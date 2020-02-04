@@ -115,15 +115,10 @@ public final class TestNGCucumberRunner {
     public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
-        TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        Pickle cucumberPickle = pickle.getPickle();
-        runner.runPickle(cucumberPickle);
-        testCaseResultListener.finishExecutionUnit();
-
-        if (!testCaseResultListener.isPassed()) {
-            // null pointer is covered by isPassed
-            // noinspection ConstantConditions
-            throw testCaseResultListener.getError();
+        try(TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus(), runtimeOptions.isStrict())){
+            Pickle cucumberPickle = pickle.getPickle();
+            runner.runPickle(cucumberPickle);
+            observer.assertTestCasePassed();
         }
     }
 

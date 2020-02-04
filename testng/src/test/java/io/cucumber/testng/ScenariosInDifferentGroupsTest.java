@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-@CucumberOptions(features = "classpath:io/cucumber/testng/scenarios_with_tags.feature", plugin = "timeline:target/timeline")
+@CucumberOptions(features = "classpath:io/cucumber/testng/scenarios-with-tags.feature", plugin = "timeline:target/timeline")
 public class ScenariosInDifferentGroupsTest {
 
     private static final Predicate<Pickle> isSerial = pickle -> pickle.getTags().contains("@Serial");

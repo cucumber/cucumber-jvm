@@ -8,7 +8,7 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
-public final class Result{
+public final class Result {
 
     private final Status status;
     private final Duration duration;
@@ -17,9 +17,9 @@ public final class Result{
     /**
      * The result of a step or scenario
      *
-     * @param status status of the step or scenario
+     * @param status   status of the step or scenario
      * @param duration the duration
-     * @param error the error that caused the failure if any
+     * @param error    the error that caused the failure if any
      */
     public Result(Status status, Duration duration, Throwable error) {
         this.status = requireNonNull(status);
@@ -35,6 +35,13 @@ public final class Result{
         return duration;
     }
 
+    /**
+     * Returns the error encountered while executing a step or scenario. Will
+     * return null when passed. May return null when undefined in case of the
+     * empty scenario or skipped due to a failing prior step.
+     *
+     * @return the error encountered while executing a step or scenario.
+     */
     public Throwable getError() {
         return error;
     }
