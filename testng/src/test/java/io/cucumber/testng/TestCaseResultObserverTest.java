@@ -33,9 +33,11 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.expectThrows;
 
-public class TestCaseResultListenerTest {
+public class TestCaseResultObserverTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
@@ -54,8 +56,8 @@ public class TestCaseResultListenerTest {
     }
 
     @Test
-    public void should_be_passed_for_passed_result() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
+    public void should_be_passed_for_passed_result() throws Throwable {
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         Result stepResult = new Result(Status.PASSED, ZERO, null);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -63,13 +65,12 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(Status.PASSED, ZERO, null);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertTrue(resultListener.isPassed());
-        assertNull(resultListener.getError());
+        resultListener.assertTestCasePassed();
     }
 
     @Test
     public void should_not_be_passed_for_failed_result() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         Result stepResult = new Result(FAILED, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -77,13 +78,13 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(FAILED, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertFalse(resultListener.isPassed());
-        assertEquals(resultListener.getError(), error);
+        Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
+        assertEquals(exception, error);
     }
 
     @Test
     public void should_not_be_passed_for_ambiguous_result() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         Result stepResult = new Result(AMBIGUOUS, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -91,13 +92,13 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(AMBIGUOUS, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertFalse(resultListener.isPassed());
-        assertEquals(resultListener.getError(), error);
+        Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
+        assertEquals(exception, error);
     }
 
     @Test
     public void should_be_skipped_for_undefined_result() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
 
@@ -107,20 +108,18 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertFalse(resultListener.isPassed());
-        Throwable resultError = requireNonNull(resultListener.getError());
-        SkipException skipException = (SkipException) resultError;
+        SkipException skipException = expectThrows(SkipException.class, resultListener::assertTestCasePassed);
         assertThat(skipException.isSkip(), is(true));
         assertThat(skipException.getMessage(), is("" +
             "The step \"some step\" is undefined. You can implement it using tne snippet(s) below:\n" +
             "\n" +
-            "stub snippet"
+            "stub snippet\n"
         ));
     }
 
     @Test
     public void should_not_be_skipped_for_undefined_result_in_strict_mode() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, true);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, true);
 
         bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
 
@@ -130,20 +129,28 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertFalse(resultListener.isPassed());
-        Throwable resultError = requireNonNull(resultListener.getError());
-        SkipException skipException = (SkipException) resultError;
+        SkipException skipException = expectThrows(SkipException.class, resultListener::assertTestCasePassed);
         assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
             "The step \"some step\" is undefined. You can implement it using tne snippet(s) below:\n" +
             "\n" +
-            "stub snippet"
+            "stub snippet\n"
         ));
     }
 
     @Test
+    public void should_be_passed_for_empty_scenario() throws Throwable {
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+
+        Result testCaseResult = new Result(UNDEFINED, ZERO, error);
+        bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
+
+        resultListener.assertTestCasePassed();
+    }
+
+    @Test
     public void should_be_skipped_for_pending_result() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         Exception error = new TestPendingException();
 
@@ -153,13 +160,12 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(PENDING, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertFalse(resultListener.isPassed());
-        assertThat(resultListener.getError(), isA(SkipException.class));
+        expectThrows(SkipException.class, resultListener::assertTestCasePassed);
     }
 
     @Test
     public void should_not_be_skipped_for_pending_result_in_strict_mode() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, true);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, true);
 
         TestPendingException error = new TestPendingException();
 
@@ -169,13 +175,13 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(PENDING, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertFalse(resultListener.isPassed());
-        assertEquals(error, resultListener.getError());
+        Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
+        assertEquals(exception, error);
     }
 
     @Test
     public void should_be_skipped_for_skipped_result() {
-        TestCaseResultListener resultListener = new TestCaseResultListener(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         Result stepResult = new Result(SKIPPED, ZERO, null);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -183,9 +189,6 @@ public class TestCaseResultListenerTest {
         Result testCaseResult = new Result(SKIPPED, ZERO, null);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        assertFalse(resultListener.isPassed());
-        assertThat(resultListener.getError(), isA(SkipException.class));
+        expectThrows(SkipException.class, resultListener::assertTestCasePassed);
     }
-
-
 }

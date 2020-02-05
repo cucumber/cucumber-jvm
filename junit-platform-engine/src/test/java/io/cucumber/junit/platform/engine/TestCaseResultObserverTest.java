@@ -218,5 +218,11 @@ class TestCaseResultObserverTest {
             "mocked snippet 3\n"));
     }
 
-
+    @Test
+    void empty() {
+        bus.send(new TestCaseStarted(Instant.now(), testCase));
+        Result result = new Result(Status.UNDEFINED, Duration.ZERO, null);
+        bus.send(new TestCaseFinished(Instant.now(), testCase, result));
+        observer.assertTestCasePassed();
+    }
 }

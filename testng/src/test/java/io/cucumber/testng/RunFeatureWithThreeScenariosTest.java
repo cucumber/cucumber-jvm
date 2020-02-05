@@ -2,7 +2,7 @@ package io.cucumber.testng;
 
 
 @CucumberOptions(
-    features = "classpath:io/cucumber/testng/three_scenarios.feature"
+    features = "classpath:io/cucumber/testng/three-scenarios.feature"
 )
 public class RunFeatureWithThreeScenariosTest extends AbstractTestNGCucumberTests {
 }

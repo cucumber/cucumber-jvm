@@ -92,7 +92,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectClasspathRoots(singleton(classpathRoot)).get(0);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(4, testDescriptor.getChildren().size());
+        assertEquals(5, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -169,7 +169,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(3, testDescriptor.getChildren().size());
+        assertEquals(4, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -177,7 +177,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectPackage("io.cucumber.junit.platform.engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(3, testDescriptor.getChildren().size());
+        assertEquals(4, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -268,7 +268,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectClass(RunCucumberTest.class);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(3, testDescriptor.getChildren().size());
+        assertEquals(4, testDescriptor.getChildren().size());
     }
 
     private Optional<UniqueId> selectSomePickle(DiscoverySelector resource) {
