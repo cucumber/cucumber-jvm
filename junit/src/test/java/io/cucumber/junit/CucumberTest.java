@@ -54,15 +54,15 @@ class CucumberTest {
     @Test
     void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
-        assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getDescription().getDisplayName(), is(equalTo("Feature A")));
+        assertThat(cucumber.getChildren().size(), is(equalTo(3)));
+        assertThat(cucumber.getChildren().get(1).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 
     @Test
     void finds_features_based_on_explicit_root_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
-        assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getDescription().getDisplayName(), is(equalTo("Feature A")));
+        assertThat(cucumber.getChildren().size(), is(equalTo(3)));
+        assertThat(cucumber.getChildren().get(1).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 
     @Test
@@ -131,7 +131,7 @@ class CucumberTest {
         Description description = new Cucumber(ValidEmpty.class).getDescription();
 
         assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$ValidEmpty"));
-        Description feature = description.getChildren().get(0);
+        Description feature = description.getChildren().get(1);
         assertThat(feature.getDisplayName(), is("Feature A"));
         Description pickle = feature.getChildren().get(0);
         assertThat(pickle.getDisplayName(), is("A good start(Feature A)"));
