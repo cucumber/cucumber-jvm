@@ -17,6 +17,8 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
@@ -64,6 +66,17 @@ public final class RuntimeOptions implements
         }
     }
 
+    void addDefaultGlueIfAbsent() {
+        if (glue.isEmpty()) {
+            glue.add(rootPackageUri());
+        }
+    }
+
+    void addDefaultFeaturePathIfAbsent() {
+        if (featurePaths.isEmpty()) {
+            featurePaths.add(FeatureWithLines.create(rootPackageUri(), emptyList()));
+        }
+    }
     public int getCount() {
         return count;
     }

@@ -54,6 +54,8 @@ public class Main {
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
             .parse(argv)
+            .addDefaultGlueIfAbsent()
+            .addDefaultFeaturePathIfAbsent()
             .addDefaultFormatterIfAbsent()
             .addDefaultSummaryPrinterIfAbsent()
             .build(systemOptions);

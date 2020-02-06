@@ -32,6 +32,8 @@ public final class RuntimeOptionsBuilder {
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
     private boolean addDefaultSummaryPrinterIfAbsent;
     private boolean addDefaultFormatterIfAbsent;
+    private boolean addDefaultGlueIfAbsent;
+    private boolean addDefaultFeaturePathIfAbsent;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -134,6 +136,14 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.addDefaultSummaryPrinterIfAbsent();
         }
 
+        if (addDefaultGlueIfAbsent) {
+            runtimeOptions.addDefaultGlueIfAbsent();
+        }
+
+        if (addDefaultFeaturePathIfAbsent) {
+            runtimeOptions.addDefaultFeaturePathIfAbsent();
+        }
+
         return runtimeOptions;
     }
 
@@ -204,6 +214,17 @@ public final class RuntimeOptionsBuilder {
         this.addDefaultFormatterIfAbsent = true;
         return this;
     }
+
+    public RuntimeOptionsBuilder addDefaultGlueIfAbsent() {
+        this.addDefaultGlueIfAbsent = true;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder addDefaultFeaturePathIfAbsent() {
+        this.addDefaultFeaturePathIfAbsent = true;
+        return this;
+    }
+
 
     public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.parsedObjectFactoryClass = objectFactoryClass;

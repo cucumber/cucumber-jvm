@@ -6,8 +6,10 @@ Options:
                                            Defaults to 1.
 
   -g, --glue PATH                          Package to load glue code (step
-                                           definitions, hooks and plugins) from.
-                                           E.g: com.example.app
+                                           definitions, hooks and plugins) from
+                                           e.g: com.example.app. When not
+                                           provided Cucumber will search the
+                                           classpath.
 
   -p, --[add-]plugin PLUGIN[:PATH_OR_URL]  Register a plugin.
                                            Built-in formatter PLUGIN types:
@@ -69,6 +71,9 @@ Options:
                                            META-INF/services/io.cucumber.core.backend.ObjectFactory
 
 Feature path examples:
+                                           When no feature path is provided
+                                           cucumber will scan the classpath root
+                                           and its sub directories.
 
   <path>                                   Load the files with the extension
                                            ".feature" for the directory <path>
