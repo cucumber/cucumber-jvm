@@ -8,14 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [Core] Allow Object and String data table types to be redefined ([#1884](https://github.com/cucumber/cucumber-jvm/pull/1884),[#cucumber/885](https://github.com/cucumber/cucumber/pull/885) M.P. Korstanje)
-    
+
 ### Changed
 
 ### Deprecated
 
 ### Removed
 
+### Fixed
+
+## [5.2.0] (2020-02-06)
+
+### Added
+ * [Core] Allow Object and String data table types to be redefined ([#1884](https://github.com/cucumber/cucumber-jvm/pull/1884),[#cucumber/885](https://github.com/cucumber/cucumber/pull/885) M.P. Korstanje)
+    
 ### Fixed
  * [Core] Fix NPE while when failing to invoke a step definition (M.P. Korstanje)
  * [TestNG] Fix NPE in empty scenario ([#1885](https://github.com/cucumber/cucumber-jvm/pull/1885),[#1887](https://github.com/cucumber/cucumber-jvm/pull/1887) M.P. Korstanje)
@@ -1287,7 +1293,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.1.3...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...master
+[5.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.3-RC4...v5.2.0
 [5.1.3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.2-RC4...v5.1.3
 [5.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.1-RC4...v5.1.2
 [5.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.0-RC4...v5.1.1
