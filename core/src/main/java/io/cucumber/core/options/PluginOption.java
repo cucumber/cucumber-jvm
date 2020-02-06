@@ -23,6 +23,8 @@ import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.SummaryPrinter;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,13 +50,21 @@ public class PluginOption implements Options.Plugin {
         put("teamcity", TeamCityPlugin.class);
     }};
 
+    // Replace IDEA plugin with TeamCity
+    private static final Set<String> INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashSet<String>() {{
+        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter");
+        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter");
+        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter");
+        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter");
+        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter");
+    }};
+
     // Refuse plugins known to implement the old API
-    private static final HashMap<String, Class<? extends Plugin>> INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter", TeamCityPlugin.class);
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter", TeamCityPlugin.class);
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter", TeamCityPlugin.class);
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter", TeamCityPlugin.class);
-        put("org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter", TeamCityPlugin.class);
+    private static final Set<String> INCOMPATIBLE_PLUGIN_CLASSES = new HashSet<String>() {{
+        add("io.qameta.allure.cucumberjvm.AllureCucumberJvm");
+        add("io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm");
+        add("io.qameta.allure.cucumber3jvm.AllureCucumber3Jvm");
+        add("io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm");
     }};
 
     private final String pluginString;
@@ -78,10 +88,13 @@ public class PluginOption implements Options.Plugin {
     }
 
     private static Class<? extends Plugin> parsePluginName(String pluginName) {
-        Class<? extends Plugin> oldApiPlugin = INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES.get(pluginName);
-        if (oldApiPlugin != null) {
+        if (INCOMPATIBLE_PLUGIN_CLASSES.contains(pluginName)) {
+            throw new IllegalArgumentException("Plugin is not compatible with this version of Cucumber: " + pluginName);
+        }
+
+        if (INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES.contains(pluginName)) {
             log.debug(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to teamcity plugin");
-            return oldApiPlugin;
+            return TeamCityPlugin.class;
         }
 
         Class<? extends Plugin> pluginClass = PLUGIN_CLASSES.get(pluginName);
@@ -100,7 +113,7 @@ public class PluginOption implements Options.Plugin {
                 return (Class<? extends Plugin>) aClass;
             }
             throw new CucumberException("Couldn't load plugin class: " + className + ". It does not implement " + Plugin.class.getName());
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
             throw new CucumberException("Couldn't load plugin class: " + className, e);
         }
     }
