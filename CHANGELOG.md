@@ -1294,11 +1294,11 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 <!-- Releases -->
 [Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...master
-[5.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.3-RC4...v5.2.0
-[5.1.3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.2-RC4...v5.1.3
-[5.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.1-RC4...v5.1.2
-[5.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.0-RC4...v5.1.1
-[5.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.1.0
+[5.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.3...v5.2.0
+[5.1.3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.2...v5.1.3
+[5.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.1...v5.1.2
+[5.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.0...v5.1.1
+[5.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...v5.1.0
 [5.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.0.0
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
