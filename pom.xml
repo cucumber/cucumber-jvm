@@ -49,7 +49,7 @@
 
         <!--Dependencies -->
         <cucumber-expressions.version>8.3.1</cucumber-expressions.version>
-        <datatable.version>3.2.1</datatable.version>
+        <datatable.version>3.3.0</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
         <messages.version>9.0.3</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>

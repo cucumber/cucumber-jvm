@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
-
+ * [Core] Allow Object and String data table types to be redefined ([#1884](https://github.com/cucumber/cucumber-jvm/pull/1884),[#cucumber/885](https://github.com/cucumber/cucumber/pull/885) M.P. Korstanje)
+    
 ### Changed
 
 ### Deprecated
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
  * [Core] Fix NPE while when failing to invoke a step definition (M.P. Korstanje)
  * [TestNG] Fix NPE in empty scenario ([#1885](https://github.com/cucumber/cucumber-jvm/pull/1885),[#1887](https://github.com/cucumber/cucumber-jvm/pull/1887) M.P. Korstanje)
+
 ## [5.1.3] (2020-01-31)
 
 ### Fixed
