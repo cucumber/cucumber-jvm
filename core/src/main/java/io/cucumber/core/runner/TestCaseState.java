@@ -39,7 +39,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     @Override
     public Status getStatus() {
         if (stepResults.isEmpty()) {
-            return Status.UNDEFINED;
+            return Status.PASSED;
         }
 
         Result mostSevereResult = max(stepResults, comparing(Result::getStatus));

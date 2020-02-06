@@ -109,11 +109,6 @@ class TestCaseResultObserver implements AutoCloseable {
         }
 
         if (status.is(UNDEFINED)) {
-            if (suggestions.isEmpty()) {
-                // Empty scenario
-                return;
-            }
-
             throw new UndefinedStepException(suggestions, strict);
         }
 

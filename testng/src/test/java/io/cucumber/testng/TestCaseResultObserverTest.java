@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static io.cucumber.plugin.event.Status.AMBIGUOUS;
 import static io.cucumber.plugin.event.Status.FAILED;
+import static io.cucumber.plugin.event.Status.PASSED;
 import static io.cucumber.plugin.event.Status.PENDING;
 import static io.cucumber.plugin.event.Status.SKIPPED;
 import static io.cucumber.plugin.event.Status.UNDEFINED;
@@ -142,7 +143,7 @@ public class TestCaseResultObserverTest {
     public void should_be_passed_for_empty_scenario() throws Throwable {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
-        Result testCaseResult = new Result(UNDEFINED, ZERO, error);
+        Result testCaseResult = new Result(PASSED, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         resultListener.assertTestCasePassed();

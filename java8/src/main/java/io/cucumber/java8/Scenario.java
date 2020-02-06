@@ -27,6 +27,14 @@ public final class Scenario {
         return delegate.getSourceTagNames();
     }
 
+    /**
+     * Returns the current status of this scenario.
+     * <p>
+     * The scenario status is calculate as the most severe status of the
+     * executed steps in the scenario so far.
+     *
+     * @return the current status of this scenario
+     */
     public Status getStatus() {
         return Status.valueOf(delegate.getStatus().name());
     }
