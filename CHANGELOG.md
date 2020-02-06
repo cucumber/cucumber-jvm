@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ *  [Core] TestCaseState should be PASSED by default ([#1888](https://github.com/cucumber/cucumber-jvm/pull/1888) M.P. Korstanje)
+    * As a result  `Scenario.getState` will return `PASSED` rather then
+      `UNDEFINED` prior to the execution of the first step of a scenario.  
 
 ## [5.2.0] (2020-02-06)
 

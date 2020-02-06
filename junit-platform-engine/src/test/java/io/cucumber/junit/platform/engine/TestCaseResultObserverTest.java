@@ -221,7 +221,7 @@ class TestCaseResultObserverTest {
     @Test
     void empty() {
         bus.send(new TestCaseStarted(Instant.now(), testCase));
-        Result result = new Result(Status.UNDEFINED, Duration.ZERO, null);
+        Result result = new Result(Status.PASSED, Duration.ZERO, null);
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         observer.assertTestCasePassed();
     }

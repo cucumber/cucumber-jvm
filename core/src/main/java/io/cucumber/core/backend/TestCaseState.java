@@ -14,7 +14,12 @@ public interface TestCaseState {
     Collection<String> getSourceTagNames();
 
     /**
-     * @return the <em>most severe</em> status of the Scenario's Steps.
+     * Returns the current status of this test case.
+     * <p>
+     * The test case status is calculate as the most severe status of the
+     * executed steps in the testcase so far.
+     *
+     * @return the current status of this test case
      */
     Status getStatus();
 
