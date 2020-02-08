@@ -84,7 +84,7 @@ class JavaDataTableTypeDefinitionTest {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_table_entry_to_string", Map.class);
         JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[]{"[empty]"});
         assertThat(definition.dataTableType().transform(emptyTable.asLists()),
-            is(singletonList("converts_table_entry_to_string={=d, a=}")));
+            is(singletonList("converts_table_entry_to_string={a=, =d}")));
     }
 
     public String converts_table_entry_to_string(Map<String, String> entry) {

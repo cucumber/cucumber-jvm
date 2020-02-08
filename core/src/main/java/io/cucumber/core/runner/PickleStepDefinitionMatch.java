@@ -47,8 +47,12 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
                 result.add(argument.getValue());
             }
         } catch (UndefinedDataTableTypeException e) {
-            throw registerTypeInConfiguration(e);
+            throw registerDataTableTypeInConfiguration(e);
         } catch (CucumberExpressionException | CucumberDataTableException | CucumberDocStringException e) {
+            CucumberInvocationTargetException targetException;
+            if ((targetException = causedByCucumberInvocationTargetException(e)) != null) {
+                throw removeFrameworkFrames(targetException);
+            }
             throw couldNotConvertArguments(e);
         } catch (CucumberBackendException e) {
             throw couldNotInvokeArgumentConversion(e);
@@ -62,6 +66,14 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         } catch (CucumberInvocationTargetException e) {
             throw removeFrameworkFramesAndAppendStepLocation(e, getStepLocation());
         }
+    }
+
+    private CucumberInvocationTargetException causedByCucumberInvocationTargetException(RuntimeException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof CucumberInvocationTargetException) {
+            return (CucumberInvocationTargetException) cause;
+        }
+        return null;
     }
 
     private Throwable couldNotInvokeStep(CucumberBackendException e, List<Object> result) {
@@ -89,12 +101,11 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private String createArgumentTypes(List<Object> result) {
         return result.stream()
-            .map(Object::getClass)
-            .map(Class::getName)
+            .map(o -> o == null ? "null" : o.getClass().getName())
             .collect(Collectors.joining(", "));
     }
 
-    private CucumberException registerTypeInConfiguration(Exception e) {
+    private CucumberException registerDataTableTypeInConfiguration(Exception e) {
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
                 "It appears you did not register a data table type. The details are in the stacktrace below.", //TODO: Add doc URL

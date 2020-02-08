@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -27,7 +28,7 @@ public final class FeatureParser {
     }
 
 
-    public Feature parseResource(Resource resource) {
+    public Optional<Feature> parseResource(Resource resource) {
         requireNonNull(resource);
         URI uri = resource.getUri();
         String source = read(resource);

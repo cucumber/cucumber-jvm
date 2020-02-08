@@ -2,6 +2,7 @@ package io.cucumber.core.resource;
 
 import javax.lang.model.SourceVersion;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -85,7 +86,7 @@ public final class ClasspathSupport {
     }
 
     static URI determineClasspathResourceUri(Path baseDir, String basePackagePath, Path resource) {
-        String subPackageName = baseDir.relativize(resource.getParent()).toString();
+        String subPackageName = determineSubpackageName(baseDir, resource);
         String resourceName = resource.getFileName().toString();
         String classpathResourcePath = of(basePackagePath, subPackageName, resourceName)
             .filter(value -> !value.isEmpty()) // default package .
@@ -93,8 +94,8 @@ public final class ClasspathSupport {
         return classpathResourceUri(classpathResourcePath);
     }
 
-    private static String determineSubpackageName(Path baseDir, Path classFile) {
-        Path relativePath = baseDir.relativize(classFile.getParent());
+    private static String determineSubpackageName(Path baseDir, Path resource) {
+        Path relativePath = baseDir.relativize(resource.getParent());
         String pathSeparator = baseDir.getFileSystem().getSeparator();
         return relativePath.toString().replace(pathSeparator, PACKAGE_SEPARATOR_STRING);
     }
@@ -133,7 +134,12 @@ public final class ClasspathSupport {
     }
 
     static URI classpathResourceUri(String classpathResourceName) {
-        return URI.create(CLASSPATH_SCHEME_PREFIX + classpathResourceName);
+        try {
+            // Unlike URI.create the constructor escapes reserved characters
+            return new URI(CLASSPATH_SCHEME, classpathResourceName, null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public static URI rootPackageUri() {

@@ -12,7 +12,7 @@ import java.util.Set;
 @Test
 public final class AbstractTestNGCucumberTestsTest {
 
-    private Set<String> invokedConfigurationMethodNames;
+    private List<String> invokedConfigurationMethodNames;
     private List<String> invokedTestMethodNames;
 
     @BeforeClass(alwaysRun = true)

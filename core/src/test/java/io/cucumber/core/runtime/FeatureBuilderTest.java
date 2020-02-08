@@ -91,9 +91,9 @@ class FeatureBuilderTest {
 
             @Override
             public InputStream getInputStream() {
-                return new ByteArrayInputStream("Feature: Example".getBytes(UTF_8));
+                return new ByteArrayInputStream("Feature: Example\n  Scenario: Empty".getBytes(UTF_8));
             }
-        });
+        }).orElse(null);
     }
 
 }

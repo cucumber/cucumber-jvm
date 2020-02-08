@@ -64,6 +64,8 @@ public class TeamCityPlugin implements EventListener {
     private static final String TEMPLATE_PROGRESS_TEST_STARTED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testStarted' timestamp = '%s']";
     private static final String TEMPLATE_PROGRESS_TEST_FINISHED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testFinished' timestamp = '%s']";
 
+    private static final String TEMPLATE_EMBED_WRITE_EVENT = TEAMCITY_PREFIX + "[message text='%s' status='NORMAL']";
+
     private static final Pattern ANNOTATION_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\([^:]*\\)");
     private static final Pattern LAMBDA_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\(.*:.*\\)");
 
@@ -101,7 +103,10 @@ public class TeamCityPlugin implements EventListener {
     private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
 
     private void handleTestSourceRead(TestSourceRead event) {
-        features.put(event.getUri(), featureParser.parseResource(new TestSourceReadResource(event)));
+        TestSourceReadResource source = new TestSourceReadResource(event);
+        featureParser.parseResource(source).ifPresent(feature ->
+            features.put(event.getUri(), feature)
+        );
     }
 
     private void printTestRunStarted(TestRunStarted event) {
@@ -347,11 +352,11 @@ public class TeamCityPlugin implements EventListener {
 
     private void handleEmbedEvent(EmbedEvent event) {
         String name = event.getName() == null ? "" : event.getName() + " ";
-        print("Embed event: " + name + "[" + event.getMediaType() + " " + event.getData().length + " bytes]");
+        print(TEMPLATE_EMBED_WRITE_EVENT, "Embed event: " + name + "[" + event.getMediaType() + " " + event.getData().length + " bytes]\n");
     }
 
     private void handleWriteEvent(WriteEvent event) {
-        print("Write event:\n" + event.getText());
+        print(TEMPLATE_EMBED_WRITE_EVENT, "Write event:\n" + event.getText() + "\n");
     }
 
     private void print(String command, Object... args) {

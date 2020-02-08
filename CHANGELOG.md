@@ -8,9 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [Core] Document supported properties ([#1859](https://github.com/cucumber/cucumber-jvm/pull/1859) M.P. Korstanje)
-   - Adds `lexical` value (the default) for `cucumber.execution.order`
-   
+ * [Core] CLI should search classpath root by default ([#1889](https://github.com/cucumber/cucumber-jvm/pull/1889) M.P. Korstanje)
+ * [Core] Improve error message when incompatible Plugins are used 
 ### Changed
 
 ### Deprecated
@@ -18,6 +17,53 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] TestCaseState should be PASSED by default ([#1888](https://github.com/cucumber/cucumber-jvm/pull/1888) M.P. Korstanje)
+    * As a result  `Scenario.getState` will return `PASSED` rather then
+      `UNDEFINED` prior to the execution of the first step of a scenario.  
+
+## [5.2.0] (2020-02-06)
+
+### Added
+ * [Core] Allow Object and String data table types to be redefined ([#1884](https://github.com/cucumber/cucumber-jvm/pull/1884),[#cucumber/885](https://github.com/cucumber/cucumber/pull/885) M.P. Korstanje)
+    
+### Fixed
+ * [Core] Fix NPE while when failing to invoke a step definition (M.P. Korstanje)
+ * [TestNG] Fix NPE in empty scenario ([#1885](https://github.com/cucumber/cucumber-jvm/pull/1885),[#1887](https://github.com/cucumber/cucumber-jvm/pull/1887) M.P. Korstanje)
+
+## [5.1.3] (2020-01-31)
+
+### Fixed
+ * [Core] Fix UnknownFormatConversionException in TeamCityPlugin  ([#1881](https://github.com/cucumber/cucumber-jvm/pull/1881) M.P. Korstanje)
+ * [Core] Fix NPE when parsing empty feature file ([#1882](https://github.com/cucumber/cucumber-jvm/pull/1882) M.P. Korstanje)
+
+## [5.1.2] (2020-01-27)
+
+### Fixed
+ * [JUnit] Build JUnit Platform Engine at Source level 8. (M.P. Korstanje)
+   - Entire project was build at source level 9 rather then only `module-info.java`
+ * [JUnit] Require `io.cucumber.core.gherkin` as a module dependency. (M.P. Korstanje)
+
+## [5.1.1] (2020-01-26)
+
+### Fixed
+ * [Core] Print root cause of exceptions thrown in datatable, parameter and docstring definitions ([#1873](https://github.com/cucumber/cucumber-jvm/pull/1873) M.P. Korstanje)
+ * [Core] Escape spaces in resource name ([#1874](https://github.com/cucumber/cucumber-jvm/pull/1874) M.P. Korstanje)
+
+## [5.1.0] (2020-01-25)
+
+### Added
+ * [Core] Document supported properties ([#1859](https://github.com/cucumber/cucumber-jvm/pull/1859) M.P. Korstanje)
+   - Adds `lexical` value (the default) for `cucumber.execution.order`
+ * [TestNG] Run scenarios in customized groups ([#1863](https://github.com/cucumber/cucumber-jvm/pull/1863) Konrad Maciaszczyk, M.P. Korstanje)
+
+### Changed
+ * [JUnit] Upgrade JUnit Platform from v1.5.2 to v1.6.0
+ * [JUnit] Add module-info for `cucumber-junit-platform-engine` ([#1867](https://github.com/cucumber/cucumber-jvm/pull/1867) M.P. Korstanje, John Patrick)
+
+### Fixed
+ * [Java/Java8] Fix NPE in AbstractDatatableElementTransformerDefinition ([#1865](https://github.com/cucumber/cucumber-jvm/pull/1865) Florin Slevoaca, M.P. Korstanje)
+ * [Core] Fix collision when using `Datatable.asMaps` ([cucumber/cucumber#877](https://github.com/cucumber/cucumber/pull/877) M.P. Korstanje)
+ * [Core] Replace windows path separator in sub package name ([#1869](https://github.com/cucumber/cucumber-jvm/pull/1869) M.P. Korstanje)
 
 ## [5.0.0] (2020-01-16) - [Release Notes](release-notes/v5.0.0.md)
 
@@ -1251,7 +1297,12 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...master
+[5.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.3...v5.2.0
+[5.1.3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.2...v5.1.3
+[5.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.1...v5.1.2
+[5.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.0...v5.1.1
+[5.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0...v5.1.0
 [5.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC4...v5.0.0
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4
 [5.0.0-RC4]:  https://github.com/cucumber/cucumber-jvm/compare/v5.0.0-RC3...v5.0.0-RC4

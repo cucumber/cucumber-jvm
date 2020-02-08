@@ -5,13 +5,29 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-archetype</artifactId>
     <packaging>maven-archetype</packaging>
-    <name>cucumber-archetype</name>
+    <name>Cucumber JVM: Archetype</name>
     <description>Cucumber JVM: Maven Archetype</description>
+
+    <!-- Not used by this module, but used by the integration tests of
+         created project. Declaring the dependencies keeps the project
+         in the right order in the maven reactor -->
+    <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>

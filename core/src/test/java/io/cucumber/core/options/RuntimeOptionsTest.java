@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
+import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
@@ -734,6 +735,24 @@ class RuntimeOptionsTest {
         assertThat(options.getFeaturePaths(), emptyCollectionOf(URI.class));
     }
 
+    @Test
+    void scans_class_path_root_for_glue_by_default() {
+        RuntimeOptions options = new CommandlineOptionsParser()
+            .parse()
+            .addDefaultGlueIfAbsent()
+            .build();
+        assertThat(options.getGlue(), is(singletonList(rootPackageUri())));
+    }
+
+    @Test
+    void scans_class_path_root_for_features_by_default() {
+        RuntimeOptions options = new CommandlineOptionsParser()
+            .parse()
+            .addDefaultFeaturePathIfAbsent()
+            .build();
+        assertThat(options.getFeaturePaths(), is(singletonList(rootPackageUri())));
+        assertThat(options.getLineFilters(), is(emptyMap()));
+    }
 
     public static final class AwareFormatter implements StrictAware, ColorAware, EventListener {
 

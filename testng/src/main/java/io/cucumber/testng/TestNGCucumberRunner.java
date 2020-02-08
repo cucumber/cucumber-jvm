@@ -65,6 +65,7 @@ public final class TestNGCucumberRunner {
     private final RuntimeOptions runtimeOptions;
     private final Plugins plugins;
     private final FeaturePathFeatureSupplier featureSupplier;
+    private List<Feature> features = null;
 
     /**
      * Bootstrap the cucumber runtime
@@ -119,15 +120,10 @@ public final class TestNGCucumberRunner {
     public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
-        TestCaseResultListener testCaseResultListener = new TestCaseResultListener(runner.getBus(), runtimeOptions.isStrict());
-        Pickle cucumberPickle = pickle.getPickle();
-        runner.runPickle(cucumberPickle);
-        testCaseResultListener.finishExecutionUnit();
-
-        if (!testCaseResultListener.isPassed()) {
-            // null pointer is covered by isPassed
-            // noinspection ConstantConditions
-            throw testCaseResultListener.getError();
+        try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus(), runtimeOptions.isStrict())) {
+            Pickle cucumberPickle = pickle.getPickle();
+            runner.runPickle(cucumberPickle);
+            observer.assertTestCasePassed();
         }
     }
 
@@ -154,13 +150,18 @@ public final class TestNGCucumberRunner {
         }
     }
 
+    /**
+     * Gets features found on the feature path and sends {@link TestRunStarted} and {@link TestSourceRead} events. The method is
+     * idempotent.
+     *
+     * @return a list of {@link Feature} features found on the feature path.
+     */
     private List<Feature> getFeatures() {
-        plugins.setSerialEventBusOnEventListenerPlugins(bus);
-
-        List<Feature> features = featureSupplier.get();
-        emitTestRunStarted();
-        for (Feature feature : features) {
-            emitTestSource(feature);
+        if (features == null) {
+            plugins.setSerialEventBusOnEventListenerPlugins(bus);
+            features = featureSupplier.get();
+            emitTestRunStarted();
+            features.forEach(this::emitTestSource);
         }
         return features;
     }

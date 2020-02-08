@@ -61,8 +61,8 @@ class TestCaseStateResultTest {
     }
 
     @Test
-    void no_steps_is_undefined() {
-        assertThat(s.getStatus(), is(equalTo(UNDEFINED)));
+    void no_steps_is_passed() {
+        assertThat(s.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test

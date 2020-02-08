@@ -15,32 +15,16 @@ git checkout master
 Also check if you can upgrade any dependencies:
 
 ```
-update-dependency-versions
+make update-dependency-versions
 ```
-
-## Prepare for release ##
-
-Update the version numbers in the changelog by running (replace X.Y.Z below with the next release number): 
-
-```
-make update-changelog NEW_VERSION=X.Y.Z
-```
-
-Then run (replace X.Y.Z below with the next release number): 
-
-```
-git commit -am "Prepare for release X.Y.Z"
-``` 
 
 ## Make the release ##
 
-Now release everything:
+Remove the empty sections in the changelog. Don't commit these but run: 
 
 ```
-mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true"
-git checkout vX.Y.Z
-mvn clean deploy -P-examples -Psign-source-javadoc -DskipTests=true -DskipITs=true
-```
+make release
+``` 
 
 ## Last bits ##
 
