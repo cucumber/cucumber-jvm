@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
  * [Core] CLI should search classpath root by default ([#1889](https://github.com/cucumber/cucumber-jvm/pull/1889) M.P. Korstanje)
  * [Core] Improve error message when incompatible Plugins are used 
+
 ### Changed
 
 ### Deprecated
@@ -20,7 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Core] TestCaseState should be PASSED by default ([#1888](https://github.com/cucumber/cucumber-jvm/pull/1888) M.P. Korstanje)
     * As a result  `Scenario.getState` will return `PASSED` rather then
       `UNDEFINED` prior to the execution of the first step of a scenario.  
-
+ * [Core] Rerun formatter returns `/` rather then `.` ([#1892](https://github.com/cucumber/cucumber-jvm/issues/1892) M.P. Korstanje)
+ 
 ## [5.2.0] (2020-02-06)
 
 ### Added
