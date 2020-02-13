@@ -52,7 +52,7 @@ public final class RerunFormatter implements EventListener, StrictAware {
     private void recordTestFailed(TestCase testCase) {
         URI uri = testCase.getUri();
         Collection<Integer> failedTestCaseLines = getFailedTestCaseLines(uri);
-        failedTestCaseLines.add(testCase.getLine());
+        failedTestCaseLines.add(testCase.getLocation().getLine());
     }
 
     private Collection<Integer> getFailedTestCaseLines(URI uri) {

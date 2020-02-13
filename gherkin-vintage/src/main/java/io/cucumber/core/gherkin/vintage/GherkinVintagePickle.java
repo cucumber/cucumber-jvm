@@ -5,7 +5,7 @@ import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
-import io.cucumber.core.gherkin.Location;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;

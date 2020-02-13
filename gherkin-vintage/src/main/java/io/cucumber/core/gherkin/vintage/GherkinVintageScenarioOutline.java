@@ -1,8 +1,7 @@
 package io.cucumber.core.gherkin.vintage;
 
-import io.cucumber.core.gherkin.Examples;
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.ScenarioOutline;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
 
-final class GherkinVintageScenarioOutline implements ScenarioOutline {
+final class GherkinVintageScenarioOutline implements Node.ScenarioOutline {
 
     private final gherkin.ast.ScenarioOutline scenarioOutline;
     private final List<Examples> children;
@@ -23,7 +22,7 @@ final class GherkinVintageScenarioOutline implements ScenarioOutline {
     }
 
     @Override
-    public Collection<Examples> children() {
+    public Collection<Examples> elements() {
         return children;
     }
 
@@ -33,7 +32,7 @@ final class GherkinVintageScenarioOutline implements ScenarioOutline {
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return scenarioOutline.getKeyword();
     }
 

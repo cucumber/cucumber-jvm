@@ -97,7 +97,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         String definitionText = formatScenarioDefinition(testCase);
         String path = relativize(testCase.getUri()).getSchemeSpecificPart();
         String locationIndent = calculateLocationIndent(event.getTestCase(), SCENARIO_INDENT + definitionText);
-        out.println(SCENARIO_INDENT + definitionText + locationIndent + formatLocation(path + ":" + testCase.getLine()));
+        out.println(SCENARIO_INDENT + definitionText + locationIndent + formatLocation(path + ":" + testCase.getLocation().getLine()));
     }
 
     private String formatScenarioDefinition(TestCase testCase) {

@@ -12,6 +12,7 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.w3c.dom.Document;
@@ -83,7 +84,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestSourceParsed.class, this::handleTestSourceParsed);
         publisher.registerHandlerFor(TestRunStarted.class, this::handleTestRunStarted);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
@@ -100,11 +101,14 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         this.strict = strict;
     }
 
-    private void handleTestSourceRead(TestSourceRead event) {
-        TestSourceReadResource source = new TestSourceReadResource(event);
-        parser.parseResource(source).ifPresent(feature ->
-            featuresNames.put(feature.getUri(), feature.getName())
-        );
+    private void handleTestSourceParsed(TestSourceParsed event) {
+        io.cucumber.plugin.event.Node.Container<io.cucumber.plugin.event.Node> container = event.getContainer();
+        if (container instanceof io.cucumber.plugin.event.Node) {
+            io.cucumber.plugin.event.Node node = (io.cucumber.plugin.event.Node) container;
+            featuresNames.put(event.getUri(), node.getName());
+        } else {
+            featuresNames.put(event.getUri(), event.getUri().toString());
+        }
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {

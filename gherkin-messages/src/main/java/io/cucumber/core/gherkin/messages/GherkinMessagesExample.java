@@ -1,10 +1,10 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Example;
-import io.cucumber.core.gherkin.Location;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
+import io.cucumber.plugin.event.Node;
 
-final class GherkinMessagesExample implements Example {
+final class GherkinMessagesExample implements Node.Example {
 
     private final TableRow tableRow;
     private final int rowIndex;
@@ -15,7 +15,7 @@ final class GherkinMessagesExample implements Example {
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return null;
     }
 

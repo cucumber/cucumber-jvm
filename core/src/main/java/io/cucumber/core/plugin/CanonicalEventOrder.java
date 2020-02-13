@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.plugin.event.TestCaseEvent;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.util.Comparator;
@@ -61,6 +62,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
         private final List<Class<? extends Event>> fixedOrder = asList(
             TestRunStarted.class,
             TestSourceRead.class,
+            TestSourceParsed.class,
             SnippetsSuggestedEvent.class,
             StepDefinedEvent.class,
             TestCaseEvent.class,
@@ -99,7 +101,10 @@ final class CanonicalEventOrder implements Comparator<Event> {
                 return uri;
             }
 
-            int line = Integer.compare(a.getTestCase().getLine(), b.getTestCase().getLine());
+            int line = Integer.compare(
+                a.getTestCase().getLocation().getLine(),
+                b.getTestCase().getLocation().getLine()
+            );
             if(line != 0){
                 return line;
             }

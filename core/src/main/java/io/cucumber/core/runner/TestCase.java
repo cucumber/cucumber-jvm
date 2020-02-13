@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -81,7 +82,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     @Override
     public String getScenarioDesignation() {
-        return fileColonLine(getLine()) + " # " + getName();
+        return fileColonLine(getLocation().getLine()) + " # " + getName();
     }
 
     @Override
@@ -97,6 +98,11 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     @Override
     public Integer getLine() {
         return pickle.getLocation().getLine();
+    }
+
+    @Override
+    public Location getLocation() {
+        return pickle.getLocation();
     }
 
     @Override

@@ -1,11 +1,9 @@
 package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.GherkinDocument;
-import gherkin.ast.ScenarioOutline;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Located;
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Node;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.core.gherkin.Pickle;
 
 import java.net.URI;
@@ -29,8 +27,8 @@ final class GherkinVintageFeature implements Feature {
         this.pickles = pickles;
         this.children = gherkinDocument.getFeature().getChildren().stream()
             .map(scenarioDefinition -> {
-                if (scenarioDefinition instanceof ScenarioOutline) {
-                    ScenarioOutline outline = (ScenarioOutline) scenarioDefinition;
+                if (scenarioDefinition instanceof gherkin.ast.ScenarioOutline) {
+                    gherkin.ast.ScenarioOutline outline = (gherkin.ast.ScenarioOutline) scenarioDefinition;
                     return new GherkinVintageScenarioOutline(outline);
                 }
                 return new GherkinVintageScenario(scenarioDefinition);
@@ -39,7 +37,7 @@ final class GherkinVintageFeature implements Feature {
     }
 
     @Override
-    public Collection<Node> children() {
+    public Collection<Node> elements() {
         return children;
     }
 
@@ -49,8 +47,8 @@ final class GherkinVintageFeature implements Feature {
     }
 
     @Override
-    public Optional<Pickle> getPickleAt(Located located) {
-        Location location = located.getLocation();
+    public Optional<Pickle> getPickleAt(Node node) {
+        Location location = node.getLocation();
         return pickles.stream()
             .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
             .findFirst();
@@ -64,11 +62,6 @@ final class GherkinVintageFeature implements Feature {
     @Override
     public List<Pickle> getPickles() {
         return pickles;
-    }
-
-    @Override
-    public String getKeyWord() {
-        return null;
     }
 
     @Override

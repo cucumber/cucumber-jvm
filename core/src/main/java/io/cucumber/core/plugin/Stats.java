@@ -238,7 +238,7 @@ class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
 
     private void addScenario(TestCaseFinished event) {
         TestCase testCase = event.getTestCase();
-        String location = testCase.getUri() + ":" + testCase.getLine();
+        String location = testCase.getUri() + ":" + testCase.getLocation().getLine();
         String scenarioDesignation = location + "# " + testCase.getName();
         addScenario(event.getResult().getStatus(), scenarioDesignation);
     }

@@ -13,7 +13,6 @@ import io.cucumber.messages.Messages.Envelope;
 import io.cucumber.messages.Messages.GherkinDocument;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -74,8 +73,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                 gherkinDocument,
                 path,
                 source,
-                pickles,
-                envelopes
+                pickles
             );
             return Optional.of(feature);
         } catch (ParserException e) {

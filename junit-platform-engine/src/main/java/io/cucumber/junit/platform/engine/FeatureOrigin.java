@@ -1,8 +1,8 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Located;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
@@ -51,23 +51,23 @@ abstract class FeatureOrigin {
 
     abstract TestSource featureSource();
 
-    abstract TestSource nodeSource(Located node);
+    abstract TestSource nodeSource(Node node);
 
     abstract UniqueId featureSegment(UniqueId parent, Feature feature);
 
-    UniqueId ruleSegment(UniqueId parent, Located rule){
+    UniqueId ruleSegment(UniqueId parent, Node rule){
         return parent.append(RULE_SEGMENT_TYPE, String.valueOf(rule.getLocation().getLine()));
     }
 
-    UniqueId scenarioSegment(UniqueId parent, Located scenarioDefinition) {
+    UniqueId scenarioSegment(UniqueId parent, Node scenarioDefinition) {
         return parent.append(SCENARIO_SEGMENT_TYPE, String.valueOf(scenarioDefinition.getLocation().getLine()));
     }
 
-    UniqueId examplesSegment(UniqueId parent, Located examples) {
+    UniqueId examplesSegment(UniqueId parent, Node examples) {
         return parent.append(EXAMPLES_SEGMENT_TYPE, String.valueOf(examples.getLocation().getLine()));
     }
 
-    UniqueId exampleSegment(UniqueId parent, Located tableRow) {
+    UniqueId exampleSegment(UniqueId parent, Node tableRow) {
         return parent.append(EXAMPLE_SEGMENT_TYPE, String.valueOf(tableRow.getLocation().getLine()));
     }
 
@@ -85,7 +85,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource nodeSource(Located node) {
+        TestSource nodeSource(Node node) {
             return FileSource.from(source.getFile(), createFilePosition(node.getLocation()));
         }
 
@@ -109,7 +109,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource nodeSource(Located node) {
+        TestSource nodeSource(Node node) {
             return source;
         }
 
@@ -133,7 +133,7 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource nodeSource(Located node) {
+        TestSource nodeSource(Node node) {
             return ClasspathResourceSource.from(source.getClasspathResourceName(), createFilePosition(node.getLocation()));
         }
 

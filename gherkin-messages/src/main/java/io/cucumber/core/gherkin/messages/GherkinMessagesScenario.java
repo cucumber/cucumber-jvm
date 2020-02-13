@@ -1,9 +1,9 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Scenario;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
-final class GherkinMessagesScenario implements Scenario {
+final class GherkinMessagesScenario implements Node.Scenario {
 
     private final io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario scenario;
 
@@ -12,7 +12,7 @@ final class GherkinMessagesScenario implements Scenario {
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return scenario.getKeyword();
     }
 

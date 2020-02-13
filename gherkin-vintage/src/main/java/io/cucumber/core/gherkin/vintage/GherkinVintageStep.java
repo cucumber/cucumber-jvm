@@ -8,6 +8,7 @@ import gherkin.pickles.PickleTable;
 import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
+import io.cucumber.plugin.event.Location;
 
 import java.util.stream.Collectors;
 
@@ -80,6 +81,12 @@ final class GherkinVintageStep implements Step {
     public int getLine() {
         int last = step.getLocations().size() - 1;
         return step.getLocations().get(last).getLine();
+    }
+
+    @Override
+    public Location getLocation() {
+        int last = step.getLocations().size() - 1;
+        return GherkinVintageLocation.from(step.getLocations().get(last));
     }
 
     @Override

@@ -35,4 +35,11 @@ public interface Step {
      * @return step line number
      */
     int getLine();
+
+    /**
+     * Location of this step in in the source.
+     *
+     * @return location in the source
+     */
+    Location getLocation();
 }

@@ -1,26 +1,23 @@
 package io.cucumber.core.gherkin.vintage;
 
-import gherkin.ast.ScenarioDefinition;
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Scenario;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
-import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
+final class GherkinVintageScenario implements Node.Scenario {
 
-final class GherkinVintageScenario implements Scenario {
+    private final gherkin.ast.ScenarioDefinition scenarioDefinition;
 
-    private final ScenarioDefinition scenarioDefinition;
-
-    GherkinVintageScenario(ScenarioDefinition scenarioDefinition) {
+    GherkinVintageScenario(gherkin.ast.ScenarioDefinition scenarioDefinition) {
         this.scenarioDefinition = scenarioDefinition;
     }
 
     @Override
     public Location getLocation() {
-        return from(scenarioDefinition.getLocation());
+        return GherkinVintageLocation.from(scenarioDefinition.getLocation());
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return scenarioDefinition.getKeyword();
     }
 

@@ -23,6 +23,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.time.Clock;
@@ -89,6 +90,7 @@ public final class Runtime {
         bus.send(new TestRunStarted(bus.getInstant()));
         for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+            bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), feature));
         }
 
         final List<Future<?>> executingPickles = features.stream()

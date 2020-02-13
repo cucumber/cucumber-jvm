@@ -20,6 +20,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 import org.junit.platform.commons.logging.Logger;
@@ -69,7 +70,9 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     void beforeFeature(Feature feature) {
         logger.debug(() -> "Sending test source read event for " + feature.getUri());
         // Invoked concurrently.
-        getRunner().getBus().send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        EventBus bus = getRunner().getBus();
+        bus.send(new TestSourceRead(this.bus.getInstant(), feature.getUri(), feature.getSource()));
+        bus.send(new TestSourceParsed(this.bus.getInstant(), feature.getUri(), feature));
     }
 
     void runTestCase(Pickle pickle) {

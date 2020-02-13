@@ -27,6 +27,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
@@ -215,6 +216,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             bus.send(new TestRunStarted(bus.getInstant()));
             for (Feature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+                bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), feature));
             }
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));

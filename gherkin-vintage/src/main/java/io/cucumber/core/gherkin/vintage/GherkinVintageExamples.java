@@ -1,16 +1,16 @@
 package io.cucumber.core.gherkin.vintage;
 
-import io.cucumber.core.gherkin.Example;
-import io.cucumber.core.gherkin.Examples;
-import io.cucumber.core.gherkin.Location;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-final class GherkinVintageExamples implements Examples {
+final class GherkinVintageExamples implements Node.Examples {
 
     private final List<Example> children;
     private final gherkin.ast.Examples examples;
@@ -28,7 +28,7 @@ final class GherkinVintageExamples implements Examples {
     }
 
     @Override
-    public Collection<Example> children() {
+    public Collection<Example> elements() {
         return children;
     }
 
@@ -38,7 +38,7 @@ final class GherkinVintageExamples implements Examples {
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return examples.getKeyword();
     }
 

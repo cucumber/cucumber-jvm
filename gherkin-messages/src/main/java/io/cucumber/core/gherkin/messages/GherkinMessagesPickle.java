@@ -1,6 +1,6 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Location;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
@@ -43,10 +43,10 @@ final class GherkinMessagesPickle implements Pickle {
         for (PickleStep pickleStep : pickle.getStepsList()) {
             String gherkinStepId = pickleStep.getAstNodeIds(0);
             Messages.GherkinDocument.Feature.Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
-            int stepLine = gherkinStep.getLocation().getLine();
+            Messages.Location location = gherkinStep.getLocation();
             String keyword = gherkinStep.getKeyword();
 
-            Step step = new GherkinMessagesStep(pickleStep, dialect, previousGivenWhenThen, stepLine, keyword);
+            Step step = new GherkinMessagesStep(pickleStep, dialect, previousGivenWhenThen, location, keyword);
             if (step.getType().isGivenWhenThen()) {
                 previousGivenWhenThen = step.getKeyWord();
             }

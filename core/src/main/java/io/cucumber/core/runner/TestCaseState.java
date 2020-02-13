@@ -84,7 +84,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public Integer getLine() {
-        return testCase.getLine();
+        return testCase.getLocation().getLine();
     }
 
     Throwable getError() {

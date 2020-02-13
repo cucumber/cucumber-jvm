@@ -86,7 +86,7 @@ public final class JSONFormatter implements EventListener {
             currentElementsList = (List<Map<String, Object>>) currentFeatureMap.get("elements");
         }
         currentTestCaseMap = createTestCase(event);
-        if (testSources.hasBackground(currentFeatureFile, event.getTestCase().getLine())) {
+        if (testSources.hasBackground(currentFeatureFile, event.getTestCase().getLocation().getLine())) {
             currentElementMap = createBackground(event.getTestCase());
             currentElementsList.add(currentElementMap);
         } else {
@@ -186,7 +186,7 @@ public final class JSONFormatter implements EventListener {
     }
 
     private Map<String, Object> createBackground(TestCase testCase) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLocation().getLine());
         if (astNode != null) {
             Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
             Map<String, Object> testCaseMap = new HashMap<>();

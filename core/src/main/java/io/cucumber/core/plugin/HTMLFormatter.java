@@ -117,7 +117,7 @@ public final class HTMLFormatter implements EventListener {
         handleStartOfFeature(event.getTestCase());
         handleScenarioOutline(event.getTestCase());
         currentTestCaseMap = createTestCase(event.getTestCase());
-        if (testSources.hasBackground(currentFeatureFile, event.getTestCase().getLine())) {
+        if (testSources.hasBackground(currentFeatureFile, event.getTestCase().getLocation().getLine())) {
             jsFunctionCall("background", createBackground(event.getTestCase()));
         } else {
             jsFunctionCall("scenario", currentTestCaseMap);
@@ -225,7 +225,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private void handleScenarioOutline(TestCase testCase) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLocation().getLine());
         if (TestSourcesModel.isScenarioOutlineScenario(astNode)) {
             ScenarioOutline scenarioOutline = (ScenarioOutline) TestSourcesModel.getScenarioDefinition(astNode);
             if (currentScenarioOutline == null || !currentScenarioOutline.equals(scenarioOutline)) {
@@ -320,7 +320,7 @@ public final class HTMLFormatter implements EventListener {
     private Map<String, Object> createTestCase(TestCase testCase) {
         Map<String, Object> testCaseMap = new HashMap<>();
         testCaseMap.put("name", testCase.getName());
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLocation().getLine());
         if (astNode != null) {
             ScenarioDefinition scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
             testCaseMap.put("keyword", scenarioDefinition.getKeyword());
@@ -339,7 +339,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private Map<String, Object> createBackground(TestCase testCase) {
-        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
+        TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLocation().getLine());
         if (astNode != null) {
             Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
             Map<String, Object> testCaseMap = new HashMap<>();

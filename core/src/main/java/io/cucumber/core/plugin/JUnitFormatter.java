@@ -5,6 +5,7 @@ import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -12,7 +13,7 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -88,7 +89,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestRunStarted.class, this::handleTestRunStarted);
-        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestSourceParsed.class, this::handleTestSourceParsed);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
@@ -104,11 +105,14 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         this.strict = strict;
     }
 
-    private void handleTestSourceRead(TestSourceRead event) {
-        TestSourceReadResource source = new TestSourceReadResource(event);
-        parser.parseResource(source).ifPresent(feature ->
-            featuresNames.put(feature.getUri(), feature.getName())
-        );
+    private void handleTestSourceParsed(TestSourceParsed event) {
+        Node.Container<Node> container = event.getContainer();
+        if (container instanceof Node) {
+            Node node = (Node) container;
+            featuresNames.put(event.getUri(), node.getName());
+        } else {
+            featuresNames.put(event.getUri(), event.getUri().toString());
+        }
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {

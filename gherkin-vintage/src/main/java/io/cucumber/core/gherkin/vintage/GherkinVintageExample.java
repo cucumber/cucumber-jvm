@@ -1,10 +1,10 @@
 package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.TableRow;
-import io.cucumber.core.gherkin.Example;
-import io.cucumber.core.gherkin.Location;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
-final class GherkinVintageExample implements Example {
+final class GherkinVintageExample implements Node.Example {
 
     private final TableRow tableRow;
     private final int rowIndex;
@@ -15,7 +15,7 @@ final class GherkinVintageExample implements Example {
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return null;
     }
 

@@ -1,20 +1,19 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Examples;
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.ScenarioOutline;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
+import io.cucumber.messages.Messages;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-final class GherkinMessagesScenarioOutline implements ScenarioOutline {
+final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
 
-    private final Scenario scenario;
+    private final Messages.GherkinDocument.Feature.Scenario scenario;
     private final List<Examples> children;
 
-    GherkinMessagesScenarioOutline(Scenario scenario) {
+    GherkinMessagesScenarioOutline(Messages.GherkinDocument.Feature.Scenario scenario) {
         this.scenario = scenario;
         this.children = scenario.getExamplesList().stream()
             .map(GherkinMessagesExamples::new)
@@ -23,12 +22,12 @@ final class GherkinMessagesScenarioOutline implements ScenarioOutline {
 
 
     @Override
-    public Collection<Examples> children() {
+    public Collection<Examples> elements() {
         return children;
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return scenario.getKeyword();
     }
 

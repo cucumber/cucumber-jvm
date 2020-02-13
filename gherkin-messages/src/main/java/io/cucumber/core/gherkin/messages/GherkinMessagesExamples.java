@@ -1,15 +1,14 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Example;
-import io.cucumber.core.gherkin.Examples;
-import io.cucumber.core.gherkin.Location;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-final class GherkinMessagesExamples implements Examples {
+final class GherkinMessagesExamples implements Node.Examples {
 
     private final io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples examples;
     private final List<Example> children;
@@ -24,12 +23,12 @@ final class GherkinMessagesExamples implements Examples {
     }
 
     @Override
-    public Collection<Example> children() {
+    public Collection<Example> elements() {
         return children;
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return examples.getKeyword();
     }
 

@@ -7,11 +7,13 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseEvent;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.Closeable;
@@ -68,17 +70,20 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(final EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestSourceParsed.class, this::handleTestSourceParsed);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(TestRunFinished.class, this::finishReport);
     }
 
-    private void handleTestSourceRead(TestSourceRead event) {
-        TestSourceReadResource source = new TestSourceReadResource(event);
-        parser.parseResource(source).ifPresent(feature ->
-            featuresNames.put(feature.getUri(), feature.getName())
-        );
+    private void handleTestSourceParsed(TestSourceParsed event) {
+        Node.Container<Node> container = event.getContainer();
+        if (container instanceof Node) {
+            Node node = (Node) container;
+            featuresNames.put(event.getUri(), node.getName());
+        } else {
+            featuresNames.put(event.getUri(), event.getUri().toString());
+        }
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {
