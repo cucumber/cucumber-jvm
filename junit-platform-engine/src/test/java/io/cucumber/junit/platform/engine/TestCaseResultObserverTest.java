@@ -209,7 +209,7 @@ class TestCaseResultObserverTest {
             observer::assertTestCasePassed
         );
         assertThat(exception.getMessage(), is("" +
-            "The step \"mocked\" is undefined. You can implement it using tne snippet(s) below:\n" +
+            "The step \"mocked\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
             "mocked snippet 1\n" +
             "---\n" +
