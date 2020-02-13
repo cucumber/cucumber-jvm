@@ -112,7 +112,7 @@ public class TestCaseResultObserverTest {
         SkipException skipException = expectThrows(SkipException.class, resultListener::assertTestCasePassed);
         assertThat(skipException.isSkip(), is(true));
         assertThat(skipException.getMessage(), is("" +
-            "The step \"some step\" is undefined. You can implement it using tne snippet(s) below:\n" +
+            "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
             "stub snippet\n"
         ));
@@ -133,7 +133,7 @@ public class TestCaseResultObserverTest {
         SkipException skipException = expectThrows(SkipException.class, resultListener::assertTestCasePassed);
         assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
-            "The step \"some step\" is undefined. You can implement it using tne snippet(s) below:\n" +
+            "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
             "stub snippet\n"
         ));
