@@ -14,7 +14,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.deltaspike</project.Automatic-Module-Name>
-        <deltaspike.version>1.9.2</deltaspike.version>
+        <deltaspike.version>1.9.3</deltaspike.version>
         <cdi-api.version>1.2</cdi-api.version>
     </properties>
 
