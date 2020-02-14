@@ -54,7 +54,7 @@
         <messages.version>9.0.3</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
         <gherkin-vintage-jvm-deps.version>1.0.6</gherkin-vintage-jvm-deps.version>
-        <gherkin-messages.version>9.1.0</gherkin-messages.version>
+        <gherkin-messages.version>9.2.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
