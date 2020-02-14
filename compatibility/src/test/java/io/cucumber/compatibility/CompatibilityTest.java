@@ -1,20 +1,14 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.core.feature.FeatureWithLines;
-import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
@@ -33,40 +27,11 @@ public class CompatibilityTest {
     private final AtomicLong id = new AtomicLong();
     private final Supplier<UUID> idGenerator = () -> new UUID(0L, id.getAndIncrement());
 
-    public enum TestCase {
-        attachments("attachments", "attachments"),
-        datatables("datatables", "data-tables"),
-        hooks("hooks", "hooks"),
-        parametertypes("parametertypes", "parameter-types"),
-        stacktraces("stacktraces", "stack-traces");
-
-        private final String packageName;
-        private final String id;
-
-        TestCase(String packageName, String id) {
-            this.packageName = packageName;
-            this.id = id;
-        }
-
-        private URI getGlue() {
-            return GluePath.parse("io.cucumber.compatibility." + packageName);
-        }
-
-        private FeatureWithLines getFeature() {
-            return FeatureWithLines.parse("file:src/test/resources/features/" + id + "/" + id + ".feature");
-        }
-
-        private Path getExpectedFile() {
-            return Paths.get("src/test/resources/features/" + id + "/" + id + ".ndjson");
-        }
-
-    }
-
-//    @Disabled
+    //    @Disabled
     @ParameterizedTest
-    @EnumSource(TestCase.class)
+    @MethodSource("io.cucumber.compatibility.TestCase#testCases")
     void produces_expected_output_for(TestCase testCase) throws IOException {
-        File parentDir = new File("target/messages/" + testCase.id);
+        File parentDir = new File("target/messages/" + testCase.getId());
         parentDir.mkdirs();
         File output = new File(parentDir, "out.ndjson");
 
@@ -87,8 +52,6 @@ public class CompatibilityTest {
             replaceAndSort(expected),
             replaceAndSort(actual)
         );
-
-
     }
 
     private String replaceAndSort(List<String> actual) {
@@ -107,7 +70,7 @@ public class CompatibilityTest {
                     .replaceAll("\"testCaseStartedId\":\"[0-9a-z\\-]+\"", "\"testCaseStartedId\":\"0\"")
                     .replaceAll("\"astNodeIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
                     .replaceAll("\"stepDefinitionIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
-                )
+            )
             .sorted()
             .collect(Collectors.joining("\n"));
     }
