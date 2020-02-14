@@ -71,7 +71,7 @@ public class CompatibilityTest {
                     .replaceAll("\"astNodeIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
                     .replaceAll("\"stepDefinitionIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
             )
-//            .sorted()
+            .sorted()
             .collect(Collectors.joining("\n"));
     }
 }
