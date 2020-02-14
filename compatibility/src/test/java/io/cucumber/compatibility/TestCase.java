@@ -10,7 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import static java.util.Comparator.comparing;
 
 final class TestCase {
     private static final String FEATURES_DIRECTORY = "src/test/resources/features";
@@ -56,6 +59,7 @@ final class TestCase {
                 }
             }
         }
+        testCases.sort(comparing(TestCase::getId));
         return testCases;
     }
 }
