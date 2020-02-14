@@ -171,17 +171,19 @@ public class TeamCityPlugin implements EventListener {
 
     private List<Node> extractStack(Node.Container<Node> feature, TestCase testCase) {
         List<Node> stack = new ArrayList<>();
-        if (feature instanceof Node) {
-            findInFeature(stack, (Node) feature, testCase);
-        } else {
-            for (Node node : feature.elements()) {
-                if (findInFeature(stack, node, testCase)) {
-                    break;
-                }
-            }
-        }
+        findInFeature(feature, testCase, stack);
         Collections.reverse(stack);
         return stack;
+    }
+
+    private void findInFeature(Node.Container<Node> feature, TestCase testCase, List<Node> stack) {
+        if (feature instanceof Node) {
+            findInFeature(stack, (Node) feature, testCase);
+        } else for (Node node : feature.elements()) {
+            if (findInFeature(stack, node, testCase)) {
+                break;
+            }
+        }
     }
 
     private boolean findInFeature(List<Node> stack, Node node, TestCase testCase) {
@@ -191,7 +193,7 @@ public class TeamCityPlugin implements EventListener {
         }
 
         if (node instanceof Node.Container) {
-            Node.Container<Node> container = (Node.Container<Node>) node;
+            Node.Container<?> container = (Node.Container<?>) node;
             for (Node child : container.elements()) {
                 if (findInFeature(stack, child, testCase)) {
                     stack.add(node);
@@ -311,7 +313,7 @@ public class TeamCityPlugin implements EventListener {
 
         snippets.stream()
             .filter(snippet ->
-                snippet.getStepLine() == testStep.getStep().getLine() &&
+                snippet.getStepLocation().equals(testStep.getStep().getLocation()) &&
                     snippet.getUri().equals(testStep.getUri())
             )
             .findFirst()
