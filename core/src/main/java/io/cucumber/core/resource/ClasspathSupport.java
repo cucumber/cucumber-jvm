@@ -85,8 +85,15 @@ public final class ClasspathSupport {
             .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
+
+    private static String determineSubpackagePath(Path baseDir, Path resource) {
+        Path relativePath = baseDir.relativize(resource.getParent());
+        String pathSeparator = baseDir.getFileSystem().getSeparator();
+        return relativePath.toString().replace(pathSeparator, RESOURCE_SEPARATOR_STRING);
+    }
+
     static URI determineClasspathResourceUri(Path baseDir, String basePackagePath, Path resource) {
-        String subPackageName = determineSubpackageName(baseDir, resource);
+        String subPackageName = determineSubpackagePath(baseDir, resource);
         String resourceName = resource.getFileName().toString();
         String classpathResourcePath = of(basePackagePath, subPackageName, resourceName)
             .filter(value -> !value.isEmpty()) // default package .

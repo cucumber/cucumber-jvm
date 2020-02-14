@@ -45,7 +45,7 @@ final class UndefinedStepException extends RuntimeException {
         if (snippets.isEmpty()) {
             return;
         }
-        sb.append(". You can implement it using tne snippet(s) below:\n\n");
+        sb.append(". You can implement it using the snippet(s) below:\n\n");
         sb.append(String.join("\n", snippets));
     }
 

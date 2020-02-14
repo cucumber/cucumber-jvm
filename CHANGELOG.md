@@ -8,8 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [Core] CLI should search classpath root by default ([#1889](https://github.com/cucumber/cucumber-jvm/pull/1889) M.P. Korstanje)
- * [Core] Improve error message when incompatible Plugins are used 
+
 ### Changed
 
 ### Deprecated
@@ -17,10 +16,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Junit] Sort discovered features (M.P. Korstanje)
+ * [All] Fix typo in snippet generator message ([#1894](https://github.com/cucumber/cucumber-jvm/pull/1894) Nat Ritmeyer)
+ 
+## [5.3.0] (2020-02-13)
+
+### Added
+ * [Core] CLI should search classpath root by default ([#1889](https://github.com/cucumber/cucumber-jvm/pull/1889) M.P. Korstanje)
+ * [Core] Improve error message when incompatible plugins are used
+    * `io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm` is not compatible with
+       Cucumber resulting in rather hard to explain `NoClassDefFoundError`s. 
+
+### Fixed
  * [Core] TestCaseState should be PASSED by default ([#1888](https://github.com/cucumber/cucumber-jvm/pull/1888) M.P. Korstanje)
     * As a result  `Scenario.getState` will return `PASSED` rather then
       `UNDEFINED` prior to the execution of the first step of a scenario.  
-
+ * [Core] Rerun formatter returns `/` rather then `.` ([#1892](https://github.com/cucumber/cucumber-jvm/issues/1892) M.P. Korstanje)
+ 
 ## [5.2.0] (2020-02-06)
 
 ### Added
@@ -1297,7 +1309,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.3.0...master
+[5.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...v5.3.0
 [5.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.3...v5.2.0
 [5.1.3]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.2...v5.1.3
 [5.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.1...v5.1.2

@@ -36,7 +36,7 @@ final class UndefinedStepException extends SkipException {
         if (snippets.isEmpty()) {
             return;
         }
-        sb.append(". You can implement it using tne snippet(s) below:\n\n");
+        sb.append(". You can implement it using the snippet(s) below:\n\n");
         sb.append(snippets.stream().collect(joining("\n---\n", "", "\n")));
     }
 
