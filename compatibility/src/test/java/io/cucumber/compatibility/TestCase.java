@@ -1,6 +1,5 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.util.List;
 
 final class TestCase {
     private static final String FEATURES_DIRECTORY = "src/test/resources/features";
+    private static final String FEATURES_PACKAGE = "io.cucumber.compatibility";
 
     private final String packageName;
     private final String id;
@@ -28,7 +28,7 @@ final class TestCase {
     }
 
     URI getGlue() {
-        return GluePath.parse("io.cucumber.compatibility." + packageName);
+        return GluePath.parse(FEATURES_PACKAGE + "." + packageName);
     }
 
     Path getExpectedFile() {
