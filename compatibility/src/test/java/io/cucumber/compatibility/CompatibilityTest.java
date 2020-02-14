@@ -70,6 +70,7 @@ public class CompatibilityTest {
                     .replaceAll("\"testCaseStartedId\":\"[0-9a-z\\-]+\"", "\"testCaseStartedId\":\"0\"")
                     .replaceAll("\"astNodeIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
                     .replaceAll("\"stepDefinitionIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
+                    .replaceAll("\"message\":\".*BOOM.*\"", "\"message\":\"BOOM\"")
             )
             .sorted()
             .collect(Collectors.joining("\n"));

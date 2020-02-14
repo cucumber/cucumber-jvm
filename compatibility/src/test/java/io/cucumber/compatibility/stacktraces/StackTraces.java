@@ -6,6 +6,6 @@ public class StackTraces {
 
     @When("a step throws an exception")
     public void test() throws Exception {
-        throw new Exception("Boom");
+        throw new Exception("BOOM");
     }
 }
