@@ -5,6 +5,11 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class Attachments {
 
     Scenario scenario;
@@ -35,5 +40,14 @@ public class Attachments {
             bytes[i] = i;
         }
         scenario.embed(bytes, mediaType, null);
+    }
+
+
+    @When("a JPEG image is attached")
+    public void aJPEGImageIsAttached() throws IOException {
+        Path path = Paths.get("src/test/resources/features/attachments/cucumber-growing-on-vine.jpg");
+        byte[] bytes = Files.readAllBytes(path);
+        String fileName = path.getFileName().toString();
+        scenario.embed(bytes, "image/jpg", fileName);
     }
 }
