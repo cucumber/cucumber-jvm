@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
 import static java.util.Comparator.comparing;
-import static java.util.Optional.of;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -36,7 +35,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
         this.featureScanner = new ResourceScanner<>(
             classLoader,
             FeatureIdentifier::isFeature,
-            resource -> parser.parseResource(resource)
+            parser::parseResource
         );
     }
 
