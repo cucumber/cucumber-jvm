@@ -16,7 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-
+ * [Junit] Sort discovered features (M.P. Korstanje)
+ * [All] Fix typo in snippet generator message ([#1894](https://github.com/cucumber/cucumber-jvm/pull/1894) Nat Ritmeyer)
+ 
 ## [5.3.0] (2020-02-13)
 
 ### Added
