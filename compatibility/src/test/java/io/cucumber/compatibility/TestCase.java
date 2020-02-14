@@ -18,21 +18,17 @@ final class TestCase {
     private final String packageName;
     private final String id;
 
-    TestCase(String packageName, String id) {
+    private TestCase(String packageName, String id) {
         this.packageName = packageName;
         this.id = id;
     }
 
-    public String getId() {
+    String getId() {
         return id;
     }
 
     URI getGlue() {
         return GluePath.parse("io.cucumber.compatibility." + packageName);
-    }
-
-    FeatureWithLines getFeature() {
-        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id + "/" + id + ".feature");
     }
 
     Path getExpectedFile() {
