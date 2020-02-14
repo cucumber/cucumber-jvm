@@ -1,5 +1,6 @@
 package io.cucumber.compatibility;
 
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 
 import java.io.IOException;
@@ -28,7 +29,11 @@ final class TestCase {
     }
 
     URI getGlue() {
-        return GluePath.parse(FEATURES_PACKAGE + "." + packageName);
+        return GluePath.parse(FEATURES_PACKAGE +"."+ packageName);
+    }
+
+    FeatureWithLines getFeature() {
+        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id + "/" + id + ".feature");
     }
 
     Path getExpectedFile() {
