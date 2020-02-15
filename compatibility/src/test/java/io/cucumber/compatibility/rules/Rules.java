@@ -7,29 +7,35 @@ import io.cucumber.java.en.When;
 
 public class Rules {
 
-    @Then("the customer's change should be {int} {double} coin")
-    public void theCustomerSChangeShouldBeCoin(int arg0, int arg1, int arg2) {
+    @Given("there are {int} {float} coins inside")
+    public void thereAreCoinsInside(int arg0, float arg2) {
     }
 
-    @When("the customer tries to buy a {double} chocolate with a {int} coin")
-    public void theCustomerTriesToBuyAChocolateWithACoin(int arg0, int arg1, int arg2) {
-    }
-
-    @Then("the sale should not happen")
-    public void theSaleShouldNotHappen() {
+    @Given("there are no chocolates inside")
+    public void thereAreNoChocolatesInside() {
     }
 
     @And("there are {int} chocolates inside")
     public void thereAreChocolatesInside(int arg0) {
     }
 
-    @Given("there are {int} {double} coins inside")
-    public void thereAreCoinsInside(int arg0, int arg1, int arg2) {
+    @When("the customer tries to buy a {float} chocolate with a {float} coin")
+    public void theCustomerTriesToBuyAChocolateWithACoin(float arg0, float arg1) {
     }
 
-    @Given("there are no chocolates inside")
-    public void thereAreNoChocolatesInside() {
+    @Then("the sale should not happen")
+    public void theSaleShouldNotHappen() {
     }
+
+    @Then("the customer's change should be {int} {float} coin(s)")
+    public void theCustomerSChangeShouldBeCoin(int arg0, float arg1) {
+    }
+
+
+
+
+
+
 
 
 }

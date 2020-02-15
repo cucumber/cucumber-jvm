@@ -18,6 +18,7 @@ import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Location;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -240,7 +241,8 @@ final class CachingGlue implements Glue {
                         .setSource(stepDefinition.getPattern())
                         .build())
                     .setSourceReference(Messages.SourceReference.newBuilder()
-                        .setUri(stepDefinition.getStepDefinition().getLocation()).build())
+                        .setUri(stepDefinition.getStepDefinition().getLocation())
+                        .build())
                     .build())
             .build()
         );

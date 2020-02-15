@@ -69,9 +69,25 @@ public class CompatibilityTest {
                     .replaceAll("\"testCaseId\":\"[0-9a-z\\-]+\"", "\"testCaseId\":\"0\"")
                     .replaceAll("\"testCaseStartedId\":\"[0-9a-z\\-]+\"", "\"testCaseStartedId\":\"0\"")
                     .replaceAll("\"astNodeIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
-                    .replaceAll("\"stepDefinitionIds\":\\[[0-9a-z\\-\",]+]", "\"astNodeIds\":[1]")
+                    .replaceAll("\"stepDefinitionIds\":\\[[0-9a-z\\-\",]+]", "\"stepDefinitionIds\":[1]")
+
                     .replaceAll("\"message\":\".*BOOM.*\"", "\"message\":\"BOOM\"")
+                    .replaceAll("\"tags\":\\[],?", "")
+                    .replaceAll("\"examples\":\\[],?", "")
+                    .replaceAll(",?\"comments\":\\[]", "")
+                    .replaceAll("\"description\":\"\",?", "")
+
+                    // TODO: Remove source reference from step definition message
+                    .replaceAll("\"sourceReference\":\\{.*(\"location\":\"\\{[^}]*})?}", "\"sourceReference\":{}")
+
+                    // TODO: These needs a new version of messages
+                    .replaceAll("\"testResult\":", "\"testStepResult\":")
+                    .replaceAll("\"success\":false,?", "")
+                    .replaceAll("\"message\":\"\",?", "")
+                    .replaceAll(",?\"willBeRetried\":false", "")
+
             )
+            .distinct()
             .sorted()
             .collect(Collectors.joining("\n"));
     }
