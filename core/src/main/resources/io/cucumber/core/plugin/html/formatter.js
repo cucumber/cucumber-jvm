@@ -121,7 +121,7 @@ CucumberHTML.DOMFormatter = function(rootNode) {
     if (currentStepIndex == 1) {
       this.dummyStep();
     }
-    currentStep.append('<pre class="embedded-text">' + text + '</pre>');
+    currentStep.append('<pre class="embedded-text">' + String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') + '</pre>');
   };
 
   this.before = function(before) {
