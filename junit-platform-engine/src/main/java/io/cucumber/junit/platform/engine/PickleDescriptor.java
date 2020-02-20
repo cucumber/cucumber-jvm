@@ -46,7 +46,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         if (expression.evaluate(tags)) {
             return SkipResult.doNotSkip();
         }
-        return SkipResult.skip("Disabled because '" + expression + "' did not match");
+        return SkipResult.skip("'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression + "' did not match this scenario");
     }
 
     /**

@@ -60,7 +60,7 @@ class CucumberTestEngineTest {
             .execute();
         assertEquals(1, result.testEvents().count());
         assertEquals(1, result.testEvents().skipped().count());
-        assertEquals(Optional.of("Disabled because '( @Integration and not ( @Disabled ) )' did not match"), result.testEvents()
+        assertEquals(Optional.of("'cucumber.filter.tags=( @Integration and not ( @Disabled ) )' did not match this scenario"), result.testEvents()
             .skipped()
             .map(event -> event.getPayload().get()) // replace with flatMap when above java 9
             .findFirst());
