@@ -46,6 +46,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -216,7 +217,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             bus.send(new TestRunStarted(bus.getInstant()));
             for (Feature feature : features) {
                 bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-                bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), feature));
+                bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
             }
             runFeatures.evaluate();
             bus.send(new TestRunFinished(bus.getInstant()));

@@ -27,9 +27,13 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
@@ -54,8 +58,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final Map<Long, GroupData> allGroups = new HashMap<>();
     private final URL reportDir;
     private final NiceAppendable reportJs;
-    private final Map<URI, String> featuresNames = new HashMap<>();
-    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+    private final Map<URI, List<Node>> parsedTestSources = new HashMap<>();
 
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -77,13 +80,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void handleTestSourceParsed(TestSourceParsed event) {
-        Node.Container<Node> container = event.getContainer();
-        if (container instanceof Node) {
-            Node node = (Node) container;
-            featuresNames.put(event.getUri(), node.getName());
-        } else {
-            featuresNames.put(event.getUri(), event.getUri().toString());
-        }
+        parsedTestSources.put(event.getUri(), event.getNodes());
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {
@@ -214,11 +211,25 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.id = getId(started);
             final TestCase testCase = started.getTestCase();
             final URI uri = testCase.getUri();
-            this.feature = featuresNames.get(uri);
+            this.feature = findFeatureName(testCase);
             this.scenario = testCase.getName();
             this.startTime = started.getInstant().toEpochMilli();
             this.threadId = threadId;
             this.tags = buildTagsValue(testCase);
+        }
+
+        private String findFeatureName(TestCase testCase) {
+            Predicate<Node> onLine = candidate ->
+                candidate.getLocation().getLine() == testCase.getLocation().getLine();
+            return parsedTestSources.get(testCase.getUri())
+                .stream()
+                .map(node -> node.findPathTo(onLine))
+                .filter(Optional::isPresent)
+                .flatMap(optional -> Stream.of(optional.get()))
+                .findFirst()
+                .map(nodes -> nodes.get(0))
+                .map(Node::getName)
+                .orElse("Unknown feature");
         }
 
         private String buildTagsValue(final TestCase testCase) {

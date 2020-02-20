@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
@@ -43,7 +42,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -61,8 +62,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, String> featuresNames = new HashMap<>();
-    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+    private final Map<URI, List<Node>> parsedTestSources = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL writer) throws IOException {
@@ -106,13 +106,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     }
 
     private void handleTestSourceParsed(TestSourceParsed event) {
-        Node.Container<Node> container = event.getContainer();
-        if (container instanceof Node) {
-            Node node = (Node) container;
-            featuresNames.put(event.getUri(), node.getName());
-        } else {
-            featuresNames.put(event.getUri(), event.getUri().toString());
-        }
+        parsedTestSources.put(event.getUri(), event.getNodes());
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -198,8 +192,22 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         }
 
         void writeElement(Element tc) {
-            tc.setAttribute("classname", featuresNames.get(currentFeatureFile));
+            tc.setAttribute("classname", findFeatureName(testCase));
             tc.setAttribute("name", calculateElementName(testCase));
+        }
+
+        private String findFeatureName(io.cucumber.plugin.event.TestCase testCase) {
+            Predicate<Node> onLine = candidate ->
+                candidate.getLocation().getLine() == testCase.getLocation().getLine();
+            return parsedTestSources.get(testCase.getUri())
+                .stream()
+                .map(node -> node.findPathTo(onLine))
+                .filter(Optional::isPresent)
+                .flatMap(optional -> Stream.of(optional.get()))
+                .findFirst()
+                .map(nodes -> nodes.get(0))
+                .map(Node::getName)
+                .orElse("Unknown feature");
         }
 
         private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {

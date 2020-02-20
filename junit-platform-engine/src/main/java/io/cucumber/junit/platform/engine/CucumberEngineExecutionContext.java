@@ -32,6 +32,8 @@ import java.time.Clock;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static java.util.Collections.singletonList;
+
 @API(status = API.Status.STABLE)
 public final class CucumberEngineExecutionContext implements EngineExecutionContext {
 
@@ -77,7 +79,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         // Invoked concurrently.
         EventBus bus = getRunner().getBus();
         bus.send(new TestSourceRead(this.bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.send(new TestSourceParsed(this.bus.getInstant(), feature.getUri(), feature));
+        bus.send(new TestSourceParsed(this.bus.getInstant(), feature.getUri(), singletonList(feature)));
     }
 
     void runTestCase(Pickle pickle) {

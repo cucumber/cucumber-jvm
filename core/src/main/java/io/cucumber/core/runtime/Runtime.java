@@ -46,6 +46,7 @@ import java.util.function.Supplier;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.max;
 import static java.util.Collections.min;
+import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
@@ -90,7 +91,7 @@ public final class Runtime {
         bus.send(new TestRunStarted(bus.getInstant()));
         for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-            bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), feature));
+            bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
         }
 
         final List<Future<?>> executingPickles = features.stream()

@@ -1,25 +1,25 @@
 package io.cucumber.plugin.event;
 
-import io.cucumber.plugin.event.Node.Container;
 import org.apiguardian.api.API;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 
 @API(status = API.Status.EXPERIMENTAL)
 public final class TestSourceParsed extends TimeStampedEvent {
     private final URI uri;
-    private final Container<Node> container;
+    private final List<Node> nodes;
 
-    public TestSourceParsed(Instant timeInstant, URI uri, Container<Node> container) {
+    public TestSourceParsed(Instant timeInstant, URI uri, List<Node> nodes) {
         super(timeInstant);
         this.uri = Objects.requireNonNull(uri);
-        this.container = Objects.requireNonNull(container);
+        this.nodes = Objects.requireNonNull(nodes);
     }
 
-    public Container<Node> getContainer() {
-        return container;
+    public List<Node> getNodes() {
+        return nodes;
     }
 
     public URI getUri() {

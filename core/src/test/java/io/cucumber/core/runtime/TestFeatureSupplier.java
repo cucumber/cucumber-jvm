@@ -8,6 +8,8 @@ import io.cucumber.plugin.event.TestSourceRead;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
+
 public class TestFeatureSupplier implements FeatureSupplier {
     private final EventBus bus ;
     private final List<Feature> features;
@@ -25,7 +27,7 @@ public class TestFeatureSupplier implements FeatureSupplier {
     public List<Feature> get() {
         for (Feature feature : features) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-            bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), feature));
+            bus.send(new TestSourceParsed(this.bus.getInstant(), feature.getUri(), singletonList(feature)));
         }
         return features;
     }

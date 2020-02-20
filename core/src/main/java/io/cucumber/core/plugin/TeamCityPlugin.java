@@ -35,8 +35,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 
@@ -69,7 +72,7 @@ public class TeamCityPlugin implements EventListener {
 
     private final PrintStream out;
     private final List<SnippetsSuggestedEvent> snippets = new ArrayList<>();
-    private final Map<URI, Node.Container<Node>> features = new HashMap<>();
+    private final Map<URI, List<Node>> parsedTestSources = new HashMap<>();
     private List<Node> currentStack = new ArrayList<>();
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -99,7 +102,7 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private void handleTestSourceParsed(TestSourceParsed event) {
-        features.put(event.getUri(), event.getContainer());
+        parsedTestSources.put(event.getUri(), event.getNodes());
     }
 
     private void printTestRunStarted(TestRunStarted event) {
@@ -117,13 +120,21 @@ public class TeamCityPlugin implements EventListener {
     private void printTestCaseStarted(TestCaseStarted event) {
         TestCase testCase = event.getTestCase();
         URI uri = testCase.getUri();
-        Node.Container<Node> feature = features.get(uri);
+        List<Node> nodes = parsedTestSources.get(uri);
         String timestamp = extractTimeStamp(event);
 
-        List<Node> newStack = extractStack(feature, testCase);
-        poppedNodes(newStack).forEach(node -> finishNode(timestamp, node));
-        pushedNodes(newStack).forEach(node -> startNode(uri, timestamp, node));
-        this.currentStack = newStack;
+        int line = testCase.getLocation().getLine();
+        Predicate<Node> onLine = candidate -> candidate.getLocation().getLine() == line;
+        List<Node> path = nodes.stream()
+            .map(candidate -> candidate.findPathTo(onLine))
+            .filter(Optional::isPresent)
+            .flatMap(optional -> Stream.of(optional.get()))
+            .findFirst()
+            .orElse(new ArrayList<>());
+
+        poppedNodes(path).forEach(node -> finishNode(timestamp, node));
+        pushedNodes(path).forEach(node -> startNode(uri, timestamp, node));
+        this.currentStack = path;
 
         print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
     }
@@ -169,40 +180,6 @@ public class TeamCityPlugin implements EventListener {
         return newStack.subList(currentStack.size(), newStack.size());
     }
 
-    private List<Node> extractStack(Node.Container<Node> feature, TestCase testCase) {
-        List<Node> stack = new ArrayList<>();
-        findInFeature(feature, testCase, stack);
-        Collections.reverse(stack);
-        return stack;
-    }
-
-    private void findInFeature(Node.Container<Node> feature, TestCase testCase, List<Node> stack) {
-        if (feature instanceof Node) {
-            findInFeature(stack, (Node) feature, testCase);
-        } else for (Node node : feature.elements()) {
-            if (findInFeature(stack, node, testCase)) {
-                break;
-            }
-        }
-    }
-
-    private boolean findInFeature(List<Node> stack, Node node, TestCase testCase) {
-        if (node.getLocation().getLine() == testCase.getLocation().getLine()) {
-            stack.add(node);
-            return true;
-        }
-
-        if (node instanceof Node.Container) {
-            Node.Container<?> container = (Node.Container<?>) node;
-            for (Node child : container.elements()) {
-                if (findInFeature(stack, child, testCase)) {
-                    stack.add(node);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     private void printTestStepStarted(TestStepStarted event) {
         String timestamp = extractTimeStamp(event);

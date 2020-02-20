@@ -28,15 +28,18 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -157,6 +160,7 @@ public final class TestNGCucumberRunner {
             features = featureSupplier.get();
             bus.send(new TestRunStarted(bus.getInstant()));
             features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
+            features.forEach(feature -> bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature))));
         }
         return features;
     }
