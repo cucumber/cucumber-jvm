@@ -2,6 +2,7 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.resource.ClasspathSupport;
+import io.cucumber.tagexpressions.Expression;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
@@ -11,6 +12,7 @@ import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,6 +37,16 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
     public CucumberEngineExecutionContext execute(CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor) {
         context.runTestCase(pickleEvent);
         return context;
+    }
+
+    @Override
+    public SkipResult shouldBeSkipped(CucumberEngineExecutionContext context) {
+        List<String> tags = pickleEvent.getTags();
+        Expression expression = context.getOptions().tagFilter();
+        if (expression.evaluate(tags)) {
+            return SkipResult.doNotSkip();
+        }
+        return SkipResult.skip("'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression + "' did not match this scenario");
     }
 
     /**

@@ -131,16 +131,40 @@ For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engin
 
 ```
 cucumber.ansi-colors.disabled=                          # true or false. default: true                     
-cucumber.glue=                                          # comma separated package names. example: com.example.glue  
-cucumber.plugin=                                        # comma separated plugin strings. example: pretty, json:path/to/report.json
-cucumber.object-factory=                                # object factory class name. example: com.example.MyObjectFactory
-cucumber.snippet-type=                                  # underscore or camelcase. default: underscore
-cucumber.execution.dry-run=                             # true or false. default: false 
-cucumber.execution.parallel.enabled=                    # true or false. default: false
-cucumber.execution.parallel.config.strategy=            # dynamic, fixed or custom. default: dynamic
-cucumber.execution.parallel.config.fixed.parallelism=   # positive integer. example: 4 
-cucumber.execution.parallel.config.dynamic.factor=      # positive double. default: 1.0
-cucumber.execution.parallel.config.custom.class=        # class name. example: com.example.MyCustomParallelStrategy
+
+cucumber.filter.tags=                                   # a cucumber tag expression. 
+                                                        # only matching scenarios are executed. 
+                                                        # example: @integration and not @disabled
+
+cucumber.glue=                                          # comma separated package names. 
+                                                        # example: com.example.glue  
+
+cucumber.plugin=                                        # comma separated plugin strings. 
+                                                        # example: pretty, json:path/to/report.json
+
+cucumber.object-factory=                                # object factory class name.
+                                                        # example: com.example.MyObjectFactory
+
+cucumber.snippet-type=                                  # underscore or camelcase. 
+                                                        # default: underscore
+
+cucumber.execution.dry-run=                             # true or false. 
+                                                        # default: false
+ 
+cucumber.execution.parallel.enabled=                    # true or false. 
+                                                        # default: false
+
+cucumber.execution.parallel.config.strategy=            # dynamic, fixed or custom. 
+                                                        # default: dynamic
+
+cucumber.execution.parallel.config.fixed.parallelism=   # positive integer. 
+                                                        # example: 4 
+
+cucumber.execution.parallel.config.dynamic.factor=      # positive double.
+                                                        # default: 1.0
+
+cucumber.execution.parallel.config.custom.class=        # class name. 
+                                                        # example: com.example.MyCustomParallelStrategy
 ```
 
 ## Supported Discovery Selectors and Filters ## 
@@ -199,3 +223,13 @@ For further information See the relevant documentation on how to select tags:
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
 * [JUnit 5 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)
 * [JUnit 5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions)
+
+### @Disabled
+
+It is possible to recreate JUnit Jupiter's `@Disabled` functionality by
+setting the `cucumber.filter.tags=not @Disabled` property<sup>1</sup>. Any scenarios 
+tagged with `@Disabled` will be skipped. See [Configuration Options](#configuration-options)
+for more information. 
+
+1. Do note that this is a [Cucumber Tag Expression](https://cucumber.io/docs/cucumber/api/#tags)
+rather then a JUnit5 tag expression.
