@@ -65,7 +65,7 @@ class FeaturePathFeatureSupplierTest {
             IllegalArgumentException.class,
             supplier::get
         );
-        assertThat(exception.getMessage(), containsString("baseDir must exist"));
+        assertThat(exception.getMessage(), containsString("path must exist"));
     }
 
     @Test

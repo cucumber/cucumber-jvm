@@ -29,7 +29,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.Optional.of;
+import static java.util.Comparator.comparing;
 import static org.junit.platform.engine.support.descriptor.FilePosition.fromQuery;
 
 final class FeatureResolver {
@@ -38,7 +38,7 @@ final class FeatureResolver {
     private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,
-        resource -> featureParser.parseResource(resource)
+        featureParser::parseResource
     );
 
     private final TestDescriptor engineDescriptor;
@@ -128,6 +128,7 @@ final class FeatureResolver {
         featureScanner
             .scanForResourcesPath(path)
             .stream()
+            .sorted(comparing(Feature::getUri))
             .map(this::resolveFeature)
             .forEach(this::merge);
     }
@@ -148,6 +149,7 @@ final class FeatureResolver {
         featureScanner
             .scanForResourcesInPackage(packageName, packageFilter)
             .stream()
+            .sorted(comparing(Feature::getUri))
             .map(this::resolveFeature)
             .forEach(this::merge);
     }
@@ -157,6 +159,7 @@ final class FeatureResolver {
         featureScanner
             .scanForClasspathResource(classpathResourceName, packageFilter)
             .stream()
+            .sorted(comparing(Feature::getUri))
             .map(this::resolveFeature)
             .forEach(this::merge);
     }
@@ -165,6 +168,7 @@ final class FeatureResolver {
         featureScanner
             .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter)
             .stream()
+            .sorted(comparing(Feature::getUri))
             .map(this::resolveFeature)
             .forEach(this::merge);
     }
@@ -206,6 +210,7 @@ final class FeatureResolver {
         return featureScanner
             .scanForResourcesUri(uri)
             .stream()
+            .sorted(comparing(Feature::getUri))
             .map(this::resolveFeature);
     }
 

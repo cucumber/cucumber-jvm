@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,17 +93,24 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectClasspathRoots(singleton(classpathRoot)).get(0);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(5, testDescriptor.getChildren().size());
+        assertEquals(6, testDescriptor.getChildren().size());
     }
 
     @Test
-    void resolveRequestWithUriSelector() {
-        URI uri = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature").toURI();
-        DiscoverySelector resource = selectUri(uri);
+    void resolveFeatureTestDescriptorsInUriOrder() {
+        Path classpathRoot = Paths.get("src/test/resources/");
+        DiscoverySelector resource = selectClasspathRoots(singleton(classpathRoot)).get(0);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(1, testDescriptor.getChildren().size());
+
+        Set<? extends TestDescriptor> features = testDescriptor.getChildren();
+        List<TestDescriptor> unsorted = new ArrayList<>(features);
+        List<TestDescriptor> sorted = new ArrayList<>(features);
+        // Sorts by URI
+        sorted.sort(comparing(feature -> feature.getUniqueId().getSegments().get(1).getValue()));
+        assertEquals(unsorted, sorted);
     }
+
     @Test
     void resolveRequestWithUriSelectorWithScenarioOutlineLine() {
         File file = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
@@ -169,7 +177,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(4, testDescriptor.getChildren().size());
+        assertEquals(5, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -177,7 +185,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectPackage("io.cucumber.junit.platform.engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(4, testDescriptor.getChildren().size());
+        assertEquals(5, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -268,7 +276,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectClass(RunCucumberTest.class);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(4, testDescriptor.getChildren().size());
+        assertEquals(5, testDescriptor.getChildren().size());
     }
 
     private Optional<UniqueId> selectSomePickle(DiscoverySelector resource) {

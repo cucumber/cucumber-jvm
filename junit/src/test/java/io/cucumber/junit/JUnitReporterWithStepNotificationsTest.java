@@ -250,7 +250,7 @@ class JUnitReporterWithStepNotificationsTest {
         Failure pickleFailure = failureArgumentCaptor.getValue();
         assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
         assertThat(pickleFailure.getException().getMessage(), is("" +
-            "The step \"step name\" is undefined. You can implement it using tne snippet(s) below:\n" +
+            "The step \"step name\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
             "some snippet"
         ));
@@ -288,7 +288,7 @@ class JUnitReporterWithStepNotificationsTest {
         Failure pickleFailure = failureArgumentCaptor.getValue();
         assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
         assertThat(pickleFailure.getException().getMessage(), is("" +
-            "The step \"step name\" is undefined. You can implement it using tne snippet(s) below:\n" +
+            "The step \"step name\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
             "some snippet"
         ));

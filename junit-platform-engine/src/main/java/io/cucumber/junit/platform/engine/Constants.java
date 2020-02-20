@@ -30,6 +30,18 @@ public final class Constants {
     public static final String EXECUTION_DRY_RUN_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 
     /**
+     * Property name used to set tag filter: {@value}
+     * <p>
+     * Filters scenarios based on the provided tag expression e.g:
+     * {@code @Integration and not @Ignored}. Scenarios
+     * that did not match the expression will be rendered by JUnit
+     * as skipped.
+     * <p>
+     * By default all scenarios are executed
+     */
+    public static final String FILTER_TAGS_PROPERTY_NAME = io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
+
+    /**
      * Property name to set the glue path: {@value}
      * <p>
      * A comma separated list of a classpath uri or package name e.g.:
