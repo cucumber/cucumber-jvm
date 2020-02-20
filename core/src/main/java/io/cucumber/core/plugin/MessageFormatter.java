@@ -21,7 +21,7 @@ public final class MessageFormatter implements EventListener {
     private final ProtobufFormat format;
 
     public MessageFormatter(File file) throws FileNotFoundException {
-        this.format = file.getPath().endsWith(".ndjson") ? ProtobufFormat.NDJSON : ProtobufFormat.PROTOBUF;
+        this.format = ProtobufFormat.NDJSON;
         this.outputStream = new FileOutputStream(file);
         this.writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
     }
