@@ -37,12 +37,13 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     private static final Logger logger = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
     private final RunnerSupplier runnerSupplier;
     private final EventBus bus;
+    private final CucumberEngineOptions options;
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
 
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
         logger.debug(() -> "Parsing options");
-        CucumberEngineOptions options = new CucumberEngineOptions(configurationParameters);
+        options = new CucumberEngineOptions(configurationParameters);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
@@ -59,6 +60,10 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
             this.runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         }
+    }
+
+    CucumberEngineOptions getOptions() {
+        return options;
     }
 
     void startTestRun() {

@@ -12,6 +12,7 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 
 import java.util.Optional;
 
+import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
@@ -47,8 +48,22 @@ class CucumberTestEngineTest {
         EngineExecutionResults result = EngineTestKit.engine("cucumber")
             .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
             .execute();
-        assertEquals(0, result.tests().failed().count());
-        assertEquals(1, result.tests().succeeded().count());
+        assertEquals(2, result.testEvents().count()); // test start and finished
+        assertEquals(1, result.testEvents().succeeded().count());
+    }
+
+    @Test
+    void selectAndSkipDisabledScenario() {
+        EngineExecutionResults result = EngineTestKit.engine("cucumber")
+            .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
+            .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/disabled.feature"))
+            .execute();
+        assertEquals(1, result.testEvents().count());
+        assertEquals(1, result.testEvents().skipped().count());
+        assertEquals(Optional.of("Disabled because '( @Integration and not ( @Disabled ) )' did not match"), result.testEvents()
+            .skipped()
+            .map(event -> event.getPayload().get()) // replace with flatMap when above java 9
+            .findFirst());
     }
 
 }

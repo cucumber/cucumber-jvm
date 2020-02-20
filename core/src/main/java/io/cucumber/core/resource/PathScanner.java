@@ -37,13 +37,13 @@ class PathScanner {
         return CloseablePath.open(uri);
     }
 
-    void findResourcesForPath(Path baseDir, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
-        if (!exists(baseDir)) {
-            throw new IllegalArgumentException("baseDir must exist: " + baseDir);
+    void findResourcesForPath(Path path, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
+        if (!exists(path)) {
+            throw new IllegalArgumentException("path must exist: " + path);
         }
 
         try {
-            walkFileTree(baseDir, new ResourceFileVisitor(filter, consumer.apply(baseDir)));
+            walkFileTree(path, new ResourceFileVisitor(filter, consumer.apply(path)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
