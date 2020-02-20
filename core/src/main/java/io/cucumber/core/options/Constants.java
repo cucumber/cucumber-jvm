@@ -98,10 +98,11 @@ public final class Constants {
     /**
      * Property name used to set tag filter: {@value}
      * <p>
-     * Filters features based on the provided tag expression e.g:
-     * {@code @Integration and not @Ignored}.
+     * Filters scenarios based on the provided tag expression e.g:
+     * {@code @Integration and not @Ignored}. Scenarios that do not
+     * match the expression are not executed.
      * <p>
-     * By default no features are filtered
+     * By default all scenarios are executed
      */
     public static final String FILTER_TAGS_PROPERTY_NAME = "cucumber.filter.tags";
 

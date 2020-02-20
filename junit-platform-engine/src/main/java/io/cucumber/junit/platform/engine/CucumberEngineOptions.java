@@ -6,6 +6,8 @@ import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.SnippetTypeParser;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.Expression;
+import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.platform.engine.ConfigurationParameters;
 
 import java.net.URI;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
@@ -47,6 +50,14 @@ class CucumberEngineOptions implements
             .map(pluginOption -> (Plugin) pluginOption)
             .collect(Collectors.toList()))
             .orElse(Collections.emptyList());
+    }
+
+    public Expression tagFilter() {
+        return new TagExpressionParser()
+            .parse(configurationParameters
+                .get(FILTER_TAGS_PROPERTY_NAME)
+                .orElse("")
+            );
     }
 
     @Override
@@ -88,7 +99,7 @@ class CucumberEngineOptions implements
             .orElse(null);
     }
 
-    boolean isParallelExecutionEnabled(){
+    boolean isParallelExecutionEnabled() {
         return configurationParameters
             .get(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, Boolean::parseBoolean)
             .orElse(false);

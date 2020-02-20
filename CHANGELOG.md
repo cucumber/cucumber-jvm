@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * [JUnit Platform] Support skipping scenarios with `cucumber.filter.tags` ([#1899](https://github.com/cucumber/cucumber-jvm/pull/1899) M.P. Korstanje)
 
 ### Changed
 
@@ -16,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
- * [Junit] Sort discovered features (M.P. Korstanje)
+ * [JUnit Platform] Sort discovered features (M.P. Korstanje)
  * [All] Fix typo in snippet generator message ([#1894](https://github.com/cucumber/cucumber-jvm/pull/1894) Nat Ritmeyer)
  
 ## [5.3.0] (2020-02-13)
@@ -51,9 +52,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [5.1.2] (2020-01-27)
 
 ### Fixed
- * [JUnit] Build JUnit Platform Engine at Source level 8. (M.P. Korstanje)
+ * [JUnit Platform] Build JUnit Platform Engine at Source level 8. (M.P. Korstanje)
    - Entire project was build at source level 9 rather then only `module-info.java`
- * [JUnit] Require `io.cucumber.core.gherkin` as a module dependency. (M.P. Korstanje)
+ * [JUnit Platform] Require `io.cucumber.core.gherkin` as a module dependency. (M.P. Korstanje)
 
 ## [5.1.1] (2020-01-26)
 
@@ -69,8 +70,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [TestNG] Run scenarios in customized groups ([#1863](https://github.com/cucumber/cucumber-jvm/pull/1863) Konrad Maciaszczyk, M.P. Korstanje)
 
 ### Changed
- * [JUnit] Upgrade JUnit Platform from v1.5.2 to v1.6.0
- * [JUnit] Add module-info for `cucumber-junit-platform-engine` ([#1867](https://github.com/cucumber/cucumber-jvm/pull/1867) M.P. Korstanje, John Patrick)
+ * [JUnit Platform] Upgrade JUnit Platform from v1.5.2 to v1.6.0
+ * [JUnit Platform] Add module-info for `cucumber-junit-platform-engine` ([#1867](https://github.com/cucumber/cucumber-jvm/pull/1867) M.P. Korstanje, John Patrick)
 
 ### Fixed
  * [Java/Java8] Fix NPE in AbstractDatatableElementTransformerDefinition ([#1865](https://github.com/cucumber/cucumber-jvm/pull/1865) Florin Slevoaca, M.P. Korstanje)
@@ -93,7 +94,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
  * [Core] Fixed Illegal character error on Windows ([#1849](https://github.com/cucumber/cucumber-jvm/issues/1849) M.P. Korstanje)
- * [JUnit] Annotate `@Cucumber` with `@Testable` to facilitate discovery by IDEs (M.P. Korstanje)
+ * [JUnit Platform] Annotate `@Cucumber` with `@Testable` to facilitate discovery by IDEs (M.P. Korstanje)
  
 ### Deprecated 
 
@@ -114,20 +115,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Core] Support Gherkin Rule keyword ([##1804](https://github.com/cucumber/cucumber-jvm/issues/#1804), [#1840](https://github.com/cucumber/cucumber-jvm/issues/1840) M.P. Korstanje, Aslak Hellesøy)
    - Opt-in by adding `cucumber-gherkin-messages` dependency
    - Not supported by JSON and HTML formatter.
- * [JUnit] Support `line` query parameter in `UriSelector` ([#1845](https://github.com/cucumber/cucumber-jvm/issues/1845) M.P. Korstanje)
+ * [JUnit Platform] Support `line` query parameter in `UriSelector` ([#1845](https://github.com/cucumber/cucumber-jvm/issues/1845) M.P. Korstanje)
  * [Core] Include default gherkin version in version.properties ([#1847](https://github.com/cucumber/cucumber-jvm/issues/1847) David Goss)
 
 ### Changed
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
  * [Core] Print warning when using --non-strict ([#1835](https://github.com/cucumber/cucumber-jvm/issues/1835) M.P. Korstanje)
  * [Core] Throw exception when multiple object factories are found ([#1832](https://github.com/cucumber/cucumber-jvm/issues/1832) M.P. Korstanje)
- * [JUnit] Do not include @ in TestTags ([#1825](https://github.com/cucumber/cucumber-jvm/issues/1825) M.P. Korstanje)
+ * [JUnit Platform] Do not include @ in TestTags ([#1825](https://github.com/cucumber/cucumber-jvm/issues/1825) M.P. Korstanje)
 
 ### Fixed
- * [JUnit] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
- * [JUnit] Send events to configured Plugins (M.P. Korstanje)
- * [JUnit] Fix concurrent modification of event queue (M.P. Korstanje)
- * [JUnit] Mark `Constants` as part of the public API (M.P. Korstanje)
+ * [JUnit Platform] Map `SKIPPED` to `TestAbortedException` (M.P. Korstanje)
+ * [JUnit Platform] Send events to configured Plugins (M.P. Korstanje)
+ * [JUnit Platform] Fix concurrent modification of event queue (M.P. Korstanje)
+ * [JUnit Platform] Mark `Constants` as part of the public API (M.P. Korstanje)
  * [Core] DataTable does not support Kotlin Collection types ([#1838](https://github.com/cucumber/cucumber-jvm/issues/1838) Marit Van Dijk, M.P. Korstanje)
      - DataTable types for `X` and `? extends X` are now considered identical.
  * [Core] Ignore class load error while class scanning ([#1843](https://github.com/cucumber/cucumber-jvm/issues/1843), [#1844](https://github.com/cucumber/cucumber-jvm/issues/1844) M.P. Korstanje)
@@ -158,7 +159,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    - Add `DefaultDataTableCellTransformer` alternative for `TypeRegistry.setDefaultDataTableCellTransformer`
  * [Core] Limited support for classpath scanning in SpringBoot jars ([#1821](https://github.com/cucumber/cucumber-jvm/pull/1821) M.P. Korstanje)
    - Enables scanning of glue and features in `BOOT-INF/classes`.
- * [JUnit] Implement Cucumber as a Junit Platform Engine ([#1530](https://github.com/cucumber/cucumber-jvm/pull/1530), [#1824](https://github.com/cucumber/cucumber-jvm/pull/1824) M.P. Korstanje)
+ * [JUnit Platform] Implement Cucumber as a Junit Platform Engine ([#1530](https://github.com/cucumber/cucumber-jvm/pull/1530), [#1824](https://github.com/cucumber/cucumber-jvm/pull/1824) M.P. Korstanje)
    
 ### Changed
  * [Core] Indent write events in PrettyFormatter ([#1809](https://github.com/cucumber/cucumber-jvm/pull/1809) Alexandre Monterroso)
