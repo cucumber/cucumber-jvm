@@ -30,7 +30,7 @@ import static java.util.Collections.singletonList;
  *       Location location = testCase.getLocation();
  *       Predicate<Node> withLocation = candidate ->
  *          location.equals(candidate.getLocation());
- *       List<Node> path = node.findPathTo(withLocation);
+ *       Optional<List<Node>> path = node.findPathTo(withLocation);
  * }
  * </pre>
  */
