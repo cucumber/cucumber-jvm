@@ -12,6 +12,7 @@
     <name>Cucumber-JVM: Docstring</name>
 
     <properties>
+        <jackson-databind.version>2.10.2</jackson-databind.version>
         <project.Automatic-Module-Name>io.cucumber.docstring</project.Automatic-Module-Name>
     </properties>
 
@@ -33,6 +34,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
