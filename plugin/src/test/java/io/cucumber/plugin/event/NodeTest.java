@@ -4,6 +4,7 @@ package io.cucumber.plugin.event;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -153,6 +154,60 @@ class NodeTest {
         }
     };
 
+    private final Node.Examples emptyExamplesA = new Node.Examples() {
+        @Override
+        public Collection<Example> elements() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Empty Examples A";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
+    private final Node.Examples emptyExamplesB = new Node.Examples() {
+        @Override
+        public Collection<Example> elements() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Empty Examples B";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
     private final Node.ScenarioOutline outline = new Node.ScenarioOutline() {
         @Override
         public Collection<Examples> elements() {
@@ -172,6 +227,33 @@ class NodeTest {
         @Override
         public String getName() {
             return "Outline";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
+    private final Node.ScenarioOutline emptyOutline = new Node.ScenarioOutline() {
+        @Override
+        public Collection<Examples> elements() {
+            return asList(emptyExamplesA, emptyExamplesB);
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Empty Outline";
         }
 
         @Override
@@ -211,9 +293,21 @@ class NodeTest {
     }
 
     @Test
+    void findEmptyExamplesA() {
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Empty Examples A".equals(node.getName()));
+        assertEquals(Optional.of(asList(emptyOutline, emptyExamplesA)), pathTo);
+    }
+
+    @Test
     void findExamplesB() {
         Optional<List<Node>> pathTo = outline.findPathTo(node -> "Examples B".equals(node.getName()));
         assertEquals(Optional.of(asList(outline, examplesB)), pathTo);
+    }
+
+    @Test
+    void findEmptyExamplesB() {
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Empty Examples B".equals(node.getName()));
+        assertEquals(Optional.of(asList(emptyOutline, emptyExamplesB)), pathTo);
     }
 
     @Test
@@ -223,19 +317,30 @@ class NodeTest {
     }
 
     @Test
-    void findNothing() {
+    void findEmptyOutline() {
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Empty Outline".equals(node.getName()));
+        assertEquals(Optional.of(asList(emptyOutline)), pathTo);
+    }
+
+    @Test
+    void findNothingInOutline() {
         Optional<List<Node>> pathTo = outline.findPathTo(node -> "Nothing".equals(node.getName()));
+        assertEquals(Optional.empty(), pathTo);
+    }
+    @Test
+    void findNothingInEmptyOutline() {
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Nothing".equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
 
     @Test
-    void findNode() {
+    void findInNode() {
         Optional<List<Node>> pathTo = example1.findPathTo(node -> "Example #1".equals(node.getName()));
         assertEquals(Optional.of(asList(example1)), pathTo);
     }
 
     @Test
-    void findNothingNode() {
+    void findNothingInNode() {
         Optional<List<Node>> pathTo = example1.findPathTo(node -> "Nothing".equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
