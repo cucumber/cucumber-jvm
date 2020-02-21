@@ -5,11 +5,12 @@ import org.apiguardian.api.API;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import static java.util.Collections.singletonList;
 
 /**
  * A node in a source file.
@@ -50,24 +51,29 @@ public interface Node {
         Collection<T> elements();
 
         default Optional<List<Node>> findPathTo(Predicate<Node> predicate) {
-            //TODO: Fix this.
-            Deque<Node> path = new ArrayDeque<>();
-            path.add(this);
+            List<Node> path = new ArrayList<>();
 
-            List<T> elements = new ArrayList<>(elements());
-            Collections.reverse(elements);
-            Deque<Node> toSearch = new ArrayDeque<>(elements);
+            Deque<Deque<Node>> toSearch = new ArrayDeque<>();
+            toSearch.addLast(new ArrayDeque<>(singletonList(this)));
 
             while (!toSearch.isEmpty()) {
-                Node element = toSearch.removeLast();
-                path.addLast(element);
-                if (predicate.test(element)) {
-                    return Optional.of(new ArrayList<>(path));
-                } else if (element instanceof Container) {
-                    Container<?> container = (Container<?>) element;
-                    toSearch.addAll(container.elements());
-                } else {
-                    path.removeLast();
+                Deque<Node> candidates = toSearch.peekLast();
+                if (candidates.isEmpty()) {
+                    if (!path.isEmpty()) {
+                        path.remove(path.size() - 1);
+                    }
+                    toSearch.removeLast();
+                    continue;
+                }
+                Node candidate = candidates.pop();
+                if (predicate.test(candidate)) {
+                    path.add(candidate);
+                    return Optional.of(path);
+                }
+                if (candidate instanceof Container) {
+                    path.add(candidate);
+                    Container<?> container = (Container<?>) candidate;
+                    toSearch.addLast(new ArrayDeque<>(container.elements()));
                 }
             }
             return Optional.empty();

@@ -1,0 +1,244 @@
+package io.cucumber.plugin.event;
+
+
+import org.junit.jupiter.api.Test;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class NodeTest {
+
+    private final Node.Example example1 = new Node.Example() {
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Example #1";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
+    private final Node.Example example2 = new Node.Example() {
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Example #2";
+        }
+
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+    private final Node.Example example3 = new Node.Example() {
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Example #3";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
+    private final Node.Example example4 = new Node.Example() {
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Example #4";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
+    private final Node.Examples examplesA = new Node.Examples() {
+        @Override
+        public Collection<Example> elements() {
+            return asList(example1, example2);
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Examples A";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+    private final Node.Examples examplesB = new Node.Examples() {
+        @Override
+        public Collection<Example> elements() {
+            return asList(example3, example4);
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Examples B";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
+    private final Node.ScenarioOutline outline = new Node.ScenarioOutline() {
+        @Override
+        public Collection<Examples> elements() {
+            return asList(examplesA, examplesB);
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "Outline";
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    };
+
+    @Test
+    void findExamples1() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #1".equals(node.getName()));
+        assertEquals(Optional.of(asList(outline, examplesA, example1)), pathTo);
+    }
+
+    @Test
+    void findExamples2() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #2".equals(node.getName()));
+        assertEquals(Optional.of(asList(outline, examplesA, example2)), pathTo);
+    }
+
+    @Test
+    void findExamples3() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #3".equals(node.getName()));
+        assertEquals(Optional.of(asList(outline, examplesB, example3)), pathTo);
+    }
+
+    @Test
+    void findExamples4() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #4".equals(node.getName()));
+        assertEquals(Optional.of(asList(outline, examplesB, example4)), pathTo);
+    }
+
+    @Test
+    void findExamplesA() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Examples A".equals(node.getName()));
+        assertEquals(Optional.of(asList(outline, examplesA)), pathTo);
+    }
+
+    @Test
+    void findExamplesB() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Examples B".equals(node.getName()));
+        assertEquals(Optional.of(asList(outline, examplesB)), pathTo);
+    }
+
+    @Test
+    void findOutline() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Outline".equals(node.getName()));
+        assertEquals(Optional.of(asList(outline)), pathTo);
+    }
+
+    @Test
+    void findNothing() {
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Nothing".equals(node.getName()));
+        assertEquals(Optional.empty(), pathTo);
+    }
+
+    @Test
+    void findNode() {
+        Optional<List<Node>> pathTo = example1.findPathTo(node -> "Example #1".equals(node.getName()));
+        assertEquals(Optional.of(asList(example1)), pathTo);
+    }
+
+    @Test
+    void findNothingNode() {
+        Optional<List<Node>> pathTo = example1.findPathTo(node -> "Nothing".equals(node.getName()));
+        assertEquals(Optional.empty(), pathTo);
+    }
+
+
+}
