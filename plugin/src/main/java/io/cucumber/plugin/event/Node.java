@@ -63,6 +63,7 @@ public interface Node {
 
         Collection<T> elements();
 
+        @Override
         default Optional<List<Node>> findPathTo(Predicate<Node> predicate) {
             List<Node> path = new ArrayList<>();
 
