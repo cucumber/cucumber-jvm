@@ -209,7 +209,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
                 .findFirst()
                 .map(nodes -> nodes.get(0))
                 .map(Node::getName)
-                .orElse("Unknown Feature");
+                .orElse("Unknown");
         }
 
         private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {

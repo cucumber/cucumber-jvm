@@ -207,14 +207,14 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.id = getId(started);
             final TestCase testCase = started.getTestCase();
             final URI uri = testCase.getUri();
-            this.feature = findFeatureName(testCase);
+            this.feature = findRootNodeName(testCase);
             this.scenario = testCase.getName();
             this.startTime = started.getInstant().toEpochMilli();
             this.threadId = threadId;
             this.tags = buildTagsValue(testCase);
         }
 
-        private String findFeatureName(TestCase testCase) {
+        private String findRootNodeName(TestCase testCase) {
             Location location = testCase.getLocation();
             Predicate<Node> withLocation = candidate ->
                 candidate.getLocation().equals(location);
@@ -226,7 +226,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 .findFirst()
                 .map(nodes -> nodes.get(0))
                 .map(Node::getName)
-                .orElse("Unknown feature");
+                .orElse("Unknown");
         }
 
         private String buildTagsValue(final TestCase testCase) {

@@ -92,8 +92,7 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
     }
 
     private static String getNameOrKeyWord(io.cucumber.plugin.event.Node node) {
-        String name = node.getName();
-        return name.isEmpty() ? node.getKeyword() : name;
+        return node.getName().isEmpty() ? node.getKeyword() : node.getName();
     }
 
     @Override

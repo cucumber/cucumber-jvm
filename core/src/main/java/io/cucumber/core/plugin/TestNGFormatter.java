@@ -111,7 +111,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             previousTestCaseName = "";
             exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", findFeatureName(event.getTestCase()));
+            clazz.setAttribute("name", findRootNodeName(event.getTestCase()));
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
@@ -120,7 +120,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
         testCase.start(root, event.getInstant());
     }
 
-    private String findFeatureName(io.cucumber.plugin.event.TestCase testCase) {
+    private String findRootNodeName(io.cucumber.plugin.event.TestCase testCase) {
         Location location = testCase.getLocation();
         Predicate<Node> withLocation = candidate ->
             candidate.getLocation().equals(location);
@@ -132,7 +132,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             .findFirst()
             .map(nodes -> nodes.get(0))
             .map(Node::getName)
-            .orElse("Unknown Feature");
+            .orElse("Unknown");
     }
 
     private void handleTestStepFinished(TestStepFinished event) {

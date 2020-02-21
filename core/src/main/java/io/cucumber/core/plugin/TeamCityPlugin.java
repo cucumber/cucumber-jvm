@@ -142,13 +142,13 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private void startNode(URI uri, String timestamp, Node node) {
-        String name = node.getName() == null ? node.getKeyword() : node.getName();
+        String name = node.getName().isEmpty() ? node.getKeyword() : node.getName();
         String location = uri + ":" + node.getLocation().getLine();
         print(TEMPLATE_TEST_SUITE_STARTED, timestamp, location, name);
     }
 
     private void finishNode(String timestamp, Node node) {
-        String name = node.getName() == null ? node.getKeyword() : node.getName();
+        String name = node.getName().isEmpty() ? node.getKeyword() : node.getName();
         print(TEMPLATE_TEST_SUITE_FINISHED, timestamp, name);
     }
 
