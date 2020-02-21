@@ -1,14 +1,20 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.plugin.event.Node;
+import io.cucumber.plugin.event.Node.Example;
+import io.cucumber.plugin.event.Node.Examples;
+import io.cucumber.plugin.event.Node.Rule;
+import io.cucumber.plugin.event.Node.Scenario;
 import io.cucumber.plugin.event.Node.ScenarioOutline;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
-import org.junit.platform.engine.support.hierarchical.Node;
 
-class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+class FeatureDescriptor
+    extends AbstractTestDescriptor
+    implements org.junit.platform.engine.support.hierarchical.Node<CucumberEngineExecutionContext> {
 
     private final Feature feature;
 
@@ -30,8 +36,8 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         return descriptor;
     }
 
-    private static void visit(Feature feature, TestDescriptor parent, FeatureOrigin source, io.cucumber.plugin.event.Node node) {
-        if (node instanceof io.cucumber.plugin.event.Node.Scenario) {
+    private static void visit(Feature feature, TestDescriptor parent, FeatureOrigin source, Node node) {
+        if (node instanceof Scenario) {
             feature.getPickleAt(node)
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(
@@ -44,14 +50,14 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
                 });
         }
 
-        if (node instanceof io.cucumber.plugin.event.Node.Rule) {
+        if (node instanceof Rule) {
             NodeDescriptor descriptor = new NodeDescriptor(
                 source.ruleSegment(parent.getUniqueId(), node),
                 getNameOrKeyWord(node),
                 source.nodeSource(node)
             );
             parent.addChild(descriptor);
-            io.cucumber.plugin.event.Node.Rule rule = (io.cucumber.plugin.event.Node.Rule) node;
+            Rule rule = (Rule) node;
             rule.elements().forEach(section -> visit(feature, descriptor, source, section));
         }
 
@@ -66,18 +72,18 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
             scenarioOutline.elements().forEach(section -> visit(feature, descriptor, source, section));
         }
 
-        if (node instanceof io.cucumber.plugin.event.Node.Examples) {
+        if (node instanceof Examples) {
             NodeDescriptor descriptor = new NodeDescriptor(
                 source.examplesSegment(parent.getUniqueId(), node),
                 getNameOrKeyWord(node),
                 source.nodeSource(node)
             );
             parent.addChild(descriptor);
-            io.cucumber.plugin.event.Node.Examples examples = (io.cucumber.plugin.event.Node.Examples) node;
+            Examples examples = (Examples) node;
             examples.elements().forEach(example -> visit(feature, descriptor, source, example));
         }
 
-        if (node instanceof io.cucumber.plugin.event.Node.Example) {
+        if (node instanceof Example) {
             feature.getPickleAt(node)
                 .ifPresent(pickle -> {
                     PickleDescriptor descriptor = new PickleDescriptor(
@@ -92,7 +98,7 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
 
     }
 
-    private static String getNameOrKeyWord(io.cucumber.plugin.event.Node node) {
+    private static String getNameOrKeyWord(Node node) {
         return node.getName().isEmpty() ? node.getKeyword() : node.getName();
     }
 
