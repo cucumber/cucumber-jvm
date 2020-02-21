@@ -38,13 +38,13 @@ import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -62,7 +62,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, List<Node>> parsedTestSources = new HashMap<>();
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public JUnitFormatter(URL writer) throws IOException {
@@ -192,22 +192,22 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         }
 
         void writeElement(Element tc) {
-            tc.setAttribute("classname", findFeatureName(testCase));
+            tc.setAttribute("classname", findRootNodeName(testCase));
             tc.setAttribute("name", calculateElementName(testCase));
         }
 
-        private String findFeatureName(io.cucumber.plugin.event.TestCase testCase) {
+        private String findRootNodeName(io.cucumber.plugin.event.TestCase testCase) {
             Predicate<Node> onLine = candidate ->
                 candidate.getLocation().getLine() == testCase.getLocation().getLine();
             return parsedTestSources.get(testCase.getUri())
                 .stream()
                 .map(node -> node.findPathTo(onLine))
                 .filter(Optional::isPresent)
-                .flatMap(optional -> Stream.of(optional.get()))
+                .map(Optional::get)
                 .findFirst()
                 .map(nodes -> nodes.get(0))
                 .map(Node::getName)
-                .orElse("Unknown feature");
+                .orElse("Unknown Feature");
         }
 
         private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {

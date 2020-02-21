@@ -37,6 +37,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, List<Node>> parsedTestSources = new HashMap<>();
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
     @SuppressWarnings("WeakerAccess") // Used by plugin factory
     public TestNGFormatter(URL url) throws IOException {
@@ -126,11 +127,11 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             .stream()
             .map(node -> node.findPathTo(onLine))
             .filter(Optional::isPresent)
-            .flatMap(optional -> Stream.of(optional.get()))
+            .map(Optional::get)
             .findFirst()
             .map(nodes -> nodes.get(0))
             .map(Node::getName)
-            .orElse("Unknown feature");
+            .orElse("Unknown Feature");
     }
 
     private void handleTestStepFinished(TestStepFinished event) {

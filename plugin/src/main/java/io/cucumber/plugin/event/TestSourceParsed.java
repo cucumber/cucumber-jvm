@@ -4,6 +4,7 @@ import org.apiguardian.api.API;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,7 +19,7 @@ public final class TestSourceParsed extends TimeStampedEvent {
         this.nodes = Objects.requireNonNull(nodes);
     }
 
-    public List<Node> getNodes() {
+    public Collection<Node> getNodes() {
         return nodes;
     }
 

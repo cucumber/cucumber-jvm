@@ -30,6 +30,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ public class TeamCityPlugin implements EventListener {
 
     private final PrintStream out;
     private final List<SnippetsSuggestedEvent> snippets = new ArrayList<>();
-    private final Map<URI, List<Node>> parsedTestSources = new HashMap<>();
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
     private List<Node> currentStack = new ArrayList<>();
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -120,15 +121,15 @@ public class TeamCityPlugin implements EventListener {
     private void printTestCaseStarted(TestCaseStarted event) {
         TestCase testCase = event.getTestCase();
         URI uri = testCase.getUri();
-        List<Node> nodes = parsedTestSources.get(uri);
         String timestamp = extractTimeStamp(event);
 
         int line = testCase.getLocation().getLine();
         Predicate<Node> onLine = candidate -> candidate.getLocation().getLine() == line;
-        List<Node> path = nodes.stream()
+        List<Node> path = parsedTestSources.get(uri)
+            .stream()
             .map(candidate -> candidate.findPathTo(onLine))
             .filter(Optional::isPresent)
-            .flatMap(optional -> Stream.of(optional.get()))
+            .map(Optional::get)
             .findFirst()
             .orElse(new ArrayList<>());
 

@@ -58,7 +58,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final Map<Long, GroupData> allGroups = new HashMap<>();
     private final URL reportDir;
     private final NiceAppendable reportJs;
-    private final Map<URI, List<Node>> parsedTestSources = new HashMap<>();
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -225,7 +225,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 .stream()
                 .map(node -> node.findPathTo(onLine))
                 .filter(Optional::isPresent)
-                .flatMap(optional -> Stream.of(optional.get()))
+                .map(Optional::get)
                 .findFirst()
                 .map(nodes -> nodes.get(0))
                 .map(Node::getName)
