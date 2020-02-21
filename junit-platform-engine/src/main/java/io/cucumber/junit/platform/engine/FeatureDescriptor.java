@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.plugin.event.Node.ScenarioOutline;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
@@ -54,14 +55,14 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
             rule.elements().forEach(section -> visit(feature, descriptor, source, section));
         }
 
-        if (node instanceof io.cucumber.plugin.event.Node.ScenarioOutline) {
+        if (node instanceof ScenarioOutline) {
             NodeDescriptor descriptor = new NodeDescriptor(
                 source.scenarioSegment(parent.getUniqueId(), node),
                 getNameOrKeyWord(node),
                 source.nodeSource(node)
             );
             parent.addChild(descriptor);
-            io.cucumber.plugin.event.Node.ScenarioOutline scenarioOutline = (io.cucumber.plugin.event.Node.ScenarioOutline) node;
+            ScenarioOutline scenarioOutline = (ScenarioOutline) node;
             scenarioOutline.elements().forEach(section -> visit(feature, descriptor, source, section));
         }
 
