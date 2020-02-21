@@ -4,6 +4,7 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static java.time.Duration.ZERO;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
@@ -121,11 +121,12 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     }
 
     private String findFeatureName(io.cucumber.plugin.event.TestCase testCase) {
-        Predicate<Node> onLine = candidate ->
-            candidate.getLocation().getLine() == testCase.getLocation().getLine();
+        Location location = testCase.getLocation();
+        Predicate<Node> withLocation = candidate ->
+            candidate.getLocation().equals(location);
         return parsedTestSources.get(testCase.getUri())
             .stream()
-            .map(node -> node.findPathTo(onLine))
+            .map(node -> node.findPathTo(withLocation))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findFirst()

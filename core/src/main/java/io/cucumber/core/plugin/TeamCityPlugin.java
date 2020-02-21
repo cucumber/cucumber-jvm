@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.HookTestStep;
 import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -40,7 +41,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 
@@ -123,11 +123,12 @@ public class TeamCityPlugin implements EventListener {
         URI uri = testCase.getUri();
         String timestamp = extractTimeStamp(event);
 
-        int line = testCase.getLocation().getLine();
-        Predicate<Node> onLine = candidate -> candidate.getLocation().getLine() == line;
+        Location location = testCase.getLocation();
+        Predicate<Node> withLocation = candidate ->
+            location.equals(candidate.getLocation());
         List<Node> path = parsedTestSources.get(uri)
             .stream()
-            .map(candidate -> candidate.findPathTo(onLine))
+            .map(node -> node.findPathTo(withLocation))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findFirst()

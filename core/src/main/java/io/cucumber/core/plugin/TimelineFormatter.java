@@ -4,9 +4,9 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.annotations.SerializedName;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseEvent;
@@ -14,7 +14,6 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestSourceParsed;
-import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.Closeable;
 import java.io.File;
@@ -27,13 +26,10 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
@@ -219,11 +215,12 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
 
         private String findFeatureName(TestCase testCase) {
-            Predicate<Node> onLine = candidate ->
-                candidate.getLocation().getLine() == testCase.getLocation().getLine();
+            Location location = testCase.getLocation();
+            Predicate<Node> withLocation = candidate ->
+                candidate.getLocation().equals(location);
             return parsedTestSources.get(testCase.getUri())
                 .stream()
-                .map(node -> node.findPathTo(onLine))
+                .map(node -> node.findPathTo(withLocation))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
