@@ -15,11 +15,24 @@ import static java.util.Collections.singletonList;
 /**
  * A node in a source file.
  * <p>
- * A node has a location, a name and optionally a keyword. The name may be
+ * A node has a location, a name and optionally (null) a keyword. The name may be
  * the the empty string if the node is unnamed.
  * <p>
  * Nodes are organized in a tree like structure where {@link Container} nodes
  * contain yet more nodes.
+ * <p>
+ * A node can be linked to a {@link TestCase} by {@link #getLocation()}. The
+ * {@link Node#findPathTo(Predicate)} method can be used to find a path from the
+ * root node to a node with the same location as a test case.
+ *
+ * <pre>
+ * {@code
+ *       Location location = testCase.getLocation();
+ *       Predicate<Node> withLocation = candidate ->
+ *          location.equals(candidate.getLocation());
+ *       List<Node> path = node.findPathTo(withLocation);
+ * }
+ * </pre>
  */
 @API(status = API.Status.EXPERIMENTAL)
 public interface Node {
@@ -116,7 +129,7 @@ public interface Node {
     }
 
     /**
-     * An example has no keyword but always a name.
+     * An example has no keyword (null) but always a name.
      */
     interface Example extends Node {
 

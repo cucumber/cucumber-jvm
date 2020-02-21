@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Provides abstract representation of a parsed test source.
@@ -28,6 +29,7 @@ import java.util.Objects;
  * <p>
  * Note that a test source may contain multiple root nodes. Though currently
  * there are no parsers that support this yet.
+ * <p>
  */
 @API(status = API.Status.EXPERIMENTAL)
 public final class TestSourceParsed extends TimeStampedEvent {
