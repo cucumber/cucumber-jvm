@@ -132,7 +132,7 @@ public class TeamCityPlugin implements EventListener {
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findFirst()
-            .orElse(new ArrayList<>());
+            .orElse(emptyList());
 
         poppedNodes(path).forEach(node -> finishNode(timestamp, node));
         pushedNodes(path).forEach(node -> startNode(uri, timestamp, node));
