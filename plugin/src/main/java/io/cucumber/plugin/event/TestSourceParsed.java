@@ -20,8 +20,14 @@ import java.util.Objects;
  * in hierarchical fashion. This event allows test cases to be associated with
  * with a {@link Node} in the hierarchy.
  * <p>
+ * Note that this representation is intentionally abstract. To create more
+ * detailed reports that recreate a facsimile of the feature file it is
+ * recommended to use the Gherkin AST. This AST can be obtained by parsing the
+ * source provided by {@link TestSourceRead} event using {@code gherkin.Parser}
+ * or {@code io.cucumber.gherkin.Gherkin}.
+ * <p>
  * Note that a test source may contain multiple root nodes. Though currently
- * there are no parsers yet that support this.
+ * there are no parsers that support this yet.
  */
 @API(status = API.Status.EXPERIMENTAL)
 public final class TestSourceParsed extends TimeStampedEvent {
