@@ -5,8 +5,6 @@ import io.cucumber.datatable.DataTableType;
 
 import java.util.List;
 
-import static net.jodah.typetools.TypeResolver.resolveRawArguments;
-
 final class Java8DataTableRowDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
 
     private final DataTableType dataTableType;
