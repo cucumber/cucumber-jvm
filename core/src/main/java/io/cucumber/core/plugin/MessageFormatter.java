@@ -17,7 +17,8 @@ import java.nio.charset.StandardCharsets;
 public final class MessageFormatter implements EventListener {
     private final OutputStream outputStream;
     private final Writer writer;
-    private final JsonFormat.Printer jsonPrinter = JsonFormat.printer().omittingInsignificantWhitespace().includingDefaultValueFields();
+    private final JsonFormat.Printer jsonPrinter = JsonFormat.printer()
+        .omittingInsignificantWhitespace();
     private final ProtobufFormat format;
 
     public MessageFormatter(File file) throws FileNotFoundException {

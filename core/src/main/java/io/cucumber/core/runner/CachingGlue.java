@@ -18,7 +18,6 @@ import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.Location;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -213,6 +212,9 @@ final class CachingGlue implements Glue {
             throw new DuplicateDefaultDataTableCellTransformers(defaultDataTableCellTransformers);
         }
 
+        // TODO: Redefine hooks for each scenario, similar to how we're doing for CoreStepDefinition
+        beforeHooks.forEach(this::emitHook);
+
         stepDefinitions.forEach(stepDefinition -> {
             CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition, stepTypeRegistry);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
@@ -222,6 +224,22 @@ final class CachingGlue implements Glue {
             stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
             emitStepDefined(coreStepDefinition);
         });
+
+        afterHooks.forEach(this::emitHook);
+    }
+
+    private void emitHook(CoreHookDefinition hook) {
+        bus.send(Messages.Envelope.newBuilder()
+            .setHook(Messages.Hook.newBuilder()
+                .setId(hook.getId().toString())
+                .setTagExpression(hook.getTagExpression())
+                .setSourceReference(Messages.SourceReference.newBuilder()
+                    // TODO: Maybe we should add a proper URI prefix here, like "javamethod:....". Maybe there is
+                    // a standard for this
+                    .setUri(hook.getLocation()))
+            )
+            .build()
+        );
     }
 
     private void emitStepDefined(CoreStepDefinition stepDefinition) {

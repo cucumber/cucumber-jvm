@@ -24,6 +24,11 @@ public class Attachments {
         scenario.write(text);
     }
 
+    @When("the string {string} is logged")
+    public void theStringIsLogged(String text){
+        scenario.write(text);
+    }
+
     @When("an array with {int} bytes are attached as {string}")
     public void anArrayWithBytesAreAttachedAs(int n, String mediaType) {
         byte[] bytes = new byte[n];

@@ -81,7 +81,6 @@ public class CompatibilityTest {
                     .replaceAll("\"sourceReference\":\\{.*(\"location\":\"\\{[^}]*})?}", "\"sourceReference\":{}")
 
                     // TODO: These needs a new version of messages
-                    .replaceAll("\"testResult\":", "\"testStepResult\":")
                     .replaceAll("\"success\":false,?", "")
                     .replaceAll("\"message\":\"\",?", "")
                     .replaceAll(",?\"willBeRetried\":false", "")

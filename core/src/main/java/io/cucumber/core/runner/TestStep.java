@@ -3,7 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Pending;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.TestResult;
+import io.cucumber.messages.Messages.TestStepResult;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static io.cucumber.core.runner.TestResultStatus.from;
+import static io.cucumber.core.runner.TestStepResultStatus.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
@@ -89,12 +89,12 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private void emitTestStepFinished(TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        TestResult.Builder builder = TestResult.newBuilder();
+        TestStepResult.Builder builder = TestStepResult.newBuilder();
 
         if (result.getError() != null) {
             builder.setMessage(extractStackTrace(result.getError()));
         }
-        TestResult testResult = builder.setStatus(from(result.getStatus()))
+        TestStepResult testResult = builder.setStatus(from(result.getStatus()))
             .setDuration(javaDurationToDuration(duration))
             .build();
         bus.send(Messages.Envelope.newBuilder()
@@ -102,7 +102,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
                 .setTestCaseStartedId(textExecutionId.toString())
                 .setTestStepId(id.toString())
                 .setTimestamp(javaInstantToTimestamp(stopTime))
-                .setTestResult(testResult)
+                .setTestStepResult(testResult)
             ).build()
         );
     }

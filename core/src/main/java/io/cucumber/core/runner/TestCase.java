@@ -19,11 +19,10 @@ import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static io.cucumber.core.runner.TestResultStatus.from;
+import static io.cucumber.core.runner.TestStepResultStatus.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.singletonList;
@@ -203,7 +202,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     private void emitTestCaseFinished(EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result) {
         bus.send(new TestCaseFinished(stop, this, result));
-        Messages.TestResult.Builder testResultBuilder = Messages.TestResult.newBuilder()
+        Messages.TestStepResult.Builder testResultBuilder = Messages.TestStepResult.newBuilder()
             .setStatus(from(status))
             .setDuration(javaDurationToDuration(duration));
 
