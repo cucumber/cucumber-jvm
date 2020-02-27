@@ -4,8 +4,6 @@ import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.docstring.DocStringType;
 
-import static net.jodah.typetools.TypeResolver.resolveRawArguments;
-
 final class Java8DocStringTypeDefinition extends AbstractGlueDefinition implements DocStringTypeDefinition {
 
     private final DocStringType docStringType;
