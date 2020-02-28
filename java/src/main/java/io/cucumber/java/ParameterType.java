@@ -1,7 +1,6 @@
 package io.cucumber.java;
 
 import io.cucumber.cucumberexpressions.GeneratedExpression;
-import io.cucumber.cucumberexpressions.RegularExpression;
 import org.apiguardian.api.API;
 
 import java.lang.annotation.ElementType;
@@ -58,7 +57,7 @@ public @interface ParameterType {
 
     /**
      * Indicates whether or not this is a preferential parameter type when matching text
-     * against a {@link RegularExpression}. In case there are multiple parameter types
+     * against a RegularExpression. In case there are multiple parameter types
      * with a regexp identical to the capture group's regexp, a preferential parameter type will
      * win. If there are more than 1 preferential ones, an error will be thrown.
      *

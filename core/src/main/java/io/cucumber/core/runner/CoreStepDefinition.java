@@ -6,46 +6,33 @@ import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
-import io.cucumber.core.stepexpression.StepExpressionFactory;
-import io.cucumber.core.stepexpression.StepTypeRegistry;
+import io.cucumber.cucumberexpressions.Expression;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
 final class CoreStepDefinition {
 
     private final UUID id;
-    private final StepExpression expression;
+    private final StepExpression stepExpression;
     private final ArgumentMatcher argumentMatcher;
     private final StepDefinition stepDefinition;
     private final Type[] types;
 
-    CoreStepDefinition(UUID id, StepDefinition stepDefinition, StepTypeRegistry stepTypeRegistry) {
+    CoreStepDefinition(UUID id, StepDefinition stepDefinition, StepExpression stepExpression) {
         this.id = requireNonNull(id);
         this.stepDefinition = requireNonNull(stepDefinition);
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
-        this.expression = createExpression(parameterInfos, stepDefinition.getPattern(), stepTypeRegistry);
-        this.argumentMatcher = new ArgumentMatcher(this.expression);
+        this.stepExpression = stepExpression;
+        this.argumentMatcher = new ArgumentMatcher(this.stepExpression);
         this.types = getTypes(parameterInfos);
     }
 
-    private StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, StepTypeRegistry stepTypeRegistry) {
-        if (parameterInfos == null || parameterInfos.isEmpty()) {
-            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression);
-        } else {
-            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
-            boolean transposed = parameterInfo.isTransposed();
-            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression, typeResolver, transposed);
-        }
-    }
-
     String getPattern() {
-        return expression.getSource();
+        return stepExpression.getSource();
     }
 
     StepDefinition getStepDefinition() {
@@ -70,5 +57,9 @@ final class CoreStepDefinition {
             types[i] = parameterInfos.get(i).getType();
         }
         return types;
+    }
+
+    Class<? extends Expression> getExpressionClass() {
+        return this.stepExpression.getExpressionClass();
     }
 }

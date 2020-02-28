@@ -274,6 +274,7 @@ class RunnerTest {
     private HookDefinition addHook() {
         HookDefinition hook = mock(HookDefinition.class);
         when(hook.getTagExpression()).thenReturn("");
+        when(hook.getLocation()).thenReturn("");
         return hook;
     }
 

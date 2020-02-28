@@ -1228,6 +1228,7 @@ class JSONFormatterTest {
     private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getTagExpression()).thenReturn("");
+        when(hook.getLocation()).thenReturn("hook-location");
         File report = File.createTempFile("cucumber-jvm-junit", ".json");
 
         List<String> args = new ArrayList<>();
@@ -1268,6 +1269,7 @@ class JSONFormatterTest {
     private String runFeaturesWithFormatter(final List<String> featurePaths) {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getTagExpression()).thenReturn("");
+        when(hook.getLocation()).thenReturn("hook-location");
 
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override

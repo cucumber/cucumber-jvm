@@ -22,6 +22,7 @@ class RerunFormatterTest {
     private final List<Feature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
+    private final List<String> hookLocations = new ArrayList<>();
 
     @Test
     void should_leave_report_empty_when_exit_code_is_zero() {
@@ -134,6 +135,7 @@ class RerunFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
+        hookLocations.add("hook-location");
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
@@ -153,6 +155,7 @@ class RerunFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed")));
+        hookLocations.add("hook-location");
 
         String formatterOutput = runFeaturesWithFormatter(false);
 
@@ -214,6 +217,7 @@ class RerunFormatterTest {
             .withFeatures(features)
             .withStepsToResult(stepsToResult)
             .withHooks(hooks)
+            .withHookLocations(hookLocations)
             .withTimeServiceIncrement(ZERO)
             .build()
             .run();

@@ -172,6 +172,7 @@ class PrettyFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
+        hookLocations.add("hook-location");
 
         String formatterOutput = runFeaturesWithFormatter(true);
 
@@ -191,6 +192,7 @@ class PrettyFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed")));
+        hookLocations.add("hook-location");
 
         String formatterOutput = runFeaturesWithFormatter(true);
 
@@ -209,6 +211,7 @@ class PrettyFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
+        hookLocations.add("hook-location");
         hookActions.add(createWriteHookAction("printed from hook"));
 
         String formatterOutput = runFeaturesWithFormatter(true);
@@ -231,6 +234,7 @@ class PrettyFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
+        hookLocations.add("hook-location");
         hookActions.add(createWriteHookAction("printed from hook"));
 
         String formatterOutput = runFeaturesWithFormatter(true);
@@ -254,6 +258,7 @@ class PrettyFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
         hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        hookLocations.add("hook-location");
         hookActions.add(createWriteHookAction("printed from afterstep hook"));
 
         String formatterOutput = runFeaturesWithFormatter(true);

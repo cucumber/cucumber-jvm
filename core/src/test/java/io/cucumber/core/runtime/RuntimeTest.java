@@ -257,6 +257,7 @@ class RuntimeTest {
                 "    When second step\n" +
                 "    Then third step\n");
         final HookDefinition beforeHook = mock(HookDefinition.class);
+        when(beforeHook.getLocation()).thenReturn("");
         when(beforeHook.getTagExpression()).thenReturn("");
 
         TestBackendSupplier testBackendSupplier = createTestBackendSupplier(feature, beforeHook);

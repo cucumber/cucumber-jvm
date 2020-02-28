@@ -387,6 +387,7 @@ class HTMLFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("before", result("passed")));
+        hookLocations.add("hook-location");
         stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -423,6 +424,7 @@ class HTMLFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("after", result("passed")));
+        hookLocations.add("hook-location");
         stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -463,6 +465,8 @@ class HTMLFormatterTest {
         stepsToLocation.put("second step", "path/step_definitions.java:4");
         hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
         hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        hookLocations.add("hook-location-1");
+        hookLocations.add("hook-location-2");
         stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -518,6 +522,7 @@ class HTMLFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("before", result("passed")));
+        hookLocations.add("hook-location");
         hookActions.add(createWriteHookAction("printed from hook"));
         stepDuration = ofMillis(1L);
 
@@ -556,6 +561,7 @@ class HTMLFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("after", result("passed")));
+        hookLocations.add("hook-location");
         hookActions.add(createWriteHookAction("printed from hook"));
         stepDuration = ofMillis(1L);
 
@@ -597,6 +603,7 @@ class HTMLFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:4");
         hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
+        hookLocations.add("hook-location");
         hookActions.add(createWriteHookAction("printed from hook"));
         stepDuration = ofMillis(1L);
 
@@ -649,6 +656,7 @@ class HTMLFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("before", result("passed")));
+        hookLocations.add("hook-location");
         hookActions.add(createEmbedHookAction("embedded from hook".getBytes(US_ASCII), "text/ascii"));
         stepDuration = ofMillis(1L);
 
@@ -754,6 +762,8 @@ class HTMLFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("after", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
+        hookLocations.add("hook-location-1");
+        hookLocations.add("hook-location-2");
         hookActions.add(createEmbedHookAction("fakedata".getBytes(US_ASCII), "image/png", "Fake image"));
         hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes(US_ASCII), "text/plain"));
         stepDuration = ofMillis(1L);
