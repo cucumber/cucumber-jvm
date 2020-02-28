@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [5.4.1] (2020-02-27)
+
+### Fixed
+ * [Java8] Add error when types could not be resolved on Java 12+ ([#1902](https://github.com/cucumber/cucumber-jvm/pull/1902) M.P. Korstanje)
+ * [All] Remove Jackson from `cucumber-jvm` parent pom ([#1900](https://github.com/cucumber/cucumber-jvm/pull/1900) M.P. Korstanje)
+
 ## [5.4.0] (2020-02-20)
 
 ### Added
@@ -1316,7 +1322,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...master
+[5.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...v5.4.1
 [5.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.3.0...v5.4.0
 [5.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...v5.3.0
 [5.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.3...v5.2.0

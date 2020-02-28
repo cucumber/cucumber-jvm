@@ -2,7 +2,6 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.datatable.DataTableType;
-import net.jodah.typetools.TypeResolver;
 
 final class Java8DataTableCellDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
 
@@ -10,7 +9,7 @@ final class Java8DataTableCellDefinition extends AbstractDatatableElementTransfo
 
     Java8DataTableCellDefinition(String[] emptyPatterns, DataTableCellDefinitionBody<?> body) {
         super(body, new Exception().getStackTrace()[3], emptyPatterns);
-        Class<?> returnType = TypeResolver.resolveRawArguments(DataTableCellDefinitionBody.class, body.getClass())[0];
+        Class<?> returnType = resolveRawArguments(DataTableCellDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
             (String cell) -> execute(replaceEmptyPatternsWithEmptyString(cell))

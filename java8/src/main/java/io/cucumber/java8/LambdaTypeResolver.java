@@ -26,9 +26,6 @@ final class LambdaTypeResolver implements TypeResolver {
     }
 
     public Type getType() {
-        if (net.jodah.typetools.TypeResolver.Unknown.class.equals(type)) {
-            return Object.class;
-        }
         return type;
     }
 

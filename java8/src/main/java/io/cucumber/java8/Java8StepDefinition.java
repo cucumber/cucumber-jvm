@@ -9,7 +9,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static net.jodah.typetools.TypeResolver.resolveRawArguments;
 
 final class Java8StepDefinition extends AbstractGlueDefinition implements StepDefinition {
 
