@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   the output will be sent with a POST request. This can be overridden by specifying e.g.
   `http-method=PUT` as a query parameter. Other `http-` prefixed query parameters will be
   converted to request headers (with the `http-` prefix stripped off).
+* The default HTTP method for URLs has changed from `POST` to `PUT`. Users who need `PUT` can specify `http-method=PUT` in the query.
 
 ### Deprecated
 
