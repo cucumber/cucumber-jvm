@@ -4,9 +4,6 @@ import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
 import org.apiguardian.api.API;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,7 +18,8 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
-import static io.cucumber.spring.TestContextAdaptor.createApplicationContextAdaptor;
+import static io.cucumber.spring.TestContextAdaptor.createClassPathXmlApplicationContextAdaptor;
+import static io.cucumber.spring.TestContextAdaptor.createGenericApplicationContextAdaptor;
 import static io.cucumber.spring.TestContextAdaptor.createTestContextManagerAdaptor;
 import static java.util.Arrays.asList;
 
@@ -146,30 +144,27 @@ public final class SpringFactory implements ObjectFactory {
             // threads.
             TestContextManager testContextManager = new TestContextManager(stepClassWithSpringContext);
             testContextAdaptor = createTestContextManagerAdaptor(testContextManager, stepClasses);
+        } else if (getClass().getClassLoader().getResource(CUCUMBER_XML) == null) {
+            // The generic fallback application context is not shared between
+            // threads (because the spring factory is not shared) and not reused
+            // between scenarios because we recreate it each time the spring
+            // factory starts.
+            testContextAdaptor = createGenericApplicationContextAdaptor(stepClasses);
         } else if (testContextAdaptor == null) {
-            // The fallback application context is not shared between threads
-            // (because the spring factory is not shared) but is reused
-            // between scenarios
-            if (getClass().getClassLoader().getResource(CUCUMBER_XML) == null) {
-                ConfigurableApplicationContext applicationContext = new GenericApplicationContext();
-                testContextAdaptor = createApplicationContextAdaptor(applicationContext, stepClasses);
-            } else {
-                // Application context is refreshed by TestContextManager.start
-                // can't be done twice
-                boolean refresh = false;
-                String[] configLocations = {CUCUMBER_XML};
-                ConfigurableApplicationContext applicationContext = new ClassPathXmlApplicationContext(configLocations, refresh);
-                testContextAdaptor = createApplicationContextAdaptor(applicationContext, stepClasses);
-            }
+            // The xml fallback application context is not shared between
+            // threads (because the spring factory is not shared) but is reused
+            // between scenarios.
+            String[] configLocations = {CUCUMBER_XML};
+            testContextAdaptor = createClassPathXmlApplicationContextAdaptor(configLocations, stepClasses);
         }
         testContextAdaptor.start();
-        GlueCodeContext.getInstance().start();
     }
 
     @Override
     public void stop() {
-        testContextAdaptor.stop();
-        GlueCodeContext.getInstance().stop();
+        if (testContextAdaptor != null) {
+            testContextAdaptor.stop();
+        }
     }
 
     @Override

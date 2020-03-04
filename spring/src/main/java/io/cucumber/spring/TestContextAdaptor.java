@@ -5,6 +5,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestContextManager;
 
@@ -31,13 +33,37 @@ abstract class TestContextAdaptor {
         return new TestContextManagerAdaptor(delegate, applicationContext, glueClasses);
     }
 
+    static TestContextAdaptor createGenericApplicationContextAdaptor(Collection<Class<?>> glueClasses) {
+        ConfigurableApplicationContext applicationContext = new GenericApplicationContext();
+        return createApplicationContextAdaptor(applicationContext, glueClasses);
+    }
+
+    static TestContextAdaptor createClassPathXmlApplicationContextAdaptor(String[] configLocations, Collection<Class<?>> glueClasses) {
+        // Application context is refreshed by FallbackApplicationContextAdaptor.start
+        // this can't be done twice.
+        boolean refresh = false;
+        ConfigurableApplicationContext applicationContext = new ClassPathXmlApplicationContext(configLocations, refresh);
+
+        return createApplicationContextAdaptor(applicationContext, glueClasses);
+    }
+
     static TestContextAdaptor createApplicationContextAdaptor(ConfigurableApplicationContext applicationContext, Collection<Class<?>> glueClasses) {
         return new FallbackApplicationContextAdaptor(applicationContext, glueClasses);
     }
 
-    abstract void start();
+    public final void start() {
+        startApplicationContext();
+        GlueCodeContext.getInstance().start();
+    }
 
-    abstract void stop();
+    public final void stop() {
+        GlueCodeContext.getInstance().stop();
+        stopApplicationContext();
+    }
+
+    abstract void startApplicationContext();
+
+    abstract void stopApplicationContext();
 
     final <T> T getInstance(Class<T> type) {
         return applicationContext.getBean(type);
@@ -84,7 +110,7 @@ abstract class TestContextAdaptor {
         }
 
         @Override
-        public void start() {
+        public void startApplicationContext() {
             // The TestContextManager delegate makes the application context
             // available to other threads. Register the glue however requires
             // modifies the application context. To avoid concurrent modification
@@ -105,7 +131,7 @@ abstract class TestContextAdaptor {
         }
 
         @Override
-        public void stop() {
+        public void stopApplicationContext() {
             try {
                 delegate.afterTestClass();
             } catch (Exception e) {
@@ -122,7 +148,7 @@ abstract class TestContextAdaptor {
         }
 
         @Override
-        public void start() {
+        public void startApplicationContext() {
             applicationContext.registerShutdownHook();
             applicationContext.refresh();
             registerGlueCodeScope(applicationContext);
@@ -130,8 +156,8 @@ abstract class TestContextAdaptor {
         }
 
         @Override
-        public void stop() {
-
+        public void stopApplicationContext() {
+            applicationContext.stop();
         }
     }
 }
