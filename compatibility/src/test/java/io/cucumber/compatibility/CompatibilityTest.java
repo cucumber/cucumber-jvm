@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -40,7 +41,7 @@ public class CompatibilityTest {
                 .addGlue(testCase.getGlue())
                 .addFeature(testCase.getFeature())
                 .build())
-            .withAdditionalPlugins(new MessageFormatter(output))
+            .withAdditionalPlugins(new MessageFormatter(new FileOutputStream(output)))
             .withEventBus(new TimeServiceEventBus(fixed(ofEpochSecond(0), UTC), idGenerator))
             .build()
             .run();

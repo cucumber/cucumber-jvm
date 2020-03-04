@@ -5,9 +5,7 @@ import io.cucumber.messages.internal.com.google.protobuf.util.JsonFormat;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -21,10 +19,10 @@ public final class MessageFormatter implements EventListener {
         .omittingInsignificantWhitespace();
     private final ProtobufFormat format;
 
-    public MessageFormatter(File file) throws FileNotFoundException {
+    public MessageFormatter(OutputStream outputStream) throws FileNotFoundException {
         this.format = ProtobufFormat.NDJSON;
-        this.outputStream = new FileOutputStream(file);
-        this.writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+        this.outputStream = outputStream;
+        this.writer = new OutputStreamWriter(this.outputStream, StandardCharsets.UTF_8);
     }
 
     @Override

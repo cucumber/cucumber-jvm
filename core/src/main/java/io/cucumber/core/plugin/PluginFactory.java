@@ -25,7 +25,7 @@ import static java.util.Arrays.asList;
  * @see Plugin for specific requirements
  */
 public final class PluginFactory {
-    private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{String.class, Appendable.class, URI.class, URL.class, File.class};
+    private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{String.class, Appendable.class, URI.class, URL.class, File.class, OutputStream.class};
 
     private String defaultOutFormatter = null;
 
@@ -109,6 +109,9 @@ public final class PluginFactory {
         }
         if (ctorArgClass.equals(Appendable.class)) {
             return new UTF8OutputStreamWriter(new URLOutputStream(toURL(arg)));
+        }
+        if (ctorArgClass.equals(OutputStream.class)) {
+            return new URLOutputStream(toURL(arg));
         }
         return null;
     }

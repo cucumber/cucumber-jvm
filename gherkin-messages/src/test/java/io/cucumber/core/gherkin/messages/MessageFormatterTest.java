@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +43,7 @@ public class MessageFormatterTest {
                 .addGlue(GluePath.parse("io.cucumber.core.gherkin.messages"))
                 .addFeature(FeatureWithLines.parse("classpath:io/cucumber/core/gherkin/messages"))
                 .build())
-            .withAdditionalPlugins(new MessageFormatter(output))
+            .withAdditionalPlugins(new MessageFormatter(new FileOutputStream(output)))
             .withEventBus(new TimeServiceEventBus(fixed(ofEpochSecond(-1815350400), UTC), idGenerator))
             .build()
             .run();
