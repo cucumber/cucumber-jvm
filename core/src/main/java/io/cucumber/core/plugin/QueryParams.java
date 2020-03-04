@@ -11,6 +11,7 @@ import java.util.Set;
 public class QueryParams {
     public static Map<String, Set<String>> parse(String queryString) throws UnsupportedEncodingException {
         Map<String, Set<String>> query = new HashMap<>();
+        if(queryString == null) return query;
         for (String pair : queryString.split("&")) {
             int eq = pair.indexOf("=");
             String key;

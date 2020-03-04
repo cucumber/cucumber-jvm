@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,6 +16,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 class QueryParamsTest {
+    @Test
+    public void it_generates_an_empty_map_for_null() throws UnsupportedEncodingException {
+        Map<String, Set<String>> query = QueryParams.parse(null);
+        assertThat(query, is(emptyMap()));
+    }
+
     @Test
     public void it_escapes_values() throws UnsupportedEncodingException {
         Map<String, Set<String>> query = QueryParams.parse("key=hello+%22world");
