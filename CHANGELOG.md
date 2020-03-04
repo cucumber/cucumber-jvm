@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+* If a http:// or https:// URL is used as output for a formatter plugin,
+  the output will be sent with a POST request. This can be overridden by specifying e.g.
+  `http-method=PUT` as a query parameter. Other `http-` prefixed query parameters will be
+  converted to request headers (with the `http-` prefix stripped off).
+
 ### Deprecated
 
 ### Removed

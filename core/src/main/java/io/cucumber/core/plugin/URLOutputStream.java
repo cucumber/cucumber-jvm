@@ -11,8 +11,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -23,32 +24,51 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * if it's a http or https URL, writes with a HTTP PUT (by default) or with the specified method.
  */
 class URLOutputStream extends OutputStream {
-    private final URL url;
-    private final String method;
-    private final int expectedResponseCode;
     private final OutputStream out;
     private final HttpURLConnection urlConnection;
 
-    URLOutputStream(URL url) throws IOException {
-        this(url, "PUT", Collections.emptyMap(), 200);
-    }
+    private String method;
+    private URL url;
 
-    private URLOutputStream(URL url, String method, Map<String, String> headers, int expectedResponseCode) throws IOException {
-        this.url = url;
-        this.method = method;
-        this.expectedResponseCode = expectedResponseCode;
+    URLOutputStream(URL url) throws IOException {
         if (url.getProtocol().equals("file")) {
             File file = new File(url.getFile());
             ensureParentDirExists(file);
             out = new FileOutputStream(file);
             urlConnection = null;
         } else if (url.getProtocol().startsWith("http")) {
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod(method);
-            urlConnection.setDoOutput(true);
-            for (Map.Entry<String, String> header : headers.entrySet()) {
-                urlConnection.setRequestProperty(header.getKey(), header.getValue());
+            this.method = "POST";
+
+            // Set HTTP headers and method from query string
+            Map<String, Set<String>> query = QueryParams.parse(url.getQuery());
+            Map<String, Set<String>> requestHeaders = new HashMap<>();
+            for (Map.Entry<String, Set<String>> pair : query.entrySet()) {
+                if (pair.getKey().startsWith("http-")) {
+                    String key = pair.getKey().substring(5); // Strip the http- prefix.
+                    Set<String> values = query.remove(pair.getKey());
+                    if (key.equals("method")) {
+                        for (String method : values) {
+                            this.method = method;
+                        }
+                    } else {
+                        requestHeaders.put(key, values);
+                    }
+                }
             }
+
+            String queryString = QueryParams.toString(query);
+            String file = queryString.equals("") ? url.getFile() : url.getPath() + "?" + queryString;
+            this.url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
+
+            urlConnection = (HttpURLConnection) this.url.openConnection();
+            for (Map.Entry<String, Set<String>> header : requestHeaders.entrySet()) {
+                for (String value : header.getValue()) {
+                    urlConnection.setRequestProperty(header.getKey(), value);
+                }
+            }
+            urlConnection.setRequestMethod(this.method);
+            urlConnection.setDoOutput(true);
+
             out = urlConnection.getOutputStream();
         } else {
             throw new IllegalArgumentException("URL Scheme must be one of file,http,https. " + url.toExternalForm());
@@ -91,18 +111,18 @@ class URLOutputStream extends OutputStream {
                 return;
             }
 
-            int responseCode = urlConnection.getResponseCode();
-            if (responseCode == expectedResponseCode) {
+            int httpStatus = urlConnection.getResponseCode();
+            if (httpStatus <= 400) {
                 return;
             }
 
             try {
                 urlConnection.getInputStream().close();
-                throw new IOException(String.format("Expected response code: %d. Got: %d", expectedResponseCode, responseCode));
+                throw new IOException(String.format("HTTP status was %d", httpStatus));
             } catch (IOException expected) {
                 InputStream errorStream = urlConnection.getErrorStream();
                 if (errorStream != null) {
-                    throw createResponseException(responseCode, expected, errorStream);
+                    throw createResponseException(httpStatus, expected, errorStream);
                 } else {
                     throw expected;
                 }
@@ -137,7 +157,7 @@ class URLOutputStream extends OutputStream {
         @Override
         public String getMessage() {
             if (contentType.equals("application/json")) {
-                Map<?,?> map = gson.fromJson(super.getMessage(), Map.class);
+                Map<?, ?> map = gson.fromJson(super.getMessage(), Map.class);
                 if (map.containsKey("error")) {
                     return getMessage0(map.get("error").toString());
                 } else {

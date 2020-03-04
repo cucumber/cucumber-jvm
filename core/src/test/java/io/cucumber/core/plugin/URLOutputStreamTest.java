@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -44,19 +43,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class URLOutputStreamTest {
 
-    private static final URL CUCUMBER_STEPDEFS = createUrl("http://localhost:9873/.cucumber/stepdefs.json");
-
-    private static URL createUrl(String s) {
-        try {
-            return new URL(s);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private WebServer webbit;
-    private final int threadsCount = 100;
-    private final long waitTimeoutMillis = 30000L;
     private final List<File> tmpFiles = new ArrayList<>();
     private final List<String> threadErrors = new ArrayList<>();
 
@@ -77,7 +64,7 @@ class URLOutputStreamTest {
     void write_to_file_without_existing_parent_directory() throws IOException, URISyntaxException {
         Path filesWithoutParent = Files.createTempDirectory("filesWithoutParent");
         String baseURL = filesWithoutParent.toUri().toURL().toString();
-        URL urlWithoutParentDirectory = createUrl(baseURL + "/non/existing/directory");
+        URL urlWithoutParentDirectory = new URL(baseURL + "/non/existing/directory");
 
 
         Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(urlWithoutParentDirectory));
@@ -98,15 +85,48 @@ class URLOutputStreamTest {
     }
 
     @Test
-    void can_http_put() throws IOException, InterruptedException {
+    void can_http_post() throws IOException, InterruptedException {
         final BlockingQueue<String> data = new LinkedBlockingDeque<>();
         Rest r = new Rest(webbit);
-        r.PUT("/.cucumber/stepdefs.json", (req, res, ctl) -> {
+        r.POST("/", (req, res, ctl) -> {
             data.offer(req.body());
             res.end();
         });
 
-        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(new URL("http://localhost:9873/")));
+        w.write("Hellesøy");
+        w.flush();
+        w.close();
+        assertThat(data.poll(1000, TimeUnit.MILLISECONDS), is(equalTo("Hellesøy")));
+    }
+
+    @Test
+    void can_http_put() throws IOException, InterruptedException {
+        final BlockingQueue<String> data = new LinkedBlockingDeque<>();
+        Rest r = new Rest(webbit);
+        r.PUT("/", (req, res, ctl) -> {
+            data.offer(req.body());
+            res.end();
+        });
+
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(new URL("http://localhost:9873/?http-method=PUT")));
+        w.write("Hellesøy");
+        w.flush();
+        w.close();
+        assertThat(data.poll(1000, TimeUnit.MILLISECONDS), is(equalTo("Hellesøy")));
+    }
+    @Test
+    void can_http_post_with_headers() throws IOException, InterruptedException {
+        final BlockingQueue<String> data = new LinkedBlockingDeque<>();
+        Rest r = new Rest(webbit);
+        r.POST("/", (req, res, ctl) -> {
+            assertThat(req.header("content-type"), is(equalTo("application/json")));
+            assertThat(new URL("http://localhost" + req.uri()).getQuery(), is(equalTo("foo=bar")));
+            data.offer(req.body());
+            res.end();
+        });
+
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(new URL("http://localhost:9873/?http-content-type=application/json&foo=bar")));
         w.write("Hellesøy");
         w.flush();
         w.close();
@@ -115,32 +135,32 @@ class URLOutputStreamTest {
 
     @Test
     void throws_fnfe_if_http_response_is_404() throws IOException {
-        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(new URL("http://localhost:9873/")));
         w.write("Hellesøy");
         w.flush();
 
         Executable testMethod = w::close;
         FileNotFoundException actualThrown = assertThrows(FileNotFoundException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/.cucumber/stepdefs.json")));
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("http://localhost:9873/")));
     }
 
     @Test
     void throws_ioe_if_http_response_is_500() throws IOException {
         Rest r = new Rest(webbit);
-        r.PUT("/.cucumber/stepdefs.json", (req, res, ctl) -> {
+        r.POST("/", (req, res, ctl) -> {
             res.status(500);
             res.content("something went wrong");
             res.end();
         });
 
-        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(CUCUMBER_STEPDEFS));
+        Writer w = TestUTF8OutputStreamWriter.create(new URLOutputStream(new URL("http://localhost:9873/")));
         w.write("Hellesøy");
         w.flush();
 
         Executable testMethod = w::close;
         IOException actualThrown = assertThrows(IOException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "PUT http://localhost:9873/.cucumber/stepdefs.json\n" +
+            "POST http://localhost:9873/\n" +
                 "HTTP 500\nsomething went wrong"
         )));
     }
@@ -148,6 +168,7 @@ class URLOutputStreamTest {
     @Test
     void do_not_throw_ioe_if_parent_dir_created_by_another_thread() {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
+        int threadsCount = 100;
         List<Thread> testThreads = getThreadsWithLatchForFile(countDownLatch, threadsCount);
         startThreadsFromList(testThreads);
         countDownLatch.countDown();
@@ -207,6 +228,7 @@ class URLOutputStreamTest {
         long timeStart = System.currentTimeMillis();
         do {
             // Protection from forever loop
+            long waitTimeoutMillis = 30000L;
             if (System.currentTimeMillis() - timeStart > waitTimeoutMillis) {
                 fail("Some threads are still alive");
             }

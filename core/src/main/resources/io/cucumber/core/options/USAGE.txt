@@ -25,6 +25,14 @@ Options:
                                            of that type defined from a different
                                            source.
 
+                                           If a http:// or https:// URL is used,
+                                           the output will be sent with a POST request.
+                                           This can be overridden by specifying e.g.
+                                           http-method=PUT as a query parameter.
+                                           Other http- prefixed query parameters will be
+                                           converted to request headers (with the http-
+                                           prefix stripped off).
+
   -t, --tags TAG_EXPRESSION                Only run scenarios tagged with tags
                                            matching TAG_EXPRESSION.
 
@@ -52,8 +60,8 @@ Options:
 
   -w, --wip                                Fail if there are any passing
                                            scenarios.
-  
-    
+
+
       --order                              Run the scenarios in a different
                                            order. The options are 'reverse' and
                                            'random'. In case of 'random' order
