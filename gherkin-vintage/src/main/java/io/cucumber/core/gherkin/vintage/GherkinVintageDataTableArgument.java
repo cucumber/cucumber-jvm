@@ -11,9 +11,15 @@ final class GherkinVintageDataTableArgument implements DataTableArgument {
     private final CellView cells;
     private final int line;
 
-    GherkinVintageDataTableArgument(PickleTable table) {
+    GherkinVintageDataTableArgument(PickleTable table, int lineHint) {
         this.cells = new CellView(table);
-        this.line = table.getLocation().getLine();
+        // Work around for broken table.getLocation.
+        // TODO: Deprecate DataTableArgument.getLine
+        if (table.getRows().size() > 0 && table.getRows().get(0).getCells().size() > 0) {
+            this.line = table.getLocation().getLine();
+        } else {
+            this.line = lineHint;
+        }
     }
 
     @Override
