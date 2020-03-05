@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [5.4.2] (2020-03-05)
+
+### Fixed
+ * [Gherkin] Fix NPE on empty table ([#1912](https://github.com/cucumber/cucumber-jvm/issues/1912), [#1913](https://github.com/cucumber/cucumber-jvm/pull/1913) M.P. Korstanje)
+ * [Java8] update to net.jodah:typetools:0.6.2 ([#1908](https://github.com/cucumber/cucumber-jvm/pull/1908) John Patrick)
+    * Adds an automatic modulename to `type-tools`.
+ * [Spring] Do not reuse generic application context between scenarios ([#1905](https://github.com/cucumber/cucumber-jvm/pull/1905) M.P. Korstanje)
+
 ## [5.4.1] (2020-02-27)
 
 ### Fixed
@@ -1322,7 +1330,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...master
+[5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2
 [5.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...v5.4.1
 [5.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.3.0...v5.4.0
 [5.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...v5.3.0
