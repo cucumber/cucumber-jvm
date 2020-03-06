@@ -140,6 +140,9 @@ public class GlueAdaptorTest {
             () -> assertThat(dataTableTypeDefinition, notNullValue()),
             () -> assertThat(parameterTypeDefinition.parameterType().getRegexps(), is(singletonList("pattern"))),
             () -> assertThat(parameterTypeDefinition.parameterType().getName(), is("name")),
+            () -> assertThat(parameterTypeDefinition.parameterType().preferForRegexpMatch(), is(true)),
+            () -> assertThat(parameterTypeDefinition.parameterType().useForSnippets(), is(true)),
+            () -> assertThat(parameterTypeDefinition.parameterType().useRegexpMatchAsStrongTypeHint(), is(false)),
             () -> assertThat(afterStepHook, notNullValue()),
             () -> assertThat(beforeStepHook, notNullValue()),
             () -> assertThat(afterHook, notNullValue()),
@@ -174,7 +177,7 @@ public class GlueAdaptorTest {
         return "data_table_type";
     }
 
-    @ParameterType(value = "pattern", name = "name")
+    @ParameterType(value = "pattern", name = "name", preferForRegexMatch = true, useForSnippets = true, useRegexpMatchAsStrongTypeHint = false)
     public String parameter_type(String fromValue) {
         return "parameter_type";
     }

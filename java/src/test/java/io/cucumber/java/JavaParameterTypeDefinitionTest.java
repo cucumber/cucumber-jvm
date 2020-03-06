@@ -33,7 +33,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void can_define_parameter_type_converters_with_one_capture_group() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_one_capture_group_to_string", String.class);
-        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup);
+        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "(.*)", method, false, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_one_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test");
@@ -47,7 +47,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void can_define_parameter_type_converters_with_two_capture_groups() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_two_capture_group_to_string", String.class, String.class);
-        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "([^ ]*) ([^ ]*)", method, false, false, lookup);
+        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "([^ ]*) ([^ ]*)", method, false, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_two_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test test");
@@ -61,7 +61,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void can_define_parameter_type_converters_with_var_args() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_varargs_capture_group_to_string", String[].class);
-        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "([^ ]*) ([^ ]*)", method, false, false, lookup);
+        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "([^ ]*) ([^ ]*)", method, false, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_varargs_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test test");
@@ -75,7 +75,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void arguments_must_match_captured_groups() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_two_capture_group_to_string", String.class, String.class);
-        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", ".*", method, false, false, lookup);
+        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", ".*", method, false, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_two_capture_group_to_string}");
         List<Argument<?>> test = cucumberExpression.match("test");
@@ -86,7 +86,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void converter_must_have_return_type() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_capture_group_to_void", String.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, false, lookup));
     }
 
     public void convert_capture_group_to_void(String all) {
@@ -95,7 +95,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void converter_may_have_non_generic_return_type() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_capture_group_to_optional_string", String.class);
-        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup);
+        JavaParameterTypeDefinition definition = new JavaParameterTypeDefinition("", "(.*)", method, false, false, false, lookup);
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry).createExpression("{convert_capture_group_to_optional_string}");
         List<Argument<?>> args = cucumberExpression.match("convert_capture_group_to_optional_string");
@@ -109,7 +109,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void converter_must_have_at_least_one_argument() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("convert_nothing_to_string");
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, false, lookup));
     }
 
     public String convert_nothing_to_string() {
@@ -119,7 +119,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void converter_must_have_string_arguments() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("converts_object_to_string", Object.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, false, lookup));
     }
 
     public String converts_object_to_string(Object other) {
@@ -129,7 +129,7 @@ class JavaParameterTypeDefinitionTest {
     @Test
     void converter_must_have_all_string_arguments() throws NoSuchMethodException {
         Method method = JavaParameterTypeDefinitionTest.class.getMethod("converts_objects_to_string", String.class, Object.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, lookup));
+        assertThrows(InvalidMethodSignatureException.class, () -> new JavaParameterTypeDefinition("", "(.*)", method, false, false, false, lookup));
     }
 
     public String converts_objects_to_string(String all, Object other) {

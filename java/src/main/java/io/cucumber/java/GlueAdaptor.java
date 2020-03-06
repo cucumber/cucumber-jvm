@@ -43,7 +43,8 @@ final class GlueAdaptor {
             String name = parameterType.name();
             boolean useForSnippets = parameterType.useForSnippets();
             boolean preferForRegexMatch = parameterType.preferForRegexMatch();
-            glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, lookup));
+            boolean useRegexpMatchAsStrongTypeHint = parameterType.useRegexpMatchAsStrongTypeHint();
+            glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, useRegexpMatchAsStrongTypeHint, lookup));
         } else if (annotationType.equals(DataTableType.class)) {
             DataTableType dataTableType = (DataTableType) annotation;
             glue.addDataTableType(new JavaDataTableTypeDefinition(method, lookup, dataTableType.replaceWithEmptyString()));
