@@ -13,6 +13,10 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +42,14 @@ public final class UsageFormatter implements Plugin, EventListener {
      */
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public UsageFormatter(Appendable out) {
+        this.out = new NiceAppendable(out);
+    }
+
+    public UsageFormatter(URL url) throws IOException {
+        this.out = IO.openNiceAppendable(url);
+    }
+
+    public UsageFormatter(PrintStream out) {
         this.out = new NiceAppendable(out);
     }
 

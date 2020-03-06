@@ -7,14 +7,14 @@ import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
+import io.cucumber.core.plugin.JSONFormatter;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
@@ -67,7 +68,7 @@ class RuntimeTest {
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     @Test
-    void runs_feature_with_json_formatter() {
+    void runs_feature_with_json_formatter() throws IOException {
         final Feature feature = TestFeatureParser.parse("test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
@@ -76,7 +77,7 @@ class RuntimeTest {
             "    When s\n");
         StringBuilder out = new StringBuilder();
 
-        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
+        Plugin jsonFormatter = new JSONFormatter(out);
 
         FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
         Runtime.builder()

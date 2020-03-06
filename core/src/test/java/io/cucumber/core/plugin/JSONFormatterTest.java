@@ -50,7 +50,7 @@ class JSONFormatterTest {
     private Duration stepDuration = Duration.ZERO;
 
     @Test
-    void featureWithOutlineTest() {
+    void featureWithOutlineTest() throws IOException {
         List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature");
         String actual = runFeaturesWithFormatter(featurePaths);
         InputStream resourceAsStream = getClass().getResourceAsStream("JSONPrettyFormatterTest.json");
@@ -73,7 +73,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_an_undefined_step() {
+    void should_format_scenario_with_an_undefined_step() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -122,7 +122,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_passed_step() {
+    void should_format_scenario_with_a_passed_step() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -176,7 +176,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_failed_step() {
+    void should_format_scenario_with_a_failed_step() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -231,7 +231,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_outline_with_one_example() {
+    void should_format_scenario_outline_with_one_example() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Fruit party\n" +
             "\n" +
@@ -288,7 +288,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_feature_with_background() {
+    void should_format_feature_with_background() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -417,7 +417,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_feature_and_scenario_with_tags() {
+    void should_format_feature_and_scenario_with_tags() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "@Party @Banana\n" +
             "Feature: Banana party\n" +
@@ -500,7 +500,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_hooks() {
+    void should_format_scenario_with_hooks() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -580,7 +580,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_add_step_hooks_to_step() {
+    void should_add_step_hooks_to_step() throws IOException {
         Feature feature = TestFeatureParser.parse("file:path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -717,7 +717,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_handle_write_from_a_hook() {
+    void should_handle_write_from_a_hook() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -788,7 +788,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_handle_embed_from_a_hook() {
+    void should_handle_embed_from_a_hook() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -862,7 +862,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_handle_embed_with_name_from_a_hook() {
+    void should_handle_embed_with_name_from_a_hook() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -937,7 +937,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_step_with_a_doc_string() {
+    void should_format_scenario_with_a_step_with_a_doc_string() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -998,7 +998,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() {
+    void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -1060,7 +1060,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_step_with_a_data_table() {
+    void should_format_scenario_with_a_step_with_a_data_table() throws IOException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -1130,7 +1130,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_handle_several_features() {
+    void should_handle_several_features() throws IOException {
         Feature feature1 = TestFeatureParser.parse("path/test1.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -1246,7 +1246,7 @@ class JSONFormatterTest {
         };
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
-        Appendable stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Runtime.builder()
@@ -1265,7 +1265,7 @@ class JSONFormatterTest {
     }
 
 
-    private String runFeaturesWithFormatter(final List<String> featurePaths) {
+    private String runFeaturesWithFormatter(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getTagExpression()).thenReturn("");
 
@@ -1278,7 +1278,7 @@ class JSONFormatterTest {
         };
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
-        Appendable stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
         Runtime.builder()
             .withRuntimeOptions(
@@ -1295,7 +1295,7 @@ class JSONFormatterTest {
         return stringBuilder.toString();
     }
 
-    private String runFeaturesWithFormatter() {
+    private String runFeaturesWithFormatter() throws IOException {
         final StringBuilder report = new StringBuilder();
 
         TestHelper.builder()

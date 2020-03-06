@@ -6,6 +6,7 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static java.time.Duration.ZERO;
@@ -16,7 +17,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 class JsonParallelRuntimeTest {
 
     @Test
-    void testSingleFeature() {
+    void testSingleFeature() throws IOException {
         StringBuilder parallel = new StringBuilder();
 
         Runtime.builder()
@@ -51,7 +52,7 @@ class JsonParallelRuntimeTest {
     }
 
     @Test
-    void testMultipleFeatures() {
+    void testMultipleFeatures() throws IOException {
         StringBuilder parallel = new StringBuilder();
 
         Runtime.builder()

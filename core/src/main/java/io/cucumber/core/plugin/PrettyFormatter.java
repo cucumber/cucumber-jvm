@@ -16,9 +16,12 @@ import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +40,18 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private final Map<UUID, Integer> commentStartIndex = new HashMap<>();
 
     private final NiceAppendable out;
-    private Formats formats;
+    private Formats formats = new AnsiFormats();
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public PrettyFormatter(Appendable out) {
+    public PrettyFormatter(URL url) throws IOException {
+        this.out = IO.openNiceAppendable(url);
+    }
+
+    public PrettyFormatter(PrintStream out) {
         this.out = new NiceAppendable(out);
-        this.formats = new AnsiFormats();
+    }
+
+    public PrettyFormatter(Writer out) {
+        this.out = new NiceAppendable(out);
     }
 
     @Override

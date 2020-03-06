@@ -9,6 +9,9 @@ import io.cucumber.plugin.event.WriteEvent;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +36,12 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     private final NiceAppendable out;
     private boolean monochrome = false;
 
-    public ProgressFormatter(Appendable appendable) {
-        out = new NiceAppendable(appendable);
+    public ProgressFormatter(URL url) throws IOException {
+        this.out = IO.openNiceAppendable(url);
+    }
+
+    public ProgressFormatter(PrintStream out) throws IOException {
+        this.out = new NiceAppendable(out);
     }
 
     @Override

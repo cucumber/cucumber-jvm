@@ -9,6 +9,7 @@ import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
@@ -337,7 +338,7 @@ final class TestNGFormatterTest {
 
     private String runFeaturesWithFormatter(boolean strict) throws IOException {
         final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
-        final TestNGFormatter formatter = new TestNGFormatter(tempFile.toURI().toURL());
+        final TestNGFormatter formatter = createTestNGFormatter(tempFile);
         formatter.setStrict(strict);
 
         TestHelper.builder()
@@ -353,6 +354,10 @@ final class TestNGFormatterTest {
             .run();
 
         return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
+    }
+
+    private TestNGFormatter createTestNGFormatter(final File report) throws IOException {
+        return new TestNGFormatter(new UTF8OutputStreamWriter(new FileOutputStream(report)));
     }
 
     private static class TestNGException extends Exception {

@@ -35,20 +35,19 @@ import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
 public final class HTMLFormatter implements EventListener {
@@ -73,7 +72,7 @@ public final class HTMLFormatter implements EventListener {
     };
 
     private final TestSourcesModel testSources = new TestSourcesModel();
-    private final URL htmlReportDir;
+    private final File reportDir;
     private final NiceAppendable jsOut;
 
     private boolean firstFeature = true;
@@ -84,13 +83,20 @@ public final class HTMLFormatter implements EventListener {
     private int embeddedIndex;
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public HTMLFormatter(URL htmlReportDir) {
-        this(htmlReportDir, createJsOut(htmlReportDir));
+    public HTMLFormatter(File reportDir)  {
+        if (!reportDir.isDirectory()) {
+            throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s", getClass().getName(), reportDir.getAbsolutePath()));
+        }
+        this.reportDir = reportDir;
+        this.jsOut = createJsOut(reportDir);
     }
 
-    HTMLFormatter(URL htmlReportDir, NiceAppendable jsOut) {
-        this.htmlReportDir = htmlReportDir;
-        this.jsOut = jsOut;
+    HTMLFormatter(File reportDir, Appendable jsOut) {
+        if (!reportDir.isDirectory()) {
+            throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s", getClass().getName(), reportDir.getAbsolutePath()));
+        }
+        this.reportDir = reportDir;
+        this.jsOut = new NiceAppendable(jsOut);
     }
 
     @Override
@@ -174,7 +180,7 @@ public final class HTMLFormatter implements EventListener {
             String extension = MIME_TYPES_EXTENSIONS.get(mediaType);
             if (extension != null) {
                 StringBuilder fileName = new StringBuilder("embedded").append(embeddedIndex++).append(".").append(extension);
-                writeBytesToURL(event.getData(), toUrl(fileName.toString()));
+                writeBytesToFile(event.getData(), fileName.toString());
                 jsFunctionCall("embedding", mediaType, fileName, event.getName());
             }
         }
@@ -433,7 +439,7 @@ public final class HTMLFormatter implements EventListener {
     }
 
     private void copyReportFiles() {
-        if (htmlReportDir == null) {
+        if (reportDir == null) {
             return;
         }
         for (String textAsset : TEXT_ASSETS) {
@@ -442,7 +448,7 @@ public final class HTMLFormatter implements EventListener {
                 throw new CucumberException("Couldn't find " + textAsset + ". Is cucumber-html on your classpath? Make sure you have the right version.");
             }
             String fileName = new File(textAsset).getName();
-            writeStreamToURL(textAssetStream, toUrl(fileName));
+            copyStream(textAssetStream, makeOutputStream(fileName));
         }
     }
 
@@ -453,17 +459,7 @@ public final class HTMLFormatter implements EventListener {
         return stringWriter.toString();
     }
 
-    private URL toUrl(String fileName) {
-        try {
-            return new URL(htmlReportDir, fileName);
-        } catch (IOException e) {
-            throw new CucumberException(e);
-        }
-    }
-
-    private static void writeStreamToURL(InputStream in, URL url) {
-        OutputStream out = createReportFileOutputStream(url);
-
+    private static void copyStream(InputStream in, OutputStream out) {
         byte[] buffer = new byte[16 * 1024];
         try {
             int len = in.read(buffer);
@@ -478,29 +474,26 @@ public final class HTMLFormatter implements EventListener {
         }
     }
 
-    private static void writeBytesToURL(byte[] buf, URL url) throws CucumberException {
-        OutputStream out = createReportFileOutputStream(url);
-        try {
+    private static void writeBytesToFile(byte[] buf, String file) {
+        try (OutputStream out = new FileOutputStream(file)) {
             out.write(buf);
-        } catch (IOException e) {
-            throw new CucumberException("Unable to write to report file item: ", e);
-        } finally {
-            closeQuietly(out);
-        }
-    }
-
-    private static NiceAppendable createJsOut(URL htmlReportDir) {
-        try {
-            return new NiceAppendable(new OutputStreamWriter(createReportFileOutputStream(new URL(htmlReportDir, JS_REPORT_FILENAME)), UTF_8));
         } catch (IOException e) {
             throw new CucumberException(e);
         }
     }
 
-    private static OutputStream createReportFileOutputStream(URL url) {
+    private static NiceAppendable createJsOut(File htmlReportDir) {
         try {
-            return new URLOutputStream(url);
-        } catch (IOException e) {
+            return new NiceAppendable(new UTF8OutputStreamWriter(new FileOutputStream(new File(htmlReportDir, JS_REPORT_FILENAME))));
+        } catch (FileNotFoundException e) {
+            throw new CucumberException(e);
+        }
+    }
+
+    private OutputStream makeOutputStream(String fileName) {
+        try {
+            return new FileOutputStream(new File(reportDir, fileName));
+        } catch (FileNotFoundException e) {
             throw new CucumberException(e);
         }
     }

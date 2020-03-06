@@ -12,6 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 
@@ -24,31 +26,22 @@ import static java.util.Arrays.asList;
  * @see Plugin for specific requirements
  */
 public final class PluginFactory {
-    private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{String.class, Appendable.class, URI.class, URL.class, File.class};
+    private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{
+        String.class,
+        File.class,
+        URI.class,
+        URL.class,
+        PrintStream.class
+    };
 
-    private String defaultOutFormatter = null;
+    private String formatterUsingDefaultOut = null;
 
-    private Appendable defaultOut = new PrintStream(System.out) {
+    private PrintStream defaultOut = new PrintStream(System.out) {
         @Override
         public void close() {
             // We have no intention to close System.out
         }
     };
-
-    static URL toURL(String pathOrUrl) {
-        try {
-            if (!pathOrUrl.endsWith("/")) {
-                pathOrUrl = pathOrUrl + "/";
-            }
-            if (pathOrUrl.matches("^(file|http|https):.*")) {
-                return new URL(pathOrUrl);
-            } else {
-                return new URL("file:" + pathOrUrl);
-            }
-        } catch (MalformedURLException e) {
-            throw new CucumberException("Bad URL:" + pathOrUrl, e);
-        }
-    }
 
     Plugin create(Options.Plugin plugin) {
         try {
@@ -59,21 +52,42 @@ public final class PluginFactory {
     }
 
     private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String argument) throws IOException, URISyntaxException {
-        Constructor<T> single = findSingleArgConstructor(pluginClass);
-        Constructor<T> empty = findEmptyConstructor(pluginClass);
+        Map<Class<?>, Constructor<T>> singleArgConstructors = findSingleArgConstructors(pluginClass);
 
-        if (single != null) {
-            Object ctorArg = convertOrNull(argument, single.getParameterTypes()[0], pluginString);
-            if (ctorArg != null)
-                return newInstance(single, ctorArg);
+        if (singleArgConstructors.isEmpty()) {
+            Constructor<T> emptyConstructor = findEmptyConstructor(pluginClass);
+            if (emptyConstructor == null) {
+                throw new CucumberException(String.format("%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
+            } else if (argument != null) {
+                throw new CucumberException(String.format("Cannot pass argument %s to empty constructor for %s", argument, pluginClass));
+            } else {
+                return newInstance(emptyConstructor);
+            }
         }
-        if (argument == null && empty != null) {
-            return newInstance(empty);
-        }
-        if (single != null)
-            throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:output", pluginString, pluginString));
 
-        throw new CucumberException(String.format("%s must have a constructor that is either empty or a single arg of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
+        if (argument == null) {
+            if (formatterUsingDefaultOut != null) {
+                throw new CucumberException(String.format("Only one plugin can use STDOUT, now both %s and %s use it. " +
+                    "If you use more than one plugin you must specify output path with %s:DIR|FILE|URL", formatterUsingDefaultOut, pluginString, pluginString));
+            }
+            Constructor<T> printStreamConstructor = singleArgConstructors.get(PrintStream.class);
+            if (printStreamConstructor != null) {
+                return newInstance(printStreamConstructor, defaultOut);
+            } else {
+                throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString, pluginString));
+            }
+        }
+
+        for (Map.Entry<Class<?>, Constructor<T>> constructorEntry : singleArgConstructors.entrySet()) {
+            Class<?> ctorArgType = constructorEntry.getKey();
+            if (!PrintStream.class.equals(ctorArgType)) {
+                Object ctorArg = convert(argument, ctorArgType, pluginString);
+                Constructor<T> ctor = constructorEntry.getValue();
+                return newInstance(ctor, ctorArg);
+            }
+        }
+
+        throw new CucumberException(String.format("Sorry there was nothing I could do%s", "!"));
     }
 
     private <T extends Plugin> T newInstance(Constructor<T> constructor, Object... ctorArgs) {
@@ -86,19 +100,19 @@ public final class PluginFactory {
         }
     }
 
-    private Object convertOrNull(String arg, Class<?> ctorArgClass, String formatterString) throws IOException, URISyntaxException {
+    private Object convert(String arg, Class<?> ctorArgClass, String pluginString) throws IOException, URISyntaxException {
         if (arg == null) {
-            if (ctorArgClass.equals(Appendable.class)) {
-                return defaultOutOrFailIfAlreadyUsed(formatterString);
+            if (ctorArgClass.equals(PrintStream.class)) {
+                return defaultOutOrFailIfAlreadyUsed(pluginString);
             } else {
                 return null;
             }
         }
         if (ctorArgClass.equals(URI.class)) {
-            return new URI(arg);
+            return makeURL(arg).toURI();
         }
         if (ctorArgClass.equals(URL.class)) {
-            return toURL(arg);
+            return makeURL(arg);
         }
         if (ctorArgClass.equals(File.class)) {
             return new File(arg);
@@ -106,28 +120,30 @@ public final class PluginFactory {
         if (ctorArgClass.equals(String.class)) {
             return arg;
         }
-        if (ctorArgClass.equals(Appendable.class)) {
-            return new UTF8OutputStreamWriter(new URLOutputStream(toURL(arg)));
-        }
-        return null;
+        throw new CucumberException(String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
     }
 
-    private <T> Constructor<T> findSingleArgConstructor(Class<T> pluginClass) {
-        Constructor<T> constructor = null;
+    private URL makeURL(String arg) throws MalformedURLException {
+        if (arg.matches("^(file|http|https):.*")) {
+            return new URL(arg);
+        } else {
+            return new URL("file:" + arg);
+        }
+    }
+
+    private <T> Map<Class<?>, Constructor<T>> findSingleArgConstructors(Class<T> pluginClass) {
+        Map<Class<?>, Constructor<T>> result = new HashMap<>();
+
         for (Class<?> ctorArgClass : CTOR_PARAMETERS) {
             try {
-                Constructor<T> candidate = pluginClass.getConstructor(ctorArgClass);
-                if (constructor != null) {
-                    throw new CucumberException(String.format("Plugin %s should only define a single one-argument constructor", pluginClass.getName()));
-                }
-                constructor = candidate;
+                result.put(ctorArgClass, pluginClass.getConstructor(ctorArgClass));
             } catch (NoSuchMethodException ignore) {
             }
         }
-        return constructor;
+        return result;
     }
 
-    private <T> Constructor<T> findEmptyConstructor(Class<T> pluginClass) {
+    private <T extends Plugin> Constructor<T> findEmptyConstructor(Class<T> pluginClass) {
         try {
             return pluginClass.getConstructor();
         } catch (NoSuchMethodException ignore) {
@@ -135,14 +151,14 @@ public final class PluginFactory {
         }
     }
 
-    private Appendable defaultOutOrFailIfAlreadyUsed(String formatterString) {
+    private PrintStream defaultOutOrFailIfAlreadyUsed(String formatterString) {
         try {
             if (defaultOut != null) {
-                defaultOutFormatter = formatterString;
+                formatterUsingDefaultOut = formatterString;
                 return defaultOut;
             } else {
                 throw new CucumberException("Only one plugin can use STDOUT, now both " +
-                    defaultOutFormatter + " and " + formatterString + " use it. " +
+                    formatterUsingDefaultOut + " and " + formatterString + " use it. " +
                     "If you use more than one plugin you must specify output path with PLUGIN:PATH_OR_URL");
             }
         } finally {
