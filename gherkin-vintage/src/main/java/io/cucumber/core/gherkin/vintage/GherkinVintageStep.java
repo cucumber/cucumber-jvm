@@ -22,24 +22,40 @@ final class GherkinVintageStep implements Step {
 
     GherkinVintageStep(PickleStep step, GherkinDocument document, GherkinDialect dialect, String previousGwtKeyWord, String uri) {
         this.step = step;
-        this.argument = extractArgument(step);
-        this.keyWord = extractKeyWord(document);
+        this.argument = extractArgument(step, getLine());
+        this.keyWord = extractKeyWord(document, getLine());
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
         this.uri = uri;
     }
 
-    private String extractKeyWord(GherkinDocument document) {
+    private static String extractKeyWord(GherkinDocument document, int stepLine) {
         return document.getFeature().getChildren().stream()
             .flatMap(scenarioDefinition -> scenarioDefinition.getSteps().stream())
-            .filter(step -> step.getLocation().getLine() == getLine())
+            .filter(step -> step.getLocation().getLine() == stepLine)
             .findFirst()
             .map(gherkin.ast.Step::getKeyword)
-            .orElseThrow(() ->  new IllegalStateException("GherkinDocument did not contain PickleStep"));
+            .orElseThrow(() -> new IllegalStateException("GherkinDocument did not contain PickleStep"));
+    }
+
+    private static Argument extractArgument(PickleStep pickleStep, int stepLine) {
+        if (pickleStep.getArgument().isEmpty()) {
+            return null;
+        }
+        gherkin.pickles.Argument argument = pickleStep.getArgument().get(0);
+        if (argument instanceof PickleString) {
+            PickleString docString = (PickleString) argument;
+            return new GherkinVintageDocStringArgument(docString);
+        }
+        if (argument instanceof PickleTable) {
+            PickleTable table = (PickleTable) argument;
+            return new GherkinVintageDataTableArgument(table, stepLine + 1);
+        }
+        return null;
     }
 
     private StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
-        if(StepType.isAstrix(keyWord)){
+        if (StepType.isAstrix(keyWord)) {
             return StepType.OTHER;
         }
         if (dialect.getGivenKeywords().contains(keyWord)) {
@@ -58,22 +74,6 @@ final class GherkinVintageStep implements Step {
             return StepType.BUT;
         }
         throw new IllegalStateException("Keyword " + keyWord + " was neither given, when, then, and, but nor *");
-    }
-
-    private Argument extractArgument(PickleStep pickleStep) {
-        if (pickleStep.getArgument().isEmpty()) {
-            return null;
-        }
-        gherkin.pickles.Argument argument = pickleStep.getArgument().get(0);
-        if (argument instanceof PickleString) {
-            PickleString docString = (PickleString) argument;
-            return new GherkinVintageDocStringArgument(docString);
-        }
-        if (argument instanceof PickleTable) {
-            PickleTable table = (PickleTable) argument;
-            return new GherkinVintageDataTableArgument(table);
-        }
-        return null;
     }
 
     @Override
