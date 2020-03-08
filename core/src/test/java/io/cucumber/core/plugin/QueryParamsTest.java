@@ -17,32 +17,32 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 class QueryParamsTest {
     @Test
-    public void it_generates_an_empty_map_for_null() throws UnsupportedEncodingException {
+    void it_generates_an_empty_map_for_null() throws UnsupportedEncodingException {
         Map<String, Set<String>> query = QueryParams.parse(null);
         assertThat(query, is(emptyMap()));
     }
 
     @Test
-    public void it_escapes_values() throws UnsupportedEncodingException {
+    void it_escapes_values() throws UnsupportedEncodingException {
         Map<String, Set<String>> query = QueryParams.parse("key=hello+%22world");
         assertThat(query.get("key"), is(equalTo(singleton("hello \"world"))));
     }
 
     @Test
-    public void it_parses_params_without_values() throws UnsupportedEncodingException {
+    void it_parses_params_without_values() throws UnsupportedEncodingException {
         Map<String, Set<String>> query = QueryParams.parse("foo=bar&zap&foo=baz");
         assertThat(query.get("zap"), is(equalTo(emptySet())));
         assertThat(query.get("x"), is(equalTo(null)));
     }
 
     @Test
-    public void it_parses_params_specfified_several_times() throws UnsupportedEncodingException {
+    void it_parses_params_specfified_several_times() throws UnsupportedEncodingException {
         Map<String, Set<String>> query = QueryParams.parse("foo=bar&zap&foo=baz");
         assertThat(query.get("foo"), is(equalTo(new HashSet<>(asList("bar", "baz")))));
     }
 
     @Test
-    public void it_generates_a_string() throws UnsupportedEncodingException {
+    void it_generates_a_string() throws UnsupportedEncodingException {
         Map<String, Set<String>> query1 = QueryParams.parse("foo=bar&zap&foo=baz");
         String queryString = QueryParams.toString(query1);
         System.out.println("queryString = " + queryString);
