@@ -12,8 +12,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -31,7 +33,10 @@ public final class PluginFactory {
         File.class,
         URI.class,
         URL.class,
-        PrintStream.class
+        // For formatters that want to print to STDOUT
+        PrintStream.class,
+        // Deprecated
+        Appendable.class
     };
 
     private String formatterUsingDefaultOut = null;
@@ -81,7 +86,7 @@ public final class PluginFactory {
         for (Map.Entry<Class<?>, Constructor<T>> constructorEntry : singleArgConstructors.entrySet()) {
             Class<?> ctorArgType = constructorEntry.getKey();
             if (!PrintStream.class.equals(ctorArgType)) {
-                Object ctorArg = convert(argument, ctorArgType, pluginString);
+                Object ctorArg = convert(argument, ctorArgType, pluginString, pluginClass);
                 Constructor<T> ctor = constructorEntry.getValue();
                 return newInstance(ctor, ctorArg);
             }
@@ -100,7 +105,7 @@ public final class PluginFactory {
         }
     }
 
-    private Object convert(String arg, Class<?> ctorArgClass, String pluginString) throws IOException, URISyntaxException {
+    private Object convert(String arg, Class<?> ctorArgClass, String pluginString, Class<?> pluginClass) throws IOException, URISyntaxException {
         if (arg == null) {
             if (ctorArgClass.equals(PrintStream.class)) {
                 return defaultOutOrFailIfAlreadyUsed(pluginString);
@@ -119,6 +124,14 @@ public final class PluginFactory {
         }
         if (ctorArgClass.equals(String.class)) {
             return arg;
+        }
+        if (ctorArgClass.equals(Appendable.class)) {
+            String recommendedParameters = Arrays.stream(CTOR_PARAMETERS)
+                .filter(c -> c != Appendable.class)
+                .map(Class::getName)
+                .collect(Collectors.joining(", "));
+            System.err.format("The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s", pluginClass.getName(), recommendedParameters);
+            return IO.openWriter(makeURL(arg));
         }
         throw new CucumberException(String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
     }

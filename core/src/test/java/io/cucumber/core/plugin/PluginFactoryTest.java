@@ -12,14 +12,17 @@ import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
 import static java.time.Duration.ZERO;
@@ -39,6 +42,12 @@ class PluginFactoryTest {
     void instantiates_junit_plugin_with_file_arg() throws IOException {
         Object plugin = fc.create(parse("junit:" + File.createTempFile("cucumber", "xml")));
         assertThat(plugin.getClass(), is(equalTo(JUnitFormatter.class)));
+    }
+
+    @Test
+    void instantiates_rerun_plugin_with_file_arg() throws IOException {
+        Object plugin = fc.create(parse("rerun:" + File.createTempFile("rerun", "txt")));
+        assertThat(plugin.getClass(), is(equalTo(RerunFormatter.class)));
     }
 
     @Test
@@ -129,14 +138,23 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_custom_file_plugin() {
-        WantsFile plugin = (WantsFile) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsFile:halp.txt"));
+        WantsFile plugin = (WantsFile) fc.create(parse(WantsFile.class.getName() + ":halp.txt"));
         assertThat(plugin.out, is(equalTo(new File("halp.txt"))));
     }
 
     @Test
     void instantiates_custom_string_arg_plugin() {
-        WantsString plugin = (WantsString) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsString:hello"));
+        WantsString plugin = (WantsString) fc.create(parse(WantsString.class.getName() + ":hello"));
         assertThat(plugin.arg, is(equalTo("hello")));
+    }
+
+    @Test
+    void instantiates_custom_deprecated_appendable_arg_plugin() throws IOException {
+        String tempFilePath = TempDir.createTempFile().getAbsolutePath();
+        WantsAppendable plugin = (WantsAppendable) fc.create(parse(WantsAppendable.class.getName() + ":" + tempFilePath));
+        plugin.writeAndClose("hello");
+        String written = new BufferedReader(new FileReader(tempFilePath)).lines().collect(Collectors.joining());
+        assertThat(written, is(equalTo("hello")));
     }
 
     @Test
@@ -171,6 +189,19 @@ class PluginFactoryTest {
 
         public WantsString(String arg) {
             this.arg = Objects.requireNonNull(arg);
+        }
+    }
+
+    public static class WantsAppendable extends StubFormatter {
+        public final NiceAppendable arg;
+
+        public WantsAppendable(Appendable arg) {
+            this.arg = new NiceAppendable(Objects.requireNonNull(arg));
+        }
+
+        public void writeAndClose(String s) {
+            this.arg.println(s);
+            this.arg.close();
         }
     }
 }
