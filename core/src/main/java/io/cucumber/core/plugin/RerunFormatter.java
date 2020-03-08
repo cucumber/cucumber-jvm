@@ -11,7 +11,9 @@ import io.cucumber.plugin.event.TestRunFinished;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,8 +32,12 @@ public final class RerunFormatter implements EventListener, StrictAware {
 
     private boolean isStrict = false;
 
-    public RerunFormatter(File out) throws FileNotFoundException {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(new FileOutputStream(out)));
+    public RerunFormatter(URL out) throws IOException {
+        this(IO.openWriter(out));
+    }
+
+    public RerunFormatter(Appendable out) {
+        this.out = new NiceAppendable(out);
     }
 
     @Override
