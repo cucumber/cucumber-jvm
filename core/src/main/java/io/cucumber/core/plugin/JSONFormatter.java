@@ -59,7 +59,6 @@ public final class JSONFormatter implements EventListener {
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JSONFormatter(URL url) throws IOException {
         this.out = IO.openNiceAppendable(url);
     }

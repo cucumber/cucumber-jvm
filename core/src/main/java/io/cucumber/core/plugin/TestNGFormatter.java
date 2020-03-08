@@ -34,6 +34,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -64,8 +65,11 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private final Map<URI, String> featuresNames = new HashMap<>();
     private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
 
-    @SuppressWarnings("WeakerAccess") // Used by plugin factory
-    public TestNGFormatter(Writer writer) {
+    public TestNGFormatter(URL url) throws IOException {
+        this(IO.openWriter(url));
+    }
+
+    TestNGFormatter(Writer writer) {
         this.writer = writer;
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();

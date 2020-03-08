@@ -35,13 +35,7 @@ public final class UsageFormatter implements Plugin, EventListener {
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
     private final NiceAppendable out;
 
-    /**
-     * Constructor
-     *
-     * @param out {@link Appendable} to print the result
-     */
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public UsageFormatter(Appendable out) {
+    UsageFormatter(Appendable out) {
         this.out = new NiceAppendable(out);
     }
 

@@ -8,6 +8,9 @@ import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,9 +30,8 @@ public final class RerunFormatter implements EventListener, StrictAware {
 
     private boolean isStrict = false;
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public RerunFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
+    public RerunFormatter(File out) throws FileNotFoundException {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(new FileOutputStream(out)));
     }
 
     @Override

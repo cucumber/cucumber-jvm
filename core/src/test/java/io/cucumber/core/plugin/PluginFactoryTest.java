@@ -163,6 +163,12 @@ class PluginFactoryTest {
         assertThat(plugin.getClass(), is(equalTo(TimelineFormatter.class)));
     }
 
+    @Test
+    void instantiates_wants_nothing_plugin() {
+        WantsNothing plugin = (WantsNothing) fc.create(parse(WantsNothing.class.getName()));
+        assertThat(plugin.getClass(), is(equalTo(WantsNothing.class)));
+    }
+
     public static class WantsPrintStreamOrUri extends StubFormatter {
         public URI uri;
         public PrintStream printStream;
@@ -203,5 +209,8 @@ class PluginFactoryTest {
             this.arg.println(s);
             this.arg.close();
         }
+    }
+
+    public static class WantsNothing extends StubFormatter {
     }
 }
