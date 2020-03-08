@@ -113,22 +113,22 @@ class PluginFactoryTest {
         }
     }
 
-//    @Test
-//    void instantiates_single_custom_appendable_plugin_with_stdout() {
-//        WantsPrintStreamOrUri plugin = (WantsPrintStreamOrUri) fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
-//        assertThat(plugin.out, is(instanceOf(PrintStream.class)));
-//
-//        Executable testMethod = () -> fc.create(parse("io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable"));
-//        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-//        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-//            "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable " +
-//                "and io.cucumber.core.plugin.PluginFactoryTest$WantsAppendable use it. " +
-//                "If you use more than one plugin you must specify output path with PLUGIN:PATH_OR_URL"
-//        )));
-//    }
+    @Test
+    void instantiates_single_custom_appendable_plugin_with_stdout() {
+        WantsPrintStreamOrUri plugin1 = (WantsPrintStreamOrUri) fc.create(parse(WantsPrintStreamOrUri.class.getName()));
+        assertThat(plugin1.printStream, is(not(nullValue())));
+
+        Executable testMethod = () -> fc.create(parse(WantsPrintStreamOrUri.class.getName()));
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+            "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsPrintStreamOrUri " +
+                "and io.cucumber.core.plugin.PluginFactoryTest$WantsPrintStreamOrUri use it. " +
+                "If you use more than one plugin you must specify output path with io.cucumber.core.plugin.PluginFactoryTest$WantsPrintStreamOrUri:DIR|FILE|URL"
+        )));
+    }
 
     @Test
-    void instantiates_plugin_with_stdout_then_uri() throws IOException {
+    void instantiates_plugin_with_stdout_then_uri() {
         WantsPrintStreamOrUri plugin1 = (WantsPrintStreamOrUri) fc.create(parse(WantsPrintStreamOrUri.class.getName()));
         assertThat(plugin1.printStream, is(not(nullValue())));
 

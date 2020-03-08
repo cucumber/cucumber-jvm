@@ -77,7 +77,8 @@ public final class PluginFactory {
             }
             Constructor<T> printStreamConstructor = singleArgConstructors.get(PrintStream.class);
             if (printStreamConstructor != null) {
-                return newInstance(printStreamConstructor, defaultOut);
+                Object ctorArg = convert(argument, PrintStream.class, pluginString, pluginClass);
+                return newInstance(printStreamConstructor, ctorArg);
             } else {
                 throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString, pluginString));
             }
