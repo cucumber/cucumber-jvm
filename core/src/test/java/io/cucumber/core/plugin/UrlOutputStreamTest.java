@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 @ExtendWith({VertxExtension.class})
-public class UrlOutputStream2Test {
+public class UrlOutputStreamTest {
     private int port;
     private IOException exception;
 
@@ -168,18 +168,14 @@ public class UrlOutputStream2Test {
                         ctx.response().setChunked(true);
                         ctx.response().write(responseBody);
                         ctx.response().end();
-                        testContext.verify(() -> {
-                            assertThat(receivedBody, is(equalTo(expectedBody)));
-                        });
+                        testContext.verify(() -> assertThat(receivedBody, is(equalTo(expectedBody))));
                     });
                 });
             });
             vertx
                 .createHttpServer()
                 .requestHandler(router)
-                .listen(port, e -> {
-                    startPromise.complete();
-                });
+                .listen(port, e -> startPromise.complete());
         }
     }
 }
