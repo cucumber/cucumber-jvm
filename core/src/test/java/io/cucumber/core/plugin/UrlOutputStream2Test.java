@@ -56,6 +56,21 @@ public class UrlOutputStream2Test {
     }
 
     @Test
+    void throws_exception_for_redirects(Vertx vertx, VertxTestContext testContext) throws MalformedURLException, InterruptedException {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
+        URL url = new URL("http://localhost:" + port + "/redirect");
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+
+        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
+        assertThat(exception.getMessage(), is(equalTo("HTTP redirect not supported:\n" +
+            "> POST http://localhost:" + port + "/redirect\n" +
+            "< HTTP/1.1 301 Moved Permanently\n" +
+            "< content-length: 0\n" +
+            "< Location: /\n")));
+    }
+
+    @Test
     void streams_request_body_in_chunks(Vertx vertx, VertxTestContext testContext) throws MalformedURLException {
         String requestBody = makeOneKilobyteStringWithEmoji();
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
@@ -133,6 +148,12 @@ public class UrlOutputStream2Test {
         public void start(Promise<Void> startPromise) {
             Router router = Router.router(vertx);
             router.route().handler(ctx -> {
+                if(ctx.request().uri().equals("/redirect")) {
+                    ctx.response().setStatusCode(301);
+                    ctx.response().headers().add("Location", "/");
+                    ctx.response().end();
+                    return;
+                }
                 ctx.response().setStatusCode(statusCode);
 
                 testContext.verify(() -> {

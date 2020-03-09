@@ -65,6 +65,7 @@ class URLOutputStream extends OutputStream {
         urlConnection.setRequestMethod(this.method);
         urlConnection.setDoOutput(true);
         urlConnection.setChunkedStreamingMode(CHUNK_LENGTH);
+        urlConnection.setInstanceFollowRedirects(false);
         requestHeaders = urlConnection.getRequestProperties();
         outputStream = urlConnection.getOutputStream();
     }
@@ -93,13 +94,14 @@ class URLOutputStream extends OutputStream {
     public void close() throws IOException {
         outputStream.close();
         int httpStatus = urlConnection.getResponseCode();
+        boolean redirect = httpStatus >= 300 && httpStatus < 400;
         boolean error = httpStatus >= 400;
         try (InputStream inputStream = error ? urlConnection.getErrorStream() : urlConnection.getInputStream()) {
             Map<String, List<String>> responseHeaders = urlConnection.getHeaderFields();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, UTF_8))) {
                 String responseBody = br.lines().collect(Collectors.joining(System.lineSeparator()));
-                if (error) {
-                    String message = generateCurlLikeMessage(this.method, this.url, this.requestHeaders, responseHeaders, responseBody);
+                if (error || redirect) {
+                    String message = generateCurlLikeMessage(this.method, this.url, this.requestHeaders, responseHeaders, responseBody, redirect);
                     throw new IOException(message);
                 }
             }
@@ -111,10 +113,11 @@ class URLOutputStream extends OutputStream {
         URL url,
         Map<String, List<String>> requestHeaders,
         Map<String, List<String>> responseHeaders,
-        String responseBody
-    ) {
+        String responseBody,
+        boolean redirect) {
         return String.format(
-            "HTTP request failed:\n> %s %s\n%s%s\n%s",
+            "%s:\n> %s %s\n%s%s\n%s",
+            redirect ? "HTTP redirect not supported" : "HTTP request failed",
             method,
             url,
             headersToString("> ", requestHeaders),
