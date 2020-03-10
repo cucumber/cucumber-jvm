@@ -44,8 +44,8 @@ import static org.mockito.Mockito.mock;
     }
 
     @Test
-     void instantiates_html_plugin_with_dir_arg() throws IOException {
-        Object plugin = fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath()));
+     void instantiates_html_plugin_with_file_arg() throws IOException {
+        Object plugin = fc.create(parse("html:" + File.createTempFile("cucumber", "xml")));
         assertThat(plugin.getClass(), is(equalTo(HTMLFormatter.class)));
     }
 
