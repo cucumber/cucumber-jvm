@@ -17,6 +17,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [5.5.0] (2020-03-12)
+
+### Added
+ * [Java] Add `@ParameterType(useRegexpMatchAsStrongTypeHint=true/false)` ([#1905](https://github.com/cucumber/cucumber-jvm/pull/1914) M.P. Korstanje)
+
+### Fixed
+ * [TestNG] Fix concurrent modification of events ([#1919](https://github.com/cucumber/cucumber-jvm/pull/1919) M.P. Korstanje)
+   * Resolves an NPE when running TestNG with `parallel="methods"`
+
 ## [5.4.2] (2020-03-05)
 
 ### Fixed
@@ -1330,7 +1339,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...master
+[5.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...v5.5.0
 [5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2
 [5.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...v5.4.1
 [5.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.3.0...v5.4.0
