@@ -3,7 +3,6 @@ package io.cucumber.spring;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
@@ -32,7 +31,7 @@ final class SpringBackend implements Backend {
             .map(ClasspathSupport::packageName)
             .map(classFinder::scanForClassesInPackage)
             .flatMap(Collection::stream)
-            .filter((Class clazz) -> clazz.getAnnotation(CucumberSpringTest.class) != null)
+            .filter((Class clazz) -> clazz.getAnnotation(CucumberContextConfiguration.class) != null)
             .forEach(container::addClass);
     }
 

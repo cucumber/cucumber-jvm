@@ -7,8 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Configure an application context class that Cucumber should use
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @API(status = API.Status.STABLE)
-public @interface CucumberSpringTest {
+public @interface CucumberContextConfiguration {
 }
