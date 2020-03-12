@@ -269,7 +269,7 @@ class PrettyFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
+        assertThat(runFeaturesWithFormatter(false), bytesContainsString("" +
             "  " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step" + AnsiEscapes.RESET));
     }
 
@@ -283,7 +283,7 @@ class PrettyFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
+        assertThat(runFeaturesWithFormatter(false), bytesContainsString("" +
             AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
     }
 
@@ -297,7 +297,7 @@ class PrettyFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("failed"));
 
-        assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
+        assertThat(runFeaturesWithFormatter(false), bytesContainsString("" +
             "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
     }
 

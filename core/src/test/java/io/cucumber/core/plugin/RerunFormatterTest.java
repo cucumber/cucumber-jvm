@@ -58,7 +58,7 @@ class RerunFormatterTest {
         stepsToResult.put("pending step", result("pending"));
         stepsToResult.put("undefined step", result("undefined"));
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:2:4:6\n"));
+        assertThat(runFeaturesWithFormatter(true), isBytesEqualTo("classpath:path/test.feature:2:4:6\n"));
     }
 
     @Test

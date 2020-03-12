@@ -6,6 +6,7 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.plugin.Plugin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -80,10 +81,11 @@ public final class PluginFactory {
                 throw new CucumberException(String.format("Only one plugin can use STDOUT, now both %s and %s use it. " +
                     "If you use more than one plugin you must specify output path with %s:DIR|FILE|URL", formatterUsingDefaultOut, pluginString, pluginString));
             }
-            Constructor<T> printStreamConstructor = singleArgConstructors.get(PrintStream.class);
-            if (printStreamConstructor != null) {
-                Object ctorArg = convert(argument, PrintStream.class, pluginString, pluginClass);
-                return newInstance(printStreamConstructor, ctorArg);
+            Class<OutputStream> stdOutConstructorArgument = OutputStream.class;
+            Constructor<T> constructor = singleArgConstructors.get(stdOutConstructorArgument);
+            if (constructor != null) {
+                Object ctorArg = convert(argument, stdOutConstructorArgument, pluginString, pluginClass);
+                return newInstance(constructor, ctorArg);
             } else {
                 throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString, pluginString));
             }
@@ -138,7 +140,7 @@ public final class PluginFactory {
                 .map(Class::getName)
                 .collect(Collectors.joining(", "));
             log.error(() -> String.format("The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s", pluginClass.getName(), recommendedParameters));
-            return openStream(makeURL(arg));
+            return new UTF8OutputStreamWriter(openStream(makeURL(arg)));
         }
         throw new CucumberException(String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
     }
@@ -152,8 +154,30 @@ public final class PluginFactory {
     }
 
     private static OutputStream openStream(URL url) throws IOException {
-        return url.getProtocol().equals("file") ? new FileOutputStream(url.getFile()) :
-            new URLOutputStream(url);
+        if (url.getProtocol().equals("file")) {
+            return createFileOutputStream(url);
+        }
+        return createUrlOutputStream(url);
+    }
+
+    private static URLOutputStream createUrlOutputStream(URL url) throws IOException {
+        if (!(url.getProtocol().equals("http") || url.getProtocol().equals("https"))) {
+            throw new IllegalArgumentException("URLOutputStream only works with http and https. The url is " + url);
+        }
+        return new URLOutputStream(url);
+    }
+
+    private static FileOutputStream createFileOutputStream(URL url) {
+        try {
+            return new FileOutputStream(url.getFile());
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException(String.format("" +
+                "Couldn't create a file output stream for %s.\n" +
+                "Make sure the the file isn't a directory.\n" +
+                "The details are in the stack trace below:", url),
+                e
+            );
+        }
     }
 
     private <T> Map<Class<?>, Constructor<T>> findSingleArgConstructors(Class<T> pluginClass) {

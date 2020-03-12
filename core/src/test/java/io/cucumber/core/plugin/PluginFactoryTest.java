@@ -15,17 +15,18 @@ import org.junit.jupiter.api.function.Executable;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.URI;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
 import static java.time.Duration.ZERO;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,18 +51,20 @@ class PluginFactoryTest {
         assertThat(plugin.getClass(), is(equalTo(RerunFormatter.class)));
     }
 
-     @Test
-     void instantiates_html_plugin_with_dir_arg() throws IOException {
-         Object plugin = fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath()));
-         assertThat(plugin.getClass(), is(equalTo(HTMLFormatter.class)));
-     }
+    @Test
+    void fails_to_instantiates_html_plugin_with_dir_arg() {
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath()))
+        );
+    }
 
     @Test
-    void fails_to_instantiate_html_plugin_without_dir_arg() {
-        Executable testMethod = () -> fc.create(parse("html"));
+    void fails_to_instantiate_plugin_that_wants_a_file_without_file_arg() {
+        Executable testMethod = () -> fc.create(parse(WantsFile.class.getName()));
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "You must supply an output argument to html. Like so: html:DIR|FILE|URL"
+            "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFile. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFile:DIR|FILE|URL"
         )));
     }
 
@@ -115,25 +118,16 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_single_custom_appendable_plugin_with_stdout() {
-        WantsPrintStreamOrUri plugin1 = (WantsPrintStreamOrUri) fc.create(parse(WantsPrintStreamOrUri.class.getName()));
+        WantsOutputStream plugin1 = (WantsOutputStream) fc.create(parse(WantsOutputStream.class.getName()));
         assertThat(plugin1.printStream, is(not(nullValue())));
 
-        Executable testMethod = () -> fc.create(parse(WantsPrintStreamOrUri.class.getName()));
+        Executable testMethod = () -> fc.create(parse(WantsOutputStream.class.getName()));
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsPrintStreamOrUri " +
-                "and io.cucumber.core.plugin.PluginFactoryTest$WantsPrintStreamOrUri use it. " +
-                "If you use more than one plugin you must specify output path with io.cucumber.core.plugin.PluginFactoryTest$WantsPrintStreamOrUri:DIR|FILE|URL"
+            "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream " +
+                "and io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream use it. " +
+                "If you use more than one plugin you must specify output path with io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream:DIR|FILE|URL"
         )));
-    }
-
-    @Test
-    void instantiates_plugin_with_stdout_then_uri() {
-        WantsPrintStreamOrUri plugin1 = (WantsPrintStreamOrUri) fc.create(parse(WantsPrintStreamOrUri.class.getName()));
-        assertThat(plugin1.printStream, is(not(nullValue())));
-
-        WantsPrintStreamOrUri plugin2 = (WantsPrintStreamOrUri) fc.create(parse(WantsPrintStreamOrUri.class.getName() + ":foo"));
-        assertThat(plugin2.uri, is(equalTo(URI.create("file:foo"))));
     }
 
     @Test
@@ -169,16 +163,11 @@ class PluginFactoryTest {
         assertThat(plugin.getClass(), is(equalTo(WantsNothing.class)));
     }
 
-    public static class WantsPrintStreamOrUri extends StubFormatter {
-        public URI uri;
-        public PrintStream printStream;
+    public static class WantsOutputStream extends StubFormatter {
+        public OutputStream printStream;
 
-        public WantsPrintStreamOrUri(PrintStream printStream) {
-            this.printStream = Objects.requireNonNull(printStream);
-        }
-
-        public WantsPrintStreamOrUri(URI uri) {
-            this.uri = Objects.requireNonNull(uri);
+        public WantsOutputStream(OutputStream outputStream) {
+            this.printStream = Objects.requireNonNull(outputStream);
         }
     }
 

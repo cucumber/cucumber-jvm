@@ -31,9 +31,6 @@ class URLOutputStream extends OutputStream {
     private final Map<String, List<String>> requestHeaders;
 
     URLOutputStream(URL url) throws IOException {
-        if (!url.getProtocol().startsWith("http")) {
-            throw new IllegalArgumentException("URLOutputStream only works with http and https. The url is " + url);
-        }
         this.method = "POST";
 
         // Set HTTP headers and method from query string
