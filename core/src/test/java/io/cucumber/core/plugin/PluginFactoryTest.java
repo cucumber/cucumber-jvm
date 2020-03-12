@@ -15,19 +15,19 @@ import org.junit.jupiter.api.function.Executable;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
 import static java.time.Duration.ZERO;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -63,7 +63,8 @@ class PluginFactoryTest {
     void fails_to_instantiate_plugin_that_wants_a_file_without_file_arg() {
         Executable testMethod = () -> fc.create(parse(WantsFile.class.getName()));
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+        actualThrown.printStackTrace();
+        assertThat(actualThrown.getMessage(), is(equalTo(
             "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFile. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFile:DIR|FILE|URL"
         )));
     }
@@ -143,11 +144,23 @@ class PluginFactoryTest {
     }
 
     @Test
+    void instantiates_file_or_empty_arg_plugin_with_arg() throws IOException {
+        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc.create(parse(WantsFileOrEmpty.class.getName() + ":" + File.createTempFile("blah", "txt")));
+        assertThat(plugin.out, is(notNullValue()));
+    }
+
+    @Test
+    void instantiates_file_or_empty_arg_plugin_without_arg() {
+        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc.create(parse(WantsFileOrEmpty.class.getName()));
+        assertThat(plugin.out, is(nullValue()));
+    }
+
+    @Test
     void instantiates_custom_deprecated_appendable_arg_plugin() throws IOException {
-        String tempFilePath = TempDir.createTempFile().getAbsolutePath();
-        WantsAppendable plugin = (WantsAppendable) fc.create(parse(WantsAppendable.class.getName() + ":" + tempFilePath));
+        String tempDirPath = TempDir.createTempFile().getAbsolutePath();
+        WantsAppendable plugin = (WantsAppendable) fc.create(parse(WantsAppendable.class.getName() + ":" + tempDirPath));
         plugin.writeAndClose("hello");
-        String written = new BufferedReader(new FileReader(tempFilePath)).lines().collect(Collectors.joining());
+        String written = new BufferedReader(new FileReader(tempDirPath)).lines().collect(Collectors.joining());
         assertThat(written, is(equalTo("hello")));
     }
 
@@ -163,6 +176,36 @@ class PluginFactoryTest {
         assertThat(plugin.getClass(), is(equalTo(WantsNothing.class)));
     }
 
+    @Test
+    void fails_to_instantiate_plugin_that_wants_too_much() {
+        Executable testMethod = () -> fc.create(parse(WantsTooMuch.class.getName()));
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        actualThrown.printStackTrace();
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "class io.cucumber.core.plugin.PluginFactoryTest$WantsTooMuch must have at least one empty constructor or a constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]"
+        )));
+    }
+
+    @Test
+    void fails_to_instantiate_plugin_that_declares_two_single_arg_constructors_when_argument_specified() {
+        Executable testMethod = () -> fc.create(parse(WantsFileOrURL.class.getName() + ":some_arg"));
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        actualThrown.printStackTrace();
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "class io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL must have exactly one constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]"
+        )));
+    }
+
+    @Test
+    void fails_to_instantiate_plugin_that_declares_two_single_arg_constructors_when_no_argument_specified() {
+        Executable testMethod = () -> fc.create(parse(WantsFileOrURL.class.getName()));
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        actualThrown.printStackTrace();
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL:DIR|FILE|URL"
+        )));
+    }
+
     public static class WantsOutputStream extends StubFormatter {
         public OutputStream printStream;
 
@@ -171,11 +214,31 @@ class PluginFactoryTest {
         }
     }
 
+    public static class WantsFileOrEmpty extends StubFormatter {
+        public File out = null;
+
+        public WantsFileOrEmpty(File out) {
+            this.out = Objects.requireNonNull(out);
+        }
+
+        public WantsFileOrEmpty() {
+        }
+    }
+
     public static class WantsFile extends StubFormatter {
         public final File out;
 
         public WantsFile(File out) {
             this.out = Objects.requireNonNull(out);
+        }
+    }
+
+    public static class WantsFileOrURL extends StubFormatter {
+        public WantsFileOrURL(File out) {
+            Objects.requireNonNull(out);
+        }
+        public WantsFileOrURL(URL out) {
+            Objects.requireNonNull(out);
         }
     }
 
@@ -201,5 +264,10 @@ class PluginFactoryTest {
     }
 
     public static class WantsNothing extends StubFormatter {
+    }
+
+    public static class WantsTooMuch extends StubFormatter {
+        public WantsTooMuch(String too, String much) {
+        }
     }
 }

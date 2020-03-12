@@ -45,7 +45,7 @@ public final class PluginFactory {
         Appendable.class
     };
 
-    private String formatterUsingDefaultOut = null;
+    private String pluginUsingDefaultOut = null;
 
     private PrintStream defaultOut = new PrintStream(System.out) {
         @Override
@@ -64,43 +64,27 @@ public final class PluginFactory {
 
     private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String argument) throws IOException, URISyntaxException {
         Map<Class<?>, Constructor<T>> singleArgConstructors = findSingleArgConstructors(pluginClass);
-
-        if (singleArgConstructors.isEmpty()) {
+        if (argument == null) {// No argument passed
+            Constructor<T> outputStreamConstructor = singleArgConstructors.get(OutputStream.class);
+            if (outputStreamConstructor != null) {
+                return newInstance(outputStreamConstructor, defaultOutOrFailIfAlreadyUsed(pluginString));
+            }
             Constructor<T> emptyConstructor = findEmptyConstructor(pluginClass);
-            if (emptyConstructor == null) {
-                throw new CucumberException(String.format("%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
-            } else if (argument != null) {
-                throw new CucumberException(String.format("Cannot pass argument %s to empty constructor for %s", argument, pluginClass));
-            } else {
+            if (emptyConstructor != null) {
                 return newInstance(emptyConstructor);
             }
-        }
-
-        if (argument == null) {
-            if (formatterUsingDefaultOut != null) {
-                throw new CucumberException(String.format("Only one plugin can use STDOUT, now both %s and %s use it. " +
-                    "If you use more than one plugin you must specify output path with %s:DIR|FILE|URL", formatterUsingDefaultOut, pluginString, pluginString));
-            }
-            Class<OutputStream> stdOutConstructorArgument = OutputStream.class;
-            Constructor<T> constructor = singleArgConstructors.get(stdOutConstructorArgument);
-            if (constructor != null) {
-                Object ctorArg = convert(argument, stdOutConstructorArgument, pluginString, pluginClass);
-                return newInstance(constructor, ctorArg);
-            } else {
+            if (!singleArgConstructors.isEmpty()) {
                 throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString, pluginString));
             }
+            throw new CucumberException(String.format("%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
         }
-
-        for (Map.Entry<Class<?>, Constructor<T>> constructorEntry : singleArgConstructors.entrySet()) {
-            Class<?> ctorArgType = constructorEntry.getKey();
-            if (!PrintStream.class.equals(ctorArgType)) {
-                Object ctorArg = convert(argument, ctorArgType, pluginString, pluginClass);
-                Constructor<T> ctor = constructorEntry.getValue();
-                return newInstance(ctor, ctorArg);
-            }
+        if (singleArgConstructors.size() != 1) {
+            throw new CucumberException(String.format("%s must have exactly one constructor that declares a single parameter of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
         }
-
-        throw new CucumberException(String.format("Sorry there was nothing I could do%s", "!"));
+        Map.Entry<Class<?>, Constructor<T>> singleArgConstructorEntry = singleArgConstructors.entrySet().iterator().next();
+        Class<?> parameterType = singleArgConstructorEntry.getKey();
+        Constructor<T> singleArgConstructor = singleArgConstructorEntry.getValue();
+        return newInstance(singleArgConstructor, convert(argument, parameterType, pluginString, pluginClass));
     }
 
     private <T extends Plugin> T newInstance(Constructor<T> constructor, Object... ctorArgs) {
@@ -155,7 +139,7 @@ public final class PluginFactory {
 
     private static OutputStream openStream(URL url) throws IOException {
         if (url.getProtocol().equals("file")) {
-            return createFileOutputStream(url);
+            return createFileOutputStream(new File(url.getFile()));
         }
         return createUrlOutputStream(url);
     }
@@ -167,14 +151,18 @@ public final class PluginFactory {
         return new URLOutputStream(url);
     }
 
-    private static FileOutputStream createFileOutputStream(URL url) {
+    private static FileOutputStream createFileOutputStream(File file) throws IOException {
         try {
-            return new FileOutputStream(url.getFile());
+            File parentFile = file.getParentFile();
+            if (parentFile != null) {
+                parentFile.mkdirs();
+            }
+            return new FileOutputStream(file);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException(String.format("" +
                 "Couldn't create a file output stream for %s.\n" +
                 "Make sure the the file isn't a directory.\n" +
-                "The details are in the stack trace below:", url),
+                "The details are in the stack trace below:", file),
                 e
             );
         }
@@ -200,15 +188,15 @@ public final class PluginFactory {
         }
     }
 
-    private PrintStream defaultOutOrFailIfAlreadyUsed(String formatterString) {
+    private PrintStream defaultOutOrFailIfAlreadyUsed(String pluginString) {
         try {
             if (defaultOut != null) {
-                formatterUsingDefaultOut = formatterString;
+                pluginUsingDefaultOut = pluginString;
                 return defaultOut;
             } else {
                 throw new CucumberException("Only one plugin can use STDOUT, now both " +
-                    formatterUsingDefaultOut + " and " + formatterString + " use it. " +
-                    "If you use more than one plugin you must specify output path with PLUGIN:PATH_OR_URL");
+                    pluginUsingDefaultOut + " and " + pluginString + " use it. " +
+                    "If you use more than one plugin you must specify output path with " + pluginString + ":DIR|FILE|URL");
             }
         } finally {
             defaultOut = null;
