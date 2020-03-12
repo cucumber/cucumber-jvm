@@ -6,9 +6,12 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -18,7 +21,7 @@ class JsonParallelRuntimeTest {
 
     @Test
     void testSingleFeature() throws IOException {
-        StringBuilder parallel = new StringBuilder();
+        final ByteArrayOutputStream parallelOut = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(
@@ -28,12 +31,12 @@ class JsonParallelRuntimeTest {
                         "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
                     .build()
             )
-            .withAdditionalPlugins(new JSONFormatter(parallel))
+            .withAdditionalPlugins(new JSONFormatter(parallelOut))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
-        StringBuilder serial = new StringBuilder();
+        final ByteArrayOutputStream serialOut = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(
@@ -43,17 +46,19 @@ class JsonParallelRuntimeTest {
                         "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
                     .build()
             )
-            .withAdditionalPlugins(new JSONFormatter(serial))
+            .withAdditionalPlugins(new JSONFormatter(serialOut))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
-        assertThat(parallel.toString(), sameJSONAs(serial.toString()).allowingAnyArrayOrdering());
+        String actual = new String(parallelOut.toByteArray(), UTF_8);
+        String expected = new String(serialOut.toByteArray(), UTF_8);
+        assertThat(actual, sameJSONAs(expected).allowingAnyArrayOrdering());
     }
 
     @Test
     void testMultipleFeatures() throws IOException {
-        StringBuilder parallel = new StringBuilder();
+        final ByteArrayOutputStream parallelOut = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(
@@ -63,13 +68,13 @@ class JsonParallelRuntimeTest {
                         "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
                     .build()
             )
-            .withAdditionalPlugins(new JSONFormatter(parallel))
+            .withAdditionalPlugins(new JSONFormatter(parallelOut))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
 
-        StringBuilder serial = new StringBuilder();
+        final ByteArrayOutputStream serialOut = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(new CommandlineOptionsParser()
@@ -77,12 +82,13 @@ class JsonParallelRuntimeTest {
                     "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
                     "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
                 .build())
-            .withAdditionalPlugins(new JSONFormatter(serial))
+            .withAdditionalPlugins(new JSONFormatter(serialOut))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
-        assertThat(parallel.toString(), sameJSONAs(serial.toString()).allowingAnyArrayOrdering());
-    }
+        String actual = new String(parallelOut.toByteArray(), UTF_8);
+        String expected = new String(serialOut.toByteArray(), UTF_8);
+        assertThat(actual, sameJSONAs(expected).allowingAnyArrayOrdering());    }
 
 }
