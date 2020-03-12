@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,12 +27,8 @@ public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, Sum
 	private final NiceAppendable out;
 	private Formats formats = new MonochromeFormats();
 
-    public UnusedStepsSummaryPrinter(URL url) throws IOException {
-        this(IO.openWriter(url));
-    }
-
-	UnusedStepsSummaryPrinter(Appendable out) {
-		this.out = new NiceAppendable(out);
+    public UnusedStepsSummaryPrinter(OutputStream out) {
+		this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
 	}
 
 	@Override

@@ -4,19 +4,16 @@ import gherkin.deps.com.google.gson.Gson;
 import gherkin.deps.com.google.gson.GsonBuilder;
 import gherkin.deps.com.google.gson.JsonPrimitive;
 import gherkin.deps.com.google.gson.JsonSerializer;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.Plugin;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.net.URL;
+import java.io.OutputStream;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,16 +32,8 @@ public final class UsageFormatter implements Plugin, EventListener {
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
     private final NiceAppendable out;
 
-    UsageFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
-    }
-
-    public UsageFormatter(URL url) throws IOException {
-        this.out = IO.openNiceAppendable(url);
-    }
-
-    public UsageFormatter(PrintStream out) {
-        this.out = new NiceAppendable(out);
+    public UsageFormatter(OutputStream out) {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

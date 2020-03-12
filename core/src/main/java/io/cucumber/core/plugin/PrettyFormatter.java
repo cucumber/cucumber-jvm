@@ -16,12 +16,10 @@ import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URL;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -42,16 +40,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private final NiceAppendable out;
     private Formats formats = new AnsiFormats();
 
-    public PrettyFormatter(URL url) throws IOException {
-        this.out = IO.openNiceAppendable(url);
-    }
-
-    public PrettyFormatter(PrintStream out) {
-        this.out = new NiceAppendable(out);
-    }
-
-    public PrettyFormatter(Writer out) {
-        this.out = new NiceAppendable(out);
+    public PrettyFormatter(OutputStream out) {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

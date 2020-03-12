@@ -27,11 +27,10 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
 
-import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -59,12 +58,8 @@ public final class JSONFormatter implements EventListener {
     private final NiceAppendable out;
     private final TestSourcesModel testSources = new TestSourcesModel();
 
-    public JSONFormatter(URL url) throws IOException {
-        this.out = IO.openNiceAppendable(url);
-    }
-
-    public JSONFormatter(StringBuilder stringBuilder) throws IOException {
-        this.out = new NiceAppendable(stringBuilder);
+    public JSONFormatter(OutputStream out) {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

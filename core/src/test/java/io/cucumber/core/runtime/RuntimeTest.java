@@ -33,8 +33,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -75,7 +77,7 @@ class RuntimeTest {
             "    Given b\n" +
             "  Scenario: scenario name\n" +
             "    When s\n");
-        StringBuilder out = new StringBuilder();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         Plugin jsonFormatter = new JSONFormatter(out);
 
@@ -139,7 +141,7 @@ class RuntimeTest {
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
-        assertThat(out.toString(), sameJSONAs(expected));
+        assertThat(new String(out.toByteArray(), StandardCharsets.UTF_8), sameJSONAs(expected));
     }
 
     @Test

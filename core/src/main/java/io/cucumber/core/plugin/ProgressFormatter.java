@@ -1,17 +1,15 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.WriteEvent;
-import io.cucumber.plugin.ColorAware;
-import io.cucumber.plugin.ConcurrentEventListener;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URL;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,12 +34,8 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     private final NiceAppendable out;
     private boolean monochrome = false;
 
-    public ProgressFormatter(URL url) throws IOException {
-        this.out = IO.openNiceAppendable(url);
-    }
-
-    public ProgressFormatter(PrintStream out) throws IOException {
-        this.out = new NiceAppendable(out);
+    public ProgressFormatter(OutputStream out) {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

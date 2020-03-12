@@ -7,7 +7,6 @@ import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 public final class HTMLFormatter implements ConcurrentEventListener {
 
@@ -15,7 +14,7 @@ public final class HTMLFormatter implements ConcurrentEventListener {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public HTMLFormatter(OutputStream out) throws IOException {
-        this.writer = new MessagesToHtmlWriter(new OutputStreamWriter(out));
+        this.writer = new MessagesToHtmlWriter(new UTF8OutputStreamWriter(out));
     }
 
     @Override

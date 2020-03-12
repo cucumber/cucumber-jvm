@@ -1,9 +1,12 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.plugin.Plugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -29,13 +32,13 @@ import static java.util.Arrays.asList;
  * @see Plugin for specific requirements
  */
 public final class PluginFactory {
+    private static final Logger log = LoggerFactory.getLogger(PluginFactory.class);
+
     private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{
         String.class,
         File.class,
         URI.class,
         URL.class,
-        // For formatters that want to print to STDOUT
-        PrintStream.class,
         OutputStream.class,
         // Deprecated
         Appendable.class
@@ -109,13 +112,6 @@ public final class PluginFactory {
     }
 
     private Object convert(String arg, Class<?> ctorArgClass, String pluginString, Class<?> pluginClass) throws IOException, URISyntaxException {
-        if (arg == null) {
-            if (ctorArgClass.equals(PrintStream.class)) {
-                return defaultOutOrFailIfAlreadyUsed(pluginString);
-            } else {
-                return null;
-            }
-        }
         if (ctorArgClass.equals(URI.class)) {
             return makeURL(arg).toURI();
         }
@@ -129,7 +125,11 @@ public final class PluginFactory {
             return arg;
         }
         if (ctorArgClass.equals(OutputStream.class)) {
-            return new URLOutputStream(makeURL(arg));
+            if (arg == null) {
+                return defaultOutOrFailIfAlreadyUsed(pluginString);
+            } else {
+                return openStream(makeURL(arg));
+            }
         }
 
         if (ctorArgClass.equals(Appendable.class)) {
@@ -137,18 +137,23 @@ public final class PluginFactory {
                 .filter(c -> c != Appendable.class)
                 .map(Class::getName)
                 .collect(Collectors.joining(", "));
-            System.err.format("The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s", pluginClass.getName(), recommendedParameters);
-            return IO.openWriter(makeURL(arg));
+            log.error(() -> String.format("The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s", pluginClass.getName(), recommendedParameters));
+            return openStream(makeURL(arg));
         }
         throw new CucumberException(String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
     }
 
-    private URL makeURL(String arg) throws MalformedURLException {
+    private static URL makeURL(String arg) throws MalformedURLException {
         if (arg.matches("^(file|http|https):.*")) {
             return new URL(arg);
         } else {
             return new URL("file:" + arg);
         }
+    }
+
+    private static OutputStream openStream(URL url) throws IOException {
+        return url.getProtocol().equals("file") ? new FileOutputStream(url.getFile()) :
+            new URLOutputStream(url);
     }
 
     private <T> Map<Class<?>, Constructor<T>> findSingleArgConstructors(Class<T> pluginClass) {
@@ -185,5 +190,4 @@ public final class PluginFactory {
             defaultOut = null;
         }
     }
-
 }

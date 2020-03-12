@@ -593,7 +593,7 @@ class JUnitFormatterTest {
     }
 
     private JUnitFormatter createJUnitFormatter(final File report) throws IOException {
-        return new JUnitFormatter(new UTF8OutputStreamWriter(new FileOutputStream(report)));
+        return new JUnitFormatter(new FileOutputStream(report));
     }
 
     private String getStackTrace(Throwable exception) {

@@ -6,6 +6,7 @@ import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -207,8 +209,8 @@ class RerunFormatterTest {
         assertThat(formatterOutput, is("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
     }
 
-    private String runFeaturesWithFormatter(boolean isStrict) {
-        final StringBuffer report = new StringBuffer();
+    private ByteArrayOutputStream runFeaturesWithFormatter(boolean isStrict) {
+        final ByteArrayOutputStream report = new ByteArrayOutputStream();
         final RerunFormatter formatter = new RerunFormatter(report);
         formatter.setStrict(isStrict);
 
@@ -222,7 +224,7 @@ class RerunFormatterTest {
             .build()
             .run();
 
-        return report.toString();
+        return new String(report.toByteArray(), UTF_8);
     }
 
 }
