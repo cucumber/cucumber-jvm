@@ -1,16 +1,13 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.Result;
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
@@ -18,9 +15,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import static io.cucumber.core.runner.TestHelper.result;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Duration.ZERO;
 import static java.time.Duration.ofMillis;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,7 +34,7 @@ final class TestNGFormatterTest {
     private Duration stepDuration = null;
 
     @Test
-    void testScenarioWithUndefinedSteps() throws Throwable {
+    void testScenarioWithUndefinedSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
@@ -61,7 +58,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioWithUndefinedStepsStrict() throws Throwable {
+    void testScenarioWithUndefinedStepsStrict() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
@@ -92,7 +89,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioWithPendingSteps() throws Throwable {
+    void testScenarioWithPendingSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
@@ -117,7 +114,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioWithFailedSteps() throws Throwable {
+    void testScenarioWithFailedSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
@@ -149,7 +146,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioWithPassedSteps() throws Throwable {
+    void testScenarioWithPassedSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
@@ -173,7 +170,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioWithBackground() throws Throwable {
+    void testScenarioWithBackground() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Background:\n" +
@@ -201,7 +198,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioOutlineWithExamples() throws Throwable {
+    void testScenarioOutlineWithExamples() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario Outline: scenario\n" +
@@ -230,7 +227,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testDurationCalculationOfStepsAndHooks() throws Throwable {
+    void testDurationCalculationOfStepsAndHooks() {
         Feature feature1 = TestFeatureParser.parse("path/feature1.feature", "" +
             "Feature: feature_1\n" +
             "  Scenario: scenario_1\n" +
@@ -271,7 +268,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioWithFailedBeforeHook() throws Throwable {
+    void testScenarioWithFailedBeforeHook() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
@@ -304,7 +301,7 @@ final class TestNGFormatterTest {
     }
 
     @Test
-    void testScenarioWithFailedAfterHook() throws Throwable {
+    void testScenarioWithFailedAfterHook() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature\n" +
             "  Scenario: scenario\n" +
@@ -340,9 +337,9 @@ final class TestNGFormatterTest {
         assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
     }
 
-    private String runFeaturesWithFormatter(boolean strict) throws IOException {
-        final File tempFile = File.createTempFile("cucumber-jvm-testng", ".xml");
-        final TestNGFormatter formatter = createTestNGFormatter(tempFile);
+    private String runFeaturesWithFormatter(boolean strict) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final TestNGFormatter formatter = new TestNGFormatter(out);
         formatter.setStrict(strict);
 
         TestHelper.builder()
@@ -357,11 +354,7 @@ final class TestNGFormatterTest {
             .build()
             .run();
 
-        return new Scanner(new FileInputStream(tempFile), "UTF-8").useDelimiter("\\A").next();
-    }
-
-    private TestNGFormatter createTestNGFormatter(final File report) throws IOException {
-        return new TestNGFormatter(new UTF8OutputStreamWriter(new FileOutputStream(report)));
+        return new String(out.toByteArray(), UTF_8);
     }
 
     private static class TestNGException extends Exception {
