@@ -16,10 +16,12 @@ import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -1247,7 +1249,7 @@ class JSONFormatterTest {
         };
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Runtime.builder()
@@ -1258,11 +1260,11 @@ class JSONFormatterTest {
             )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(new JSONFormatter(stringBuilder))
+            .withAdditionalPlugins(new JSONFormatter(out))
             .build()
             .run();
 
-        return stringBuilder.toString();
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
 
@@ -1280,7 +1282,7 @@ class JSONFormatterTest {
         };
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(
@@ -1290,18 +1292,18 @@ class JSONFormatterTest {
             )
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(new JSONFormatter(stringBuilder))
+            .withAdditionalPlugins(new JSONFormatter(out))
             .build()
             .run();
 
-        return stringBuilder.toString();
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
-    private String runFeaturesWithFormatter() throws IOException {
-        final StringBuilder report = new StringBuilder();
+    private String runFeaturesWithFormatter() {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         TestHelper.builder()
-            .withFormatterUnderTest(new JSONFormatter(report))
+            .withFormatterUnderTest(new JSONFormatter(out))
             .withFeatures(features)
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
@@ -1312,7 +1314,7 @@ class JSONFormatterTest {
             .build()
             .run();
 
-        return report.toString();
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
 }
