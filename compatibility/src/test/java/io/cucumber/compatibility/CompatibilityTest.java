@@ -1,6 +1,7 @@
 package io.cucumber.compatibility;
 
 import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.plugin.HTMLFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -21,7 +22,6 @@ import static java.nio.file.Files.readAllLines;
 import static java.time.Clock.fixed;
 import static java.time.Instant.ofEpochSecond;
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CompatibilityTest {
 
@@ -41,15 +41,17 @@ public class CompatibilityTest {
                 .addGlue(testCase.getGlue())
                 .addFeature(testCase.getFeature())
                 .build())
-            .withAdditionalPlugins(new MessageFormatter(new FileOutputStream(output)))
+            .withAdditionalPlugins(
+                new MessageFormatter(new FileOutputStream(output)),
+                new HTMLFormatter(new FileOutputStream(new File(parentDir, testCase.getId() + ".html"))))
             .withEventBus(new TimeServiceEventBus(fixed(ofEpochSecond(0), UTC), idGenerator))
             .build()
             .run();
 
         List<String> actual = readAllLines(output.toPath());
         List<String> expected = readAllLines(testCase.getExpectedFile());
-            String actualSorted = replaceAndSort(actual);
-            String expectedSorted = replaceAndSort(expected);
+        String actualSorted = replaceAndSort(actual);
+        String expectedSorted = replaceAndSort(expected);
 
         // For the time being it's too hard to compare contents - just compare length for now
 //        if(actualSorted.split("\n").length != expectedSorted.split("\n").length) {

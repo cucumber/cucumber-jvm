@@ -19,7 +19,7 @@ public final class MessageFormatter implements EventListener {
         .omittingInsignificantWhitespace();
     private final ProtobufFormat format;
 
-    public MessageFormatter(OutputStream outputStream) throws FileNotFoundException {
+    public MessageFormatter(OutputStream outputStream) {
         this.format = ProtobufFormat.NDJSON;
         this.outputStream = outputStream;
         this.writer = new OutputStreamWriter(this.outputStream, StandardCharsets.UTF_8);
