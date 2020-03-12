@@ -26,17 +26,21 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -60,9 +64,7 @@ public final class TestNGCucumberRunner {
     private final Predicate<Pickle> filters;
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
-    private final Plugins plugins;
-    private final FeaturePathFeatureSupplier featureSupplier;
-    private List<Feature> features = null;
+    private final List<Feature> features;
 
     /**
      * Bootstrap the cucumber runtime
@@ -101,38 +103,49 @@ public final class TestNGCucumberRunner {
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeatureParser parser = new FeatureParser(bus::generateId);
-        this.featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
-        this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
+        Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         this.runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+
+        // Start test execution now.
+        plugins.setSerialEventBusOnEventListenerPlugins(bus);
+        features = featureSupplier.get();
+        emitTestRunStarted();
+        features.forEach(this::emitTestSource);
     }
 
     public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
-        try(TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus(), runtimeOptions.isStrict())){
+        try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus(), runtimeOptions.isStrict())) {
             Pickle cucumberPickle = pickle.getPickle();
             runner.runPickle(cucumberPickle);
             observer.assertTestCasePassed();
         }
     }
 
+    /**
+     * Finishes test execution by Cucumber.
+     */
     public void finish() {
-        bus.send(new TestRunFinished(bus.getInstant()));
+        emitTestRunFinished();
     }
 
     /**
-     * @return returns the cucumber scenarios as a two dimensional array of {@link PickleWrapper}
-     * scenarios combined with their {@link FeatureWrapper} feature.
+     * @return returns the cucumber scenarios as a two dimensional array of
+     * {@link PickleWrapper} scenarios combined with their
+     * {@link FeatureWrapper} feature.
      */
     public Object[][] provideScenarios() {
+        //Possibly invoked in a multi-threaded context
         try {
-            return getFeatures().stream()
+            return features.stream()
                 .flatMap(feature -> feature.getPickles().stream()
                     .filter(filters)
                     .map(cucumberPickle -> new Object[]{
@@ -145,19 +158,26 @@ public final class TestNGCucumberRunner {
         }
     }
 
-    /**
-     * Gets features found on the feature path and sends {@link TestRunStarted} and {@link TestSourceRead} events. The method is
-     * idempotent.
-     *
-     * @return a list of {@link Feature} features found on the feature path.
-     */
-    private List<Feature> getFeatures() {
-        if (features == null) {
-            plugins.setSerialEventBusOnEventListenerPlugins(bus);
-            features = featureSupplier.get();
-            bus.send(new TestRunStarted(bus.getInstant()));
-            features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
-        }
-        return features;
+    private void emitTestRunStarted() {
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunStarted(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build());
+    }
+
+    private void emitTestSource(Feature feature) {
+        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        bus.sendAll(feature.getParseEvents());
+    }
+
+    private void emitTestRunFinished() {
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunFinished(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build());
     }
 }

@@ -18,6 +18,7 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -28,8 +29,10 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 
 @API(status = API.Status.STABLE)
 public final class CucumberEngineExecutionContext implements EngineExecutionContext {
@@ -68,13 +71,21 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
 
     void startTestRun() {
         logger.debug(() -> "Sending run test started event");
-        bus.send(new TestRunStarted(bus.getInstant()));
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunStarted(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build()
+        );
     }
 
     void beforeFeature(Feature feature) {
         logger.debug(() -> "Sending test source read event for " + feature.getUri());
         // Invoked concurrently.
-        getRunner().getBus().send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        EventBus bus = getRunner().getBus();
+        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        bus.sendAll(feature.getParseEvents());
     }
 
     void runTestCase(Pickle pickle) {
@@ -89,7 +100,12 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
 
     void finishTestRun() {
         logger.debug(() -> "Sending test run finished event");
-        bus.send(new TestRunFinished(bus.getInstant()));
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunFinished(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build());
     }
 
     private Runner getRunner() {

@@ -46,7 +46,9 @@
               "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "hook-location"
+            }
           }
         ],
         "line": 8,
@@ -138,7 +140,9 @@
               "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "hook-location"
+            }
           }
         ],
         "line": 21,
@@ -221,7 +225,9 @@
               "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "hook-location"
+            }
           }
         ],
         "line": 22,
@@ -304,7 +310,9 @@
               "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "hook-location"
+            }
           }
         ],
         "line": 24,

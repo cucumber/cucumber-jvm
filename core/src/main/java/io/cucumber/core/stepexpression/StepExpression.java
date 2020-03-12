@@ -54,6 +54,9 @@ public final class StepExpression {
         return list;
     }
 
+    public Class<? extends Expression> getExpressionClass() {
+        return expression.getClass();
+    }
 
     private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {
         List<Argument> copy = new ArrayList<>(match.size() + 1);
@@ -62,5 +65,4 @@ public final class StepExpression {
         }
         return copy;
     }
-
 }

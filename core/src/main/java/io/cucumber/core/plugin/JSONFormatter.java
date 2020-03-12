@@ -241,7 +241,7 @@ public final class JSONFormatter implements EventListener {
         Map<String, Object> docStringMap = new HashMap<>();
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLine());
-        docStringMap.put("content_type", docString.getContentType());
+        docStringMap.put("content_type", docString.getMediaType());
         return docStringMap;
     }
 

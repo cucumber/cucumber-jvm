@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+
 final class GherkinVintageFeature implements Feature {
     private final URI uri;
     private final List<Pickle> pickles;
@@ -84,6 +86,11 @@ final class GherkinVintageFeature implements Feature {
     @Override
     public String getSource() {
         return gherkinSource;
+    }
+
+    @Override
+    public Iterable<?> getParseEvents() {
+        return emptyList();
     }
 
     @Override

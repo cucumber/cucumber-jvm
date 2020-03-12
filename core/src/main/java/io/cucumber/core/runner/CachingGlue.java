@@ -7,18 +7,25 @@ import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
+import io.cucumber.core.stepexpression.StepExpression;
+import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
+import io.cucumber.cucumberexpressions.ParameterType;
+import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 final class CachingGlue implements Glue {
     private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
@@ -65,6 +73,17 @@ final class CachingGlue implements Glue {
 
     CachingGlue(EventBus bus) {
         this.bus = bus;
+    }
+
+    public static StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, StepTypeRegistry stepTypeRegistry) {
+        if (parameterInfos == null || parameterInfos.isEmpty()) {
+            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression);
+        } else {
+            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
+            Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
+            boolean transposed = parameterInfo.isTransposed();
+            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression, typeResolver, transposed);
+        }
     }
 
     @Override
@@ -211,23 +230,87 @@ final class CachingGlue implements Glue {
             throw new DuplicateDefaultDataTableCellTransformers(defaultDataTableCellTransformers);
         }
 
-        stepDefinitions.forEach(stepDefinition -> {
-            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
-            CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
-            if (previous != null) {
-                throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
-            }
-            stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
+        parameterTypeDefinitions.forEach(parameterTypeDefinition -> {
+            ParameterType<?> parameterType = parameterTypeDefinition.parameterType();
             bus.send(
-                new StepDefinedEvent(
-                    bus.getInstant(),
-                    new io.cucumber.plugin.event.StepDefinition(
-                        stepDefinition.getLocation(),
-                        stepDefinition.getPattern()
+                Messages.Envelope.newBuilder()
+                    .setParameterType(
+                        Messages.ParameterType.newBuilder()
+                            .setName(parameterType.getName())
+                            .addAllRegularExpressions(parameterType.getRegexps())
+                            .setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch())
+                            .setUseForSnippets(parameterType.useForSnippets())
                     )
-                )
+                    .build()
             );
         });
+
+        // TODO: Redefine hooks for each scenario, similar to how we're doing for CoreStepDefinition
+        beforeHooks.forEach(this::emitHook);
+
+        stepDefinitions.forEach(stepDefinition -> {
+            try {
+                StepExpression stepExpression = createExpression(stepDefinition.parameterInfos(), stepDefinition.getPattern(), stepTypeRegistry);
+                CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition, stepExpression);
+                CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
+                if (previous != null) {
+                    throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
+                }
+                stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
+                emitStepDefined(coreStepDefinition);
+            } catch (UndefinedParameterTypeException e) {
+                bus.send(
+                    Messages.Envelope.newBuilder()
+                        .setUndefinedParameterType(Messages.UndefinedParameterType.newBuilder()
+                            .setExpression(stepDefinition.getPattern())
+                            .setName(e.getUndefinedParameterTypeName())
+                        ).build()
+                );
+            }
+        });
+
+        afterHooks.forEach(this::emitHook);
+    }
+
+    private void emitHook(CoreHookDefinition hook) {
+        bus.send(Messages.Envelope.newBuilder()
+            .setHook(Messages.Hook.newBuilder()
+                .setId(hook.getId().toString())
+                .setTagExpression(hook.getTagExpression())
+                .setSourceReference(Messages.SourceReference.newBuilder()
+                    // TODO: Maybe we should add a proper URI prefix here, like "javamethod:....". Maybe there is
+                    // a standard for this
+                    .setUri(hook.getLocation()))
+            )
+            .build()
+        );
+    }
+
+    private void emitStepDefined(CoreStepDefinition stepDefinition) {
+        bus.send(new StepDefinedEvent(
+                bus.getInstant(),
+                new io.cucumber.plugin.event.StepDefinition(
+                    stepDefinition.getStepDefinition().getLocation(),
+                    stepDefinition.getPattern()
+                )
+            )
+        );
+
+        // TODO: this is fragile - make CucumberExpression public again (but with a package-private constructor)
+        boolean isCucumberExpression = stepDefinition.getExpressionClass().getName().equals("io.cucumber.cucumberexpressions.CucumberExpression");
+        Messages.StepDefinitionPatternType type = isCucumberExpression ? Messages.StepDefinitionPatternType.CUCUMBER_EXPRESSION : Messages.StepDefinitionPatternType.REGULAR_EXPRESSION;
+        bus.send(Messages.Envelope.newBuilder()
+            .setStepDefinition(
+                Messages.StepDefinition.newBuilder()
+                    .setId(stepDefinition.getId().toString())
+                    .setPattern(Messages.StepDefinitionPattern.newBuilder()
+                        .setType(type)
+                        .setSource(stepDefinition.getPattern()))
+                    .setSourceReference(Messages.SourceReference.newBuilder()
+                        .setUri(stepDefinition.getStepDefinition().getLocation()))
+                    .build())
+            .build()
+        );
     }
 
     PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {

@@ -3,7 +3,6 @@ package io.cucumber.core.eventbus;
 import java.time.Instant;
 import java.util.UUID;
 
-import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
 
 public interface EventBus extends EventPublisher {
@@ -12,8 +11,8 @@ public interface EventBus extends EventPublisher {
 
     UUID generateId();
 
-    void send(Event event);
+    <T> void send(T event);
 
-    void sendAll(Iterable<Event> queue);
+    <T> void sendAll(Iterable<T> queue);
 
 }

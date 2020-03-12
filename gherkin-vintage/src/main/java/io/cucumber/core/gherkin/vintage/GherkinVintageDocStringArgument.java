@@ -22,6 +22,11 @@ final class GherkinVintageDocStringArgument implements DocStringArgument {
     }
 
     @Override
+    public String getMediaType() {
+        return docString.getContentType();
+    }
+
+    @Override
     public int getLine() {
         return docString.getLocation().getLine();
     }

@@ -249,6 +249,8 @@ final class TestNGFormatterTest {
         stepsToResult.put("step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
+        hookLocations.add("hook-location-1");
+        hookLocations.add("hook-location-2");
         stepDuration = ofMillis(1);
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
@@ -278,6 +280,7 @@ final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("skipped"));
         hooks.add(TestHelper.hookEntry("before", result("failed", new TestNGException("message", "stacktrace"))));
+        hookLocations.add("hook-location");
         stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +
@@ -310,6 +313,7 @@ final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed", new TestNGException("message", "stacktrace"))));
+        hookLocations.add("hook-location");
         stepDuration = ZERO;
         String actual = runFeaturesWithFormatter(false);
         assertXmlEqual("" +

@@ -21,6 +21,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.SummaryPrinter;
+import io.cucumber.core.plugin.MessageFormatter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ public class PluginOption implements Options.Plugin {
         put("null_summary", NullSummaryPrinter.class);
         put("pretty", PrettyFormatter.class);
         put("progress", ProgressFormatter.class);
+        put("message", MessageFormatter.class);
         put("rerun", RerunFormatter.class);
         put("summary", DefaultSummaryPrinter.class);
         put("testng", TestNGFormatter.class);
@@ -75,6 +77,29 @@ public class PluginOption implements Options.Plugin {
         this.pluginString = pluginString;
         this.pluginClass = pluginClass;
         this.argument = argument;
+    }
+
+    @Override
+    public Class<? extends Plugin> pluginClass() {
+        return pluginClass;
+    }
+
+    @Override
+    public String argument() {
+        return argument;
+    }
+
+    @Override
+    public String pluginString() {
+        return pluginString;
+    }
+
+    boolean isFormatter() {
+        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
+    }
+
+    boolean isSummaryPrinter() {
+        return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
     public static PluginOption parse(String pluginArgumentPattern) {
@@ -116,29 +141,6 @@ public class PluginOption implements Options.Plugin {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             throw new CucumberException("Couldn't load plugin class: " + className, e);
         }
-    }
-
-    @Override
-    public Class<? extends Plugin> pluginClass() {
-        return pluginClass;
-    }
-
-    @Override
-    public String argument() {
-        return argument;
-    }
-
-    @Override
-    public String pluginString() {
-        return pluginString;
-    }
-
-    boolean isFormatter() {
-        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
-    }
-
-    boolean isSummaryPrinter() {
-        return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
 

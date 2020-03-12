@@ -1,9 +1,7 @@
 package io.cucumber.core.stepexpression;
 
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
-import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.docstring.DocString;
@@ -42,20 +40,15 @@ public final class StepExpressionFactory {
         return createExpression(expressionString, tableOrDocStringType, false);
     }
 
-    public StepExpression createExpression(String expressionString, Type tableOrDocStringType, boolean transpose) {
-        return createExpression(expressionString, () -> tableOrDocStringType, transpose);
-    }
+//    public StepExpression createExpression(String expressionString, Type tableOrDocStringType, boolean transpose) {
+//        return createExpression(expressionString, () -> tableOrDocStringType, transpose);
+//    }
 
     public StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose) {
         if (expressionString == null) throw new NullPointerException("expressionString can not be null");
         if (tableOrDocStringType == null) throw new NullPointerException("tableOrDocStringType can not be null");
 
-        final Expression expression;
-        try {
-            expression = expressionFactory.createExpression(expressionString);
-        } catch (UndefinedParameterTypeException e) {
-            throw registerTypeInConfiguration(expressionString, e);
-        }
+        final Expression expression = expressionFactory.createExpression(expressionString);
 
         RawTableTransformer<?> tableTransform = (List<List<String>> raw) -> {
             DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
@@ -69,14 +62,5 @@ public final class StepExpressionFactory {
             return docString.convert(Object.class.equals(targetType) ? DocString.class : targetType);
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
-    }
-
-    private CucumberException registerTypeInConfiguration(String expressionString, UndefinedParameterTypeException e) {
-        return new CucumberException(String.format("" +
-                "Could not create a cucumber expression for '%s'.\n" +
-                "It appears you did not register parameter type. The details are in the stacktrace below.\n" +
-                "You can find the documentation here: https://docs.cucumber.io/cucumber/cucumber-expressions/",
-            expressionString
-        ), e);
     }
 }

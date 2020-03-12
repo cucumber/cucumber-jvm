@@ -16,4 +16,5 @@ public interface Feature extends Node, Container<Node> {
 
     String getSource();
 
+    Iterable<?> getParseEvents();
 }

@@ -141,6 +141,12 @@ class TestCaseResultObserverTest {
         public String getCodeLocation() {
             return null;
         }
+
+        @Override
+        public UUID getId() {
+            return UUID.randomUUID();
+        }
+
     };
 
     @Test

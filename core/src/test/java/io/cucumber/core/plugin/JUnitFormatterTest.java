@@ -245,6 +245,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -278,6 +279,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
         hooks.add(TestHelper.hookEntry("before", result("pending")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -309,6 +311,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -342,6 +345,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -374,6 +378,8 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
+        hookLocations.add("hook-location-1");
+        hookLocations.add("hook-location-2");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();

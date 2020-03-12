@@ -50,11 +50,11 @@ class PluginFactoryTest {
         assertThat(plugin.getClass(), is(equalTo(RerunFormatter.class)));
     }
 
-    @Test
-    void instantiates_html_plugin_with_dir_arg() throws IOException {
-        Object plugin = fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath()));
-        assertThat(plugin.getClass(), is(equalTo(HTMLFormatter.class)));
-    }
+     @Test
+     void instantiates_html_plugin_with_dir_arg() throws IOException {
+         Object plugin = fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath()));
+         assertThat(plugin.getClass(), is(equalTo(HTMLFormatter.class)));
+     }
 
     @Test
     void fails_to_instantiate_html_plugin_without_dir_arg() {

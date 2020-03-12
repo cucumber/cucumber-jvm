@@ -5,6 +5,7 @@ import io.cucumber.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +36,7 @@ public final class PluginFactory {
         URL.class,
         // For formatters that want to print to STDOUT
         PrintStream.class,
+        OutputStream.class,
         // Deprecated
         Appendable.class
     };
@@ -126,6 +128,10 @@ public final class PluginFactory {
         if (ctorArgClass.equals(String.class)) {
             return arg;
         }
+        if (ctorArgClass.equals(OutputStream.class)) {
+            return new URLOutputStream(makeURL(arg));
+        }
+
         if (ctorArgClass.equals(Appendable.class)) {
             String recommendedParameters = Arrays.stream(CTOR_PARAMETERS)
                 .filter(c -> c != Appendable.class)
