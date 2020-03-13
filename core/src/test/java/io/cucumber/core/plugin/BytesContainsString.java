@@ -7,12 +7,12 @@ import java.io.ByteArrayOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class BytesContainsString {
-    public static DiagnosingMatcher<ByteArrayOutputStream> bytesContainsString(String expected) {
+final class BytesContainsString {
+    static DiagnosingMatcher<ByteArrayOutputStream> bytesContainsString(String expected) {
         return new DiagnosingMatcher<ByteArrayOutputStream>() {
             @Override
             protected boolean matches(Object actual, Description description) {
-                description.appendText("actual=");
+                description.appendText("but was ");
                 if (!(actual instanceof ByteArrayOutputStream)) {
                     description.appendValue(actual.getClass());
                     return false;
