@@ -1,5 +1,6 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.options.CurlOption;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -16,14 +17,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.ServerSocket;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -41,12 +41,12 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void throws_exception_for_500_status(Vertx vertx, VertxTestContext testContext) throws MalformedURLException, InterruptedException {
+    void throws_exception_for_500_status(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 500, "Oh noes");
-        URL url = new URL("http://localhost:" + port);
+        CurlOption option = CurlOption.parse(format("http://localhost:%d", port));
 
-        verifyRequest(url, testServer, vertx, testContext, requestBody);
+        verifyRequest(option, testServer, vertx, testContext, requestBody);
         assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
         assertThat(exception.getMessage(), is(equalTo("HTTP request failed:\n" +
             "> POST http://localhost:" + port + "\n" +
@@ -56,10 +56,10 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void throws_exception_for_redirects(Vertx vertx, VertxTestContext testContext) throws MalformedURLException, InterruptedException {
+    void throws_exception_for_redirects(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
-        URL url = new URL("http://localhost:" + port + "/redirect");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
@@ -71,30 +71,30 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void streams_request_body_in_chunks(Vertx vertx, VertxTestContext testContext) throws MalformedURLException {
+    void streams_request_body_in_chunks(Vertx vertx, VertxTestContext testContext) {
         String requestBody = makeOneKilobyteStringWithEmoji();
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
-        URL url = new URL("http://localhost:" + port);
+        CurlOption url = CurlOption.parse(format("http://localhost:%d", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
     @Test
-    void overrides_request_method(Vertx vertx, VertxTestContext testContext) throws MalformedURLException {
+    void overrides_request_method(Vertx vertx, VertxTestContext testContext) {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
-        URL url = new URL("http://localhost:" + port + "?http-method=PUT");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d -X PUT", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
     @Test
-    void sets_request_headers(Vertx vertx, VertxTestContext testContext) throws MalformedURLException {
+    void sets_request_headers(Vertx vertx, VertxTestContext testContext) {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, "foo=bar", "application/x-ndjson", 200, "");
-        URL url = new URL("http://localhost:" + port + "?http-content-type=application/x-ndjson&foo=bar");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d?foo=bar -H 'Content-Type: application/x-ndjson'", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
-    private void verifyRequest(URL url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody) {
+    private void verifyRequest(CurlOption url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody) {
         vertx.deployVerticle(testServer, testContext.succeeding(id -> {
             try {
                 OutputStream out = new URLOutputStream(url);
@@ -148,7 +148,7 @@ public class UrlOutputStreamTest {
         public void start(Promise<Void> startPromise) {
             Router router = Router.router(vertx);
             router.route().handler(ctx -> {
-                if(ctx.request().uri().equals("/redirect")) {
+                if (ctx.request().uri().equals("/redirect")) {
                     ctx.response().setStatusCode(301);
                     ctx.response().headers().add("Location", "/");
                     ctx.response().end();

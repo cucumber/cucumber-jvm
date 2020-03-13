@@ -1,5 +1,7 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.options.CurlOption;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,10 +9,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -30,34 +31,13 @@ class URLOutputStream extends OutputStream {
     private URL url;
     private final Map<String, List<String>> requestHeaders;
 
-    URLOutputStream(URL url) throws IOException {
-        this.method = "POST";
+    URLOutputStream(CurlOption option) throws IOException {
+        this.method = option.getMethod().name();
+        this.url = option.getUri().toURL();
 
-        // Set HTTP headers and method from query string
-        Map<String, Set<String>> query = QueryParams.parse(url.getQuery());
-        Map<String, Set<String>> requestHeadersToSet = new HashMap<>();
-        for (Map.Entry<String, Set<String>> pair : query.entrySet()) {
-            if (pair.getKey().startsWith("http-")) {
-                String key = pair.getKey().substring(5); // Strip the http- prefix.
-                Set<String> values = query.remove(pair.getKey());
-                if (key.equals("method")) {
-                    for (String method : values) {
-                        this.method = method;
-                    }
-                } else {
-                    requestHeadersToSet.put(key, values);
-                }
-            }
-        }
-
-        String queryString = QueryParams.toString(query);
-        String file = queryString.equals("") ? url.getPath() : url.getPath() + "?" + queryString;
-        this.url = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
         urlConnection = (HttpURLConnection) this.url.openConnection();
-        for (Map.Entry<String, Set<String>> header : requestHeadersToSet.entrySet()) {
-            for (String value : header.getValue()) {
-                urlConnection.setRequestProperty(header.getKey(), value);
-            }
+        for (Entry<String, String> header : option.getHeaders()) {
+            urlConnection.setRequestProperty(header.getKey(), header.getValue());
         }
         urlConnection.setRequestMethod(this.method);
         urlConnection.setDoOutput(true);

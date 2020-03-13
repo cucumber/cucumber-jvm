@@ -3,6 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.options.CurlOption;
 import io.cucumber.plugin.Plugin;
 
 import java.io.File;
@@ -114,7 +115,7 @@ public final class PluginFactory {
             if (arg == null) {
                 return defaultOutOrFailIfAlreadyUsed(pluginString);
             } else {
-                return openStream(makeURL(arg));
+                return openStream(arg);
             }
         }
 
@@ -124,7 +125,7 @@ public final class PluginFactory {
                 .map(Class::getName)
                 .collect(Collectors.joining(", "));
             log.error(() -> String.format("The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s", pluginClass.getName(), recommendedParameters));
-            return new UTF8OutputStreamWriter(openStream(makeURL(arg)));
+            return new UTF8OutputStreamWriter(openStream(arg));
         }
         throw new CucumberException(String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
     }
@@ -137,21 +138,18 @@ public final class PluginFactory {
         }
     }
 
-    private static OutputStream openStream(URL url) throws IOException {
-        if (url.getProtocol().equals("file")) {
-            return createFileOutputStream(new File(url.getFile()));
+    private static OutputStream openStream(String arg) throws IOException, URISyntaxException {
+        if (arg.matches("^(http|https):.*")) {
+            CurlOption option = CurlOption.parse(arg);
+            return new URLOutputStream(option);
+        } else if (arg.matches("^file:.*")) {
+            return createFileOutputStream(new File(new URL(arg).getFile()));
+        } else {
+            return createFileOutputStream(new File(arg));
         }
-        return createUrlOutputStream(url);
     }
 
-    private static URLOutputStream createUrlOutputStream(URL url) throws IOException {
-        if (!(url.getProtocol().equals("http") || url.getProtocol().equals("https"))) {
-            throw new IllegalArgumentException("URLOutputStream only works with http and https. The url is " + url);
-        }
-        return new URLOutputStream(url);
-    }
-
-    private static FileOutputStream createFileOutputStream(File file) throws IOException {
+    private static FileOutputStream createFileOutputStream(File file) {
         try {
             File parentFile = file.getParentFile();
             if (parentFile != null) {
