@@ -269,7 +269,6 @@
         <module>spring</module>
         <module>testng</module>
         <module>weld</module>
-        <module>compatibility</module>
     </modules>
 
     <profiles>
