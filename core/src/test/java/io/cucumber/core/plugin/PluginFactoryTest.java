@@ -46,7 +46,7 @@ import static org.mockito.Mockito.mock;
     @Test
      void instantiates_html_plugin_with_file_arg() throws IOException {
         Object plugin = fc.create(parse("html:" + File.createTempFile("cucumber", "html")));
-        assertThat(plugin.getClass(), is(equalTo(HTMLFormatter.class)));
+        assertThat(plugin.getClass(), is(equalTo(HtmlFormatter.class)));
     }
 
     @Test

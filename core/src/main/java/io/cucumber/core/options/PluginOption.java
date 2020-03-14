@@ -4,7 +4,7 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.plugin.DefaultSummaryPrinter;
-import io.cucumber.core.plugin.HTMLFormatter;
+import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JSONFormatter;
 import io.cucumber.core.plugin.JUnitFormatter;
 import io.cucumber.core.plugin.NullSummaryPrinter;
@@ -36,7 +36,7 @@ public class PluginOption implements Options.Plugin {
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
     private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
         put("default_summary", DefaultSummaryPrinter.class);
-        put("html", HTMLFormatter.class);
+        put("html", HtmlFormatter.class);
         put("json", JSONFormatter.class);
         put("junit", JUnitFormatter.class);
         put("null_summary", NullSummaryPrinter.class);
