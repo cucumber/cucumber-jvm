@@ -1,10 +1,10 @@
 package io.cucumber.core.plugin;
 
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.deps.com.google.gson.annotations.SerializedName;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.messages.internal.com.google.gson.Gson;
+import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
+import io.cucumber.messages.internal.com.google.gson.annotations.SerializedName;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCase;

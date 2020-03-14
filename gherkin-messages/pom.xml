@@ -15,32 +15,6 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Gherkin Messages</name>
 
-    <profiles>
-        <profile>
-            <!-- IDEA doesn't calculate shaded dependencies correctly and tries
-                 to include both gherkin 5 and gherkin "new". Manually excluded here
-                 for development -->
-            <id>idea-exclude-gherkin-vintage</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>cucumber-core</artifactId>
-                    <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>io.cucumber</groupId>
-                            <artifactId>gherkin</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>io.cucumber</groupId>
-                            <artifactId>cucumber-gherkin-vintage</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -51,22 +25,6 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-gherkin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-core</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>gherkin</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>cucumber-gherkin-vintage</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

@@ -160,7 +160,7 @@ class RuntimeOptionsTest {
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
-        assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.HTMLFormatter"));
+        assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.HtmlFormatter"));
     }
 
     @Test
@@ -498,7 +498,7 @@ class RuntimeOptionsTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
-            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter"))),
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HtmlFormatter"))),
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")))
         );
     }

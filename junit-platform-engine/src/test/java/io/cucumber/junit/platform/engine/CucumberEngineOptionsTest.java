@@ -30,10 +30,10 @@ class CucumberEngineOptionsTest {
         );
 
         CucumberEngineOptions htmlAndJson = new CucumberEngineOptions(
-            new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME, "html:path/with spaces/to/report.html, json:path/with spaces/to/report.json")
+            new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME, "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson")
         );
         assertEquals(
-            asList("html:path/with spaces/to/report.html", "json:path/with spaces/to/report.json"),
+            asList("html:path/with spaces/to/report.html", "message:path/with spaces/to/report.ndjson"),
             htmlAndJson.plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList())
