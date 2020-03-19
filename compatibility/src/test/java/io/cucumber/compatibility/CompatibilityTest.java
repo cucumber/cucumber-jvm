@@ -1,7 +1,6 @@
 package io.cucumber.compatibility;
 
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.HTMLFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -41,9 +40,7 @@ public class CompatibilityTest {
                 .addGlue(testCase.getGlue())
                 .addFeature(testCase.getFeature())
                 .build())
-            .withAdditionalPlugins(
-                new MessageFormatter(new FileOutputStream(output)),
-                new HTMLFormatter(new FileOutputStream(new File(parentDir, testCase.getId() + ".html"))))
+            .withAdditionalPlugins(new MessageFormatter(new FileOutputStream(output)))
             .withEventBus(new TimeServiceEventBus(fixed(ofEpochSecond(0), UTC), idGenerator))
             .build()
             .run();

@@ -155,12 +155,12 @@ class RuntimeOptionsTest {
     @Test
     void creates_html_formatter() {
         RuntimeOptions options = new CommandlineOptionsParser()
-            .parse("--plugin", "html:target/some/dir", "--glue", "somewhere")
+            .parse("--plugin", "html:target/deeply/nested.html", "--glue", "somewhere")
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
-        assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.HTMLFormatter"));
+        assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.HtmlFormatter"));
     }
 
     @Test
@@ -488,7 +488,7 @@ class RuntimeOptionsTest {
         properties.put(OPTIONS_PROPERTY_NAME, "--add-plugin pretty");
 
         RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse("--plugin", "html:target/some/dir", "--glue", "somewhere")
+            .parse("--plugin", "html:target/index.html", "--glue", "somewhere")
             .build();
 
         RuntimeOptions options = new CucumberPropertiesParser()
@@ -498,7 +498,7 @@ class RuntimeOptionsTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll("Checking Plugins",
-            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HTMLFormatter"))),
+            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.HtmlFormatter"))),
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.PrettyFormatter")))
         );
     }

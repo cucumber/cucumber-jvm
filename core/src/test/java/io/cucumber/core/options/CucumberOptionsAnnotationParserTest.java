@@ -156,7 +156,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         List<Plugin> pluginList = plugins.getPlugins();
 
         assertAll("Checking Plugin",
-            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.JSONFormatter"),
+            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.HtmlFormatter"),
             () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.PrettyFormatter")
         );
     }
@@ -255,7 +255,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         // empty
     }
 
-    @CucumberOptions(plugin = "json:target/test-json-report.json")
+    @CucumberOptions(plugin = "html:target/test-report.html")
     private static class BaseClassWithFormatter {
         // empty
     }

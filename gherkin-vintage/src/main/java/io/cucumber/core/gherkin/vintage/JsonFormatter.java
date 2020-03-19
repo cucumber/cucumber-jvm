@@ -1,4 +1,4 @@
-package io.cucumber.core.plugin;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
@@ -27,9 +27,13 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -39,10 +43,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.util.Locale.ROOT;
 
-public final class JSONFormatter implements EventListener {
+public final class JsonFormatter implements EventListener {
     private static final String before = "before";
     private static final String after = "after";
     private URI currentFeatureFile;
@@ -54,12 +57,12 @@ public final class JSONFormatter implements EventListener {
     private Map<String, Object> currentStepOrHookMap;
     private final Map<String, Object> currentBeforeStepHookList = new HashMap<>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final NiceAppendable out;
+    private final OutputStreamWriter out;
     private final TestSourcesModel testSources = new TestSourcesModel();
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public JSONFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
+    public JsonFormatter(OutputStream out) {
+        this.out = new OutputStreamWriter(out, StandardCharsets.UTF_8);
     }
 
     @Override
@@ -135,12 +138,16 @@ public final class JSONFormatter implements EventListener {
 
     private void finishReport() {
         gson.toJson(featureMaps, out);
-        out.close();
+        try {
+            out.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Map<String, Object> createFeatureMap(TestCase testCase) {
         Map<String, Object> featureMap = new HashMap<>();
-        featureMap.put("uri", relativize(testCase.getUri()));
+        featureMap.put("uri", TestSourcesModel.relativize(testCase.getUri()));
         featureMap.put("elements", new ArrayList<Map<String, Object>>());
         Feature feature = testSources.getFeature(testCase.getUri());
         if (feature != null) {

@@ -132,9 +132,9 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_plugin() {
-        properties.put(Constants.PLUGIN_PROPERTY_NAME, "json:target/cucumber.json, html:target/cucumber.html");
+        properties.put(Constants.PLUGIN_PROPERTY_NAME, "message:target/cucumber.ndjson, html:target/cucumber.html");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.plugins().get(0).pluginString(), equalTo("json:target/cucumber.json"));
+        assertThat(options.plugins().get(0).pluginString(), equalTo("message:target/cucumber.ndjson"));
         assertThat(options.plugins().get(1).pluginString(), equalTo("html:target/cucumber.html"));
     }
 

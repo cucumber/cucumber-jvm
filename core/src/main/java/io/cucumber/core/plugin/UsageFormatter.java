@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.deps.com.google.gson.JsonPrimitive;
-import gherkin.deps.com.google.gson.JsonSerializer;
+import io.cucumber.messages.internal.com.google.gson.Gson;
+import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
+import io.cucumber.messages.internal.com.google.gson.JsonPrimitive;
+import io.cucumber.messages.internal.com.google.gson.JsonSerializer;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -13,6 +13,7 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 
+import java.io.OutputStream;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +38,8 @@ public final class UsageFormatter implements Plugin, EventListener {
      * @param out {@link Appendable} to print the result
      */
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public UsageFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
+    public UsageFormatter(OutputStream out) {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

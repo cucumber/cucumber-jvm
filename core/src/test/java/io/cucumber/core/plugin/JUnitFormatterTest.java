@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,7 @@ import org.opentest4j.TestAbortedException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -592,7 +593,7 @@ class JUnitFormatterTest {
     }
 
     private JUnitFormatter createJUnitFormatter(final File report) throws IOException {
-        return new JUnitFormatter(report.toURI().toURL());
+        return new JUnitFormatter(new FileOutputStream(report));
     }
 
     private String getStackTrace(Throwable exception) {

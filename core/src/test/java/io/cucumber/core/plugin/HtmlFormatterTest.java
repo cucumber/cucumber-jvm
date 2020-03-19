@@ -7,20 +7,18 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-class HTMLFormatterTest {
+class HtmlFormatterTest {
 
     @Test
     void writes_index_html() throws Throwable {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        HTMLFormatter formatter = new HTMLFormatter(bytes);
+        HtmlFormatter formatter = new HtmlFormatter(bytes);
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 

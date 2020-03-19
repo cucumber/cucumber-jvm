@@ -9,12 +9,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-public final class HTMLFormatter implements ConcurrentEventListener {
+public final class HtmlFormatter implements ConcurrentEventListener {
 
     private final MessagesToHtmlWriter writer;
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public HTMLFormatter(OutputStream out) throws IOException {
+    public HtmlFormatter(OutputStream out) throws IOException {
         this.writer = new MessagesToHtmlWriter(new OutputStreamWriter(out));
     }
 

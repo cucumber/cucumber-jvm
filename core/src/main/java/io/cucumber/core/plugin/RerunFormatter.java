@@ -8,6 +8,7 @@ import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.cucumber.core.feature.FeatureWithLines.create;
-import static io.cucumber.core.plugin.TestSourcesModel.relativize;
+import static io.cucumber.core.plugin.PrettyFormatter.relativize;
 
 /**
  * Formatter for reporting all failed test cases and print their locations
@@ -27,9 +28,8 @@ public final class RerunFormatter implements EventListener, StrictAware {
 
     private boolean isStrict = false;
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public RerunFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
+    public RerunFormatter(OutputStream out) {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

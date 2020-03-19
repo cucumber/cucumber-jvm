@@ -1,12 +1,12 @@
 package io.cucumber.core.options;
 
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
-import gherkin.IGherkinDialectProvider;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.gherkin.GherkinDialect;
+import io.cucumber.gherkin.GherkinDialectProvider;
+import io.cucumber.gherkin.IGherkinDialectProvider;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
