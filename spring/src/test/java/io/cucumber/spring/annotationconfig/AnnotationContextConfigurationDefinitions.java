@@ -8,10 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AnnotationContextConfigurationDefinitions {
 
-
     @Autowired
     private WebApplicationContext wac;
-
 
     @Then("cucumber picks up configuration class without step defs")
     public void pickUpContext() {
