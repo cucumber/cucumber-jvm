@@ -14,7 +14,6 @@ import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
-import io.cucumber.core.plugin.JSONFormatter;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
@@ -68,81 +67,6 @@ class RuntimeTest {
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-
-    @Test
-    void runs_feature_with_json_formatter() throws IOException {
-        final Feature feature = TestFeatureParser.parse("test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background name\n" +
-            "    Given b\n" +
-            "  Scenario: scenario name\n" +
-            "    When s\n");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        Plugin jsonFormatter = new JSONFormatter(out);
-
-        FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
-        Runtime.builder()
-            .withAdditionalPlugins(jsonFormatter)
-            .withEventBus(new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID))
-            .withFeatureSupplier(featureSupplier)
-            .build()
-            .run();
-
-        String expected = "" +
-            "[\n" +
-            "  {\n" +
-            "    \"line\": 1,\n" +
-            "    \"elements\": [\n" +
-            "      {\n" +
-            "        \"line\": 2,\n" +
-            "        \"name\": \"background name\",\n" +
-            "        \"description\": \"\",\n" +
-            "        \"type\": \"background\",\n" +
-            "        \"keyword\": \"Background\",\n" +
-            "        \"steps\": [\n" +
-            "          {\n" +
-            "            \"result\": {\n" +
-            "              \"status\": \"undefined\"\n" +
-            "            },\n" +
-            "            \"line\": 3,\n" +
-            "            \"name\": \"b\",\n" +
-            "            \"match\": {},\n" +
-            "            \"keyword\": \"Given \"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      },\n" +
-            "      {\n" +
-            "        \"line\": 4,\n" +
-            "        \"name\": \"scenario name\",\n" +
-            "        \"description\": \"\",\n" +
-            "        \"id\": \"feature-name;scenario-name\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
-            "        \"type\": \"scenario\",\n" +
-            "        \"keyword\": \"Scenario\",\n" +
-            "        \"steps\": [\n" +
-            "          {\n" +
-            "            \"result\": {\n" +
-            "              \"status\": \"undefined\"\n" +
-            "            },\n" +
-            "            \"line\": 5,\n" +
-            "            \"name\": \"s\",\n" +
-            "            \"match\": {},\n" +
-            "            \"keyword\": \"When \"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"name\": \"feature name\",\n" +
-            "    \"description\": \"\",\n" +
-            "    \"id\": \"feature-name\",\n" +
-            "    \"keyword\": \"Feature\",\n" +
-            "    \"uri\": \"file:test.feature\",\n" +
-            "    \"tags\": []\n" +
-            "  }\n" +
-            "]";
-        assertThat(new String(out.toByteArray(), StandardCharsets.UTF_8), sameJSONAs(expected));
-    }
 
     @Test
     void strict_with_passed_scenarios() {

@@ -6,22 +6,21 @@ import io.cucumber.messages.Messages;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-class HTMLFormatterTest {
+public class MessageFormatterTest {
 
     @Test
-    void writes_index_html() throws Throwable {
+    void test() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        HTMLFormatter formatter = new HTMLFormatter(bytes);
-        EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.now(), ZoneId.of("UTC")), UUID::randomUUID);
+        MessageFormatter formatter = new MessageFormatter(bytes);
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
         bus.send(Messages.Envelope.newBuilder()
@@ -43,11 +42,8 @@ class HTMLFormatterTest {
 
         String html = new String(bytes.toByteArray(), UTF_8);
         assertThat(html, containsString("" +
-            "window.CUCUMBER_MESSAGES = [" +
-            "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}," +
-            "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}" +
-            "];"));
+            "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}\n" +
+            "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}"
+        ));
     }
-
-
 }

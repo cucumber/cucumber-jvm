@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.5.1-SNAPSHOT</version>
+        <version>6.0.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -14,32 +14,6 @@
     <artifactId>cucumber-gherkin-messages</artifactId>
     <packaging>jar</packaging>
     <name>Cucumber-JVM: Gherkin Messages</name>
-
-    <profiles>
-        <profile>
-            <!-- IDEA doesn't calculate shaded dependencies correctly and tries
-                 to include both gherkin 5 and gherkin "new". Manually excluded here
-                 for development -->
-            <id>idea-exclude-gherkin-vintage</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>cucumber-core</artifactId>
-                    <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>io.cucumber</groupId>
-                            <artifactId>gherkin</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>io.cucumber</groupId>
-                            <artifactId>cucumber-gherkin-vintage</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>
@@ -51,28 +25,6 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-gherkin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-core</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>gherkin</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>cucumber-gherkin-vintage</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
