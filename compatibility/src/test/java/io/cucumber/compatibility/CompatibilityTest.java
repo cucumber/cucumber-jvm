@@ -7,6 +7,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.NdjsonToMessageIterable;
 import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
@@ -78,9 +79,16 @@ public class CompatibilityTest {
         );
     }
 
-    private static Collection<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> expectedMessages) {
+    private static Collection<Matcher<?>> aComparableMessage(List<?> expectedMessages) {
         return expectedMessages.stream()
-            .map(GeneratedMessageV3TypeSafeDiagnosingMatcher::new)
+            .map(element -> {
+                if (element instanceof GeneratedMessageV3) {
+                    GeneratedMessageV3 message = (GeneratedMessageV3) element;
+                    return new GeneratedMessageV3TypeSafeDiagnosingMatcher(message);
+                }
+                return CoreMatchers.is(element);
+
+            })
             .collect(Collectors.toList());
     }
 
@@ -105,30 +113,21 @@ public class CompatibilityTest {
 
     private static class GeneratedMessageV3TypeSafeDiagnosingMatcher extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
 
-        private final GeneratedMessageV3 expected;
+        private final List<Matcher<?>> expected = new ArrayList<>();
 
         public GeneratedMessageV3TypeSafeDiagnosingMatcher(GeneratedMessageV3 expected) {
-            this.expected = expected;
+            openEnvelope(Collections.singletonList(expected))
+                .forEach((messageType, expectedMessages) ->
+                    this.expected.add(hasEntry(is(messageType), containsInAnyOrder(aComparableMessage(expectedMessages)))));
         }
 
         @Override
         public void describeTo(Description description) {
-            description.appendValue(expected);
+            description.appendList("", ", ", "", expected);
         }
 
         @Override
         protected boolean matchesSafely(GeneratedMessageV3 actual, Description mismatchDescription) {
-            mismatchDescription.appendValue(actual);
-
-
-            Map<String, List<Object>> expectedEntries = openEnvelope(Collections.singletonList(expected));
-            Map<String, List<Object>> actualEntries = openEnvelope(Collections.singletonList(actual));
-
-            for (Map.Entry<String, List<Object>> entry : expectedEntries.entrySet()) {
-                String jsonName = entry.getKey();
-                List<Object> value = entry.getValue();
-            }
-
             return expected.equals(actual);
         }
     }
