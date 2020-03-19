@@ -81,9 +81,11 @@ public class TestConfig {
 }
 ```
 
-To make Cucumber aware of your test configuration you can annotate configuration class with `@CucumberContextConfiguration`
-and with one of the following annotations: `@ContextConfiguration`, `@ContextHierarchy` or
-`@BootstrapWith`. If you are using SpringBoot, you can annotate configuration class with `@SpringBootTest(classes = TestConfig.class)`.
+To make Cucumber aware of your test configuration you can annotate a
+configuration class with `@CucumberContextConfiguration` and with one of the
+following annotations: `@ContextConfiguration`, `@ContextHierarchy` or
+`@BootstrapWith`. If you are using SpringBoot, you can annotate configuration
+class with `@SpringBootTest(classes = TestConfig.class)`.
 
 For example:
 ```java
