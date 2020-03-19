@@ -15,17 +15,19 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.lang.Math.max;
 import static java.util.Locale.ROOT;
 
@@ -225,4 +227,21 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         return stringWriter.toString();
     }
 
+    static URI relativize(URI uri) {
+        if (!"file".equals(uri.getScheme())) {
+            return uri;
+        }
+        if (!uri.isAbsolute()) {
+            return uri;
+        }
+
+        try {
+            URI root = new File("").toURI();
+            URI relative = root.relativize(uri);
+            // Scheme is lost by relativize
+            return new URI("file", relative.getSchemeSpecificPart(), relative.getFragment());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
 }

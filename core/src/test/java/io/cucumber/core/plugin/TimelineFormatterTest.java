@@ -1,8 +1,8 @@
 package io.cucumber.core.plugin;
 
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.deps.com.google.gson.JsonDeserializer;
+import io.cucumber.messages.internal.com.google.gson.Gson;
+import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
+import io.cucumber.messages.internal.com.google.gson.JsonDeserializer;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;

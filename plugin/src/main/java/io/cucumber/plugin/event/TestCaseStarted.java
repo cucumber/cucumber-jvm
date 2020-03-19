@@ -4,6 +4,7 @@ import org.apiguardian.api.API;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 
 @API(status = API.Status.STABLE)
 public final class TestCaseStarted extends TestCaseEvent {
@@ -12,7 +13,7 @@ public final class TestCaseStarted extends TestCaseEvent {
     public TestCaseStarted(Instant timeInstant, TestCase testCase) {
       super(timeInstant, testCase);
       this.testCase = Objects.requireNonNull(testCase);
-  }
+    }
 
     @Override
     public TestCase getTestCase() {

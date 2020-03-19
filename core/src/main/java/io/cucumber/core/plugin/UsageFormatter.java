@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
-import gherkin.deps.com.google.gson.JsonPrimitive;
-import gherkin.deps.com.google.gson.JsonSerializer;
+import io.cucumber.messages.internal.com.google.gson.Gson;
+import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
+import io.cucumber.messages.internal.com.google.gson.JsonPrimitive;
+import io.cucumber.messages.internal.com.google.gson.JsonSerializer;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;

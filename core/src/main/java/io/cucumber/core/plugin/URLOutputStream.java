@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import gherkin.deps.com.google.gson.Gson;
+import io.cucumber.messages.internal.com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.File;

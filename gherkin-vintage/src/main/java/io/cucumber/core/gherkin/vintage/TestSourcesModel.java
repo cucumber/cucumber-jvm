@@ -1,4 +1,4 @@
-package io.cucumber.core.plugin;
+package io.cucumber.core.gherkin.vintage;
 
 import gherkin.AstBuilder;
 import gherkin.Parser;
@@ -13,7 +13,6 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.TableRow;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.File;
@@ -153,7 +152,7 @@ final class TestSourcesModel {
             // parsing. So if we couldn't parse the feature, it will throw
             // before emitting the event. So if we can't parse it now, it was
             // not parsed by the Gherkin 5 parser.
-            throw new CucumberException("" +
+            throw new RuntimeException("" +
                 "You are using a plugin that does not support Gherkin 8+.\n" +
                 "Try to remove the html and/or json formatters. See the\n" +
                 "Cucumber-JVM 5.0.0 release announcement for more information.",

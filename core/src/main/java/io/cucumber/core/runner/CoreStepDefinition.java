@@ -11,18 +11,21 @@ import io.cucumber.core.stepexpression.StepTypeRegistry;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
 final class CoreStepDefinition {
 
+    private final UUID id;
     private final StepExpression expression;
     private final ArgumentMatcher argumentMatcher;
     private final StepDefinition stepDefinition;
     private final Type[] types;
 
-    CoreStepDefinition(StepDefinition stepDefinition, StepTypeRegistry stepTypeRegistry) {
+    CoreStepDefinition(UUID id, StepDefinition stepDefinition, StepTypeRegistry stepTypeRegistry) {
+        this.id = requireNonNull(id);
         this.stepDefinition = requireNonNull(stepDefinition);
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
         this.expression = createExpression(parameterInfos, stepDefinition.getPattern(), stepTypeRegistry);
@@ -41,16 +44,20 @@ final class CoreStepDefinition {
         }
     }
 
-    public String getPattern() {
+    String getPattern() {
         return expression.getSource();
     }
 
-    public StepDefinition getStepDefinition() {
+    StepDefinition getStepDefinition() {
         return stepDefinition;
     }
 
     List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step, types);
+    }
+
+    UUID getId() {
+        return id;
     }
 
     private static Type[] getTypes(List<ParameterInfo> parameterInfos) {
