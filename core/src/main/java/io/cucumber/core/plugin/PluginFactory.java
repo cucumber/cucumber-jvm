@@ -141,7 +141,7 @@ public final class PluginFactory {
     private static OutputStream openStream(String arg) throws IOException, URISyntaxException {
         if (arg.matches("^(http|https):.*")) {
             CurlOption option = CurlOption.parse(arg);
-            return new URLOutputStream(option);
+            return new UrlOutputStream(option);
         } else if (arg.matches("^file:.*")) {
             return createFileOutputStream(new File(new URL(arg).getFile()));
         } else {

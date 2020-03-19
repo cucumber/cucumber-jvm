@@ -97,7 +97,7 @@ public class UrlOutputStreamTest {
     private void verifyRequest(CurlOption url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody) {
         vertx.deployVerticle(testServer, testContext.succeeding(id -> {
             try {
-                OutputStream out = new URLOutputStream(url);
+                OutputStream out = new UrlOutputStream(url);
                 Writer w = new OutputStreamWriter(out, StandardCharsets.UTF_8);
                 w.write(requestBody);
                 w.flush();

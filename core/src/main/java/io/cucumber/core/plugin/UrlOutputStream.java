@@ -21,7 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * A stream that can write to both file and http URLs. If it's a file URL, writes with a {@link java.io.FileOutputStream},
  * if it's a http or https URL, writes with a HTTP PUT (by default) or with the specified method.
  */
-class URLOutputStream extends OutputStream {
+class UrlOutputStream extends OutputStream {
     // Allow streaming, using a chunk size that is similar to a typical NDJSON message length
     public static final int CHUNK_LENGTH = 256;
     private final HttpURLConnection urlConnection;
@@ -31,7 +31,7 @@ class URLOutputStream extends OutputStream {
     private URL url;
     private final Map<String, List<String>> requestHeaders;
 
-    URLOutputStream(CurlOption option) throws IOException {
+    UrlOutputStream(CurlOption option) throws IOException {
         this.method = option.getMethod().name();
         this.url = option.getUri().toURL();
 
