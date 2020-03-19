@@ -81,20 +81,20 @@ public class TestConfig {
 }
 ```
 
-To make Cucumber aware of your test configuration you can annotate a single step
-definition with `@ContextConfiguration`, `@ContextHierarchy` or
-`@BootstrapWith`. If you are using SpringBoot, you can annotate a single step
-definition class with `@SpringBootTest(classes = TestConfig.class)`.
+To make Cucumber aware of your test configuration you can annotate configuration class with `@CucumberContextConfiguration`
+and with one of the following annotations: `@ContextConfiguration`, `@ContextHierarchy` or
+`@BootstrapWith`. If you are using SpringBoot, you can annotate configuration class with `@SpringBootTest(classes = TestConfig.class)`.
 
 For example:
 ```java
 import com.example.app;
 import org.springframework.boot.test.context.SpringBootTest;
+import io.cucumber.spring.CucumberContextConfiguration;
 
 @SpringBootTest(classes = TestConfig.class)
+@CucumberContextConfiguration
 public class SomeServiceStepDefinitions {
 
-    // the rest of your step definitions
 
 }
 ```
@@ -106,7 +106,6 @@ For example:
 import com.example.app;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringBootTest(classes = TestConfig.class)
 public class SomeServiceStepDefinitions {
     
     @Autowired
@@ -177,6 +176,6 @@ If you are using xml based configuration, you can to register the beans in a
 <bean class="com.example.lib.SomeOtherService"/>
 ```
 
-Annotate a single step definition class with 
+Annotate a configuration class with 
 `@ContextConfiguration("classpath:cucumber.xml")`
 
