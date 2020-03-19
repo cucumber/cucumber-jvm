@@ -17,6 +17,7 @@
         <jsoup.version>1.12.2</jsoup.version>
         <xmlunit.version>2.6.3</xmlunit.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
+        <vertx.version>3.8.5</vertx.version>
     </properties>
 
     <dependencies>
@@ -92,13 +93,13 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web</artifactId>
-            <version>3.8.5</version>
+            <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-junit5</artifactId>
-            <version>3.8.5</version>
+            <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
 
