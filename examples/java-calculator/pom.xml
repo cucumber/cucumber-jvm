@@ -16,31 +16,6 @@
         <jackson-databind.version>2.10.2</jackson-databind.version>
     </properties>
 
-    <profiles>
-        <profile>
-            <!-- IDEA doesn't calculate shaded dependencies correctly and tries
-                 to include both gherkin 5 and gherkin 8. Manually excluded here
-                 for development -->
-            <id>idea-exclude-gherkin-vintage</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.cucumber</groupId>
-                    <artifactId>cucumber-core</artifactId>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>io.cucumber</groupId>
-                            <artifactId>gherkin</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>io.cucumber</groupId>
-                            <artifactId>cucumber-gherkin-vintage</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
