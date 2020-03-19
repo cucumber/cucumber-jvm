@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 class UrlOutputStream extends OutputStream {
-    // Allow streaming, using a chunk size that is similar to a typical NDJSON message length
+    // Allow streaming, using a chunk size that is similar to a typical NDJSON
+    // message length
     public static final int CHUNK_LENGTH = 256;
     private final HttpURLConnection urlConnection;
     private final OutputStream outputStream;
