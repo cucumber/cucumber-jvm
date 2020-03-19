@@ -130,7 +130,7 @@ can be supplied see the JUnit documentation [4.5. Configuration Parameters](http
 For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
-cucumber.ansi-colors.disabled=                          # true or false. default: true                     
+cucumber.ansi-colors.disabled=                          # true or false. default: false                     
 
 cucumber.filter.tags=                                   # a cucumber tag expression. 
                                                         # only matching scenarios are executed. 

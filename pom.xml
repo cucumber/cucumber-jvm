@@ -6,7 +6,7 @@
         <version>2.0.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>5.4.1-SNAPSHOT</version>
+    <version>5.5.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -62,8 +62,6 @@
         <junit-platform.version>1.6.0</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.2.4</mockito.version>
-        <jackson-databind.version>2.10.2</jackson-databind.version>
-
         <!--Maven plugins-->
         <groovy.version>2.5.9</groovy.version>
     </properties>
@@ -175,15 +173,6 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit-platform-engine</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
-                <!-- Only ever include Jackson as test dependency
-                     This library gets security fixes faster then our release cycle -->
-                <scope>test</scope>
             </dependency>
 
             <dependency>

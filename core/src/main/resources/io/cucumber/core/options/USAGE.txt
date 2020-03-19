@@ -106,7 +106,7 @@ properties file and CLI arguments take precedence over all.
 Supported properties are:
 
 ```
-cucumber.ansi-colors.disabled=  # true or false. default: true
+cucumber.ansi-colors.disabled=  # true or false. default: false
 cucumber.execution.dry-run=     # true or false. default: false
 cucumber.execution.limit=       # number of scenarios to execute (CLI only).
 cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical

@@ -119,6 +119,9 @@ Jackson to quickly transform well known string representations to Java objects.
  * `DefaultDataTableEntryTransformer`
  * `DefaultDataTableCellTransformer`
  
+For a full list of transformations that can be achieved with data table types
+see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+ 
 ```java
 package com.example.app;
 
@@ -183,6 +186,55 @@ public class StepDefinitions implements En {
             List<Author> authors = authorsTable.asList(Author.class);
           // authors = [Author(name="Aspiring Author", firstPublication=null), Author(name="Ancient Author", firstPublication=)]
 
+        });
+    }
+}
+```
+
+
+# Transposing Tables
+
+A data table can be transposed by calling `.transpose()`. This means the keys
+will be in the first column rather then the first row.
+
+
+```gherkin
+ Given the user is
+    | firstname	    | Roberto	|
+    | lastname	    | Lo Giacco |
+    | nationality	| Italian	|
+ ```
+
+And a data table type to create a User
+
+```java 
+package com.example.app;
+
+import io.cucumber.datatable.DataTable;
+
+import io.cucumber.java8.En;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class StepDefinitions implements En {
+    
+    public StepDefinitions() {
+        DataTableType((Map<String, String> entry) -> new User(
+            entry.get("firstname"),
+            entry.get("lastname")
+            entry.get("nationality")
+        ));
+    
+        Given("the user is",  (DataTable authorsTable) -> {
+            User user = authorsTable.transpose().asList(User.class);
+            // user  = User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
         });
     }
 }

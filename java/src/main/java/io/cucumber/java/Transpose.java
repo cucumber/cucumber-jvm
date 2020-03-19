@@ -23,18 +23,16 @@ import java.lang.annotation.Target;
  * And a data table type to create a User
  *
  * <pre>
- * typeRegistry.defineDataTableType(new DataTableType(
- *    Author.class,
- *    new TableEntryTransformer&lt;User&gt;() {
- *    &#064;Override
- *    public Author transform(Map&lt;String, String&gt; entry) {
- *       return new User(
- *          entry.get("firstName"),
- *          entry.get("lastName"),
- *          entry.get("nationality"));
- *    }
- * }));
- *
+ * {@code
+ * @DataTableType
+ * public User convert(Map<String, String> entry){
+ *    return new User(
+ *        entry.get("firstname"),
+ *        entry.get("lastname")
+ *        entry.get("nationality")
+ *   );
+ * }
+ * }
  * </pre>
  * Then the following Java Step Definition would convert that into an User object:
  * <pre>
