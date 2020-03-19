@@ -16,20 +16,18 @@ import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
 public final class TimelineFormatter implements ConcurrentEventListener {
@@ -50,20 +48,21 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     private final Map<String, TestData> allTests = new HashMap<>();
     private final Map<Long, GroupData> allGroups = new HashMap<>();
-    private final URL reportDir;
+    private final File reportDir;
     private final NiceAppendable reportJs;
     private final Map<URI, String> featuresNames = new HashMap<>();
     private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
 
 
     @SuppressWarnings("unused") // Used by PluginFactory
-    public TimelineFormatter(final URL reportDir) {
-        this(reportDir, createOutput(reportDir, "report.js"));
-    }
+    public TimelineFormatter(final File reportDir) throws FileNotFoundException {
+        reportDir.mkdirs();
+        if (!reportDir.isDirectory()) {
+            throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s", getClass().getName(), reportDir.getAbsolutePath()));
+        }
 
-    private TimelineFormatter(final URL reportDir, final NiceAppendable reportJs) {
         this.reportDir = reportDir;
-        this.reportJs = reportJs;
+        this.reportJs = new NiceAppendable(new UTF8OutputStreamWriter(new FileOutputStream(new File(reportDir, "report.js"))));
     }
 
     @Override
@@ -139,19 +138,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             final String fileName = new File(textAsset).getName();
             copyFile(textAssetStream, new File(outputDir, fileName));
             closeQuietly(textAssetStream);
-        }
-    }
-
-    private static NiceAppendable createOutput(final URL dir, final String file) {
-        final File outDir = new File(dir.getPath());
-        if (!outDir.exists() && !outDir.mkdirs()) {
-            throw new CucumberException("Failed to create dir: " + dir.getPath());
-        }
-        try {
-            final OutputStream out = new URLOutputStream(new URL(dir, file));
-            return new NiceAppendable(new OutputStreamWriter(out, UTF_8));
-        } catch (IOException e) {
-            throw new CucumberException(e);
         }
     }
 

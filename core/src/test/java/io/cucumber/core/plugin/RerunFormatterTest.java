@@ -6,16 +6,17 @@ import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 class RerunFormatterTest {
 
@@ -39,9 +40,7 @@ class RerunFormatterTest {
         stepsToResult.put("pending step", result("pending"));
         stepsToResult.put("undefined step", result("undefined"));
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is(""));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo(""));
     }
 
     @Test
@@ -59,9 +58,7 @@ class RerunFormatterTest {
         stepsToResult.put("pending step", result("pending"));
         stepsToResult.put("undefined step", result("undefined"));
 
-        String formatterOutput = runFeaturesWithFormatter(true);
-
-        assertThat(formatterOutput, is("classpath:path/test.feature:2:4:6\n"));
+        assertThat(runFeaturesWithFormatter(true), isBytesEqualTo("classpath:path/test.feature:2:4:6\n"));
     }
 
     @Test
@@ -77,9 +74,7 @@ class RerunFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("failed"));
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is("file:path/test.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("file:path/test.feature:2\n"));
     }
 
     @Test
@@ -96,9 +91,7 @@ class RerunFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is("file:path/test.feature:4\n"));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("file:path/test.feature:4\n"));
     }
 
     @Test
@@ -117,9 +110,7 @@ class RerunFormatterTest {
         stepsToResult.put("executing second row", result("failed"));
         stepsToResult.put("everything is ok", result("passed"));
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is("classpath:path/test.feature:8\n"));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:8\n"));
     }
 
     @Test
@@ -137,9 +128,7 @@ class RerunFormatterTest {
         hooks.add(TestHelper.hookEntry("before", result("failed")));
         hookLocations.add("hook-location");
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is("classpath:path/test.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:2\n"));
     }
 
     @Test
@@ -157,9 +146,7 @@ class RerunFormatterTest {
         hooks.add(TestHelper.hookEntry("after", result("failed")));
         hookLocations.add("hook-location");
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is("classpath:path/test.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:2\n"));
     }
 
     @Test
@@ -178,9 +165,7 @@ class RerunFormatterTest {
         stepsToResult.put("third step", result("failed"));
         stepsToResult.put("forth step", result("passed"));
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is("classpath:path/test.feature:2:5\n"));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:2:5\n"));
     }
 
     @Test
@@ -202,13 +187,11 @@ class RerunFormatterTest {
         stepsToResult.put("third step", result("failed"));
         stepsToResult.put("forth step", result("passed"));
 
-        String formatterOutput = runFeaturesWithFormatter(false);
-
-        assertThat(formatterOutput, is("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
     }
 
-    private String runFeaturesWithFormatter(boolean isStrict) {
-        final StringBuffer report = new StringBuffer();
+    private ByteArrayOutputStream runFeaturesWithFormatter(boolean isStrict) {
+        final ByteArrayOutputStream report = new ByteArrayOutputStream();
         final RerunFormatter formatter = new RerunFormatter(report);
         formatter.setStrict(isStrict);
 
@@ -222,7 +205,7 @@ class RerunFormatterTest {
             .build()
             .run();
 
-        return report.toString();
+        return report;
     }
 
 }

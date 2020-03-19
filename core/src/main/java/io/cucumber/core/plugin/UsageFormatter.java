@@ -13,6 +13,7 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 
+import java.io.OutputStream;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +38,8 @@ public final class UsageFormatter implements Plugin, EventListener {
      * @param out {@link Appendable} to print the result
      */
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public UsageFormatter(Appendable out) {
-        this.out = new NiceAppendable(out);
+    public UsageFormatter(OutputStream out) {
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

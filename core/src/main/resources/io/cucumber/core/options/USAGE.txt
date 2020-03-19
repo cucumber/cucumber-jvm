@@ -11,19 +11,28 @@ Options:
                                            provided Cucumber will search the
                                            classpath.
 
-  -p, --[add-]plugin PLUGIN[:PATH_OR_URL]  Register a plugin.
+  -p, --[add-]plugin PLUGIN[:[PATH|[URI [OPTIONS]]]
+                                           Register a plugin.
                                            Built-in formatter PLUGIN types:
                                            junit, html, pretty, progress, json,
                                            usage, rerun, testng. Built-in
                                            summary PLUGIN types:
                                            default_summary, null_summary,
                                            unused. PLUGIN can also be a fully
-                                           qualified class name, allowing registration
-                                           of 3rd party plugins.
+                                           qualified class name, allowing
+                                           registration of 3rd party plugins.
 
                                            --add-plugin does not clobber plugins
                                            of that type defined from a different
                                            source.
+
+                                           If a http:// or https:// URI is used,
+                                           the output will be sent as a POST
+                                           request. This can be overridden by
+                                           providing additional options.
+
+                                           OPTIONS supports cUrls -X and -H
+                                           commands.
 
   -t, --tags TAG_EXPRESSION                Only run scenarios tagged with tags
                                            matching TAG_EXPRESSION.
@@ -52,8 +61,8 @@ Options:
 
   -w, --wip                                Fail if there are any passing
                                            scenarios.
-  
-    
+
+
       --order                              Run the scenarios in a different
                                            order. The options are 'reverse' and
                                            'random'. In case of 'random' order
@@ -61,7 +70,8 @@ Options:
                                            added 'random:<seed>'.
 
       --count                              Number of scenarios to be executed.
-                                           If not specified all scenarios are run.
+                                           If not specified all scenarios are
+                                           run.
 
       --object-factory CLASSNAME           Uses the class specified by CLASSNAME
                                            as object factory. Be aware that the

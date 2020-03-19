@@ -21,6 +21,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.SummaryPrinter;
+import io.cucumber.core.plugin.MessageFormatter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -132,12 +133,7 @@ public class PluginOption implements Options.Plugin {
             log.debug(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to teamcity plugin");
             return TeamCityPlugin.class;
         }
-
-        Class<? extends Plugin> pluginClass = PLUGIN_CLASSES.get(pluginName).get();
-        if (pluginClass == null) {
-            pluginClass = loadClass(pluginName);
-        }
-        return pluginClass;
+        return PLUGIN_CLASSES.getOrDefault(pluginName, () -> loadClass(pluginName)).get();
     }
 
     @SuppressWarnings("unchecked")

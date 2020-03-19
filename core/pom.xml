@@ -16,9 +16,8 @@
         <jackson-databind.version>2.10.2</jackson-databind.version>
         <jsoup.version>1.12.2</jsoup.version>
         <xmlunit.version>2.6.3</xmlunit.version>
-        <webbit.version>0.4.15</webbit.version>
-        <webbit-rest.version>0.3.0</webbit-rest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
+        <vertx.version>3.8.5</vertx.version>
     </properties>
 
     <dependencies>
@@ -92,15 +91,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.webbitserver</groupId>
-            <artifactId>webbit</artifactId>
-            <version>${webbit.version}</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.webbitserver</groupId>
-            <artifactId>webbit-rest</artifactId>
-            <version>${webbit-rest.version}</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-junit5</artifactId>
+            <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
 
