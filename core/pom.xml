@@ -13,9 +13,9 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
-        <jackson-databind.version>2.10.2</jackson-databind.version>
-        <jsoup.version>1.12.2</jsoup.version>
-        <xmlunit.version>2.6.3</xmlunit.version>
+        <jackson-databind.version>2.10.3</jackson-databind.version>
+        <jsoup.version>1.13.1</jsoup.version>
+        <xmlunit.version>2.6.4</xmlunit.version>
         <webbit.version>0.4.15</webbit.version>
         <webbit-rest.version>0.3.0</webbit-rest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>

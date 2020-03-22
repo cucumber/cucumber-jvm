@@ -10,5 +10,6 @@
         <ignoreVersion type="regex">.*-rc-?\d+</ignoreVersion>
         <ignoreVersion type="regex">.*-RC-?\d+</ignoreVersion>
         <ignoreVersion type="regex">.*-M\d+</ignoreVersion>
+        <ignoreVersion type="regex">.*-milestone\d+</ignoreVersion>
     </ignoreVersions>
 </ruleset>
