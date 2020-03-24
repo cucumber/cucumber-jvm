@@ -54,16 +54,16 @@
         <messages.version>9.0.3</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
         <gherkin-vintage-jvm-deps.version>1.0.6</gherkin-vintage-jvm-deps.version>
-        <gherkin-messages.version>9.1.0</gherkin-messages.version>
+        <gherkin-messages.version>9.2.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
-        <junit-jupiter.version>5.6.0</junit-jupiter.version>
-        <junit-platform.version>1.6.0</junit-platform.version>
+        <junit-jupiter.version>5.6.1</junit-jupiter.version>
+        <junit-platform.version>1.6.1</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.2.4</mockito.version>
+        <mockito.version>3.3.3</mockito.version>
         <!--Maven plugins-->
-        <groovy.version>2.5.9</groovy.version>
+        <groovy.version>2.5.10</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
