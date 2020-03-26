@@ -122,10 +122,10 @@ public class CompatibilityTest {
             this.expectedMessage = expectedMessage;
             this.depth = depth + 1;
             openEnvelope(singletonList(expectedMessage))
-                .forEach((messageType, expectedMessages) -> {
-                    switch (messageType) {
+                .forEach((fieldName, expectedMessages) -> {
+                    switch (fieldName) {
                         case "uri":
-                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aUriEndingWith(expectedMessages))));
+                            this.expected.add(hasEntry(is(fieldName), containsInRelativeOrder(aUriEndingWith(expectedMessages))));
                             break;
                         case "id":
                         case "pickleId":
@@ -135,31 +135,26 @@ public class CompatibilityTest {
                         case "testCaseId":
                         case "testStepId":
                         case "testCaseStartedId":
-                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(anId(expectedMessages))));
+                            this.expected.add(hasEntry(is(fieldName), containsInRelativeOrder(anId(expectedMessages))));
                             break;
                         case "astNodeIds":
                         case "stepDefinitionIds":
-                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(containsInRelativeOrder(anId(expectedMessages)))));
-                            break;
-                        case "stepMatchArguments":
-                        case "stepMatchArgumentsLists":
-                            // TODO: start and finish don't work right at the very least....
-//                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(containsInRelativeOrder(aComparableElement(expectedMessages, this.depth)))));
+                            this.expected.add(hasEntry(is(fieldName), containsInRelativeOrder(containsInRelativeOrder(anId(expectedMessages)))));
                             break;
                         case "sourceReference":
                             // TODO: Uris don't compare. We should use something else.
                             break;
                         case "timestamp":
-                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aTimeStamp(expectedMessages))));
+                            this.expected.add(hasEntry(is(fieldName), containsInRelativeOrder(aTimeStamp(expectedMessages))));
                             break;
                         case "duration":
-                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aDuration(expectedMessages))));
+                            this.expected.add(hasEntry(is(fieldName), containsInRelativeOrder(aDuration(expectedMessages))));
                             break;
                         case "message":
                             // TODO: Errors don't usually match. But is this key only used for errors?
                             break;
                         default:
-                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aComparableElement(expectedMessages, this.depth))));
+                            this.expected.add(hasEntry(is(fieldName), containsInRelativeOrder(aComparableElement(expectedMessages, this.depth))));
                     }
                 });
 

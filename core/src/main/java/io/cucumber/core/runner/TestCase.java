@@ -156,21 +156,22 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             testStepBuilder
                 .addAllStepDefinitionIds(singletonList(pickleStep.getId().toString()))
                 .setPickleStepId(pickleStep.getStep().getId())
-                .addAllStepMatchArgumentsLists(getStepMatchArguments(pickleStep));
+                .addStepMatchArgumentsLists(getStepMatchArguments(pickleStep));
         }
 
         return testStepBuilder.build();
     }
 
-    public Iterable<StepMatchArgumentsList> getStepMatchArguments(PickleStepTestStep pickleStep) {
-        return pickleStep.getDefinitionArgument().stream()
-            .map(arg -> StepMatchArgumentsList.newBuilder()
-                .addStepMatchArguments(StepMatchArgument.newBuilder()
-                    .setParameterTypeName(arg.getParameterTypeName())
-                    .setGroup(makeMessageGroup(arg.getGroup()))
-                    .build())
-                .build()
-            ).collect(toList());
+    public StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
+        StepMatchArgumentsList.Builder builder = StepMatchArgumentsList.newBuilder();
+
+        pickleStep.getDefinitionArgument().forEach(arg -> builder
+            .addStepMatchArguments(StepMatchArgument.newBuilder()
+                .setParameterTypeName(arg.getParameterTypeName())
+                .setGroup(makeMessageGroup(arg.getGroup()))
+                .build()));
+
+        return builder.build();
     }
 
     private static StepMatchArgument.Group makeMessageGroup(Group group) {
@@ -182,9 +183,12 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         if (group.getValue() != null) {
             builder.setValue(group.getValue());
         }
+
+        if (group.getStart() != -1) {
+            builder.setStart(group.getStart());
+        }
+
         return builder
-            //TODO: We can't represent undefined / missing matches.
-            .setStart(group.getStart())
             .addAllChildren(group.getChildren().stream()
                 .map(TestCase::makeMessageGroup)
                 .collect(toList()))
