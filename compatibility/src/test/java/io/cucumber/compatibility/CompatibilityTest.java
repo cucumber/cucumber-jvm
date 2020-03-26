@@ -123,7 +123,7 @@ public class CompatibilityTest {
 
         @Override
         public void describeTo(Description description) {
-            description.appendList("", ", ", "", expected);
+            description.appendList("", ",\n", "", expected);
         }
 
         @Override
