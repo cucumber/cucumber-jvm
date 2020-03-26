@@ -6,6 +6,8 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.NdjsonToMessageIterable;
+import io.cucumber.messages.internal.com.google.protobuf.ByteString;
+import io.cucumber.messages.internal.com.google.protobuf.Descriptors.EnumValueDescriptor;
 import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
@@ -21,8 +23,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +34,11 @@ import java.util.stream.Collectors;
 import static java.time.Clock.fixed;
 import static java.time.Instant.ofEpochSecond;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.containsInRelativeOrder;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 
 public class CompatibilityTest {
@@ -58,7 +60,7 @@ public class CompatibilityTest {
                     .addFeature(testCase.getFeature())
                     .build())
                 .withAdditionalPlugins(new MessageFormatter(new FileOutputStream(output)))
-                .withEventBus(new TimeServiceEventBus(fixed(ofEpochSecond(0), UTC), idGenerator))
+                .withEventBus(new TimeServiceEventBus(fixed(ofEpochSecond(1), UTC), idGenerator))
                 .build()
                 .run();
         } catch (Exception ignored) {
@@ -74,21 +76,66 @@ public class CompatibilityTest {
         expectedEnvelopes.forEach((messageType, expectedMessages) ->
             assertThat(
                 actualEnvelopes,
-                hasEntry(is(messageType), containsInAnyOrder(aComparableMessage(expectedMessages)))
+                hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))
             )
         );
     }
 
-    private static Collection<Matcher<?>> aComparableMessage(List<?> expectedMessages) {
+    private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {
+        List<Messages.Envelope> expectedEnvelopes = new ArrayList<>();
+        InputStream input = Files.newInputStream(output);
+        new NdjsonToMessageIterable(input)
+            .forEach(expectedEnvelopes::add);
+        return expectedEnvelopes;
+    }
+
+    private static List<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> expectedMessages) {
+        return expectedMessages.stream()
+            .map(GeneratedMessageV3TypeSafeDiagnosingMatcher::new)
+            .collect(Collectors.toList());
+    }
+
+    private static List<Matcher<? super Object>> aComparableElement(List<?> expectedMessages, int depth) {
         return expectedMessages.stream()
             .map(element -> {
                 if (element instanceof GeneratedMessageV3) {
                     GeneratedMessageV3 message = (GeneratedMessageV3) element;
-                    return new GeneratedMessageV3TypeSafeDiagnosingMatcher(message);
+                    return new GeneratedMessageV3TypeSafeDiagnosingMatcher(message, depth);
                 }
-                return CoreMatchers.is(element);
+                if (element instanceof List) {
+                    List<?> list = (List<?>) element;
+                    return containsInRelativeOrder(aComparableElement(list, depth));
+                }
 
+                if (element instanceof EnumValueDescriptor) {
+                    return new IsEnumValueDescriptor((EnumValueDescriptor) element);
+                }
+
+                if (element instanceof ByteString) {
+                    return new IsByteString((ByteString) element);
+                }
+
+                if (element instanceof String || element instanceof Integer || element instanceof Boolean) {
+                    return CoreMatchers.is(element);
+                }
+
+                throw new IllegalArgumentException("Unsupported type " + element.getClass() + ": " + element);
             })
+            .map(matcher -> (Matcher<? super Object>) matcher)
+            .collect(Collectors.toList());
+    }
+
+    private static List<Matcher<? super String>> aUriEndingWith(List<?> expectedMessages) {
+        return expectedMessages.stream()
+            .map(String.class::cast)
+            .map(CoreMatchers::endsWith)
+            .collect(Collectors.toList());
+    }
+
+    private static List<Matcher<? super String>> anId(List<?> expectedMessages) {
+        return expectedMessages.stream()
+            // id generation is not predictable
+            .map(m -> isA(String.class))
             .collect(Collectors.toList());
     }
 
@@ -103,32 +150,86 @@ public class CompatibilityTest {
         return map;
     }
 
-    private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {
-        List<Messages.Envelope> expectedEnvelopes = new ArrayList<>();
-        InputStream input = Files.newInputStream(output);
-        new NdjsonToMessageIterable(input)
-            .forEach(expectedEnvelopes::add);
-        return expectedEnvelopes;
-    }
-
     private static class GeneratedMessageV3TypeSafeDiagnosingMatcher extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
 
         private final List<Matcher<?>> expected = new ArrayList<>();
+        private final GeneratedMessageV3 expectedMessage;
+        private final int depth;
 
-        public GeneratedMessageV3TypeSafeDiagnosingMatcher(GeneratedMessageV3 expected) {
-            openEnvelope(Collections.singletonList(expected))
-                .forEach((messageType, expectedMessages) ->
-                    this.expected.add(hasEntry(is(messageType), containsInAnyOrder(aComparableMessage(expectedMessages)))));
+
+        public GeneratedMessageV3TypeSafeDiagnosingMatcher(GeneratedMessageV3 expectedMessage) {
+            this(expectedMessage, 0);
         }
+
+        public GeneratedMessageV3TypeSafeDiagnosingMatcher(GeneratedMessageV3 expectedMessage, int depth) {
+            this.expectedMessage = expectedMessage;
+            this.depth = depth + 1;
+            openEnvelope(singletonList(expectedMessage))
+                .forEach((messageType, expectedMessages) -> {
+                    switch (messageType) {
+                        case "uri":
+                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aUriEndingWith(expectedMessages))));
+                            break;
+                        case "id":
+                        case "pickleId":
+                        case "astNodeId":
+                        case "hookId":
+                        case "pickleStepId":
+                        case "testCaseId":
+                        case "testStepId":
+                        case "testCaseStartedId":
+                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(anId(expectedMessages))));
+                            break;
+                        case "astNodeIds":
+                        case "stepDefinitionIds":
+                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(containsInRelativeOrder(anId(expectedMessages)))));
+                            break;
+                        case "stepMatchArguments":
+                        case "stepMatchArgumentsLists":
+                            // TODO: start and finish don't work right at the very least....
+//                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(containsInRelativeOrder(aComparableElement(expectedMessages, this.depth)))));
+                            break;
+                        case "sourceReference":
+                            // TODO: Uris don't compare. We should use something lese.
+                            break;
+                        case "timestamp":
+                        case "duration":
+                            // TODO:
+                            break;
+                        case "message":
+                            // TODO: Errors don't usually match. But is this key only used for errors?
+                            break;
+                        default:
+                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aComparableElement(expectedMessages, this.depth))));
+                    }
+                });
+        }
+
 
         @Override
         public void describeTo(Description description) {
-            description.appendList("", ",\n", "", expected);
+            StringBuilder padding = new StringBuilder();
+            for (int i = 0; i < depth + 1; i++) {
+                padding.append("\t");
+            }
+
+            description.appendList("\n" + padding.toString(), ",\n" + padding.toString(), "\n", expected);
+//            description.appendValue(expectedMessage);
         }
 
         @Override
         protected boolean matchesSafely(GeneratedMessageV3 actual, Description mismatchDescription) {
-            return expected.equals(actual);
+            Map<String, List<Object>> actualEnvelope = openEnvelope(singletonList(actual));
+
+            for (Matcher<?> matcher : expected) {
+                if (!matcher.matches(actualEnvelope)) {
+//                    mismatchDescription = new StringDescription();
+                    matcher.describeMismatch(actualEnvelope, mismatchDescription);
+                    return false;
+                }
+            }
+            return true;
         }
     }
+
 }

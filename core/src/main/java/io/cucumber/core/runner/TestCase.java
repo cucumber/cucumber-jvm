@@ -197,7 +197,9 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
                 .setId(executionId.toString())
                 .setTestCaseId(id.toString())
-                .setTimestamp(javaInstantToTimestamp(start))).build());
+                .setTimestamp(javaInstantToTimestamp(start))
+                .build()
+            ).build());
     }
 
     private void emitTestCaseFinished(EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result) {

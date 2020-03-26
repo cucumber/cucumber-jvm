@@ -2,7 +2,6 @@ package io.cucumber.compatibility.attachments;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
 import java.io.IOException;
@@ -10,22 +9,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class Attachments {
 
     Scenario scenario;
 
     @Before
-    public void before(Scenario scenario){
+    public void before(Scenario scenario) {
         this.scenario = scenario;
     }
 
     @When("the string {string} is attached as {string}")
-    public void theStringIsAttachedAs(String text, String contentType){
-        scenario.write(text);
+    public void theStringIsAttachedAs(String text, String contentType) {
+        // TODO: This doesn't work as expected.
+        // Spec still does type guessing when it shouldn't.
+        scenario.embed(text.getBytes(UTF_8), contentType, null);
     }
 
     @When("the string {string} is logged")
-    public void theStringIsLogged(String text){
+    public void theStringIsLogged(String text) {
         scenario.write(text);
     }
 

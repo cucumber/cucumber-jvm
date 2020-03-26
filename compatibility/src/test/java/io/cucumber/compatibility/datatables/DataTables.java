@@ -9,13 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DataTables {
     private DataTable toTranspose;
 
+    @When("the following table is transposed:")
+    public void theFollowingTableIsTransposed(DataTable toTranspose) {
+        this.toTranspose = toTranspose;
+    }
+
     @Then("it should be:")
     public void itShouldBe(DataTable expected) {
         assertEquals(expected, toTranspose.transpose());
     }
 
-    @When("the following table is transposed:")
-    public void theFollowingTableIsTransposed(DataTable toTranspose) {
-        this.toTranspose = toTranspose;
-    }
 }

@@ -94,7 +94,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
                     .setTestCaseStartedId(testExecutionId.toString())
                     .setTestStepId(currentTestStepId.toString())
                     .setText(text)
-                    .setMediaType("text/plain")
+                    .setMediaType("text/x.cucumber.log+plain")
                     .build()
             )
             .build()
