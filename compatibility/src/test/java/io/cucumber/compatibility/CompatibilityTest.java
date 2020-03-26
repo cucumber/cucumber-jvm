@@ -89,56 +89,6 @@ public class CompatibilityTest {
         return expectedEnvelopes;
     }
 
-    private static List<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> expectedMessages) {
-        return expectedMessages.stream()
-            .map(GeneratedMessageV3TypeSafeDiagnosingMatcher::new)
-            .collect(Collectors.toList());
-    }
-
-    private static List<Matcher<? super Object>> aComparableElement(List<?> expectedMessages, int depth) {
-        return expectedMessages.stream()
-            .map(element -> {
-                if (element instanceof GeneratedMessageV3) {
-                    GeneratedMessageV3 message = (GeneratedMessageV3) element;
-                    return new GeneratedMessageV3TypeSafeDiagnosingMatcher(message, depth);
-                }
-                if (element instanceof List) {
-                    List<?> list = (List<?>) element;
-                    return containsInRelativeOrder(aComparableElement(list, depth));
-                }
-
-                if (element instanceof EnumValueDescriptor) {
-                    return new IsEnumValueDescriptor((EnumValueDescriptor) element);
-                }
-
-                if (element instanceof ByteString) {
-                    return new IsByteString((ByteString) element);
-                }
-
-                if (element instanceof String || element instanceof Integer || element instanceof Boolean) {
-                    return CoreMatchers.is(element);
-                }
-
-                throw new IllegalArgumentException("Unsupported type " + element.getClass() + ": " + element);
-            })
-            .map(matcher -> (Matcher<? super Object>) matcher)
-            .collect(Collectors.toList());
-    }
-
-    private static List<Matcher<? super String>> aUriEndingWith(List<?> expectedMessages) {
-        return expectedMessages.stream()
-            .map(String.class::cast)
-            .map(CoreMatchers::endsWith)
-            .collect(Collectors.toList());
-    }
-
-    private static List<Matcher<? super String>> anId(List<?> expectedMessages) {
-        return expectedMessages.stream()
-            // id generation is not predictable
-            .map(m -> isA(String.class))
-            .collect(Collectors.toList());
-    }
-
     private static <T> Map<String, List<T>> openEnvelope(List<? extends GeneratedMessageV3> actual) {
         Map<String, List<T>> map = new LinkedHashMap<>();
         actual.forEach(envelope -> envelope.getAllFields()
@@ -148,6 +98,13 @@ public class CompatibilityTest {
                 map.get(jsonName).add((T) value);
             }));
         return map;
+    }
+
+
+    private static List<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> expectedMessages) {
+        return expectedMessages.stream()
+            .map(GeneratedMessageV3TypeSafeDiagnosingMatcher::new)
+            .collect(Collectors.toList());
     }
 
     private static class GeneratedMessageV3TypeSafeDiagnosingMatcher extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
@@ -190,11 +147,13 @@ public class CompatibilityTest {
 //                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(containsInRelativeOrder(aComparableElement(expectedMessages, this.depth)))));
                             break;
                         case "sourceReference":
-                            // TODO: Uris don't compare. We should use something lese.
+                            // TODO: Uris don't compare. We should use something else.
                             break;
                         case "timestamp":
+                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aTimeStamp(expectedMessages))));
+                            break;
                         case "duration":
-                            // TODO:
+                            this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aDuration(expectedMessages))));
                             break;
                         case "message":
                             // TODO: Errors don't usually match. But is this key only used for errors?
@@ -203,8 +162,8 @@ public class CompatibilityTest {
                             this.expected.add(hasEntry(is(messageType), containsInRelativeOrder(aComparableElement(expectedMessages, this.depth))));
                     }
                 });
-        }
 
+        }
 
         @Override
         public void describeTo(Description description) {
@@ -234,6 +193,64 @@ public class CompatibilityTest {
                 }
             }
             return true;
+        }
+
+        private static List<Matcher<? super Object>> aComparableElement(List<?> expectedMessages, int depth) {
+            return expectedMessages.stream()
+                .map(element -> {
+                    if (element instanceof GeneratedMessageV3) {
+                        GeneratedMessageV3 message = (GeneratedMessageV3) element;
+                        return new GeneratedMessageV3TypeSafeDiagnosingMatcher(message, depth);
+                    }
+                    if (element instanceof List) {
+                        List<?> list = (List<?>) element;
+                        return containsInRelativeOrder(aComparableElement(list, depth));
+                    }
+
+                    if (element instanceof EnumValueDescriptor) {
+                        return new IsEnumValueDescriptor((EnumValueDescriptor) element);
+                    }
+
+                    if (element instanceof ByteString) {
+                        return new IsByteString((ByteString) element);
+                    }
+
+                    if (element instanceof String || element instanceof Integer || element instanceof Boolean) {
+                        return CoreMatchers.is(element);
+                    }
+
+                    throw new IllegalArgumentException("Unsupported type " + element.getClass() + ": " + element);
+                })
+                .map(matcher -> (Matcher<? super Object>) matcher)
+                .collect(Collectors.toList());
+        }
+
+        private static List<Matcher<? super String>> aUriEndingWith(List<?> expectedMessages) {
+            return expectedMessages.stream()
+                .map(String.class::cast)
+                .map(CoreMatchers::endsWith)
+                .collect(Collectors.toList());
+        }
+
+        private static List<Matcher<? super String>> anId(List<?> expectedMessages) {
+            return expectedMessages.stream()
+                // id generation is not predictable
+                .map(m -> isA(String.class))
+                .collect(Collectors.toList());
+        }
+
+        private static List<Matcher<? super Messages.Timestamp>> aTimeStamp(List<?> expectedMessages) {
+            return expectedMessages.stream()
+                // timestamps are not predictable
+                .map(m -> isA(Messages.Timestamp.class))
+                .collect(Collectors.toList());
+        }
+
+        private static List<Matcher<? super Messages.Duration>> aDuration(List<?> expectedMessages) {
+            return expectedMessages.stream()
+                // timestamps are not predictable
+                .map(m -> isA(Messages.Duration.class))
+                .collect(Collectors.toList());
         }
     }
 
