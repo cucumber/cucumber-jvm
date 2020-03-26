@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,9 +32,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static java.time.Clock.fixed;
-import static java.time.Instant.ofEpochSecond;
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
@@ -42,9 +40,6 @@ import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.contai
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 
 public class CompatibilityTest {
-
-    private final AtomicLong id = new AtomicLong();
-    private final Supplier<UUID> idGenerator = () -> new UUID(0L, id.getAndIncrement());
 
     @ParameterizedTest
     @MethodSource("io.cucumber.compatibility.TestCase#testCases")
@@ -60,7 +55,7 @@ public class CompatibilityTest {
                     .addFeature(testCase.getFeature())
                     .build())
                 .withAdditionalPlugins(new MessageFormatter(new FileOutputStream(output)))
-                .withEventBus(new TimeServiceEventBus(fixed(ofEpochSecond(1), UTC), idGenerator))
+                .withEventBus(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID))
                 .build()
                 .run();
         } catch (Exception ignored) {
