@@ -213,6 +213,11 @@ public class CompatibilityTest {
                 padding.append("\t");
             }
 
+            if (expected.isEmpty()) {
+                description.appendText("\n" + padding.toString() + "all fields are ignored");
+                return;
+            }
+
             description.appendList("\n" + padding.toString(), ",\n" + padding.toString(), "\n", expected);
 //            description.appendValue(expectedMessage);
         }
