@@ -22,8 +22,6 @@ public class Attachments {
 
     @When("the string {string} is attached as {string}")
     public void theStringIsAttachedAs(String text, String contentType) {
-        // TODO: This doesn't work as expected.
-        // Spec still does type guessing when it shouldn't.
         scenario.embed(text.getBytes(UTF_8), contentType, null);
     }
 
@@ -43,7 +41,6 @@ public class Attachments {
 
     @When("a stream with {int} bytes are attached as {string}")
     public void aStreamWithBytesAreAttachedAs(int n, String mediaType) {
-        // TODO: The embed method should take a java.io.InputStream too
         byte[] bytes = new byte[n];
         for (byte i = 0; i < n; i++) {
             bytes[i] = i;

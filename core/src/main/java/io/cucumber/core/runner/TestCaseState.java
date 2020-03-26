@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.max;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -71,18 +72,35 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     @Override
     public void embed(byte[] data, String mediaType, String name) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
-        bus.send(Messages.Envelope.newBuilder()
-            .setAttachment(
-                Messages.Attachment.newBuilder()
-                    .setTestCaseStartedId(testExecutionId.toString())
-                    .setTestStepId(currentTestStepId.toString())
-                    .setBinary(ByteString.copyFrom(data))
-                     //TODO: Add file name to message protocol
-                    .setMediaType(mediaType)
-                    .build()
-            )
-            .build()
-        );
+
+        // TODO: Remove this weird exception from the cck
+        if (mediaType.equals("text/plain")) {
+            bus.send(Messages.Envelope.newBuilder()
+                .setAttachment(
+                    Messages.Attachment.newBuilder()
+                        .setTestCaseStartedId(testExecutionId.toString())
+                        .setTestStepId(currentTestStepId.toString())
+                        .setText(new String(data, UTF_8))
+                        //TODO: Add file name to message protocol
+                        .setMediaType(mediaType)
+                        .build()
+                )
+                .build()
+            );
+        } else {
+            bus.send(Messages.Envelope.newBuilder()
+                .setAttachment(
+                    Messages.Attachment.newBuilder()
+                        .setTestCaseStartedId(testExecutionId.toString())
+                        .setTestStepId(currentTestStepId.toString())
+                        .setBinary(ByteString.copyFrom(data))
+                        //TODO: Add file name to message protocol
+                        .setMediaType(mediaType)
+                        .build()
+                )
+                .build()
+            );
+        }
     }
 
     @Override
