@@ -243,12 +243,7 @@ final class CachingGlue implements Glue {
         bus.send(Messages.Envelope.newBuilder()
             .setHook(Messages.Hook.newBuilder()
                 .setId(hook.getId().toString())
-                .setTagExpression(hook.getTagExpression())
-                .setSourceReference(Messages.SourceReference.newBuilder()
-                    // TODO: Maybe we should add a proper URI prefix here, like "javamethod:....". Maybe there is
-                    // a standard for this
-                    .setUri(hook.getLocation()))
-            )
+                .setTagExpression(hook.getTagExpression()))
             .build()
         );
     }
@@ -268,11 +263,7 @@ final class CachingGlue implements Glue {
                     .setId(stepDefinition.getId().toString())
                     .setPattern(Messages.StepDefinitionPattern.newBuilder()
                         .setSource(stepDefinition.getPattern())
-                        .build())
-                    .setSourceReference(Messages.SourceReference.newBuilder()
-                        .setUri(stepDefinition.getStepDefinition().getLocation())
-                        .build())
-                    .build())
+                    ))
             .build()
         );
     }
