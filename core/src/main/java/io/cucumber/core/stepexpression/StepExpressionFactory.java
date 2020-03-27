@@ -40,9 +40,9 @@ public final class StepExpressionFactory {
         return createExpression(expressionString, tableOrDocStringType, false);
     }
 
-//    public StepExpression createExpression(String expressionString, Type tableOrDocStringType, boolean transpose) {
-//        return createExpression(expressionString, () -> tableOrDocStringType, transpose);
-//    }
+    public StepExpression createExpression(String expressionString, Type tableOrDocStringType, boolean transpose) {
+        return createExpression(expressionString, () -> tableOrDocStringType, transpose);
+    }
 
     public StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose) {
         if (expressionString == null) throw new NullPointerException("expressionString can not be null");
