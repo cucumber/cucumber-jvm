@@ -57,7 +57,6 @@ public final class StepExpressionFactory {
             throw registerTypeInConfiguration(expressionString, e);
         }
 
-
         RawTableTransformer<?> tableTransform = (List<List<String>> raw) -> {
             DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
             Type targetType = tableOrDocStringType.get();
