@@ -252,7 +252,7 @@ class JUnitReporterWithStepNotificationsTest {
         assertThat(pickleFailure.getException().getMessage(), is("" +
             "The step \"step name\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
-            "some snippet"
+            "some snippet\n"
         ));
     }
 
@@ -290,7 +290,7 @@ class JUnitReporterWithStepNotificationsTest {
         assertThat(pickleFailure.getException().getMessage(), is("" +
             "The step \"step name\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
-            "some snippet"
+            "some snippet\n"
         ));
     }
 
