@@ -1,5 +1,6 @@
 package io.cucumber.compatibility;
 
+import io.cucumber.compatibility.matchers.AComparableMessage;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
@@ -75,6 +76,7 @@ public class CompatibilityTest {
         return expectedEnvelopes;
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> Map<String, List<T>> openEnvelopes(List<? extends GeneratedMessageV3> actual) {
         Map<String, List<T>> map = new LinkedHashMap<>();
         actual.forEach(envelope -> envelope.getAllFields()

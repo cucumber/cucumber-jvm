@@ -1,4 +1,4 @@
-package io.cucumber.compatibility;
+package io.cucumber.compatibility.matchers;
 
 import io.cucumber.messages.internal.com.google.protobuf.ByteString;
 import io.cucumber.messages.internal.com.google.protobuf.Descriptors;
@@ -22,7 +22,7 @@ import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.contai
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.collection.IsMapContaining.hasKey;
 
-class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
+public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
 
     private final List<Matcher<?>> expectedFields;
     private final int depth;
@@ -31,7 +31,7 @@ class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
         this(expectedMessage, 0);
     }
 
-    private AComparableMessage(GeneratedMessageV3 expectedMessage, int depth) {
+    AComparableMessage(GeneratedMessageV3 expectedMessage, int depth) {
         this.depth = depth + 1;
         this.expectedFields = extractExpectedFields(expectedMessage, this.depth);
     }
@@ -105,6 +105,7 @@ class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private static Matcher<?> aComparableValue(Object value, int depth) {
         if (value instanceof GeneratedMessageV3) {
             GeneratedMessageV3 message = (GeneratedMessageV3) value;

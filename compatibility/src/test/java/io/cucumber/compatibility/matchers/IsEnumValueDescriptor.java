@@ -1,4 +1,4 @@
-package io.cucumber.compatibility;
+package io.cucumber.compatibility.matchers;
 
 import io.cucumber.messages.internal.com.google.protobuf.Descriptors.EnumValueDescriptor;
 import org.hamcrest.Description;
