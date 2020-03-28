@@ -73,7 +73,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     public void embed(byte[] data, String mediaType, String name) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
 
-        // TODO: Remove this weird exception from the cck
+        // Remove this weird exception from the cck
+        // https://github.com/cucumber/cucumber/issues/945
         if (mediaType.equals("text/plain")) {
             bus.send(Messages.Envelope.newBuilder()
                 .setAttachment(
@@ -81,9 +82,9 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
                         .setTestCaseStartedId(testExecutionId.toString())
                         .setTestStepId(currentTestStepId.toString())
                         .setText(new String(data, UTF_8))
-                        //TODO: Add file name to message protocol
+                        // Add file name to message protocol
+                        // https://github.com/cucumber/cucumber/issues/945
                         .setMediaType(mediaType)
-                        .build()
                 )
                 .build()
             );
@@ -94,9 +95,9 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
                         .setTestCaseStartedId(testExecutionId.toString())
                         .setTestStepId(currentTestStepId.toString())
                         .setBinary(ByteString.copyFrom(data))
-                        //TODO: Add file name to message protocol
+                        // Add file name to message protocol
+                        // https://github.com/cucumber/cucumber/issues/945
                         .setMediaType(mediaType)
-                        .build()
                 )
                 .build()
             );
