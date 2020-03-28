@@ -9,10 +9,8 @@ import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
-import static java.util.stream.Collectors.joining;
 
 /**
  * Utilities for reading the encoding of a file.
@@ -37,11 +35,19 @@ final class Encoding {
     }
 
     private static String read(Resource resource, String encoding) throws IOException {
-        try (InputStream is = resource.getInputStream()) {
+        char[] buffer = new char[2 * 1024];
+        final StringBuilder out = new StringBuilder();
+        try (
+            InputStream is = resource.getInputStream();
             InputStreamReader in = new InputStreamReader(is, encoding);
             BufferedReader reader = new BufferedReader(in);
-            return reader.lines().collect(joining(lineSeparator()));
+        ) {
+            int read;
+            while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
+                out.append(buffer, 0, read);
+            }
         }
+        return out.toString();
     }
 
     private static String encoding(String source) {
