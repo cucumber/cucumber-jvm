@@ -24,7 +24,6 @@ public final class PicoFactory implements ObjectFactory {
         pico = new PicoBuilder()
             .withCaching()
             .withLifecycle()
-            .withBehaviors()
             .build();
         for (Class<?> clazz : classes) {
             pico.addComponent(clazz);
