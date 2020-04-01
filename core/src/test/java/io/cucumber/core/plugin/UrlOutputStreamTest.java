@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.is;
 @ExtendWith({VertxExtension.class})
 public class UrlOutputStreamTest {
     private int port;
-    private IOException exception;
+    private Exception exception;
 
     @BeforeEach
     void randomPort() throws IOException {
@@ -48,26 +48,37 @@ public class UrlOutputStreamTest {
 
         verifyRequest(option, testServer, vertx, testContext, requestBody);
         assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
-        assertThat(exception.getMessage(), is(equalTo("HTTP request failed:\n" +
+        assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
             "> POST http://localhost:" + port + "\n" +
             "< HTTP/1.1 500 Internal Server Error\n" +
             "< transfer-encoding: chunked\n" +
-            "Oh noes")));
+            "Oh noes"
+        ));
     }
 
     @Test
-    void throws_exception_for_redirects(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+    void follows_307_temporary_redirects(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
-        assertThat(exception.getMessage(), is(equalTo("HTTP redirect not supported:\n" +
-            "> POST http://localhost:" + port + "/redirect\n" +
-            "< HTTP/1.1 301 Moved Permanently\n" +
-            "< content-length: 0\n" +
-            "< Location: /\n")));
+    }
+
+    @Test
+    void throws_exception_for_307_temporary_redirect_without_location(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+
+        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
+        assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
+            "> POST http://localhost:" + port + "/redirect-no-location\n" +
+            "< HTTP/1.1 307 Temporary Redirect\n" +
+            "< content-length: 0\n"
+        ));
     }
 
     @Test
@@ -103,7 +114,7 @@ public class UrlOutputStreamTest {
                 w.flush();
                 w.close();
                 testContext.completeNow();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 exception = e;
                 testContext.completeNow();
             }
@@ -147,15 +158,18 @@ public class UrlOutputStreamTest {
         @Override
         public void start(Promise<Void> startPromise) {
             Router router = Router.router(vertx);
-            router.route().handler(ctx -> {
-                if (ctx.request().uri().equals("/redirect")) {
-                    ctx.response().setStatusCode(301);
-                    ctx.response().headers().add("Location", "/");
-                    ctx.response().end();
-                    return;
-                }
-                ctx.response().setStatusCode(statusCode);
+            router.route("/redirect").handler(ctx -> {
+                ctx.response().setStatusCode(307);
+                ctx.response().headers().add("Location", "http://localhost:" + port);
+                ctx.response().end();
+            });
+            router.route("/redirect-no-location").handler(ctx -> {
+                ctx.response().setStatusCode(307);
+                ctx.response().end();
+            });
 
+            router.route().handler(ctx -> {
+                ctx.response().setStatusCode(statusCode);
                 testContext.verify(() -> {
                     assertThat(ctx.request().method(), is(equalTo(expectedMethod)));
                     assertThat(ctx.request().query(), is(equalTo(expectedQuery)));
