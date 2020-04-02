@@ -8,14 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
-
+ * [Spring] Add `@CucumberContextConfiguration` annotation ([#1911](https://github.com/cucumber/cucumber-jvm/issues/1911) Anton Deriabin)
+  - Allows `cucumber-spring` to discover application context configurations
+    without requiring step definitions or hooks to be available in the class.   
+  
 ### Changed
-
-### Deprecated
-
-### Removed
+ * [JUnit Platform] Update `junit-platform` dependency to 1.6.1  ([#1923](https://github.com/cucumber/cucumber-jvm/issues/1923) M.P. Korstanje)
+ * [Spring] Update `spring-*` dependency to 5.2.4.RELEASE ([#1923](https://github.com/cucumber/cucumber-jvm/issues/1923) M.P. Korstanje)
 
 ### Fixed
+ * [Core] Upgrade datatable to v3.3.1 ([#1928](https://github.com/cucumber/cucumber-jvm/issues/1928), [cucumber/cucumber#540](https://github.com/cucumber/cucumber/pull/540) M.P. Korstanje)
+  - Correctly throw an exception when converting a horizontal table to a list of Strings
+ * [Core] Deduplicate suggest snippets ([#1930](https://github.com/cucumber/cucumber-jvm/issues/1930) M.P. Korstanje)
 
 ## [5.5.0] (2020-03-12)
 
