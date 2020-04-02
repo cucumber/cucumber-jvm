@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [5.6.0] (2020-04-02)
+
+### Added
  * [Spring] Add `@CucumberContextConfiguration` annotation ([#1911](https://github.com/cucumber/cucumber-jvm/issues/1911) Anton Deriabin)
     - Allows `cucumber-spring` to discover application context configurations
       without requiring step definitions or hooks to be available in the class.   
@@ -1343,7 +1355,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...master
+[5.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...v5.6.0
 [5.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...v5.5.0
 [5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2
 [5.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...v5.4.1
