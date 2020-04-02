@@ -17,6 +17,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [5.6.0] (2020-04-02)
+
+### Added
+ * [Spring] Add `@CucumberContextConfiguration` annotation ([#1911](https://github.com/cucumber/cucumber-jvm/issues/1911) Anton Deriabin)
+    - Allows `cucumber-spring` to discover application context configurations
+      without requiring step definitions or hooks to be available in the class.   
+  
+### Changed
+ * [JUnit Platform] Update `junit-platform` dependency to 1.6.1 ([#1923](https://github.com/cucumber/cucumber-jvm/issues/1923) M.P. Korstanje)
+ * [Spring] Update `spring-*` dependency to 5.2.4.RELEASE ([#1923](https://github.com/cucumber/cucumber-jvm/issues/1923) M.P. Korstanje)
+
+### Fixed
+ * [Core] Upgrade datatable to v3.3.1 ([#1928](https://github.com/cucumber/cucumber-jvm/issues/1928), [cucumber/cucumber#540](https://github.com/cucumber/cucumber/pull/540) M.P. Korstanje)
+    - Correctly throw an exception when converting a horizontal table to a list of Strings
+ * [Core] Deduplicate suggest snippets ([#1930](https://github.com/cucumber/cucumber-jvm/issues/1930) M.P. Korstanje)
+
 ## [5.5.0] (2020-03-12)
 
 ### Added
@@ -1339,7 +1355,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...master
+[5.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...v5.6.0
 [5.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...v5.5.0
 [5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2
 [5.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...v5.4.1

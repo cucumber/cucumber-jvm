@@ -18,6 +18,7 @@ import org.junit.runners.model.MultipleFailureException;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,7 +30,7 @@ final class JUnitReporter {
 
     private final JUnitOptions junitOptions;
     private final EventBus bus;
-    private final Map<StepLocation, List<String>> snippetsPerStep = new TreeMap<>();
+    private final Map<StepLocation, Collection<String>> snippetsPerStep = new TreeMap<>();
     private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedEventEventHandler = this::handleSnippetSuggested;
     private List<Throwable> stepErrors;
     private TestNotifier stepNotifier;
@@ -125,7 +126,7 @@ final class JUnitReporter {
                 );
                 break;
             case UNDEFINED:
-                List<String> snippets = snippetsPerStep.remove(
+                Collection<String> snippets = snippetsPerStep.remove(
                     new StepLocation(testStep.getUri(), testStep.getStepLine())
                 );
                 stepErrors.add(new UndefinedStepException(

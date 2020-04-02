@@ -8,19 +8,25 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.SummaryPrinter;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, ConcurrentEventListener {
 
-    private final List<String> snippets = new ArrayList<>();
+    private final Set<String> snippets = new LinkedHashSet<>();
     private final Stats stats = new Stats();
 
     private final PrintStream out;
 
     public DefaultSummaryPrinter() {
-        this.out = System.out;
+        this(System.out);
+    }
+
+    DefaultSummaryPrinter(OutputStream out) {
+        this.out = new PrintStream(out);
     }
 
     private void handleSnippetsSuggestedEvent(SnippetsSuggestedEvent event) {
