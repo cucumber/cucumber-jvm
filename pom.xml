@@ -48,14 +48,14 @@
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
 
         <!--Dependencies -->
-        <cucumber-expressions.version>9.0.0</cucumber-expressions.version>
+        <cucumber-expressions.version>10.0.0</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
-        <messages.version>10.0.3</messages.version>
+        <messages.version>11.1.1</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
         <gherkin-vintage-jvm-deps.version>1.0.6</gherkin-vintage-jvm-deps.version>
-        <gherkin-messages.version>11.0.0</gherkin-messages.version>
-        <html-formatter.version>4.3.0</html-formatter.version>
+        <gherkin-messages.version>12.0.0</gherkin-messages.version>
+        <html-formatter.version>5.0.0</html-formatter.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
