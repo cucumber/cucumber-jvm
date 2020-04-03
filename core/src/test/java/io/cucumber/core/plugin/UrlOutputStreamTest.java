@@ -43,13 +43,13 @@ public class UrlOutputStreamTest {
     @Test
     void throws_exception_for_500_status(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
         String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 500, "Oh noes");
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 500, "Oh noes");
         CurlOption option = CurlOption.parse(format("http://localhost:%d", port));
 
         verifyRequest(option, testServer, vertx, testContext, requestBody);
         assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
         assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
-            "> POST http://localhost:" + port + "\n" +
+            "> PUT http://localhost:" + port + "\n" +
             "< HTTP/1.1 500 Internal Server Error\n" +
             "< transfer-encoding: chunked\n" +
             "Oh noes"
@@ -59,7 +59,7 @@ public class UrlOutputStreamTest {
     @Test
     void follows_307_temporary_redirects(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
         String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
@@ -70,7 +70,7 @@ public class UrlOutputStreamTest {
     void throws_exception_for_307_temporary_redirect_without_location(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location", port));
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location -X POST", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
@@ -84,7 +84,7 @@ public class UrlOutputStreamTest {
     @Test
     void streams_request_body_in_chunks(Vertx vertx, VertxTestContext testContext) {
         String requestBody = makeOneKilobyteStringWithEmoji();
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
@@ -92,15 +92,15 @@ public class UrlOutputStreamTest {
     @Test
     void overrides_request_method(Vertx vertx, VertxTestContext testContext) {
         String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d -X PUT", port));
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d -X POST", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
     @Test
     void sets_request_headers(Vertx vertx, VertxTestContext testContext) {
         String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, "foo=bar", "application/x-ndjson", 200, "");
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, "foo=bar", "application/x-ndjson", 200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d?foo=bar -H 'Content-Type: application/x-ndjson'", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }

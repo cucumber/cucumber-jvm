@@ -23,7 +23,7 @@ public final class CurlOption {
         List<String> args = ShellWords.parse(cmdLine);
 
         String url = null;
-        HttpMethod method = HttpMethod.POST;
+        HttpMethod method = HttpMethod.PUT;
         List<Entry<String, String>> headers = new ArrayList<>();
 
         while (!args.isEmpty()) {

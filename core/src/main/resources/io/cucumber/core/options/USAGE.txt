@@ -27,7 +27,7 @@ Options:
                                            source.
 
                                            If a http:// or https:// URI is used,
-                                           the output will be sent as a POST
+                                           the output will be sent as a PUT
                                            request. This can be overridden by
                                            providing additional options.
 
