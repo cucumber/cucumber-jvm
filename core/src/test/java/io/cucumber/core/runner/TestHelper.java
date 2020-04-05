@@ -117,12 +117,12 @@ public class TestHelper {
         };
     }
 
-    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mediaType) {
-        return createEmbedHookAction(data, mediaType, null);
+    public static Answer<Object> createAttachHookAction(final byte[] data, final String mediaType) {
+        return createAttachHookAction(data, mediaType, null);
     }
 
     @SuppressWarnings("deprecation")
-    public static Answer<Object> createEmbedHookAction(final byte[] data, final String mediaType, final String name) {
+    public static Answer<Object> createAttachHookAction(final byte[] data, final String mediaType, final String name) {
         return invocation -> {
             TestCaseState state = (TestCaseState) invocation.getArguments()[0];
             if (name != null) {

@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
+import static io.cucumber.core.runner.TestHelper.createAttachHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.nio.charset.StandardCharsets.US_ASCII;
@@ -649,7 +649,7 @@ class HTMLFormatterTest {
         stepsToResult.put("first step", result("passed"));
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("before", result("passed")));
-        hookActions.add(createEmbedHookAction("embedded from hook".getBytes(US_ASCII), "text/ascii"));
+        hookActions.add(createAttachHookAction("embedded from hook".getBytes(US_ASCII), "text/ascii"));
         stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -754,8 +754,8 @@ class HTMLFormatterTest {
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         hooks.add(TestHelper.hookEntry("after", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
-        hookActions.add(createEmbedHookAction("fakedata".getBytes(US_ASCII), "image/png", "Fake image"));
-        hookActions.add(createEmbedHookAction("dodgy stack trace here".getBytes(US_ASCII), "text/plain"));
+        hookActions.add(createAttachHookAction("fakedata".getBytes(US_ASCII), "image/png", "Fake image"));
+        hookActions.add(createAttachHookAction("dodgy stack trace here".getBytes(US_ASCII), "text/plain"));
         stepDuration = ofMillis(1L);
 
         runFeaturesWithFormatter(f);
