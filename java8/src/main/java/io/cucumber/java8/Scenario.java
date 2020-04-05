@@ -50,7 +50,7 @@ public final class Scenario {
 
     @Deprecated(since = "5.6.1", forRemoval = true)
     public void embed(byte[] data, String mediaType, String name) {
-        delegate.attach(data, mediaType, name);
+        attach(data, mediaType, name);
     }
 
     public void attach(byte[] data, String mediaType, String name) {
@@ -59,7 +59,7 @@ public final class Scenario {
 
     @Deprecated(since = "5.6.1", forRemoval = true)
     public void write(String text) {
-        delegate.log(text);
+        log(text);
     }
 
     public void log(String text) {
