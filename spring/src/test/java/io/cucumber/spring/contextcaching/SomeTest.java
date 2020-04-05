@@ -1,7 +1,6 @@
 package io.cucumber.spring.contextcaching;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,12 +11,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ContextConfig.class})
-class SomeTest {
+public class SomeTest {
     @Autowired
     ContextCounter contextCounter;
 
     @Test
-    void contextCountIsOne() {
+    public void contextCountIsOne() {
         assertThat(contextCounter.getContextCount(), is(1));
     }
 
