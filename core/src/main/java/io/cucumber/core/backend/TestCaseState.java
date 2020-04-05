@@ -5,7 +5,6 @@ import org.apiguardian.api.API;
 import java.net.URI;
 import java.util.Collection;
 
-
 @API(status = API.Status.STABLE)
 public interface TestCaseState {
     /**
@@ -31,7 +30,6 @@ public interface TestCaseState {
     /**
      * @param data      what to embed, for example an image.
      * @param mediaType what is the data? Using the
-     * @see #attach(byte[], String, String)
      * @see #attach(byte[], String, String)
      * @deprecated use {@link TestCaseState#attach(byte[], String, String)} instead.
      */
@@ -63,12 +61,12 @@ public interface TestCaseState {
     void embed(byte[] data, String mediaType, String name);
 
     /**
-     * Embeds data into the report(s).
+     * Attach data to the report(s).
      * <pre>
      * {@code
-     * // Embed a screenshot. See your UI automation tool's docs for
+     * // Attach a screenshot. See your UI automation tool's docs for
      * // details about how to take a screenshot.
-     * scenario.embed(pngBytes, "image/png", "Bartholomew and the Bytes of the Oobleck");
+     * scenario.attach(pngBytes, "image/png", "Bartholomew and the Bytes of the Oobleck");
      * }
      * </pre>
      * <p>
@@ -78,9 +76,9 @@ public interface TestCaseState {
      * <p>
      * Media types are defined in <a href= https://tools.ietf.org/html/rfc7231#section-3.1.1.1>RFC 7231 Section 3.1.1.1</a>.
      *
-     * @param data      what to embed, for example an image.
+     * @param data      what to attach, for example an image.
      * @param mediaType what is the data?
-     * @param name      embedding name
+     * @param name      attachment name
      */
     void attach(byte[] data, String mediaType, String name);
 
