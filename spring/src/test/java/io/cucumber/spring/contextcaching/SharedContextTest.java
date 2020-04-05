@@ -11,10 +11,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ContextConfig.class})
-public class SharedContextTest {
+class SharedContextTest {
 
     @Autowired
-    private ContextCounter contextCounter;
+    ContextCounter contextCounter;
 
     @Test
     void contextCountIsOne() {
