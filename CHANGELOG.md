@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * `Scenario.log(String)` & `Scenario.attach(byte[], String, String)`
 
 ### Changed
 
 ### Deprecated
+ * `Scenario.write(String)` & `Scenario.embed(byte[], String, String)`
 
 ### Removed
 

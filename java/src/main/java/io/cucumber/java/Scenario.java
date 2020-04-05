@@ -48,11 +48,21 @@ public final class Scenario {
         delegate.embed(data, mediaType);
     }
 
+    @Deprecated(since = "5.6.1", forRemoval = true)
     public void embed(byte[] data, String mediaType, String name) {
         delegate.embed(data, mediaType, name);
     }
 
+    public void attach(byte[] data, String mediaType, String name) {
+        delegate.embed(data, mediaType, name);
+    }
+
+    @Deprecated(since = "5.6.1", forRemoval = true)
     public void write(String text) {
+        delegate.write(text);
+    }
+
+    public void log(String text) {
         delegate.write(text);
     }
 
