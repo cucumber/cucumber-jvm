@@ -112,7 +112,7 @@ public class TestHelper {
     public static Answer<Object> createWriteHookAction(final String output) {
         return invocation -> {
             TestCaseState state = (TestCaseState) invocation.getArguments()[0];
-            state.write(output);
+            state.log(output);
             return null;
         };
     }
@@ -126,7 +126,7 @@ public class TestHelper {
         return invocation -> {
             TestCaseState state = (TestCaseState) invocation.getArguments()[0];
             if (name != null) {
-                state.embed(data, mediaType, name);
+                state.attach(data, mediaType, name);
             } else {
                 state.embed(data, mediaType);
             }

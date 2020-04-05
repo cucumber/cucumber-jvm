@@ -57,13 +57,25 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType));
     }
 
+    @Deprecated(since = "5.6.1", forRemoval = true)
     @Override
     public void embed(byte[] data, String mediaType, String name) {
-        bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
+        attach(data, mediaType, name);
     }
 
     @Override
+    public void attach(byte[] data, String mediaType, String name) {
+        bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
+    }
+
+    @Deprecated(since = "5.6.1", forRemoval = true)
+    @Override
     public void write(String text) {
+        log(text);
+    }
+
+    @Override
+    public void log(String text) {
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
     }
 
