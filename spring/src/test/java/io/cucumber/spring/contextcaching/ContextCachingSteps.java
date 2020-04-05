@@ -15,8 +15,9 @@ public class ContextCachingSteps {
     @Autowired
     ContextCounter contextCounter;
 
-    @When("I run a scenario")
+    @When("I run a scenario in the same JVM as the SharedContextTest")
     public void runningScenario() {
+        // happens automatically
     }
 
     @Then("there should be only one Spring context")
