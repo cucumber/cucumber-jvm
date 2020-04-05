@@ -80,7 +80,9 @@ public interface TestCaseState {
      * @param mediaType what is the data?
      * @param name      attachment name
      */
-    void attach(byte[] data, String mediaType, String name);
+    default void attach(byte[] data, String mediaType, String name) {
+        embed(data, mediaType, name);
+    }
 
     /**
      * Outputs some text into the report.
@@ -96,7 +98,9 @@ public interface TestCaseState {
      *
      * @param text what to put in the report.
      */
-    void log(String text);
+    default void log(String text) {
+        write(text);
+    }
 
     /**
      * @return the name of the Scenario
