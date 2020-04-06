@@ -48,7 +48,7 @@ public final class Scenario {
         delegate.embed(data, mediaType);
     }
 
-    @Deprecated(since = "5.6.1", forRemoval = true)
+    @Deprecated(since = "5.7.0", forRemoval = true)
     public void embed(byte[] data, String mediaType, String name) {
         attach(data, mediaType, name);
     }
@@ -57,7 +57,7 @@ public final class Scenario {
         delegate.attach(data, mediaType, name);
     }
 
-    @Deprecated(since = "5.6.1", forRemoval = true)
+    @Deprecated(since = "5.7.0", forRemoval = true)
     public void write(String text) {
         log(text);
     }

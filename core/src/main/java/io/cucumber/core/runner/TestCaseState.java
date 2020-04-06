@@ -57,7 +57,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType));
     }
 
-    @Deprecated(since = "5.6.1", forRemoval = true)
+    @Deprecated(since = "5.7.0", forRemoval = true)
     @Override
     public void embed(byte[] data, String mediaType, String name) {
         attach(data, mediaType, name);
@@ -68,7 +68,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
     }
 
-    @Deprecated(since = "5.6.1", forRemoval = true)
+    @Deprecated(since = "5.7.0", forRemoval = true)
     @Override
     public void write(String text) {
         log(text);

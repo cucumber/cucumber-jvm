@@ -57,7 +57,7 @@ public interface TestCaseState {
      * @param name      embedding name
      * @deprecated use {@link #attach(byte[], String, String)}
      */
-    @Deprecated(since = "5.6.1", forRemoval = true)
+    @Deprecated(since = "5.7.0", forRemoval = true)
     void embed(byte[] data, String mediaType, String name);
 
     /**
@@ -90,7 +90,7 @@ public interface TestCaseState {
      * @param text what to put in the report.
      * @deprecated use {@link #log(String)}
      */
-    @Deprecated(since = "5.6.1", forRemoval = true)
+    @Deprecated(since = "5.7.0", forRemoval = true)
     void write(String text);
 
     /**
