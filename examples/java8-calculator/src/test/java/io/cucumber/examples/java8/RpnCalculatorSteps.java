@@ -28,7 +28,7 @@ public class RpnCalculatorSteps implements En {
         Then("the result is {double}", (Double expected) -> assertEquals(expected, calc.value()));
 
         Before("not @foo", (Scenario scenario) -> {
-            scenario.write("Runs before scenarios *not* tagged with @foo");
+            scenario.log("Runs before scenarios *not* tagged with @foo");
         });
 
         After((Scenario scenario) -> {

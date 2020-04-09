@@ -5,7 +5,6 @@ import org.apiguardian.api.API;
 import java.net.URI;
 import java.util.Collection;
 
-
 @API(status = API.Status.STABLE)
 public interface TestCaseState {
     /**
@@ -31,9 +30,8 @@ public interface TestCaseState {
     /**
      * @param data      what to embed, for example an image.
      * @param mediaType what is the data? Using the
-     * @see #embed(byte[], String, String)
-     * @see #embed(byte[], String, String)
-     * @deprecated use {@link TestCaseState#embed(byte[], String, String)} instead.
+     * @see #attach(byte[], String, String)
+     * @deprecated use {@link TestCaseState#attach(byte[], String, String)} instead.
      */
     @Deprecated
     void embed(byte[] data, String mediaType);
@@ -57,15 +55,52 @@ public interface TestCaseState {
      * @param data      what to embed, for example an image.
      * @param mediaType what is the data?
      * @param name      embedding name
+     * @deprecated use {@link #attach(byte[], String, String)}
      */
+    @Deprecated(since = "5.7.0", forRemoval = true)
     void embed(byte[] data, String mediaType, String name);
+
+    /**
+     * Attach data to the report(s).
+     * <pre>
+     * {@code
+     * // Attach a screenshot. See your UI automation tool's docs for
+     * // details about how to take a screenshot.
+     * scenario.attach(pngBytes, "image/png", "Bartholomew and the Bytes of the Oobleck");
+     * }
+     * </pre>
+     * <p>
+     * To ensure reporting tools can understand what the data is a
+     * {@code mediaType} must be provided. For example: {@code text/plain},
+     * {@code image/png}, {@code text/html;charset=utf-8}.
+     * <p>
+     * Media types are defined in <a href= https://tools.ietf.org/html/rfc7231#section-3.1.1.1>RFC 7231 Section 3.1.1.1</a>.
+     *
+     * @param data      what to attach, for example an image.
+     * @param mediaType what is the data?
+     * @param name      attachment name
+     */
+    default void attach(byte[] data, String mediaType, String name) {
+        embed(data, mediaType, name);
+    }
+
+    /**
+     * Outputs some text into the report.
+     *
+     * @param text what to put in the report.
+     * @deprecated use {@link #log(String)}
+     */
+    @Deprecated(since = "5.7.0", forRemoval = true)
+    void write(String text);
 
     /**
      * Outputs some text into the report.
      *
      * @param text what to put in the report.
      */
-    void write(String text);
+    default void log(String text) {
+        write(text);
+    }
 
     /**
      * @return the name of the Scenario

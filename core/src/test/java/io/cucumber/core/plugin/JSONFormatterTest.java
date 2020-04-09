@@ -3,8 +3,8 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runner.ClockStub;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
-import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
+import static io.cucumber.core.runner.TestHelper.createAttachHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.time.Duration.ofMillis;
@@ -788,7 +788,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_handle_embed_from_a_hook() {
+    void should_handle_attach_from_a_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -799,7 +799,7 @@ class JSONFormatterTest {
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
-        hookActions.add(createEmbedHookAction(new byte[]{1, 2, 3}, "mime-type;base64"));
+        hookActions.add(createAttachHookAction(new byte[]{1, 2, 3}, "mime-type;base64"));
         stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -862,7 +862,7 @@ class JSONFormatterTest {
     }
 
     @Test
-    void should_handle_embed_with_name_from_a_hook() {
+    void should_handle_attach_with_name_from_a_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: Banana party\n" +
             "\n" +
@@ -873,7 +873,7 @@ class JSONFormatterTest {
         stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_1()");
-        hookActions.add(createEmbedHookAction(new byte[]{1, 2, 3}, "mime-type;base64", "someEmbedding"));
+        hookActions.add(createAttachHookAction(new byte[]{1, 2, 3}, "mime-type;base64", "someEmbedding"));
         stepDuration = ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();

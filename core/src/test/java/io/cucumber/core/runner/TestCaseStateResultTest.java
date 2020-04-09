@@ -129,7 +129,7 @@ class TestCaseStateResultTest {
 
     @Test
     void prints_output() {
-        s.write("Hi");
+        s.log("Hi");
         verify(bus).send(argThat(new WriteEventMatcher("Hi")));
     }
 

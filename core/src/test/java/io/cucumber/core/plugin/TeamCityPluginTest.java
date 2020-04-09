@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.core.runner.TestHelper.createEmbedHookAction;
+import static io.cucumber.core.runner.TestHelper.createAttachHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.hookEntry;
 import static io.cucumber.core.runner.TestHelper.result;
@@ -87,7 +87,7 @@ class TeamCityPluginTest {
     }
 
     @Test
-    void should_handle_nameless_embed_events() {
+    void should_handle_nameless_attach_events() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -99,7 +99,7 @@ class TeamCityPluginTest {
 
         hooks.add(hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_3()");
-        hookActions.add(createEmbedHookAction("A message".getBytes(), "text/plain"));
+        hookActions.add(createAttachHookAction("A message".getBytes(), "text/plain"));
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -131,7 +131,7 @@ class TeamCityPluginTest {
     }
 
     @Test
-    void should_handle_embed_events() {
+    void should_handle_attach_events() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -143,7 +143,7 @@ class TeamCityPluginTest {
 
         hooks.add(hookEntry("before", result("passed")));
         hookLocations.add("Hooks.before_hook_3()");
-        hookActions.add(createEmbedHookAction("A message".getBytes(), "text/plain", "message.txt"));
+        hookActions.add(createAttachHookAction("A message".getBytes(), "text/plain", "message.txt"));
 
         String formatterOutput = runFeaturesWithFormatter();
 
