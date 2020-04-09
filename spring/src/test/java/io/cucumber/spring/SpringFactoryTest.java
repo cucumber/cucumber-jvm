@@ -305,6 +305,7 @@ class SpringFactoryTest {
         );
     }
 
+    @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
     public static class WithSpringAnnotations {
 
@@ -338,8 +339,23 @@ class SpringFactoryTest {
         assertDoesNotThrow(factory::stop);
     }
 
+    @CucumberContextConfiguration
     @ContextConfiguration()
     public static class WithEmptySpringAnnotations {
+
+    }
+    @Test
+    void shouldBeStoppableWhenFacedWithMissingContextConfiguration() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithoutContextConfiguration.class);
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
+        assertThat(exception.getMessage(), containsString("Failed to load ApplicationContext"));
+        assertDoesNotThrow(factory::stop);
+    }
+
+    @CucumberContextConfiguration
+    public static class WithoutContextConfiguration {
 
     }
 }
