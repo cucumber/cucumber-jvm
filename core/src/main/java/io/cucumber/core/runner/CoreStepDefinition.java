@@ -8,6 +8,7 @@ import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
+import io.cucumber.cucumberexpressions.Expression;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -44,8 +45,8 @@ final class CoreStepDefinition {
         }
     }
 
-    String getPattern() {
-        return expression.getSource();
+    StepExpression getExpression() {
+        return expression;
     }
 
     StepDefinition getStepDefinition() {

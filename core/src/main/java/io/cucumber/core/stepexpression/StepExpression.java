@@ -18,6 +18,10 @@ public final class StepExpression {
         this.tableType = tableType;
     }
 
+    public Class<? extends Expression> getExpressionType() {
+        return expression.getClass();
+    }
+
     public List<Argument> match(String text, Type... types) {
         List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text, types);
         if (match == null) {
