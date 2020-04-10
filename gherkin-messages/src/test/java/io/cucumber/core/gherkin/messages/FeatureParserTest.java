@@ -67,6 +67,8 @@ class FeatureParserTest {
         });
     }
 
+    // TODO: Add test for background
+
     @Test
     void lexer_error_throws_exception() throws IOException {
         URI uri = URI.create("classpath:com/example.feature");
