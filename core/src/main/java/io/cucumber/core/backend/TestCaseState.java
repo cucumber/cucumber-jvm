@@ -85,6 +85,14 @@ public interface TestCaseState {
     }
 
     /**
+     * @param data      what to attach, for example html.
+     * @param mediaType what is the data?
+     * @param name      attachment name
+     * @see #attach(byte[], String, String)
+     */
+    void attach(String data, String mediaType, String name);
+
+    /**
      * Outputs some text into the report.
      *
      * @param text what to put in the report.

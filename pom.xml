@@ -375,12 +375,6 @@
                             <artifactId>gherkin</artifactId>
                             <version>${gherkin-messages.version}</version>
                         </dependency>
-                        <!-- TODO: Gherkin 11.0.0 is broken because messages 10.0.2 doesn't exist-->
-                        <dependency>
-                            <groupId>io.cucumber</groupId>
-                            <artifactId>messages</artifactId>
-                            <version>${messages.version}</version>
-                        </dependency>
                     </dependencies>
                 </plugin>
 

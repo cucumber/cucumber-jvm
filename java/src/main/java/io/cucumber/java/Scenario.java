@@ -57,6 +57,10 @@ public final class Scenario {
         delegate.attach(data, mediaType, name);
     }
 
+    public void attach(String data, String mediaType, String name) {
+        delegate.attach(data, mediaType, name);
+    }
+
     @Deprecated
     public void write(String text) {
         log(text);

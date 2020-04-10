@@ -9,8 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class Attachments {
 
     Scenario scenario;
@@ -22,7 +20,7 @@ public class Attachments {
 
     @When("the string {string} is attached as {string}")
     public void theStringIsAttachedAs(String text, String contentType) {
-        scenario.attach(text.getBytes(UTF_8), contentType, null);
+        scenario.attach(text, contentType, null);
     }
 
     @When("the string {string} is logged")

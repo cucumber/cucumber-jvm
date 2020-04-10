@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Attachment.ContentEncoding;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.max;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -83,7 +85,24 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
                     .setTestCaseStartedId(testExecutionId.toString())
                     .setTestStepId(currentTestStepId.toString())
                     .setBody(Base64.getEncoder().encodeToString(data))
-                    .setContentEncoding(Messages.Attachment.ContentEncoding.BASE64)
+                    .setContentEncoding(ContentEncoding.BASE64)
+                    // Add file name to message protocol
+                    // https://github.com/cucumber/cucumber/issues/945
+                    .setMediaType(mediaType)
+            )
+            .build()
+        );
+    }
+    @Override
+    public void attach(String data, String mediaType, String name) {
+        bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
+        bus.send(Messages.Envelope.newBuilder()
+            .setAttachment(
+                Messages.Attachment.newBuilder()
+                    .setTestCaseStartedId(testExecutionId.toString())
+                    .setTestStepId(currentTestStepId.toString())
+                    .setBody(data)
+                    .setContentEncoding(ContentEncoding.IDENTITY)
                     // Add file name to message protocol
                     // https://github.com/cucumber/cucumber/issues/945
                     .setMediaType(mediaType)
@@ -107,7 +126,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
                     .setTestCaseStartedId(testExecutionId.toString())
                     .setTestStepId(currentTestStepId.toString())
                     .setBody(text)
-                    .setContentEncoding(Messages.Attachment.ContentEncoding.IDENTITY)
+                    .setContentEncoding(ContentEncoding.IDENTITY)
                     .setMediaType("text/x.cucumber.log+plain")
                     .build()
             )
