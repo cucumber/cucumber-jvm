@@ -348,7 +348,7 @@
     "description": "",
     "id": "feature-3",
     "keyword": "Feature",
-    "uri": "classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
+    "uri": "classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
     "tags": []
   }
 ]
