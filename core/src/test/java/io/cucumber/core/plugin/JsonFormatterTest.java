@@ -315,8 +315,41 @@ class JsonFormatterTest {
             "    \"line\": 1,\n" +
             "    \"elements\": [\n" +
             "      {\n" +
+            "        \"line\": 3,\n" +
+            "        \"name\": \"\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"type\": \"background\",\n" +
+            "        \"keyword\": \"Background\",\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"line\": 4,\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+            "            },\n" +
+            "            \"keyword\": \"Given \"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"line\": 9,\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+            "            },\n" +
+            "            \"keyword\": \"Given \"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      },\n" +
+            "      {\n" +
             "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
-            "        \"line\": 4,\n" +
+            "        \"line\": 11,\n" +
             "        \"name\": \"Monkey eats bananas\",\n" +
             "        \"description\": \"\",\n" +
             "        \"id\": \";monkey-eats-bananas\",\n" +
@@ -328,7 +361,7 @@ class JsonFormatterTest {
             "              \"duration\": 1000000,\n" +
             "              \"status\": \"passed\"\n" +
             "            },\n" +
-            "            \"line\": 5,\n" +
+            "            \"line\": 12,\n" +
             "            \"name\": \"there are bananas\",\n" +
             "            \"match\": {\n" +
             "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
