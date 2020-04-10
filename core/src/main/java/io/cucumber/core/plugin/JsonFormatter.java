@@ -1,11 +1,11 @@
-package io.cucumber.core.gherkin.vintage;
+package io.cucumber.core.plugin;
 
-import gherkin.ast.Background;
-import gherkin.ast.Feature;
-import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.Step;
-import gherkin.deps.com.google.gson.Gson;
-import gherkin.deps.com.google.gson.GsonBuilder;
+import io.cucumber.messages.Messages.GherkinDocument.Feature;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Background;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
+import io.cucumber.messages.internal.com.google.gson.Gson;
+import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.DataTableArgument;
@@ -40,10 +40,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Locale.ROOT;
+import static java.util.stream.Collectors.toList;
 
 public final class JsonFormatter implements EventListener {
     private static final String before = "before";
@@ -156,7 +158,18 @@ public final class JsonFormatter implements EventListener {
             featureMap.put("description", feature.getDescription() != null ? feature.getDescription() : "");
             featureMap.put("line", feature.getLocation().getLine());
             featureMap.put("id", TestSourcesModel.convertToId(feature.getName()));
-            featureMap.put("tags", feature.getTags());
+            featureMap.put("tags", feature.getTagsList().stream().map(
+                tag -> {
+                    Map<String, Object> json = new LinkedHashMap<>();
+                    json.put("name", tag.getName());
+                    json.put("type", "Tag");
+                    Map<String, Object> location = new LinkedHashMap<>();
+                    location.put("line", tag.getLocation().getLine());
+                    location.put("column", tag.getLocation().getColumn());
+                    json.put("location", location);
+                    return json;
+                }
+            ).collect(toList()));
 
         }
         return featureMap;
@@ -175,7 +188,7 @@ public final class JsonFormatter implements EventListener {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLine());
         if (astNode != null) {
             testCaseMap.put("id", TestSourcesModel.calculateId(astNode));
-            ScenarioDefinition scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
+            Scenario scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
             testCaseMap.put("keyword", scenarioDefinition.getKeyword());
             testCaseMap.put("description", scenarioDefinition.getDescription() != null ? scenarioDefinition.getDescription() : "");
         }

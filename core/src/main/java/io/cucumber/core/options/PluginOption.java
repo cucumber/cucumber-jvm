@@ -6,6 +6,7 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JUnitFormatter;
+import io.cucumber.core.plugin.JsonFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.plugin.NullSummaryPrinter;
 import io.cucumber.core.plugin.Options;
@@ -38,7 +39,7 @@ public class PluginOption implements Options.Plugin {
     private static final HashMap<String, Supplier<Class<? extends Plugin>>> PLUGIN_CLASSES = new HashMap<String, Supplier<Class<? extends Plugin>>>() {{
         put("default_summary", () -> DefaultSummaryPrinter.class);
         put("html", () -> HtmlFormatter.class);
-        put("json", () -> loadClassFromGherkinVintage("io.cucumber.core.gherkin.vintage.JsonFormatter"));
+        put("json", () -> JsonFormatter.class);
         put("junit", () -> JUnitFormatter.class);
         put("null_summary", () -> NullSummaryPrinter.class);
         put("pretty", () -> PrettyFormatter.class);
@@ -53,16 +54,6 @@ public class PluginOption implements Options.Plugin {
         put("teamcity", () -> TeamCityPlugin.class);
     }};
 
-    private static Class<? extends Plugin> loadClassFromGherkinVintage(String className) {
-        try {
-            Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(className);
-            return (Class<? extends Plugin>) aClass;
-        } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            throw new CucumberException("" +
-                "Couldn't load plugin class: " + className + "\n" +
-                "Make sure `cucumber-gherkin-vintage` is available on the classpath", e);
-        }
-    }
 
     // Replace IDEA plugin with TeamCity
     private static final Set<String> INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashSet<String>() {{

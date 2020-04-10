@@ -186,7 +186,7 @@ public class TestHelper {
 
         final FeatureSupplier featureSupplier = features.isEmpty()
             ? null // assume feature paths passed in as args instead
-            : new TestFeatureSupplier(bus, features);
+            : new TestFeatureSupplier(features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
             .withRuntimeOptions(

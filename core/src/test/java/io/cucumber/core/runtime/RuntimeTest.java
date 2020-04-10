@@ -32,13 +32,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -189,7 +185,7 @@ class RuntimeTest {
 
         TestBackendSupplier testBackendSupplier = createTestBackendSupplier(feature, beforeHook);
 
-        FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
+        FeatureSupplier featureSupplier = new TestFeatureSupplier(feature);
 
         Runtime runtime = Runtime.builder()
             .withBackendSupplier(testBackendSupplier)
@@ -329,7 +325,7 @@ class RuntimeTest {
         final List<Feature> features = Arrays.asList(feature1, feature2, feature3);
 
         Runtime.builder()
-            .withFeatureSupplier(new TestFeatureSupplier(bus, features))
+            .withFeatureSupplier(new TestFeatureSupplier(features))
             .withEventBus(bus)
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
