@@ -53,9 +53,9 @@ class JsonFormatterTest {
 
     @Test
     void featureWithOutlineTest() {
-        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature");
+        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature");
         String actual = runFeaturesWithFormatter(featurePaths);
-        InputStream resourceAsStream = getClass().getResourceAsStream("JSONPrettyFormatterTest.json");
+        InputStream resourceAsStream = getClass().getResourceAsStream("JsonPrettyFormatterTest.json");
         String expected = new Scanner(resourceAsStream, "UTF-8")
             .useDelimiter("\\A")
             .next();
@@ -64,9 +64,9 @@ class JsonFormatterTest {
 
     @Test
     void featureWithOutlineTestParallel() throws Exception {
-        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JSONPrettyFormatterTest.feature");
+        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature");
         String actual = runFeaturesWithFormatterInParallel(featurePaths);
-        InputStream resourceAsStream = getClass().getResourceAsStream("JSONPrettyFormatterTest.json");
+        InputStream resourceAsStream = getClass().getResourceAsStream("JsonPrettyFormatterTest.json");
         String expected = new Scanner(resourceAsStream, "UTF-8")
             .useDelimiter("\\A")
             .next();

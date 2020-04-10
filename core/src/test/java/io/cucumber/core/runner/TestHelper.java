@@ -379,6 +379,9 @@ public class TestHelper {
                                      final List<HookDefinition> beforeStepHooks,
                                      final List<HookDefinition> afterStepHooks) {
             HookDefinition hook = mock(HookDefinition.class);
+            if(hookLocation == null) {
+                throw new RuntimeException("hookLocation cannot be null");
+            }
             when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {
                 when(hook.getLocation()).thenReturn(hookLocation);

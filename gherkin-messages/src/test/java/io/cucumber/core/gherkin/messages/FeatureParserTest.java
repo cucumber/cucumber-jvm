@@ -66,8 +66,15 @@ class FeatureParserTest {
             assertEquals("text/plain", ((DocStringArgument) steps.get(1).getArgument()).getContentType());
         });
     }
-
-    // TODO: Add test for background
+    @Test
+    void backgrounds_can_occur_twice() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/messages/background.feature")));
+        Feature feature = parser.parse(uri, source, UUID::randomUUID).get();
+        Pickle pickle = feature.getPickles().get(0);
+        List<Step> steps = pickle.getSteps();
+        assertEquals(3, steps.size());
+    }
 
     @Test
     void lexer_error_throws_exception() throws IOException {

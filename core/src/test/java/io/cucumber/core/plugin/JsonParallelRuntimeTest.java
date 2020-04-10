@@ -13,7 +13,6 @@ import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-//TODO: Merge with the existing test
 class JsonParallelRuntimeTest {
 
     @Test
@@ -25,7 +24,7 @@ class JsonParallelRuntimeTest {
                 new CommandlineOptionsParser()
                     .parse(
                         "--threads", "3",
-                        "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
+                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature")
                     .build()
             )
             .withAdditionalPlugins(new JsonFormatter(parallel))
@@ -40,7 +39,7 @@ class JsonParallelRuntimeTest {
                 new CommandlineOptionsParser()
                     .parse(
                         "--threads", "1",
-                        "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
+                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature")
                     .build()
             )
             .withAdditionalPlugins(new JsonFormatter(serial))
@@ -59,7 +58,7 @@ class JsonParallelRuntimeTest {
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse("--threads", "3",
-                        "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
+                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
                         "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
                     .build()
             )
@@ -73,7 +72,7 @@ class JsonParallelRuntimeTest {
         Runtime.builder()
             .withRuntimeOptions(new CommandlineOptionsParser()
                 .parse("--threads", "1",
-                    "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
+                    "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
                     "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
                 .build())
             .withAdditionalPlugins(new JsonFormatter(serial))
