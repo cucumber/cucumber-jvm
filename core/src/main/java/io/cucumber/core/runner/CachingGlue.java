@@ -11,15 +11,14 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.CucumberExpression;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
+import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.RegularExpression;
-import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
@@ -189,7 +188,11 @@ final class CachingGlue implements Glue {
     }
 
     void prepareGlue(StepTypeRegistry stepTypeRegistry) throws DuplicateStepDefinitionException {
-        parameterTypeDefinitions.forEach(ptd -> stepTypeRegistry.defineParameterType(ptd.parameterType()));
+        parameterTypeDefinitions.forEach(ptd -> {
+            ParameterType<?> parameterType = ptd.parameterType();
+            stepTypeRegistry.defineParameterType(parameterType);
+            emitParameterTypeDefined(parameterType);
+        });
         dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
         docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
 
@@ -231,6 +234,17 @@ final class CachingGlue implements Glue {
         });
 
         afterHooks.forEach(this::emitHook);
+    }
+
+    private void emitParameterTypeDefined(ParameterType<?> parameterType) {
+        bus.send(Messages.Envelope.newBuilder()
+            .setParameterType(Messages.ParameterType.newBuilder()
+                .setName(parameterType.getName())
+                .addAllRegularExpressions(parameterType.getRegexps())
+                .setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch())
+                .setUseForSnippets(parameterType.useForSnippets()))
+            .build()
+        );
     }
 
     private void emitHook(CoreHookDefinition hook) {

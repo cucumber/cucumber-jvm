@@ -24,7 +24,7 @@ public class ParameterTypes {
         assertEquals(45, delay);
     }
 
-    @ParameterType("([A-Z]{3})-([A-Z]{3})")
+    @ParameterType(value = "([A-Z]{3})-([A-Z]{3})", useForSnippets = true)
     public Flight flight(String from, String to) {
         return new Flight(from, to);
     }
