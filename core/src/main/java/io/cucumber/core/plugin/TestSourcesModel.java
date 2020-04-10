@@ -1,13 +1,14 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.gherkin.ScenarioDefinition;
 import io.cucumber.gherkin.Gherkin;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument;
 import io.cucumber.messages.Messages.GherkinDocument.Feature;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.*;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples;
 import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
+import io.cucumber.messages.internal.com.google.protobuf.Message;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.File;
@@ -45,7 +46,11 @@ final class TestSourcesModel {
     }
 
     static Scenario getScenarioDefinition(AstNode astNode) {
-        return astNode.node instanceof Scenario ? (Scenario) astNode.node : (Scenario) astNode.parent.parent.node;
+        AstNode candidate = astNode;
+        while (candidate != null && !(candidate.node instanceof Scenario)){
+            candidate = candidate.parent;
+        }
+        return candidate == null ? null : (Scenario) candidate.node;
     }
 
     static boolean isBackgroundStep(AstNode astNode) {
@@ -56,6 +61,9 @@ final class TestSourcesModel {
         GeneratedMessageV3 node = astNode.node;
         if (node instanceof Scenario) {
             return calculateId(astNode.parent) + ";" + convertToId(((Scenario) node).getName());
+        }
+        if (node instanceof ExamplesRowWrapperNode) {
+            return calculateId(astNode.parent) + ";" + (((ExamplesRowWrapperNode) node).bodyRowIndex + 2);
         }
         if (node instanceof TableRow) {
             return calculateId(astNode.parent) + ";" + 1;
@@ -154,27 +162,51 @@ final class TestSourcesModel {
         Map<Integer, AstNode> nodeMap = new HashMap<>();
         AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);
         for (FeatureChild child : gherkinDocument.getFeature().getChildrenList()) {
-            processScenarioDefinition(nodeMap, child, currentParent);
+            processFeatureDefinition(nodeMap, child, currentParent);
         }
         pathToNodeMap.put(path, nodeMap);
 
     }
 
-    private void processScenarioDefinition(Map<Integer, AstNode> nodeMap, FeatureChild child, AstNode currentParent) {
+    private void processFeatureDefinition(Map<Integer, AstNode> nodeMap, FeatureChild child, AstNode currentParent) {
         if (child.hasBackground()) {
-            AstNode childNode = new AstNode(child.getBackground(), currentParent);
-            nodeMap.put(child.getBackground().getLocation().getLine(), childNode);
+            processBackgroundDefinition(nodeMap, child.getBackground(), currentParent);
         } else if (child.hasScenario()) {
-            AstNode childNode = new AstNode(child.getScenario(), currentParent);
-            nodeMap.put(child.getScenario().getLocation().getLine(), childNode);
-            for (Step step : child.getScenario().getStepsList()) {
-                nodeMap.put(step.getLocation().getLine(), new AstNode(step, childNode));
-            }
-            if (child.getScenario().getExamplesCount() > 0) {
-                processScenarioOutlineExamples(nodeMap, child.getScenario(), childNode);
+            processScenarioDefinition(nodeMap, child.getScenario(), currentParent);
+        } else if (child.hasRule()) {
+            AstNode childNode = new AstNode(child.getRule(), currentParent);
+            nodeMap.put(child.getRule().getLocation().getLine(), childNode);
+            for (RuleChild ruleChild : child.getRule().getChildrenList()) {
+                processRuleDefinition(nodeMap, ruleChild, childNode);
             }
         }
+    }
 
+    private void processBackgroundDefinition(Map<Integer, AstNode> nodeMap, Background background, AstNode currentParent) {
+        AstNode childNode = new AstNode(background, currentParent);
+        nodeMap.put(background.getLocation().getLine(), childNode);
+        for (Step step : background.getStepsList()) {
+            nodeMap.put(step.getLocation().getLine(), new AstNode(step, childNode));
+        }
+    }
+
+    private void processScenarioDefinition(Map<Integer, AstNode> nodeMap, Scenario child, AstNode currentParent) {
+        AstNode childNode = new AstNode(child, currentParent);
+        nodeMap.put(child.getLocation().getLine(), childNode);
+        for (Step step : child.getStepsList()) {
+            nodeMap.put(step.getLocation().getLine(), new AstNode(step, childNode));
+        }
+        if (child.getExamplesCount() > 0) {
+            processScenarioOutlineExamples(nodeMap, child, childNode);
+        }
+    }
+
+    private void processRuleDefinition(Map<Integer, AstNode> nodeMap, RuleChild child, AstNode currentParent) {
+        if (child.hasBackground()) {
+            processBackgroundDefinition(nodeMap, child.getBackground(), currentParent);
+        } else if (child.hasScenario()) {
+            processScenarioDefinition(nodeMap, child.getScenario(), currentParent);
+        }
     }
 
     private void processScenarioOutlineExamples(Map<Integer, AstNode> nodeMap, Scenario scenarioOutline, AstNode parent) {
@@ -185,9 +217,43 @@ final class TestSourcesModel {
             nodeMap.put(headerRow.getLocation().getLine(), headerNode);
             for (int i = 0; i < examples.getTableBodyCount(); ++i) {
                 TableRow examplesRow = examples.getTableBody(i);
-                AstNode expandedScenarioNode = new AstNode(examplesRow, examplesNode);
+                GeneratedMessageV3 rowNode = new ExamplesRowWrapperNode(examplesRow, i);
+                AstNode expandedScenarioNode = new AstNode(rowNode, examplesNode);
                 nodeMap.put(examplesRow.getLocation().getLine(), expandedScenarioNode);
             }
+        }
+    }
+
+    static class ExamplesRowWrapperNode extends GeneratedMessageV3 {
+        final int bodyRowIndex;
+
+        ExamplesRowWrapperNode(GeneratedMessageV3 examplesRow, int bodyRowIndex) {
+            this.bodyRowIndex = bodyRowIndex;
+        }
+
+        @Override
+        protected FieldAccessorTable internalGetFieldAccessorTable() {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        protected Message.Builder newBuilderForType(BuilderParent builderParent) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Message.Builder newBuilderForType() {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Message.Builder toBuilder() {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Message getDefaultInstanceForType() {
+            throw new UnsupportedOperationException("not implemented");
         }
     }
 

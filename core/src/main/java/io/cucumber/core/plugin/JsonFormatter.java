@@ -37,11 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Locale.ROOT;
@@ -158,7 +154,18 @@ public final class JsonFormatter implements EventListener {
             featureMap.put("description", feature.getDescription() != null ? feature.getDescription() : "");
             featureMap.put("line", feature.getLocation().getLine());
             featureMap.put("id", TestSourcesModel.convertToId(feature.getName()));
-            featureMap.put("tags", feature.getTagsList().stream().map(Feature.Tag::getName).collect(toList()));
+            featureMap.put("tags", feature.getTagsList().stream().map(
+                tag -> {
+                    Map<String, Object> json = new LinkedHashMap<>();
+                    json.put("name", tag.getName());
+                    json.put("type", "Tag");
+                    Map<String, Object> location = new LinkedHashMap<>();
+                    location.put("line", tag.getLocation().getLine());
+                    location.put("column", tag.getLocation().getColumn());
+                    json.put("location", location);
+                    return json;
+                }
+            ).collect(toList()));
 
         }
         return featureMap;

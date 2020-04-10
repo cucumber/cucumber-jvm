@@ -41,7 +41,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-class JSONFormatterTest {
+class JsonFormatterTest {
 
     private final List<Feature> features = new ArrayList<>();
     private final Map<String, Result> stepsToResult = new HashMap<>();
@@ -226,6 +226,123 @@ class JSONFormatterTest {
             "        ]\n" +
             "      }\n" +
             "    ],\n" +
+            "    \"tags\": []\n" +
+            "  }\n" +
+            "]";
+        assertThat(formatterOutput, sameJSONAs(expected));
+    }
+
+    @Test
+    void should_format_scenario_with_a_rule() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+            "Feature: Banana party\n" +
+            "\n" +
+            "  Rule: This is all monkey business\n" +
+            "    Scenario: Monkey eats bananas\n" +
+            "      Given there are bananas\n");
+        features.add(feature);
+        stepsToResult.put("there are bananas", result("passed"));
+        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
+        stepDuration = ofMillis(1L);
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        String expected = "" +
+            "[\n" +
+            "  {\n" +
+            "    \"line\": 1,\n" +
+            "    \"elements\": [\n" +
+            "      {\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
+            "        \"line\": 4,\n" +
+            "        \"name\": \"Monkey eats bananas\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"id\": \";monkey-eats-bananas\",\n" +
+            "        \"type\": \"scenario\",\n" +
+            "        \"keyword\": \"Scenario\",\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"line\": 5,\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+            "            },\n" +
+            "            \"keyword\": \"Given \"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"name\": \"Banana party\",\n" +
+            "    \"description\": \"\",\n" +
+            "    \"id\": \"banana-party\",\n" +
+            "    \"keyword\": \"Feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
+            "    \"tags\": []\n" +
+            "  }\n" +
+            "]";
+        assertThat(formatterOutput, sameJSONAs(expected));
+    }
+
+    @Test
+    void should_format_scenario_with_a_rule_and_background() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+            "Feature: Banana party\n" +
+            "\n" +
+            "  Background: \n" +
+            "     Given there are bananas\n" +
+            "\n" +
+            "  Rule: This is all monkey business\n" +
+            "\n" +
+            "  Background: \n" +
+            "     Given there are bananas\n" +
+            "\n" +
+            "    Scenario: Monkey eats bananas\n" +
+            "      Given there are bananas\n");
+        features.add(feature);
+        stepsToResult.put("there are bananas", result("passed"));
+        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
+        stepDuration = ofMillis(1L);
+
+        String formatterOutput = runFeaturesWithFormatter();
+
+        String expected = "" +
+            "[\n" +
+            "  {\n" +
+            "    \"line\": 1,\n" +
+            "    \"elements\": [\n" +
+            "      {\n" +
+            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
+            "        \"line\": 4,\n" +
+            "        \"name\": \"Monkey eats bananas\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"id\": \";monkey-eats-bananas\",\n" +
+            "        \"type\": \"scenario\",\n" +
+            "        \"keyword\": \"Scenario\",\n" +
+            "        \"steps\": [\n" +
+            "          {\n" +
+            "            \"result\": {\n" +
+            "              \"duration\": 1000000,\n" +
+            "              \"status\": \"passed\"\n" +
+            "            },\n" +
+            "            \"line\": 5,\n" +
+            "            \"name\": \"there are bananas\",\n" +
+            "            \"match\": {\n" +
+            "              \"location\": \"StepDefs.there_are_bananas()\"\n" +
+            "            },\n" +
+            "            \"keyword\": \"Given \"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"name\": \"Banana party\",\n" +
+            "    \"description\": \"\",\n" +
+            "    \"id\": \"banana-party\",\n" +
+            "    \"keyword\": \"Feature\",\n" +
+            "    \"uri\": \"file:path/test.feature\",\n" +
             "    \"tags\": []\n" +
             "  }\n" +
             "]";
