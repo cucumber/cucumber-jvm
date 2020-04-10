@@ -39,7 +39,7 @@ public class RpnCalculatorStepDefinitions {
 
     @Before("not @foo")
     public void before(Scenario scenario) {
-        scenario.write("Runs before scenarios *not* tagged with @foo");
+        scenario.log("Runs before scenarios *not* tagged with @foo");
     }
 
     @After

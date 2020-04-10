@@ -22,12 +22,12 @@ public class Attachments {
 
     @When("the string {string} is attached as {string}")
     public void theStringIsAttachedAs(String text, String contentType) {
-        scenario.embed(text.getBytes(UTF_8), contentType, null);
+        scenario.attach(text.getBytes(UTF_8), contentType, null);
     }
 
     @When("the string {string} is logged")
     public void theStringIsLogged(String text) {
-        scenario.write(text);
+        scenario.log(text);
     }
 
     @When("an array with {int} bytes are attached as {string}")
@@ -36,7 +36,7 @@ public class Attachments {
         for (byte i = 0; i < n; i++) {
             bytes[i] = i;
         }
-        scenario.embed(bytes, mediaType, null);
+        scenario.attach(bytes, mediaType, null);
     }
 
     @When("a stream with {int} bytes are attached as {string}")
@@ -45,7 +45,7 @@ public class Attachments {
         for (byte i = 0; i < n; i++) {
             bytes[i] = i;
         }
-        scenario.embed(bytes, mediaType, null);
+        scenario.attach(bytes, mediaType, null);
     }
 
 
@@ -54,6 +54,6 @@ public class Attachments {
         Path path = Paths.get("src/test/resources/features/attachments/cucumber-growing-on-vine.jpg");
         byte[] bytes = Files.readAllBytes(path);
         String fileName = path.getFileName().toString();
-        scenario.embed(bytes, "image/jpg", fileName);
+        scenario.attach(bytes, "image/jpg", fileName);
     }
 }
