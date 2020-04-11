@@ -29,16 +29,13 @@ import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 class FeatureResolverTest {
     private final String featurePath = "io/cucumber/junit/platform/engine/feature-with-outline.feature";
     private final String featureSegmentValue = CLASSPATH_SCHEME_PREFIX + featurePath;
-    private TestDescriptor testDescriptor;
+    private CucumberEngineDescriptor testDescriptor;
     private UniqueId id;
 
     @BeforeEach
     void before() {
-        CucumberTestEngine engine = new CucumberTestEngine();
-        ConfigurationParameters configuration = new EmptyConfigurationParameters();
-        EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
-        id = UniqueId.forEngine(engine.getId());
-        testDescriptor = engine.discover(discoveryRequest, id);
+        id = UniqueId.forEngine(new CucumberTestEngine().getId());
+        testDescriptor = new CucumberEngineDescriptor(id);
         FeatureResolver featureResolver = createFeatureResolver(testDescriptor, aPackage -> true);
         featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
     }

@@ -45,7 +45,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 
 class DiscoverySelectorResolverTest {
     private final DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
-    private TestDescriptor testDescriptor;
+    private CucumberEngineDescriptor testDescriptor;
 
     private static Matcher<TestDescriptor> allDescriptorsPrefixedBy(UniqueId targetId) {
         return new CustomTypeSafeMatcher<TestDescriptor>("All descendants are prefixed by " + targetId) {
@@ -62,11 +62,8 @@ class DiscoverySelectorResolverTest {
 
     @BeforeEach
     void before() {
-        CucumberTestEngine engine = new CucumberTestEngine();
-        ConfigurationParameters configuration = new EmptyConfigurationParameters();
-        EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
-        UniqueId id = UniqueId.forEngine(engine.getId());
-        testDescriptor = engine.discover(discoveryRequest, id);
+        UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
+        testDescriptor = new CucumberEngineDescriptor(id);
         assertEquals(0, testDescriptor.getChildren().size());
     }
 
@@ -150,7 +147,6 @@ class DiscoverySelectorResolverTest {
             .collect(Collectors.toList());
         assertEquals(1, tests.size());
     }
-
 
     @Test
     void resolveRequestWithClassPathUriSelectorWithLine() {
