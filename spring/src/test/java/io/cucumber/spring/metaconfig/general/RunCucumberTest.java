@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
+    strict = true,
     glue = {
         "io.cucumber.spring.metaconfig.general",
         "io.cucumber.spring.commonglue",
