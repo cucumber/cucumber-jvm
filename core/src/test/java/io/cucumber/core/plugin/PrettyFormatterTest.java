@@ -1,8 +1,10 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
@@ -12,12 +14,14 @@ import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import static io.cucumber.core.plugin.BytesContainsString.bytesContainsString;
 import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
@@ -36,9 +40,10 @@ class PrettyFormatterTest {
     private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     @Test
-    void should_align_the_indentation_of_location_strings() throws IOException {
+    void should_align_the_indentation_of_location_strings() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -59,7 +64,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_handle_background() throws IOException {
+    void should_handle_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Background: background name\n" +
@@ -85,7 +90,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_handle_scenario_outline() throws IOException {
+    void should_handle_scenario_outline() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario Outline: <name>\n" +
@@ -112,7 +117,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_tags() throws IOException {
+    void should_print_tags() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "@feature_tag\n" +
             "Feature: feature name\n" +
@@ -143,7 +148,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_error_message_for_failed_steps() throws IOException {
+    void should_print_error_message_for_failed_steps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -158,7 +163,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_error_message_for_before_hooks() throws IOException {
+    void should_print_error_message_for_before_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -176,7 +181,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_error_message_for_after_hooks() throws IOException {
+    void should_print_error_message_for_after_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -193,7 +198,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_output_from_before_hooks() throws IOException {
+    void should_print_output_from_before_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -214,7 +219,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_output_from_after_hooks() throws IOException {
+    void should_print_output_from_after_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -233,7 +238,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_output_from_afterStep_hooks() throws IOException {
+    void should_print_output_from_afterStep_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -260,7 +265,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_color_code_steps_according_to_the_result() throws IOException {
+    void should_color_code_steps_according_to_the_result() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -274,7 +279,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_color_code_locations_as_comments() throws IOException {
+    void should_color_code_locations_as_comments() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -288,7 +293,7 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_color_code_error_message_according_to_the_result() throws IOException {
+    void should_color_code_error_message_according_to_the_result() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
             "Feature: feature name\n" +
             "  Scenario: scenario name\n" +
@@ -302,11 +307,11 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_mark_subsequent_arguments_in_steps() throws IOException {
+    void should_mark_subsequent_arguments_in_steps() {
         Formats formats = new AnsiFormats();
 
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
-        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
         StepExpression expression = stepExpressionFactory.createExpression("text {string} text {string}");
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
@@ -321,11 +326,11 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_mark_nested_argument_as_part_of_full_argument() throws IOException {
+    void should_mark_nested_argument_as_part_of_full_argument() {
         Formats formats = new AnsiFormats();
 
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
-        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
         StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not yet )?confirmed)?$");
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
@@ -339,11 +344,11 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_mark_nested_arguments_as_part_of_enclosing_argument() throws IOException {
+    void should_mark_nested_arguments_as_part_of_enclosing_argument() {
         Formats formats = new AnsiFormats();
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
-        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry);
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
         StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not( yet)? )?confirmed)?$");
         String stepText = "the order is placed and not yet confirmed";
         String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
@@ -354,7 +359,7 @@ class PrettyFormatterTest {
             AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
-    private ByteArrayOutputStream runFeaturesWithFormatter(boolean monochrome) throws IOException {
+    private ByteArrayOutputStream runFeaturesWithFormatter(boolean monochrome) {
         final ByteArrayOutputStream report = new ByteArrayOutputStream();
         final PrettyFormatter formatter = new PrettyFormatter(report);
         formatter.setMonochrome(monochrome);

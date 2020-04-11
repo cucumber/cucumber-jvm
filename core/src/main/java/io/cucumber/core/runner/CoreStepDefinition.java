@@ -25,24 +25,12 @@ final class CoreStepDefinition {
     private final StepDefinition stepDefinition;
     private final Type[] types;
 
-    CoreStepDefinition(UUID id, StepDefinition stepDefinition, StepTypeRegistry stepTypeRegistry) {
+    CoreStepDefinition(UUID id, StepDefinition stepDefinition, StepExpression expression) {
         this.id = requireNonNull(id);
         this.stepDefinition = requireNonNull(stepDefinition);
-        List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
-        this.expression = createExpression(parameterInfos, stepDefinition.getPattern(), stepTypeRegistry);
+        this.expression = expression;
         this.argumentMatcher = new ArgumentMatcher(this.expression);
-        this.types = getTypes(parameterInfos);
-    }
-
-    private StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, StepTypeRegistry stepTypeRegistry) {
-        if (parameterInfos == null || parameterInfos.isEmpty()) {
-            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression);
-        } else {
-            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
-            boolean transposed = parameterInfo.isTransposed();
-            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression, typeResolver, transposed);
-        }
+        this.types = getTypes(stepDefinition.parameterInfos());
     }
 
     StepExpression getExpression() {

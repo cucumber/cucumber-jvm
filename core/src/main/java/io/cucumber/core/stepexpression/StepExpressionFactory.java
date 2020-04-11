@@ -1,5 +1,8 @@
 package io.cucumber.core.stepexpression;
 
+import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
@@ -8,6 +11,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
+import io.cucumber.messages.Messages;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -18,14 +22,29 @@ public final class StepExpressionFactory {
     private final ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
     private final DocStringTypeRegistryDocStringConverter docStringConverter;
+    private final EventBus bus;
 
-    public StepExpressionFactory(StepTypeRegistry registry) {
+    public StepExpressionFactory(StepTypeRegistry registry, EventBus bus) {
         this.expressionFactory = new ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
         this.docStringConverter = new DocStringTypeRegistryDocStringConverter(registry.docStringTypeRegistry());
+        this.bus = bus;
     }
 
-    public StepExpression createExpression(String expressionString) {
+    public StepExpression createExpression(StepDefinition stepDefinition) {
+        String expression = stepDefinition.getPattern();
+        List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
+        if (parameterInfos == null || parameterInfos.isEmpty()) {
+            return createExpression(expression);
+        } else {
+            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
+            Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
+            boolean transposed = parameterInfo.isTransposed();
+            return createExpression(expression, typeResolver, transposed);
+        }
+    }
+
+    StepExpression createExpression(String expressionString) {
         if (expressionString == null) throw new NullPointerException("expression can not be null");
         Expression expression = expressionFactory.createExpression(expressionString);
 
@@ -34,11 +53,12 @@ public final class StepExpressionFactory {
         return new StepExpression(expression, toDocString, toDataTable);
     }
 
-    public StepExpression createExpression(String expressionString, Type tableOrDocStringType) {
+    // TODO: Remove redundant methods.
+    StepExpression createExpression(String expressionString, Type tableOrDocStringType) {
         return createExpression(expressionString, () -> tableOrDocStringType, false);
     }
 
-    public StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType) {
+    StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType) {
         return createExpression(expressionString, tableOrDocStringType, false);
     }
 
@@ -47,6 +67,7 @@ public final class StepExpressionFactory {
     }
 
     public StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose) {
+        // TODO: Replace with require non null
         if (expressionString == null) throw new NullPointerException("expressionString can not be null");
         if (tableOrDocStringType == null) throw new NullPointerException("tableOrDocStringType can not be null");
 
@@ -54,6 +75,12 @@ public final class StepExpressionFactory {
         try {
             expression = expressionFactory.createExpression(expressionString);
         } catch (UndefinedParameterTypeException e) {
+            bus.send(Messages.Envelope.newBuilder()
+                .setUndefinedParameterType(Messages.UndefinedParameterType.newBuilder()
+                    .setExpression(expressionString)
+                    .setName(e.getUndefinedParameterTypeName())
+                    .build())
+            );
             throw registerTypeInConfiguration(expressionString, e);
         }
 
