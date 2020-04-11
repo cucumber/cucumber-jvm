@@ -19,6 +19,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class FeatureParserTest {
 
     private final GherkinVintageFeatureParser parser = new GherkinVintageFeatureParser();
+    @Test
+    void can_parse_single_scenario() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/vintage/single.feature")));
+        Optional<Feature> feature = parser.parse(uri, source, UUID::randomUUID);
+        assertEquals(1, feature.get().getPickles().size());
+    }
+
+    @Test
+    void background_elements_are_not_scenarios() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/vintage/background.feature")));
+        Optional<Feature> feature = parser.parse(uri, source, UUID::randomUUID);
+        assertEquals(1, feature.get().getPickles().size());
+    }
 
     @Test
     void empty_feature_file_is_parsed_but_produces_no_feature() throws IOException {

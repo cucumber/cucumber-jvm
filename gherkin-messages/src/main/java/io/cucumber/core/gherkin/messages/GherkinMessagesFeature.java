@@ -67,7 +67,7 @@ final class GherkinMessagesFeature implements Feature {
         return pickles.stream()
             .filter(pickle -> pickle.getLocation().equals(location))
             .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("No pickle at " + location));
+            .orElseThrow(() -> new NoSuchElementException("No pickle in " + uri + " at " + location));
     }
 
     @Override

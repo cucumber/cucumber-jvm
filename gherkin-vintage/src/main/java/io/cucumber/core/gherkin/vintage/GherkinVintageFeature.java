@@ -1,6 +1,7 @@
 package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.GherkinDocument;
+import gherkin.ast.Scenario;
 import gherkin.ast.ScenarioOutline;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Located;
@@ -28,6 +29,9 @@ final class GherkinVintageFeature implements Feature {
         this.gherkinSource = gherkinSource;
         this.pickles = pickles;
         this.children = gherkinDocument.getFeature().getChildren().stream()
+            .filter(scenarioDefinition ->
+                (scenarioDefinition instanceof ScenarioOutline)
+                    || (scenarioDefinition instanceof Scenario))
             .map(scenarioDefinition -> {
                 if (scenarioDefinition instanceof ScenarioOutline) {
                     ScenarioOutline outline = (ScenarioOutline) scenarioDefinition;
@@ -54,7 +58,7 @@ final class GherkinVintageFeature implements Feature {
         return pickles.stream()
             .filter(pickle -> pickle.getLocation().equals(location))
             .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("No pickle at " + location));
+            .orElseThrow(() -> new NoSuchElementException("No pickle in " + uri + " at " + location));
     }
 
     @Override

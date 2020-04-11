@@ -42,4 +42,12 @@ final class GherkinMessagesLocation implements Location {
     public int hashCode() {
         return Objects.hash(line, column);
     }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+            "line=" + line +
+            ", column=" + column +
+            '}';
+    }
 }
