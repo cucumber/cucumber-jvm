@@ -11,8 +11,8 @@ import io.cucumber.core.gherkin.Pickle;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinVintageFeature implements Feature {
@@ -49,11 +49,12 @@ final class GherkinVintageFeature implements Feature {
     }
 
     @Override
-    public Optional<Pickle> getPickleAt(Located located) {
+    public Pickle getPickleAt(Located located) {
         Location location = located.getLocation();
         return pickles.stream()
-            .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
-            .findFirst();
+            .filter(pickle -> pickle.getLocation().equals(location))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("No pickle at " + location));
     }
 
     @Override

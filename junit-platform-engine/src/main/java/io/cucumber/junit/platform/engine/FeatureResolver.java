@@ -5,8 +5,8 @@ import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.Example;
 import io.cucumber.core.gherkin.Examples;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Located;
 import io.cucumber.core.gherkin.Named;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Rule;
 import io.cucumber.core.gherkin.Scenario;
 import io.cucumber.core.gherkin.ScenarioOutline;
@@ -96,7 +96,7 @@ final class FeatureResolver {
             .scanForResourcesPath(path)
             .stream()
             .sorted(comparing(Feature::getUri))
-            .map(this::resolveFeature)
+            .map(this::createFeatureDescriptor)
             .forEach(engineDescriptor::mergeFeature);
     }
 
@@ -117,7 +117,7 @@ final class FeatureResolver {
             .scanForResourcesInPackage(packageName, packageFilter)
             .stream()
             .sorted(comparing(Feature::getUri))
-            .map(this::resolveFeature)
+            .map(this::createFeatureDescriptor)
             .forEach(engineDescriptor::mergeFeature);
     }
 
@@ -127,7 +127,7 @@ final class FeatureResolver {
             .scanForClasspathResource(classpathResourceName, packageFilter)
             .stream()
             .sorted(comparing(Feature::getUri))
-            .map(this::resolveFeature)
+            .map(this::createFeatureDescriptor)
             .forEach(engineDescriptor::mergeFeature);
     }
 
@@ -136,7 +136,7 @@ final class FeatureResolver {
             .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter)
             .stream()
             .sorted(comparing(Feature::getUri))
-            .map(this::resolveFeature)
+            .map(this::createFeatureDescriptor)
             .forEach(engineDescriptor::mergeFeature);
     }
 
@@ -182,81 +182,70 @@ final class FeatureResolver {
             .scanForResourcesUri(uri)
             .stream()
             .sorted(comparing(Feature::getUri))
-            .map(this::resolveFeature);
+            .map(this::createFeatureDescriptor);
     }
 
-    private FeatureDescriptor resolveFeature(Feature feature) {
+    private FeatureDescriptor createFeatureDescriptor(Feature feature) {
         FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
-        FeatureDescriptor descriptor = new FeatureDescriptor(
-            source.featureSegment(engineDescriptor.getUniqueId(), feature),
-            getNameOrKeyWord(feature),
-            source.featureSource(),
-            feature
+
+        return (FeatureDescriptor) feature.map(
+            engineDescriptor,
+            (Feature self, TestDescriptor parent) -> new FeatureDescriptor(
+                source.featureSegment(parent.getUniqueId(), self),
+                getNameOrKeyWord(self),
+                source.featureSource(),
+                self
+            ),
+            (Scenario node, TestDescriptor parent) -> {
+                Pickle pickle = feature.getPickleAt(node);
+                TestDescriptor descriptor = new PickleDescriptor(
+                    source.scenarioSegment(parent.getUniqueId(), node),
+                    getNameOrKeyWord(node),
+                    source.nodeSource(node),
+                    pickle
+                );
+                parent.addChild(descriptor);
+                return descriptor;
+            },
+            (Rule node, TestDescriptor parent) -> {
+                TestDescriptor descriptor = new NodeDescriptor(
+                    source.ruleSegment(parent.getUniqueId(), node),
+                    getNameOrKeyWord(node),
+                    source.nodeSource(node)
+                );
+                parent.addChild(descriptor);
+                return descriptor;
+            },
+            (ScenarioOutline node, TestDescriptor parent) -> {
+                TestDescriptor descriptor = new NodeDescriptor(
+                    source.scenarioSegment(parent.getUniqueId(), node),
+                    getNameOrKeyWord(node),
+                    source.nodeSource(node)
+                );
+                parent.addChild(descriptor);
+                return descriptor;
+            },
+            (Examples node, TestDescriptor parent) -> {
+                NodeDescriptor descriptor = new NodeDescriptor(
+                    source.examplesSegment(parent.getUniqueId(), node),
+                    getNameOrKeyWord(node),
+                    source.nodeSource(node)
+                );
+                parent.addChild(descriptor);
+                return descriptor;
+            },
+            (Example node, TestDescriptor parent) -> {
+                Pickle pickle = feature.getPickleAt(node);
+                PickleDescriptor descriptor = new PickleDescriptor(
+                    source.exampleSegment(parent.getUniqueId(), node),
+                    getNameOrKeyWord(node),
+                    source.nodeSource(node),
+                    pickle
+                );
+                parent.addChild(descriptor);
+                return descriptor;
+            }
         );
-        feature.children().forEach(scenarioDefinition -> visit(feature, descriptor, source, scenarioDefinition));
-        return descriptor;
-    }
-
-    private <T extends Located & Named> void visit(Feature feature, TestDescriptor parent, FeatureOrigin source, T node) {
-        if (node instanceof Scenario) {
-            feature.getPickleAt(node)
-                .ifPresent(pickle -> {
-                    PickleDescriptor descriptor = new PickleDescriptor(
-                        source.scenarioSegment(parent.getUniqueId(), node),
-                        getNameOrKeyWord(node),
-                        source.nodeSource(node),
-                        pickle
-                    );
-                    parent.addChild(descriptor);
-                });
-        }
-
-        if (node instanceof Rule) {
-            NodeDescriptor descriptor = new NodeDescriptor(
-                source.ruleSegment(parent.getUniqueId(), node),
-                getNameOrKeyWord(node),
-                source.nodeSource(node)
-            );
-            parent.addChild(descriptor);
-            Rule rule = (Rule) node;
-            rule.children().forEach(section -> visit(feature, descriptor, source, section));
-        }
-
-        if (node instanceof ScenarioOutline) {
-            NodeDescriptor descriptor = new NodeDescriptor(
-                source.scenarioSegment(parent.getUniqueId(), node),
-                getNameOrKeyWord(node),
-                source.nodeSource(node)
-            );
-            parent.addChild(descriptor);
-            ScenarioOutline scenarioOutline = (ScenarioOutline) node;
-            scenarioOutline.children().forEach(section -> visit(feature, descriptor, source, section));
-        }
-
-        if (node instanceof Examples) {
-            NodeDescriptor descriptor = new NodeDescriptor(
-                source.examplesSegment(parent.getUniqueId(), node),
-                getNameOrKeyWord(node),
-                source.nodeSource(node)
-            );
-            parent.addChild(descriptor);
-            Examples examples = (Examples) node;
-            examples.children().forEach(example -> visit(feature, descriptor, source, example));
-        }
-
-        if (node instanceof Example) {
-            feature.getPickleAt(node)
-                .ifPresent(pickle -> {
-                    PickleDescriptor descriptor = new PickleDescriptor(
-                        source.exampleSegment(parent.getUniqueId(), node),
-                        getNameOrKeyWord(node),
-                        source.nodeSource(node),
-                        pickle
-                    );
-                    parent.addChild(descriptor);
-                });
-        }
-
     }
 
     private <T extends Named> String getNameOrKeyWord(T node) {
