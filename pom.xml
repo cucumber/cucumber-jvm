@@ -521,63 +521,11 @@
                             </revapi.semver.ignore>
                             <revapi.ignore>
                                 <item>
-                                    <code>java.class.visibilityReduced</code>
-                                    <old>class io.cucumber.java.AbstractDatatableElementTransformerDefinition</old>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.visibilityReduced</code>
-                                    <old>class io.cucumber.java8.AbstractDatatableElementTransformerDefinition</old>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.annotation.added</code>
-                                    <old>class io.cucumber.core.backend.CucumberBackendException</old>
-                                    <justification>Internal API promoted to public API</justification>
-                                </item>
-                                <item>
-                                    <code>java.annotation.added</code>
-                                    <old>class io.cucumber.core.backend.CucumberInvocationTargetException</old>
-                                    <justification>Internal API promoted to public API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.nowFinal</code>
-                                    <old>class io.cucumber.core.backend.CucumberInvocationTargetException</old>
-                                    <justification>Internal API promoted to public API</justification>
-                                </item>
-                                <item>
                                     <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        <![CDATA[method io.cucumber.core.gherkin.Feature io.cucumber.core.gherkin.FeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.gherkin.FeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></new>
+                                    <old><![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Pickle> io.cucumber.core.gherkin.Feature::getPickleAt(io.cucumber.core.gherkin.Located)]]></old>
+                                    <new><![CDATA[method io.cucumber.core.gherkin.Pickle io.cucumber.core.gherkin.Feature::getPickleAt(io.cucumber.core.gherkin.Located)]]></new>
                                     <justification>Internal API</justification>
                                 </item>
-                                <item>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        <![CDATA[method io.cucumber.core.gherkin.Feature io.cucumber.core.gherkin.vintage.GherkinVintageFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.gherkin.vintage.GherkinVintageFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        <![CDATA[method io.cucumber.core.gherkin.Feature io.cucumber.core.gherkin.messages.GherkinMessagesFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.gherkin.messages.GherkinMessagesFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        method io.cucumber.core.gherkin.Feature io.cucumber.core.feature.FeatureParser::parseResource(io.cucumber.core.resource.Resource)</old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.feature.FeatureParser::parseResource(io.cucumber.core.resource.Resource)]]></new>
-                                    <justification>Internal API</justification>
-                                </item>
-
                                 <!-- Gherkin parser related -->
                                 <item>
                                     <code>java.class.externalClassExposedInAPI</code>
@@ -599,20 +547,6 @@
                                     <code>java.class.nonPublicPartOfAPI</code>
                                     <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
                                     <justification>Internal API</justification>
-                                </item>
-
-                                <!-- JUnit Jupiter related -->
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
-                                    </newArchive>
-                                    <justification>We implement the junit platform API</justification>
-                                </item>
-                                <item>
-                                    <code>java.annotation.added</code>
-                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
-                                    </newArchive>
-                                    <justification>We implement the junit platform API</justification>
                                 </item>
                             </revapi.ignore>
                         </analysisConfiguration>
