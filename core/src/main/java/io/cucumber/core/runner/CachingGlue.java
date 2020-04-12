@@ -7,7 +7,6 @@ import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
@@ -27,7 +26,6 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +36,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Supplier;
 
 final class CachingGlue implements Glue {
     private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
@@ -244,7 +241,6 @@ final class CachingGlue implements Glue {
 
         afterHooks.forEach(this::emitHook);
     }
-
 
 
     private void emitParameterTypeDefined(ParameterType<?> parameterType) {

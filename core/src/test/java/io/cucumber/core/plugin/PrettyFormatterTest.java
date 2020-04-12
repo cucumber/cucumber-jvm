@@ -1,9 +1,11 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
@@ -13,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.Clock;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.result;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -312,7 +312,8 @@ class PrettyFormatterTest {
 
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-        StepExpression expression = stepExpressionFactory.createExpression("text {string} text {string}");
+        StepDefinition stepDefinition = new StubStepDefinition("text {string} text {string}", String.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         String stepText = "text 'arg1' text 'arg2'";
@@ -331,7 +332,8 @@ class PrettyFormatterTest {
 
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-        StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not yet )?confirmed)?$");
+        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not yet )?confirmed)?$", String.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         String stepText = "the order is placed and not yet confirmed";
@@ -349,7 +351,8 @@ class PrettyFormatterTest {
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-        StepExpression expression = stepExpressionFactory.createExpression("^the order is placed( and (not( yet)? )?confirmed)?$");
+        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not( yet)? )?confirmed)?$", String.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         String stepText = "the order is placed and not yet confirmed";
         String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
