@@ -211,7 +211,7 @@ class StepDefinitionMatchTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.\n" +
-                "It appears you did not register a data table type. The details are in the stacktrace below."
+                "It appears you did not register a data table type."
         )));
     }
 
@@ -239,8 +239,7 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'.\n" +
-                "The details are in the stacktrace below."
+            "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'."
         )));
     }
 
@@ -297,8 +296,7 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
-                "The details are in the stacktrace below."
+            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'."
         )));
     }
 
@@ -358,8 +356,7 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
-                "The details are in the stacktrace below."
+            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'."
         )));
     }
 
@@ -420,7 +417,7 @@ class StepDefinitionMatchTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.\n" +
-                "It appears there was a problem with a hook or transformer definition. The details are in the stacktrace below."
+                "It appears there was a problem with a hook or transformer definition."
         )));
     }
 
@@ -458,9 +455,7 @@ class StepDefinitionMatchTest {
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not invoke step [I have a data table] defined at '{stubbed location with details}'.\n" +
                 "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (java.lang.String, java.lang.String)\n" +
-                "\n" +
-                "The details are in the stacktrace below."
+                "The converted arguments types were (java.lang.String, java.lang.String)"
         )));
     }
 
@@ -494,9 +489,7 @@ class StepDefinitionMatchTest {
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not invoke step [I have an {word} value] defined at '{stubbed location with details}'.\n" +
                 "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (null)\n" +
-                "\n" +
-                "The details are in the stacktrace below."
+                "The converted arguments types were (null)"
         )));
     }
 

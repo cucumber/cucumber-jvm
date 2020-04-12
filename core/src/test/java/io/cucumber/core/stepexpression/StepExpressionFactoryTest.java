@@ -97,7 +97,7 @@ class StepExpressionFactoryTest {
         );
         assertThat(exception.getMessage(), is("" +
             "Could not create a cucumber expression for 'Given a {unknownParameterType}'.\n" +
-            "It appears you did not register parameter type. The details are in the stacktrace below.\n" +
+            "It appears you did not register parameter type." +
             "You can find the documentation here: https://docs.cucumber.io/cucumber/cucumber-expressions/"
         ));
         assertThat(events, iterableWithSize(1));

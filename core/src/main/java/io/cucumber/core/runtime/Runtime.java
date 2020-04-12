@@ -117,13 +117,17 @@ public final class Runtime {
                 throw new CucumberException(e);
             }
         }
-        if (thrown.size() == 1) {
-            throw new CucumberException(thrown.get(0));
-        } else if (thrown.size() > 1) {
-            throw new CompositeCucumberException(thrown);
+        if(thrown.isEmpty()){
+            emitTestRunFinished(null);
+        } else if (thrown.size() == 1) {
+            CucumberException cucumberException = new CucumberException(thrown.get(0));
+            emitTestRunFinished(cucumberException);
+            throw cucumberException;
+        } else {
+            CompositeCucumberException compositeCucumberException = new CompositeCucumberException(thrown);
+            emitTestRunFinished(compositeCucumberException);
+            throw compositeCucumberException;
         }
-
-        emitTestRunFinished();
     }
 
     private void emitTestRunStarted() {
@@ -140,12 +144,19 @@ public final class Runtime {
         bus.sendAll(feature.getParseEvents());
     }
 
-    private void emitTestRunFinished() {
+    private void emitTestRunFinished(CucumberException cucumberException) {
         Instant instant = bus.getInstant();
         bus.send(new TestRunFinished(instant));
+
+        Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
+            .setTimestamp(javaInstantToTimestamp(instant));
+
+        if (cucumberException != null) {
+            testRunFinished.setMessage(cucumberException.getMessage());
+            testRunFinished.setSuccess(false);
+        }
         bus.send(Messages.Envelope.newBuilder()
-            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(instant)))
+            .setTestRunFinished(testRunFinished)
             .build());
     }
 
