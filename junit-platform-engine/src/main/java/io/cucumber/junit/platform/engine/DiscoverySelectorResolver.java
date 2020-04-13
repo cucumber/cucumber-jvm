@@ -33,7 +33,7 @@ class DiscoverySelectorResolver {
     }
 
     private void resolve(EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
-        FeatureResolver featureResolver = createFeatureResolver(engineDescriptor, packageFilter);
+        FeatureResolver featureResolver = createFeatureResolver(request.getConfigurationParameters(), engineDescriptor, packageFilter);
 
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClasspathRoot);
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClasspathResource);

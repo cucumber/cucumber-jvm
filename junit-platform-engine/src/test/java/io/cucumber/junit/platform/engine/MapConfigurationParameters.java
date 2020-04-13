@@ -10,7 +10,7 @@ class MapConfigurationParameters implements ConfigurationParameters {
 
     private final Map<String, String> parameters;
 
-    private MapConfigurationParameters(Map<String, String> parameters) {
+    MapConfigurationParameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
