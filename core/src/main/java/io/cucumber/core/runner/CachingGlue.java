@@ -261,7 +261,7 @@ final class CachingGlue implements Glue {
             .setStepDefinition(
                 Messages.StepDefinition.newBuilder()
                     .setId(stepDefinition.getId().toString())
-                    .setPattern(Messages.StepDefinitionPattern.newBuilder()
+                    .setPattern(Messages.StepDefinition.StepDefinitionPattern.newBuilder()
                         .setSource(stepDefinition.getPattern())
                     ))
             .build()
