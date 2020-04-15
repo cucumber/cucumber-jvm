@@ -10,9 +10,9 @@ public final class TestCaseStarted extends TestCaseEvent {
     private final TestCase testCase;
 
     public TestCaseStarted(Instant timeInstant, TestCase testCase) {
-      super(timeInstant, testCase);
-      this.testCase = Objects.requireNonNull(testCase);
-  }
+        super(timeInstant, testCase);
+        this.testCase = Objects.requireNonNull(testCase);
+    }
 
     @Override
     public TestCase getTestCase() {

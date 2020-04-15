@@ -4,8 +4,10 @@ import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.messages.Messages;
 
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
+import static java.util.Collections.emptyList;
 
 final class HookDefinitionMatch implements StepDefinitionMatch {
     private final CoreHookDefinition hookDefinition;

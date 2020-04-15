@@ -11,12 +11,15 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
+import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -211,23 +214,58 @@ final class CachingGlue implements Glue {
             throw new DuplicateDefaultDataTableCellTransformers(defaultDataTableCellTransformers);
         }
 
+        // TODO: Redefine hooks for each scenario, similar to how we're doing for CoreStepDefinition
+        beforeHooks.forEach(this::emitHook);
+
         stepDefinitions.forEach(stepDefinition -> {
-            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition, stepTypeRegistry);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
             if (previous != null) {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
             }
             stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
-            bus.send(
-                new StepDefinedEvent(
-                    bus.getInstant(),
-                    new io.cucumber.plugin.event.StepDefinition(
-                        stepDefinition.getLocation(),
-                        stepDefinition.getPattern()
-                    )
-                )
-            );
+            emitStepDefined(coreStepDefinition);
         });
+
+        afterHooks.forEach(this::emitHook);
+    }
+
+    private CucumberException registerTypeInConfiguration(String expressionString, UndefinedParameterTypeException e) {
+        return new CucumberException(String.format("" +
+                "Could not create a cucumber expression for '%s'.\n" +
+                "It appears you did not register parameter type. The details are in the stacktrace below.\n" +
+                "You can find the documentation here: https://docs.cucumber.io/cucumber/cucumber-expressions/",
+            expressionString
+        ), e);
+    }
+
+    private void emitHook(CoreHookDefinition hook) {
+        bus.send(Messages.Envelope.newBuilder()
+            .setHook(Messages.Hook.newBuilder()
+                .setId(hook.getId().toString())
+                .setTagExpression(hook.getTagExpression()))
+            .build()
+        );
+    }
+
+    private void emitStepDefined(CoreStepDefinition stepDefinition) {
+        bus.send(new StepDefinedEvent(
+                bus.getInstant(),
+                new io.cucumber.plugin.event.StepDefinition(
+                    stepDefinition.getStepDefinition().getLocation(),
+                    stepDefinition.getPattern()
+                )
+            )
+        );
+        bus.send(Messages.Envelope.newBuilder()
+            .setStepDefinition(
+                Messages.StepDefinition.newBuilder()
+                    .setId(stepDefinition.getId().toString())
+                    .setPattern(Messages.StepDefinition.StepDefinitionPattern.newBuilder()
+                        .setSource(stepDefinition.getPattern())
+                    ))
+            .build()
+        );
     }
 
     PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {

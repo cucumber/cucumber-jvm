@@ -186,7 +186,7 @@ public class TestHelper {
 
         final FeatureSupplier featureSupplier = features.isEmpty()
             ? null // assume feature paths passed in as args instead
-            : new TestFeatureSupplier(bus, features);
+            : new TestFeatureSupplier(features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
             .withRuntimeOptions(
@@ -379,6 +379,9 @@ public class TestHelper {
                                      final List<HookDefinition> beforeStepHooks,
                                      final List<HookDefinition> afterStepHooks) {
             HookDefinition hook = mock(HookDefinition.class);
+            if(hookLocation == null) {
+                throw new RuntimeException("hookLocation cannot be null");
+            }
             when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {
                 when(hook.getLocation()).thenReturn(hookLocation);

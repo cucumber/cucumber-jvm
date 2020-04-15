@@ -96,6 +96,11 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
+    public Iterable<?> getParseEvents() {
+        return envelopes;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -1,5 +1,6 @@
 package io.cucumber.core.plugin;
 
+import java.io.ByteArrayOutputStream;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.UUID;
@@ -15,9 +16,9 @@ import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 
+import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +26,7 @@ class UnusedStepsSummaryPrinterTest {
 
     @Test
     void verifyUnusedStepsPrinted() {
-        StringBuilder out = new StringBuilder();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         UnusedStepsSummaryPrinter summaryPrinter = new UnusedStepsSummaryPrinter(out);
         TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         summaryPrinter.setEventPublisher(bus);
@@ -42,7 +43,7 @@ class UnusedStepsSummaryPrinterTest {
         bus.send(new TestRunFinished(bus.getInstant()));
 
         // Verify produced output
-        assertThat(out.toString(), is(equalTo("1 Unused steps:\n" + "my/tummy.feature:5 # some more cukes\n")));
+        assertThat(out, isBytesEqualTo("1 Unused steps:\n" + "my/tummy.feature:5 # some more cukes\n"));
     }
 
     private static StepDefinition mockStepDef(String location, String pattern) {

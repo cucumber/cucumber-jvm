@@ -1,1 +1,0 @@
-Feature: No scenarios, no rules

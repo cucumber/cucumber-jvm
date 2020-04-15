@@ -28,7 +28,6 @@ import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -69,10 +68,15 @@ class CucumberTest {
     void testThatParsingErrorsIsNicelyReported() {
         Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
         FeatureParserException actualThrown = assertThrows(FeatureParserException.class, testMethod);
-        assertAll("Checking Exception including cause",
-            () -> assertThat(
-                actualThrown.getMessage(),
-                is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))
+        assertThat(
+            actualThrown.getMessage(),
+            equalTo("" +
+                "Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature\n" +
+                "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Feature  FA'\n" +
+                "(3:3): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Scenario SA'\n" +
+                "(4:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Given GA'\n" +
+                "(5:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'When GA'\n" +
+                "(6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'"
             )
         );
     }
@@ -83,7 +87,7 @@ class CucumberTest {
             () -> new Cucumber(FormatterWithLexerErrorFeature.class)
         );
         assertFalse(
-            new File("target/lexor_error_feature.json").exists(),
+            new File("target/lexor_error_feature.ndjson").exists(),
             "File is created despite Lexor Error"
         );
     }
@@ -189,7 +193,7 @@ class CucumberTest {
     }
 
     @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
+    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"message:target/lexor_error_feature.ndjson"})
     public static class FormatterWithLexerErrorFeature {
 
     }

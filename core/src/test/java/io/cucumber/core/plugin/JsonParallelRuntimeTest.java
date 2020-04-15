@@ -6,43 +6,43 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-//TODO: Merge with the existing test
 class JsonParallelRuntimeTest {
 
     @Test
     void testSingleFeature() {
-        StringBuilder parallel = new StringBuilder();
+        ByteArrayOutputStream parallel = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(
                         "--threads", "3",
-                        "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
+                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature")
                     .build()
             )
-            .withAdditionalPlugins(new JSONFormatter(parallel))
+            .withAdditionalPlugins(new JsonFormatter(parallel))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
-        StringBuilder serial = new StringBuilder();
+        ByteArrayOutputStream serial = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse(
                         "--threads", "1",
-                        "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature")
+                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature")
                     .build()
             )
-            .withAdditionalPlugins(new JSONFormatter(serial))
+            .withAdditionalPlugins(new JsonFormatter(serial))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
@@ -52,31 +52,30 @@ class JsonParallelRuntimeTest {
 
     @Test
     void testMultipleFeatures() {
-        StringBuilder parallel = new StringBuilder();
+        ByteArrayOutputStream parallel = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(
                 new CommandlineOptionsParser()
                     .parse("--threads", "3",
-                        "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
+                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
                         "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
                     .build()
             )
-            .withAdditionalPlugins(new JSONFormatter(parallel))
+            .withAdditionalPlugins(new JsonFormatter(parallel))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();
 
-
-        StringBuilder serial = new StringBuilder();
+        ByteArrayOutputStream serial = new ByteArrayOutputStream();
 
         Runtime.builder()
             .withRuntimeOptions(new CommandlineOptionsParser()
                 .parse("--threads", "1",
-                    "src/test/resources/io/cucumber/core/plugin/JSONPrettyFormatterTest.feature",
+                    "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
                     "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
                 .build())
-            .withAdditionalPlugins(new JSONFormatter(serial))
+            .withAdditionalPlugins(new JsonFormatter(serial))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()
             .run();

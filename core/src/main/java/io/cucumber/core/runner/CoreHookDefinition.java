@@ -7,6 +7,9 @@ import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.util.List;
+import java.util.UUID;
+
+import static java.util.Objects.requireNonNull;
 
 class CoreHookDefinition {
 
@@ -16,13 +19,15 @@ class CoreHookDefinition {
         if (hookDefinition instanceof ScenarioScoped) {
             return new ScenarioScopedCoreHookDefinition(hookDefinition);
         }
-        return new CoreHookDefinition(hookDefinition);
+        return new CoreHookDefinition(UUID.randomUUID(), hookDefinition);
     }
 
+    private final UUID id;
     private final HookDefinition delegate;
     private final Expression tagExpression;
 
-    private CoreHookDefinition(HookDefinition delegate) {
+    private CoreHookDefinition(UUID id, HookDefinition delegate) {
+        this.id = requireNonNull(id);
         this.delegate = delegate;
         this.tagExpression = new TagExpressionParser().parse(delegate.getTagExpression());
     }
@@ -39,6 +44,10 @@ class CoreHookDefinition {
         return delegate.getLocation();
     }
 
+    UUID getId() {
+        return id;
+    }
+
     int getOrder() {
         return delegate.getOrder();
     }
@@ -47,9 +56,13 @@ class CoreHookDefinition {
         return tagExpression.evaluate(tags);
     }
 
+    String getTagExpression() {
+        return delegate.getTagExpression();
+    }
+
     static class ScenarioScopedCoreHookDefinition extends CoreHookDefinition implements ScenarioScoped {
         private ScenarioScopedCoreHookDefinition(HookDefinition delegate) {
-            super(delegate);
+            super(UUID.randomUUID(), delegate);
         }
 
     }

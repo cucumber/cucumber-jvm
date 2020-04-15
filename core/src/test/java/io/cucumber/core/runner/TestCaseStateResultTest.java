@@ -43,6 +43,7 @@ class TestCaseStateResultTest {
     private final EventBus bus = mock(EventBus.class);
     private final TestCaseState s = new TestCaseState(
         bus,
+        UUID.randomUUID(),
         new TestCase(
             UUID.randomUUID(),
             Collections.emptyList(),
@@ -56,6 +57,7 @@ class TestCaseStateResultTest {
     @BeforeEach
     void setup() {
         when(bus.getInstant()).thenReturn(Instant.now());
+        s.setCurrentTestStepId(UUID.randomUUID());
     }
 
     @Test

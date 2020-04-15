@@ -26,17 +26,21 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -112,8 +116,8 @@ public final class TestNGCucumberRunner {
         // Start test execution now.
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
         features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getInstant()));
-        features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
+        emitTestRunStarted();
+        features.forEach(this::emitTestSource);
     }
 
     public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
@@ -130,7 +134,7 @@ public final class TestNGCucumberRunner {
      * Finishes test execution by Cucumber.
      */
     public void finish() {
-        bus.send(new TestRunFinished(bus.getInstant()));
+        emitTestRunFinished();
     }
 
     /**
@@ -152,5 +156,28 @@ public final class TestNGCucumberRunner {
         } catch (CucumberException e) {
             return new Object[][]{new Object[]{new CucumberExceptionWrapper(e), null}};
         }
+    }
+
+    private void emitTestRunStarted() {
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunStarted(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build());
+    }
+
+    private void emitTestSource(Feature feature) {
+        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        bus.sendAll(feature.getParseEvents());
+    }
+
+    private void emitTestRunFinished() {
+        Instant instant = bus.getInstant();
+        bus.send(new TestRunFinished(instant));
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                .setTimestamp(javaInstantToTimestamp(instant)))
+            .build());
     }
 }

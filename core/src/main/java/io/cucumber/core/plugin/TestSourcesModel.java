@@ -1,26 +1,27 @@
 package io.cucumber.core.plugin;
 
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.ParserException;
-import gherkin.TokenMatcher;
-import gherkin.ast.Background;
-import gherkin.ast.Examples;
-import gherkin.ast.Feature;
-import gherkin.ast.GherkinDocument;
-import gherkin.ast.Node;
-import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.ScenarioOutline;
-import gherkin.ast.Step;
-import gherkin.ast.TableRow;
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.gherkin.Gherkin;
+import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.GherkinDocument;
+import io.cucumber.messages.Messages.GherkinDocument.Feature;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.*;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples;
+import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
+import io.cucumber.messages.internal.com.google.protobuf.Message;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import static io.cucumber.gherkin.Gherkin.makeSourceEnvelope;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 final class TestSourcesModel {
     private final Map<URI, TestSourceRead> pathToReadEventMap = new HashMap<>();
@@ -36,20 +37,20 @@ final class TestSourcesModel {
 
     static Background getBackgroundForTestCase(AstNode astNode) {
         Feature feature = getFeatureForTestCase(astNode);
-        ScenarioDefinition backgound = feature.getChildren().get(0);
-        if (backgound instanceof Background) {
-            return (Background) backgound;
-        } else {
-            return null;
+        return feature.getChildrenList()
+            .stream()
+            .filter(FeatureChild::hasBackground)
+            .map(FeatureChild::getBackground)
+            .findFirst()
+            .orElse(null);
+    }
+
+    static Scenario getScenarioDefinition(AstNode astNode) {
+        AstNode candidate = astNode;
+        while (candidate != null && !(candidate.node instanceof Scenario)){
+            candidate = candidate.parent;
         }
-    }
-
-    static ScenarioDefinition getScenarioDefinition(AstNode astNode) {
-        return astNode.node instanceof ScenarioDefinition ? (ScenarioDefinition) astNode.node : (ScenarioDefinition) astNode.parent.parent.node;
-    }
-
-    static boolean isScenarioOutlineScenario(AstNode astNode) {
-        return !(astNode.node instanceof ScenarioDefinition);
+        return candidate == null ? null : (Scenario) candidate.node;
     }
 
     static boolean isBackgroundStep(AstNode astNode) {
@@ -57,9 +58,9 @@ final class TestSourcesModel {
     }
 
     static String calculateId(AstNode astNode) {
-        Node node = astNode.node;
-        if (node instanceof ScenarioDefinition) {
-            return calculateId(astNode.parent) + ";" + convertToId(((ScenarioDefinition) node).getName());
+        GeneratedMessageV3 node = astNode.node;
+        if (node instanceof Scenario) {
+            return calculateId(astNode.parent) + ";" + convertToId(((Scenario) node).getName());
         }
         if (node instanceof ExamplesRowWrapperNode) {
             return calculateId(astNode.parent) + ";" + (((ExamplesRowWrapperNode) node).bodyRowIndex + 2);
@@ -137,71 +138,130 @@ final class TestSourcesModel {
         if (!pathToReadEventMap.containsKey(path)) {
             return;
         }
-        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-        TokenMatcher matcher = new TokenMatcher();
-        try {
-            GherkinDocument gherkinDocument = parser.parse(pathToReadEventMap.get(path).getSource(), matcher);
-            pathToAstMap.put(path, gherkinDocument);
-            Map<Integer, AstNode> nodeMap = new HashMap<>();
-            AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);
-            for (ScenarioDefinition child : gherkinDocument.getFeature().getChildren()) {
-                processScenarioDefinition(nodeMap, child, currentParent);
+        String source = pathToReadEventMap.get(path).getSource();
+
+        List<Messages.Envelope> sources = singletonList(
+            makeSourceEnvelope(source, path.toString())
+        );
+
+        List<Messages.Envelope> envelopes = Gherkin.fromSources(
+            sources,
+            true,
+            true,
+            true,
+            () -> String.valueOf(UUID.randomUUID())
+        ).collect(toList());
+
+        GherkinDocument gherkinDocument = envelopes.stream()
+            .filter(Messages.Envelope::hasGherkinDocument)
+            .map(Messages.Envelope::getGherkinDocument)
+            .findFirst()
+            .orElse(null);
+
+        pathToAstMap.put(path, gherkinDocument);
+        Map<Integer, AstNode> nodeMap = new HashMap<>();
+        AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);
+        for (FeatureChild child : gherkinDocument.getFeature().getChildrenList()) {
+            processFeatureDefinition(nodeMap, child, currentParent);
+        }
+        pathToNodeMap.put(path, nodeMap);
+
+    }
+
+    private void processFeatureDefinition(Map<Integer, AstNode> nodeMap, FeatureChild child, AstNode currentParent) {
+        if (child.hasBackground()) {
+            processBackgroundDefinition(nodeMap, child.getBackground(), currentParent);
+        } else if (child.hasScenario()) {
+            processScenarioDefinition(nodeMap, child.getScenario(), currentParent);
+        } else if (child.hasRule()) {
+            AstNode childNode = new AstNode(child.getRule(), currentParent);
+            nodeMap.put(child.getRule().getLocation().getLine(), childNode);
+            for (RuleChild ruleChild : child.getRule().getChildrenList()) {
+                processRuleDefinition(nodeMap, ruleChild, childNode);
             }
-            pathToNodeMap.put(path, nodeMap);
-        } catch (ParserException e) {
-            // This works because the TestSourceRead event is emitted after
-            // parsing. So if we couldn't parse the feature, it will throw
-            // before emitting the event. So if we can't parse it now, it was
-            // not parsed by the Gherkin 5 parser.
-            throw new CucumberException("" +
-                "You are using a plugin that does not support Gherkin 8+.\n" +
-                "Try to remove the html and/or json formatters. See the\n" +
-                "Cucumber-JVM 5.0.0 release announcement for more information.",
-                e
-            );
         }
     }
 
-    private void processScenarioDefinition(Map<Integer, AstNode> nodeMap, ScenarioDefinition child, AstNode currentParent) {
-        AstNode childNode = new AstNode(child, currentParent);
-        nodeMap.put(child.getLocation().getLine(), childNode);
-        for (Step step : child.getSteps()) {
+    private void processBackgroundDefinition(Map<Integer, AstNode> nodeMap, Background background, AstNode currentParent) {
+        AstNode childNode = new AstNode(background, currentParent);
+        nodeMap.put(background.getLocation().getLine(), childNode);
+        for (Step step : background.getStepsList()) {
             nodeMap.put(step.getLocation().getLine(), new AstNode(step, childNode));
         }
-        if (child instanceof ScenarioOutline) {
-            processScenarioOutlineExamples(nodeMap, (ScenarioOutline) child, childNode);
+    }
+
+    private void processScenarioDefinition(Map<Integer, AstNode> nodeMap, Scenario child, AstNode currentParent) {
+        AstNode childNode = new AstNode(child, currentParent);
+        nodeMap.put(child.getLocation().getLine(), childNode);
+        for (Step step : child.getStepsList()) {
+            nodeMap.put(step.getLocation().getLine(), new AstNode(step, childNode));
+        }
+        if (child.getExamplesCount() > 0) {
+            processScenarioOutlineExamples(nodeMap, child, childNode);
         }
     }
 
-    private void processScenarioOutlineExamples(Map<Integer, AstNode> nodeMap, ScenarioOutline scenarioOutline, AstNode childNode) {
-        for (Examples examples : scenarioOutline.getExamples()) {
-            AstNode examplesNode = new AstNode(examples, childNode);
+    private void processRuleDefinition(Map<Integer, AstNode> nodeMap, RuleChild child, AstNode currentParent) {
+        if (child.hasBackground()) {
+            processBackgroundDefinition(nodeMap, child.getBackground(), currentParent);
+        } else if (child.hasScenario()) {
+            processScenarioDefinition(nodeMap, child.getScenario(), currentParent);
+        }
+    }
+
+    private void processScenarioOutlineExamples(Map<Integer, AstNode> nodeMap, Scenario scenarioOutline, AstNode parent) {
+        for (Examples examples : scenarioOutline.getExamplesList()) {
+            AstNode examplesNode = new AstNode(examples, parent);
             TableRow headerRow = examples.getTableHeader();
             AstNode headerNode = new AstNode(headerRow, examplesNode);
             nodeMap.put(headerRow.getLocation().getLine(), headerNode);
-            for (int i = 0; i < examples.getTableBody().size(); ++i) {
-                TableRow examplesRow = examples.getTableBody().get(i);
-                Node rowNode = new ExamplesRowWrapperNode(examplesRow, i);
+            for (int i = 0; i < examples.getTableBodyCount(); ++i) {
+                TableRow examplesRow = examples.getTableBody(i);
+                GeneratedMessageV3 rowNode = new ExamplesRowWrapperNode(examplesRow, i);
                 AstNode expandedScenarioNode = new AstNode(rowNode, examplesNode);
                 nodeMap.put(examplesRow.getLocation().getLine(), expandedScenarioNode);
             }
         }
     }
 
-    static class ExamplesRowWrapperNode extends Node {
+    static class ExamplesRowWrapperNode extends GeneratedMessageV3 {
         final int bodyRowIndex;
 
-        ExamplesRowWrapperNode(Node examplesRow, int bodyRowIndex) {
-            super(examplesRow.getLocation());
+        ExamplesRowWrapperNode(GeneratedMessageV3 examplesRow, int bodyRowIndex) {
             this.bodyRowIndex = bodyRowIndex;
+        }
+
+        @Override
+        protected FieldAccessorTable internalGetFieldAccessorTable() {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        protected Message.Builder newBuilderForType(BuilderParent builderParent) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Message.Builder newBuilderForType() {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Message.Builder toBuilder() {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Message getDefaultInstanceForType() {
+            throw new UnsupportedOperationException("not implemented");
         }
     }
 
     static class AstNode {
-        final Node node;
+        final GeneratedMessageV3 node;
         final AstNode parent;
 
-        AstNode(Node node, AstNode parent) {
+        AstNode(GeneratedMessageV3 node, AstNode parent) {
             this.node = node;
             this.parent = parent;
         }

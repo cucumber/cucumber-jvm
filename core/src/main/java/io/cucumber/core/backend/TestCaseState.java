@@ -3,6 +3,7 @@ package io.cucumber.core.backend;
 import org.apiguardian.api.API;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 @API(status = API.Status.STABLE)
@@ -82,6 +83,16 @@ public interface TestCaseState {
      */
     default void attach(byte[] data, String mediaType, String name) {
         embed(data, mediaType, name);
+    }
+
+    /**
+     * @param data      what to attach, for example html.
+     * @param mediaType what is the data?
+     * @param name      attachment name
+     * @see #attach(byte[], String, String)
+     */
+    default void attach(String data, String mediaType, String name){
+        attach(data.getBytes(StandardCharsets.UTF_8), mediaType, name);
     }
 
     /**
