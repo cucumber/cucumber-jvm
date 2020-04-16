@@ -52,15 +52,14 @@ public final class Runtime {
     private final CucumberExecutionContext context;
 
     private Runtime(final ExitStatus exitStatus,
-                    final EventBus bus,
+                    final CucumberExecutionContext context,
                     final Predicate<Pickle> filter,
                     final int limit,
-                    final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
                     final ExecutorService executor,
                     final PickleOrder pickleOrder) {
-        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         this.filter = filter;
+        this.context = context;
         this.limit = limit;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
@@ -197,8 +196,9 @@ public final class Runtime {
             final Predicate<Pickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
+            final CucumberExecutionContext context = new CucumberExecutionContext(eventBus, exitStatus, runnerSupplier);
 
-            return new Runtime(exitStatus, eventBus, filter, limit, runnerSupplier, featureSupplier, executor, pickleOrder);
+            return new Runtime(exitStatus, context, filter, limit, featureSupplier, executor, pickleOrder);
         }
     }
 
