@@ -1,7 +1,6 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
@@ -14,15 +13,9 @@ import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
-import io.cucumber.messages.Messages;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
@@ -52,13 +44,12 @@ public final class Runtime {
 
     private final ExitStatus exitStatus;
 
-    private final RunnerSupplier runnerSupplier;
     private final Predicate<Pickle> filter;
     private final int limit;
-    private final EventBus bus;
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
     private final PickleOrder pickleOrder;
+    private final CucumberExecutionContext context;
 
     private Runtime(final ExitStatus exitStatus,
                     final EventBus bus,
@@ -68,10 +59,9 @@ public final class Runtime {
                     final FeatureSupplier featureSupplier,
                     final ExecutorService executor,
                     final PickleOrder pickleOrder) {
-        this.bus = bus;
+        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         this.filter = filter;
         this.limit = limit;
-        this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
         this.exitStatus = exitStatus;
@@ -80,75 +70,39 @@ public final class Runtime {
 
     public void run() {
         final List<Feature> features = featureSupplier.get();
-        emitTestRunStarted();
-        for (Feature feature : features) {
-            emitTestSource(feature);
-        }
-
+        features.forEach(context::beforeFeature);
+        context.startTestRun();
         final List<Future<?>> executingPickles = features.stream()
             .flatMap(feature -> feature.getPickles().stream())
             .filter(filter)
             .collect(collectingAndThen(toList(),
                 list -> pickleOrder.orderPickles(list).stream()))
             .limit(limit > 0 ? limit : Integer.MAX_VALUE)
-            .map(pickle -> executor.submit(() -> runnerSupplier.get().runPickle(pickle)))
+            .map(pickle -> executor.submit(execute(pickle)))
             .collect(toList());
 
         executor.shutdown();
 
-        List<Throwable> thrown = new ArrayList<>();
         for (Future<?> executingPickle : executingPickles) {
             try {
                 executingPickle.get();
             } catch (ExecutionException e) {
                 log.error(e, () -> "Exception while executing pickle");
-                thrown.add(e.getCause());
             } catch (InterruptedException e) {
                 executor.shutdownNow();
-                throw new CucumberException(e);
+                log.debug(e, () -> "Interrupted while executing pickle");
             }
         }
-        if(thrown.isEmpty()){
-            emitTestRunFinished(null);
-        } else if (thrown.size() == 1) {
-            CucumberException cucumberException = new CucumberException(thrown.get(0));
-            emitTestRunFinished(cucumberException);
-            throw cucumberException;
-        } else {
-            CompositeCucumberException compositeCucumberException = new CompositeCucumberException(thrown);
-            emitTestRunFinished(compositeCucumberException);
-            throw compositeCucumberException;
+        context.finishTestRun();
+
+        CucumberException exception = context.getException();
+        if (exception != null) {
+            throw exception;
         }
     }
 
-    private void emitTestRunStarted() {
-        Instant instant = bus.getInstant();
-        bus.send(new TestRunStarted(instant));
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(instant)))
-            .build());
-    }
-
-    private void emitTestSource(Feature feature) {
-        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.sendAll(feature.getParseEvents());
-    }
-
-    private void emitTestRunFinished(CucumberException cucumberException) {
-        Instant instant = bus.getInstant();
-        bus.send(new TestRunFinished(instant));
-
-        Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
-            .setSuccess(exitStatus.isSuccess())
-            .setTimestamp(javaInstantToTimestamp(instant));
-
-        if (cucumberException != null) {
-            testRunFinished.setMessage(cucumberException.getMessage());
-        }
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunFinished(testRunFinished)
-            .build());
+    private Runnable execute(Pickle pickle) {
+        return () -> context.runTestCase(runner ->  runner.runPickle(pickle));
     }
 
     public byte exitStatus() {
