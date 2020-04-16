@@ -1,6 +1,7 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
@@ -18,6 +19,7 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
@@ -34,13 +36,14 @@ import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
+import static java.util.Collections.synchronizedList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -65,6 +68,8 @@ public final class TestNGCucumberRunner {
     private final ThreadLocalRunnerSupplier runnerSupplier;
     private final RuntimeOptions runtimeOptions;
     private final List<Feature> features;
+    private final ExitStatus exitStatus;
+    private final List<Throwable> thrown = synchronizedList(new ArrayList<>());
 
     /**
      * Bootstrap the cucumber runtime
@@ -106,6 +111,8 @@ public final class TestNGCucumberRunner {
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
+        this.exitStatus = new ExitStatus(runtimeOptions);
+        plugins.addPlugin(exitStatus);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
@@ -122,7 +129,7 @@ public final class TestNGCucumberRunner {
 
     public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
-        Runner runner = runnerSupplier.get();
+        Runner runner = getRunner();
         try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus(), runtimeOptions.isStrict())) {
             Pickle cucumberPickle = pickle.getPickle();
             runner.runPickle(cucumberPickle);
@@ -130,11 +137,29 @@ public final class TestNGCucumberRunner {
         }
     }
 
+    private Runner getRunner() {
+        try {
+            return runnerSupplier.get();
+        } catch (Throwable e) {
+            thrown.add(e);
+            throw e;
+        }
+    }
+
+
     /**
      * Finishes test execution by Cucumber.
      */
     public void finish() {
-        emitTestRunFinished();
+        if(thrown.isEmpty()){
+            emitTestRunFinished(null);
+        } else if (thrown.size() == 1) {
+            CucumberException cucumberException = new CucumberException(thrown.get(0));
+            emitTestRunFinished(cucumberException);
+        } else {
+            CompositeCucumberException compositeCucumberException = new CompositeCucumberException(thrown);
+            emitTestRunFinished(compositeCucumberException);
+        }
     }
 
     /**
@@ -172,12 +197,19 @@ public final class TestNGCucumberRunner {
         bus.sendAll(feature.getParseEvents());
     }
 
-    private void emitTestRunFinished() {
+    private void emitTestRunFinished(CucumberException cucumberException) {
         Instant instant = bus.getInstant();
         bus.send(new TestRunFinished(instant));
+
+        Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
+            .setSuccess(exitStatus.isSuccess())
+            .setTimestamp(javaInstantToTimestamp(instant));
+
+        if (cucumberException != null) {
+            testRunFinished.setMessage(cucumberException.getMessage());
+        }
         bus.send(Messages.Envelope.newBuilder()
-            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(instant)))
+            .setTestRunFinished(testRunFinished)
             .build());
     }
 }

@@ -43,6 +43,11 @@ class CucumberEngineOptions implements
     }
 
     @Override
+    public boolean isWip() {
+        return false;
+    }
+
+    @Override
     public List<Plugin> plugins() {
         return configurationParameters.get(PLUGIN_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
             .map(String::trim)

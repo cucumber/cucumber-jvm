@@ -1,6 +1,8 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.plugin.PluginFactory;
@@ -8,6 +10,7 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.RunnerSupplier;
@@ -30,9 +33,13 @@ import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
+
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
+import static java.util.Collections.synchronizedList;
 
 @API(status = API.Status.STABLE)
 public final class CucumberEngineExecutionContext implements EngineExecutionContext {
@@ -41,6 +48,8 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     private final RunnerSupplier runnerSupplier;
     private final EventBus bus;
     private final CucumberEngineOptions options;
+    private final ExitStatus exitStatus;
+    private final List<Throwable> thrown = synchronizedList(new ArrayList<>());
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
 
@@ -51,6 +60,8 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
         Plugins plugins = new Plugins(new PluginFactory(), options);
+        this.exitStatus = new ExitStatus(options);
+        plugins.addPlugin(exitStatus);
 
         if (options.isParallelExecutionEnabled()) {
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
@@ -100,11 +111,31 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
 
     void finishTestRun() {
         logger.debug(() -> "Sending test run finished event");
+
+        if(thrown.isEmpty()){
+            emitTestRunFinished(null);
+        } else if (thrown.size() == 1) {
+            CucumberException cucumberException = new CucumberException(thrown.get(0));
+            emitTestRunFinished(cucumberException);
+        } else {
+            CompositeCucumberException compositeCucumberException = new CompositeCucumberException(thrown);
+            emitTestRunFinished(compositeCucumberException);
+        }
+    }
+
+    private void emitTestRunFinished(CucumberException cucumberException) {
         Instant instant = bus.getInstant();
         bus.send(new TestRunFinished(instant));
+
+        Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
+            .setSuccess(exitStatus.isSuccess())
+            .setTimestamp(javaInstantToTimestamp(instant));
+
+        if (cucumberException != null) {
+            testRunFinished.setMessage(cucumberException.getMessage());
+        }
         bus.send(Messages.Envelope.newBuilder()
-            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(instant)))
+            .setTestRunFinished(testRunFinished)
             .build());
     }
 
@@ -113,6 +144,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
             return runnerSupplier.get();
         } catch (Throwable e) {
             logger.error(e, () -> "Unable to start Cucumber");
+            thrown.add(e);
             throw e;
         }
     }

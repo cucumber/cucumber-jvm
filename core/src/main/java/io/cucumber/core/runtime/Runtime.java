@@ -15,13 +15,7 @@ import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.messages.Messages;
-import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.event.EventHandler;
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -46,9 +40,6 @@ import java.util.function.Supplier;
 
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.max;
-import static java.util.Collections.min;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
@@ -149,11 +140,11 @@ public final class Runtime {
         bus.send(new TestRunFinished(instant));
 
         Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
+            .setSuccess(exitStatus.isSuccess())
             .setTimestamp(javaInstantToTimestamp(instant));
 
         if (cucumberException != null) {
             testRunFinished.setMessage(cucumberException.getMessage());
-            testRunFinished.setSuccess(false);
         }
         bus.send(Messages.Envelope.newBuilder()
             .setTestRunFinished(testRunFinished)
@@ -306,36 +297,4 @@ public final class Runtime {
         }
     }
 
-    static final class ExitStatus implements ConcurrentEventListener {
-        private static final byte DEFAULT = 0x0;
-        private static final byte ERRORS = 0x1;
-
-        private final List<Result> results = new ArrayList<>();
-        private final RuntimeOptions runtimeOptions;
-
-        private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> results.add(event.getResult());
-
-        ExitStatus(RuntimeOptions runtimeOptions) {
-            this.runtimeOptions = runtimeOptions;
-        }
-
-        @Override
-        public void setEventPublisher(EventPublisher publisher) {
-            publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
-        }
-
-        byte exitStatus() {
-            if (results.isEmpty()) {
-                return DEFAULT;
-            }
-
-            if (runtimeOptions.isWip()) {
-                Result leastSeverResult = min(results, comparing(Result::getStatus));
-                return leastSeverResult.getStatus().is(Status.PASSED) ? ERRORS : DEFAULT;
-            } else {
-                Result mostSevereResult = max(results, comparing(Result::getStatus));
-                return mostSevereResult.getStatus().isOk(runtimeOptions.isStrict()) ? DEFAULT : ERRORS;
-            }
-        }
-    }
 }

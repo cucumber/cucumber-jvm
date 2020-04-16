@@ -17,6 +17,7 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
@@ -92,6 +93,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private final EventBus bus;
     private final List<Feature> features;
     private final Plugins plugins;
+    private final ExitStatus exitStatus;
 
     private boolean multiThreadingAssumed = false;
 
@@ -160,6 +162,8 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
+        this.exitStatus = new ExitStatus(runtimeOptions);
+        this.plugins.addPlugin(exitStatus);
 
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
@@ -219,8 +223,13 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             for (Feature feature : features) {
                 emitTestSource(feature);
             }
-            runFeatures.evaluate();
-            emitTestRunFinished();
+            try {
+                runFeatures.evaluate();
+            } catch (Throwable e) {
+                emitTestRunFinished(e);
+                throw e;
+            }
+            emitTestRunFinished(null);
         }
 
         private void emitTestRunStarted() {
@@ -232,17 +241,24 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 .build());
         }
 
-        private void emitTestSource(Feature feature){
+        private void emitTestSource(Feature feature) {
             bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
             bus.sendAll(feature.getParseEvents());
         }
 
-        private void emitTestRunFinished() {
+        private void emitTestRunFinished(Throwable throwable) {
             Instant instant = bus.getInstant();
             bus.send(new TestRunFinished(instant));
+
+            Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
+                .setSuccess(exitStatus.isSuccess())
+                .setTimestamp(javaInstantToTimestamp(instant));
+
+            if (throwable != null) {
+                testRunFinished.setMessage(throwable.getMessage());
+            }
             bus.send(Messages.Envelope.newBuilder()
-                .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                    .setTimestamp(javaInstantToTimestamp(instant)))
+                .setTestRunFinished(testRunFinished)
                 .build());
         }
     }
