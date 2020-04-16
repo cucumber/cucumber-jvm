@@ -36,19 +36,22 @@ public final class StepExpressionFactory {
     }
 
     public StepExpression createExpression(StepDefinition stepDefinition) {
-        String expression = stepDefinition.getPattern();
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
-        if (parameterInfos == null || parameterInfos.isEmpty()) {
-            Supplier<Type> typeResolver = () -> {
-                throw stepDefinitionDoesNotTakeAnyParameter(stepDefinition);
-            };
-            return createExpression(expression, typeResolver, false);
-        } else {
-            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
-            boolean transposed = parameterInfo.isTransposed();
-            return createExpression(expression, typeResolver, transposed);
+
+        if (parameterInfos.isEmpty()) {
+            return createExpression(
+                stepDefinition.getPattern(),
+                stepDefinitionDoesNotTakeAnyParameter(stepDefinition),
+                false
+            );
         }
+
+        ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
+        return createExpression(
+            stepDefinition.getPattern(),
+            parameterInfo.getTypeResolver()::resolve,
+            parameterInfo.isTransposed()
+        );
     }
 
     private StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose) {
@@ -87,18 +90,19 @@ public final class StepExpressionFactory {
         return expression;
     }
 
-    private static CucumberException stepDefinitionDoesNotTakeAnyParameter(StepDefinition stepDefinition) {
-        return new CucumberException(format(
-            "step definition at %s does not take any parameters",
-            stepDefinition.getLocation()
-        ));
+    private static Supplier<Type> stepDefinitionDoesNotTakeAnyParameter(StepDefinition stepDefinition) {
+        return () -> {
+            throw new CucumberException(format(
+                "step definition at %s does not take any parameters",
+                stepDefinition.getLocation()
+            ));
+        };
     }
 
     private CucumberException registerTypeInConfiguration(String expressionString, UndefinedParameterTypeException e) {
         return new CucumberException(format("" +
                 "Could not create a cucumber expression for '%s'.\n" +
-                "It appears you did not register parameter type.\n" +
-                "You can find the documentation here: https://docs.cucumber.io/cucumber/cucumber-expressions/",
+                "It appears you did not register parameter type.",
             expressionString
         ), e);
     }
