@@ -116,7 +116,7 @@ public final class TestNGCucumberRunner {
         features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
     }
 
-    public void runScenario(io.cucumber.testng.Pickle pickle) {
+    public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {
         //Possibly invoked in a multi-threaded context
         Runner runner = runnerSupplier.get();
         try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus(), runtimeOptions.isStrict())) {
