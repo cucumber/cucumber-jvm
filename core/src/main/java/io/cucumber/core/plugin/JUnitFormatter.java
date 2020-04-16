@@ -28,8 +28,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
@@ -44,6 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -269,12 +268,6 @@ public final class JUnitFormatter implements EventListener, StrictAware {
         private void addStackTrace(StringBuilder sb, Result failed) {
             sb.append("\nStackTrace:\n");
             sb.append(printStackTrace(failed.getError()));
-        }
-
-        private String printStackTrace(Throwable error) {
-            StringWriter stringWriter = new StringWriter();
-            error.printStackTrace(new PrintWriter(stringWriter));
-            return stringWriter.toString();
         }
 
         private Element createSkipped(Document doc, StringBuilder sb, String message) {

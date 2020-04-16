@@ -16,15 +16,14 @@ import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.lang.Math.max;
 import static java.util.Locale.ROOT;
@@ -145,7 +144,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         Throwable error = result.getError();
         if (error != null) {
             String name = result.getStatus().name().toLowerCase(ROOT);
-            String text = formatStackTrace(error);
+            String text = printStackTrace(error);
             out.println("      " + formats.get(name).text(text));
         }
     }
@@ -216,13 +215,6 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     private String formatLocation(String location) {
         return formats.get("comment").text("# " + location);
-    }
-
-    private static String formatStackTrace(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        error.printStackTrace(printWriter);
-        return stringWriter.toString();
     }
 
 }

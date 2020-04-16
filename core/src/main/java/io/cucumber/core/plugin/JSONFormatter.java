@@ -27,8 +27,6 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -39,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static io.cucumber.core.plugin.TestSourcesModel.relativize;
 import static java.util.Locale.ROOT;
 
@@ -351,10 +350,4 @@ public final class JSONFormatter implements EventListener {
         return formatter.format(instant);
     }
 
-    private static String printStackTrace(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        error.printStackTrace(printWriter);
-        return stringWriter.toString();
-    }
 }

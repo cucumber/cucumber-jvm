@@ -19,6 +19,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.plugin.event.Status.PASSED;
 import static io.cucumber.plugin.event.Status.PENDING;
 import static io.cucumber.plugin.event.Status.SKIPPED;
@@ -101,24 +102,19 @@ public final class TestCaseResultObserver implements AutoCloseable {
         Throwable error = result.getError();
         if (status.is(SKIPPED) && error == null) {
             Throwable throwable = testCaseSkipped.get();
-            throwAs(throwable);
+            throwAsUncheckedException(throwable);
         } else if (status.is(SKIPPED) && error != null) {
             Throwable throwable = testCaseSkippedWithException.apply(error);
-            throwAs(throwable);
+            throwAsUncheckedException(throwable);
         } else if (status.is(UNDEFINED)) {
             Throwable throwable = testCaseWasUndefined.apply(suggestions, strict);
-            throwAs(throwable);
+            throwAsUncheckedException(throwable);
         } else if (status.is(PENDING) && !strict) {
             Throwable throwable = testCaseWasPending.apply(error);
-            throwAs(throwable);
+            throwAsUncheckedException(throwable);
         }
         requireNonNull(error, "result.error=null while result.status=" + result.getStatus());
-        throwAs(error);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void throwAs(Throwable t) throws T {
-        throw (T) t;
+        throwAsUncheckedException(error);
     }
 
     private static final class StepLocation implements Comparable<StepLocation> {
