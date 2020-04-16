@@ -2,6 +2,8 @@ package io.cucumber.spring;
 
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import org.apiguardian.api.API;
 import org.springframework.beans.BeansException;
 import org.springframework.stereotype.Component;
@@ -39,7 +41,7 @@ import static java.util.Arrays.asList;
  * with @{@link org.springframework.test.context.web.WebAppConfiguration}
  * or @{@link org.springframework.test.annotation.DirtiesContext} annotation.
  * </li>
- * <li>If no step definition class with @ContextConfiguration or @ContextHierarchy
+ * <li>Deprecated: If no step definition class with @ContextConfiguration or @ContextHierarchy
  * is found, it will try to load cucumber.xml from the classpath.</li>
  * </ul>
  * <p>
@@ -51,12 +53,14 @@ import static java.util.Arrays.asList;
  * the @Component stereotype an exception will be thrown
  * </li>
  * <li>
- * If more that one step definition class is used to configure the spring context an exception will be thrown.
+ * If more that one glue class is used to configure the spring context an exception will be thrown.
  * </li>
  * </ul>
  */
 @API(status = API.Status.STABLE)
 public final class SpringFactory implements ObjectFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(SpringFactory.class);
 
     private static final String CUCUMBER_XML = "cucumber.xml";
     private final Collection<Class<?>> stepClasses = new HashSet<>();
@@ -102,6 +106,7 @@ public final class SpringFactory implements ObjectFactory {
         return false;
     }
 
+    @Deprecated
     private static boolean dependsOnSpringContext(Class<?> type) {
         for (Annotation annotation : type.getAnnotations()) {
             if (annotatedWithSupportedSpringRootTestAnnotations(annotation)) {
@@ -111,6 +116,7 @@ public final class SpringFactory implements ObjectFactory {
         return false;
     }
 
+    @Deprecated
     private static boolean annotatedWithSupportedSpringRootTestAnnotations(Annotation type) {
         return hasAnnotation(type, asList(
             ContextConfiguration.class,
@@ -123,18 +129,33 @@ public final class SpringFactory implements ObjectFactory {
     public boolean addClass(final Class<?> stepClass) {
         if (!stepClasses.contains(stepClass)) {
             checkNoComponentAnnotations(stepClass);
-            if (dependsOnSpringContext(stepClass)) {
+            if (dependsOnSpringContext(stepClass) || hasCucumberContextConfiguration(stepClass)) {
                 if (stepClassWithSpringContext != null) {
                     throw new CucumberBackendException(String.format("" +
                         "Glue class %1$s and %2$s both attempt to configure the spring context. Please ensure only one " +
-                        "glue class configures the spring context", stepClass, stepClassWithSpringContext));
+                        "glue class configures the spring context", stepClass, stepClassWithSpringContext
+                    ));
                 }
+
+                if (dependsOnSpringContext(stepClass) && !hasCucumberContextConfiguration(stepClass)) {
+                    log.warn(() -> String.format(
+                        "Glue class %1$s attempts to configure the spring context but was not annotated with %2$s.\n" +
+                            "Implicit configuration of the spring context is deprecated.\n" +
+                            "Please add the %2$s to %1$s", stepClass, CucumberContextConfiguration.class.getName()
+                    ));
+                }
+
                 stepClassWithSpringContext = stepClass;
             }
             stepClasses.add(stepClass);
         }
         return true;
     }
+
+    private boolean hasCucumberContextConfiguration(Class<?> stepClass) {
+        return stepClass.getAnnotation(CucumberContextConfiguration.class) != null;
+    }
+
 
     @Override
     public void start() {
@@ -145,12 +166,15 @@ public final class SpringFactory implements ObjectFactory {
             TestContextManager testContextManager = new TestContextManager(stepClassWithSpringContext);
             testContextAdaptor = createTestContextManagerAdaptor(testContextManager, stepClasses);
         } else if (getClass().getClassLoader().getResource(CUCUMBER_XML) == null) {
+            warnAboutDeprecationOfGenericApplicationContext();
             // The generic fallback application context is not shared between
             // threads (because the spring factory is not shared) and not reused
             // between scenarios because we recreate it each time the spring
             // factory starts.
             testContextAdaptor = createGenericApplicationContextAdaptor(stepClasses);
         } else if (testContextAdaptor == null) {
+            warnAboutDeprecationOfCucumberXml();
+
             // The xml fallback application context is not shared between
             // threads (because the spring factory is not shared) but is reused
             // between scenarios.
@@ -159,6 +183,39 @@ public final class SpringFactory implements ObjectFactory {
         }
         testContextAdaptor.start();
     }
+
+    private void warnAboutDeprecationOfGenericApplicationContext() {
+        log.warn(() -> "" +
+            "Glue glue classes have been annotated with a Spring Context Configuration.\n" +
+            "Falling back to a generic application context.\n" +
+            "This fallback has beep deprecated. Please annotate a glue class with some context configuration.\n" +
+            "\n" +
+            "For example:\n" +
+            "\n" +
+            "   @@CucumberContextConfiguration\n" +
+            "   @SpringBootTest(classes = TestConfig.class)\n" +
+            "   public class CucumberSpringConfiguration { }" +
+            "\n" +
+            "Or: \n" +
+            "\n" +
+            "   @@CucumberContextConfiguration\n" +
+            "   @ContextConfiguration( ... )\n" +
+            "   public class CucumberSpringConfiguration { }"
+        );
+    }
+
+    private void warnAboutDeprecationOfCucumberXml() {
+        log.warn(() -> "" +
+            "You are using cucumber.xml to configure the Spring Application Context.\n" +
+            "cucumber.xml has been deprecated. Instead consider annotation based configuration.\n" +
+            "You may create a glue class containing:\n" +
+            "\n" +
+            "   @@CucumberContextConfiguration\n" +
+            "   @ContextConfiguration(\"classpath:cucumber.xml\")\n" +
+            "   public class CucumberSpringConfiguration { }"
+        );
+    }
+
 
     @Override
     public void stop() {

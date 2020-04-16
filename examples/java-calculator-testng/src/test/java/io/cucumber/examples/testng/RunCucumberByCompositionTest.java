@@ -24,7 +24,7 @@ public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
     }
 
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
-    public void scenario(PickleWrapper pickle, FeatureWrapper cucumberFeature) throws Throwable {
+    public void scenario(PickleWrapper pickle, FeatureWrapper cucumberFeature) {
         testNGCucumberRunner.runScenario(pickle.getPickle());
     }
 

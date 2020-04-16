@@ -45,9 +45,9 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
 
         if (gherkinDocument == null || !gherkinDocument.hasFeature()) {
             List<String> errors = envelopes.stream()
-                .filter(Envelope::hasAttachment)
-                .map(Envelope::getAttachment)
-                .map(Messages.Attachment::getBody)
+                .filter(Envelope::hasParseError)
+                .map(Envelope::getParseError)
+                .map(Messages.ParseError::getMessage)
                 .collect(toList());
             if (!errors.isEmpty()) {
                 throw new FeatureParserException("Failed to parse resource at: " + path.toString() + "\n" + String.join("\n", errors));

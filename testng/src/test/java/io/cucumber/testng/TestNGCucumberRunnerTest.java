@@ -21,7 +21,7 @@ public class TestNGCucumberRunnerTest {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @Test
-    public void runCucumberTest() throws Throwable {
+    public void runCucumberTest() {
         testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
 
         for (Object[] scenario : testNGCucumberRunner.provideScenarios()) {

@@ -3,7 +3,6 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Pending;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.TestStepResult;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
@@ -89,12 +88,12 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private void emitTestStepFinished(TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        TestStepResult.Builder builder = TestStepResult.newBuilder();
+        Messages.TestStepFinished.TestStepResult.Builder builder = Messages.TestStepFinished.TestStepResult.newBuilder();
 
         if (result.getError() != null) {
             builder.setMessage(extractStackTrace(result.getError()));
         }
-        TestStepResult testResult = builder.setStatus(from(result.getStatus()))
+        Messages.TestStepFinished.TestStepResult testResult = builder.setStatus(from(result.getStatus()))
             .setDuration(javaDurationToDuration(duration))
             .build();
         bus.send(Messages.Envelope.newBuilder()

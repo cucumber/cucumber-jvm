@@ -3,9 +3,6 @@ package io.cucumber.core.runner;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.Envelope;
-import io.cucumber.messages.Messages.StepMatchArgument;
-import io.cucumber.messages.Messages.TestCase.TestStep.StepMatchArgumentsList;
 import io.cucumber.plugin.event.Group;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -130,7 +127,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     private void emitTestCaseMessage(EventBus bus) {
-        bus.send(Envelope.newBuilder()
+        bus.send(Messages.Envelope.newBuilder()
             .setTestCase(Messages.TestCase.newBuilder()
                 .setId(id.toString())
                 .setPickleId(pickle.getId())
@@ -162,11 +159,11 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return testStepBuilder.build();
     }
 
-    public StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
-        StepMatchArgumentsList.Builder builder = StepMatchArgumentsList.newBuilder();
+    public Messages.TestCase.TestStep.StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
+        Messages.TestCase.TestStep.StepMatchArgumentsList.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList.newBuilder();
 
         pickleStep.getDefinitionArgument().forEach(arg -> builder
-            .addStepMatchArguments(StepMatchArgument.newBuilder()
+            .addStepMatchArguments(Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.newBuilder()
                 .setParameterTypeName(arg.getParameterTypeName())
                 .setGroup(makeMessageGroup(arg.getGroup()))
                 .build()));
@@ -174,8 +171,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return builder.build();
     }
 
-    private static StepMatchArgument.Group makeMessageGroup(Group group) {
-        StepMatchArgument.Group.Builder builder = StepMatchArgument.Group.newBuilder();
+    private static Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group makeMessageGroup(Group group) {
+        Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.newBuilder();
         if (group == null) {
             return builder.build();
         }
@@ -197,7 +194,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
         bus.send(new TestCaseStarted(start, this));
-        bus.send(Envelope.newBuilder()
+        bus.send(Messages.Envelope.newBuilder()
             .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
                 .setId(executionId.toString())
                 .setTestCaseId(id.toString())
@@ -208,7 +205,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     private void emitTestCaseFinished(EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result) {
         bus.send(new TestCaseFinished(stop, this, result));
-        Messages.TestStepResult.Builder testResultBuilder = Messages.TestStepResult.newBuilder()
+        Messages.TestStepFinished.TestStepResult.Builder testResultBuilder = Messages.TestStepFinished.TestStepResult.newBuilder()
             .setStatus(from(status))
             .setDuration(javaDurationToDuration(duration));
 
@@ -216,7 +213,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             testResultBuilder.setMessage(toString(result.getError()));
         }
 
-        bus.send(Envelope.newBuilder()
+        bus.send(Messages.Envelope.newBuilder()
             .setTestCaseFinished(Messages.TestCaseFinished.newBuilder()
                 .setTestCaseStartedId(executionId.toString())
                 .setTimestamp(javaInstantToTimestamp(stop)))

@@ -24,6 +24,8 @@ import io.cucumber.cucumberexpressions.RegularExpression;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern;
+import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern.StepDefinitionPatternType;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -276,7 +278,7 @@ final class CachingGlue implements Glue {
             .setStepDefinition(
                 Messages.StepDefinition.newBuilder()
                     .setId(stepDefinition.getId().toString())
-                    .setPattern(Messages.StepDefinitionPattern.newBuilder()
+                    .setPattern(StepDefinitionPattern.newBuilder()
                         .setSource(stepDefinition.getExpression().getSource())
                         .setType(getExpressionType(stepDefinition))
                     ))
@@ -284,12 +286,12 @@ final class CachingGlue implements Glue {
         );
     }
 
-    private Messages.StepDefinitionPatternType getExpressionType(CoreStepDefinition stepDefinition) {
+    private StepDefinitionPatternType getExpressionType(CoreStepDefinition stepDefinition) {
         Class<? extends Expression> expressionType = stepDefinition.getExpression().getExpressionType();
         if (expressionType.isAssignableFrom(RegularExpression.class)) {
-            return Messages.StepDefinitionPatternType.REGULAR_EXPRESSION;
+            return StepDefinitionPatternType.REGULAR_EXPRESSION;
         } else if (expressionType.isAssignableFrom(CucumberExpression.class)) {
-            return Messages.StepDefinitionPatternType.CUCUMBER_EXPRESSION;
+            return StepDefinitionPatternType.CUCUMBER_EXPRESSION;
         } else {
             throw new IllegalArgumentException(expressionType.getName());
         }

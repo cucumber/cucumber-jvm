@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 @Entity
 @Table(name = "messages")
@@ -50,5 +51,13 @@ public class Message implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Message.class.getSimpleName() + "[", "]")
+            .add("id=" + id)
+            .add("content='" + content + "'")
+            .toString();
     }
 }

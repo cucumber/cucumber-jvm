@@ -31,8 +31,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.time.Duration;
@@ -43,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.time.Duration.ZERO;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Locale.ROOT;
@@ -235,7 +234,7 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             }
             if (failed != null) {
                 element.setAttribute("status", "FAIL");
-                String stacktrace = printStrackTrace(failed);
+                String stacktrace = printStackTrace(failed.getError());
                 Element exception = createException(doc, failed.getError().getClass().getName(), stringBuilder.toString(), stacktrace);
                 element.appendChild(exception);
             } else if (skipped != null) {
@@ -249,12 +248,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
             } else {
                 element.setAttribute("status", "PASS");
             }
-        }
-
-        private String printStrackTrace(Result failed) {
-            StringWriter stringWriter = new StringWriter();
-            failed.getError().printStackTrace(new PrintWriter(stringWriter));
-            return stringWriter.toString();
         }
 
         private String calculateTotalDurationString() {

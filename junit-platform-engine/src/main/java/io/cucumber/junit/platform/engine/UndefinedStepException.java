@@ -1,5 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
 import org.opentest4j.IncompleteExecutionException;
 
 import java.util.List;
@@ -9,13 +10,13 @@ import static java.util.stream.Collectors.joining;
 final class UndefinedStepException extends IncompleteExecutionException {
     private static final long serialVersionUID = 1L;
 
-    UndefinedStepException(List<Suggestion> suggestions) {
+    UndefinedStepException(List<Suggestion> suggestions, boolean strict) {
         super(createMessage(suggestions));
     }
 
     private static String createMessage(List<Suggestion> suggestions) {
         return suggestions.stream()
-            .map(suggestion -> createStepMessage(suggestion.step, suggestion.snippets))
+            .map(suggestion -> createStepMessage(suggestion.getStep(), suggestion.getSnippets()))
             .collect(joining("\n", createPreAmble(suggestions), ""));
     }
 
@@ -30,21 +31,10 @@ final class UndefinedStepException extends IncompleteExecutionException {
     }
 
     private static void appendSnippets(List<String> snippets, StringBuilder sb) {
-
         if (snippets.isEmpty()) {
             return;
         }
         sb.append(". You can implement it using the snippet(s) below:\n\n");
         sb.append(snippets.stream().collect(joining("\n---\n", "", "\n")));
-    }
-
-    static final class Suggestion {
-        final String step;
-        final List<String> snippets;
-
-        Suggestion(String step, List<String> snippets) {
-            this.step = step;
-            this.snippets = snippets;
-        }
     }
 }
