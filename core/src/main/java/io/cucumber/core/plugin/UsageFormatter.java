@@ -4,14 +4,14 @@ import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.messages.internal.com.google.gson.JsonPrimitive;
 import io.cucumber.messages.internal.com.google.gson.JsonSerializer;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.Plugin;
 
 import java.io.OutputStream;
 import java.time.Duration;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Formatter to measure performance of steps. Includes average and median step duration.
  */
-public final class UsageFormatter implements Plugin, EventListener {
+public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     private static final long NANOS_PER_SECOND = TimeUnit.SECONDS.toNanos(1);
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();

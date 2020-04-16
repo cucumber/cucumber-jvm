@@ -2,7 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.messages.Messages.Envelope;
 import io.cucumber.messages.internal.com.google.protobuf.util.JsonFormat;
-import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-public final class MessageFormatter implements EventListener {
+public final class MessageFormatter implements ConcurrentEventListener {
     private final Writer writer;
     private final JsonFormat.Printer jsonPrinter = JsonFormat.printer()
         .omittingInsignificantWhitespace();
