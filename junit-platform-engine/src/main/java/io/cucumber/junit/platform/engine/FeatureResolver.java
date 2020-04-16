@@ -12,6 +12,7 @@ import io.cucumber.core.gherkin.Scenario;
 import io.cucumber.core.gherkin.ScenarioOutline;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
+import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassSelector;
@@ -47,14 +48,16 @@ final class FeatureResolver {
 
     private final CucumberEngineDescriptor engineDescriptor;
     private final Predicate<String> packageFilter;
+    private final ConfigurationParameters parameters;
 
-    private FeatureResolver(CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
+    private FeatureResolver(ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
+        this.parameters = parameters;
         this.engineDescriptor = engineDescriptor;
         this.packageFilter = packageFilter;
     }
 
-    static FeatureResolver createFeatureResolver(CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
-        return new FeatureResolver(engineDescriptor, packageFilter);
+    static FeatureResolver createFeatureResolver(ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
+        return new FeatureResolver(parameters, engineDescriptor, packageFilter);
     }
 
     private static URI stripQuery(URI uri) {
@@ -199,6 +202,7 @@ final class FeatureResolver {
             (Scenario node, TestDescriptor parent) -> {
                 Pickle pickle = feature.getPickleAt(node);
                 TestDescriptor descriptor = new PickleDescriptor(
+                    parameters,
                     source.scenarioSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
                     source.nodeSource(node),
@@ -237,6 +241,7 @@ final class FeatureResolver {
             (Example node, TestDescriptor parent) -> {
                 Pickle pickle = feature.getPickleAt(node);
                 PickleDescriptor descriptor = new PickleDescriptor(
+                    parameters,
                     source.exampleSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
                     source.nodeSource(node),

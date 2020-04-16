@@ -1,5 +1,6 @@
 package io.cucumber.testng;
 
+import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
 import org.testng.SkipException;
 
 import java.util.List;
@@ -17,7 +18,7 @@ final class UndefinedStepException extends SkipException {
 
     private static String createMessage(List<Suggestion> suggestions) {
         return suggestions.stream()
-            .map(suggestion -> createStepMessage(suggestion.step, suggestion.snippets))
+            .map(suggestion -> createStepMessage(suggestion.getStep(), suggestion.getSnippets()))
             .collect(joining("\n", createPreAmble(suggestions), ""));
     }
 
@@ -38,16 +39,6 @@ final class UndefinedStepException extends SkipException {
         }
         sb.append(". You can implement it using the snippet(s) below:\n\n");
         sb.append(snippets.stream().collect(joining("\n---\n", "", "\n")));
-    }
-
-    static final class Suggestion {
-        final String step;
-        final List<String> snippets;
-
-        Suggestion(String step, List<String> snippets) {
-            this.step = step;
-            this.snippets = snippets;
-        }
     }
 
     @Override

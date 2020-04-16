@@ -30,8 +30,6 @@ import io.cucumber.plugin.event.WriteEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -44,6 +42,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 
@@ -371,10 +370,4 @@ public final class JsonFormatter implements EventListener {
         return formatter.format(instant);
     }
 
-    private static String printStackTrace(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        error.printStackTrace(printWriter);
-        return stringWriter.toString();
-    }
 }
