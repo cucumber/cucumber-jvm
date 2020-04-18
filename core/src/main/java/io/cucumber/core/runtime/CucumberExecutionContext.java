@@ -64,7 +64,7 @@ public final class CucumberExecutionContext {
 
     private void emitTestRunFinished(CucumberException cucumberException) {
         Instant instant = bus.getInstant();
-        bus.send(new TestRunFinished(instant));
+        bus.send(new TestRunFinished(instant, cucumberException));
 
         Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
             .setSuccess(exitStatus.isSuccess())
