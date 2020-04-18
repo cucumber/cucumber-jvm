@@ -4,7 +4,6 @@ import io.cucumber.compatibility.matchers.AComparableMessage;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.NdjsonToMessageIterable;
 import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
@@ -18,12 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -47,7 +44,6 @@ public class CompatibilityTest {
                     .addFeature(testCase.getFeature())
                     .build())
                 .withAdditionalPlugins(new MessageFormatter(new FileOutputStream(output)))
-                .withEventBus(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID))
                 .build()
                 .run();
         } catch (Exception ignored) {
@@ -59,6 +55,15 @@ public class CompatibilityTest {
 
         Map<String, List<GeneratedMessageV3>> expectedEnvelopes = openEnvelopes(expected);
         Map<String, List<GeneratedMessageV3>> actualEnvelopes = openEnvelopes(actual);
+
+        // exception: Cucumber JVM can't execute when there are unknown-parameter-types
+        if ("unknown-parameter-type".equals(testCase.getId())) {
+            expectedEnvelopes.remove("testCase");
+            expectedEnvelopes.remove("testCaseStarted");
+            expectedEnvelopes.remove("testStepStarted");
+            expectedEnvelopes.remove("testStepFinished");
+            expectedEnvelopes.remove("testCaseFinished");
+        }
 
         expectedEnvelopes.forEach((messageType, expectedMessages) ->
             assertThat(
