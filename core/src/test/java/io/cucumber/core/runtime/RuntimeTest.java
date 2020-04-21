@@ -17,6 +17,7 @@ import io.cucumber.core.plugin.FormatterSpy;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
@@ -50,7 +51,9 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -473,8 +476,6 @@ class RuntimeTest {
             }
         };
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
         FeatureSupplier featureSupplier = () -> singletonList(feature);
         Runtime.builder()
             .withBackendSupplier(backendSupplier)
@@ -491,6 +492,18 @@ class RuntimeTest {
         assertThat(stepDefinedEvents.get(3).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
         assertThat(stepDefinedEvents.size(), is(4));
     }
+
+    @Test
+    public void generates_a_meta_message() {
+        Runtime runtime = Runtime.builder().build();
+        Messages.Meta meta = runtime.makeMeta();
+        assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+"));
+        assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
+        assertThat(meta.getImplementation().getVersion(), is("unreleased"));
+        assertThat(meta.getOs().getName(), matchesPattern(".+"));
+        assertThat(meta.getCpu().getName(), matchesPattern(".+"));
+    }
+
 
     private String runFeatureWithFormatterSpy(Feature feature, Map<String, Result> stepsToResult) {
         FormatterSpy formatterSpy = new FormatterSpy();

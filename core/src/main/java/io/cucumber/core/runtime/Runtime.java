@@ -88,6 +88,7 @@ public final class Runtime {
     }
 
     public void run() {
+        emitMeta();
         final List<Feature> features = featureSupplier.get();
         emitTestRunStarted();
         for (Feature feature : features) {
@@ -124,6 +125,34 @@ public final class Runtime {
         }
 
         emitTestRunFinished();
+    }
+
+    private void emitMeta() {
+        bus.send(Messages.Envelope.newBuilder()
+            .setMeta(makeMeta())
+            .build());
+
+    }
+
+    Messages.Meta makeMeta() {
+        String version = getClass().getPackage().getImplementationVersion();
+        if(version == null) {
+            // Development version
+            version = "unreleased";
+        }
+        return Messages.Meta.newBuilder()
+            .setProtocolVersion(Messages.class.getPackage().getImplementationVersion())
+            .setImplementation(Messages.Meta.Product.newBuilder()
+                .setName("cucumber-jvm")
+                .setVersion(version)
+            )
+            .setOs(Messages.Meta.Product.newBuilder()
+                .setName(System.getProperty("os.name"))
+            )
+            .setCpu(Messages.Meta.Product.newBuilder()
+                .setName(System.getProperty("os.arch"))
+            )
+            .build();
     }
 
     private void emitTestRunStarted() {
