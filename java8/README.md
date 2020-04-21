@@ -1,7 +1,7 @@
 Cucumber Java8
 ==============
 
-Provides annotation based step definitions. To use add the `cucumber-java` dependency to your pom.xml:
+Provides annotation based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
 
 ```xml
 <dependencies>
