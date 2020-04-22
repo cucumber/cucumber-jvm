@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.feature.FeatureWithLines;
-import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestCase;
@@ -22,7 +22,7 @@ import static io.cucumber.core.plugin.PrettyFormatter.relativize;
  * Formatter for reporting all failed test cases and print their locations
  * Failed means: results that make the exit code non-zero.
  */
-public final class RerunFormatter implements EventListener, StrictAware {
+public final class RerunFormatter implements ConcurrentEventListener, StrictAware {
     private final NiceAppendable out;
     private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new HashMap<>();
 

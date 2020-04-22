@@ -1,26 +1,24 @@
 package io.cucumber.core.plugin;
 
-import java.io.IOException;
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.SummaryPrinter;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestStepFinished;
+
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.StepDefinedEvent;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.plugin.ColorAware;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.SummaryPrinter;
-
 import static java.util.Locale.ROOT;
 
-public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, SummaryPrinter {
+public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener, SummaryPrinter {
 
 	private final Map<String, String> registeredSteps = new TreeMap<>();
 	private final Set<String> usedSteps = new TreeSet<>();
