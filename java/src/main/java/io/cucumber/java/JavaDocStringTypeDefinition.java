@@ -18,7 +18,7 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
         this.docStringType = new DocStringType(
             this.method.getReturnType(),
             contentType.isEmpty() ? method.getName() : contentType,
-            this::execute
+            this::invokeMethod
         );
     }
 
@@ -48,11 +48,6 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
             .addSignature("public JsonNode json(String content)")
             .addNote("Note: JsonNode is an example of the class you want to convert content to")
             .build();
-    }
-
-
-    private Object execute(String content) {
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, content);
     }
 
     @Override

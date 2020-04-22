@@ -13,13 +13,11 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     private final String tagExpression;
     private final int order;
-    private final Lookup lookup;
 
     JavaHookDefinition(Method method, String tagExpression, int order, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
-        this.lookup = lookup;
     }
 
     private static Method requireValidMethod(Method method) {
@@ -58,7 +56,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             args = new Object[0];
         }
 
-        Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
+        invokeMethod(args);
     }
 
     @Override

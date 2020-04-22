@@ -25,6 +25,13 @@ class JavaDataTableTypeDefinitionTest {
         }
     };
 
+    private final Lookup lookupForStaticMethod = new Lookup() {
+        @Override
+        public <T> T getInstance(Class<T> glueClass) {
+            throw new IllegalArgumentException("should not be invoked");
+        }
+    };
+
     private final DataTable dataTable = DataTable.create(asList(
         asList("a", "b"),
         asList("c", "d")
@@ -171,5 +178,18 @@ class JavaDataTableTypeDefinitionTest {
     public String converts_map_of_objects_to_string(Map<Object, Object> entry) {
         return "converts_map_of_objects_to_string=" + entry;
     }
+
+    @Test
+    void static_methods_are_invoked_without_a_body() throws NoSuchMethodException {
+        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("static_convert_data_table_to_string", DataTable.class);
+        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookupForStaticMethod, new String[0]);
+        assertThat(definition.dataTableType().transform(dataTable.asLists()), is("static_convert_data_table_to_string=[[a, b], [c, d]]"));
+    }
+
+    public static String static_convert_data_table_to_string(DataTable table) {
+        return "static_convert_data_table_to_string=" + table.cells();
+    }
+
+
 
 }

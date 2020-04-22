@@ -98,7 +98,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
         } else {
             args = new Object[]{fromValue, toValueType};
         }
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
+        return invokeMethod(args);
     }
 
 }

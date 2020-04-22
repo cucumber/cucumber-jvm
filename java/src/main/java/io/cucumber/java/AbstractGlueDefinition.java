@@ -4,13 +4,14 @@ import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.Lookup;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import static java.util.Objects.requireNonNull;
 
 abstract class AbstractGlueDefinition implements Located {
 
     protected final Method method;
-    protected final Lookup lookup;
+    private final Lookup lookup;
     private String fullFormat;
 
     AbstractGlueDefinition(Method method, Lookup lookup) {
@@ -34,4 +35,12 @@ abstract class AbstractGlueDefinition implements Located {
         }
         return fullFormat;
     }
+
+    final Object invokeMethod(Object... args) {
+        if (Modifier.isStatic(method.getModifiers())) {
+            return Invoker.invokeStatic(this, method, args);
+        }
+        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
+    }
+
 }
