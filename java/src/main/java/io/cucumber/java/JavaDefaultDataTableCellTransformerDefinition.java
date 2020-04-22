@@ -16,7 +16,7 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableEle
     JavaDefaultDataTableCellTransformerDefinition(Method method, Lookup lookup, String[] emptyPatterns) {
         super(requireValidMethod(method), lookup, emptyPatterns);
         this.transformer = (cellValue, toValueType) ->
-            execute(replaceEmptyPatternsWithEmptyString(cellValue), toValueType);
+            invokeMethod(replaceEmptyPatternsWithEmptyString(cellValue), toValueType);
     }
 
     private static Method requireValidMethod(Method method) {
@@ -52,10 +52,6 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableEle
     @Override
     public TableCellByTypeTransformer tableCellByTypeTransformer() {
         return transformer;
-    }
-
-    private Object execute(String fromValue, Type toValueType) {
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
 }

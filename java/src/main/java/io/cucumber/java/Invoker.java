@@ -19,8 +19,16 @@ final class Invoker {
         return invoke(null, annotation, expressionMethod);
     }
 
+    static Object invokeStatic(Located located, Method method, Object... args) {
+        return doInvoke(located, null, method, args);
+    }
+
     static Object invoke(Located located, Object target, Method method, Object... args) {
         Method targetMethod = targetMethod(target, method);
+        return doInvoke(located, target, targetMethod, args);
+    }
+
+    private static Object doInvoke(Located located, Object target, Method targetMethod, Object[] args) {
         boolean accessible = targetMethod.isAccessible();
         try {
             targetMethod.setAccessible(true);

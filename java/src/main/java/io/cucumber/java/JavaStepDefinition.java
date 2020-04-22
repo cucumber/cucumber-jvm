@@ -10,8 +10,8 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 final class JavaStepDefinition extends AbstractGlueDefinition implements StepDefinition {
-    private final String expression;
 
+    private final String expression;
     private final List<ParameterInfo> parameterInfos;
 
     JavaStepDefinition(Method method,
@@ -24,7 +24,7 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
 
     @Override
     public void execute(Object[] args) {
-        Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
+        invokeMethod(args);
     }
 
     @Override
