@@ -84,7 +84,7 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
-               default:
+                default:
                     expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue, depth)));
             }
         });
