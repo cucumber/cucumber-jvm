@@ -74,15 +74,10 @@ public class CompatibilityTest {
         }
 
         expectedEnvelopes.forEach((messageType, expectedMessages) -> {
-            try {
-                assertThat(
-                    actualEnvelopes,
-                    hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))
-                );
-            } catch (Throwable e) {
-                e.printStackTrace();
-                throw e;
-            }
+            assertThat(
+                actualEnvelopes,
+                hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))
+            );
         });
     }
 
