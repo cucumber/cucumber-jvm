@@ -18,7 +18,7 @@ public interface StepDefinition extends Located {
     void execute(Object[] args) throws CucumberBackendException, CucumberInvocationTargetException;
 
     /**
-     * @return parameter information or null when the language does not provide parameter information
+     * @return parameter information, may not return null
      */
     List<ParameterInfo> parameterInfos();
 

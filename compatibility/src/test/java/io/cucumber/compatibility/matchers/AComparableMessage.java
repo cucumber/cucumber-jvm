@@ -40,22 +40,22 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
         List<Matcher<?>> expected = new ArrayList<>();
         asMapOfJsonNameToField(expectedMessage).forEach((fieldName, expectedValue) -> {
             switch (fieldName) {
-                // messages are platform specific
+                // exception: error messages are platform specific
                 case "message":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
-                // the CCK uses relative paths as uris
+                // exception: the CCK uses relative paths as uris
                 case "uri":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
-                // the CCK expects source references but java can not provide them
+                // exception: the CCK expects source references but java can not provide them
                 case "sourceReference":
                     expected.add(not(hasKey(is(fieldName))));
                     break;
 
-                // ids are not predictable
+                // exception: ids are not predictable
                 case "id":
                 case "pickleId":
                 case "astNodeId":
@@ -64,6 +64,8 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 case "testCaseId":
                 case "testStepId":
                 case "testCaseStartedId":
+                // exception: protocolVersion can vary
+                case "protocolVersion":
                     expected.add(hasEntry(is(fieldName), isA(String.class)));
                     break;
                 case "astNodeIds":
@@ -71,13 +73,18 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                     expected.add(hasEntry(is(fieldName), containsInRelativeOrder(isA(String.class))));
                     break;
 
-                // timestamps and durations are not predictable
+                // exception: timestamps and durations are not predictable
                 case "timestamp":
                 case "duration":
+                // exception: Mata fields depend on the platform
+                case "implementation":
+                case "runtime":
+                case "os":
+                case "cpu":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
-                default:
+               default:
                     expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue, depth)));
             }
         });

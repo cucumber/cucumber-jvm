@@ -493,18 +493,6 @@ class RuntimeTest {
         assertThat(stepDefinedEvents.size(), is(4));
     }
 
-    @Test
-    public void generates_a_meta_message() {
-        Runtime runtime = Runtime.builder().build();
-        Messages.Meta meta = runtime.makeMeta();
-        assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+"));
-        assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
-        assertThat(meta.getImplementation().getVersion(), is("unreleased"));
-        assertThat(meta.getOs().getName(), matchesPattern(".+"));
-        assertThat(meta.getCpu().getName(), matchesPattern(".+"));
-    }
-
-
     private String runFeatureWithFormatterSpy(Feature feature, Map<String, Result> stepsToResult) {
         FormatterSpy formatterSpy = new FormatterSpy();
 

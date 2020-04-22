@@ -24,7 +24,7 @@ class ExitStatusTest {
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private EventBus bus;
-    private Runtime.ExitStatus exitStatus;
+    private ExitStatus exitStatus;
 
     @Test
     void non_strict_wip_with_ambiguous_scenarios() {
@@ -47,7 +47,7 @@ class ExitStatusTest {
             .parse(runtimeArgs)
             .build();
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        exitStatus = new Runtime.ExitStatus(runtimeOptions);
+        exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
     }
 

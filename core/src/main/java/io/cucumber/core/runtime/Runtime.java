@@ -1,7 +1,6 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
@@ -14,21 +13,9 @@ import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
-import io.cucumber.messages.Messages;
-import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.event.EventHandler;
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,11 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.max;
-import static java.util.Collections.min;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
@@ -61,26 +44,23 @@ public final class Runtime {
 
     private final ExitStatus exitStatus;
 
-    private final RunnerSupplier runnerSupplier;
     private final Predicate<Pickle> filter;
     private final int limit;
-    private final EventBus bus;
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
     private final PickleOrder pickleOrder;
+    private final CucumberExecutionContext context;
 
     private Runtime(final ExitStatus exitStatus,
-                    final EventBus bus,
+                    final CucumberExecutionContext context,
                     final Predicate<Pickle> filter,
                     final int limit,
-                    final RunnerSupplier runnerSupplier,
                     final FeatureSupplier featureSupplier,
                     final ExecutorService executor,
                     final PickleOrder pickleOrder) {
-        this.bus = bus;
         this.filter = filter;
+        this.context = context;
         this.limit = limit;
-        this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
         this.exitStatus = exitStatus;
@@ -88,94 +68,41 @@ public final class Runtime {
     }
 
     public void run() {
-        emitMeta();
+        context.emitMeta();
         final List<Feature> features = featureSupplier.get();
-        emitTestRunStarted();
-        for (Feature feature : features) {
-            emitTestSource(feature);
-        }
-
+        features.forEach(context::beforeFeature);
+        context.startTestRun();
         final List<Future<?>> executingPickles = features.stream()
             .flatMap(feature -> feature.getPickles().stream())
             .filter(filter)
             .collect(collectingAndThen(toList(),
                 list -> pickleOrder.orderPickles(list).stream()))
             .limit(limit > 0 ? limit : Integer.MAX_VALUE)
-            .map(pickle -> executor.submit(() -> runnerSupplier.get().runPickle(pickle)))
+            .map(pickle -> executor.submit(execute(pickle)))
             .collect(toList());
 
         executor.shutdown();
 
-        List<Throwable> thrown = new ArrayList<>();
         for (Future<?> executingPickle : executingPickles) {
             try {
                 executingPickle.get();
             } catch (ExecutionException e) {
                 log.error(e, () -> "Exception while executing pickle");
-                thrown.add(e.getCause());
             } catch (InterruptedException e) {
                 executor.shutdownNow();
-                throw new CucumberException(e);
+                log.debug(e, () -> "Interrupted while executing pickle");
             }
         }
-        if (thrown.size() == 1) {
-            throw new CucumberException(thrown.get(0));
-        } else if (thrown.size() > 1) {
-            throw new CompositeCucumberException(thrown);
+        context.finishTestRun();
+
+        CucumberException exception = context.getException();
+        if (exception != null) {
+            throw exception;
         }
-
-        emitTestRunFinished();
     }
 
-    private void emitMeta() {
-        bus.send(Messages.Envelope.newBuilder()
-            .setMeta(makeMeta())
-            .build());
-
-    }
-
-    Messages.Meta makeMeta() {
-        String version = getClass().getPackage().getImplementationVersion();
-        if(version == null) {
-            // Development version
-            version = "unreleased";
-        }
-        return Messages.Meta.newBuilder()
-            .setProtocolVersion(Messages.class.getPackage().getImplementationVersion())
-            .setImplementation(Messages.Meta.Product.newBuilder()
-                .setName("cucumber-jvm")
-                .setVersion(version)
-            )
-            .setOs(Messages.Meta.Product.newBuilder()
-                .setName(System.getProperty("os.name"))
-            )
-            .setCpu(Messages.Meta.Product.newBuilder()
-                .setName(System.getProperty("os.arch"))
-            )
-            .build();
-    }
-
-    private void emitTestRunStarted() {
-        Instant instant = bus.getInstant();
-        bus.send(new TestRunStarted(instant));
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(instant)))
-            .build());
-    }
-
-    private void emitTestSource(Feature feature) {
-        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.sendAll(feature.getParseEvents());
-    }
-
-    private void emitTestRunFinished() {
-        Instant instant = bus.getInstant();
-        bus.send(new TestRunFinished(instant));
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(instant)))
-            .build());
+    private Runnable execute(Pickle pickle) {
+        return () -> context.runTestCase(runner ->  runner.runPickle(pickle));
     }
 
     public byte exitStatus() {
@@ -270,8 +197,9 @@ public final class Runtime {
             final Predicate<Pickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
+            final CucumberExecutionContext context = new CucumberExecutionContext(eventBus, exitStatus, runnerSupplier);
 
-            return new Runtime(exitStatus, eventBus, filter, limit, runnerSupplier, featureSupplier, executor, pickleOrder);
+            return new Runtime(exitStatus, context, filter, limit, featureSupplier, executor, pickleOrder);
         }
     }
 
@@ -324,36 +252,4 @@ public final class Runtime {
         }
     }
 
-    static final class ExitStatus implements ConcurrentEventListener {
-        private static final byte DEFAULT = 0x0;
-        private static final byte ERRORS = 0x1;
-
-        private final List<Result> results = new ArrayList<>();
-        private final RuntimeOptions runtimeOptions;
-
-        private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> results.add(event.getResult());
-
-        ExitStatus(RuntimeOptions runtimeOptions) {
-            this.runtimeOptions = runtimeOptions;
-        }
-
-        @Override
-        public void setEventPublisher(EventPublisher publisher) {
-            publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
-        }
-
-        byte exitStatus() {
-            if (results.isEmpty()) {
-                return DEFAULT;
-            }
-
-            if (runtimeOptions.isWip()) {
-                Result leastSeverResult = min(results, comparing(Result::getStatus));
-                return leastSeverResult.getStatus().is(Status.PASSED) ? ERRORS : DEFAULT;
-            } else {
-                Result mostSevereResult = max(results, comparing(Result::getStatus));
-                return mostSevereResult.getStatus().isOk(runtimeOptions.isStrict()) ? DEFAULT : ERRORS;
-            }
-        }
-    }
 }
