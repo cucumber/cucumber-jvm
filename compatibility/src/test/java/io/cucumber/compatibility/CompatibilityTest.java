@@ -73,12 +73,12 @@ public class CompatibilityTest {
             expectedEnvelopes.remove("testCaseFinished");
         }
 
-        expectedEnvelopes.forEach((messageType, expectedMessages) -> {
+        expectedEnvelopes.forEach((messageType, expectedMessages) ->
             assertThat(
                 actualEnvelopes,
                 hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))
-            );
-        });
+            )
+        );
     }
 
     private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {
