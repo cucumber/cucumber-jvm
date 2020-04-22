@@ -248,6 +248,7 @@ final class CachingGlue implements Glue {
     private void emitParameterTypeDefined(ParameterType<?> parameterType) {
         bus.send(Messages.Envelope.newBuilder()
             .setParameterType(Messages.ParameterType.newBuilder()
+                .setId(bus.generateId().toString())
                 .setName(parameterType.getName())
                 .addAllRegularExpressions(parameterType.getRegexps())
                 .setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch())
