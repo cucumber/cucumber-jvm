@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.core.eventbus.AbstractEventBus;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runner.Options;
@@ -78,50 +77,4 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
         }
     }
 
-    private static final class SynchronizedEventBus implements EventBus {
-
-        private final EventBus delegate;
-
-        static SynchronizedEventBus synchronize(EventBus eventBus) {
-            if (eventBus instanceof SynchronizedEventBus) {
-                return (SynchronizedEventBus) eventBus;
-            }
-
-            return new SynchronizedEventBus(eventBus);
-        }
-
-        private SynchronizedEventBus(final EventBus delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public synchronized <T> void send(final T event) {
-            delegate.send(event);
-        }
-
-        @Override
-        public synchronized <T> void sendAll(final Iterable<T> events) {
-            delegate.sendAll(events);
-        }
-
-        @Override
-        public synchronized <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
-            delegate.registerHandlerFor(eventType, handler);
-        }
-
-        @Override
-        public synchronized <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
-            delegate.removeHandlerFor(eventType, handler);
-        }
-
-        @Override
-        public Instant getInstant() {
-            return delegate.getInstant();
-        }
-
-        @Override
-        public UUID generateId() {
-            return delegate.generateId();
-        }
-    }
 }

@@ -81,9 +81,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         return new CucumberException(String.format("" +
                 "Could not invoke step [%s] defined at '%s'.\n" +
                 "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (" + argumentTypes + ")\n" +
-                "\n" +
-                "The details are in the stacktrace below.", //TODO: Add doc URL
+                "The converted arguments types were (" + argumentTypes + ")", //TODO: Add doc URL
             stepDefinition.getPattern(),
             stepDefinition.getLocation()
         ), e);
@@ -92,8 +90,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears there was a problem with a hook or transformer definition. " +
-                "The details are in the stacktrace below.", //TODO: Add doc URL
+                "It appears there was a problem with a hook or transformer definition.", //TODO: Add doc URL
             stepDefinition.getPattern(),
             stepDefinition.getLocation()
         ), e);
@@ -108,7 +105,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     private CucumberException registerDataTableTypeInConfiguration(Exception e) {
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears you did not register a data table type. The details are in the stacktrace below.", //TODO: Add doc URL
+                "It appears you did not register a data table type.", //TODO: Add doc URL
             stepDefinition.getPattern(),
             stepDefinition.getLocation()
         ), e);
@@ -117,8 +114,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private CucumberException couldNotConvertArguments(Exception e) {
         return new CucumberException(String.format(
-            "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "The details are in the stacktrace below.",
+            "Could not convert arguments for step [%s] defined at '%s'.",
             stepDefinition.getPattern(),
             stepDefinition.getLocation()
         ), e);

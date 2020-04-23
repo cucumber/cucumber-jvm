@@ -17,6 +17,8 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.CucumberExecutionContext;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
@@ -25,10 +27,6 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
-import io.cucumber.messages.Messages;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -41,13 +39,11 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -92,6 +88,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private final EventBus bus;
     private final List<Feature> features;
     private final Plugins plugins;
+    private final CucumberExecutionContext context;
 
     private boolean multiThreadingAssumed = false;
 
@@ -160,12 +157,15 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
+        ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+        this.plugins.addPlugin(exitStatus);
 
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         Predicate<Pickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
             .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
@@ -209,42 +209,21 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         @Override
         public void evaluate() throws Throwable {
+            context.emitMeta();
             if (multiThreadingAssumed) {
                 plugins.setSerialEventBusOnEventListenerPlugins(bus);
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
 
-            emitTestRunStarted();
-            for (Feature feature : features) {
-                emitTestSource(feature);
+            context.startTestRun();
+            features.forEach(context::beforeFeature);
+
+            try {
+                runFeatures.evaluate();
+            } finally {
+                context.finishTestRun();
             }
-            runFeatures.evaluate();
-            emitTestRunFinished();
-        }
-
-        private void emitTestRunStarted() {
-            Instant instant = bus.getInstant();
-            bus.send(new TestRunStarted(instant));
-            bus.send(Messages.Envelope.newBuilder()
-                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                    .setTimestamp(javaInstantToTimestamp(instant)))
-                .build());
-        }
-
-        private void emitTestSource(Feature feature){
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-            bus.sendAll(feature.getParseEvents());
-        }
-
-        private void emitTestRunFinished() {
-            Instant instant = bus.getInstant();
-            bus.send(new TestRunFinished(instant));
-            bus.send(Messages.Envelope.newBuilder()
-                .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                    .setTimestamp(javaInstantToTimestamp(instant)))
-                .build());
         }
     }
-
 }

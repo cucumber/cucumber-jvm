@@ -74,7 +74,7 @@ public final class JsonFormatter implements EventListener {
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
         publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
         publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbed);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
+        publisher.registerHandlerFor(TestRunFinished.class, this::finishReport);
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
@@ -137,7 +137,21 @@ public final class JsonFormatter implements EventListener {
         currentStepOrHookMap.put("result", createResultMap(event.getResult()));
     }
 
-    private void finishReport() {
+    private void finishReport(TestRunFinished event) {
+        Throwable exception = event.getResult().getError();
+        if (exception != null) {
+            Map<String, Object> feature = new LinkedHashMap<>();
+            feature.put("description", "Test run failed");
+            Map<String, Object> elements = new LinkedHashMap<>();
+            feature.put("elements", elements);
+            elements.put("description", "There were errors during the execution");
+            Map<String, Object> result = new LinkedHashMap<>();
+            elements.put("result", result);
+            result.put("error_message", exception.getMessage());
+            result.put("status", "failed");
+            featureMaps.add(feature);
+        }
+
         gson.toJson(featureMaps, out);
         try {
             out.close();

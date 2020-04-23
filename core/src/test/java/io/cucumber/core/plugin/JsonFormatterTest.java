@@ -1380,15 +1380,6 @@ class JsonFormatterTest {
     private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getTagExpression()).thenReturn("");
-        File report = File.createTempFile("cucumber-jvm-junit", ".json");
-
-        List<String> args = new ArrayList<>();
-        args.add("--threads");
-        args.add("4");
-        args.add("--plugin");
-        args.add("json:" + report.getAbsolutePath());
-        args.addAll(featurePaths);
-
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {

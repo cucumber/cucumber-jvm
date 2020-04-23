@@ -8,6 +8,7 @@ import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
+import io.cucumber.cucumberexpressions.Expression;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -24,28 +25,16 @@ final class CoreStepDefinition {
     private final StepDefinition stepDefinition;
     private final Type[] types;
 
-    CoreStepDefinition(UUID id, StepDefinition stepDefinition, StepTypeRegistry stepTypeRegistry) {
+    CoreStepDefinition(UUID id, StepDefinition stepDefinition, StepExpression expression) {
         this.id = requireNonNull(id);
         this.stepDefinition = requireNonNull(stepDefinition);
-        List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
-        this.expression = createExpression(parameterInfos, stepDefinition.getPattern(), stepTypeRegistry);
+        this.expression = expression;
         this.argumentMatcher = new ArgumentMatcher(this.expression);
-        this.types = getTypes(parameterInfos);
+        this.types = getTypes(stepDefinition.parameterInfos());
     }
 
-    private StepExpression createExpression(List<ParameterInfo> parameterInfos, String expression, StepTypeRegistry stepTypeRegistry) {
-        if (parameterInfos == null || parameterInfos.isEmpty()) {
-            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression);
-        } else {
-            ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-            Supplier<Type> typeResolver = parameterInfo.getTypeResolver()::resolve;
-            boolean transposed = parameterInfo.isTransposed();
-            return new StepExpressionFactory(stepTypeRegistry).createExpression(expression, typeResolver, transposed);
-        }
-    }
-
-    String getPattern() {
-        return expression.getSource();
+    StepExpression getExpression() {
+        return expression;
     }
 
     StepDefinition getStepDefinition() {

@@ -11,15 +11,21 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
+import io.cucumber.core.stepexpression.StepExpression;
+import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
+import io.cucumber.cucumberexpressions.CucumberExpression;
+import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
-import io.cucumber.cucumberexpressions.UndefinedParameterTypeException;
+import io.cucumber.cucumberexpressions.ParameterType;
+import io.cucumber.cucumberexpressions.RegularExpression;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern;
+import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern.StepDefinitionPatternType;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -186,7 +192,14 @@ final class CachingGlue implements Glue {
     }
 
     void prepareGlue(StepTypeRegistry stepTypeRegistry) throws DuplicateStepDefinitionException {
-        parameterTypeDefinitions.forEach(ptd -> stepTypeRegistry.defineParameterType(ptd.parameterType()));
+        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(stepTypeRegistry, bus);
+
+        // TODO: separate prepared and unprepared glue into different classes
+        parameterTypeDefinitions.forEach(ptd -> {
+            ParameterType<?> parameterType = ptd.parameterType();
+            stepTypeRegistry.defineParameterType(parameterType);
+            emitParameterTypeDefined(parameterType);
+        });
         dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
         docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
 
@@ -218,25 +231,30 @@ final class CachingGlue implements Glue {
         beforeHooks.forEach(this::emitHook);
 
         stepDefinitions.forEach(stepDefinition -> {
-            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition, stepTypeRegistry);
+            StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition, expression);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
             if (previous != null) {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
             }
-            stepDefinitionsByPattern.put(coreStepDefinition.getPattern(), coreStepDefinition);
+            stepDefinitionsByPattern.put(coreStepDefinition.getExpression().getSource(), coreStepDefinition);
             emitStepDefined(coreStepDefinition);
         });
 
         afterHooks.forEach(this::emitHook);
     }
 
-    private CucumberException registerTypeInConfiguration(String expressionString, UndefinedParameterTypeException e) {
-        return new CucumberException(String.format("" +
-                "Could not create a cucumber expression for '%s'.\n" +
-                "It appears you did not register parameter type. The details are in the stacktrace below.\n" +
-                "You can find the documentation here: https://docs.cucumber.io/cucumber/cucumber-expressions/",
-            expressionString
-        ), e);
+
+    private void emitParameterTypeDefined(ParameterType<?> parameterType) {
+        bus.send(Messages.Envelope.newBuilder()
+            .setParameterType(Messages.ParameterType.newBuilder()
+                .setId(bus.generateId().toString())
+                .setName(parameterType.getName())
+                .addAllRegularExpressions(parameterType.getRegexps())
+                .setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch())
+                .setUseForSnippets(parameterType.useForSnippets()))
+            .build()
+        );
     }
 
     private void emitHook(CoreHookDefinition hook) {
@@ -253,7 +271,7 @@ final class CachingGlue implements Glue {
                 bus.getInstant(),
                 new io.cucumber.plugin.event.StepDefinition(
                     stepDefinition.getStepDefinition().getLocation(),
-                    stepDefinition.getPattern()
+                    stepDefinition.getExpression().getSource()
                 )
             )
         );
@@ -261,11 +279,23 @@ final class CachingGlue implements Glue {
             .setStepDefinition(
                 Messages.StepDefinition.newBuilder()
                     .setId(stepDefinition.getId().toString())
-                    .setPattern(Messages.StepDefinition.StepDefinitionPattern.newBuilder()
-                        .setSource(stepDefinition.getPattern())
+                    .setPattern(StepDefinitionPattern.newBuilder()
+                        .setSource(stepDefinition.getExpression().getSource())
+                        .setType(getExpressionType(stepDefinition))
                     ))
             .build()
         );
+    }
+
+    private StepDefinitionPatternType getExpressionType(CoreStepDefinition stepDefinition) {
+        Class<? extends Expression> expressionType = stepDefinition.getExpression().getExpressionType();
+        if (expressionType.isAssignableFrom(RegularExpression.class)) {
+            return StepDefinitionPatternType.REGULAR_EXPRESSION;
+        } else if (expressionType.isAssignableFrom(CucumberExpression.class)) {
+            return StepDefinitionPatternType.CUCUMBER_EXPRESSION;
+        } else {
+            throw new IllegalArgumentException(expressionType.getName());
+        }
     }
 
     PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {
