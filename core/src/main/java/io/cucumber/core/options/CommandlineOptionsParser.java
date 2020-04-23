@@ -89,8 +89,12 @@ public final class CommandlineOptionsParser {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 parsedOptions.setDryRun(!arg.startsWith("--no-"));
-            } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
-                parsedOptions.setStrict(!arg.startsWith("--no-"));
+            } else if (arg.equals("--no-strict")) {
+                out.println("--no-strict is no longer effective");
+                exitCode = 1;
+                return parsedOptions;
+            } else if (arg.equals("--strict") || arg.equals("-s")) {
+                // Ignore
             } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
                 parsedOptions.setMonochrome(!arg.startsWith("--no-"));
             } else if (arg.equals("--snippets")) {

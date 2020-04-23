@@ -23,8 +23,10 @@ public @interface CucumberOptions {
 
     /**
      * @return true if undefined and pending steps should be treated as errors.
+     * @deprecated will be removed and cucumber will default to strict
      */
-    boolean strict() default false;
+    @Deprecated
+    boolean strict() default true;
 
     /**
      * Either a URI or path to a directory of features or a URI or path to a single
@@ -95,6 +97,7 @@ public @interface CucumberOptions {
 
     /**
      * Only run scenarios whose names match one of the provided regular expressions.
+     *
      * @return a list of regular expressions
      */
     String[] name() default {};

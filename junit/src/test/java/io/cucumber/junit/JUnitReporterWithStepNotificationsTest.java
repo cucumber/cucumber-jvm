@@ -261,7 +261,6 @@ class JUnitReporterWithStepNotificationsTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder()
             .setStepNotifications(true)
-            .setStrict(true)
             .build());
 
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);

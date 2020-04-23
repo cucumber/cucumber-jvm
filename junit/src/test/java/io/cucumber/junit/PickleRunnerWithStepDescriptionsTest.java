@@ -157,11 +157,11 @@ class PickleRunnerWithStepDescriptionsTest {
     }
 
     private JUnitOptions createJunitOptions() {
-        return new JUnitOptionsBuilder().setStrict(true).build();
+        return new JUnitOptionsBuilder().build();
     }
 
     private JUnitOptions createFileNameCompatibleJunitOptions() {
-        return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).setStrict(true).build();
+        return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).build();
     }
 
 }

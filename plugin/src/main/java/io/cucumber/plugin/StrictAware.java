@@ -4,7 +4,10 @@ import org.apiguardian.api.API;
 
 /**
  * Interface for Plugins that need to know if the Runtime is strict.
+ *
+ * @deprecated strict mode is enabled by default
  */
+@Deprecated
 @API(status = API.Status.STABLE)
 public interface StrictAware extends Plugin {
     /**

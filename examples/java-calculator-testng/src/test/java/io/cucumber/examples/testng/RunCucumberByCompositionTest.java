@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
  * AbstractTestNGCucumberTests but still executes each scenario as a separate
  * TestNG test.
  */
-@CucumberOptions(strict = true, plugin = "message:target/cucumber-report-feature-composite.ndjson")
+@CucumberOptions(plugin = "message:target/cucumber-report-feature-composite.ndjson")
 public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
     private TestNGCucumberRunner testNGCucumberRunner;
 

@@ -31,14 +31,12 @@ class RerunFormatterTest {
             "Feature: feature name\n" +
             "  Scenario: passed scenario\n" +
             "    Given passed step\n" +
-            "  Scenario: pending scenario\n" +
-            "    Given pending step\n" +
-            "  Scenario: undefined scenario\n" +
-            "    Given undefined step\n");
+            "  Scenario: skipped scenario\n" +
+            "    Given skipped step\n"
+        );
         features.add(feature);
         stepsToResult.put("passed step", result("passed"));
-        stepsToResult.put("pending step", result("pending"));
-        stepsToResult.put("undefined step", result("undefined"));
+        stepsToResult.put("skipped step", result("skipped"));
 
         assertThat(runFeaturesWithFormatter(false), isBytesEqualTo(""));
     }
@@ -193,7 +191,6 @@ class RerunFormatterTest {
     private ByteArrayOutputStream runFeaturesWithFormatter(boolean isStrict) {
         final ByteArrayOutputStream report = new ByteArrayOutputStream();
         final RerunFormatter formatter = new RerunFormatter(report);
-        formatter.setStrict(isStrict);
 
         TestHelper.builder()
             .withFormatterUnderTest(formatter)

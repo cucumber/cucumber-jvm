@@ -17,7 +17,6 @@ import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -51,13 +50,6 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.EXECUTION_ORDER_PROPERTY_NAME, "reverse");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getPickleOrder(), equalTo(StandardPickleOrders.reverseLexicalUriOrder()));
-    }
-
-    @Test
-    void should_parse_strict() {
-        properties.put(Constants.EXECUTION_STRICT_PROPERTY_NAME, "true");
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.isStrict(), equalTo(true));
     }
 
     @Test

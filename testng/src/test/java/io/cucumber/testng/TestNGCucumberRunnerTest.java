@@ -76,17 +76,16 @@ public class TestNGCucumberRunnerTest {
     }
 
     @CucumberOptions(
-        features = "classpath:io/cucumber/undefined/undefined_steps.feature",
-        strict = true
+        features = "classpath:io/cucumber/undefined/undefined_steps.feature"
     )
     static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {
     }
 
-    @CucumberOptions(strict = true)
+    @CucumberOptions
     static class RunCucumberTest extends AbstractTestNGCucumberTests {
     }
 
-    @CucumberOptions(strict = true, plugin = "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin")
+    @CucumberOptions(plugin = "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin")
     static class RunCucumberTestWithPlugin extends AbstractTestNGCucumberTests {
     }
 

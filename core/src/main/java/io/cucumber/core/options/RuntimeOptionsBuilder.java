@@ -23,7 +23,6 @@ public final class RuntimeOptionsBuilder {
     private List<FeatureWithLines> parsedRerunPaths = null;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;
-    private Boolean parsedStrict = null;
     private Boolean parsedMonochrome = null;
     private SnippetType parsedSnippetType = null;
     private Boolean parsedWip = null;
@@ -79,10 +78,6 @@ public final class RuntimeOptionsBuilder {
 
         if (this.parsedDryRun != null) {
             runtimeOptions.setDryRun(this.parsedDryRun);
-        }
-
-        if (this.parsedStrict != null) {
-            runtimeOptions.setStrict(this.parsedStrict);
         }
 
         if (this.parsedMonochrome != null) {
@@ -186,12 +181,8 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder setStrict() {
-        return setStrict(true);
-    }
-
     public RuntimeOptionsBuilder setStrict(boolean strict) {
-        this.parsedStrict = strict;
+        Boolean parsedStrict = strict;
         return this;
     }
 

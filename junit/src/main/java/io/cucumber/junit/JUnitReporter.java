@@ -186,11 +186,7 @@ final class JUnitReporter {
     }
 
     private void addFailureOrFailedAssumptionDependingOnStrictMode(TestNotifier notifier, Throwable error) {
-        if (junitOptions.isStrict()) {
-            notifier.addFailure(error);
-        } else {
-            notifier.addFailedAssumption(error);
-        }
+        notifier.addFailure(error);
     }
 
     private interface TestNotifier {

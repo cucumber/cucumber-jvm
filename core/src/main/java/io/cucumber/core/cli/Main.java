@@ -68,13 +68,6 @@ public class Main {
             return exitStatus.get();
         }
 
-        if (!runtimeOptions.isStrict()) {
-            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
-                "This default will change to --strict and --non-strict will be removed.\n" +
-                "You can use --strict to suppress this warning"
-            );
-        }
-
         final Runtime runtime = Runtime.builder()
             .withRuntimeOptions(runtimeOptions)
             .withClassLoader(() -> classLoader)

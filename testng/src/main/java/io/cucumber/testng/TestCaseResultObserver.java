@@ -9,12 +9,12 @@ class TestCaseResultObserver implements AutoCloseable {
     private static final String SKIP_MESSAGE = "This scenario is skipped";
     private final io.cucumber.core.runtime.TestCaseResultObserver delegate;
 
-    private TestCaseResultObserver(EventPublisher bus, boolean strict) {
-        this.delegate = new io.cucumber.core.runtime.TestCaseResultObserver(bus, strict);
+    private TestCaseResultObserver(EventPublisher bus) {
+        this.delegate = new io.cucumber.core.runtime.TestCaseResultObserver(bus, true);
     }
 
-    static TestCaseResultObserver observe(EventBus bus, boolean strict) {
-        return new TestCaseResultObserver(bus, strict);
+    static TestCaseResultObserver observe(EventBus bus) {
+        return new TestCaseResultObserver(bus);
     }
 
     void assertTestCasePassed() {
@@ -23,7 +23,7 @@ class TestCaseResultObserver implements AutoCloseable {
             (exception) -> exception instanceof SkipException
                 ? exception
                 : new SkipException(exception.getMessage(), exception),
-            (suggestions, strict) -> new UndefinedStepException(suggestions, strict),
+            (suggestions, strict) -> new UndefinedStepException(suggestions),
             (exception) -> new SkipException(exception.getMessage(), exception)
         );
     }

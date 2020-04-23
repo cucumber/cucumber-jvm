@@ -121,14 +121,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
-
-        if (!runtimeOptions.isStrict()) {
-            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
-                "This default will change to --strict and --non-strict will be removed.\n" +
-                "You can use --strict or @CucumberOptions(strict = true) to suppress this warning"
-            );
-        }
-
         // Next parse the junit options
         JUnitOptions junitPropertiesFileOptions = new JUnitOptionsParser()
             .parse(CucumberProperties.fromPropertiesFile())
@@ -144,7 +136,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         JUnitOptions junitOptions = new JUnitOptionsParser()
             .parse(CucumberProperties.fromSystemProperties())
-            .setStrict(runtimeOptions.isStrict())
             .build(junitEnvironmentOptions);
 
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);

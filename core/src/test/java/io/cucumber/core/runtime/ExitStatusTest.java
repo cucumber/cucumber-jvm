@@ -26,13 +26,6 @@ class ExitStatusTest {
     private EventBus bus;
     private ExitStatus exitStatus;
 
-    @Test
-    void non_strict_wip_with_ambiguous_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
 
     private void createNonStrictWipExitStatus() {
         createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
@@ -46,96 +39,6 @@ class ExitStatusTest {
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
-    }
-
-    @Test
-    void non_strict_wip_with_failed_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.FAILED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_wip_with_passed_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PASSED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    @Test
-    void non_strict_wip_with_pending_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PENDING));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_wip_with_skipped_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_wip_with_undefined_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_ambiguous_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    private void createNonStrictExitStatus() {
-        createExitStatus(new RuntimeOptionsBuilder().build());
-    }
-
-    @Test
-    void non_strict_with_failed_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.FAILED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    @Test
-    void non_strict_with_passed_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PASSED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_pending_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PENDING));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_skipped_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_undefined_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -153,7 +56,7 @@ class ExitStatusTest {
     }
 
     private void createStrictWipRuntime() {
-        createExitStatus(new RuntimeOptionsBuilder().setStrict(true).setWip(true).build());
+        createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
     }
 
     @Test
@@ -231,7 +134,7 @@ class ExitStatusTest {
     }
 
     private void createStrictRuntime() {
-        createExitStatus(new RuntimeOptionsBuilder().setStrict(true).build());
+        createExitStatus(new RuntimeOptionsBuilder().build());
     }
 
     @Test
@@ -296,7 +199,7 @@ class ExitStatusTest {
 
     @Test
     void strict_with_skipped_scenarios() {
-        createNonStrictExitStatus();
+        createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));

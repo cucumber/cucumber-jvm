@@ -40,7 +40,7 @@ class PluginsTest {
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
         StrictAware plugin = mock(StrictAware.class);
         plugins.addPlugin(plugin);
-        verify(plugin).setStrict(false);
+        verify(plugin).setStrict(true);
     }
 
     @Test

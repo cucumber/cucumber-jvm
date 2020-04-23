@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-    strict = true,
     glue = {"io.cucumber.spring.annotationconfig"},
     features = {"classpath:io/cucumber/spring/annotationContextConfiguration.feature"}
 )

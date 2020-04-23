@@ -340,7 +340,6 @@ final class TestNGFormatterTest {
     private String runFeaturesWithFormatter(boolean strict) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         final TestNGFormatter formatter = new TestNGFormatter(out);
-        formatter.setStrict(strict);
 
         TestHelper.builder()
             .withFormatterUnderTest(formatter)

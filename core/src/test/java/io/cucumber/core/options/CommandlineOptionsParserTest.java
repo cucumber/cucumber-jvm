@@ -55,7 +55,6 @@ import static org.hamcrest.text.MatchesPattern.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class CommandlineOptionsParserTest {
@@ -256,30 +255,6 @@ class CommandlineOptionsParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.PrettyPrinter"))));
-    }
-
-    @Test
-    void assigns_strict() {
-        RuntimeOptions options = parser
-            .parse("--strict")
-            .build();
-        assertTrue(options.isStrict());
-    }
-
-    @Test
-    void assigns_strict_short() {
-        RuntimeOptions options = parser
-            .parse("-s")
-            .build();
-        assertTrue(options.isStrict());
-    }
-
-    @Test
-    void default_strict() {
-        RuntimeOptions options = parser
-            .parse()
-            .build();
-        assertThat(options.isStrict(), is(false));
     }
 
     @Test

@@ -71,21 +71,6 @@ class RuntimeTest {
     }
 
     @Test
-    void non_strict_with_passed_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.PASSED));
-
-        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_undefined_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
     void strict_with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
@@ -101,22 +86,6 @@ class RuntimeTest {
     }
 
     @Test
-    void non_strict_with_pending_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.PENDING));
-
-        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_skipped_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
-
-        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
     void strict_with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
@@ -125,25 +94,9 @@ class RuntimeTest {
     }
 
     @Test
-    void non_strict_with_failed_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.FAILED));
-
-        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    @Test
     void strict_with_failed_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
-
-        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    @Test
-    void non_strict_with_ambiguous_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
@@ -160,7 +113,6 @@ class RuntimeTest {
     void should_pass_if_no_features_are_found() {
         Runtime runtime = Runtime.builder()
             .withRuntimeOptions(new RuntimeOptionsBuilder()
-                .setStrict(true)
                 .build())
             .build();
 
@@ -502,7 +454,6 @@ class RuntimeTest {
         return Runtime.builder()
             .withRuntimeOptions(
                 new RuntimeOptionsBuilder()
-                    .setStrict(true)
                     .build()
             )
             .withEventBus(bus)

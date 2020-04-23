@@ -35,7 +35,6 @@ public final class RuntimeOptions implements
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
 
     private boolean dryRun;
-    private boolean strict = false;
     private boolean monochrome = false;
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
@@ -104,11 +103,6 @@ public final class RuntimeOptions implements
     @Override
     public List<URI> getGlue() {
         return unmodifiableList(glue);
-    }
-
-    @Override
-    public boolean isStrict() {
-        return strict;
     }
 
     @Override
@@ -220,10 +214,6 @@ public final class RuntimeOptions implements
 
     void setSnippetType(SnippetType snippetType) {
         this.snippetType = snippetType;
-    }
-
-    void setStrict(boolean strict) {
-        this.strict = strict;
     }
 
     void setThreads(int threads) {

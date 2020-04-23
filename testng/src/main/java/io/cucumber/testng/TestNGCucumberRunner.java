@@ -88,13 +88,6 @@ public final class TestNGCucumberRunner {
 
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
-        if (!runtimeOptions.isStrict()) {
-            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
-                "This default will change to --strict and --non-strict will be removed.\n" +
-                "You can use --strict or @CucumberOptions(strict = true) to suppress this warning"
-            );
-        }
-
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeatureParser parser = new FeatureParser(bus::generateId);
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
@@ -120,7 +113,7 @@ public final class TestNGCucumberRunner {
 
     public void runScenario(io.cucumber.testng.Pickle pickle) {
         context.runTestCase(runner -> {
-            try (TestCaseResultObserver observer = observe(runner.getBus(), runtimeOptions.isStrict())) {
+            try (TestCaseResultObserver observer = observe(runner.getBus())) {
                 Pickle cucumberPickle = pickle.getPickle();
                 runner.runPickle(cucumberPickle);
                 observer.assertTestCasePassed();

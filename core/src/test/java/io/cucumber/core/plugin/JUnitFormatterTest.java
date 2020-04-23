@@ -40,7 +40,6 @@ class JUnitFormatterTest {
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
     private Duration stepDuration = null;
-    private boolean strict = false;
 
     private static void assertXmlEqual(Object expected, Object actual) {
         assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
@@ -67,8 +66,7 @@ class JUnitFormatterTest {
 
     @Test
     void featureSimpleStrictTest() throws Exception {
-        boolean strict = true;
-        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"), strict);
+        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"));
         assertXmlEqual(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/JUnitFormatterTest_1_strict.report.xml"), report);
     }
 
@@ -127,7 +125,6 @@ class JUnitFormatterTest {
                 "  Scenario: scenario name\n");
         features.add(feature);
         stepDuration = Duration.ofMillis(1L);
-        strict = true;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -542,14 +539,9 @@ class JUnitFormatterTest {
     }
 
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
-        return runFeaturesWithJunitFormatter(featurePaths, false);
-    }
-
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
         RuntimeOptionsBuilder options = new RuntimeOptionsBuilder()
-            .setStrict(strict)
             .addPluginName("junit:" + report.getAbsolutePath());
         featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
 
@@ -572,7 +564,6 @@ class JUnitFormatterTest {
     private String runFeaturesWithFormatter() throws IOException {
         final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
         final JUnitFormatter formatter = createJUnitFormatter(report);
-        formatter.setStrict(strict);
         TestHelper.builder()
             .withFormatterUnderTest(formatter)
             .withFeatures(features)

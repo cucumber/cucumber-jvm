@@ -16,16 +16,12 @@ public enum Status {
         return this == status;
     }
 
-    public boolean isOk(boolean isStrict) {
-        return hasAlwaysOkStatus() || !isStrict && hasOkWhenNotStrictStatus();
+    public boolean isOk() {
+        return hasAlwaysOkStatus();
     }
 
     private boolean hasAlwaysOkStatus() {
         return is(Status.PASSED) || is(Status.SKIPPED);
-    }
-
-    private boolean hasOkWhenNotStrictStatus() {
-        return is(Status.UNDEFINED) || is(Status.PENDING);
     }
 
 }

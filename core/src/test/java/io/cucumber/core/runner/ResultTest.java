@@ -45,8 +45,8 @@ class ResultTest {
         Result passedResult = new Result(PASSED, ZERO, null);
 
         assertAll("Checking Result",
-            () -> assertTrue(passedResult.getStatus().isOk(isStrict(false))),
-            () -> assertTrue(passedResult.getStatus().isOk(isStrict(true)))
+            () -> assertTrue(passedResult.getStatus().isOk()),
+            () -> assertTrue(passedResult.getStatus().isOk())
         );
     }
 
@@ -55,8 +55,8 @@ class ResultTest {
         Result skippedResult = new Result(SKIPPED, ZERO, null);
 
         assertAll("Checking Result",
-            () -> assertTrue(skippedResult.getStatus().isOk(isStrict(false))),
-            () -> assertTrue(skippedResult.getStatus().isOk(isStrict(true)))
+            () -> assertTrue(skippedResult.getStatus().isOk()),
+            () -> assertTrue(skippedResult.getStatus().isOk())
         );
     }
 
@@ -65,28 +65,8 @@ class ResultTest {
         Result failedResult = new Result(FAILED, ZERO, null);
 
         assertAll("Checking Result",
-            () -> assertFalse(failedResult.getStatus().isOk(isStrict(false))),
-            () -> assertFalse(failedResult.getStatus().isOk(isStrict(true)))
-        );
-    }
-
-    @Test
-    void undefined_result_is_only_ok_when_not_strict() {
-        Result undefinedResult = new Result(UNDEFINED, ZERO, null);
-
-        assertAll("Checking Result",
-            () -> assertTrue(undefinedResult.getStatus().isOk(isStrict(false))),
-            () -> assertFalse(undefinedResult.getStatus().isOk(isStrict(true)))
-        );
-    }
-
-    @Test
-    void pending_result_is_only_ok_when_not_strict() {
-        Result pendingResult = new Result(PENDING, ZERO, null);
-
-        assertAll("Checking Result",
-            () -> assertTrue(pendingResult.getStatus().isOk(isStrict(false))),
-            () -> assertFalse(pendingResult.getStatus().isOk(isStrict(true)))
+            () -> assertFalse(failedResult.getStatus().isOk()),
+            () -> assertFalse(failedResult.getStatus().isOk())
         );
     }
 

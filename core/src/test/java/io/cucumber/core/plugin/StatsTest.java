@@ -144,7 +144,6 @@ class StatsTest {
     @Test
     void should_use_locale_for_decimal_separator() {
         Stats counter = new Stats(Locale.GERMANY);
-        counter.setStrict(true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.setStartTime(ANY_TIME);
@@ -192,7 +191,6 @@ class StatsTest {
         counter.addScenario(Status.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
         counter.addStep(Status.PENDING);
         counter.addScenario(Status.PENDING, "path/file.feature:3 # Scenario: scenario_name");
-        counter.setStrict(true);
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
