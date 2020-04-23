@@ -230,17 +230,6 @@ class SpringFactoryTest {
     }
 
     @Test
-    void shouldUseCucumberXmlIfNoClassWithSpringAnnotationIsFound() {
-        final ObjectFactory factory = new SpringFactory();
-        factory.addClass(Object.class);
-        factory.start();
-        final BellyBean o1 = factory.getInstance(BellyBean.class);
-        factory.stop();
-
-        assertThat(o1, is(notNullValue()));
-    }
-
-    @Test
     void shouldFailIfMultipleClassesWithSpringAnnotationsAreFound() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
@@ -248,7 +237,8 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(BellyStepDefinitions.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
+            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both annotated with @CucumberContextConfiguration.\n" +
+                "Please ensure only one class configures the spring context"
         )));
     }
 
@@ -344,6 +334,7 @@ class SpringFactoryTest {
     public static class WithEmptySpringAnnotations {
 
     }
+
     @Test
     void shouldBeStoppableWhenFacedWithMissingContextConfiguration() {
         final ObjectFactory factory = new SpringFactory();
