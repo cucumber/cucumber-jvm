@@ -5,8 +5,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestContextManager;
 
@@ -15,12 +13,15 @@ import java.util.Collection;
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
 abstract class TestContextAdaptor {
+    private static final Object monitor = new Object();
 
-    protected final ConfigurableApplicationContext applicationContext;
+    private final TestContextManager delegate;
+    private final ConfigurableApplicationContext applicationContext;
     private final Collection<Class<?>> glueClasses;
 
-    protected TestContextAdaptor(ConfigurableApplicationContext applicationContext,
+    protected TestContextAdaptor(TestContextManager delegate, ConfigurableApplicationContext applicationContext,
                                  Collection<Class<?>> glueClasses) {
+        this.delegate = delegate;
         this.applicationContext = applicationContext;
         this.glueClasses = glueClasses;
     }
@@ -30,40 +31,41 @@ abstract class TestContextAdaptor {
         TestContext testContext = delegate.getTestContext();
         ConfigurableApplicationContext applicationContext =
             (ConfigurableApplicationContext) testContext.getApplicationContext();
-        return new TestContextManagerAdaptor(delegate, applicationContext, glueClasses);
-    }
+        return new TestContextAdaptor(delegate, applicationContext, glueClasses) {
 
-    static TestContextAdaptor createGenericApplicationContextAdaptor(Collection<Class<?>> glueClasses) {
-        ConfigurableApplicationContext applicationContext = new GenericApplicationContext();
-        return createApplicationContextAdaptor(applicationContext, glueClasses);
-    }
 
-    static TestContextAdaptor createClassPathXmlApplicationContextAdaptor(String[] configLocations, Collection<Class<?>> glueClasses) {
-        // Application context is refreshed by FallbackApplicationContextAdaptor.start
-        // this can't be done twice.
-        boolean refresh = false;
-        ConfigurableApplicationContext applicationContext = new ClassPathXmlApplicationContext(configLocations, refresh);
-
-        return createApplicationContextAdaptor(applicationContext, glueClasses);
-    }
-
-    static TestContextAdaptor createApplicationContextAdaptor(ConfigurableApplicationContext applicationContext, Collection<Class<?>> glueClasses) {
-        return new FallbackApplicationContextAdaptor(applicationContext, glueClasses);
+        };
     }
 
     public final void start() {
-        startApplicationContext();
+        // The TestContextManager delegate makes the application context
+        // available to other threads. Register the glue however requires
+        // modifies the application context. To avoid concurrent modification
+        // issues (#1823, #1153, #1148, #1106) we do this serially.
+        synchronized (monitor) {
+            registerGlueCodeScope(applicationContext);
+            notifyContextManagerAboutTestClassStarted();
+            registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
+        }
         GlueCodeContext.getInstance().start();
     }
 
     public final void stop() {
         GlueCodeContext.getInstance().stop();
-        stopApplicationContext();
+        try {
+            delegate.afterTestClass();
+        } catch (Exception e) {
+            throw new CucumberBackendException(e.getMessage(), e);
+        }
     }
 
-    abstract void startApplicationContext();
-
-    abstract void stopApplicationContext();
+    private void notifyContextManagerAboutTestClassStarted() {
+        try {
+            delegate.beforeTestClass();
+        } catch (Exception e) {
+            throw new CucumberBackendException(e.getMessage(), e);
+        }
+    }
 
     final <T> T getInstance(Class<T> type) {
         return applicationContext.getBean(type);
@@ -95,69 +97,5 @@ abstract class TestContextAdaptor {
             .setScope(SCOPE_CUCUMBER_GLUE)
             .getBeanDefinition()
         );
-    }
-
-    private static final class TestContextManagerAdaptor extends TestContextAdaptor {
-        private static final Object monitor = new Object();
-
-        private final TestContextManager delegate;
-
-        private TestContextManagerAdaptor(TestContextManager delegate,
-                                          ConfigurableApplicationContext applicationContext,
-                                          Collection<Class<?>> glueClasses) {
-            super(applicationContext, glueClasses);
-            this.delegate = delegate;
-        }
-
-        @Override
-        public void startApplicationContext() {
-            // The TestContextManager delegate makes the application context
-            // available to other threads. Register the glue however requires
-            // modifies the application context. To avoid concurrent modification
-            // issues (#1823, #1153, #1148, #1106) we do this serially.
-            synchronized (monitor) {
-                registerGlueCodeScope(applicationContext);
-                notifyContextManagerAboutTestClassStarted();
-                registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
-            }
-        }
-
-        private void notifyContextManagerAboutTestClassStarted() {
-            try {
-                delegate.beforeTestClass();
-            } catch (Exception e) {
-                throw new CucumberBackendException(e.getMessage(), e);
-            }
-        }
-
-        @Override
-        public void stopApplicationContext() {
-            try {
-                delegate.afterTestClass();
-            } catch (Exception e) {
-                throw new CucumberBackendException(e.getMessage(), e);
-            }
-        }
-    }
-
-    private static final class FallbackApplicationContextAdaptor extends TestContextAdaptor {
-
-        FallbackApplicationContextAdaptor(ConfigurableApplicationContext applicationContext,
-                                          Collection<Class<?>> glueClasses) {
-            super(applicationContext, glueClasses);
-        }
-
-        @Override
-        public void startApplicationContext() {
-            applicationContext.registerShutdownHook();
-            applicationContext.refresh();
-            registerGlueCodeScope(applicationContext);
-            registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
-        }
-
-        @Override
-        public void stopApplicationContext() {
-            applicationContext.stop();
-        }
     }
 }
