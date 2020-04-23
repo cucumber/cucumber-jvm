@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ *  [Core] Support limited set of cURL commands for UrlOutputStream ([#1910](https://github.com/cucumber/cucumber-jvm/issues/#1910), [#1932](https://github.com/cucumber/cucumber-jvm/issues/1932) M.P. Korstanje, Aslak Hellesøy) 
+
+### Changed
+ * [Core] Use Gherkin 6+ and Cucumber messages ([#1841](https://github.com/cucumber/cucumber-jvm/issues/1841), [#1941](https://github.com/cucumber/cucumber-jvm/issues/1941), [#1942](https://github.com/cucumber/cucumber-jvm/issues/1942) M.P. Korstanje, Aslak Hellesøy) 
+   - Implements the `message` formatter which will output cucumber messages as ndjson as well as an improved `html`
+     formatter which renders a html report based on these messages.
+   - Switches the default parser to Gherkin 6+. This will enable rule support by default. 
+   - Adds exception to `TestRunFinished` event.
+   - Adds error state json to `JsonFormatter` output.
+   - Add exception handling around Cucumber execution. When execution fails, Cucumber will still emit the `TestRunFinished` event.
+
+### Deprecated
+
+### Removed
+
+### Fixed
+ * [Java] Invoke static methods without instantiating target object ([#1953](https://github.com/cucumber/cucumber-jvm/issues/1953) M.P. Korstanje)
+ 
+## [v5.x.x Unreleased] (In Git)
+
+### Added
  * [Java]  `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
 
 ### Changed
