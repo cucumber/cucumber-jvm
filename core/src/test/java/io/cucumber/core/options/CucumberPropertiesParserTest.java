@@ -33,13 +33,6 @@ class CucumberPropertiesParserTest {
     Path temp;
 
     @Test
-    void should_parse_cucumber_options() {
-        properties.put(Constants.OPTIONS_PROPERTY_NAME, "--glue com.example");
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlue(), equalTo(singletonList(URI.create("classpath:/com/example"))));
-    }
-
-    @Test
     void should_parse_ansi_colors() {
         properties.put(Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME, "true");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();

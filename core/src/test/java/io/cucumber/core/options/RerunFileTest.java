@@ -1,6 +1,5 @@
 package io.cucumber.core.options;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -12,14 +11,11 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Map;
 
-import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -179,23 +175,6 @@ class RerunFileTest {
         );
     }
 
-    @Test
-    void clobbers_features_from_rerun_file_specified_in_cli_if_features_specified_in_cucumber_options_property() throws Exception {
-        mockFileResource("path/bar.feature:2\n");
-
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse("@" + rerunPath)
-            .build();
-
-        RuntimeOptions options = new CucumberPropertiesParser()
-            .parse(singletonMap(OPTIONS_PROPERTY_NAME, "path/foo.feature"))
-            .build(runtimeOptions);
-
-        assertAll(
-            () -> assertThat(options.getFeaturePaths(), contains(new File("path/foo.feature").toURI())),
-            () -> assertThat(options.getLineFilters().size(), CoreMatchers.is(0))
-        );
-    }
 
     @Test
     void strips_lines_from_rerun_file_from_cli_if_filters_are_specified_in_cucumber_options_property() throws IOException {
@@ -206,11 +185,10 @@ class RerunFileTest {
         assertThat(options.getFeaturePaths(), contains(new File("path/file.feature").toURI()));
     }
 
-    private Map<String, String> mockFileResource(String... contents) throws IOException {
+    private void mockFileResource(String... contents) throws IOException {
         Path path = Files.createTempFile(temp, "rerun", ".txt");
         Files.write(path, Arrays.asList(contents), UTF_8, WRITE);
         this.rerunPath = path;
-        return singletonMap(OPTIONS_PROPERTY_NAME, "@" + path);
     }
 
 }

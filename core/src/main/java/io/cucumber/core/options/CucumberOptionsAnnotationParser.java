@@ -96,7 +96,7 @@ public final class CucumberOptionsAnnotationParser {
 
     private void addPlugins(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String plugin : options.plugin()) {
-            args.addPluginName(plugin, false);
+            args.addPluginName(plugin);
         }
     }
 

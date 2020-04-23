@@ -173,8 +173,8 @@ final class RuntimeOptionsParser {
                 parsedOptions.addGlue(parse);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedOptions.addTagFilter(removeArgFor(arg, args));
-            } else if (arg.equals("--plugin") || arg.equals("--add-plugin") || arg.equals("-p")) {
-                parsedOptions.addPluginName(removeArgFor(arg, args), arg.equals("--add-plugin"));
+            } else if (arg.equals("--plugin") || arg.equals("-p")) {
+                parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 parsedOptions.setDryRun(!arg.startsWith("--no-"));
             } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
