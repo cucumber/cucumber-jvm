@@ -27,7 +27,6 @@ import java.io.File;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -52,6 +51,7 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.hamcrest.text.MatchesPattern.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,7 +117,9 @@ class CommandlineOptionsParserTest {
 
     @Test
     void has_version_from_properties_file() {
-        assertTrue(CommandlineOptionsParser.VERSION.matches("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
+        parser.parse("--version");
+        assertThat(output(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?\n"));
+        assertThat(parser.exitStatus(), is(Optional.of((byte) 0x0)));
     }
 
     @Test
@@ -358,7 +360,7 @@ class CommandlineOptionsParserTest {
     @Test
     void fail_on_unsupported_options() {
         parser
-            .parse(asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"))
+            .parse("-concreteUnsupportedOption", "somewhere", "somewhere_else")
             .build();
         assertThat(output(), startsWith("Unknown option: -concreteUnsupportedOption"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
@@ -367,7 +369,7 @@ class CommandlineOptionsParserTest {
     @Test
     void threads_default_1() {
         RuntimeOptions options = parser
-            .parse(Collections.emptyList())
+            .parse()
             .build();
         assertThat(options.getThreads(), is(1));
     }
@@ -417,7 +419,7 @@ class CommandlineOptionsParserTest {
     @Test
     void ensure_default_snippet_type_is_underscore() {
         RuntimeOptions runtimeOptions = parser
-            .parse(Collections.emptyList())
+            .parse()
             .build();
         RuntimeOptions options = new CucumberPropertiesParser()
             .parse(properties)
@@ -428,7 +430,7 @@ class CommandlineOptionsParserTest {
     @Test
     void order_type_default_none() {
         RuntimeOptions options = parser
-            .parse(Collections.emptyList())
+            .parse()
             .build();
         Pickle a = createPickle("file:path/file1.feature", "a");
         Pickle b = createPickle("file:path/file2.feature", "b");

@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.joining;
 
 public final class CommandlineOptionsParser {
 
-    static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
+    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
 
@@ -44,11 +44,108 @@ public final class CommandlineOptionsParser {
         out = new PrintWriter(outputStream, true);
     }
 
+    public Optional<Byte> exitStatus() {
+        return Optional.of(exitCode);
+    }
+
+    public RuntimeOptionsBuilder parse(String... args) {
+        return parse(Arrays.asList(args));
+    }
+
+    private RuntimeOptionsBuilder parse(List<String> args) {
+        args = new ArrayList<>(args);
+        RuntimeOptionsBuilder parsedOptions = new RuntimeOptionsBuilder();
+
+        while (!args.isEmpty()) {
+            String arg = args.remove(0).trim();
+
+            if (arg.equals("--help") || arg.equals("-h")) {
+                printUsage();
+                exitCode = 0;
+                return parsedOptions;
+            } else if (arg.equals("--version") || arg.equals("-v")) {
+                out.println(VERSION);
+                exitCode = 0;
+                return parsedOptions;
+            } else if (arg.equals("--i18n")) {
+                String nextArg = removeArgFor(arg, args);
+                exitCode = printI18n(nextArg);
+                return parsedOptions;
+            } else if (arg.equals("--threads")) {
+                int threads = Integer.parseInt(removeArgFor(arg, args));
+                if (threads < 1) {
+                    out.println("--threads must be > 0");
+                    exitCode = 1;
+                    return parsedOptions;
+                }
+                parsedOptions.setThreads(threads);
+            } else if (arg.equals("--glue") || arg.equals("-g")) {
+                String gluePath = removeArgFor(arg, args);
+                URI parse = GluePath.parse(gluePath);
+                parsedOptions.addGlue(parse);
+            } else if (arg.equals("--tags") || arg.equals("-t")) {
+                parsedOptions.addTagFilter(removeArgFor(arg, args));
+            } else if (arg.equals("--plugin") || arg.equals("-p")) {
+                parsedOptions.addPluginName(removeArgFor(arg, args));
+            } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
+                parsedOptions.setDryRun(!arg.startsWith("--no-"));
+            } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
+                parsedOptions.setStrict(!arg.startsWith("--no-"));
+            } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
+                parsedOptions.setMonochrome(!arg.startsWith("--no-"));
+            } else if (arg.equals("--snippets")) {
+                String nextArg = removeArgFor(arg, args);
+                parsedOptions.setSnippetType(SnippetTypeParser.parseSnippetType(nextArg));
+            } else if (arg.equals("--name") || arg.equals("-n")) {
+                String nextArg = removeArgFor(arg, args);
+                Pattern pattern = Pattern.compile(nextArg);
+                parsedOptions.addNameFilter(pattern);
+            } else if (arg.equals("--wip") || arg.equals("-w")) {
+                parsedOptions.setWip(true);
+            } else if (arg.equals("--order")) {
+                parsedOptions.setPickleOrder(PickleOrderParser.parse(removeArgFor(arg, args)));
+            } else if (arg.equals("--count")) {
+                int count = Integer.parseInt(removeArgFor(arg, args));
+                if (count < 1) {
+                    out.println("--count must be > 0");
+                    exitCode = 1;
+                    return parsedOptions;
+                }
+                parsedOptions.setCount(count);
+            } else if (arg.equals("--object-factory")) {
+                String objectFactoryClassName = removeArgFor(arg, args);
+                parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
+            } else if (arg.startsWith("-")) {
+                out.println("Unknown option: " + arg);
+                printUsage();
+                exitCode = 1;
+                return parsedOptions;
+            } else if (!arg.isEmpty()) {
+                if (arg.startsWith("@")) {
+                    Path rerunFile = Paths.get(arg.substring(1));
+                    parsedOptions.addRerun(parseFeatureWithLinesFile(rerunFile));
+                } else {
+                    FeatureWithLines featureWithLines = FeatureWithLines.parse(arg);
+                    parsedOptions.addFeature(featureWithLines);
+                }
+            }
+        }
+        return parsedOptions;
+    }
+
+    private String removeArgFor(String arg, List<String> args) {
+        if (!args.isEmpty()) {
+            return args.remove(0);
+        }
+        printUsage();
+        throw new CucumberException("Missing argument for " + arg);
+    }
+
     private void printUsage() {
         out.println(loadUsageText());
     }
 
-    String loadUsageText() {
+    private String loadUsageText() {
         try (
             InputStream usageResourceStream = CommandlineOptionsParser.class.getResourceAsStream(USAGE_RESOURCE);
             BufferedReader br = new BufferedReader(new InputStreamReader(usageResourceStream, UTF_8))
@@ -148,102 +245,5 @@ public final class CommandlineOptionsParser {
         int width = maxWidth + padding;
 
         return String.format("%" + -width + "s", text);
-    }
-
-    public RuntimeOptionsBuilder parse(String... args) {
-        return parse(Arrays.asList(args));
-    }
-
-    public RuntimeOptionsBuilder parse(List<String> args) {
-        args = new ArrayList<>(args);
-        RuntimeOptionsBuilder parsedOptions = new RuntimeOptionsBuilder();
-
-        while (!args.isEmpty()) {
-            String arg = args.remove(0).trim();
-
-            if (arg.equals("--help") || arg.equals("-h")) {
-                printUsage();
-                exitCode = 0;
-                return parsedOptions;
-            } else if (arg.equals("--version") || arg.equals("-v")) {
-                out.println(VERSION);
-                exitCode = 0;
-                return parsedOptions;
-            } else if (arg.equals("--i18n")) {
-                String nextArg = removeArgFor(arg, args);
-                exitCode = printI18n(nextArg);
-                return parsedOptions;
-            } else if (arg.equals("--threads")) {
-                int threads = Integer.parseInt(removeArgFor(arg, args));
-                if (threads < 1) {
-                    out.println("--threads must be > 0");
-                    exitCode = 1;
-                    return parsedOptions;
-                }
-                parsedOptions.setThreads(threads);
-            } else if (arg.equals("--glue") || arg.equals("-g")) {
-                String gluePath = removeArgFor(arg, args);
-                URI parse = GluePath.parse(gluePath);
-                parsedOptions.addGlue(parse);
-            } else if (arg.equals("--tags") || arg.equals("-t")) {
-                parsedOptions.addTagFilter(removeArgFor(arg, args));
-            } else if (arg.equals("--plugin") || arg.equals("-p")) {
-                parsedOptions.addPluginName(removeArgFor(arg, args));
-            } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
-                parsedOptions.setDryRun(!arg.startsWith("--no-"));
-            } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
-                parsedOptions.setStrict(!arg.startsWith("--no-"));
-            } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
-                parsedOptions.setMonochrome(!arg.startsWith("--no-"));
-            } else if (arg.equals("--snippets")) {
-                String nextArg = removeArgFor(arg, args);
-                parsedOptions.setSnippetType(SnippetTypeParser.parseSnippetType(nextArg));
-            } else if (arg.equals("--name") || arg.equals("-n")) {
-                String nextArg = removeArgFor(arg, args);
-                Pattern pattern = Pattern.compile(nextArg);
-                parsedOptions.addNameFilter(pattern);
-            } else if (arg.equals("--wip") || arg.equals("-w")) {
-                parsedOptions.setWip(true);
-            } else if (arg.equals("--order")) {
-                parsedOptions.setPickleOrder(PickleOrderParser.parse(removeArgFor(arg, args)));
-            } else if (arg.equals("--count")) {
-                int count = Integer.parseInt(removeArgFor(arg, args));
-                if (count < 1) {
-                    out.println("--count must be > 0");
-                    exitCode = 1;
-                    return parsedOptions;
-                }
-                parsedOptions.setCount(count);
-            } else if (arg.equals("--object-factory")) {
-                String objectFactoryClassName = removeArgFor(arg, args);
-                parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
-            } else if (arg.startsWith("-")) {
-                out.println("Unknown option: " + arg);
-                printUsage();
-                exitCode = 1;
-                return parsedOptions;
-            } else if (!arg.isEmpty()) {
-                if (arg.startsWith("@")) {
-                    Path rerunFile = Paths.get(arg.substring(1));
-                    parsedOptions.addRerun(parseFeatureWithLinesFile(rerunFile));
-                } else {
-                    FeatureWithLines featureWithLines = FeatureWithLines.parse(arg);
-                    parsedOptions.addFeature(featureWithLines);
-                }
-            }
-        }
-        return parsedOptions;
-    }
-
-    private String removeArgFor(String arg, List<String> args) {
-        if (!args.isEmpty()) {
-            return args.remove(0);
-        }
-        printUsage();
-        throw new CucumberException("Missing argument for " + arg);
-    }
-
-    public Optional<Byte> exitStatus() {
-        return Optional.of(exitCode);
     }
 }
