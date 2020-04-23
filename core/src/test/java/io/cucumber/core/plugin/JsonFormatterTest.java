@@ -3,10 +3,10 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
@@ -1389,14 +1389,10 @@ class JsonFormatterTest {
         final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
+        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
         Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(featurePaths)
-                    .build(runtimeOptions)
-            )
+            .withRuntimeOptions(options.build())
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(new JsonFormatter(out))
@@ -1422,12 +1418,10 @@ class JsonFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
+        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
+        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
         Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(featurePaths)
-                    .build()
-            )
+            .withRuntimeOptions(options.build())
             .withEventBus(bus)
             .withBackendSupplier(backendSupplier)
             .withAdditionalPlugins(new JsonFormatter(out))

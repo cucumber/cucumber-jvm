@@ -177,11 +177,6 @@ class CommandlineOptionsParserTest {
         assertThat(options.getTagExpressions(), contains("@keep_this"));
     }
 
-    @Test
-    void trims_options() {
-        assertThat(ShellWords.parse("  --glue  somewhere   somewhere_else"),
-            contains("--glue", "somewhere", "somewhere_else"));
-    }
 
     @Test
     void assigns_glue() {
@@ -315,11 +310,6 @@ class CommandlineOptionsParserTest {
             .build();
         Pattern actualPattern = options.getNameFilters().iterator().next();
         assertThat(actualPattern.pattern(), is("some Name"));
-    }
-
-    @Test
-    void ensure_name_with_spaces_works_with_args() {
-        assertThat(ShellWords.parse("--name 'some Name'"), contains("--name", "some Name"));
     }
 
     @Test

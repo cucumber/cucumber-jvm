@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -21,10 +22,9 @@ class JsonParallelRuntimeTest {
 
         Runtime.builder()
             .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(
-                        "--threads", "3",
-                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature")
+                new RuntimeOptionsBuilder()
+                    .setThreads(3)
+                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
                     .build()
             )
             .withAdditionalPlugins(new JsonFormatter(parallel))
@@ -36,10 +36,9 @@ class JsonParallelRuntimeTest {
 
         Runtime.builder()
             .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(
-                        "--threads", "1",
-                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature")
+                new RuntimeOptionsBuilder()
+                    .setThreads(1)
+                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
                     .build()
             )
             .withAdditionalPlugins(new JsonFormatter(serial))
@@ -56,10 +55,10 @@ class JsonParallelRuntimeTest {
 
         Runtime.builder()
             .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse("--threads", "3",
-                        "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
-                        "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
+                new RuntimeOptionsBuilder()
+                    .setThreads(3)
+                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
                     .build()
             )
             .withAdditionalPlugins(new JsonFormatter(parallel))
@@ -70,11 +69,13 @@ class JsonParallelRuntimeTest {
         ByteArrayOutputStream serial = new ByteArrayOutputStream();
 
         Runtime.builder()
-            .withRuntimeOptions(new CommandlineOptionsParser()
-                .parse("--threads", "1",
-                    "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
-                    "src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature")
-                .build())
+            .withRuntimeOptions(
+                new RuntimeOptionsBuilder()
+                    .setThreads(1)
+                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
+                    .build()
+            )
             .withAdditionalPlugins(new JsonFormatter(serial))
             .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
             .build()

@@ -38,10 +38,6 @@ public final class CommandlineOptionsParser {
 
     private final PrintWriter out;
 
-    @Deprecated
-    public CommandlineOptionsParser() {
-        this(System.out);
-    }
     public CommandlineOptionsParser(OutputStream outputStream) {
         out = new PrintWriter(outputStream, true);
     }

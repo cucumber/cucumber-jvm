@@ -11,7 +11,8 @@ import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
@@ -71,7 +72,7 @@ public class TestHelper {
     private TimeServiceType timeServiceType = TimeServiceType.FIXED_INCREMENT_ON_STEP_START;
     private Duration timeServiceIncrement = Duration.ZERO;
     private Object formatterUnderTest = null;
-    private List<String> runtimeArgs = Collections.emptyList();
+    private RuntimeOptions runtimeArgs = new RuntimeOptionsBuilder().build();
 
     private TestHelper() {
     }
@@ -189,11 +190,7 @@ public class TestHelper {
             : new TestFeatureSupplier(features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(runtimeArgs)
-                    .build()
-            )
+            .withRuntimeOptions(runtimeArgs)
             .withClassLoader(classLoader)
             .withBackendSupplier(backendSupplier)
             .withFeatureSupplier(featureSupplier)
@@ -512,11 +509,7 @@ public class TestHelper {
             return this;
         }
 
-        public Builder withRuntimeArgs(String... runtimeArgs) {
-            return withRuntimeArgs(Arrays.asList(runtimeArgs));
-        }
-
-        public Builder withRuntimeArgs(List<String> runtimeArgs) {
+        public Builder withRuntimeArgs(RuntimeOptions runtimeArgs) {
             this.instance.runtimeArgs = runtimeArgs;
             return this;
         }

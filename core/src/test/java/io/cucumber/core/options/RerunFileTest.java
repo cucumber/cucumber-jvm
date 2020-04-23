@@ -5,6 +5,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -30,13 +31,17 @@ class RerunFileTest {
 
     Path rerunPath;
 
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+    CommandlineOptionsParser parser = new CommandlineOptionsParser(out);
+
     @Test
     void loads_features_specified_in_rerun_file() throws Exception {
         mockFileResource(
             "path/bar.feature:2\n" +
                 "path/foo.feature:4\n");
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -54,7 +59,7 @@ class RerunFileTest {
     void loads_no_features_when_rerun_file_is_empty() throws Exception {
         mockFileResource("");
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -68,7 +73,7 @@ class RerunFileTest {
     void loads_no_features_when_rerun_file_contains_new_line() throws Exception {
         mockFileResource("\n");
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -82,7 +87,7 @@ class RerunFileTest {
     void loads_no_features_when_rerun_file_contains_carriage_return() throws Exception {
         mockFileResource("\r");
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -96,7 +101,7 @@ class RerunFileTest {
     void loads_no_features_when_rerun_file_contains_new_line_and_carriage_return() throws Exception {
         mockFileResource("\r\n");
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -112,7 +117,7 @@ class RerunFileTest {
             "classpath:path/bar.feature:2\nclasspath:path/foo.feature:4"
         );
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -129,7 +134,7 @@ class RerunFileTest {
         mockFileResource(
             "file:/home/users/mp/My%20Documents/tests/bar.feature:2\n");
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -146,7 +151,7 @@ class RerunFileTest {
             "file:/home/users/mp/My%20Documents/tests/bar.feature:2file:/home/users/mp/My%20Documents/tests/foo.feature:4"
         );
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -165,7 +170,7 @@ class RerunFileTest {
     void loads_features_specified_in_rerun_file_with_empty_cucumber_options() throws Exception {
         mockFileResource("file:path/bar.feature:2\n");
 
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("@" + rerunPath)
             .build();
 
@@ -179,7 +184,7 @@ class RerunFileTest {
     @Test
     void strips_lines_from_rerun_file_from_cli_if_filters_are_specified_in_cucumber_options_property() throws IOException {
         mockFileResource("file:path/file.feature:3\n");
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("@" + rerunPath)
             .build();
         assertThat(options.getFeaturePaths(), contains(new File("path/file.feature").toURI()));
