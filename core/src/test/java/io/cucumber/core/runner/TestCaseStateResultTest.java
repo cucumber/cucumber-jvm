@@ -125,7 +125,7 @@ class TestCaseStateResultTest {
     @Test
     void embeds_data() {
         byte[] data = new byte[]{1, 2, 3};
-        s.embed(data, "bytes/foo");
+        s.attach(data, "bytes/foo", null);
         verify(bus).send(argThat(new EmbedEventMatcher(data, "bytes/foo")));
     }
 

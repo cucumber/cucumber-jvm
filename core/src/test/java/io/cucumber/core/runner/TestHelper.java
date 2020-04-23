@@ -129,7 +129,7 @@ public class TestHelper {
             if (name != null) {
                 state.attach(data, mediaType, name);
             } else {
-                state.embed(data, mediaType);
+                state.attach(data, mediaType, null);
             }
             return null;
         };

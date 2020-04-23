@@ -23,6 +23,9 @@ public final class Scenario {
         this.delegate = delegate;
     }
 
+    /**
+     * @return tags of this scenario.
+     */
     public Collection<String> getSourceTagNames() {
         return delegate.getSourceTagNames();
     }
@@ -39,49 +42,85 @@ public final class Scenario {
         return Status.valueOf(delegate.getStatus().name());
     }
 
+    /**
+     * @return true if and only if {@link #getStatus()} returns "failed"
+     */
     public boolean isFailed() {
         return delegate.isFailed();
     }
 
-    @Deprecated
-    public void embed(byte[] data, String mediaType) {
-        delegate.embed(data, mediaType);
-    }
-
-    @Deprecated
-    public void embed(byte[] data, String mediaType, String name) {
-        attach(data, mediaType, name);
-    }
-
+    /**
+     * Attach data to the report(s).
+     * <pre>
+     * {@code
+     * // Attach a screenshot. See your UI automation tool's docs for
+     * // details about how to take a screenshot.
+     * scenario.attach(pngBytes, "image/png", "Bartholomew and the Bytes of the Oobleck");
+     * }
+     * </pre>
+     * <p>
+     * To ensure reporting tools can understand what the data is a
+     * {@code mediaType} must be provided. For example: {@code text/plain},
+     * {@code image/png}, {@code text/html;charset=utf-8}.
+     * <p>
+     * Media types are defined in <a href= https://tools.ietf.org/html/rfc7231#section-3.1.1.1>RFC 7231 Section 3.1.1.1</a>.
+     *
+     * @param data      what to attach, for example an image.
+     * @param mediaType what is the data?
+     * @param name      attachment name
+     */
     public void attach(byte[] data, String mediaType, String name) {
         delegate.attach(data, mediaType, name);
     }
 
+    /**
+     * Attaches some text based data to the report.
+     *
+     * @param data      what to attach, for example html.
+     * @param mediaType what is the data?
+     * @param name      attachment name
+     * @see #attach(byte[], String, String)
+     */
     public void attach(String data, String mediaType, String name) {
         delegate.attach(data, mediaType, name);
     }
 
-    @Deprecated
-    public void write(String text) {
-        log(text);
-    }
-
+    /**
+     * Outputs some text into the report.
+     *
+     * @param text what to put in the report.
+     * @see #attach(byte[], String, String)
+     */
     public void log(String text) {
         delegate.log(text);
     }
 
+    /**
+     * @return the name of the Scenario
+     */
     public String getName() {
         return delegate.getName();
     }
 
+    /**
+     * @return the id of the Scenario.
+     */
     public String getId() {
         return delegate.getId();
     }
 
+    /**
+     * @return the uri of the Scenario.
+     */
     public URI getUri() {
         return delegate.getUri();
     }
 
+    /**
+     * @return the line in the feature file of the Scenario. If this is a Scenario
+     * from Scenario Outlines this will return the line of the example row in
+     * the Scenario Outline.
+     */
     public Integer getLine() {
         return delegate.getLine();
     }
