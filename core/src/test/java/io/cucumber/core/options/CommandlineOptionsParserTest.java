@@ -1,9 +1,10 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -16,11 +17,13 @@ import io.cucumber.plugin.event.EventPublisher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
 import java.time.Clock;
@@ -35,6 +38,7 @@ import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
@@ -44,17 +48,17 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.emptyCollectionOf;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-class RuntimeOptionsTest {
+class CommandlineOptionsParserTest {
 
     private final Map<String, String> properties = new HashMap<>();
 
@@ -77,20 +81,56 @@ class RuntimeOptionsTest {
         };
     }
 
+    private final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private final CommandlineOptionsParser parser = new CommandlineOptionsParser(out);
+
+    @Test
+    void testParseWithObjectFactoryArgument() {
+        RuntimeOptionsBuilder optionsBuilder = parser.parse("--object-factory", TestObjectFactory.class.getName());
+        assertNotNull(optionsBuilder);
+        RuntimeOptions options = optionsBuilder.build();
+        assertNotNull(options);
+        assertThat(options.getObjectFactoryClass(), Is.is(equalTo(TestObjectFactory.class)));
+    }
+
+    private static final class TestObjectFactory implements ObjectFactory {
+
+        @Override
+        public boolean addClass(Class<?> glueClass) {
+            return false;
+        }
+
+        @Override
+        public <T> T getInstance(Class<T> glueClass) {
+            return null;
+        }
+
+        @Override
+        public void start() {
+        }
+
+        @Override
+        public void stop() {
+        }
+
+    }
+
     @Test
     void has_version_from_properties_file() {
-        assertTrue(RuntimeOptionsParser.VERSION.matches("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
+        assertTrue(CommandlineOptionsParser.VERSION.matches("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
     }
 
     @Test
     void has_usage() {
-        RuntimeOptionsParser.loadUsageTextIfNeeded();
-        assertThat(RuntimeOptionsParser.usageText, startsWith("Usage"));
+        CucumberException exception = assertThrows(CucumberException.class, () -> parser.parse("--not-an-option"));
+
+        assertThat(new String(out.toByteArray(), UTF_8), startsWith("Usage"));
+        assertThat(exception.getMessage(), is("Unknown option: --not-an-option"));
     }
 
     @Test
     void assigns_feature_paths() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("somewhere_else")
             .build();
         assertThat(options.getFeaturePaths(), contains(new File("somewhere_else").toURI()));
@@ -98,7 +138,7 @@ class RuntimeOptionsTest {
 
     @Test
     void strips_line_filters_from_feature_paths_and_put_them_among_line_filters() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("somewhere_else.feature:3")
             .build();
 
@@ -110,7 +150,7 @@ class RuntimeOptionsTest {
 
     @Test
     void select_multiple_lines_in_a_features() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("somewhere_else.feature:3:5")
             .build();
         assertThat(options.getFeaturePaths(), contains(new File("somewhere_else.feature").toURI()));
@@ -121,7 +161,7 @@ class RuntimeOptionsTest {
 
     @Test
     void combines_line_filters_from_repeated_features() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("classpath:somewhere_else.feature:3", "classpath:somewhere_else.feature:5")
             .build();
         assertThat(options.getFeaturePaths(), contains(uri("classpath:somewhere_else.feature")));
@@ -131,7 +171,7 @@ class RuntimeOptionsTest {
 
     @Test
     void assigns_filters_from_tags() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--tags", "@keep_this")
             .build();
         assertThat(options.getTagExpressions(), contains("@keep_this"));
@@ -145,7 +185,7 @@ class RuntimeOptionsTest {
 
     @Test
     void assigns_glue() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--glue", "somewhere")
             .build();
         assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
@@ -153,7 +193,7 @@ class RuntimeOptionsTest {
 
     @Test
     void creates_html_formatter() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--plugin", "html:target/deeply/nested.html", "--glue", "somewhere")
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
@@ -164,7 +204,7 @@ class RuntimeOptionsTest {
 
     @Test
     void creates_progress_formatter_as_default() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse()
             .addDefaultFormatterIfAbsent()
             .build();
@@ -176,7 +216,7 @@ class RuntimeOptionsTest {
 
     @Test
     void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--plugin", "pretty")
             .addDefaultSummaryPrinterIfAbsent()
             .build();
@@ -188,7 +228,7 @@ class RuntimeOptionsTest {
 
     @Test
     void creates_null_summary_printer() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--plugin", "null_summary", "--glue", "somewhere")
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
@@ -202,7 +242,7 @@ class RuntimeOptionsTest {
 
     @Test
     void replaces_incompatible_intellij_idea_plugin() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--plugin", "org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter")
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
@@ -213,7 +253,7 @@ class RuntimeOptionsTest {
 
     @Test
     void assigns_strict() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--strict")
             .build();
         assertTrue(options.isStrict());
@@ -221,7 +261,7 @@ class RuntimeOptionsTest {
 
     @Test
     void assigns_strict_short() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("-s")
             .build();
         assertTrue(options.isStrict());
@@ -229,7 +269,7 @@ class RuntimeOptionsTest {
 
     @Test
     void default_strict() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse()
             .build();
         assertThat(options.isStrict(), is(false));
@@ -237,7 +277,7 @@ class RuntimeOptionsTest {
 
     @Test
     void assigns_wip() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--wip")
             .build();
         assertThat(options.isWip(), is(true));
@@ -245,7 +285,7 @@ class RuntimeOptionsTest {
 
     @Test
     void assigns_wip_short() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("-w")
             .build();
         assertThat(options.isWip(), is(true));
@@ -253,7 +293,7 @@ class RuntimeOptionsTest {
 
     @Test
     void default_wip() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse()
             .build();
         assertThat(options.isWip(), is(false));
@@ -261,7 +301,7 @@ class RuntimeOptionsTest {
 
     @Test
     void name_without_spaces_is_preserved() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--name", "someName")
             .build();
         Pattern actualPattern = options.getNameFilters().iterator().next();
@@ -270,7 +310,7 @@ class RuntimeOptionsTest {
 
     @Test
     void name_with_spaces_is_preserved() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--name", "some Name")
             .build();
         Pattern actualPattern = options.getNameFilters().iterator().next();
@@ -284,7 +324,7 @@ class RuntimeOptionsTest {
 
     @Test
     void combines_tag_filters_from_env_if_rerun_file_specified_in_cli() {
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("@src/test/resources/io/cucumber/core/options/runtime-options-rerun.txt")
             .build();
 
@@ -300,7 +340,7 @@ class RuntimeOptionsTest {
 
     @Test
     void clobbers_line_filters_from_cli_if_tags_are_specified_in_env() {
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse("file:path/to.feature")
             .build();
 
@@ -317,7 +357,7 @@ class RuntimeOptionsTest {
 
     @Test
     void fail_on_unsupported_options() {
-        Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> parser
             .parse(asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"))
             .build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -326,7 +366,7 @@ class RuntimeOptionsTest {
 
     @Test
     void threads_default_1() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse(Collections.emptyList())
             .build();
         assertThat(options.getThreads(), is(1));
@@ -334,7 +374,7 @@ class RuntimeOptionsTest {
 
     @Test
     void ensure_threads_param_is_used() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--threads", "10")
             .build();
         assertThat(options.getThreads(), is(10));
@@ -342,7 +382,7 @@ class RuntimeOptionsTest {
 
     @Test
     void ensure_less_than_1_thread_is_not_allowed() {
-        Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> parser
             .parse("--threads", "0")
             .build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -351,7 +391,7 @@ class RuntimeOptionsTest {
 
     @Test
     void set_monochrome_on_color_aware_formatters() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--monochrome", "--plugin", AwareFormatter.class.getName())
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
@@ -363,7 +403,7 @@ class RuntimeOptionsTest {
 
     @Test
     void set_strict_on_strict_aware_formatters() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--strict", "--plugin", AwareFormatter.class.getName())
             .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
@@ -376,7 +416,7 @@ class RuntimeOptionsTest {
 
     @Test
     void ensure_default_snippet_type_is_underscore() {
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = parser
             .parse(Collections.emptyList())
             .build();
         RuntimeOptions options = new CucumberPropertiesParser()
@@ -387,7 +427,7 @@ class RuntimeOptionsTest {
 
     @Test
     void order_type_default_none() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse(Collections.emptyList())
             .build();
         Pickle a = createPickle("file:path/file1.feature", "a");
@@ -398,7 +438,7 @@ class RuntimeOptionsTest {
 
     @Test
     void ensure_order_type_reverse_is_used() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--order", "reverse")
             .build();
         Pickle a = createPickle("file:path/file1.feature", "a");
@@ -409,14 +449,14 @@ class RuntimeOptionsTest {
 
     @Test
     void ensure_order_type_random_is_used() {
-        new CommandlineOptionsParser()
+        parser
             .parse("--order", "random")
             .build();
     }
 
     @Test
     void ensure_order_type_random_with_seed_is_used() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse("--order", "random:5000")
             .build();
         Pickle a = createPickle("file:path/file1.feature", "a");
@@ -437,7 +477,7 @@ class RuntimeOptionsTest {
 
     @Test
     void ensure_invalid_ordertype_is_not_allowed() {
-        Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> parser
             .parse("--order", "invalid")
             .build();
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
@@ -446,7 +486,7 @@ class RuntimeOptionsTest {
 
     @Test
     void ensure_less_than_1_count_is_not_allowed() {
-        Executable testMethod = () -> new CommandlineOptionsParser()
+        Executable testMethod = () -> parser
             .parse("--count", "0")
             .build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
@@ -455,7 +495,7 @@ class RuntimeOptionsTest {
 
     @Test
     void scans_class_path_root_for_glue_by_default() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse()
             .addDefaultGlueIfAbsent()
             .build();
@@ -464,7 +504,7 @@ class RuntimeOptionsTest {
 
     @Test
     void scans_class_path_root_for_features_by_default() {
-        RuntimeOptions options = new CommandlineOptionsParser()
+        RuntimeOptions options = parser
             .parse()
             .addDefaultFeaturePathIfAbsent()
             .build();

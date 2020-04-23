@@ -52,7 +52,7 @@ public class Main {
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        RuntimeOptions runtimeOptions = new CommandlineOptionsParser(System.out)
             .parse(argv)
             .addDefaultGlueIfAbsent()
             .addDefaultFeaturePathIfAbsent()
