@@ -1,7 +1,6 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
@@ -32,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -121,11 +121,22 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void has_usage() {
-        CucumberException exception = assertThrows(CucumberException.class, () -> parser.parse("--not-an-option"));
+    void prints_usage_for_unknown_options() {
+        parser.parse("--not-an-option");
+        assertThat(output(), startsWith("Unknown option: --not-an-option"));
+        assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
 
-        assertThat(new String(out.toByteArray(), UTF_8), startsWith("Usage"));
-        assertThat(exception.getMessage(), is("Unknown option: --not-an-option"));
+    }
+
+    private String output() {
+        return new String(out.toByteArray(), UTF_8);
+    }
+
+    @Test
+    void prints_usage_for_help() {
+        parser.parse("--help");
+
+        assertThat(output(), startsWith("Usage"));
     }
 
     @Test
@@ -176,7 +187,6 @@ class CommandlineOptionsParserTest {
             .build();
         assertThat(options.getTagExpressions(), contains("@keep_this"));
     }
-
 
     @Test
     void assigns_glue() {
@@ -347,11 +357,11 @@ class CommandlineOptionsParserTest {
 
     @Test
     void fail_on_unsupported_options() {
-        Executable testMethod = () -> parser
+        parser
             .parse(asList("-concreteUnsupportedOption", "somewhere", "somewhere_else"))
             .build();
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo("Unknown option: -concreteUnsupportedOption")));
+        assertThat(output(), startsWith("Unknown option: -concreteUnsupportedOption"));
+        assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
 
     @Test
@@ -372,11 +382,11 @@ class CommandlineOptionsParserTest {
 
     @Test
     void ensure_less_than_1_thread_is_not_allowed() {
-        Executable testMethod = () -> parser
+        parser
             .parse("--threads", "0")
             .build();
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo("--threads must be > 0")));
+        assertThat(output(), is("--threads must be > 0\n"));
+        assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
 
     @Test
@@ -476,11 +486,11 @@ class CommandlineOptionsParserTest {
 
     @Test
     void ensure_less_than_1_count_is_not_allowed() {
-        Executable testMethod = () -> parser
+        parser
             .parse("--count", "0")
             .build();
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo("--count must be > 0")));
+        assertThat(output(), is("--count must be > 0\n"));
+        assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
 
     @Test

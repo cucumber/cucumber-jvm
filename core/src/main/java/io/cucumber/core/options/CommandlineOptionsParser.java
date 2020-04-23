@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -37,6 +38,7 @@ public final class CommandlineOptionsParser {
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
 
     private final PrintWriter out;
+    private Byte exitCode = null;
 
     public CommandlineOptionsParser(OutputStream outputStream) {
         out = new PrintWriter(outputStream, true);
@@ -57,7 +59,7 @@ public final class CommandlineOptionsParser {
         }
     }
 
-    private int printI18n(String language) {
+    private byte printI18n(String language) {
         IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
         List<String> languages = dialectProvider.getLanguages();
 
@@ -76,7 +78,7 @@ public final class CommandlineOptionsParser {
                 for (GherkinDialect dialect : dialects) {
                     printDialect(dialect, widestLanguage, widestName, widestNativeName);
                 }
-                return 0;
+                return 0x0;
             }
         }
         if (languages.contains(language)) {
@@ -84,7 +86,7 @@ public final class CommandlineOptionsParser {
         }
 
         out.println("Unrecognised ISO language code");
-        return 1;
+        return 0x1;
     }
 
     private int findWidest(List<GherkinDialect> dialects, Function<GherkinDialect, String> getNativeName) {
@@ -95,7 +97,7 @@ public final class CommandlineOptionsParser {
             .orElse(0);
     }
 
-    private int printKeywordsFor(GherkinDialect dialect) {
+    private byte printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
         List<List<String>> table = new ArrayList<>();
         addKeywordRow(table, "feature", dialect.getFeatureKeywords());
@@ -115,7 +117,7 @@ public final class CommandlineOptionsParser {
         addCodeKeywordRow(table, "but", dialect.getButKeywords());
         DataTable.create(table).print(builder);
         out.println(builder.toString());
-        return 0;
+        return 0x0;
     }
 
     private void addCodeKeywordRow(List<List<String>> table, String key, List<String> keywords) {
@@ -161,17 +163,22 @@ public final class CommandlineOptionsParser {
 
             if (arg.equals("--help") || arg.equals("-h")) {
                 printUsage();
-                System.exit(0);
+                exitCode = 0;
+                return parsedOptions;
             } else if (arg.equals("--version") || arg.equals("-v")) {
                 out.println(VERSION);
-                System.exit(0);
+                exitCode = 0;
+                return parsedOptions;
             } else if (arg.equals("--i18n")) {
                 String nextArg = removeArgFor(arg, args);
-                System.exit(printI18n(nextArg));
+                exitCode = printI18n(nextArg);
+                return parsedOptions;
             } else if (arg.equals("--threads")) {
                 int threads = Integer.parseInt(removeArgFor(arg, args));
                 if (threads < 1) {
-                    throw new CucumberException("--threads must be > 0");
+                    out.println("--threads must be > 0");
+                    exitCode = 1;
+                    return parsedOptions;
                 }
                 parsedOptions.setThreads(threads);
             } else if (arg.equals("--glue") || arg.equals("-g")) {
@@ -202,15 +209,19 @@ public final class CommandlineOptionsParser {
             } else if (arg.equals("--count")) {
                 int count = Integer.parseInt(removeArgFor(arg, args));
                 if (count < 1) {
-                    throw new CucumberException("--count must be > 0");
+                    out.println("--count must be > 0");
+                    exitCode = 1;
+                    return parsedOptions;
                 }
                 parsedOptions.setCount(count);
             } else if (arg.equals("--object-factory")) {
                 String objectFactoryClassName = removeArgFor(arg, args);
                 parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
             } else if (arg.startsWith("-")) {
+                out.println("Unknown option: " + arg);
                 printUsage();
-                throw new CucumberException("Unknown option: " + arg);
+                exitCode = 1;
+                return parsedOptions;
             } else if (!arg.isEmpty()) {
                 if (arg.startsWith("@")) {
                     Path rerunFile = Paths.get(arg.substring(1));
@@ -232,4 +243,7 @@ public final class CommandlineOptionsParser {
         throw new CucumberException("Missing argument for " + arg);
     }
 
+    public Optional<Byte> exitStatus() {
+        return Optional.of(exitCode);
+    }
 }
