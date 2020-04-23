@@ -64,6 +64,8 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 case "testCaseId":
                 case "testStepId":
                 case "testCaseStartedId":
+                // exception: protocolVersion can vary
+                case "protocolVersion":
                     expected.add(hasEntry(is(fieldName), isA(String.class)));
                     break;
                 case "astNodeIds":
@@ -74,6 +76,11 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 // exception: timestamps and durations are not predictable
                 case "timestamp":
                 case "duration":
+                // exception: Mata fields depend on the platform
+                case "implementation":
+                case "runtime":
+                case "os":
+                case "cpu":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 

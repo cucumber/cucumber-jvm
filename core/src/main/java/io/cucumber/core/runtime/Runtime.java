@@ -68,6 +68,7 @@ public final class Runtime {
     }
 
     public void run() {
+        context.emitMeta();
         final List<Feature> features = featureSupplier.get();
         features.forEach(context::beforeFeature);
         context.startTestRun();

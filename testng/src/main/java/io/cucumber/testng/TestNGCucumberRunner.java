@@ -109,6 +109,7 @@ public final class TestNGCucumberRunner {
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
+        context.emitMeta();
 
         // Start test execution now.
         plugins.setSerialEventBusOnEventListenerPlugins(bus);

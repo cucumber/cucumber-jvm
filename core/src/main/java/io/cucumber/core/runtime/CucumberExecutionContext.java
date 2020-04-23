@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static io.cucumber.core.runtime.Meta.makeMeta;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.synchronizedList;
 
@@ -38,6 +39,13 @@ public final class CucumberExecutionContext {
         this.bus = bus;
         this.exitStatus = exitStatus;
         this.runnerSupplier = runnerSupplier;
+    }
+
+    public void emitMeta() {
+        bus.send(Messages.Envelope.newBuilder()
+            .setMeta(makeMeta())
+            .build()
+        );
     }
 
     public void startTestRun() {
@@ -113,5 +121,4 @@ public final class CucumberExecutionContext {
             throw e;
         }
     }
-
 }

@@ -17,6 +17,7 @@ import io.cucumber.core.plugin.FormatterSpy;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
+import io.cucumber.messages.Messages;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
@@ -50,7 +51,9 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -472,8 +475,6 @@ class RuntimeTest {
                 glue.addStepDefinition(mockedScenarioScopedStepDefinition);
             }
         };
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         FeatureSupplier featureSupplier = () -> singletonList(feature);
         Runtime.builder()
