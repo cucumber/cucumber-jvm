@@ -67,9 +67,9 @@ public @interface CucumberOptions {
      * <p>
      * For example {@code "@smoke and not @fast"}.
      *
-     * @return list of tags
+     * @return a tag expression
      */
-    String[] tags() default {};
+    String tags() default "";
 
     /**
      * Register plugins.

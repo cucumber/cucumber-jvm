@@ -47,7 +47,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         }
 
         @Override
-        public String[] tags() {
+        public String tags() {
             return annotation.tags();
         }
 

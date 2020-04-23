@@ -47,7 +47,7 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
         }
 
         @Override
-        public String[] tags() {
+        public String tags() {
             return annotation.tags();
         }
 
