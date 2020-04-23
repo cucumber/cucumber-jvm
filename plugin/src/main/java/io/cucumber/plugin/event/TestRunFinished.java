@@ -7,18 +7,18 @@ import java.time.Instant;
 @API(status = API.Status.STABLE)
 public final class TestRunFinished extends TimeStampedEvent {
 
-    private final Exception exception;
+    private final Result result;
 
     public TestRunFinished(Instant timeInstant) {
         this(timeInstant, null);
     }
 
-    public TestRunFinished(Instant timeInstant, Exception exception) {
+    public TestRunFinished(Instant timeInstant, Result result) {
         super(timeInstant);
-        this.exception = exception;
+        this.result = result;
     }
 
-    public Exception getException() {
-        return exception;
+    public Result getResult() {
+        return result;
     }
 }

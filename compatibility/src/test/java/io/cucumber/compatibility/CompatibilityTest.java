@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,11 @@ public class CompatibilityTest {
         Map<String, List<GeneratedMessageV3>> expectedEnvelopes = openEnvelopes(expected);
         Map<String, List<GeneratedMessageV3>> actualEnvelopes = openEnvelopes(actual);
 
+        // exception: Java step definitions are not in a predictable order because
+        // Class#getMethods() does not return a predictable order.
+        sortStepDefinitions(expectedEnvelopes);
+        sortStepDefinitions(actualEnvelopes);
+
         // exception: Cucumber JVM can't execute when there are unknown-parameter-types
         if ("unknown-parameter-type".equals(testCase.getId())) {
             expectedEnvelopes.remove("testCase");
@@ -79,6 +85,18 @@ public class CompatibilityTest {
                 hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))
             )
         );
+    }
+
+    private void sortStepDefinitions(Map<String, List<GeneratedMessageV3>> envelopes) {
+        Comparator<GeneratedMessageV3> stepDefinitionPatternComparator = (a, b) -> {
+            Messages.StepDefinition sa = (Messages.StepDefinition) a;
+            Messages.StepDefinition sb = (Messages.StepDefinition) b;
+            return sa.getPattern().getSource().compareTo(sb.getPattern().getSource());
+        };
+        List<GeneratedMessageV3> actualStepDefinitions = envelopes.get("stepDefinition");
+        if (actualStepDefinitions != null) {
+            actualStepDefinitions.sort(stepDefinitionPatternComparator);
+        }
     }
 
     private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {

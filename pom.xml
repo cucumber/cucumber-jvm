@@ -51,6 +51,14 @@
         <cucumber-expressions.version>10.1.0</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
+        <!--
+        IMPORTANT!
+        Whenever messages.version is updated, also update the files from the compatibility kit:
+        cd ../cucumber # the monorepo
+        git checkout messages/vMAJOR.MINOR.PATCH
+        cd ../cucumber-jvm
+        ./compatibility/copy-cck-expectations.sh
+        -->
         <messages.version>12.1.1</messages.version>
         <gherkin-messages.version>13.0.0</gherkin-messages.version>
         <html-formatter.version>6.0.1</html-formatter.version>

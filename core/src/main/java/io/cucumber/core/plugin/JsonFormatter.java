@@ -138,7 +138,7 @@ public final class JsonFormatter implements EventListener {
     }
 
     private void finishReport(TestRunFinished event) {
-        Exception exception = event.getException();
+        Throwable exception = event.getResult().getError();
         if (exception != null) {
             Map<String, Object> feature = new LinkedHashMap<>();
             feature.put("description", "Test run failed");

@@ -33,11 +33,11 @@ public final class ExitStatus implements ConcurrentEventListener {
         publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
     }
 
-    public byte exitStatus() {
+    byte exitStatus() {
         return isSuccess() ? DEFAULT : ERRORS;
     }
 
-    public boolean isSuccess() {
+    boolean isSuccess() {
         if (results.isEmpty()) {
             return true;
         }
@@ -49,5 +49,13 @@ public final class ExitStatus implements ConcurrentEventListener {
             Result mostSevereResult = max(results, comparing(Result::getStatus));
             return mostSevereResult.getStatus().isOk(options.isStrict());
         }
+    }
+
+    Status getStatus() {
+        if (results.isEmpty()) {
+            return Status.PASSED;
+        }
+        Result mostSevereResult = max(results, comparing(Result::getStatus));
+        return mostSevereResult.getStatus();
     }
 }
