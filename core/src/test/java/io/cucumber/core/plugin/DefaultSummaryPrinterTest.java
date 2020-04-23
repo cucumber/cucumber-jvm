@@ -27,7 +27,6 @@ class DefaultSummaryPrinterTest {
         Clock.fixed(ofEpochSecond(0), ZoneId.of("UTC")),
         UUID::randomUUID
     );
-    private final String LINE_ENDING = System.lineSeparator();
 
     @BeforeEach
     void setup() {
@@ -56,18 +55,18 @@ class DefaultSummaryPrinterTest {
             bus.getInstant()
         ));
 
-        assertThat(new String(out.toByteArray(), UTF_8), is("" +
-            LINE_ENDING +
-            "0 Scenarios" + LINE_ENDING +
-            "0 Steps" + LINE_ENDING +
-            "0m0.000s" + LINE_ENDING +
-            LINE_ENDING +
-                LINE_ENDING +
-            "You can implement missing steps with the snippets below:" + LINE_ENDING +
-            LINE_ENDING +
-            "snippet" + LINE_ENDING +
-            LINE_ENDING +
-            LINE_ENDING
+        assertThat(new String(out.toByteArray(), UTF_8), equalToCompressingWhiteSpace("" +
+            "\n" +
+            "0 Scenarios\n" +
+            "0 Steps\n" +
+            "0m0.000s\n" +
+            "\n" +
+            "\n" +
+            "You can implement missing steps with the snippets below:\n" +
+            "\n" +
+            "snippet\n" +
+            "\n" +
+            "\n"
         ));
 
     }
