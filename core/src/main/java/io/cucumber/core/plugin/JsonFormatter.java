@@ -36,6 +36,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
+import static java.util.Collections.singletonList;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 
@@ -140,16 +142,7 @@ public final class JsonFormatter implements EventListener {
     private void finishReport(TestRunFinished event) {
         Throwable exception = event.getResult().getError();
         if (exception != null) {
-            Map<String, Object> feature = new LinkedHashMap<>();
-            feature.put("description", "Test run failed");
-            Map<String, Object> elements = new LinkedHashMap<>();
-            feature.put("elements", elements);
-            elements.put("description", "There were errors during the execution");
-            Map<String, Object> result = new LinkedHashMap<>();
-            elements.put("result", result);
-            result.put("error_message", exception.getMessage());
-            result.put("status", "failed");
-            featureMaps.add(feature);
+            featureMaps.add(createDummyFeatureForFailure(event));
         }
 
         gson.toJson(featureMaps, out);
@@ -158,6 +151,69 @@ public final class JsonFormatter implements EventListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Map<String, Object> createDummyFeatureForFailure(TestRunFinished event) {
+        Throwable exception = event.getResult().getError();
+
+        Map<String, Object> feature = new LinkedHashMap<>();
+        feature.put("line", 1);
+        {
+            Map<String, Object> scenario = new LinkedHashMap<>();
+            feature.put("elements", singletonList(scenario));
+
+            scenario.put("start_timestamp", getDateTimeFromTimeStamp(event.getInstant()));
+            scenario.put("line", 2);
+            scenario.put("name", "Could not execute Cucumber");
+            scenario.put("description", "");
+            scenario.put("id", "failure;could-not-execute-cucumber");
+            scenario.put("type", "scenario");
+            scenario.put("keyword", "Scenario");
+
+            Map<String, Object> when = new LinkedHashMap<>();
+            Map<String, Object> then = new LinkedHashMap<>();
+            scenario.put("steps", Arrays.asList(when, then));
+            {
+
+                {
+                    Map<String, Object> whenResult = new LinkedHashMap<>();
+                    when.put("result", whenResult);
+                    whenResult.put("duration", 0);
+                    whenResult.put("status", "passed");
+                }
+                when.put("line", 3);
+                when.put("name", "Cucumber could not execute");
+                Map<String, Object> whenMatch = new LinkedHashMap<>();
+                when.put("match", whenMatch);
+                whenMatch.put("arguments", new ArrayList<>());
+                whenMatch.put("location", "io.cucumber.core.Failure.cucumber_could_not_execute()");
+                when.put("keyword", "When ");
+
+                {
+                    Map<String, Object> thenResult = new LinkedHashMap<>();
+                    then.put("result", thenResult);
+                    thenResult.put("duration", 0);
+                    thenResult.put("error_message", exception.getMessage());
+                    thenResult.put("status", "failed");
+                }
+                then.put("line", 4);
+                then.put("name", "Cucumber will report this error:");
+                Map<String, Object> thenMatch = new LinkedHashMap<>();
+                then.put("match", thenMatch);
+                thenMatch.put("arguments", new ArrayList<>());
+                thenMatch.put("location", "io.cucumber.core.Failure.cucumber_reports_this_error()");
+                then.put("keyword", "Then ");
+            }
+
+            feature.put("name", "Test run failed");
+            feature.put("description", "There were errors during the execution");
+            feature.put("id", "failure");
+            feature.put("keyword", "Feature");
+            feature.put("uri", "classpath:io/cucumber/core/failure.feature");
+            feature.put("tags", new ArrayList<>());
+        }
+
+        return feature;
     }
 
     private Map<String, Object> createFeatureMap(TestCase testCase) {
