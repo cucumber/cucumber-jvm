@@ -16,8 +16,8 @@ import java.util.UUID;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.ofEpochSecond;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 
 class DefaultSummaryPrinterTest {
 
@@ -55,7 +55,7 @@ class DefaultSummaryPrinterTest {
             bus.getInstant()
         ));
 
-        assertThat(new String(out.toByteArray(), UTF_8), is("" +
+        assertThat(new String(out.toByteArray(), UTF_8), equalToCompressingWhiteSpace("" +
             "\n" +
             "0 Scenarios\n" +
             "0 Steps\n" +
