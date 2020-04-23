@@ -269,7 +269,6 @@
         <module>spring</module>
         <module>testng</module>
         <module>weld</module>
-        <module>compatibility</module>
     </modules>
 
     <profiles>
@@ -280,6 +279,15 @@
             </activation>
             <modules>
                 <module>examples</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>compatibility</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>compatibility</module>
             </modules>
         </profile>
 
