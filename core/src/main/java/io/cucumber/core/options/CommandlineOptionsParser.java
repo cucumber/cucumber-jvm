@@ -45,7 +45,7 @@ public final class CommandlineOptionsParser {
     }
 
     public Optional<Byte> exitStatus() {
-        return Optional.of(exitCode);
+        return Optional.ofNullable(exitCode);
     }
 
     public RuntimeOptionsBuilder parse(String... args) {
