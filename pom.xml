@@ -526,6 +526,7 @@
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <oldVersion>5.6.0</oldVersion>
                         <analysisConfiguration>
                             <revapi.semver.ignore>
                                 <enabled>true</enabled>
@@ -536,11 +537,11 @@
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
                             <revapi.ignore>
+                                <!-- Cucumber-JUnit  -->
                                 <item>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old><![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Pickle> io.cucumber.core.gherkin.Feature::getPickleAt(io.cucumber.core.gherkin.Located)]]></old>
-                                    <new><![CDATA[method io.cucumber.core.gherkin.Pickle io.cucumber.core.gherkin.Feature::getPickleAt(io.cucumber.core.gherkin.Located)]]></new>
-                                    <justification>Internal API</justification>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>junit:junit:jar:${junit.version}</newArchive>
+                                    <justification>Implements JUnit4 API</justification>
                                 </item>
                                 <!-- Gherkin parser related -->
                                 <item>
