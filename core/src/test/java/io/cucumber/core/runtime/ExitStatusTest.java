@@ -1,12 +1,12 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.core.options.RuntimeOptions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -35,17 +35,14 @@ class ExitStatusTest {
     }
 
     private void createNonStrictWipExitStatus() {
-        createExitStatus("-g", "anything", "--wip");
+        createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
         return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
-    private void createExitStatus(String... runtimeArgs) {
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse(runtimeArgs)
-            .build();
+    private void createExitStatus(RuntimeOptions runtimeOptions) {
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
@@ -99,7 +96,7 @@ class ExitStatusTest {
     }
 
     private void createNonStrictExitStatus() {
-        createExitStatus("-g", "anything");
+        createExitStatus(new RuntimeOptionsBuilder().build());
     }
 
     @Test
@@ -156,7 +153,7 @@ class ExitStatusTest {
     }
 
     private void createStrictWipRuntime() {
-        createExitStatus("-g", "anything", "--strict", "--wip");
+        createExitStatus(new RuntimeOptionsBuilder().setStrict(true).setWip(true).build());
     }
 
     @Test
@@ -234,7 +231,7 @@ class ExitStatusTest {
     }
 
     private void createStrictRuntime() {
-        createExitStatus("-g", "anything", "--strict");
+        createExitStatus(new RuntimeOptionsBuilder().setStrict(true).build());
     }
 
     @Test

@@ -22,10 +22,6 @@ Options:
                                            qualified class name, allowing
                                            registration of 3rd party plugins.
 
-                                           --add-plugin does not clobber plugins
-                                           of that type defined from a different
-                                           source.
-
                                            If a http:// or https:// URI is used,
                                            the output will be sent as a PUT
                                            request. This can be overridden by

@@ -10,6 +10,8 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.Runtime;
 import org.apiguardian.api.API;
 
+import java.util.Optional;
+
 /**
  * Cucumber Main. Runs Cucumber as a CLI.
  * <p>
@@ -52,13 +54,19 @@ public class Main {
             .parse(CucumberProperties.fromSystemProperties())
             .build(environmentOptions);
 
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
+        CommandlineOptionsParser commandlineOptionsParser = new CommandlineOptionsParser(System.out);
+        RuntimeOptions runtimeOptions = commandlineOptionsParser
             .parse(argv)
             .addDefaultGlueIfAbsent()
             .addDefaultFeaturePathIfAbsent()
             .addDefaultFormatterIfAbsent()
             .addDefaultSummaryPrinterIfAbsent()
             .build(systemOptions);
+
+        Optional<Byte> exitStatus = commandlineOptionsParser.exitStatus();
+        if (exitStatus.isPresent()) {
+            return exitStatus.get();
+        }
 
         if (!runtimeOptions.isStrict()) {
             log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +

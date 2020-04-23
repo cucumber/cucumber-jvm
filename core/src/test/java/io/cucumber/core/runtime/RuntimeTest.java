@@ -11,13 +11,11 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
-import io.cucumber.messages.Messages;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
@@ -51,15 +49,12 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 class RuntimeTest {
 
@@ -330,11 +325,7 @@ class RuntimeTest {
         Runtime.builder()
             .withFeatureSupplier(new TestFeatureSupplier(features))
             .withEventBus(bus)
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse("--threads", String.valueOf(features.size()))
-                    .build()
-            )
+            .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(features.size()).build())
             .withAdditionalPlugins(formatterSpy)
             .withBackendSupplier(new TestHelper.TestHelperBackendSupplier(features))
             .build()
@@ -385,7 +376,7 @@ class RuntimeTest {
             .withFeatures(Arrays.asList(feature1, feature2))
             .withFormatterUnderTest(brokenEventListener)
             .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .withRuntimeArgs("--threads", "2")
+            .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
             .build()
             .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
@@ -427,7 +418,7 @@ class RuntimeTest {
             .withFeatures(Arrays.asList(feature1, feature2))
             .withFormatterUnderTest(brokenEventListener)
             .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .withRuntimeArgs("--threads", "2")
+            .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
             .build()
             .run());
 

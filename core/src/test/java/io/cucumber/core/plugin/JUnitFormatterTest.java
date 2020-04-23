@@ -1,7 +1,9 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
@@ -546,16 +548,13 @@ class JUnitFormatterTest {
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
-        List<String> args = new ArrayList<>();
-        if (strict) {
-            args.add("--strict");
-        }
-        args.add("--plugin");
-        args.add("junit:" + report.getAbsolutePath());
-        args.addAll(featurePaths);
+        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder()
+            .setStrict(strict)
+            .addPluginName("junit:" + report.getAbsolutePath());
+        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
 
         TestHelper.builder()
-            .withRuntimeArgs(args)
+            .withRuntimeArgs(options.build())
             .withFeatures(features)
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)

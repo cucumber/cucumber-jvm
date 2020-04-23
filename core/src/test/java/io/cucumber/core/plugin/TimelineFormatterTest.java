@@ -1,12 +1,13 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.runner.TestHelper;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.messages.internal.com.google.gson.JsonDeserializer;
 import io.cucumber.plugin.event.Result;
-import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.feature.TestFeatureParser;
-import io.cucumber.core.runner.TestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -130,7 +131,7 @@ class TimelineFormatterTest {
     void shouldWriteItemsCorrectlyToReportJsWhenRunInParallel() throws Throwable {
         TestHelper.builder()
             .withFeatures(failingFeature, successfulFeature, pendingFeature)
-            .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath(), "--threads", "3")
+            .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).setThreads(2).build())
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
             .withTimeServiceIncrement(STEP_DURATION)
@@ -241,7 +242,7 @@ class TimelineFormatterTest {
     private void runFormatterWithPlugin() {
         TestHelper.builder()
             .withFeatures(failingFeature, successfulFeature, pendingFeature)
-            .withRuntimeArgs("--plugin", "timeline:" + reportDir.getAbsolutePath())
+            .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).build())
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
             .withTimeServiceIncrement(STEP_DURATION)
