@@ -197,7 +197,7 @@ class JUnitReporterWithStepNotificationsTest {
     }
 
     @Test
-    void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_pending_exception() {
+    void test_step_finished_fires_test_failure_and_test_finished_for_skipped_step_with_pending_exception() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
         bus.send(new TestCaseStarted(now(), testCase));
@@ -206,7 +206,7 @@ class JUnitReporterWithStepNotificationsTest {
         Result result = new Result(Status.PENDING, ZERO, exception);
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
-        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
 
         Failure stepFailure = failureArgumentCaptor.getValue();
@@ -215,7 +215,7 @@ class JUnitReporterWithStepNotificationsTest {
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
-        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
@@ -225,7 +225,7 @@ class JUnitReporterWithStepNotificationsTest {
     }
 
     @Test
-    void test_step_undefined_fires_assumption_failed_and_test_finished_for_undefined_step() {
+    void test_step_undefined_fires_test_failure_and_test_finished_for_undefined_step() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
         bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, singletonList("some snippet")));
@@ -235,7 +235,7 @@ class JUnitReporterWithStepNotificationsTest {
         Result result = new Result(Status.UNDEFINED, ZERO, exception);
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
-        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
 
         Failure stepFailure = failureArgumentCaptor.getValue();
@@ -244,7 +244,7 @@ class JUnitReporterWithStepNotificationsTest {
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
-        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
 
         Failure pickleFailure = failureArgumentCaptor.getValue();

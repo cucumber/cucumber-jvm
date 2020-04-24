@@ -15,4 +15,8 @@ final class DescriptionMatcher implements ArgumentMatcher<Description> {
         return argument != null && argument.getDisplayName().equals(name);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }
