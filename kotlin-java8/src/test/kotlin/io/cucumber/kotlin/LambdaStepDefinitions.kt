@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable
 import io.cucumber.java8.En
 import io.cucumber.java8.Scenario
 import org.junit.jupiter.api.Assertions.*
+import org.opentest4j.TestAbortedException
 
 var lastInstance: LambdaStepDefinitions? = null
 
@@ -52,12 +53,14 @@ class LambdaStepDefinitions : En {
             assertEquals("hello", localState)
         }
 
-        Given("A statement with a body expression$") { assertTrue(true) }
+        Given("A statement with a body expression") { assertTrue(true) }
 
-        Given("A statement with a simple match$", { assertTrue(true) })
+        Given("A statement with a simple match", { assertTrue(true) })
+
+        Given("something that is skipped") { throw TestAbortedException("skip this!") }
 
         val localInt = 1
-        Given("A statement with a scoped argument$", { assertEquals(2, localInt + 1) })
+        Given("A statement with a scoped argument", { assertEquals(2, localInt + 1) })
 
         Given("I will give you {int} and {float} and {word} and {int}") { a: Int, b: Float, c: String, d: Int ->
             assertEquals(1, a)
