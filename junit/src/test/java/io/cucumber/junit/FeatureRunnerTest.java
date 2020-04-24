@@ -275,10 +275,10 @@ class FeatureRunnerTest {
         order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario #1)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario #1)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario #1)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #2(scenario #1)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario #1)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario #1)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario #1)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #3(scenario #1)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario #1)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario #1)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #1")));
 
@@ -287,10 +287,10 @@ class FeatureRunnerTest {
         order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario #2)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario #2)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario #2)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #2(scenario #2)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario #2)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario #2)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario #2)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #3(scenario #2)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario #2)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario #2)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #2")));
 
@@ -299,10 +299,10 @@ class FeatureRunnerTest {
         order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario #3)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario #3)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario #3)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #2(scenario #3)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario #3)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario #3)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario #3)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #3(scenario #3)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario #3)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario #3)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #3")));
     }
@@ -329,18 +329,19 @@ class FeatureRunnerTest {
         order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario_1 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario_1 name)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario_1 name)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #2(scenario_1 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario_1 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario_1 name)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario_1 name)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #3(scenario_1 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario_1 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario_1 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name")));
+
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #1(scenario_2 name)")));
         order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario_2 name)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("another step #2(scenario_2 name)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("another step #2(scenario_2 name)")));
+        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("another step #2(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("another step #2(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name")));
     }
