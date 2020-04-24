@@ -188,12 +188,12 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
+            "<testsuite errors=\"0\" failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
-            "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"java.lang.Exception\">\n" +
+            "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.runner.TestPendingException\">\n" +
             "            <![CDATA[Given first step............................................................pending\n" +
             "When second step............................................................skipped\n" +
-            "Then third step.............................................................undefined\n" +
+            "Then third step.............................................................skipped\n" +
             "]]>\n" +
             "        </failure>\n" +
             "    </testcase>\n" +

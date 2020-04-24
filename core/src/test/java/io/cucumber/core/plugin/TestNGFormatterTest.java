@@ -54,7 +54,7 @@ final class TestNGFormatterTest {
             "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
             "                        <message>\n" +
             "                            <![CDATA[When step...................................................................undefined\n" +
-            "Then step...................................................................undefined\n" +
+            "Then step...................................................................skipped\n" +
             "]]>\n" +
             "                        </message>\n" +
             "                        <full-stacktrace>\n" +
@@ -80,23 +80,27 @@ final class TestNGFormatterTest {
         stepDuration = ZERO;
         String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
-            "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
-            "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
-            "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
-            "            <class name=\"feature\">" +
-            "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
-            "                    <exception class=\"The scenario has pending or undefined step(s)\">" +
-            "                        <message><![CDATA[When step...................................................................undefined\n" +
-            "Then step...................................................................undefined\n" +
-            "]]></message>" +
-            "                        <full-stacktrace><![CDATA[The scenario has pending or undefined step(s)]]></full-stacktrace>" +
-            "                    </exception>" +
-            "                </test-method>" +
-            "            </class>" +
-            "        </test>" +
-            "    </suite>" +
-            "</testng-results>", actual);
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+            "<testng-results failed=\"1\" passed=\"0\" skipped=\"0\" total=\"1\">\n" +
+            "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
+            "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
+            "            <class name=\"feature\">\n" +
+            "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
+            "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
+            "                        <message>\n" +
+            "                            <![CDATA[When step...................................................................undefined\n" +
+            "Then step...................................................................skipped\n" +
+            "]]>\n" +
+            "                        </message>\n" +
+            "                        <full-stacktrace>\n" +
+            "                            <![CDATA[The scenario has pending or undefined step(s)]]>\n" +
+            "                        </full-stacktrace>\n" +
+            "                    </exception>\n" +
+            "                </test-method>\n" +
+            "            </class>\n" +
+            "        </test>\n" +
+            "    </suite>\n" +
+            "</testng-results>\n", actual);
     }
 
     @Test
@@ -216,9 +220,9 @@ final class TestNGFormatterTest {
             "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
             "                        <message>\n" +
             "                            <![CDATA[When background.............................................................undefined\n" +
-            "Then background.............................................................undefined\n" +
-            "When step...................................................................undefined\n" +
-            "Then step...................................................................undefined\n" +
+            "Then background.............................................................skipped\n" +
+            "When step...................................................................skipped\n" +
+            "Then step...................................................................skipped\n" +
             "]]>\n" +
             "                        </message>\n" +
             "                        <full-stacktrace>\n" +
@@ -257,7 +261,7 @@ final class TestNGFormatterTest {
             "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
             "                        <message>\n" +
             "                            <![CDATA[When step...................................................................undefined\n" +
-            "Then step...................................................................undefined\n" +
+            "Then step...................................................................skipped\n" +
             "]]>\n" +
             "                        </message>\n" +
             "                        <full-stacktrace>\n" +
@@ -269,7 +273,7 @@ final class TestNGFormatterTest {
             "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
             "                        <message>\n" +
             "                            <![CDATA[When step...................................................................undefined\n" +
-            "Then step...................................................................undefined\n" +
+            "Then step...................................................................skipped\n" +
             "]]>\n" +
             "                        </message>\n" +
             "                        <full-stacktrace>\n" +
