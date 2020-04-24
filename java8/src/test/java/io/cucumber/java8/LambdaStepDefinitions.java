@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.datatable.DataTable;
+import org.opentest4j.TestAbortedException;
 
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,10 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
             assertEquals(Optional.of("string"), optional);
         });
 
+        Given("a step that is skipped", () -> {
+            throw new TestAbortedException("skip this");
+        });
+
         Given("A method reference that declares an exception$", this::methodThatDeclaresException);
         Given("A method reference with an argument {int}", this::methodWithAnArgument);
         Given("A method reference with an int argument {int}", this::methodWithAnIntArgument);
@@ -104,6 +109,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         Given("A static method reference with an argument {int}", LambdaStepDefinitions::staticMethodWithAnArgument);
         Given("A method reference to an arbitrary object of a particular type {string}", Contact::call);
         Given("A method reference to an arbitrary object of a particular type {string} with argument {string}", Contact::update);
+
     }
 
     public static void staticMethodWithAnArgument(Integer cuckes) {
