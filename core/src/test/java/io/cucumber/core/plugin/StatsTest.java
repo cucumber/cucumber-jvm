@@ -175,6 +175,12 @@ class StatsTest {
             "Ambiguous scenarios:%n" +
             "path/file.feature:3 # Scenario: scenario_name%n" +
             "%n" +
+            "Pending scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
+            "Undefined scenarios:%n" +
+            "path/file.feature:3 # Scenario: scenario_name%n" +
+            "%n" +
             "4 Scenarios")));
     }
 
