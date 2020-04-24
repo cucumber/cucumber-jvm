@@ -110,9 +110,9 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-            "        <skipped message=\"The scenario has no steps\"/>\n" +
+            "        <failure message=\"The scenario has no steps\" type=\"java.lang.Exception\"/>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -188,13 +188,14 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
-            "        <skipped><![CDATA[" +
-            "Given first step............................................................pending\n" +
+            "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"java.lang.Exception\">\n" +
+            "            <![CDATA[Given first step............................................................pending\n" +
             "When second step............................................................skipped\n" +
             "Then third step.............................................................undefined\n" +
-            "]]></skipped>\n" +
+            "]]>\n" +
+            "        </failure>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -284,13 +285,14 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
-            "        <skipped><![CDATA[" +
-            "Given first step............................................................skipped\n" +
+            "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.runner.TestPendingException\">\n" +
+            "            <![CDATA[Given first step............................................................skipped\n" +
             "When second step............................................................skipped\n" +
             "Then third step.............................................................skipped\n" +
-            "]]></skipped>\n" +
+            "]]>\n" +
+            "        </failure>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);

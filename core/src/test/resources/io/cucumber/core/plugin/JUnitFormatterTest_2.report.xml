@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<testsuite tests="2" failures="0" skipped="2" errors="0" time="0" name="io.cucumber.core.plugin.JUnitFormatter">
+<testsuite tests="2" failures="2" skipped="0" errors="0" time="0" name="io.cucumber.core.plugin.JUnitFormatter">
     <testcase classname="Feature_2" name="Scenario_1" time="0">
-        <skipped><![CDATA[Given bg_1..................................................................undefined
+        <failure message="The scenario has pending or undefined step(s)" type="java.lang.Exception">
+            <![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
 Given step_1................................................................undefined
 When step_2.................................................................undefined
 Then step_3.................................................................undefined
-]]></skipped>
+]]>
+        </failure>
     </testcase>
     <testcase classname="Feature_2" name="Scenario_2" time="0">
-        <skipped><![CDATA[Given bg_1..................................................................undefined
+        <failure message="The scenario has pending or undefined step(s)" type="java.lang.Exception">
+            <![CDATA[Given bg_1..................................................................undefined
 When bg_2...................................................................undefined
 Then bg_3...................................................................undefined
 Given step_1................................................................undefined
 When step_2.................................................................undefined
 Then step_3.................................................................undefined
-]]></skipped>
+]]>
+        </failure>
     </testcase>
 </testsuite>
