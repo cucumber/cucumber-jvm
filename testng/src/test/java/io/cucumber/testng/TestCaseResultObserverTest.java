@@ -93,7 +93,7 @@ public class TestCaseResultObserverTest {
     }
 
     @Test
-    public void should_be_skipped_for_undefined_result() {
+    public void should_be_failed_for_undefined_result() {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
@@ -107,7 +107,7 @@ public class TestCaseResultObserverTest {
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
         assertThat(exception.getCause(), instanceOf(SkipException.class));
         SkipException skipException = (SkipException) exception.getCause();
-        assertThat(skipException.isSkip(), is(true));
+        assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
             "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
@@ -161,7 +161,7 @@ public class TestCaseResultObserverTest {
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
-        assertThat(exception.getCause(), instanceOf(SkipException.class));
+        assertThat(exception.getCause(), is(error));
     }
 
     @Test
