@@ -11,7 +11,7 @@ class TestCaseResultObserver implements AutoCloseable {
     private final io.cucumber.core.runtime.TestCaseResultObserver delegate;
 
     private TestCaseResultObserver(EventPublisher bus) {
-        this.delegate = new io.cucumber.core.runtime.TestCaseResultObserver(bus, true);
+        this.delegate = new io.cucumber.core.runtime.TestCaseResultObserver(bus);
     }
 
     static TestCaseResultObserver observe(EventBus bus) {

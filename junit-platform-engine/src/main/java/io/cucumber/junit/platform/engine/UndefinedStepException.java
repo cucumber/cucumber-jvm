@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.joining;
 final class UndefinedStepException extends IncompleteExecutionException {
     private static final long serialVersionUID = 1L;
 
-    UndefinedStepException(List<Suggestion> suggestions, boolean strict) {
+    UndefinedStepException(List<Suggestion> suggestions) {
         super(createMessage(suggestions));
     }
 

@@ -181,11 +181,6 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder setStrict(boolean strict) {
-        Boolean parsedStrict = strict;
-        return this;
-    }
-
     public RuntimeOptionsBuilder setThreads(int threads) {
         this.parsedThreads = threads;
         return this;

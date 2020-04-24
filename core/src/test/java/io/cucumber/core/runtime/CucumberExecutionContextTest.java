@@ -47,12 +47,12 @@ class CucumberExecutionContextTest {
     public void rethrows_but_does_not_collect_failures_in_test_case() {
         IllegalStateException thrown = assertThrows(IllegalStateException.class, () ->
             context.runTestCase(runner -> {
-                try (TestCaseResultObserver r = new TestCaseResultObserver(bus, true)) {
+                try (TestCaseResultObserver r = new TestCaseResultObserver(bus)) {
                     bus.send(new TestCaseFinished(bus.getInstant(), mock(TestCase.class), new Result(Status.FAILED, Duration.ZERO, failure)));
                     r.assertTestCasePassed(
                         Exception::new,
                         Function.identity(),
-                        (suggestions, strict) -> new Exception(),
+                        (suggestions) -> new Exception(),
                         Function.identity()
                     );
                 }

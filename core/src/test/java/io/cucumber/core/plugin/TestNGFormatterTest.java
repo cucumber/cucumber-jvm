@@ -43,7 +43,7 @@ final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("undefined"));
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
@@ -67,7 +67,7 @@ final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("undefined"));
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(true);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -99,7 +99,7 @@ final class TestNGFormatterTest {
         stepsToResult.put("step1", result("pending"));
         stepsToResult.put("step2", result("skipped"));
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
@@ -124,7 +124,7 @@ final class TestNGFormatterTest {
         stepsToResult.put("step1", result("failed", new TestNGException("message", "stacktrace")));
         stepsToResult.put("step2", result("skipped"));
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -155,7 +155,7 @@ final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("passed"));
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"1\" failed=\"0\" skipped=\"0\">" +
@@ -183,7 +183,7 @@ final class TestNGFormatterTest {
         stepsToResult.put("background", result("undefined"));
         stepsToResult.put("step", result("undefined"));
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"0\" failed=\"0\" skipped=\"1\">" +
@@ -211,7 +211,7 @@ final class TestNGFormatterTest {
         features.add(feature);
         stepsToResult.put("step", result("undefined"));
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"2\" passed=\"0\" failed=\"0\" skipped=\"2\">" +
@@ -249,7 +249,7 @@ final class TestNGFormatterTest {
         hookLocations.add("hook-location-1");
         hookLocations.add("hook-location-2");
         stepDuration = ofMillis(1);
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"3\" passed=\"3\" failed=\"0\" skipped=\"0\">" +
@@ -279,7 +279,7 @@ final class TestNGFormatterTest {
         hooks.add(TestHelper.hookEntry("before", result("failed", new TestNGException("message", "stacktrace"))));
         hookLocations.add("hook-location");
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -312,7 +312,7 @@ final class TestNGFormatterTest {
         hooks.add(TestHelper.hookEntry("after", result("failed", new TestNGException("message", "stacktrace"))));
         hookLocations.add("hook-location");
         stepDuration = ZERO;
-        String actual = runFeaturesWithFormatter(false);
+        String actual = runFeaturesWithFormatter();
         assertXmlEqual("" +
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
             "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
@@ -337,7 +337,7 @@ final class TestNGFormatterTest {
         assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
     }
 
-    private String runFeaturesWithFormatter(boolean strict) {
+    private String runFeaturesWithFormatter() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         final TestNGFormatter formatter = new TestNGFormatter(out);
 

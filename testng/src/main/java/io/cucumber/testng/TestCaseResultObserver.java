@@ -10,7 +10,7 @@ class TestCaseResultObserver implements AutoCloseable {
     private final io.cucumber.core.runtime.TestCaseResultObserver delegate;
 
     private TestCaseResultObserver(EventPublisher bus) {
-        this.delegate = new io.cucumber.core.runtime.TestCaseResultObserver(bus, true);
+        this.delegate = new io.cucumber.core.runtime.TestCaseResultObserver(bus);
     }
 
     static TestCaseResultObserver observe(EventBus bus) {
@@ -23,7 +23,7 @@ class TestCaseResultObserver implements AutoCloseable {
             (exception) -> exception instanceof SkipException
                 ? exception
                 : new SkipException(exception.getMessage(), exception),
-            (suggestions, strict) -> new UndefinedStepException(suggestions),
+            UndefinedStepException::new,
             (exception) -> new SkipException(exception.getMessage(), exception)
         );
     }
