@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.core.runtime.Meta.makeMeta;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.synchronizedList;
@@ -77,7 +78,7 @@ public final class CucumberExecutionContext {
 
     private void emitTestRunFinished(CucumberException cucumberException) {
         Instant instant = bus.getInstant();
-        Result result  = new Result(
+        Result result = new Result(
             cucumberException != null ? Status.FAILED : exitStatus.getStatus(),
             Duration.between(start, instant),
             cucumberException
@@ -106,6 +107,8 @@ public final class CucumberExecutionContext {
         Runner runner = getRunner();
         try {
             execution.accept(runner);
+        } catch (TestCaseResultObserver.TestCaseFailed e) {
+            throwAsUncheckedException(e.getCause());
         } catch (Throwable e) {
             thrown.add(e);
             throw e;

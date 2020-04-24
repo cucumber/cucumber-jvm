@@ -64,18 +64,6 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         return getStatus() == Status.FAILED;
     }
 
-    @Deprecated
-    @Override
-    public void embed(byte[] data, String mediaType) {
-        embed(data, mediaType, null);
-    }
-
-    @Deprecated
-    @Override
-    public void embed(byte[] data, String mediaType, String name) {
-        attach(data, mediaType, name);
-    }
-
     @Override
     public void attach(byte[] data, String mediaType, String name) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
@@ -109,12 +97,6 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             )
             .build()
         );
-    }
-
-    @Deprecated
-    @Override
-    public void write(String text) {
-        log(text);
     }
 
     @Override

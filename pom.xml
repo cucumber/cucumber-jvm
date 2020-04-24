@@ -70,7 +70,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.3.3</mockito.version>
         <!--Maven plugins-->
-        <groovy.version>2.5.10</groovy.version>
+        <groovy.version>2.5.11</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>

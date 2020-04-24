@@ -3,11 +3,11 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Argument;
-import io.cucumber.plugin.event.Step;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.Step;
 import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -163,13 +164,12 @@ class TestCaseResultObserverTest {
     void failed() {
         bus.send(new TestCaseStarted(Instant.now(), testCase));
         bus.send(new TestStepStarted(Instant.now(), testCase, testStep));
-        Result result = new Result(Status.FAILED, Duration.ZERO, new AssertionFailedError("Mocked"));
+        Throwable error = new AssertionFailedError("Mocked");
+        Result result = new Result(Status.FAILED, Duration.ZERO, error);
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
-        assertThrows(
-            AssertionFailedError.class,
-            observer::assertTestCasePassed
-        );
+        Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
+        assertThat(exception.getCause(), is(error));
     }
 
     @Test
@@ -179,10 +179,8 @@ class TestCaseResultObserverTest {
         Result result = new Result(Status.SKIPPED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
-        assertThrows(
-            TestAbortedException.class,
-            observer::assertTestCasePassed
-        );
+        Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
+        assertThat(exception.getCause(), instanceOf(TestAbortedException.class));
     }
 
     @Test
@@ -192,10 +190,9 @@ class TestCaseResultObserverTest {
         Result result = new Result(Status.SKIPPED, Duration.ZERO, new TestAbortedException("thrown by user"));
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
-        assertThrows(
-            TestAbortedException.class,
-            observer::assertTestCasePassed
-        );
+        Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
+        assertThat(exception.getCause(), instanceOf(TestAbortedException.class));
+
     }
 
     @Test
@@ -210,11 +207,10 @@ class TestCaseResultObserverTest {
         Result result = new Result(Status.UNDEFINED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
-        UndefinedStepException exception = assertThrows(
-            UndefinedStepException.class,
-            observer::assertTestCasePassed
-        );
-        assertThat(exception.getMessage(), is("" +
+        Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
+        assertThat(exception.getCause(), instanceOf(UndefinedStepException.class));
+
+        assertThat(exception.getCause().getMessage(), is("" +
             "The step \"mocked\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
             "mocked snippet 1\n" +

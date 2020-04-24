@@ -20,18 +20,6 @@ public final class CucumberScopes {
     }
 
     /**
-     * A convenient instance of {@link ScenarioScope}. Should only be used
-     * in combination with {@link CucumberModules#SCENARIO}.
-     * <p>
-     * Note that using this in combination with parallel execution results in
-     * undefined behaviour.
-     *
-     * @deprecated please use {@link #createScenarioScope()} instead
-     */
-    @Deprecated
-    public static final ScenarioScope SCENARIO = createScenarioScope();
-
-    /**
      * Creates a new instance of a ScenarioScope.
      *
      * @return a new instance of a ScenarioScope.
