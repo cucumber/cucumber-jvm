@@ -68,10 +68,9 @@ public final class Runtime {
     }
 
     public void run() {
-        context.emitMeta();
+        context.startTestRun();
         final List<Feature> features = featureSupplier.get();
         features.forEach(context::beforeFeature);
-        context.startTestRun();
         final List<Future<?>> executingPickles = features.stream()
             .flatMap(feature -> feature.getPickles().stream())
             .filter(filter)

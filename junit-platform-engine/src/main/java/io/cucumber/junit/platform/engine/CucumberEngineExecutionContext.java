@@ -70,8 +70,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         return options;
     }
 
-    void emitMetaAndStartTestRun() {
-        context.emitMeta();
+    void startTestRun() {
         context.startTestRun();
     }
 
