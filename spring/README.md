@@ -42,7 +42,7 @@ public class CucumberSpringConfiguration {
 }
 ```
 
-Note: Cucumber Spring uses Springs `TestContextManager` framework internally.
+Note: Cucumber Spring uses Spring's `TestContextManager` framework internally.
 As a result a single Cucumber scenario will mostly behave like a JUnit test.
 
 For more information configuring Spring tests see:
@@ -71,7 +71,7 @@ public class MyStepDefinitions {
 
 ## Sharing State 
 
-Cucumber Spring creates an application context and using Springs
+Cucumber Spring creates an application context and uses Spring's
 `TestContextManager` framework internally. All scenarios as well as all other
 tests (e.g. JUnit) that use the same context configuration will share one
 instance of the Spring application. This avoids an expensive startup time.
