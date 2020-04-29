@@ -1,7 +1,7 @@
 Cucumber Java8
 ==============
 
-Provides annotation based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
+Provides lambda based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
 
 ```xml
 <dependencies>
@@ -86,7 +86,7 @@ Data table types can be declared by calling `DataTableType` in the constructor.
 Depending on the lambda type this will be either a: 
  * `String` -> `io.cucumber.datatable.TableCellTranformer`
  * `Map<String,String>` -> `io.cucumber.datatable.TableEntry`
- * `List<String` -> `io.cucumber.datatable.TableRow`
+ * `List<String>` -> `io.cucumber.datatable.TableRow`
  * `DataTable` -> `io.cucumber.datatable.TableTransformer`
 
 ```java
