@@ -13,7 +13,7 @@ When property parsing functionality is not provided by the runner (i.e.
 properties from system properties, environment variables and the
 `cucumber.properties` file.
 
-Note that options provided by `@CucumberOptions` takes precedence over the
+Note that options provided by `@CucumberOptions` take precedence over the
 properties file and CLI arguments take precedence over all.
 
 Supported properties are:
@@ -40,10 +40,10 @@ Each property also has an `UPPER_CASE` and `snake_case` variant. For example
 
 ## Backend ##
 
-Backends consists of two components, a `Backend` and `ObjectFactory`. They are
-respectively responsible for discovering glue classes, registering step definitions
+Backends consist of two components: a `Backend`, and an `ObjectFactory`. They are
+respectively responsible for discovering glue classes, registering step definitions,
 and creating instances of said glue classes. Backend and object factory
-implementations are discovered via SPI
+implementations are discovered via SPI.
 
 ## Plugin ##
 
