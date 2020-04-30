@@ -8,8 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [Java]  `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
-
+ * [Java] `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
+ * [JUnit Platform] Map tags to exclusive resources ([#1944](https://github.com/cucumber/cucumber-jvm/issues/1944) M.P. Korstanje)
+ 
 ### Changed
 
 ### Deprecated
