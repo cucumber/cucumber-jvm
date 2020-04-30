@@ -42,11 +42,7 @@ import java.util.TreeMap;
 final class CachingGlue implements Glue {
     private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
         .comparingInt(CoreHookDefinition::getOrder)
-        .thenComparing((a, b) -> {
-            boolean aScenarioScoped = (a instanceof ScenarioScoped);
-            boolean bScenarioScoped = (b instanceof ScenarioScoped);
-            return Boolean.compare(aScenarioScoped, bScenarioScoped);
-        });
+        .thenComparing(ScenarioScoped.class::isInstance);
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
