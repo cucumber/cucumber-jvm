@@ -139,7 +139,7 @@ public final class CucumberPropertiesParser {
 
     private static void errorOnNonStrict(Boolean strict) {
         if (!strict) {
-            throw new CucumberException(EXECUTION_STRICT_PROPERTY_NAME + "=false is no longer effective. Please use =true (the default)");
+            throw new CucumberException(EXECUTION_STRICT_PROPERTY_NAME + "=false is no longer effective. Please use =true (the default) or remove this property");
         }
     }
 
