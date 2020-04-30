@@ -22,14 +22,14 @@ final class GherkinMessagesStep implements Step {
 
     GherkinMessagesStep(PickleStep pickleStep, GherkinDialect dialect, String previousGwtKeyWord, Messages.Location location, String keyword) {
         this.pickleStep = pickleStep;
-        this.argument = extractArgument(pickleStep);
+        this.argument = extractArgument(pickleStep, location);
         this.keyWord = keyword;
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
         this.location = location;
     }
 
-    private StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
+    private static StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
         if (StepType.isAstrix(keyWord)) {
             return StepType.OTHER;
         }
@@ -51,7 +51,7 @@ final class GherkinMessagesStep implements Step {
         throw new IllegalStateException("Keyword " + keyWord + " was neither given, when, then, and, but nor *");
     }
 
-    private Argument extractArgument(PickleStep pickleStep) {
+    private static Argument extractArgument(PickleStep pickleStep, Messages.Location location) {
         PickleStepArgument argument = pickleStep.getArgument();
         if (argument.hasDocString()) {
             PickleDocString docString = argument.getDocString();

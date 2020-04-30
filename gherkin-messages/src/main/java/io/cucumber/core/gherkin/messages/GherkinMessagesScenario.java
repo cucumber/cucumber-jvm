@@ -12,7 +12,7 @@ final class GherkinMessagesScenario implements Node.Scenario {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return scenario.getKeyword();
     }
 

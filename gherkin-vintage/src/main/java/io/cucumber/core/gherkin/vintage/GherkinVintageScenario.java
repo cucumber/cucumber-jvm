@@ -17,7 +17,7 @@ final class GherkinVintageScenario implements Node.Scenario {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return scenarioDefinition.getKeyword();
     }
 

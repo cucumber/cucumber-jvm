@@ -25,17 +25,11 @@ import static io.cucumber.plugin.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static java.time.Instant.now;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertThrows;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.expectThrows;
 
 public class TestCaseResultObserverTest {
@@ -57,7 +51,7 @@ public class TestCaseResultObserverTest {
     }
 
     @Test
-    public void should_be_passed_for_passed_result() throws Throwable {
+    public void should_be_passed_for_passed_result() {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         Result stepResult = new Result(Status.PASSED, ZERO, null);
@@ -140,7 +134,7 @@ public class TestCaseResultObserverTest {
     }
 
     @Test
-    public void should_be_passed_for_empty_scenario() throws Throwable {
+    public void should_be_passed_for_empty_scenario() {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
 
         Result testCaseResult = new Result(PASSED, ZERO, error);

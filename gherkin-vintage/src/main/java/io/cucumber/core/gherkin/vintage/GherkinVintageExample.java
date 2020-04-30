@@ -15,7 +15,7 @@ final class GherkinVintageExample implements Node.Example {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return null;
     }
 

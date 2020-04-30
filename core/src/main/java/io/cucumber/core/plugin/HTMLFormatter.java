@@ -39,8 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ROOT;
 
@@ -444,13 +443,6 @@ public final class HTMLFormatter implements EventListener {
             String fileName = new File(textAsset).getName();
             writeStreamToURL(textAssetStream, toUrl(fileName));
         }
-    }
-
-    private static String printStackTrace(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        error.printStackTrace(printWriter);
-        return stringWriter.toString();
     }
 
     private URL toUrl(String fileName) {

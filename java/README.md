@@ -93,12 +93,15 @@ public class Steps {
 
 ### Data Table Type
 
-Data table types can be declared by annotating a method with `@DataTableType`. Depending on the parameter type this
-will be either a: 
+Data table types can be declared by annotating a method with `@DataTableType`. 
+Depending on the parameter type this will be either a: 
  * `String` -> `io.cucumber.datatable.TableCellTranformer`
- * `Map<String,String>` -> `io.cucumber.datatable.TableEntry`
- * `List<String` -> `io.cucumber.datatable.TableRow`
+ * `Map<String,String>` -> `io.cucumber.datatable.TableEntryTransformer`
+ * `List<String` -> `io.cucumber.datatable.TableRowTranformer`
  * `DataTable` -> `io.cucumber.datatable.TableTransformer`
+
+For a full list of transformations that can be achieved with data table types
+see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
 
 ```java
 package com.example.app;
@@ -201,6 +204,50 @@ public class DataTableSteps {
     @Given("some authors")
     public void given_some_authors(List<Author> authors){
       // authors = [Author(name="Aspiring Author", firstPublication=null), Author(name="Ancient Author", firstPublication=)]
+    }
+}
+```
+
+# Transposing Tables
+
+A data table can be transposed by annotating the data table parameter (or the
+parameter the data table will be converted into) with `@Transpose`. This means
+the keys will be in the first column rather then the first row.
+
+
+```gherkin
+ Given the user is
+    | firstname	    | Roberto	|
+    | lastname	    | Lo Giacco |
+    | nationality	| Italian	|
+ ```
+
+And a data table type to create a User
+
+```java 
+package com.example.app;
+
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.Transpose;
+
+import java.util.Map;
+import java.util.List;
+
+public class DataTableSteps {
+
+    @DataTableType
+    public User convert(Map<String, String> entry){
+      return new User(
+         entry.get("firstname"),
+         entry.get("lastname")
+         entry.get("nationality")
+      );
+    }
+    
+    @Given("the user is")
+    public void the_user_is(@Transpose User user){
+      // user  = [User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
     }
 }
 ```

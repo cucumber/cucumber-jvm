@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.ScenarioScoped;
+import net.jodah.typetools.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,5 +42,19 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
                 "Expected single 'accept' method on body class, found '%s'", acceptMethods));
         }
         return acceptMethods.get(0);
+    }
+
+    Class<?>[] resolveRawArguments(Class<?> bodyClass, Class<?> body) {
+        Class<?>[] rawArguments = TypeResolver.resolveRawArguments(bodyClass, body);
+        for (Class<?> aClass : rawArguments) {
+            if (TypeResolver.Unknown.class.equals(aClass)) {
+                throw new IllegalStateException("" +
+                    "Could resolve the return type of the lambda at " + location.getFileName() + ":" + location.getLineNumber() + "\n" +
+                    "This version of cucumber-java8 is not compatible with Java 12+\n" +
+                    "See: https://github.com/cucumber/cucumber-jvm/issues/1817"
+                );
+            }
+        }
+        return rawArguments;
     }
 }

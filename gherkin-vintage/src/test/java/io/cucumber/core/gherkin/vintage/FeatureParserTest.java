@@ -1,6 +1,9 @@
 package io.cucumber.core.gherkin.vintage;
 
+import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.plugin.event.Node;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FeatureParserTest {
 
     private final GherkinVintageFeatureParser parser = new GherkinVintageFeatureParser();
+    @Test
+    void can_parse_single_scenario() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/vintage/single.feature")));
+        Optional<Feature> feature = parser.parse(uri, source, UUID::randomUUID);
+        assertEquals(1, feature.get().getPickles().size());
+    }
+
+    @Test
+    void background_elements_are_not_scenarios() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/vintage/background.feature")));
+        Optional<Feature> feature = parser.parse(uri, source, UUID::randomUUID);
+        assertEquals(1, feature.get().getPickles().size());
+    }
 
     @Test
     void empty_feature_file_is_parsed_but_produces_no_feature() throws IOException {
@@ -38,6 +56,17 @@ class FeatureParserTest {
     }
 
     @Test
+    void empty_table_is_parsed() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/vintage/empty-table.feature")));
+        Feature feature = parser.parse(uri, source, UUID::randomUUID).get();
+        Pickle pickle = feature.getPickles().get(0);
+        Step step = pickle.getSteps().get(0);
+        DataTableArgument argument = (DataTableArgument) step.getArgument();
+        assertEquals(5, argument.getLine());
+    }
+
+    @Test
     void unnamed_elements_return_empty_strings_as_name() throws IOException {
         URI uri = URI.create("classpath:com/example.feature");
         String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/vintage/unnamed.feature")));
@@ -46,17 +75,17 @@ class FeatureParserTest {
         Iterator<Node> featureElements = feature.elements().iterator();
         Node.Scenario scenario = (Node.Scenario) featureElements.next();
         assertEquals("", scenario.getName());
-        assertEquals("Scenario", scenario.getKeyword());
+        assertEquals("Scenario", scenario.getKeyWord());
         Node.ScenarioOutline scenarioOutline = (Node.ScenarioOutline) featureElements.next();
         assertEquals("", scenarioOutline.getName());
-        assertEquals("Scenario Outline", scenarioOutline.getKeyword());
+        assertEquals("Scenario Outline", scenarioOutline.getKeyWord());
         Node.Examples examples = scenarioOutline.elements().iterator().next();
         assertEquals("", examples.getName());
-        assertEquals("Examples", examples.getKeyword());
+        assertEquals("Examples", examples.getKeyWord());
         Node.Example example = examples.elements().iterator().next();
 
         // Example is the exception.
         assertEquals("Example #1", example.getName());
-        assertNull(example.getKeyword());
+        assertNull(example.getKeyWord());
     }
 }

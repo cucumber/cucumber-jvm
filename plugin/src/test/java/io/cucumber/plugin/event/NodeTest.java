@@ -20,7 +20,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -42,7 +42,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -64,7 +64,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -86,7 +86,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -113,7 +113,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -139,7 +139,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -166,7 +166,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -193,7 +193,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -220,7 +220,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 
@@ -247,7 +247,7 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyword() {
+        public String getKeyWord() {
             return null;
         }
 

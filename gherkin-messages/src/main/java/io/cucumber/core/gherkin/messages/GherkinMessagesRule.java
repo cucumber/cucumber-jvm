@@ -35,7 +35,7 @@ final class GherkinMessagesRule implements Node.Rule {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return rule.getKeyword();
     }
 

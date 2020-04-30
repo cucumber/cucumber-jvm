@@ -9,8 +9,8 @@ import io.cucumber.messages.Messages.GherkinDocument;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinMessagesFeature implements Feature {
@@ -47,7 +47,7 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return gherkinDocument.getFeature().getKeyword();
     }
 
@@ -57,11 +57,12 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
-    public Optional<Pickle> getPickleAt(Node node) {
+    public Pickle getPickleAt(Node node) {
         Location location = node.getLocation();
         return pickles.stream()
-            .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
-            .findFirst();
+            .filter(pickle -> pickle.getLocation().equals(location))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("No pickle in " + uri + " at " + location));
     }
 
     @Override

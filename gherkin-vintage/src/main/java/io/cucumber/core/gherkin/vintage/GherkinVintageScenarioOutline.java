@@ -32,7 +32,7 @@ final class GherkinVintageScenarioOutline implements Node.ScenarioOutline {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return scenarioOutline.getKeyword();
     }
 

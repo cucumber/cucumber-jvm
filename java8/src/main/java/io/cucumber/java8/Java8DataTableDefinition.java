@@ -4,8 +4,6 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 
-import static net.jodah.typetools.TypeResolver.resolveRawArguments;
-
 final class Java8DataTableDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
 
     private final DataTableType dataTableType;

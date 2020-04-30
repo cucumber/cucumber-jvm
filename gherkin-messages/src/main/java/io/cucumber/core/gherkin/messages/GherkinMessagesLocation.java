@@ -8,4 +8,5 @@ final class GherkinMessagesLocation {
     static Location from(Messages.Location location) {
         return new Location(location.getLine(), location.getColumn());
     }
+
 }

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import static java.util.Collections.singletonList;
@@ -39,9 +40,46 @@ public interface Node {
 
     Location getLocation();
 
-    String getKeyword();
+    String getKeyWord();
 
     String getName();
+
+    /**
+     * Maps a node into another structure
+     */
+    default <T> T map(
+        T parent,
+        BiFunction<Feature, T, T> mapFeature,
+        BiFunction<Scenario, T, T> mapScenario,
+        BiFunction<Rule, T, T> mapRule,
+        BiFunction<ScenarioOutline, T, T> mapScenarioOutline,
+        BiFunction<Examples, T, T> mapExamples,
+        BiFunction<Example, T, T> mapExample
+    ) {
+        if (this instanceof Scenario) {
+            return mapScenario.apply((Scenario) this, parent);
+        } else if (this instanceof Example) {
+            return mapExample.apply((Example) this, parent);
+        } else if (this instanceof Container) {
+            final T mapped;
+            if (this instanceof Feature) {
+                mapped = mapFeature.apply((Feature) this, parent);
+            } else if (this instanceof Rule) {
+                mapped = mapRule.apply((Rule) this, parent);
+            } else if (this instanceof ScenarioOutline) {
+                mapped = mapScenarioOutline.apply((ScenarioOutline) this, parent);
+            } else if (this instanceof Examples) {
+                mapped = mapExamples.apply((Examples) this, parent);
+            } else {
+                throw new IllegalArgumentException(this.getClass().getName());
+            }
+            Container<?> container = (Container<?>) this;
+            container.elements().forEach(node -> node.map(mapped, mapFeature, mapScenario, mapRule, mapScenarioOutline, mapExamples, mapExample));
+            return mapped;
+        } else {
+            throw new IllegalArgumentException(this.getClass().getName());
+        }
+    }
 
     /**
      * Finds a path down tree starting at this node to the first node that

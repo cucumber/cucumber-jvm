@@ -63,7 +63,7 @@ either the Maven Antrun plugin or the Gradle JavaExec task.
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
                 <execution>
-                    <!--Work around. Surefire does not use JUnits Test Engine discovery functionality -->
+                    <!--Work around. Surefire does not use JUnit's Test Engine discovery functionality -->
                     <id>CLI-test</id>
                     <phase>integration-test</phase>
                     <goals>
@@ -91,8 +91,8 @@ either the Maven Antrun plugin or the Gradle JavaExec task.
     </plugins>
 </build>
 ```
-```groovy
 
+```groovy
 tasks {
 
 	val consoleLauncherTest by registering(JavaExec::class) {
@@ -115,13 +115,53 @@ tasks {
 
 ## Parallel execution ## 
 
-By default, Cucumber tests are run sequentially in a single thread. Running
+By default, Cucumber runs tests sequentially in a single thread. Running
 tests in parallel is available as an opt-in feature. To enable parallel
-execution, set the set the `cucumber.execution.parallel.enabled` configuration
+execution, set the `cucumber.execution.parallel.enabled` configuration
 parameter to `true`, e.g. in `junit-platform.properties`.
 
-Cucumber supports JUnits `ParallelExecutionConfigurationStrategy` see the
+Cucumber supports JUnit's `ParallelExecutionConfigurationStrategy`; see the
 configuration options below.
+
+### Exclusive Resources ###
+
+Using exclusive resources it is possible to control which scenarios will
+not run concurrently with other scenarios that use the same resource.
+ 
+Cucumber tags can be mapped to exclusive resources. A resource can be
+either locked with a read-write-lock, or a read lock.  
+  
+For example:
+ 
+```gherkin
+Feature: Exclusive resources
+
+ @my-tag-ab-rw
+ Scenario: first example
+   Given this reads and writes resource a
+   And this reads and writes resource b
+   When it is executed it will   
+   Then it will not be executed concurrently with the second example
+
+ @my-tag-a-r
+ Scenario: second example
+   Given this reads resource a
+   When it is executed it will
+   Then it will not be executed concurrently with the first example
+```
+ 
+With this configuration: 
+ 
+```
+cucumber.execution.exclusive-resources.my-tag-ab-rw.read-write=resource-a,resource-b
+cucumber.execution.exclusive-resources.my-tag-a-r.read=resource-a
+```
+ 
+The first scenario tagged with `@my-tag-ab-rw` will lock resource `a` and `b`
+with a read-write lock and will not be concurrently executed with the second
+scenario that locks resource `a` with a read lock.
+
+Note: The `@` is not included.
 
 ## Configuration Options ##
 
@@ -130,41 +170,48 @@ can be supplied see the JUnit documentation [4.5. Configuration Parameters](http
 For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
-cucumber.ansi-colors.disabled=                          # true or false. default: true                     
+cucumber.ansi-colors.disabled=                                # true or false. default: false                     
+      
+cucumber.filter.tags=                                         # a cucumber tag expression. 
+                                                              # only matching scenarios are executed. 
+                                                              # example: @integration and not @disabled
+      
+cucumber.glue=                                                # comma separated package names. 
+                                                              # example: com.example.glue  
+      
+cucumber.plugin=                                              # comma separated plugin strings. 
+                                                              # example: pretty, json:path/to/report.json
+      
+cucumber.object-factory=                                      # object factory class name.
+                                                              # example: com.example.MyObjectFactory
+      
+cucumber.snippet-type=                                        # underscore or camelcase. 
+                                                              # default: underscore
+      
+cucumber.execution.dry-run=                                   # true or false. 
+                                                              # default: false
+       
+cucumber.execution.parallel.enabled=                          # true or false. 
+                                                              # default: false
+      
+cucumber.execution.parallel.config.strategy=                  # dynamic, fixed or custom. 
+                                                              # default: dynamic
+      
+cucumber.execution.parallel.config.fixed.parallelism=         # positive integer. 
+                                                              # example: 4 
+      
+cucumber.execution.parallel.config.dynamic.factor=            # positive double.
+                                                              # default: 1.0
+      
+cucumber.execution.parallel.config.custom.class=              # class name. 
+                                                              # example: com.example.MyCustomParallelStrategy
 
-cucumber.filter.tags=                                   # a cucumber tag expression. 
-                                                        # only matching scenarios are executed. 
-                                                        # example: @integration and not @disabled
+cucumber.execution.exclusive-resources.<tag-name>.read-write= # a comma seperated list of strings
+                                                              # example: resource-a, resource-b 
+     
+cucumber.execution.exclusive-resources.<tag-name>.read=       # a comma seperated list of strings
+                                                              # example: resource-a, resource-b
 
-cucumber.glue=                                          # comma separated package names. 
-                                                        # example: com.example.glue  
-
-cucumber.plugin=                                        # comma separated plugin strings. 
-                                                        # example: pretty, json:path/to/report.json
-
-cucumber.object-factory=                                # object factory class name.
-                                                        # example: com.example.MyObjectFactory
-
-cucumber.snippet-type=                                  # underscore or camelcase. 
-                                                        # default: underscore
-
-cucumber.execution.dry-run=                             # true or false. 
-                                                        # default: false
- 
-cucumber.execution.parallel.enabled=                    # true or false. 
-                                                        # default: false
-
-cucumber.execution.parallel.config.strategy=            # dynamic, fixed or custom. 
-                                                        # default: dynamic
-
-cucumber.execution.parallel.config.fixed.parallelism=   # positive integer. 
-                                                        # example: 4 
-
-cucumber.execution.parallel.config.dynamic.factor=      # positive double.
-                                                        # default: 1.0
-
-cucumber.execution.parallel.config.custom.class=        # class name. 
-                                                        # example: com.example.MyCustomParallelStrategy
 ```
 
 ## Supported Discovery Selectors and Filters ## 
@@ -186,10 +233,10 @@ The `UriSelector` supports URI's with a `line` query parameter:
   - `classpath:/com/example/example.feature?line=20`
   - `file:/path/to/com/example/example.feature?line=20`
  
-Any `TestDescriptor` that matches the line *and* its descendents will be 
+Any `TestDescriptor` that matches the line *and* its descendants will be
 included in the discovery result.
 
-## Tags
+## Tags ##
 
 Cucumber tags are mapped to JUnit tags. Note that the `@` symbol is not part of
 the JUnit tag. So the scenarios below are tagged with `Smoke` and `Sanity`. 
@@ -218,7 +265,7 @@ The example below will execute `Another tagged scenario`.
 mvn verify -DexcludedGroups="Ignore" -Dgroups="Smoke | Sanity"
 ```
 
-For further information See the relevant documentation on how to select tags:
+For further information on how to select tags see the relevant documentation:
 * [Maven: Filtering by Tags](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html)
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
 * [JUnit 5 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)

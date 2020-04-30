@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>5.4.1-SNAPSHOT</version>
+        <version>5.7.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>java-calculator-junit5</artifactId>
@@ -13,6 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.junit5</project.Automatic-Module-Name>
+        <jackson-databind.version>2.10.3</jackson-databind.version>
     </properties>
 
     <dependencies>
@@ -39,6 +40,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -50,7 +52,10 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <!--Work around. Surefire does not use JUnits Test Engine discovery functionality -->
+                        <!-- Work around. Surefire does not use JUnits Test Engine discovery functionality.
+
+                             Alternatively annotate a class with `io.cucumber.junit.platform.engine.Cucumber`
+                             to mark its package for the discovery of feature files.  -->
                         <id>CLI-test</id>
                         <phase>integration-test</phase>
                         <goals>

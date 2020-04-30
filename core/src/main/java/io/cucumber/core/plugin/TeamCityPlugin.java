@@ -66,7 +66,7 @@ public class TeamCityPlugin implements EventListener {
     private static final String TEMPLATE_PROGRESS_TEST_STARTED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testStarted' timestamp = '%s']";
     private static final String TEMPLATE_PROGRESS_TEST_FINISHED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testFinished' timestamp = '%s']";
 
-    private static final String TEMPLATE_EMBED_WRITE_EVENT = TEAMCITY_PREFIX + "[message text='%s' status='NORMAL']";
+    private static final String TEMPLATE_ATTACH_WRITE_EVENT = TEAMCITY_PREFIX + "[message text='%s' status='NORMAL']";
 
     private static final Pattern ANNOTATION_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\([^:]*\\)");
     private static final Pattern LAMBDA_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\(.*:.*\\)");
@@ -142,13 +142,13 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private void startNode(URI uri, String timestamp, Node node) {
-        String name = node.getName().isEmpty() ? node.getKeyword() : node.getName();
+        String name = node.getName().isEmpty() ? node.getKeyWord() : node.getName();
         String location = uri + ":" + node.getLocation().getLine();
         print(TEMPLATE_TEST_SUITE_STARTED, timestamp, location, name);
     }
 
     private void finishNode(String timestamp, Node node) {
-        String name = node.getName().isEmpty() ? node.getKeyword() : node.getName();
+        String name = node.getName().isEmpty() ? node.getKeyWord() : node.getName();
         print(TEMPLATE_TEST_SUITE_FINISHED, timestamp, name);
     }
 
@@ -334,11 +334,11 @@ public class TeamCityPlugin implements EventListener {
 
     private void handleEmbedEvent(EmbedEvent event) {
         String name = event.getName() == null ? "" : event.getName() + " ";
-        print(TEMPLATE_EMBED_WRITE_EVENT, "Embed event: " + name + "[" + event.getMediaType() + " " + event.getData().length + " bytes]\n");
+        print(TEMPLATE_ATTACH_WRITE_EVENT, "Embed event: " + name + "[" + event.getMediaType() + " " + event.getData().length + " bytes]\n");
     }
 
     private void handleWriteEvent(WriteEvent event) {
-        print(TEMPLATE_EMBED_WRITE_EVENT, "Write event:\n" + event.getText() + "\n");
+        print(TEMPLATE_ATTACH_WRITE_EVENT, "Write event:\n" + event.getText() + "\n");
     }
 
     private void print(String command, Object... args) {

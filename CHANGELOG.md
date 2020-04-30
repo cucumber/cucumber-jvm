@@ -8,14 +8,59 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * [Java]  `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
 
 ### Changed
 
 ### Deprecated
+ * [Java] `Scenario.write(String)` & `Scenario.embed(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
+ * [Spring] Deprecated `cucumber.xml` and implicit context configuration ([#1940](https://github.com/cucumber/cucumber-jvm/issues/1940) M.P. Korstanje)
+   - See [spring/README.md](https://github.com/cucumber/cucumber-jvm/tree/master/spring) for more information
+ * [Core] Deprecate multiple tag arguments in @CucumberOptions ([#1955](https://github.com/cucumber/cucumber-jvm/issues/1955) M.P. Korstanje)
+   - use a tag expresion instead `@CucumberOptions(tags="(@cucumber or @pickle) and not @salad")`
 
 ### Removed
 
 ### Fixed
+
+## [5.6.0] (2020-04-02)
+
+### Added
+ * [Spring] Add `@CucumberContextConfiguration` annotation ([#1911](https://github.com/cucumber/cucumber-jvm/issues/1911) Anton Deriabin)
+    - Allows `cucumber-spring` to discover application context configurations
+      without requiring step definitions or hooks to be available in the class.   
+  
+### Changed
+ * [JUnit Platform] Update `junit-platform` dependency to 1.6.1 ([#1923](https://github.com/cucumber/cucumber-jvm/issues/1923) M.P. Korstanje)
+ * [Spring] Update `spring-*` dependency to 5.2.4.RELEASE ([#1923](https://github.com/cucumber/cucumber-jvm/issues/1923) M.P. Korstanje)
+
+### Fixed
+ * [Core] Upgrade datatable to v3.3.1 ([#1928](https://github.com/cucumber/cucumber-jvm/issues/1928), [cucumber/cucumber#540](https://github.com/cucumber/cucumber/pull/540) M.P. Korstanje)
+    - Correctly throw an exception when converting a horizontal table to a list of Strings
+ * [Core] Deduplicate suggest snippets ([#1930](https://github.com/cucumber/cucumber-jvm/issues/1930) M.P. Korstanje)
+
+## [5.5.0] (2020-03-12)
+
+### Added
+ * [Java] Add `@ParameterType(useRegexpMatchAsStrongTypeHint=true/false)` ([#1905](https://github.com/cucumber/cucumber-jvm/pull/1914) M.P. Korstanje)
+
+### Fixed
+ * [TestNG] Fix concurrent modification of events ([#1919](https://github.com/cucumber/cucumber-jvm/pull/1919) M.P. Korstanje)
+   * Resolves an NPE when running TestNG with `parallel="methods"`
+
+## [5.4.2] (2020-03-05)
+
+### Fixed
+ * [Gherkin] Fix NPE on empty table ([#1912](https://github.com/cucumber/cucumber-jvm/issues/1912), [#1913](https://github.com/cucumber/cucumber-jvm/pull/1913) M.P. Korstanje)
+ * [Java8] update to net.jodah:typetools:0.6.2 ([#1908](https://github.com/cucumber/cucumber-jvm/pull/1908) John Patrick)
+    * Adds an automatic modulename to `type-tools`.
+ * [Spring] Do not reuse generic application context between scenarios ([#1905](https://github.com/cucumber/cucumber-jvm/pull/1905) M.P. Korstanje)
+
+## [5.4.1] (2020-02-27)
+
+### Fixed
+ * [Java8] Add error when types could not be resolved on Java 12+ ([#1902](https://github.com/cucumber/cucumber-jvm/pull/1902) M.P. Korstanje)
+ * [All] Remove Jackson from `cucumber-jvm` parent pom ([#1900](https://github.com/cucumber/cucumber-jvm/pull/1900) M.P. Korstanje)
 
 ## [5.4.0] (2020-02-20)
 
@@ -1316,7 +1361,11 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...master
+[5.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...v5.6.0
+[5.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...v5.5.0
+[5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2
+[5.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.0...v5.4.1
 [5.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.3.0...v5.4.0
 [5.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.2.0...v5.3.0
 [5.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.1.3...v5.2.0

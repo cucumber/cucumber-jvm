@@ -48,11 +48,8 @@ public class TestNGCucumberRunnerTest {
 
     @Test
     public void parse_error_propagated_to_testng_test_execution() {
-        testNGCucumberRunner = new TestNGCucumberRunner(ParseError.class);
         try {
-            Object[][] scenarios = testNGCucumberRunner.provideScenarios(); // a CucumberException is caught
-            PickleWrapper pickleWrapper = (PickleWrapper) scenarios[0][0];
-            pickleWrapper.getPickle();
+            testNGCucumberRunner = new TestNGCucumberRunner(ParseError.class);
             Assert.fail("CucumberException not thrown");
         } catch (FeatureParserException e) {
             assertEquals(e.getMessage(), "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature");

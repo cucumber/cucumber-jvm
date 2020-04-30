@@ -22,12 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -303,6 +305,7 @@ class SpringFactoryTest {
         );
     }
 
+    @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
     public static class WithSpringAnnotations {
 
@@ -323,6 +326,36 @@ class SpringFactoryTest {
         public String getProperty() {
             return property;
         }
+
+    }
+
+    @Test
+    void shouldBeStoppableWhenFacedWithInvalidConfiguration() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithEmptySpringAnnotations.class);
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
+        assertThat(exception.getMessage(), containsString("DelegatingSmartContextLoader was unable to detect defaults"));
+        assertDoesNotThrow(factory::stop);
+    }
+
+    @CucumberContextConfiguration
+    @ContextConfiguration()
+    public static class WithEmptySpringAnnotations {
+
+    }
+    @Test
+    void shouldBeStoppableWhenFacedWithMissingContextConfiguration() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithoutContextConfiguration.class);
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
+        assertThat(exception.getMessage(), containsString("Failed to load ApplicationContext"));
+        assertDoesNotThrow(factory::stop);
+    }
+
+    @CucumberContextConfiguration
+    public static class WithoutContextConfiguration {
 
     }
 }

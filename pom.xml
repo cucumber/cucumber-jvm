@@ -6,7 +6,7 @@
         <version>2.0.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>5.4.1-SNAPSHOT</version>
+    <version>5.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -49,23 +49,21 @@
 
         <!--Dependencies -->
         <cucumber-expressions.version>8.3.1</cucumber-expressions.version>
-        <datatable.version>3.3.0</datatable.version>
+        <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
         <messages.version>9.0.3</messages.version>
         <gherkin-vintage.version>5.2.0</gherkin-vintage.version>
         <gherkin-vintage-jvm-deps.version>1.0.6</gherkin-vintage-jvm-deps.version>
-        <gherkin-messages.version>9.1.0</gherkin-messages.version>
+        <gherkin-messages.version>9.2.0</gherkin-messages.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
-        <junit-jupiter.version>5.6.0</junit-jupiter.version>
-        <junit-platform.version>1.6.0</junit-platform.version>
+        <junit-jupiter.version>5.6.2</junit-jupiter.version>
+        <junit-platform.version>1.6.2</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.2.4</mockito.version>
-        <jackson-databind.version>2.10.2</jackson-databind.version>
-
+        <mockito.version>3.3.3</mockito.version>
         <!--Maven plugins-->
-        <groovy.version>2.5.9</groovy.version>
+        <groovy.version>2.5.11</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -175,15 +173,6 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit-platform-engine</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
-                <!-- Only ever include Jackson as test dependency
-                     This library gets security fixes faster then our release cycle -->
-                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -533,63 +522,11 @@
                             </revapi.semver.ignore>
                             <revapi.ignore>
                                 <item>
-                                    <code>java.class.visibilityReduced</code>
-                                    <old>class io.cucumber.java.AbstractDatatableElementTransformerDefinition</old>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.visibilityReduced</code>
-                                    <old>class io.cucumber.java8.AbstractDatatableElementTransformerDefinition</old>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.annotation.added</code>
-                                    <old>class io.cucumber.core.backend.CucumberBackendException</old>
-                                    <justification>Internal API promoted to public API</justification>
-                                </item>
-                                <item>
-                                    <code>java.annotation.added</code>
-                                    <old>class io.cucumber.core.backend.CucumberInvocationTargetException</old>
-                                    <justification>Internal API promoted to public API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.nowFinal</code>
-                                    <old>class io.cucumber.core.backend.CucumberInvocationTargetException</old>
-                                    <justification>Internal API promoted to public API</justification>
-                                </item>
-                                <item>
                                     <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        <![CDATA[method io.cucumber.core.gherkin.Feature io.cucumber.core.gherkin.FeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.gherkin.FeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></new>
+                                    <old><![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Pickle> io.cucumber.core.gherkin.Feature::getPickleAt(io.cucumber.core.gherkin.Located)]]></old>
+                                    <new><![CDATA[method io.cucumber.core.gherkin.Pickle io.cucumber.core.gherkin.Feature::getPickleAt(io.cucumber.core.gherkin.Located)]]></new>
                                     <justification>Internal API</justification>
                                 </item>
-                                <item>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        <![CDATA[method io.cucumber.core.gherkin.Feature io.cucumber.core.gherkin.vintage.GherkinVintageFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.gherkin.vintage.GherkinVintageFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        <![CDATA[method io.cucumber.core.gherkin.Feature io.cucumber.core.gherkin.messages.GherkinMessagesFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.gherkin.messages.GherkinMessagesFeatureParser::parse(java.net.URI, java.lang.String, java.util.function.Supplier<java.util.UUID>)]]></new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old>
-                                        method io.cucumber.core.gherkin.Feature io.cucumber.core.feature.FeatureParser::parseResource(io.cucumber.core.resource.Resource)</old>
-                                    <new>
-                                        <![CDATA[method java.util.Optional<io.cucumber.core.gherkin.Feature> io.cucumber.core.feature.FeatureParser::parseResource(io.cucumber.core.resource.Resource)]]></new>
-                                    <justification>Internal API</justification>
-                                </item>
-
                                 <!-- Gherkin parser related -->
                                 <item>
                                     <code>java.class.externalClassExposedInAPI</code>
@@ -611,20 +548,6 @@
                                     <code>java.class.nonPublicPartOfAPI</code>
                                     <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
                                     <justification>Internal API</justification>
-                                </item>
-
-                                <!-- JUnit Jupiter related -->
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
-                                    </newArchive>
-                                    <justification>We implement the junit platform API</justification>
-                                </item>
-                                <item>
-                                    <code>java.annotation.added</code>
-                                    <newArchive>org.junit.platform:junit-platform-engine:jar:${junit-platform.version}
-                                    </newArchive>
-                                    <justification>We implement the junit platform API</justification>
                                 </item>
                             </revapi.ignore>
                         </analysisConfiguration>

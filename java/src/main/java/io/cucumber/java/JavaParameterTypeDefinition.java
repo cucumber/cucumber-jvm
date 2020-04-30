@@ -14,7 +14,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
 
     private final ParameterType<Object> parameterType;
 
-    JavaParameterTypeDefinition(String name, String pattern, Method method, boolean useForSnippets, boolean preferForRegexpMatch, Lookup lookup) {
+    JavaParameterTypeDefinition(String name, String pattern, Method method, boolean useForSnippets, boolean preferForRegexpMatch, boolean useRegexpMatchAsStrongTypeHint, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.parameterType = new ParameterType<>(
             name.isEmpty() ? method.getName() : name,
@@ -22,7 +22,8 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
             this.method.getGenericReturnType(),
             this::execute,
             useForSnippets,
-            preferForRegexpMatch
+            preferForRegexpMatch,
+            useRegexpMatchAsStrongTypeHint
         );
     }
 

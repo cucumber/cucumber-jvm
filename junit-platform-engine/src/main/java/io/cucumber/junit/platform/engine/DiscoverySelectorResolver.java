@@ -20,7 +20,7 @@ import static org.junit.platform.engine.Filter.composeFilters;
 
 class DiscoverySelectorResolver {
 
-    void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
+    void resolveSelectors(EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor) {
         Predicate<String> packageFilter = buildPackageFilter(request);
         resolve(request, engineDescriptor, packageFilter);
         filter(engineDescriptor, packageFilter);
@@ -32,8 +32,8 @@ class DiscoverySelectorResolver {
         return packageFilter.toPredicate();
     }
 
-    private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor, Predicate<String> packageFilter) {
-        FeatureResolver featureResolver = createFeatureResolver(engineDescriptor, packageFilter);
+    private void resolve(EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
+        FeatureResolver featureResolver = createFeatureResolver(request.getConfigurationParameters(), engineDescriptor, packageFilter);
 
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClasspathRoot);
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClasspathResource);

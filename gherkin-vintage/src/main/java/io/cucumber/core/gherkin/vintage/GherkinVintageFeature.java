@@ -2,15 +2,15 @@ package io.cucumber.core.gherkin.vintage;
 
 import gherkin.ast.GherkinDocument;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
-import io.cucumber.core.gherkin.Pickle;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinVintageFeature implements Feature {
@@ -26,6 +26,9 @@ final class GherkinVintageFeature implements Feature {
         this.gherkinSource = gherkinSource;
         this.pickles = pickles;
         this.children = gherkinDocument.getFeature().getChildren().stream()
+            .filter(scenarioDefinition ->
+                (scenarioDefinition instanceof ScenarioOutline)
+                    || (scenarioDefinition instanceof Scenario))
             .map(scenarioDefinition -> {
                 if (scenarioDefinition instanceof gherkin.ast.ScenarioOutline) {
                     gherkin.ast.ScenarioOutline outline = (gherkin.ast.ScenarioOutline) scenarioDefinition;
@@ -42,16 +45,17 @@ final class GherkinVintageFeature implements Feature {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return gherkinDocument.getFeature().getKeyword();
     }
 
     @Override
-    public Optional<Pickle> getPickleAt(Node node) {
+    public Pickle getPickleAt(Node node) {
         Location location = node.getLocation();
         return pickles.stream()
-            .filter(cucumberPickle -> cucumberPickle.getLocation().equals(location))
-            .findFirst();
+            .filter(pickle -> pickle.getLocation().equals(location))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("No pickle in " + uri + " at " + location));
     }
 
     @Override

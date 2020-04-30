@@ -38,7 +38,7 @@ final class GherkinVintageExamples implements Node.Examples {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return examples.getKeyword();
     }
 

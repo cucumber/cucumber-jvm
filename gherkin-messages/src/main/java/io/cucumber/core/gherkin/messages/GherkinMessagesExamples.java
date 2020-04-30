@@ -28,7 +28,7 @@ final class GherkinMessagesExamples implements Node.Examples {
     }
 
     @Override
-    public String getKeyword() {
+    public String getKeyWord() {
         return examples.getKeyword();
     }
 

@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Entity
 @Table(name = "users")
@@ -57,4 +58,11 @@ public class User implements Serializable {
         this.messages = messages;
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", User.class.getSimpleName() + "[", "]")
+            .add("id=" + id)
+            .add("username='" + username + "'")
+            .toString();
+    }
 }

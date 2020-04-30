@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
@@ -73,6 +74,7 @@ public final class Runner {
     private List<SnippetGenerator> createSnippetGeneratorsForPickle(StepTypeRegistry stepTypeRegistry) {
         return backends.stream()
             .map(Backend::getSnippet)
+            .filter(Objects::nonNull)
             .map(s -> new SnippetGenerator(s, stepTypeRegistry.parameterTypeRegistry()))
             .collect(Collectors.toList());
     }
