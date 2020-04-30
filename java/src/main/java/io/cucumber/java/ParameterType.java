@@ -79,16 +79,12 @@ public @interface ParameterType {
     /**
      * Indicates whether or not this parameter provides a strong type hint when considering a
      * regular expression match. If so, the type hint provided by the method arguments will be
-     * ignored. If not, when both type hints are in agreement, this parameter types transformer
+     * ignored. If not, when both type hints are in agreement, this parameter type's transformer
      * will be used. Otherwise parameter transformation for a regular expression match will be
      * handled by {@link DefaultParameterTransformer}.
-     *
-     * Note: This value currently defaults to true but will default to false in
-     * the next major release.
      *
      * @return true if this parameter type provides a type hint when considering a regular
      * expression match
      */
-    @API(status = API.Status.EXPERIMENTAL)
-    boolean useRegexpMatchAsStrongTypeHint() default true;
+    boolean useRegexpMatchAsStrongTypeHint() default false;
 }
