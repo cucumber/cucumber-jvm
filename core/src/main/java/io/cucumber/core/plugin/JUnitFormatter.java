@@ -250,7 +250,7 @@ public final class JUnitFormatter implements EventListener {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
-                sb.append(steps.get(i).getStep().getKeyWord());
+                sb.append(steps.get(i).getStep().getKeyword());
                 sb.append(steps.get(i).getStepText());
                 do {
                     sb.append(".");

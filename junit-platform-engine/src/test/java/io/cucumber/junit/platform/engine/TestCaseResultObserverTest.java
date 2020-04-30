@@ -94,7 +94,7 @@ class TestCaseResultObserverTest {
             }
 
             @Override
-            public String getKeyWord() {
+            public String getKeyword() {
                 return "Given";
             }
 

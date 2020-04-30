@@ -13,10 +13,11 @@ final class GherkinMessagesExamples implements Node.Examples {
 
     private final io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples examples;
     private final List<Example> children;
+    private final Location location;
 
     GherkinMessagesExamples(io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples examples) {
         this.examples = examples;
-
+        this.location = GherkinMessagesLocation.from(examples.getLocation());
         AtomicInteger row = new AtomicInteger(1);
         this.children = examples.getTableBodyList().stream()
             .map(tableRow -> new GherkinMessagesExample(tableRow, row.getAndIncrement()))
@@ -29,7 +30,7 @@ final class GherkinMessagesExamples implements Node.Examples {
     }
 
     @Override
-    public Optional<String> getKeyWord() {
+    public Optional<String> getKeyword() {
         return Optional.of(examples.getKeyword());
     }
 
@@ -41,6 +42,7 @@ final class GherkinMessagesExamples implements Node.Examples {
 
     @Override
     public Location getLocation() {
-        return GherkinMessagesLocation.from(examples.getLocation());
+        return location;
     }
+
 }

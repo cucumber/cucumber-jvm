@@ -40,7 +40,7 @@ public interface Node {
 
     Location getLocation();
 
-    Optional<String> getKeyWord();
+    Optional<String> getKeyword();
 
     Optional<String> getName();
 

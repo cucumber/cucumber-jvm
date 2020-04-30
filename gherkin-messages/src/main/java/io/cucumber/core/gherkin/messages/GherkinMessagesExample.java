@@ -17,7 +17,7 @@ final class GherkinMessagesExample implements Node.Example {
     }
 
     @Override
-    public Optional<String> getKeyWord() {
+    public Optional<String> getKeyword() {
         return Optional.empty();
     }
 

@@ -52,22 +52,22 @@ class FeatureParserTest {
         assertEquals(Optional.empty(), feature.getName());
         Node.Rule rule = (Node.Rule) feature.elements().iterator().next();
         assertEquals(Optional.empty(), rule.getName());
-        assertEquals(Optional.of("Rule"), rule.getKeyWord());
+        assertEquals(Optional.of("Rule"), rule.getKeyword());
         Iterator<Node> ruleElements = rule.elements().iterator();
         Node.Scenario scenario = (Node.Scenario) ruleElements.next();
         assertEquals(Optional.empty(), scenario.getName());
-        assertEquals(Optional.of("Scenario"), scenario.getKeyWord());
+        assertEquals(Optional.of("Scenario"), scenario.getKeyword());
         Node.ScenarioOutline scenarioOutline = (Node.ScenarioOutline) ruleElements.next();
         assertEquals(Optional.empty(), scenarioOutline.getName());
-        assertEquals(Optional.of("Scenario Outline"), scenarioOutline.getKeyWord());
+        assertEquals(Optional.of("Scenario Outline"), scenarioOutline.getKeyword());
         Node.Examples examples = scenarioOutline.elements().iterator().next();
         assertEquals(Optional.empty(), examples.getName());
-        assertEquals(Optional.of("Examples"), examples.getKeyWord());
+        assertEquals(Optional.of("Examples"), examples.getKeyword());
         Node.Example example = examples.elements().iterator().next();
 
         // Example is the exception.
         assertEquals(Optional.of("Example #1"), example.getName());
-        assertEquals(Optional.empty(), example.getKeyWord());
+        assertEquals(Optional.empty(), example.getKeyword());
     }
 
     @Test

@@ -81,7 +81,7 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
-    public String getKeyWord() {
+    public String getKeyword() {
         return keyWord;
     }
 
@@ -91,7 +91,7 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
-    public String getPreviousGivenWhenThenKeyWord() {
+    public String getPreviousGivenWhenThenKeyword() {
         return previousGwtKeyWord;
     }
 

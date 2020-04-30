@@ -20,7 +20,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -42,7 +42,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -64,7 +64,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -86,7 +86,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -113,7 +113,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -140,7 +140,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -168,7 +168,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -196,7 +196,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -224,7 +224,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 
@@ -252,7 +252,7 @@ class NodeTest {
         }
 
         @Override
-        public Optional<String> getKeyWord() {
+        public Optional<String> getKeyword() {
             return Optional.empty();
         }
 

@@ -19,8 +19,18 @@ public interface Step {
      * Returns this steps keyword. I.e. Given, When, Then.
      *
      * @return step key word
+     * @deprecated use {@link #getKeyword()} instead
      */
-    String getKeyWord();
+    default String getKeyWord() {
+        return getKeyword();
+    }
+
+    /**
+     * Returns this steps keyword. I.e. Given, When, Then.
+     *
+     * @return step key word
+     */
+    String getKeyword();
 
     /**
      * Returns this steps text.

@@ -28,7 +28,7 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
     }
 
     @Override
-    public Optional<String> getKeyWord() {
+    public Optional<String> getKeyword() {
         return Optional.of(scenario.getKeyword());
     }
 

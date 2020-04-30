@@ -76,7 +76,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             .filter(PickleStepTestStep.class::isInstance)
             .map(PickleStepTestStep.class::cast)
             .map(PickleStepTestStep::getStep)
-            .map(step -> formatPlainStep(step.getKeyWord(), step.getText()).length())
+            .map(step -> formatPlainStep(step.getKeyword(), step.getText()).length())
             .max(Comparator.naturalOrder())
             .orElse(0);
 
@@ -112,7 +112,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private void printStep(TestStepFinished event) {
         if (event.getTestStep() instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-            String keyword = testStep.getStep().getKeyWord();
+            String keyword = testStep.getStep().getKeyword();
             String stepText = testStep.getStep().getText();
             String status = event.getResult().getStatus().name().toLowerCase(ROOT);
             String formattedStepText = formatStepText(keyword, stepText, formats.get(status), formats.get(status + "_arg"), testStep.getDefinitionArgument());

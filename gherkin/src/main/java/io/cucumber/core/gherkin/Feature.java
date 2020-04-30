@@ -4,11 +4,8 @@ import io.cucumber.plugin.event.Node;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 public interface Feature extends Node.Feature {
-
-    Optional<String> getKeyWord();
 
     Pickle getPickleAt(Node node);
 

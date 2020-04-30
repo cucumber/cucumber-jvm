@@ -249,7 +249,7 @@ final class FeatureResolver {
     }
 
     private String getNameOrKeyWord(Node node) {
-        Supplier<String> keyword = () -> node.getKeyWord().orElse("Unknown");
+        Supplier<String> keyword = () -> node.getKeyword().orElse("Unknown");
         return node.getName().orElseGet(keyword);
     }
 

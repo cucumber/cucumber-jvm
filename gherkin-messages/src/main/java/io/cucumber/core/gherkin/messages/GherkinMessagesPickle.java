@@ -48,7 +48,7 @@ final class GherkinMessagesPickle implements Pickle {
 
             Step step = new GherkinMessagesStep(pickleStep, dialect, previousGivenWhenThen, location, keyword);
             if (step.getType().isGivenWhenThen()) {
-                previousGivenWhenThen = step.getKeyWord();
+                previousGivenWhenThen = step.getKeyword();
             }
             list.add(step);
         }
