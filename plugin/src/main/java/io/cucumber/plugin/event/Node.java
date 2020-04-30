@@ -50,8 +50,7 @@ public interface Node {
     default <T> T map(
         T parent,
         BiFunction<Feature, T, T> mapFeature,
-        BiFunction<Scenario, T, T> mapScenario,
-        BiFunction<Rule, T, T> mapRule,
+        BiFunction<Rule, T, T> mapRule, BiFunction<Scenario, T, T> mapScenario,
         BiFunction<ScenarioOutline, T, T> mapScenarioOutline,
         BiFunction<Examples, T, T> mapExamples,
         BiFunction<Example, T, T> mapExample
@@ -74,7 +73,7 @@ public interface Node {
                 throw new IllegalArgumentException(this.getClass().getName());
             }
             Container<?> container = (Container<?>) this;
-            container.elements().forEach(node -> node.map(mapped, mapFeature, mapScenario, mapRule, mapScenarioOutline, mapExamples, mapExample));
+            container.elements().forEach(node -> node.map(mapped, mapFeature, mapRule, mapScenario, mapScenarioOutline, mapExamples, mapExample));
             return mapped;
         } else {
             throw new IllegalArgumentException(this.getClass().getName());

@@ -195,7 +195,15 @@ final class FeatureResolver {
                 source.featureSource(),
                 feature
             ),
-            (Node.Scenario node, TestDescriptor parent) -> {
+            (Node.Rule node, TestDescriptor parent) -> {
+                TestDescriptor descriptor = new NodeDescriptor(
+                    source.ruleSegment(parent.getUniqueId(), node),
+                    getNameOrKeyWord(node),
+                    source.nodeSource(node)
+                );
+                parent.addChild(descriptor);
+                return descriptor;
+            }, (Node.Scenario node, TestDescriptor parent) -> {
                 Pickle pickle = feature.getPickleAt(node);
                 TestDescriptor descriptor = new PickleDescriptor(
                     parameters,
@@ -203,15 +211,6 @@ final class FeatureResolver {
                     getNameOrKeyWord(node),
                     source.nodeSource(node),
                     pickle
-                );
-                parent.addChild(descriptor);
-                return descriptor;
-            },
-            (Node.Rule node, TestDescriptor parent) -> {
-                TestDescriptor descriptor = new NodeDescriptor(
-                    source.ruleSegment(parent.getUniqueId(), node),
-                    getNameOrKeyWord(node),
-                    source.nodeSource(node)
                 );
                 parent.addChild(descriptor);
                 return descriptor;
