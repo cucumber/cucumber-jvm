@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinVintageFeature implements Feature {
@@ -27,8 +28,8 @@ final class GherkinVintageFeature implements Feature {
         this.pickles = pickles;
         this.children = gherkinDocument.getFeature().getChildren().stream()
             .filter(scenarioDefinition ->
-                (scenarioDefinition instanceof ScenarioOutline)
-                    || (scenarioDefinition instanceof Scenario))
+                (scenarioDefinition instanceof gherkin.ast.ScenarioOutline)
+                    || (scenarioDefinition instanceof gherkin.ast.Scenario))
             .map(scenarioDefinition -> {
                 if (scenarioDefinition instanceof gherkin.ast.ScenarioOutline) {
                     gherkin.ast.ScenarioOutline outline = (gherkin.ast.ScenarioOutline) scenarioDefinition;
@@ -45,8 +46,8 @@ final class GherkinVintageFeature implements Feature {
     }
 
     @Override
-    public String getKeyWord() {
-        return gherkinDocument.getFeature().getKeyword();
+    public Optional<String> getKeyWord() {
+        return Optional.of(gherkinDocument.getFeature().getKeyword());
     }
 
     @Override
@@ -69,8 +70,9 @@ final class GherkinVintageFeature implements Feature {
     }
 
     @Override
-    public String getName() {
-        return gherkinDocument.getFeature().getName();
+    public Optional<String> getName() {
+        String name = gherkinDocument.getFeature().getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override

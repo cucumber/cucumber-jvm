@@ -16,8 +16,8 @@ import static java.util.Collections.singletonList;
 /**
  * A node in a source file.
  * <p>
- * A node has a location, a name and optionally (null) a keyword. The name may be
- * the the empty string if the node is unnamed.
+ * A node has a location, a keyword and name. The keyword and name are both
+ * optional (e.g. {@link Example} and blank scenario names).
  * <p>
  * Nodes are organized in a tree like structure where {@link Container} nodes
  * contain yet more nodes.
@@ -40,9 +40,9 @@ public interface Node {
 
     Location getLocation();
 
-    String getKeyWord();
+    Optional<String> getKeyWord();
 
-    String getName();
+    Optional<String> getName();
 
     /**
      * Maps a node into another structure
@@ -168,7 +168,7 @@ public interface Node {
     }
 
     /**
-     * An example has no keyword (null) but always a name.
+     * An example has no keyword (empty) but always a name.
      */
     interface Example extends Node {
 

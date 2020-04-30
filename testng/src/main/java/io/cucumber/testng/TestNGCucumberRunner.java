@@ -33,7 +33,6 @@ import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -117,6 +116,7 @@ public final class TestNGCucumberRunner {
         features = featureSupplier.get();
         bus.send(new TestRunStarted(bus.getInstant()));
         features.forEach(feature -> bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource())));
+        features.forEach(feature -> bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature))));
     }
 
     public void runScenario(io.cucumber.testng.Pickle pickle) throws Throwable {

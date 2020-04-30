@@ -225,7 +225,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 .map(Optional::get)
                 .findFirst()
                 .map(nodes -> nodes.get(0))
-                .map(Node::getName)
+                .flatMap(Node::getName)
                 .orElse("Unknown");
         }
 

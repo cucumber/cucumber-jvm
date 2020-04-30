@@ -20,18 +20,18 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Example #1";
+        public Optional<String> getName() {
+            return Optional.of(toString());
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Example #1";
         }
     };
 
@@ -42,19 +42,19 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Example #2";
+        public Optional<String> getName() {
+            return Optional.of(toString());
         }
 
 
         @Override
         public String toString() {
-            return getName();
+            return "Example #2";
         }
     };
     private final Node.Example example3 = new Node.Example() {
@@ -64,18 +64,18 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Example #3";
+        public Optional<String> getName() {
+            return Optional.of(toString());
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Example #3";
         }
     };
 
@@ -86,18 +86,18 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Example #4";
+        public Optional<String> getName() {
+            return Optional.of(toString());
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Example #4";
         }
     };
 
@@ -113,18 +113,19 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Examples A";
+        public Optional<String> getName() {
+            return Optional.of(toString());
+
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Examples A";
         }
     };
     private final Node.Examples examplesB = new Node.Examples() {
@@ -139,18 +140,19 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Examples B";
+        public Optional<String> getName() {
+            return Optional.of(toString());
+
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Examples B";
         }
     };
 
@@ -166,18 +168,19 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Empty Examples A";
+        public Optional<String> getName() {
+            return Optional.of(toString());
+
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Empty Examples A";
         }
     };
 
@@ -193,18 +196,19 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Empty Examples B";
+        public Optional<String> getName() {
+            return Optional.of(toString());
+
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Empty Examples B";
         }
     };
 
@@ -220,18 +224,19 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Outline";
+        public Optional<String> getName() {
+            return Optional.of(toString());
+
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Outline";
         }
     };
 
@@ -247,101 +252,102 @@ class NodeTest {
         }
 
         @Override
-        public String getKeyWord() {
-            return null;
+        public Optional<String> getKeyWord() {
+            return Optional.empty();
         }
 
         @Override
-        public String getName() {
-            return "Empty Outline";
+        public Optional<String> getName() {
+            return Optional.of(toString());
+
         }
 
         @Override
         public String toString() {
-            return getName();
+            return "Empty Outline";
         }
     };
 
     @Test
     void findExamples1() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #1".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Example #1").equals(node.getName()));
         assertEquals(Optional.of(asList(outline, examplesA, example1)), pathTo);
     }
 
     @Test
     void findExamples2() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #2".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Example #2").equals(node.getName()));
         assertEquals(Optional.of(asList(outline, examplesA, example2)), pathTo);
     }
 
     @Test
     void findExamples3() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #3".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Example #3").equals(node.getName()));
         assertEquals(Optional.of(asList(outline, examplesB, example3)), pathTo);
     }
 
     @Test
     void findExamples4() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Example #4".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Example #4").equals(node.getName()));
         assertEquals(Optional.of(asList(outline, examplesB, example4)), pathTo);
     }
 
     @Test
     void findExamplesA() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Examples A".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Examples A").equals(node.getName()));
         assertEquals(Optional.of(asList(outline, examplesA)), pathTo);
     }
 
     @Test
     void findEmptyExamplesA() {
-        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Empty Examples A".equals(node.getName()));
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Empty Examples A").equals(node.getName()));
         assertEquals(Optional.of(asList(emptyOutline, emptyExamplesA)), pathTo);
     }
 
     @Test
     void findExamplesB() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Examples B".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Examples B").equals(node.getName()));
         assertEquals(Optional.of(asList(outline, examplesB)), pathTo);
     }
 
     @Test
     void findEmptyExamplesB() {
-        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Empty Examples B".equals(node.getName()));
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Empty Examples B").equals(node.getName()));
         assertEquals(Optional.of(asList(emptyOutline, emptyExamplesB)), pathTo);
     }
 
     @Test
     void findOutline() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Outline".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Outline").equals(node.getName()));
         assertEquals(Optional.of(asList(outline)), pathTo);
     }
 
     @Test
     void findEmptyOutline() {
-        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Empty Outline".equals(node.getName()));
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Empty Outline").equals(node.getName()));
         assertEquals(Optional.of(asList(emptyOutline)), pathTo);
     }
 
     @Test
     void findNothingInOutline() {
-        Optional<List<Node>> pathTo = outline.findPathTo(node -> "Nothing".equals(node.getName()));
+        Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
     @Test
     void findNothingInEmptyOutline() {
-        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> "Nothing".equals(node.getName()));
+        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
 
     @Test
     void findInNode() {
-        Optional<List<Node>> pathTo = example1.findPathTo(node -> "Example #1".equals(node.getName()));
+        Optional<List<Node>> pathTo = example1.findPathTo(node -> Optional.of("Example #1").equals(node.getName()));
         assertEquals(Optional.of(asList(example1)), pathTo);
     }
 
     @Test
     void findNothingInNode() {
-        Optional<List<Node>> pathTo = example1.findPathTo(node -> "Nothing".equals(node.getName()));
+        Optional<List<Node>> pathTo = example1.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
 

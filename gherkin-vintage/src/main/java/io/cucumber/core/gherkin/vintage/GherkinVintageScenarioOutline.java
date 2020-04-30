@@ -5,6 +5,7 @@ import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.gherkin.vintage.GherkinVintageLocation.from;
@@ -32,12 +33,13 @@ final class GherkinVintageScenarioOutline implements Node.ScenarioOutline {
     }
 
     @Override
-    public String getKeyWord() {
-        return scenarioOutline.getKeyword();
+    public Optional<String> getKeyWord() {
+        return Optional.of(scenarioOutline.getKeyword());
     }
 
     @Override
-    public String getName() {
-        return scenarioOutline.getName();
+    public Optional<String> getName() {
+        String name = scenarioOutline.getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 }

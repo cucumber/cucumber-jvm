@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -142,13 +143,15 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private void startNode(URI uri, String timestamp, Node node) {
-        String name = node.getName().isEmpty() ? node.getKeyWord() : node.getName();
+        Supplier<String> keyword = () -> node.getKeyWord().orElse("Unknown");
+        String name = node.getName().orElseGet(keyword);
         String location = uri + ":" + node.getLocation().getLine();
         print(TEMPLATE_TEST_SUITE_STARTED, timestamp, location, name);
     }
 
     private void finishNode(String timestamp, Node node) {
-        String name = node.getName().isEmpty() ? node.getKeyWord() : node.getName();
+        Supplier<String> keyword = () -> node.getKeyWord().orElse("Unknown");
+        String name = node.getName().orElseGet(keyword);
         print(TEMPLATE_TEST_SUITE_FINISHED, timestamp, name);
     }
 

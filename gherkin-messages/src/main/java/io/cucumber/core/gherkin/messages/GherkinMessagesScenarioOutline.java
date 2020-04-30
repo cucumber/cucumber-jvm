@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
@@ -27,13 +28,14 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
     }
 
     @Override
-    public String getKeyWord() {
-        return scenario.getKeyword();
+    public Optional<String> getKeyWord() {
+        return Optional.of(scenario.getKeyword());
     }
 
     @Override
-    public String getName() {
-        return scenario.getName();
+    public Optional<String> getName() {
+        String name = scenario.getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override

@@ -7,6 +7,7 @@ import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleCh
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinMessagesRule implements Node.Rule {
@@ -35,13 +36,14 @@ final class GherkinMessagesRule implements Node.Rule {
     }
 
     @Override
-    public String getKeyWord() {
-        return rule.getKeyword();
+    public Optional<String> getKeyWord() {
+        return Optional.of(rule.getKeyword());
     }
 
     @Override
-    public String getName() {
-        return rule.getName();
+    public Optional<String> getName() {
+        String name = rule.getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override

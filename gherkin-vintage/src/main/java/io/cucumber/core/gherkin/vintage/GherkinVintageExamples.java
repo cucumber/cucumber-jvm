@@ -38,12 +38,12 @@ final class GherkinVintageExamples implements Node.Examples {
     }
 
     @Override
-    public String getKeyWord() {
-        return examples.getKeyword();
+    public Optional<String> getKeyWord() {
+        return Optional.of(examples.getKeyword());
     }
 
     @Override
-    public String getName() {
-        return examples.getName();
+    public Optional<String> getName() {
+        return examples.getName().isEmpty() ? Optional.empty() : Optional.of(examples.getName());
     }
 }

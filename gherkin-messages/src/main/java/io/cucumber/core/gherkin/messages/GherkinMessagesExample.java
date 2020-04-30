@@ -4,6 +4,8 @@ import io.cucumber.plugin.event.Location;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
 import io.cucumber.plugin.event.Node;
 
+import java.util.Optional;
+
 final class GherkinMessagesExample implements Node.Example {
 
     private final TableRow tableRow;
@@ -15,13 +17,13 @@ final class GherkinMessagesExample implements Node.Example {
     }
 
     @Override
-    public String getKeyWord() {
-        return null;
+    public Optional<String> getKeyWord() {
+        return Optional.empty();
     }
 
     @Override
-    public String getName() {
-        return "Example #" + rowIndex;
+    public Optional<String> getName() {
+        return Optional.of("Example #" + rowIndex);
     }
 
     @Override

@@ -2,10 +2,6 @@ package io.cucumber.junit;
 
 final class FileNameCompatibleNames {
     static String createName(final String name, boolean useFilenameCompatibleNames) {
-        if (name.isEmpty()) {
-            return "EMPTY_NAME";
-        }
-
         if (useFilenameCompatibleNames) {
             return makeNameFilenameCompatible(name);
         }

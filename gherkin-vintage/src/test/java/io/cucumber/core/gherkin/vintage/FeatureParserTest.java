@@ -17,8 +17,6 @@ import java.util.UUID;
 import static java.nio.file.Files.readAllBytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FeatureParserTest {
 
@@ -71,21 +69,21 @@ class FeatureParserTest {
         URI uri = URI.create("classpath:com/example.feature");
         String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/vintage/unnamed.feature")));
         Feature feature = parser.parse(uri, source, UUID::randomUUID).get();
-        assertEquals("", feature.getName());
+        assertEquals(Optional.empty(), feature.getName());
         Iterator<Node> featureElements = feature.elements().iterator();
         Node.Scenario scenario = (Node.Scenario) featureElements.next();
-        assertEquals("", scenario.getName());
-        assertEquals("Scenario", scenario.getKeyWord());
+        assertEquals(Optional.empty(), scenario.getName());
+        assertEquals(Optional.of("Scenario"), scenario.getKeyWord());
         Node.ScenarioOutline scenarioOutline = (Node.ScenarioOutline) featureElements.next();
-        assertEquals("", scenarioOutline.getName());
-        assertEquals("Scenario Outline", scenarioOutline.getKeyWord());
+        assertEquals(Optional.empty(), scenarioOutline.getName());
+        assertEquals(Optional.of("Scenario Outline"), scenarioOutline.getKeyWord());
         Node.Examples examples = scenarioOutline.elements().iterator().next();
-        assertEquals("", examples.getName());
-        assertEquals("Examples", examples.getKeyWord());
+        assertEquals(Optional.empty(), examples.getName());
+        assertEquals(Optional.of("Examples"), examples.getKeyWord());
         Node.Example example = examples.elements().iterator().next();
 
         // Example is the exception.
-        assertEquals("Example #1", example.getName());
-        assertNull(example.getKeyWord());
+        assertEquals(Optional.of("Example #1"), example.getName());
+        assertEquals(Optional.empty(), example.getKeyWord());
     }
 }

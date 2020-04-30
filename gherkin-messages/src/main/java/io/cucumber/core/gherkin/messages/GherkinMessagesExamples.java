@@ -5,6 +5,7 @@ import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -28,13 +29,14 @@ final class GherkinMessagesExamples implements Node.Examples {
     }
 
     @Override
-    public String getKeyWord() {
-        return examples.getKeyword();
+    public Optional<String> getKeyWord() {
+        return Optional.of(examples.getKeyword());
     }
 
     @Override
-    public String getName() {
-        return examples.getName();
+    public Optional<String> getName() {
+        String name = examples.getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override

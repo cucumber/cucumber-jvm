@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -249,8 +250,8 @@ final class FeatureResolver {
     }
 
     private String getNameOrKeyWord(Node node) {
-        String name = node.getName();
-        return name.isEmpty() ? node.getKeyWord() : name;
+        Supplier<String> keyword = () -> node.getKeyWord().orElse("Unknown");
+        return node.getName().orElseGet(keyword);
     }
 
 }
