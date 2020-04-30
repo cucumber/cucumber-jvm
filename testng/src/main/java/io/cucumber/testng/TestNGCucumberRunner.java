@@ -78,7 +78,6 @@ public final class TestNGCucumberRunner {
 
         RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
-            .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);

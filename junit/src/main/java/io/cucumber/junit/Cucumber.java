@@ -118,7 +118,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
-            .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
         // Next parse the junit options
