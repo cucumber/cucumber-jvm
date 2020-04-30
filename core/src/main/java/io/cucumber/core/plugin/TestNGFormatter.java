@@ -3,7 +3,6 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -46,7 +45,7 @@ import static java.time.Duration.ZERO;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static java.util.Locale.ROOT;
 
-public final class TestNGFormatter implements EventListener, StrictAware {
+public final class TestNGFormatter implements EventListener {
 
     private final Writer writer;
     private final Document document;
@@ -56,7 +55,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
     private Element clazz;
     private Element root;
     private TestCase testCase;
-    private boolean strict = false;
     private URI currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
@@ -91,11 +89,6 @@ public final class TestNGFormatter implements EventListener, StrictAware {
 
     private void handleTestRunStarted(TestRunStarted event) {
         this.started = event.getInstant();
-    }
-
-    @Override
-    public void setStrict(boolean strict) {
-        this.strict = strict;
     }
 
     private void handleTestSourceRead(TestSourceRead event) {
@@ -238,13 +231,9 @@ public final class TestNGFormatter implements EventListener, StrictAware {
                 Element exception = createException(doc, failed.getError().getClass().getName(), stringBuilder.toString(), stacktrace);
                 element.appendChild(exception);
             } else if (skipped != null) {
-                if (strict) {
-                    element.setAttribute("status", "FAIL");
-                    Element exception = createException(doc, "The scenario has pending or undefined step(s)", stringBuilder.toString(), "The scenario has pending or undefined step(s)");
-                    element.appendChild(exception);
-                } else {
-                    element.setAttribute("status", "SKIP");
-                }
+                element.setAttribute("status", "FAIL");
+                Element exception = createException(doc, "The scenario has pending or undefined step(s)", stringBuilder.toString(), "The scenario has pending or undefined step(s)");
+                element.appendChild(exception);
             } else {
                 element.setAttribute("status", "PASS");
             }

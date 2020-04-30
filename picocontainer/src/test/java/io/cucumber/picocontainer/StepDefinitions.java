@@ -2,21 +2,22 @@ package io.cucumber.picocontainer;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.opentest4j.TestAbortedException;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Steps {
+public class StepDefinitions {
 
     private final DisposableCucumberBelly belly;
 
-    public Steps(DisposableCucumberBelly belly) {
+    public StepDefinitions(DisposableCucumberBelly belly) {
         this.belly = belly;
     }
 
@@ -49,7 +50,8 @@ public class Steps {
 
     @Given("something pending")
     public void throw_pending() {
-        throw new PendingException("This should not fail (seeing this output is ok)");
+        throw new TestAbortedException("Skip this!");
+//        throw new PendingException("This should not fail (seeing this output is ok)");
     }
 
     @Then("there are {int} cukes in my belly")
@@ -70,6 +72,31 @@ public class Steps {
     @Then("I should be {word}")
     public void I_should_be(String mood) {
         assertEquals("happy", mood);
+    }
+
+
+    @When("foo")
+    public void foo() {
+        throw new TestAbortedException("Skip this!");
+    }
+
+    @Then("bar concerning a fluffy spiked club")
+    public void bar_concerning_a_fluffy_spiked_club() {
+        throw new TestAbortedException("Skip this!");
+    }
+
+    @Given("something undefined")
+    public void something_undefined() {
+        // Write code here that turns the phrase above into concrete actions
+        // throw new io.cucumber.java.PendingException();
+        throw new TestAbortedException("Skip this!");
+    }
+
+    @Given("a big basket with cukes")
+    public void a_big_basket_with_cukes() {
+        // Write code here that turns the phrase above into concrete actions
+        // throw new io.cucumber.java.PendingException();
+        throw new TestAbortedException("Skip this!");
     }
 
     @After

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,13 +31,11 @@ public final class TestCaseResultObserver implements AutoCloseable {
     private final List<Suggestion> suggestions = new ArrayList<>();
     private final EventHandler<SnippetsSuggestedEvent> snippetsSuggested = this::handleSnippetSuggestedEvent;
     private final EventHandler<TestStepFinished> testStepFinished = this::handleTestStepFinished;
-    private final boolean strict;
     private Result result;
     private final EventHandler<TestCaseFinished> testCaseFinished = this::handleTestCaseFinished;
 
-    public TestCaseResultObserver(EventPublisher bus, boolean strict) {
+    public TestCaseResultObserver(EventPublisher bus) {
         this.bus = bus;
-        this.strict = strict;
         bus.registerHandlerFor(SnippetsSuggestedEvent.class, snippetsSuggested);
         bus.registerHandlerFor(TestStepFinished.class, testStepFinished);
         bus.registerHandlerFor(TestCaseFinished.class, testCaseFinished);
@@ -91,7 +88,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
     public void assertTestCasePassed(
         Supplier<Throwable> testCaseSkipped,
         Function<Throwable, Throwable> testCaseSkippedWithException,
-        BiFunction<List<Suggestion>, Boolean, Throwable> testCaseWasUndefined,
+        Function<List<Suggestion>, Throwable> testCaseWasUndefined,
         Function<Throwable, Throwable> testCaseWasPending
     ) {
         Status status = result.getStatus();
@@ -106,9 +103,9 @@ public final class TestCaseResultObserver implements AutoCloseable {
             Throwable throwable = testCaseSkippedWithException.apply(error);
             throw new TestCaseFailed(throwable);
         } else if (status.is(UNDEFINED)) {
-            Throwable throwable = testCaseWasUndefined.apply(suggestions, strict);
+            Throwable throwable = testCaseWasUndefined.apply(suggestions);
             throw new TestCaseFailed(throwable);
-        } else if (status.is(PENDING) && !strict) {
+        } else if (status.is(PENDING)) {
             Throwable throwable = testCaseWasPending.apply(error);
             throw new TestCaseFailed(throwable);
         }

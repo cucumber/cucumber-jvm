@@ -10,6 +10,7 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
@@ -27,17 +28,15 @@ class UndefinedStepDefinitionMatchTest {
     );
 
     @Test
-    void throws_ambiguous_step_definitions_exception_when_run() {
+    void throws_undefined_step_definitions_exception_when_run() {
         Executable testMethod = () -> match.runStep(mock(TestCaseState.class));
         UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
     }
 
     @Test
-    void throws_ambiguous_step_definitions_exception_when_dry_run() {
-        Executable testMethod = () -> match.dryRunStep(mock(TestCaseState.class));
-        UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
+    void does_not_throws_undefined_step_definitions_exception_when_dry_run() {
+        assertDoesNotThrow(() -> match.dryRunStep(mock(TestCaseState.class)));
     }
 
 }

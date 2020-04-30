@@ -40,9 +40,6 @@ Options:
 
   -m, --[no-]monochrome                    Don't colour terminal output.
 
-  -s, --[no-]strict                        Treat undefined and pending steps as
-                                           errors.
-
       --snippets [underscore|camelcase]    Naming convention for generated
                                            snippets. Defaults to underscore.
 

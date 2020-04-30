@@ -5,8 +5,6 @@ public interface Options {
 
     boolean isMonochrome();
 
-    boolean isStrict();
-
     boolean isWip();
 
     interface Plugin {

@@ -19,7 +19,7 @@ final class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch
 
     @Override
     public void dryRunStep(TestCaseState state) {
-        runStep(state);
+
     }
 
 }

@@ -53,7 +53,7 @@ public class TestCaseResultObserverTest {
 
     @Test
     public void should_be_passed_for_passed_result() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         Result stepResult = new Result(Status.PASSED, ZERO, null);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -66,7 +66,7 @@ public class TestCaseResultObserverTest {
 
     @Test
     public void should_not_be_passed_for_failed_result() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         Result stepResult = new Result(FAILED, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -80,7 +80,7 @@ public class TestCaseResultObserverTest {
 
     @Test
     public void should_not_be_passed_for_ambiguous_result() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         Result stepResult = new Result(AMBIGUOUS, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -93,8 +93,8 @@ public class TestCaseResultObserverTest {
     }
 
     @Test
-    public void should_be_skipped_for_undefined_result() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+    public void should_be_failed_for_undefined_result() {
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
 
@@ -107,7 +107,7 @@ public class TestCaseResultObserverTest {
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
         assertThat(exception.getCause(), instanceOf(SkipException.class));
         SkipException skipException = (SkipException) exception.getCause();
-        assertThat(skipException.isSkip(), is(true));
+        assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
             "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
             "\n" +
@@ -116,8 +116,8 @@ public class TestCaseResultObserverTest {
     }
 
     @Test
-    public void should_not_be_skipped_for_undefined_result_in_strict_mode() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, true);
+    public void should_not_be_skipped_for_undefined_result() {
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
 
@@ -140,7 +140,7 @@ public class TestCaseResultObserverTest {
 
     @Test
     public void should_be_passed_for_empty_scenario() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         Result testCaseResult = new Result(PASSED, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
@@ -150,7 +150,7 @@ public class TestCaseResultObserverTest {
 
     @Test
     public void should_be_skipped_for_pending_result() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         Exception error = new TestPendingException();
 
@@ -161,12 +161,12 @@ public class TestCaseResultObserverTest {
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
-        assertThat(exception.getCause(), instanceOf(SkipException.class));
+        assertThat(exception.getCause(), is(error));
     }
 
     @Test
-    public void should_not_be_skipped_for_pending_result_in_strict_mode() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, true);
+    public void should_not_be_skipped_for_pending_result() {
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         TestPendingException error = new TestPendingException();
 
@@ -182,7 +182,7 @@ public class TestCaseResultObserverTest {
 
     @Test
     public void should_be_skipped_for_skipped_result() {
-        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus, false);
+        TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         Result stepResult = new Result(SKIPPED, ZERO, null);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));

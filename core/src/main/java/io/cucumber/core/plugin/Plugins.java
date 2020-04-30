@@ -77,7 +77,7 @@ public final class Plugins {
     private void setStrictOnStrictAwarePlugins(Plugin plugin) {
         if (plugin instanceof StrictAware) {
             StrictAware strictAware = (StrictAware) plugin;
-            strictAware.setStrict(pluginOptions.isStrict());
+            strictAware.setStrict(true);
         }
     }
 
