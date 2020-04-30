@@ -1,9 +1,11 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Scenario;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
-final class GherkinMessagesScenario implements Scenario {
+import java.util.Optional;
+
+final class GherkinMessagesScenario implements Node.Scenario {
 
     private final io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario scenario;
 
@@ -12,13 +14,14 @@ final class GherkinMessagesScenario implements Scenario {
     }
 
     @Override
-    public String getKeyWord() {
-        return scenario.getKeyword();
+    public Optional<String> getKeyword() {
+        return Optional.of(scenario.getKeyword());
     }
 
     @Override
-    public String getName() {
-        return scenario.getName();
+    public Optional<String> getName() {
+        String name = scenario.getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override

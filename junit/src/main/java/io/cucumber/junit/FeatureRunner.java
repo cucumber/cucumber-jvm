@@ -40,17 +40,19 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         super((Class<?>) null);
         this.feature = feature;
         this.options = options;
+        String name = feature.getName().orElse("EMPTY_NAME");
         this.children = feature.getPickles().stream()
             .filter(filter).
                 map(pickle -> options.stepNotifications()
                     ? withStepDescriptions(runners, pickle, options)
-                    : withNoStepDescriptions(feature.getName(), runners, pickle, options))
+                    : withNoStepDescriptions(name, runners, pickle, options))
             .collect(toList());
     }
 
     @Override
     protected String getName() {
-        return createName(feature.getName(), options.filenameCompatibleNames());
+        String name = feature.getName().orElse("EMPTY_NAME");
+        return createName(name, options.filenameCompatibleNames());
     }
 
     @Override

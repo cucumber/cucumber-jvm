@@ -13,6 +13,7 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 
 import java.time.Duration;
@@ -23,6 +24,7 @@ import java.util.function.Consumer;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.synchronizedList;
 
 public final class CucumberExecutionContext {
@@ -125,6 +127,7 @@ public final class CucumberExecutionContext {
     public void beforeFeature(Feature feature) {
         log.debug(() -> "Sending test source read event for " + feature.getUri());
         bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+        bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
         bus.sendAll(feature.getParseEvents());
     }
 

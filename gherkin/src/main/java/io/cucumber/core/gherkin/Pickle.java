@@ -1,5 +1,7 @@
 package io.cucumber.core.gherkin;
 
+import io.cucumber.plugin.event.Location;
+
 import java.net.URI;
 import java.util.List;
 

@@ -1,16 +1,16 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Node;
-import io.cucumber.core.gherkin.Rule;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-final class GherkinMessagesRule implements Rule {
+final class GherkinMessagesRule implements Node.Rule {
 
     private final Messages.GherkinDocument.Feature.FeatureChild.Rule rule;
     private final List<Node> children;
@@ -31,18 +31,19 @@ final class GherkinMessagesRule implements Rule {
     }
 
     @Override
-    public Collection<Node> children() {
+    public Collection<Node> elements() {
         return children;
     }
 
     @Override
-    public String getKeyWord() {
-        return rule.getKeyword();
+    public Optional<String> getKeyword() {
+        return Optional.of(rule.getKeyword());
     }
 
     @Override
-    public String getName() {
-        return rule.getName();
+    public Optional<String> getName() {
+        String name = rule.getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override

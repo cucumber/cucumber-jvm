@@ -3,6 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Argument;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
@@ -43,6 +44,11 @@ class TestCaseResultObserverTest {
         @Override
         public Integer getLine() {
             return 12;
+        }
+
+        @Override
+        public Location getLocation() {
+            return new Location(12, 4);
         }
 
         @Override
@@ -88,7 +94,7 @@ class TestCaseResultObserverTest {
             }
 
             @Override
-            public String getKeyWord() {
+            public String getKeyword() {
                 return "Given";
             }
 
@@ -100,6 +106,11 @@ class TestCaseResultObserverTest {
             @Override
             public int getLine() {
                 return 15;
+            }
+
+            @Override
+            public Location getLocation() {
+                return new Location(15, 8);
             }
         };
 
@@ -199,11 +210,16 @@ class TestCaseResultObserverTest {
     void undefined() {
         bus.send(new TestCaseStarted(Instant.now(), testCase));
         bus.send(new TestStepStarted(Instant.now(), testCase, testStep));
-        bus.send(new SnippetsSuggestedEvent(Instant.now(), uri, testCase.getLine(), testStep.getStepLine(), asList(
-            "mocked snippet 1",
-            "mocked snippet 2",
-            "mocked snippet 3"
-        )));
+        bus.send(new SnippetsSuggestedEvent(
+            Instant.now(),
+            uri,
+            testCase.getLocation(),
+            testStep.getStep().getLocation(),
+            asList(
+                "mocked snippet 1",
+                "mocked snippet 2",
+                "mocked snippet 3"
+            )));
         Result result = new Result(Status.UNDEFINED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));

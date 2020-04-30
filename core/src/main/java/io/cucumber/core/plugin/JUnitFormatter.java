@@ -1,9 +1,10 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -11,7 +12,7 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,11 +36,13 @@ import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.util.Locale.ROOT;
@@ -57,8 +60,7 @@ public final class JUnitFormatter implements EventListener {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, String> featuresNames = new HashMap<>();
-    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
     public JUnitFormatter(OutputStream out) {
         this.writer = new UTF8OutputStreamWriter(out);
@@ -84,7 +86,7 @@ public final class JUnitFormatter implements EventListener {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestRunStarted.class, this::handleTestRunStarted);
-        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestSourceParsed.class, this::handleTestSourceParsed);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
@@ -95,11 +97,8 @@ public final class JUnitFormatter implements EventListener {
         this.started = event.getInstant();
     }
 
-    private void handleTestSourceRead(TestSourceRead event) {
-        TestSourceReadResource source = new TestSourceReadResource(event);
-        parser.parseResource(source).ifPresent(feature ->
-            featuresNames.put(feature.getUri(), feature.getName())
-        );
+    private void handleTestSourceParsed(TestSourceParsed event) {
+        parsedTestSources.put(event.getUri(), event.getNodes());
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -185,8 +184,23 @@ public final class JUnitFormatter implements EventListener {
         }
 
         void writeElement(Element tc) {
-            tc.setAttribute("classname", featuresNames.get(currentFeatureFile));
+            tc.setAttribute("classname", findRootNodeName(testCase));
             tc.setAttribute("name", calculateElementName(testCase));
+        }
+
+        private String findRootNodeName(io.cucumber.plugin.event.TestCase testCase) {
+            Location location = testCase.getLocation();
+            Predicate<Node> withLocation = candidate ->
+                location.equals(candidate.getLocation());
+            return parsedTestSources.get(testCase.getUri())
+                .stream()
+                .map(node -> node.findPathTo(withLocation))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .map(nodes -> nodes.get(0))
+                .flatMap(Node::getName)
+                .orElse("Unknown");
         }
 
         private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {
@@ -236,7 +250,7 @@ public final class JUnitFormatter implements EventListener {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
-                sb.append(steps.get(i).getStep().getKeyWord());
+                sb.append(steps.get(i).getStep().getKeyword());
                 sb.append(steps.get(i).getStepText());
                 do {
                     sb.append(".");

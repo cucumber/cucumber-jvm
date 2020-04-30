@@ -6,11 +6,13 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.FeatureParserException;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
+import io.cucumber.plugin.event.Node;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +42,32 @@ class FeatureParserTest {
         String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/messages/empty.feature")));
         Optional<Feature> feature = parser.parse(uri, source, UUID::randomUUID);
         assertFalse(feature.isPresent());
+    }
+
+    @Test
+    void unnamed_elements_return_empty_strings_as_name() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/messages/unnamed.feature")));
+        Feature feature = parser.parse(uri, source, UUID::randomUUID).get();
+        assertEquals(Optional.empty(), feature.getName());
+        Node.Rule rule = (Node.Rule) feature.elements().iterator().next();
+        assertEquals(Optional.empty(), rule.getName());
+        assertEquals(Optional.of("Rule"), rule.getKeyword());
+        Iterator<Node> ruleElements = rule.elements().iterator();
+        Node.Scenario scenario = (Node.Scenario) ruleElements.next();
+        assertEquals(Optional.empty(), scenario.getName());
+        assertEquals(Optional.of("Scenario"), scenario.getKeyword());
+        Node.ScenarioOutline scenarioOutline = (Node.ScenarioOutline) ruleElements.next();
+        assertEquals(Optional.empty(), scenarioOutline.getName());
+        assertEquals(Optional.of("Scenario Outline"), scenarioOutline.getKeyword());
+        Node.Examples examples = scenarioOutline.elements().iterator().next();
+        assertEquals(Optional.empty(), examples.getName());
+        assertEquals(Optional.of("Examples"), examples.getKeyword());
+        Node.Example example = examples.elements().iterator().next();
+
+        // Example is the exception.
+        assertEquals(Optional.of("Example #1"), example.getName());
+        assertEquals(Optional.empty(), example.getKeyword());
     }
 
     @Test

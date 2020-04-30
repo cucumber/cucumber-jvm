@@ -1,19 +1,18 @@
 package io.cucumber.core.gherkin.messages;
 
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Located;
-import io.cucumber.core.gherkin.Location;
-import io.cucumber.core.gherkin.Node;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinMessagesFeature implements Feature {
@@ -36,7 +35,7 @@ final class GherkinMessagesFeature implements Feature {
                 if (featureChild.hasRule()) {
                     return new GherkinMessagesRule(featureChild.getRule());
                 }
-                Scenario scenario = featureChild.getScenario();
+                GherkinDocument.Feature.Scenario scenario = featureChild.getScenario();
                 if (scenario.getExamplesCount() > 0) {
                     return new GherkinMessagesScenarioOutline(scenario);
                 } else {
@@ -47,13 +46,13 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
-    public Collection<Node> children() {
+    public Collection<Node> elements() {
         return children;
     }
 
     @Override
-    public String getKeyword() {
-        return gherkinDocument.getFeature().getKeyword();
+    public Optional<String> getKeyword() {
+        return Optional.of(gherkinDocument.getFeature().getKeyword());
     }
 
     @Override
@@ -62,8 +61,8 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
-    public Pickle getPickleAt(Located located) {
-        Location location = located.getLocation();
+    public Pickle getPickleAt(Node node) {
+        Location location = node.getLocation();
         return pickles.stream()
             .filter(pickle -> pickle.getLocation().equals(location))
             .findFirst()
@@ -76,13 +75,9 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
-    public String getKeyWord() {
-        return gherkinDocument.getFeature().getKeyword();
-    }
-
-    @Override
-    public String getName() {
-        return gherkinDocument.getFeature().getName();
+    public Optional<String> getName() {
+        String name = gherkinDocument.getFeature().getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override

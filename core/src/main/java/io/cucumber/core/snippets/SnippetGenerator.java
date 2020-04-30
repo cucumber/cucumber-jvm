@@ -1,15 +1,15 @@
 package io.cucumber.core.snippets;
 
 import io.cucumber.core.backend.Snippet;
-import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
 import io.cucumber.cucumberexpressions.GeneratedExpression;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.plugin.event.DataTableArgument;
+import io.cucumber.plugin.event.DocStringArgument;
+import io.cucumber.plugin.event.StepArgument;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public final class SnippetGenerator {
         FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
         for (GeneratedExpression expression : generatedExpressions) {
             snippets.add(snippet.template().format(new String[]{
-                    sanitize(step.getType().isGivenWhenThen() ? step.getKeyWord() : step.getPreviousGivenWhenThenKeyWord()),
+                    sanitize(step.getType().isGivenWhenThen() ? step.getKeyword() : step.getPreviousGivenWhenThenKeyword()),
                     snippet.escapePattern(expression.getSource()),
                     functionName(expression.getSource(), functionNameGenerator),
                     snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
@@ -89,7 +89,7 @@ public final class SnippetGenerator {
             arguments.put(parameterName, parameterType.getType());
         }
 
-        Argument arg = step.getArgument();
+        StepArgument arg = step.getArgument();
         if (arg == null) {
             return arguments;
         } else if (arg instanceof DocStringArgument) {

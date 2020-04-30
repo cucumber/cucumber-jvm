@@ -1,15 +1,13 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.gherkin.Container;
-import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Node;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.HookTestStep;
 import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
@@ -19,7 +17,7 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
@@ -33,14 +31,19 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.emptyList;
 
 public class TeamCityPlugin implements EventListener {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
@@ -71,7 +74,7 @@ public class TeamCityPlugin implements EventListener {
 
     private final PrintStream out;
     private final List<SnippetsSuggestedEvent> snippets = new ArrayList<>();
-    private final Map<URI, Feature> features = new HashMap<>();
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
     private List<Node> currentStack = new ArrayList<>();
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -97,16 +100,11 @@ public class TeamCityPlugin implements EventListener {
         publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetSuggested);
         publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbedEvent);
         publisher.registerHandlerFor(WriteEvent.class, this::handleWriteEvent);
-        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestSourceParsed.class, this::handleTestSourceParsed);
     }
 
-    private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
-
-    private void handleTestSourceRead(TestSourceRead event) {
-        TestSourceReadResource source = new TestSourceReadResource(event);
-        featureParser.parseResource(source).ifPresent(feature ->
-            features.put(event.getUri(), feature)
-        );
+    private void handleTestSourceParsed(TestSourceParsed event) {
+        parsedTestSources.put(event.getUri(), event.getNodes());
     }
 
     private void printTestRunStarted(TestRunStarted event) {
@@ -124,25 +122,36 @@ public class TeamCityPlugin implements EventListener {
     private void printTestCaseStarted(TestCaseStarted event) {
         TestCase testCase = event.getTestCase();
         URI uri = testCase.getUri();
-        Feature feature = features.get(uri);
         String timestamp = extractTimeStamp(event);
 
-        List<Node> newStack = extractStack(feature, testCase);
-        poppedNodes(newStack).forEach(node -> finishNode(timestamp, node));
-        pushedNodes(newStack).forEach(node -> startNode(uri, timestamp, node));
-        this.currentStack = newStack;
+        Location location = testCase.getLocation();
+        Predicate<Node> withLocation = candidate ->
+            location.equals(candidate.getLocation());
+        List<Node> path = parsedTestSources.get(uri)
+            .stream()
+            .map(node -> node.findPathTo(withLocation))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst()
+            .orElse(emptyList());
+
+        poppedNodes(path).forEach(node -> finishNode(timestamp, node));
+        pushedNodes(path).forEach(node -> startNode(uri, timestamp, node));
+        this.currentStack = path;
 
         print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
     }
 
     private void startNode(URI uri, String timestamp, Node node) {
-        String name = node.getName() == null ? node.getKeyWord() : node.getName();
+        Supplier<String> keyword = () -> node.getKeyword().orElse("Unknown");
+        String name = node.getName().orElseGet(keyword);
         String location = uri + ":" + node.getLocation().getLine();
         print(TEMPLATE_TEST_SUITE_STARTED, timestamp, location, name);
     }
 
     private void finishNode(String timestamp, Node node) {
-        String name = node.getName() == null ? node.getKeyWord() : node.getName();
+        Supplier<String> keyword = () -> node.getKeyword().orElse("Unknown");
+        String name = node.getName().orElseGet(keyword);
         print(TEMPLATE_TEST_SUITE_FINISHED, timestamp, name);
     }
 
@@ -161,7 +170,7 @@ public class TeamCityPlugin implements EventListener {
         if (newStack.size() < currentStack.size()) {
             return currentStack.subList(newStack.size(), currentStack.size());
         }
-        return Collections.emptyList();
+        return emptyList();
     }
 
     private List<Node> pushedNodes(List<Node> newStack) {
@@ -171,35 +180,11 @@ public class TeamCityPlugin implements EventListener {
             }
         }
         if (newStack.size() < currentStack.size()) {
-            return Collections.emptyList();
+            return emptyList();
         }
         return newStack.subList(currentStack.size(), newStack.size());
     }
 
-    private List<Node> extractStack(Feature feature, TestCase testCase) {
-        List<Node> stack = new ArrayList<>();
-        findInFeature(stack, feature, testCase);
-        Collections.reverse(stack);
-        return stack;
-    }
-
-    private boolean findInFeature(List<Node> stack, Node node, TestCase testCase) {
-        if (node.getLocation().getLine() == testCase.getLine()) {
-            stack.add(node);
-            return true;
-        }
-
-        if (node instanceof Container) {
-            Container<Node> container = (Container<Node>) node;
-            for (Node child : container.children()) {
-                if (findInFeature(stack, child, testCase)) {
-                    stack.add(node);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     private void printTestStepStarted(TestStepStarted event) {
         String timestamp = extractTimeStamp(event);
@@ -310,7 +295,7 @@ public class TeamCityPlugin implements EventListener {
 
         snippets.stream()
             .filter(snippet ->
-                snippet.getStepLine() == testStep.getStep().getLine() &&
+                snippet.getStepLocation().equals(testStep.getStep().getLocation()) &&
                     snippet.getUri().equals(testStep.getUri())
             )
             .findFirst()

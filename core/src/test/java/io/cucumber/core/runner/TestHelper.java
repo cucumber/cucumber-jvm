@@ -6,8 +6,6 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.Argument;
-import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
@@ -23,9 +21,11 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.DataTableArgument;
+import io.cucumber.plugin.event.DocStringArgument;
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepArgument;
 import org.mockito.stubbing.Answer;
 import org.opentest4j.TestAbortedException;
 
@@ -331,7 +331,7 @@ public class TestHelper {
 
         private static Type[] mapArgumentToTypes(Step step) {
             Type[] types = new Type[0];
-            Argument argument = step.getArgument();
+            StepArgument argument = step.getArgument();
             if (argument == null) {
                 return types;
             } else if (argument instanceof DocStringArgument) {

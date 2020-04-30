@@ -2,16 +2,11 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.gherkin.Example;
-import io.cucumber.core.gherkin.Examples;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Named;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.gherkin.Rule;
-import io.cucumber.core.gherkin.Scenario;
-import io.cucumber.core.gherkin.ScenarioOutline;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
+import io.cucumber.plugin.event.Node;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
@@ -32,6 +27,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -193,13 +189,21 @@ final class FeatureResolver {
 
         return (FeatureDescriptor) feature.map(
             engineDescriptor,
-            (Feature self, TestDescriptor parent) -> new FeatureDescriptor(
-                source.featureSegment(parent.getUniqueId(), self),
+            (Node.Feature self, TestDescriptor parent) -> new FeatureDescriptor(
+                source.featureSegment(parent.getUniqueId(), feature),
                 getNameOrKeyWord(self),
                 source.featureSource(),
-                self
+                feature
             ),
-            (Scenario node, TestDescriptor parent) -> {
+            (Node.Rule node, TestDescriptor parent) -> {
+                TestDescriptor descriptor = new NodeDescriptor(
+                    source.ruleSegment(parent.getUniqueId(), node),
+                    getNameOrKeyWord(node),
+                    source.nodeSource(node)
+                );
+                parent.addChild(descriptor);
+                return descriptor;
+            }, (Node.Scenario node, TestDescriptor parent) -> {
                 Pickle pickle = feature.getPickleAt(node);
                 TestDescriptor descriptor = new PickleDescriptor(
                     parameters,
@@ -211,16 +215,7 @@ final class FeatureResolver {
                 parent.addChild(descriptor);
                 return descriptor;
             },
-            (Rule node, TestDescriptor parent) -> {
-                TestDescriptor descriptor = new NodeDescriptor(
-                    source.ruleSegment(parent.getUniqueId(), node),
-                    getNameOrKeyWord(node),
-                    source.nodeSource(node)
-                );
-                parent.addChild(descriptor);
-                return descriptor;
-            },
-            (ScenarioOutline node, TestDescriptor parent) -> {
+            (Node.ScenarioOutline node, TestDescriptor parent) -> {
                 TestDescriptor descriptor = new NodeDescriptor(
                     source.scenarioSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
@@ -229,7 +224,7 @@ final class FeatureResolver {
                 parent.addChild(descriptor);
                 return descriptor;
             },
-            (Examples node, TestDescriptor parent) -> {
+            (Node.Examples node, TestDescriptor parent) -> {
                 NodeDescriptor descriptor = new NodeDescriptor(
                     source.examplesSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
@@ -238,7 +233,7 @@ final class FeatureResolver {
                 parent.addChild(descriptor);
                 return descriptor;
             },
-            (Example node, TestDescriptor parent) -> {
+            (Node.Example node, TestDescriptor parent) -> {
                 Pickle pickle = feature.getPickleAt(node);
                 PickleDescriptor descriptor = new PickleDescriptor(
                     parameters,
@@ -253,9 +248,9 @@ final class FeatureResolver {
         );
     }
 
-    private <T extends Named> String getNameOrKeyWord(T node) {
-        String name = node.getName();
-        return name.isEmpty() ? node.getKeyWord() : name;
+    private String getNameOrKeyWord(Node node) {
+        Supplier<String> keyword = () -> node.getKeyword().orElse("Unknown");
+        return node.getName().orElseGet(keyword);
     }
 
 }

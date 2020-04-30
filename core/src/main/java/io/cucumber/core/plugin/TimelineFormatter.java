@@ -7,12 +7,14 @@ import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.messages.internal.com.google.gson.annotations.SerializedName;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseEvent;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestSourceParsed;
 
 import java.io.Closeable;
 import java.io.File;
@@ -25,8 +27,9 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
-import java.util.UUID;
+import java.util.function.Predicate;
 
 import static java.util.Locale.ROOT;
 
@@ -50,8 +53,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final Map<Long, GroupData> allGroups = new HashMap<>();
     private final File reportDir;
     private final NiceAppendable reportJs;
-    private final Map<URI, String> featuresNames = new HashMap<>();
-    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -67,17 +69,14 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(final EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestSourceParsed.class, this::handleTestSourceParsed);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
         publisher.registerHandlerFor(TestRunFinished.class, this::finishReport);
     }
 
-    private void handleTestSourceRead(TestSourceRead event) {
-        TestSourceReadResource source = new TestSourceReadResource(event);
-        parser.parseResource(source).ifPresent(feature ->
-            featuresNames.put(feature.getUri(), feature.getName())
-        );
+    private void handleTestSourceParsed(TestSourceParsed event) {
+        parsedTestSources.put(event.getUri(), event.getNodes());
     }
 
     private void handleTestCaseStarted(final TestCaseStarted event) {
@@ -195,11 +194,26 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.id = getId(started);
             final TestCase testCase = started.getTestCase();
             final URI uri = testCase.getUri();
-            this.feature = featuresNames.get(uri);
+            this.feature = findRootNodeName(testCase);
             this.scenario = testCase.getName();
             this.startTime = started.getInstant().toEpochMilli();
             this.threadId = threadId;
             this.tags = buildTagsValue(testCase);
+        }
+
+        private String findRootNodeName(TestCase testCase) {
+            Location location = testCase.getLocation();
+            Predicate<Node> withLocation = candidate ->
+                candidate.getLocation().equals(location);
+            return parsedTestSources.get(testCase.getUri())
+                .stream()
+                .map(node -> node.findPathTo(withLocation))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .map(nodes -> nodes.get(0))
+                .flatMap(Node::getName)
+                .orElse("Unknown");
         }
 
         private String buildTagsValue(final TestCase testCase) {

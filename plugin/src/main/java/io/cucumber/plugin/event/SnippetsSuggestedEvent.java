@@ -12,15 +12,20 @@ import static java.util.Objects.requireNonNull;
 @API(status = API.Status.STABLE)
 public final class SnippetsSuggestedEvent extends TimeStampedEvent {
     private final URI uri;
-    private final int scenarioLine;
-    private final int stepLine;
+    private final Location scenarioLocation;
+    private final Location stepLocation;
     private final List<String> snippets;
 
+    @Deprecated
     public SnippetsSuggestedEvent(Instant timeInstant, URI uri, int scenarioLine, int stepLine, List<String> snippets) {
-        super(timeInstant);
+        this(timeInstant, uri, new Location(scenarioLine, -1), new Location(stepLine, -1), snippets);
+    }
+
+    public SnippetsSuggestedEvent(Instant instant, URI uri, Location scenarioLocation, Location stepLocation, List<String> snippets) {
+        super(instant);
         this.uri = requireNonNull(uri);
-        this.scenarioLine = scenarioLine;
-        this.stepLine = stepLine;
+        this.scenarioLocation = scenarioLocation;
+        this.stepLocation = stepLocation;
         this.snippets = unmodifiableList(requireNonNull(snippets));
     }
 
@@ -28,12 +33,22 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
         return uri;
     }
 
+    @Deprecated
     public int getStepLine() {
-        return stepLine;
+        return stepLocation.getLine();
     }
 
+    @Deprecated
     public int getScenarioLine() {
-        return scenarioLine;
+        return scenarioLocation.getLine();
+    }
+
+    public Location getScenarioLocation() {
+        return scenarioLocation;
+    }
+
+    public Location getStepLocation() {
+        return stepLocation;
     }
 
     public List<String> getSnippets() {

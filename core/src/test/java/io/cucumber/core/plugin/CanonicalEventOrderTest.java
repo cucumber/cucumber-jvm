@@ -1,11 +1,13 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 import org.junit.jupiter.api.Test;
 
@@ -38,12 +40,13 @@ class CanonicalEventOrderTest {
     private static Event createTestCaseEvent(final URI uri, final int line) {
         final TestCase testCase = mock(TestCase.class);
         given(testCase.getUri()).willReturn(uri);
-        given(testCase.getLine()).willReturn(line);
+        given(testCase.getLocation()).willReturn(new Location(line, -1));
         return new TestCaseStarted(getInstant(), testCase);
     }
 
     private final Event runStarted = new TestRunStarted(getInstant());
     private final Event testRead = new TestSourceRead(getInstant(), URI.create("file:path/to.feature"), "source");
+    private final Event testParsed = new TestSourceParsed(getInstant(), URI.create("file:path/to.feature"), Collections.emptyList());
     private final Event suggested = new SnippetsSuggestedEvent(getInstant(), URI.create("file:path/to/1.feature"), 0, 0, Collections.emptyList());
     private final Event feature1Case1Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 1);
     private final Event feature1Case2Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 9);
@@ -56,6 +59,7 @@ class CanonicalEventOrderTest {
         assertAll("comparator CanonicalEventOrder",
             () -> assertThat(comparator.compare(runStarted, runStarted), equalTo(EQUAL_TO)),
             () -> assertThat(comparator.compare(runStarted, testRead), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(runStarted, testParsed), equalTo(LESS_THAN)),
             () -> assertThat(comparator.compare(runStarted, suggested), equalTo(LESS_THAN)),
             () -> assertThat(comparator.compare(runStarted, feature1Case1Started), equalTo(LESS_THAN)),
             () -> assertThat(comparator.compare(runStarted, feature1Case2Started), equalTo(LESS_THAN)),
@@ -70,6 +74,7 @@ class CanonicalEventOrderTest {
         assertAll("comparator CanonicalEventOrder",
             () -> assertThat(comparator.compare(testRead, runStarted), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(testRead, testRead), equalTo(EQUAL_TO)),
+            () -> assertThat(comparator.compare(testRead, testParsed), equalTo(LESS_THAN)),
             () -> assertThat(comparator.compare(testRead, suggested), equalTo(LESS_THAN)),
             () -> assertThat(comparator.compare(testRead, feature1Case1Started), equalTo(LESS_THAN)),
             () -> assertThat(comparator.compare(testRead, feature1Case2Started), equalTo(LESS_THAN)),
@@ -80,10 +85,26 @@ class CanonicalEventOrderTest {
     }
 
     @Test
+    void verifyTestSourceParsedSortedCorrectly() {
+        assertAll("comparator CanonicalEventOrder",
+            () -> assertThat(comparator.compare(testParsed, runStarted), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(testParsed, testRead), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(testParsed, testParsed), equalTo(EQUAL_TO)),
+            () -> assertThat(comparator.compare(testParsed, suggested), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testParsed, feature1Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testParsed, feature1Case2Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testParsed, feature1Case3Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testParsed, feature2Case1Started), equalTo(LESS_THAN)),
+            () -> assertThat(comparator.compare(testParsed, runFinished), equalTo(LESS_THAN))
+        );
+    }
+
+    @Test
     void verifySnippetsSuggestedSortedCorrectly() {
         assertAll("comparator CanonicalEventOrder",
             () -> assertThat(comparator.compare(suggested, runStarted), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(suggested, testRead), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(suggested, testParsed), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(suggested, suggested), equalTo(EQUAL_TO)),
             () -> assertThat(comparator.compare(suggested, feature1Case1Started), equalTo(LESS_THAN)),
             () -> assertThat(comparator.compare(suggested, feature1Case2Started), equalTo(LESS_THAN)),
@@ -128,6 +149,7 @@ class CanonicalEventOrderTest {
             () -> assertThat(comparator.compare(runFinished, runStarted), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(runFinished, suggested), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(runFinished, testRead), equalTo(GREATER_THAN)),
+            () -> assertThat(comparator.compare(runFinished, testParsed), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(runFinished, feature1Case1Started), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(runFinished, feature1Case2Started), equalTo(GREATER_THAN)),
             () -> assertThat(comparator.compare(runFinished, feature1Case3Started), equalTo(GREATER_THAN)),

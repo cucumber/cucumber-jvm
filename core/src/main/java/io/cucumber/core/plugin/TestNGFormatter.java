@@ -1,9 +1,10 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -11,12 +12,11 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
+import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,10 +35,12 @@ import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.time.Duration.ZERO;
@@ -59,8 +61,7 @@ public final class TestNGFormatter implements EventListener {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, String> featuresNames = new HashMap<>();
-    private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
     public TestNGFormatter(OutputStream out) {
         this.writer = new UTF8OutputStreamWriter(out);
@@ -79,7 +80,7 @@ public final class TestNGFormatter implements EventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestSourceRead.class, this::handleTestSourceRead);
+        publisher.registerHandlerFor(TestSourceParsed.class, this::handleTestSourceParsed);
         publisher.registerHandlerFor(TestRunStarted.class, this::handleTestRunStarted);
         publisher.registerHandlerFor(TestCaseStarted.class, this::handleTestCaseStarted);
         publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
@@ -91,11 +92,8 @@ public final class TestNGFormatter implements EventListener {
         this.started = event.getInstant();
     }
 
-    private void handleTestSourceRead(TestSourceRead event) {
-        TestSourceReadResource source = new TestSourceReadResource(event);
-        parser.parseResource(source).ifPresent(feature ->
-            featuresNames.put(feature.getUri(), feature.getName())
-        );
+    private void handleTestSourceParsed(TestSourceParsed event) {
+        parsedTestSources.put(event.getUri(), event.getNodes());
     }
 
     private void handleTestCaseStarted(TestCaseStarted event) {
@@ -104,13 +102,28 @@ public final class TestNGFormatter implements EventListener {
             previousTestCaseName = "";
             exampleNumber = 1;
             clazz = document.createElement("class");
-            clazz.setAttribute("name", featuresNames.get(event.getTestCase().getUri()));
+            clazz.setAttribute("name", findRootNodeName(event.getTestCase()));
             test.appendChild(clazz);
         }
         root = document.createElement("test-method");
         clazz.appendChild(root);
         testCase = new TestCase(event.getTestCase());
         testCase.start(root, event.getInstant());
+    }
+
+    private String findRootNodeName(io.cucumber.plugin.event.TestCase testCase) {
+        Location location = testCase.getLocation();
+        Predicate<Node> withLocation = candidate ->
+            candidate.getLocation().equals(location);
+        return parsedTestSources.get(testCase.getUri())
+            .stream()
+            .map(node -> node.findPathTo(withLocation))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst()
+            .map(nodes -> nodes.get(0))
+            .flatMap(Node::getName)
+            .orElse("Unknown");
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -160,7 +173,7 @@ public final class TestNGFormatter implements EventListener {
         }
     }
 
-    private int getElementsCountByAttribute(Node node, String attributeName, String attributeValue) {
+    private int getElementsCountByAttribute(org.w3c.dom.Node node, String attributeName, String attributeValue) {
         int count = 0;
 
         for (int i = 0; i < node.getChildNodes().getLength(); i++) {
@@ -169,7 +182,7 @@ public final class TestNGFormatter implements EventListener {
 
         NamedNodeMap attributes = node.getAttributes();
         if (attributes != null) {
-            Node namedItem = attributes.getNamedItem(attributeName);
+            org.w3c.dom.Node namedItem = attributes.getNamedItem(attributeName);
             if (namedItem != null && namedItem.getNodeValue().matches(attributeValue)) {
                 count++;
             }
@@ -257,7 +270,7 @@ public final class TestNGFormatter implements EventListener {
                 if (i < results.size()) {
                     resultStatus = results.get(i).getStatus().name().toLowerCase(ROOT);
                 }
-                sb.append(steps.get(i).getStep().getKeyWord());
+                sb.append(steps.get(i).getStep().getKeyword());
                 sb.append(steps.get(i).getStepText());
                 do {
                     sb.append(".");

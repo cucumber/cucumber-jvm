@@ -1,13 +1,13 @@
 package io.cucumber.core.gherkin;
 
+import io.cucumber.plugin.event.Node;
+
 import java.net.URI;
 import java.util.List;
 
-public interface Feature extends Node, Container<Node> {
+public interface Feature extends Node.Feature {
 
-    String getKeyword();
-
-    Pickle getPickleAt(Located located);
+    Pickle getPickleAt(Node node);
 
     List<Pickle> getPickles();
 
