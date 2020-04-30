@@ -45,7 +45,17 @@ public interface Node {
     Optional<String> getName();
 
     /**
-     * Maps a node into another structure
+     * Recursively maps a node into another tree-like structure.
+     *
+     * @param parent             the parent node of the target structure
+     * @param mapFeature         a function that takes a feature and a parent node and returns a mapped feature
+     * @param mapRule            a function that takes a rule and a parent node and returns a mapped rule
+     * @param mapScenario        a function that takes a scenario and a parent node and returns a mapped scenario
+     * @param mapScenarioOutline a function that takes a scenario outline and a parent node and returns a mapped scenario outline
+     * @param mapExamples        a function that takes an examples and a parent node and returns a mapped examples
+     * @param mapExample         a function that takes an example and a parent node and returns a mapped example
+     * @param <T>                the type of the target structure
+     * @return the mapped version of this instance
      */
     default <T> T map(
         T parent,
@@ -132,42 +142,42 @@ public interface Node {
     }
 
     /**
-     * A feature has a keyword and name.
+     * A feature has a keyword and optionally a name.
      */
     interface Feature extends Node, Container<Node> {
 
     }
 
     /**
-     * A rule has a keyword and name.
+     * A rule has a keyword and optionally a name.
      */
     interface Rule extends Node, Container<Node> {
 
     }
 
     /**
-     * A scenario has a keyword and name.
+     * A scenario has a keyword and optionally a name.
      */
     interface Scenario extends Node {
 
     }
 
     /**
-     * A scenario outline has a keyword and name.
+     * A scenario outline has a keyword and optionally a name.
      */
     interface ScenarioOutline extends Node, Container<Examples> {
 
     }
 
     /**
-     * An examples section has a keyword and name.
+     * An examples section has a keyword and optionally a name.
      */
     interface Examples extends Node, Container<Example> {
 
     }
 
     /**
-     * An example has no keyword (empty) but always a name.
+     * An example has no keyword but always a name.
      */
     interface Example extends Node {
 
