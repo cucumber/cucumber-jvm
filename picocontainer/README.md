@@ -60,7 +60,7 @@ All step classes and their dependencies will be recreated for each
 scenario, even if the scenario in question does not use any steps from
 that particular class.
 
-To improve performance it recommended to lazily create expensive 
+To improve performance it is recommended to lazily create expensive
 resources.
 
 ```java
@@ -84,10 +84,10 @@ public class LazyWebDriver implements Webdriver {
 }
 ```
 
-Step classes or their dependencies which own resources which need cleanup
+Step classes or their dependencies which own resources requiring cleanup
 should implement `org.picocontainer.Disposable` as described in
 [PicoContainer - Component Lifecycle](http://picocontainer.com/lifecycle.html).
-These hooks will run after any Cucumber after hooks hooks.
+These hooks will run after any Cucumber after hooks.
 
 ## Customizing PicoContainer
 
