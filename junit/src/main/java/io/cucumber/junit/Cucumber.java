@@ -200,7 +200,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         @Override
         public void evaluate() throws Throwable {
-            context.emitMeta();
             if (multiThreadingAssumed) {
                 plugins.setSerialEventBusOnEventListenerPlugins(bus);
             } else {
