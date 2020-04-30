@@ -1,34 +1,23 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.plugin.event.TestSourceParsed;
-import io.cucumber.plugin.event.TestSourceRead;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-
 public class TestFeatureSupplier implements FeatureSupplier {
-    private final EventBus bus ;
     private final List<Feature> features;
 
-    public TestFeatureSupplier(EventBus bus, Feature... features) {
-        this(bus, Arrays.asList(features));
+    public TestFeatureSupplier(Feature... features) {
+        this(Arrays.asList(features));
     }
 
-    public TestFeatureSupplier(EventBus bus, List<Feature> features) {
-        this.bus = bus;
+    public TestFeatureSupplier(List<Feature> features) {
         this.features = features;
     }
 
     @Override
     public List<Feature> get() {
-        for (Feature feature : features) {
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-            bus.send(new TestSourceParsed(this.bus.getInstant(), feature.getUri(), singletonList(feature)));
-        }
         return features;
     }
 }

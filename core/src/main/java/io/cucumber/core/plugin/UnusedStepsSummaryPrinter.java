@@ -1,32 +1,32 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.SummaryPrinter;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.StepDefinedEvent;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestStepFinished;
+
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.StepDefinedEvent;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.plugin.ColorAware;
-import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.SummaryPrinter;
-
 import static java.util.Locale.ROOT;
 
-public class UnusedStepsSummaryPrinter implements ColorAware, EventListener, SummaryPrinter {
+public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener, SummaryPrinter {
 
 	private final Map<String, String> registeredSteps = new TreeMap<>();
 	private final Set<String> usedSteps = new TreeSet<>();
 	private final NiceAppendable out;
 	private Formats formats = new MonochromeFormats();
 
-	@SuppressWarnings("WeakerAccess")
-	public UnusedStepsSummaryPrinter(Appendable out) {
-		this.out = new NiceAppendable(out);
+    public UnusedStepsSummaryPrinter(OutputStream out) {
+		this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
 	}
 
 	@Override

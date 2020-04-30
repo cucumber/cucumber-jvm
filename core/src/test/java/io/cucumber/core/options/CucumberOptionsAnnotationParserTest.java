@@ -97,7 +97,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     }
 
     @Test
-     void create_with_no_name() {
+     void create_with_no_filters() {
         RuntimeOptions runtimeOptions = parser().parse(NoName.class).build();
 
         assertAll("Checking RuntimeOptions",
@@ -119,6 +119,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
             () -> assertThat(getRegexpPattern(iterator.next()), is(equalTo("name1"))),
             () -> assertThat(getRegexpPattern(iterator.next()), is(equalTo("name2")))
         );
+    }
+
+    @Test
+     void create_with_tag_expression() {
+        RuntimeOptions runtimeOptions = parser().parse(TagExpression.class).build();
+        assertThat(runtimeOptions.getTagExpressions(), contains("@cucumber or @gherkin"));
     }
 
     @Test
@@ -156,7 +162,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         List<Plugin> pluginList = plugins.getPlugins();
 
         assertAll("Checking Plugin",
-            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.JSONFormatter"),
+            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.HtmlFormatter"),
             () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.PrettyFormatter")
         );
     }
@@ -237,6 +243,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         // empty
     }
 
+    @CucumberOptions(tags = "@cucumber or @gherkin")
+    private static class TagExpression {
+        // empty
+    }
+
     @CucumberOptions
     private static class NoName {
         // empty
@@ -255,7 +266,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         // empty
     }
 
-    @CucumberOptions(plugin = "json:target/test-json-report.json")
+    @CucumberOptions(plugin = "html:target/test-report.html")
     private static class BaseClassWithFormatter {
         // empty
     }
@@ -348,7 +359,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         }
 
         @Override
-        public String[] tags() {
+        public String tags() {
             return annotation.tags();
         }
 

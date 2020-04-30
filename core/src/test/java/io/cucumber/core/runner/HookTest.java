@@ -47,6 +47,7 @@ class HookTest {
         when(backend.getSnippet()).thenReturn(new TestSnippet());
         ObjectFactory objectFactory = mock(ObjectFactory.class);
         final HookDefinition hook = mock(HookDefinition.class);
+        when(hook.getLocation()).thenReturn("hook-location");
         TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
         when(hook.getTagExpression()).thenReturn("");
 

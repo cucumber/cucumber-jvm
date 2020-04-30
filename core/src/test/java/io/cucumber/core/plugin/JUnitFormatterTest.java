@@ -1,7 +1,9 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.opentest4j.TestAbortedException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -244,6 +247,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -277,6 +281,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("skipped"));
         stepsToResult.put("third step", result("skipped"));
         hooks.add(TestHelper.hookEntry("before", result("pending")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -308,6 +313,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("failed")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -341,6 +347,7 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
         hooks.add(TestHelper.hookEntry("after", result("failed")));
+        hookLocations.add("hook-location");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -373,6 +380,8 @@ class JUnitFormatterTest {
         stepsToResult.put("second step", result("passed"));
         hooks.add(TestHelper.hookEntry("before", result("passed")));
         hooks.add(TestHelper.hookEntry("after", result("passed")));
+        hookLocations.add("hook-location-1");
+        hookLocations.add("hook-location-2");
         stepDuration = Duration.ofMillis(1L);
 
         String formatterOutput = runFeaturesWithFormatter();
@@ -539,16 +548,13 @@ class JUnitFormatterTest {
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
-        List<String> args = new ArrayList<>();
-        if (strict) {
-            args.add("--strict");
-        }
-        args.add("--plugin");
-        args.add("junit:" + report.getAbsolutePath());
-        args.addAll(featurePaths);
+        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder()
+            .setStrict(strict)
+            .addPluginName("junit:" + report.getAbsolutePath());
+        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
 
         TestHelper.builder()
-            .withRuntimeArgs(args)
+            .withRuntimeArgs(options.build())
             .withFeatures(features)
             .withStepsToResult(stepsToResult)
             .withStepsToLocation(stepsToLocation)
@@ -586,7 +592,7 @@ class JUnitFormatterTest {
     }
 
     private JUnitFormatter createJUnitFormatter(final File report) throws IOException {
-        return new JUnitFormatter(report.toURI().toURL());
+        return new JUnitFormatter(new FileOutputStream(report));
     }
 
     private String getStackTrace(Throwable exception) {

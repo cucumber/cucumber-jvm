@@ -125,15 +125,6 @@ public final class Constants {
     public static final String OBJECT_FACTORY_PROPERTY_NAME = "cucumber.object-factory";
 
     /**
-     * Property name used to pass command line options: {@value}
-     * <p>
-     * When available it is recommended to use a property based alternative.
-     *
-     * @see RuntimeOptionsParser
-     */
-    public static final String OPTIONS_PROPERTY_NAME = "cucumber.options";
-
-    /**
      * Property name to enable plugins: {@value}
      * <p>
      * A comma separated list of {@code [PLUGIN[:PATH_OR_URL]]} e.g:

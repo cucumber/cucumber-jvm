@@ -4,9 +4,10 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.plugin.DefaultSummaryPrinter;
-import io.cucumber.core.plugin.HTMLFormatter;
-import io.cucumber.core.plugin.JSONFormatter;
+import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JUnitFormatter;
+import io.cucumber.core.plugin.JsonFormatter;
+import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.plugin.NullSummaryPrinter;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.plugin.PrettyFormatter;
@@ -21,10 +22,12 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.SummaryPrinter;
+import io.cucumber.core.plugin.MessageFormatter;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,22 +36,24 @@ public class PluginOption implements Options.Plugin {
     private static final Logger log = LoggerFactory.getLogger(PluginOption.class);
 
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
-    private static final HashMap<String, Class<? extends Plugin>> PLUGIN_CLASSES = new HashMap<String, Class<? extends Plugin>>() {{
-        put("default_summary", DefaultSummaryPrinter.class);
-        put("html", HTMLFormatter.class);
-        put("json", JSONFormatter.class);
-        put("junit", JUnitFormatter.class);
-        put("null_summary", NullSummaryPrinter.class);
-        put("pretty", PrettyFormatter.class);
-        put("progress", ProgressFormatter.class);
-        put("rerun", RerunFormatter.class);
-        put("summary", DefaultSummaryPrinter.class);
-        put("testng", TestNGFormatter.class);
-        put("timeline", TimelineFormatter.class);
-        put("unused", UnusedStepsSummaryPrinter.class);
-        put("usage", UsageFormatter.class);
-        put("teamcity", TeamCityPlugin.class);
+    private static final HashMap<String, Supplier<Class<? extends Plugin>>> PLUGIN_CLASSES = new HashMap<String, Supplier<Class<? extends Plugin>>>() {{
+        put("default_summary", () -> DefaultSummaryPrinter.class);
+        put("html", () -> HtmlFormatter.class);
+        put("json", () -> JsonFormatter.class);
+        put("junit", () -> JUnitFormatter.class);
+        put("null_summary", () -> NullSummaryPrinter.class);
+        put("pretty", () -> PrettyFormatter.class);
+        put("progress", () -> ProgressFormatter.class);
+        put("message", () -> MessageFormatter.class);
+        put("rerun", () -> RerunFormatter.class);
+        put("summary", () -> DefaultSummaryPrinter.class);
+        put("testng", () -> TestNGFormatter.class);
+        put("timeline", () -> TimelineFormatter.class);
+        put("unused", () -> UnusedStepsSummaryPrinter.class);
+        put("usage", () -> UsageFormatter.class);
+        put("teamcity", () -> TeamCityPlugin.class);
     }};
+
 
     // Replace IDEA plugin with TeamCity
     private static final Set<String> INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashSet<String>() {{
@@ -77,47 +82,6 @@ public class PluginOption implements Options.Plugin {
         this.argument = argument;
     }
 
-    public static PluginOption parse(String pluginArgumentPattern) {
-        Matcher pluginWithFile = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(pluginArgumentPattern);
-        if (!pluginWithFile.matches()) {
-            return new PluginOption(pluginArgumentPattern, parsePluginName(pluginArgumentPattern), null);
-        }
-
-        Class<? extends Plugin> pluginClass = parsePluginName(pluginWithFile.group(1));
-        return new PluginOption(pluginArgumentPattern, pluginClass, pluginWithFile.group(2));
-    }
-
-    private static Class<? extends Plugin> parsePluginName(String pluginName) {
-        if (INCOMPATIBLE_PLUGIN_CLASSES.contains(pluginName)) {
-            throw new IllegalArgumentException("Plugin is not compatible with this version of Cucumber: " + pluginName);
-        }
-
-        if (INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES.contains(pluginName)) {
-            log.debug(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to teamcity plugin");
-            return TeamCityPlugin.class;
-        }
-
-        Class<? extends Plugin> pluginClass = PLUGIN_CLASSES.get(pluginName);
-        if (pluginClass == null) {
-            pluginClass = loadClass(pluginName);
-        }
-        return pluginClass;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Class<? extends Plugin> loadClass(String className) {
-        try {
-            Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(className);
-
-            if (Plugin.class.isAssignableFrom(aClass)) {
-                return (Class<? extends Plugin>) aClass;
-            }
-            throw new CucumberException("Couldn't load plugin class: " + className + ". It does not implement " + Plugin.class.getName());
-        } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            throw new CucumberException("Couldn't load plugin class: " + className, e);
-        }
-    }
-
     @Override
     public Class<? extends Plugin> pluginClass() {
         return pluginClass;
@@ -139,6 +103,42 @@ public class PluginOption implements Options.Plugin {
 
     boolean isSummaryPrinter() {
         return SummaryPrinter.class.isAssignableFrom(pluginClass);
+    }
+
+    public static PluginOption parse(String pluginArgumentPattern) {
+        Matcher pluginWithFile = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(pluginArgumentPattern);
+        if (!pluginWithFile.matches()) {
+            return new PluginOption(pluginArgumentPattern, parsePluginName(pluginArgumentPattern), null);
+        }
+
+        Class<? extends Plugin> pluginClass = parsePluginName(pluginWithFile.group(1));
+        return new PluginOption(pluginArgumentPattern, pluginClass, pluginWithFile.group(2));
+    }
+
+    private static Class<? extends Plugin> parsePluginName(String pluginName) {
+        if (INCOMPATIBLE_PLUGIN_CLASSES.contains(pluginName)) {
+            throw new IllegalArgumentException("Plugin is not compatible with this version of Cucumber: " + pluginName);
+        }
+
+        if (INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES.contains(pluginName)) {
+            log.debug(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to teamcity plugin");
+            return TeamCityPlugin.class;
+        }
+        return PLUGIN_CLASSES.getOrDefault(pluginName, () -> loadClass(pluginName)).get();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Class<? extends Plugin> loadClass(String className) {
+        try {
+            Class<?> aClass = Thread.currentThread().getContextClassLoader().loadClass(className);
+
+            if (Plugin.class.isAssignableFrom(aClass)) {
+                return (Class<? extends Plugin>) aClass;
+            }
+            throw new CucumberException("Couldn't load plugin class: " + className + ". It does not implement " + Plugin.class.getName());
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            throw new CucumberException("Couldn't load plugin class: " + className, e);
+        }
     }
 
 

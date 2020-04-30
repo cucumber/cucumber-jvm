@@ -9,7 +9,8 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.options.CommandlineOptionsParser;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
@@ -71,7 +72,7 @@ public class TestHelper {
     private TimeServiceType timeServiceType = TimeServiceType.FIXED_INCREMENT_ON_STEP_START;
     private Duration timeServiceIncrement = Duration.ZERO;
     private Object formatterUnderTest = null;
-    private List<String> runtimeArgs = Collections.emptyList();
+    private RuntimeOptions runtimeArgs = new RuntimeOptionsBuilder().build();
 
     private TestHelper() {
     }
@@ -128,7 +129,7 @@ public class TestHelper {
             if (name != null) {
                 state.attach(data, mediaType, name);
             } else {
-                state.embed(data, mediaType);
+                state.attach(data, mediaType, null);
             }
             return null;
         };
@@ -186,14 +187,10 @@ public class TestHelper {
 
         final FeatureSupplier featureSupplier = features.isEmpty()
             ? null // assume feature paths passed in as args instead
-            : new TestFeatureSupplier(bus, features);
+            : new TestFeatureSupplier(features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse(runtimeArgs)
-                    .build()
-            )
+            .withRuntimeOptions(runtimeArgs)
             .withClassLoader(classLoader)
             .withBackendSupplier(backendSupplier)
             .withFeatureSupplier(featureSupplier)
@@ -379,6 +376,9 @@ public class TestHelper {
                                      final List<HookDefinition> beforeStepHooks,
                                      final List<HookDefinition> afterStepHooks) {
             HookDefinition hook = mock(HookDefinition.class);
+            if(hookLocation == null) {
+                throw new RuntimeException("hookLocation cannot be null");
+            }
             when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {
                 when(hook.getLocation()).thenReturn(hookLocation);
@@ -509,11 +509,7 @@ public class TestHelper {
             return this;
         }
 
-        public Builder withRuntimeArgs(String... runtimeArgs) {
-            return withRuntimeArgs(Arrays.asList(runtimeArgs));
-        }
-
-        public Builder withRuntimeArgs(List<String> runtimeArgs) {
+        public Builder withRuntimeArgs(RuntimeOptions runtimeArgs) {
             this.instance.runtimeArgs = runtimeArgs;
             return this;
         }

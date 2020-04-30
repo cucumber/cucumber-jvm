@@ -18,6 +18,10 @@ public final class StepExpression {
         this.tableType = tableType;
     }
 
+    public Class<? extends Expression> getExpressionType() {
+        return expression.getClass();
+    }
+
     public List<Argument> match(String text, Type... types) {
         List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text, types);
         if (match == null) {
@@ -54,7 +58,6 @@ public final class StepExpression {
         return list;
     }
 
-
     private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {
         List<Argument> copy = new ArrayList<>(match.size() + 1);
         for (io.cucumber.cucumberexpressions.Argument<?> argument : match) {
@@ -62,5 +65,4 @@ public final class StepExpression {
         }
         return copy;
     }
-
 }

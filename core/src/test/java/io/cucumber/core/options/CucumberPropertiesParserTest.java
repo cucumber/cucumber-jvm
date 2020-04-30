@@ -33,13 +33,6 @@ class CucumberPropertiesParserTest {
     Path temp;
 
     @Test
-    void should_parse_cucumber_options() {
-        properties.put(Constants.OPTIONS_PROPERTY_NAME, "--glue com.example");
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlue(), equalTo(singletonList(URI.create("classpath:/com/example"))));
-    }
-
-    @Test
     void should_parse_ansi_colors() {
         properties.put(Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME, "true");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
@@ -132,9 +125,9 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_plugin() {
-        properties.put(Constants.PLUGIN_PROPERTY_NAME, "json:target/cucumber.json, html:target/cucumber.html");
+        properties.put(Constants.PLUGIN_PROPERTY_NAME, "message:target/cucumber.ndjson, html:target/cucumber.html");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.plugins().get(0).pluginString(), equalTo("json:target/cucumber.json"));
+        assertThat(options.plugins().get(0).pluginString(), equalTo("message:target/cucumber.ndjson"));
         assertThat(options.plugins().get(1).pluginString(), equalTo("html:target/cucumber.html"));
     }
 

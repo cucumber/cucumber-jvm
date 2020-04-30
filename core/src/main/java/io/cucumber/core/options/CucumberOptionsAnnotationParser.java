@@ -4,8 +4,6 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.nio.file.Path;
@@ -17,8 +15,6 @@ import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX
 import static java.util.Objects.requireNonNull;
 
 public final class CucumberOptionsAnnotationParser {
-
-    private final Logger log = LoggerFactory.getLogger(CucumberOptionsAnnotationParser.class);
 
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;
@@ -92,21 +88,15 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addTags(CucumberOptions options, RuntimeOptionsBuilder args) {
-        String[] tags = options.tags();
-        if (tags.length > 1) {
-            log.warn(() -> "" +
-                "Passing multiple tags through @CucumberOptions is deprecated.\n" +
-                "Please use a single tag expressions e.g: @CucumberOptions(tags=\"(@cucumber or @pickle) and not @salad\")"
-            );
-        }
-        for (String tagExpression : tags) {
+        String tagExpression = options.tags();
+        if (!tagExpression.isEmpty()) {
             args.addTagFilter(tagExpression);
         }
     }
 
     private void addPlugins(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String plugin : options.plugin()) {
-            args.addPluginName(plugin, false);
+            args.addPluginName(plugin);
         }
     }
 
@@ -194,7 +184,7 @@ public final class CucumberOptionsAnnotationParser {
 
         String[] extraGlue();
 
-        String[] tags();
+        String tags();
 
         String[] plugin();
 

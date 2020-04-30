@@ -71,28 +71,36 @@ class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDef
         if (DataTable.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (DataTable table) -> execute(replaceEmptyPatternsWithEmptyString(table))
+                (DataTable table) -> invokeMethod(
+                    replaceEmptyPatternsWithEmptyString(table)
+                )
             );
         }
 
         if (List.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (List<String> row) -> execute(replaceEmptyPatternsWithEmptyString(row))
+                (List<String> row) -> invokeMethod(
+                    replaceEmptyPatternsWithEmptyString(row)
+                )
             );
         }
 
         if (Map.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (Map<String, String> entry) -> execute(replaceEmptyPatternsWithEmptyString(entry))
+                (Map<String, String> entry) -> invokeMethod(
+                    replaceEmptyPatternsWithEmptyString(entry)
+                )
             );
         }
 
         if (String.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (String cell) -> execute(replaceEmptyPatternsWithEmptyString(cell))
+                (String cell) -> invokeMethod(
+                    replaceEmptyPatternsWithEmptyString(cell)
+                )
             );
         }
 
@@ -102,10 +110,6 @@ class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDef
     @Override
     public DataTableType dataTableType() {
         return dataTableType;
-    }
-
-    private Object execute(Object arg) {
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, arg);
     }
 
 }

@@ -7,6 +7,8 @@ public interface Options {
 
     boolean isStrict();
 
+    boolean isWip();
+
     interface Plugin {
 
         Class<? extends io.cucumber.plugin.Plugin> pluginClass();

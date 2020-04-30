@@ -28,8 +28,7 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
     private Throwable couldNotInvokeHook(CucumberBackendException e) {
         return new CucumberException(String.format("" +
                 "Could not invoke hook defined at '%s'.\n" +
-                "It appears there was a problem with the hook definition.\n" +
-                "The details are in the stacktrace below.", //TODO: Add doc URL
+                "It appears there was a problem with the hook definition.", //TODO: Add doc URL
             hookDefinition.getLocation()
         ), e);
     }

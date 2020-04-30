@@ -18,4 +18,5 @@ public interface Feature extends Node.Feature {
 
     String getSource();
 
+    Iterable<?> getParseEvents();
 }

@@ -1,19 +1,26 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.Argument;
+import io.cucumber.core.stepexpression.StepExpression;
+import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -27,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CoreStepDefinitionTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(Locale.ENGLISH);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+    private final StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(stepTypeRegistry, bus);
+    private final UUID id = UUID.randomUUID();
 
     @Test
     void should_apply_identity_transform_to_doc_string_when_target_type_is_object() {
@@ -38,10 +48,11 @@ class CoreStepDefinitionTest {
             "       content\n" +
             "       \"\"\"\n"
         );
-        StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
+        StepDefinition stepDefinition = new StubStepDefinition("I have some step", Object.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         Step step = feature.getPickles().get(0).getSteps().get(0);
-        List<Argument> arguments = stepDefinition.matchedArguments(step);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         assertThat(arguments.get(0).getValue(), is(equalTo(DocString.create("content"))));
     }
 
@@ -54,9 +65,10 @@ class CoreStepDefinitionTest {
             "     Given I have some step\n" +
             "      | content |\n"
         );
-        StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
-        List<Argument> arguments = stepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
+        StepDefinition stepDefinition = new StubStepDefinition("I have some step", Object.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
         assertThat(arguments.get(0).getValue(), is(equalTo(DataTable.create(singletonList(singletonList("content"))))));
     }
 
@@ -68,9 +80,10 @@ class CoreStepDefinitionTest {
             "     Given I have some step\n" +
             "       |  |\n"
         );
-        StubStepDefinition stub = new StubStepDefinition("I have some step", Object.class);
-        CoreStepDefinition stepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
-        List<Argument> arguments = stepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
+        StepDefinition stepDefinition = new StubStepDefinition("I have some step", Object.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(feature.getPickles().get(0).getSteps().get(0));
         assertEquals(DataTable.create(singletonList(singletonList(null))), arguments.get(0).getValue());
     }
 
@@ -192,8 +205,9 @@ class CoreStepDefinitionTest {
 
     @SuppressWarnings("unchecked")
     private <T> T runStepDef(Method method, boolean transposed, Feature feature) {
-        StubStepDefinition stub = new StubStepDefinition("some text", transposed, method.getGenericParameterTypes());
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stub, stepTypeRegistry);
+        StubStepDefinition stepDefinition = new StubStepDefinition("some text", transposed, method.getGenericParameterTypes());
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         Step stepWithTable = feature.getPickles().get(0).getSteps().get(0);
         List<Argument> arguments = coreStepDefinition.matchedArguments(stepWithTable);
 
@@ -203,6 +217,6 @@ class CoreStepDefinitionTest {
         }
         coreStepDefinition.getStepDefinition().execute(result.toArray(new Object[0]));
 
-        return (T) stub.getArgs().get(0);
+        return (T) stepDefinition.getArgs().get(0);
     }
 }

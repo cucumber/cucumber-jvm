@@ -17,6 +17,8 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.CucumberExecutionContext;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
@@ -25,10 +27,6 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceParsed;
-import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,7 +44,6 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -91,6 +88,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private final EventBus bus;
     private final List<Feature> features;
     private final Plugins plugins;
+    private final CucumberExecutionContext context;
 
     private boolean multiThreadingAssumed = false;
 
@@ -159,12 +157,15 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         // Create plugins after feature parsing to avoid the creation of empty files on lexer errors.
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
+        ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+        this.plugins.addPlugin(exitStatus);
 
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         Predicate<Pickle> filters = new Filters(runtimeOptions);
         this.children = features.stream()
             .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
@@ -208,20 +209,21 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
         @Override
         public void evaluate() throws Throwable {
+            context.emitMeta();
             if (multiThreadingAssumed) {
                 plugins.setSerialEventBusOnEventListenerPlugins(bus);
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
 
-            bus.send(new TestRunStarted(bus.getInstant()));
-            for (Feature feature : features) {
-                bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-                bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
-            }
-            runFeatures.evaluate();
-            bus.send(new TestRunFinished(bus.getInstant()));
-        }
+            context.startTestRun();
+            features.forEach(context::beforeFeature);
 
+            try {
+                runFeatures.evaluate();
+            } finally {
+                context.finishTestRun();
+            }
+        }
     }
 }

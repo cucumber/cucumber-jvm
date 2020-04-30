@@ -25,6 +25,7 @@ import static io.cucumber.plugin.event.Status.UNDEFINED;
 import static java.time.Duration.ZERO;
 import static java.time.Instant.now;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -74,7 +75,7 @@ public class TestCaseResultObserverTest {
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
-        assertEquals(exception, error);
+        assertEquals(exception.getCause(), error);
     }
 
     @Test
@@ -88,7 +89,7 @@ public class TestCaseResultObserverTest {
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
-        assertEquals(exception, error);
+        assertEquals(exception.getCause(), error);
     }
 
     @Test
@@ -103,7 +104,9 @@ public class TestCaseResultObserverTest {
         Result testCaseResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        SkipException skipException = expectThrows(SkipException.class, resultListener::assertTestCasePassed);
+        Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
+        assertThat(exception.getCause(), instanceOf(SkipException.class));
+        SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(true));
         assertThat(skipException.getMessage(), is("" +
             "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
@@ -124,7 +127,9 @@ public class TestCaseResultObserverTest {
         Result testCaseResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        SkipException skipException = expectThrows(SkipException.class, resultListener::assertTestCasePassed);
+        Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
+        assertThat(exception.getCause(), instanceOf(SkipException.class));
+        SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
             "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
@@ -155,7 +160,8 @@ public class TestCaseResultObserverTest {
         Result testCaseResult = new Result(PENDING, ZERO, error);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        expectThrows(SkipException.class, resultListener::assertTestCasePassed);
+        Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
+        assertThat(exception.getCause(), instanceOf(SkipException.class));
     }
 
     @Test
@@ -171,7 +177,7 @@ public class TestCaseResultObserverTest {
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
-        assertEquals(exception, error);
+        assertEquals(exception.getCause(), error);
     }
 
     @Test
@@ -184,6 +190,7 @@ public class TestCaseResultObserverTest {
         Result testCaseResult = new Result(SKIPPED, ZERO, null);
         bus.send(new TestCaseFinished(now(), testCase, testCaseResult));
 
-        expectThrows(SkipException.class, resultListener::assertTestCasePassed);
+        Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
+        assertThat(exception.getCause(), instanceOf(SkipException.class));
     }
 }

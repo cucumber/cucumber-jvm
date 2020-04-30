@@ -29,9 +29,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Duration;
@@ -64,9 +64,8 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private Instant started;
     private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
-    @SuppressWarnings("WeakerAccess") // Used by plugin factory
-    public JUnitFormatter(URL writer) throws IOException {
-        this.writer = new UTF8OutputStreamWriter(new URLOutputStream(writer));
+    public JUnitFormatter(OutputStream out) {
+        this.writer = new UTF8OutputStreamWriter(out);
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             rootElement = document.createElement("testsuite");

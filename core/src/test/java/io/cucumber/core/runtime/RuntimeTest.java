@@ -7,13 +7,11 @@ import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.feature.TestFeatureParser;
-import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.FormatterBuilder;
 import io.cucumber.core.plugin.FormatterSpy;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
@@ -36,7 +34,6 @@ import org.mockito.ArgumentCaptor;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,88 +55,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 class RuntimeTest {
 
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-
-    @Test
-    void runs_feature_with_json_formatter() {
-        final Feature feature = TestFeatureParser.parse("test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background name\n" +
-            "    Given b\n" +
-            "  Scenario: scenario name\n" +
-            "    When s\n");
-        StringBuilder out = new StringBuilder();
-
-        Plugin jsonFormatter = FormatterBuilder.jsonFormatter(out);
-
-        FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
-        Runtime.builder()
-            .withAdditionalPlugins(jsonFormatter)
-            .withEventBus(new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID))
-            .withFeatureSupplier(featureSupplier)
-            .build()
-            .run();
-
-        String expected = "" +
-            "[\n" +
-            "  {\n" +
-            "    \"line\": 1,\n" +
-            "    \"elements\": [\n" +
-            "      {\n" +
-            "        \"line\": 2,\n" +
-            "        \"name\": \"background name\",\n" +
-            "        \"description\": \"\",\n" +
-            "        \"type\": \"background\",\n" +
-            "        \"keyword\": \"Background\",\n" +
-            "        \"steps\": [\n" +
-            "          {\n" +
-            "            \"result\": {\n" +
-            "              \"status\": \"undefined\"\n" +
-            "            },\n" +
-            "            \"line\": 3,\n" +
-            "            \"name\": \"b\",\n" +
-            "            \"match\": {},\n" +
-            "            \"keyword\": \"Given \"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      },\n" +
-            "      {\n" +
-            "        \"line\": 4,\n" +
-            "        \"name\": \"scenario name\",\n" +
-            "        \"description\": \"\",\n" +
-            "        \"id\": \"feature-name;scenario-name\",\n" +
-            "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
-            "        \"type\": \"scenario\",\n" +
-            "        \"keyword\": \"Scenario\",\n" +
-            "        \"steps\": [\n" +
-            "          {\n" +
-            "            \"result\": {\n" +
-            "              \"status\": \"undefined\"\n" +
-            "            },\n" +
-            "            \"line\": 5,\n" +
-            "            \"name\": \"s\",\n" +
-            "            \"match\": {},\n" +
-            "            \"keyword\": \"When \"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"name\": \"feature name\",\n" +
-            "    \"description\": \"\",\n" +
-            "    \"id\": \"feature-name\",\n" +
-            "    \"keyword\": \"Feature\",\n" +
-            "    \"uri\": \"file:test.feature\",\n" +
-            "    \"tags\": []\n" +
-            "  }\n" +
-            "]";
-        assertThat(out.toString(), sameJSONAs(expected));
-    }
 
     @Test
     void strict_with_passed_scenarios() {
@@ -257,11 +178,12 @@ class RuntimeTest {
                 "    When second step\n" +
                 "    Then third step\n");
         final HookDefinition beforeHook = mock(HookDefinition.class);
+        when(beforeHook.getLocation()).thenReturn("");
         when(beforeHook.getTagExpression()).thenReturn("");
 
         TestBackendSupplier testBackendSupplier = createTestBackendSupplier(feature, beforeHook);
 
-        FeatureSupplier featureSupplier = new TestFeatureSupplier(bus, feature);
+        FeatureSupplier featureSupplier = new TestFeatureSupplier(feature);
 
         Runtime runtime = Runtime.builder()
             .withBackendSupplier(testBackendSupplier)
@@ -401,13 +323,9 @@ class RuntimeTest {
         final List<Feature> features = Arrays.asList(feature1, feature2, feature3);
 
         Runtime.builder()
-            .withFeatureSupplier(new TestFeatureSupplier(bus, features))
+            .withFeatureSupplier(new TestFeatureSupplier(features))
             .withEventBus(bus)
-            .withRuntimeOptions(
-                new CommandlineOptionsParser()
-                    .parse("--threads", String.valueOf(features.size()))
-                    .build()
-            )
+            .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(features.size()).build())
             .withAdditionalPlugins(formatterSpy)
             .withBackendSupplier(new TestHelper.TestHelperBackendSupplier(features))
             .build()
@@ -458,7 +376,7 @@ class RuntimeTest {
             .withFeatures(Arrays.asList(feature1, feature2))
             .withFormatterUnderTest(brokenEventListener)
             .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .withRuntimeArgs("--threads", "2")
+            .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
             .build()
             .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
@@ -500,7 +418,7 @@ class RuntimeTest {
             .withFeatures(Arrays.asList(feature1, feature2))
             .withFormatterUnderTest(brokenEventListener)
             .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .withRuntimeArgs("--threads", "2")
+            .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
             .build()
             .run());
 
@@ -548,8 +466,6 @@ class RuntimeTest {
                 glue.addStepDefinition(mockedScenarioScopedStepDefinition);
             }
         };
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         FeatureSupplier featureSupplier = () -> singletonList(feature);
         Runtime.builder()

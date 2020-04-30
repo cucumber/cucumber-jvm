@@ -4,12 +4,16 @@ import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.Argument;
+import io.cucumber.core.stepexpression.StepExpression;
+import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTableType;
@@ -19,8 +23,10 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Locale.ENGLISH;
@@ -33,6 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class StepDefinitionMatchTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
+    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+    private final StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(stepTypeRegistry, bus);
+    private final UUID id = UUID.randomUUID();
 
     private final Located stubbedLocation = new Located() {
         @Override
@@ -57,7 +66,8 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
         stepDefinitionMatch.runStep(null);
@@ -73,7 +83,8 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -99,7 +110,8 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -129,7 +141,8 @@ class StepDefinitionMatchTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         PickleStepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -156,7 +169,8 @@ class StepDefinitionMatchTest {
         );
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", Integer.TYPE, Short.TYPE, List.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -183,7 +197,8 @@ class StepDefinitionMatchTest {
             "I have a data table",
             UndefinedDataTableType.class
         );
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(
             arguments,
@@ -196,7 +211,7 @@ class StepDefinitionMatchTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.\n" +
-                "It appears you did not register a data table type. The details are in the stacktrace below."
+                "It appears you did not register a data table type."
         )));
     }
 
@@ -216,15 +231,15 @@ class StepDefinitionMatchTest {
         );
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'.\n" +
-                "The details are in the stacktrace below."
+            "Could not convert arguments for step [I have {itemQuantity} in my belly] defined at '{stubbed location with details}'."
         )));
     }
 
@@ -248,7 +263,8 @@ class StepDefinitionMatchTest {
         );
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -272,15 +288,15 @@ class StepDefinitionMatchTest {
 
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
-                "The details are in the stacktrace below."
+            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'."
         )));
     }
 
@@ -305,7 +321,8 @@ class StepDefinitionMatchTest {
 
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -331,15 +348,15 @@ class StepDefinitionMatchTest {
 
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'.\n" +
-                "The details are in the stacktrace below."
+            "Could not convert arguments for step [I have some cukes in my belly] defined at '{stubbed location with details}'."
         )));
     }
 
@@ -362,7 +379,8 @@ class StepDefinitionMatchTest {
 
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have some cukes in my belly", ItemQuantity.class);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(stepDefinition, stepTypeRegistry);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
 
@@ -399,7 +417,7 @@ class StepDefinitionMatchTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.\n" +
-                "It appears there was a problem with a hook or transformer definition. The details are in the stacktrace below."
+                "It appears there was a problem with a hook or transformer definition."
         )));
     }
 
@@ -437,9 +455,7 @@ class StepDefinitionMatchTest {
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not invoke step [I have a data table] defined at '{stubbed location with details}'.\n" +
                 "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (java.lang.String, java.lang.String)\n" +
-                "\n" +
-                "The details are in the stacktrace below."
+                "The converted arguments types were (java.lang.String, java.lang.String)"
         )));
     }
 
@@ -473,9 +489,7 @@ class StepDefinitionMatchTest {
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Could not invoke step [I have an {word} value] defined at '{stubbed location with details}'.\n" +
                 "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (null)\n" +
-                "\n" +
-                "The details are in the stacktrace below."
+                "The converted arguments types were (null)"
         )));
     }
 

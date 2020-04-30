@@ -8,6 +8,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [6.0.0-RC1] (2020-04-23)
+
+### Added
+ *  [Core] Support limited set of cURL commands for UrlOutputStream ([#1910](https://github.com/cucumber/cucumber-jvm/issues/#1910), [#1932](https://github.com/cucumber/cucumber-jvm/issues/1932) M.P. Korstanje, Aslak Hellesøy) 
+
+### Changed
+ * [Core] Use Gherkin 6+ and Cucumber messages ([#1841](https://github.com/cucumber/cucumber-jvm/issues/1841), [#1941](https://github.com/cucumber/cucumber-jvm/issues/1941), [#1942](https://github.com/cucumber/cucumber-jvm/issues/1942) M.P. Korstanje, Aslak Hellesøy) 
+   - Implements the `message` formatter which will output cucumber messages as ndjson as well as an improved `html`
+     formatter which renders a html report based on these messages.
+   - Switches the default parser to Gherkin 6+. This will enable rule support by default. 
+   - Adds exception to `TestRunFinished` event.
+   - Adds error state json to `JsonFormatter` output.
+   - Add exception handling around Cucumber execution. When execution fails, Cucumber will still emit the `TestRunFinished` event.
+
+### Fixed
+ * [Java] Invoke static methods without instantiating target object ([#1953](https://github.com/cucumber/cucumber-jvm/issues/1953) M.P. Korstanje)
+ 
+## [v5.x.x Unreleased] (In Git)
+
+### Added
  * [Java]  `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
 
 ### Changed
@@ -1361,7 +1390,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC1...master
+[6.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...v6.0.0-RC1
 [5.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...v5.6.0
 [5.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...v5.5.0
 [5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2

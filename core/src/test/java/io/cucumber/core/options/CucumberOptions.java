@@ -21,7 +21,7 @@ public @interface CucumberOptions {
 
     String[] extraGlue() default {};
 
-    String[] tags() default {};
+    String tags() default "";
 
     String[] plugin() default {};
 

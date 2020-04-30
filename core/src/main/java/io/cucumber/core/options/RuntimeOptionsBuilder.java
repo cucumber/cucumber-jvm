@@ -58,8 +58,8 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder addPluginName(String name, boolean isAddPlugin) {
-        this.parsedPluginData.addPluginName(name, isAddPlugin);
+    public RuntimeOptionsBuilder addPluginName(String name) {
+        this.parsedPluginData.addPluginName(name);
         return this;
     }
 
@@ -121,8 +121,8 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setGlue(this.parsedGlue);
         }
 
-        this.parsedPluginData.updateFormatters(runtimeOptions.getFormatters());
-        this.parsedPluginData.updateSummaryPrinters(runtimeOptions.getSummaryPrinter());
+        runtimeOptions.getFormatters().addAll(this.parsedPluginData.formatters);
+        runtimeOptions.getSummaryPrinter().addAll(this.parsedPluginData.summaryPrinters);
 
         if (parsedObjectFactoryClass != null) {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
@@ -231,47 +231,19 @@ public final class RuntimeOptionsBuilder {
     }
 
     static final class ParsedPluginData {
-        private final ParsedPlugins formatters = new ParsedPlugins();
-        private final ParsedPlugins summaryPrinters = new ParsedPlugins();
+        private final List<Options.Plugin> formatters = new ArrayList<>();
+        private final List<Options.Plugin> summaryPrinters = new ArrayList<>();
 
-        void addPluginName(String name, boolean isAddPlugin) {
+        void addPluginName(String name) {
             PluginOption pluginOption = PluginOption.parse(name);
             if (pluginOption.isSummaryPrinter()) {
-                summaryPrinters.addName(pluginOption, isAddPlugin);
+                summaryPrinters.add(pluginOption);
             } else if (pluginOption.isFormatter()) {
-                formatters.addName(pluginOption, isAddPlugin);
+                formatters.add(pluginOption);
             } else {
                 throw new CucumberException("Unrecognized plugin: " + name);
             }
         }
 
-        void updateFormatters(List<Options.Plugin> formatter) {
-            this.formatters.updateNameList(formatter);
-        }
-
-        void updateSummaryPrinters(List<Options.Plugin> pluginSummaryPrinterNames) {
-            summaryPrinters.updateNameList(pluginSummaryPrinterNames);
-        }
-
-        private static class ParsedPlugins {
-            private final List<Options.Plugin> names = new ArrayList<>();
-            private boolean clobber = false;
-
-            void addName(Options.Plugin name, boolean isAddOption) {
-                names.add(name);
-                if (!isAddOption) {
-                    clobber = true;
-                }
-            }
-
-            void updateNameList(List<Options.Plugin> nameList) {
-                if (!names.isEmpty()) {
-                    if (clobber) {
-                        nameList.clear();
-                    }
-                    nameList.addAll(names);
-                }
-            }
-        }
     }
 }

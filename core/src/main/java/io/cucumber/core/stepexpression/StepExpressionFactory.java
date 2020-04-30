@@ -1,5 +1,8 @@
 package io.cucumber.core.stepexpression;
 
+import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
@@ -8,54 +11,54 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
+import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.messages.Messages.UndefinedParameterType;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 public final class StepExpressionFactory {
 
     private final ExpressionFactory expressionFactory;
     private final DataTableTypeRegistryTableConverter tableConverter;
     private final DocStringTypeRegistryDocStringConverter docStringConverter;
+    private final EventBus bus;
 
-    public StepExpressionFactory(StepTypeRegistry registry) {
+    public StepExpressionFactory(StepTypeRegistry registry, EventBus bus) {
         this.expressionFactory = new ExpressionFactory(registry.parameterTypeRegistry());
         this.tableConverter = new DataTableTypeRegistryTableConverter(registry.dataTableTypeRegistry());
         this.docStringConverter = new DocStringTypeRegistryDocStringConverter(registry.docStringTypeRegistry());
+        this.bus = bus;
     }
 
-    public StepExpression createExpression(String expressionString) {
-        if (expressionString == null) throw new NullPointerException("expression can not be null");
-        Expression expression = expressionFactory.createExpression(expressionString);
+    public StepExpression createExpression(StepDefinition stepDefinition) {
+        List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
 
-        RawTableTransformer<DataTable> toDataTable = raw -> DataTable.create(raw, tableConverter);
-        DocStringTransformer<Object> toDocString = (String input, String contentType) -> input;
-        return new StepExpression(expression, toDocString, toDataTable);
-    }
-
-    public StepExpression createExpression(String expressionString, Type tableOrDocStringType) {
-        return createExpression(expressionString, () -> tableOrDocStringType, false);
-    }
-
-    public StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType) {
-        return createExpression(expressionString, tableOrDocStringType, false);
-    }
-
-    public StepExpression createExpression(String expressionString, Type tableOrDocStringType, boolean transpose) {
-        return createExpression(expressionString, () -> tableOrDocStringType, transpose);
-    }
-
-    public StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose) {
-        if (expressionString == null) throw new NullPointerException("expressionString can not be null");
-        if (tableOrDocStringType == null) throw new NullPointerException("tableOrDocStringType can not be null");
-
-        final Expression expression;
-        try {
-            expression = expressionFactory.createExpression(expressionString);
-        } catch (UndefinedParameterTypeException e) {
-            throw registerTypeInConfiguration(expressionString, e);
+        if (parameterInfos.isEmpty()) {
+            return createExpression(
+                stepDefinition.getPattern(),
+                stepDefinitionDoesNotTakeAnyParameter(stepDefinition),
+                false
+            );
         }
+
+        ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
+        return createExpression(
+            stepDefinition.getPattern(),
+            parameterInfo.getTypeResolver()::resolve,
+            parameterInfo.isTransposed()
+        );
+    }
+
+    private StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose) {
+        requireNonNull(expressionString, "expressionString can not be null");
+        requireNonNull(tableOrDocStringType, "tableOrDocStringType can not be null");
+
+        final Expression expression = crateExpression(expressionString);
 
         RawTableTransformer<?> tableTransform = (List<List<String>> raw) -> {
             DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
@@ -71,12 +74,37 @@ public final class StepExpressionFactory {
         return new StepExpression(expression, docStringTransform, tableTransform);
     }
 
+    private Expression crateExpression(String expressionString) {
+        final Expression expression;
+        try {
+            expression = expressionFactory.createExpression(expressionString);
+        } catch (UndefinedParameterTypeException e) {
+            bus.send(Envelope.newBuilder()
+                .setUndefinedParameterType(UndefinedParameterType.newBuilder()
+                    .setExpression(expressionString)
+                    .setName(e.getUndefinedParameterTypeName()))
+                .build()
+            );
+            throw registerTypeInConfiguration(expressionString, e);
+        }
+        return expression;
+    }
+
+    private static Supplier<Type> stepDefinitionDoesNotTakeAnyParameter(StepDefinition stepDefinition) {
+        return () -> {
+            throw new CucumberException(format(
+                "step definition at %s does not take any parameters",
+                stepDefinition.getLocation()
+            ));
+        };
+    }
+
     private CucumberException registerTypeInConfiguration(String expressionString, UndefinedParameterTypeException e) {
-        return new CucumberException(String.format("" +
+        return new CucumberException(format("" +
                 "Could not create a cucumber expression for '%s'.\n" +
-                "It appears you did not register parameter type. The details are in the stacktrace below.\n" +
-                "You can find the documentation here: https://docs.cucumber.io/cucumber/cucumber-expressions/",
+                "It appears you did not register a parameter type.",
             expressionString
         ), e);
     }
+
 }

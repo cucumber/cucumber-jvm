@@ -6,14 +6,13 @@ import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
@@ -25,6 +24,7 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Clock;
 import java.util.List;
@@ -239,8 +239,8 @@ class CachingGlueTest {
 
     @Test
     void returns_match_from_cache_for_step_with_table() throws AmbiguousStepDefinitionsException {
-        StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
-        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
+        StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1", DataTable.class);
+        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2", DataTable.class);
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         glue.prepareGlue(stepTypeRegistry);
@@ -270,8 +270,8 @@ class CachingGlueTest {
 
     @Test
     void returns_match_from_cache_for_ste_with_doc_string() throws AmbiguousStepDefinitionsException {
-        StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
-        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
+        StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1", String.class);
+        StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2", String.class);
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         glue.prepareGlue(stepTypeRegistry);
@@ -427,43 +427,16 @@ class CachingGlueTest {
         assertTrue(ambiguousCalled);
     }
 
-    private static class MockedScenarioScopedStepDefinition implements StepDefinition, ScenarioScoped {
+    private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
 
-        private final String pattern;
 
-        MockedScenarioScopedStepDefinition(String pattern) {
-            this.pattern = pattern;
+        MockedScenarioScopedStepDefinition(String pattern, Type... types) {
+            super(pattern, types);
         }
 
-        MockedScenarioScopedStepDefinition() {
-            this("mocked scenario scoped step definition");
+        MockedScenarioScopedStepDefinition(String pattern, boolean transposed, Type... types) {
+            super(pattern, transposed, types);
         }
-
-        @Override
-        public String getLocation() {
-            return "mocked scenario scoped step definition";
-        }
-
-        @Override
-        public void execute(Object[] args) {
-
-        }
-
-        @Override
-        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-            return false;
-        }
-
-        @Override
-        public List<ParameterInfo> parameterInfos() {
-            return null;
-        }
-
-        @Override
-        public String getPattern() {
-            return pattern;
-        }
-
     }
 
     private static class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
@@ -581,37 +554,10 @@ class CachingGlueTest {
         }
     }
 
-    private static class MockedStepDefinition implements StepDefinition {
+    private static class MockedStepDefinition extends StubStepDefinition {
 
-        private final String pattern;
-
-        MockedStepDefinition(String pattern) {
-            this.pattern = pattern;
-        }
-
-        @Override
-        public String getLocation() {
-            return "mocked step location";
-        }
-
-        @Override
-        public void execute(Object[] args) {
-
-        }
-
-        @Override
-        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-            return false;
-        }
-
-        @Override
-        public List<ParameterInfo> parameterInfos() {
-            return null;
-        }
-
-        @Override
-        public String getPattern() {
-            return pattern;
+        MockedStepDefinition(String pattern, Type... types) {
+            super(pattern, types);
         }
     }
 
