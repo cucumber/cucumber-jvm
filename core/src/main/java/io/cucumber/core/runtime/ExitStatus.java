@@ -47,7 +47,7 @@ public final class ExitStatus implements ConcurrentEventListener {
             return !leastSeverResult.getStatus().is(Status.PASSED);
         } else {
             Result mostSevereResult = max(results, comparing(Result::getStatus));
-            return mostSevereResult.getStatus().isOk(options.isStrict());
+            return mostSevereResult.getStatus().isOk();
         }
     }
 

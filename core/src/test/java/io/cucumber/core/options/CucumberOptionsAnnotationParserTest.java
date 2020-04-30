@@ -24,27 +24,14 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
  class CucumberOptionsAnnotationParserTest {
 
-    @Test
-     void create_strict() {
-        RuntimeOptions runtimeOptions = parser().parse(Strict.class).build();
-        assertTrue(runtimeOptions.isStrict());
-    }
-
     private CucumberOptionsAnnotationParser parser() {
         return new CucumberOptionsAnnotationParser()
             .withOptionsProvider(new CoreCucumberOptionsProvider());
-    }
-
-    @Test
-     void create_non_strict() {
-        RuntimeOptions runtimeOptions = parser().parse(NotStrict.class).build();
-        assertFalse(runtimeOptions.isStrict());
     }
 
     @Test
@@ -56,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
             .build();
 
         assertAll("Checking RuntimeOptions",
-            () -> assertFalse(runtimeOptions.isStrict()),
             () -> assertThat(runtimeOptions.getObjectFactoryClass(), is(nullValue())),
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options")))

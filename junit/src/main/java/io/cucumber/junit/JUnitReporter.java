@@ -119,11 +119,10 @@ final class JUnitReporter {
                 stepNotifier.addFailedAssumption(error);
                 break;
             case PENDING:
+            case AMBIGUOUS:
+            case FAILED:
                 stepErrors.add(error);
-                addFailureOrFailedAssumptionDependingOnStrictMode(
-                    stepNotifier,
-                    error
-                );
+                stepNotifier.addFailure(error);
                 break;
             case UNDEFINED:
                 Collection<String> snippets = snippetsPerStep.remove(
@@ -134,17 +133,7 @@ final class JUnitReporter {
                     snippets,
                     snippetsPerStep.values()
                 ));
-                addFailureOrFailedAssumptionDependingOnStrictMode(
-                    stepNotifier,
-                    error == null
-                        ? new UndefinedStepException(snippets)
-                        : error
-                );
-                break;
-            case AMBIGUOUS:
-            case FAILED:
-                stepErrors.add(error);
-                stepNotifier.addFailure(error);
+                stepNotifier.addFailure(error == null ? new UndefinedStepException(snippets) : error);
                 break;
             default:
                 throw new IllegalStateException("Unexpected result status: " + result.getStatus());
@@ -164,17 +153,17 @@ final class JUnitReporter {
                 }
                 stepErrors.stream()
                     .findFirst()
-                    .ifPresent(error -> pickleRunnerNotifier.addFailedAssumption(error));
+                    .ifPresent(pickleRunnerNotifier::addFailedAssumption);
                 break;
             case PENDING:
             case UNDEFINED:
                 stepErrors.stream()
                     .findFirst()
-                    .ifPresent(error -> addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error));
+                    .ifPresent(pickleRunnerNotifier::addFailure);
                 break;
             case AMBIGUOUS:
             case FAILED:
-                stepErrors.forEach(error -> pickleRunnerNotifier.addFailure(error));
+                stepErrors.forEach(pickleRunnerNotifier::addFailure);
                 break;
         }
     }
@@ -182,14 +171,6 @@ final class JUnitReporter {
     private void handleHookResult(Result result) {
         if (result.getError() != null) {
             stepErrors.add(result.getError());
-        }
-    }
-
-    private void addFailureOrFailedAssumptionDependingOnStrictMode(TestNotifier notifier, Throwable error) {
-        if (junitOptions.isStrict()) {
-            notifier.addFailure(error);
-        } else {
-            notifier.addFailedAssumption(error);
         }
     }
 

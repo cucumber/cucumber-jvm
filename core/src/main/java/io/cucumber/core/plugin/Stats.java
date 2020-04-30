@@ -1,5 +1,7 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -9,9 +11,6 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.plugin.ColorAware;
-import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.StrictAware;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
@@ -25,7 +24,7 @@ import java.util.Locale;
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
+class Stats implements ConcurrentEventListener, ColorAware {
     private static final long ONE_SECOND = SECONDS.toNanos(1);
     private static final long ONE_MINUTE = 60 * ONE_SECOND;
     private final SubCounts scenarioSubCounts = new SubCounts();
@@ -39,7 +38,6 @@ class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
     private final List<String> pendingScenarios = new ArrayList<>();
     private final List<String> undefinedScenarios = new ArrayList<>();
     private final List<Throwable> errors = new ArrayList<>();
-    private boolean strict;
 
     Stats() {
         this(Locale.getDefault());
@@ -56,11 +54,6 @@ class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
         } else {
             formats = new AnsiFormats();
         }
-    }
-
-    @Override
-    public void setStrict(boolean strict) {
-        this.strict = true;
     }
 
     @Override
@@ -132,10 +125,8 @@ class Stats implements ConcurrentEventListener, ColorAware, StrictAware {
     private void printNonZeroResultScenarios(PrintStream out) {
         printScenarios(out, failedScenarios, Status.FAILED);
         printScenarios(out, ambiguousScenarios, Status.AMBIGUOUS);
-        if (strict) {
-            printScenarios(out, pendingScenarios, Status.PENDING);
-            printScenarios(out, undefinedScenarios, Status.UNDEFINED);
-        }
+        printScenarios(out, pendingScenarios, Status.PENDING);
+        printScenarios(out, undefinedScenarios, Status.UNDEFINED);
     }
 
     private void printScenarios(PrintStream out, List<String> scenarios, Status type) {

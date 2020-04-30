@@ -6,8 +6,6 @@ import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -53,10 +51,7 @@ import static java.util.stream.Collectors.toList;
 @API(status = API.Status.STABLE)
 public final class TestNGCucumberRunner {
 
-    private static final Logger log = LoggerFactory.getLogger(TestNGCucumberRunner.class);
-
     private final Predicate<Pickle> filters;
-    private final RuntimeOptions runtimeOptions;
     private final List<Feature> features;
     private final CucumberExecutionContext context;
 
@@ -81,19 +76,11 @@ public final class TestNGCucumberRunner {
             .parse(CucumberProperties.fromEnvironment())
             .build(annotationOptions);
 
-        runtimeOptions = new CucumberPropertiesParser()
+        RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
             .parse(CucumberProperties.fromSystemProperties())
-            .addDefaultSummaryPrinterIfAbsent()
             .build(environmentOptions);
 
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-
-        if (!runtimeOptions.isStrict()) {
-            log.warn(() -> "By default Cucumber is running in --non-strict mode.\n" +
-                "This default will change to --strict and --non-strict will be removed.\n" +
-                "You can use --strict or @CucumberOptions(strict = true) to suppress this warning"
-            );
-        }
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeatureParser parser = new FeatureParser(bus::generateId);
@@ -109,7 +96,6 @@ public final class TestNGCucumberRunner {
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
-        context.emitMeta();
 
         // Start test execution now.
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
@@ -120,7 +106,7 @@ public final class TestNGCucumberRunner {
 
     public void runScenario(io.cucumber.testng.Pickle pickle) {
         context.runTestCase(runner -> {
-            try (TestCaseResultObserver observer = observe(runner.getBus(), runtimeOptions.isStrict())) {
+            try (TestCaseResultObserver observer = observe(runner.getBus())) {
                 Pickle cucumberPickle = pickle.getPickle();
                 runner.runPickle(cucumberPickle);
                 observer.assertTestCasePassed();
@@ -144,13 +130,12 @@ public final class TestNGCucumberRunner {
         //Possibly invoked in a multi-threaded context
         try {
             return features.stream()
-                .flatMap(feature -> {
-                    return feature.getPickles().stream()
+                .flatMap(feature ->
+                    feature.getPickles().stream()
                         .filter(filters)
                         .map(cucumberPickle -> new Object[]{
                             new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle)),
-                            new FeatureWrapperImpl(feature)});
-                })
+                            new FeatureWrapperImpl(feature)}))
                 .collect(toList())
                 .toArray(new Object[0][0]);
         } catch (CucumberException e) {

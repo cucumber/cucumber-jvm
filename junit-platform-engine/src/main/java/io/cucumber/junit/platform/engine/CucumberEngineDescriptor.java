@@ -15,7 +15,7 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
 
     @Override
     public CucumberEngineExecutionContext before(CucumberEngineExecutionContext context) {
-        context.emitMetaAndStartTestRun();
+        context.startTestRun();
         return context;
     }
 

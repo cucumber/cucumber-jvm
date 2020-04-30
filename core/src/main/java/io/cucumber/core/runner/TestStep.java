@@ -23,7 +23,7 @@ import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
-    private static final String[] ASSUMPTION_VIOLATED_EXCEPTIONS = {
+    private static final String[] TEST_ABORTED_OR_SKIPPED_EXCEPTIONS = {
         "org.junit.AssumptionViolatedException",
         "org.junit.internal.AssumptionViolatedException",
         "org.opentest4j.TestAbortedException",
@@ -31,7 +31,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     };
 
     static {
-        Arrays.sort(ASSUMPTION_VIOLATED_EXCEPTIONS);
+        Arrays.sort(TEST_ABORTED_OR_SKIPPED_EXCEPTIONS);
     }
 
     private final StepDefinitionMatch stepDefinitionMatch;
@@ -131,7 +131,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         if (t.getClass().isAnnotationPresent(Pending.class)) {
             return Status.PENDING;
         }
-        if (Arrays.binarySearch(ASSUMPTION_VIOLATED_EXCEPTIONS, t.getClass().getName()) >= 0) {
+        if (Arrays.binarySearch(TEST_ABORTED_OR_SKIPPED_EXCEPTIONS, t.getClass().getName()) >= 0) {
             return Status.SKIPPED;
         }
         if (t.getClass() == UndefinedStepDefinitionException.class) {

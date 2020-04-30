@@ -41,14 +41,6 @@ class CucumberEngineOptionsTest {
     }
 
     @Test
-    void isStrict() {
-        MapConfigurationParameters someConfig = new MapConfigurationParameters(
-            "some key", "some value"
-        );
-        assertTrue(new CucumberEngineOptions(someConfig).isStrict());
-    }
-
-    @Test
     void isMonochrome() {
         MapConfigurationParameters ansiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,

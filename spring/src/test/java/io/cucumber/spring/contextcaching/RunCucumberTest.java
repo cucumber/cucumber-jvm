@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-    strict = true,
     features = {"classpath:io/cucumber/spring/contextCaching.feature"}
 )
 public class RunCucumberTest {

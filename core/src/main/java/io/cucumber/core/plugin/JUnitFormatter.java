@@ -2,7 +2,6 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
@@ -49,7 +48,7 @@ import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public final class JUnitFormatter implements EventListener, StrictAware {
+public final class JUnitFormatter implements EventListener {
 
     private static final long MILLIS_PER_SECOND = SECONDS.toMillis(1L);
     private final Writer writer;
@@ -57,7 +56,6 @@ public final class JUnitFormatter implements EventListener, StrictAware {
     private final Element rootElement;
     private Element root;
     private TestCase testCase;
-    private boolean strict = false;
     private URI currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
@@ -97,11 +95,6 @@ public final class JUnitFormatter implements EventListener, StrictAware {
 
     private void handleTestRunStarted(TestRunStarted event) {
         this.started = event.getInstant();
-    }
-
-    @Override
-    public void setStrict(boolean strict) {
-        this.strict = strict;
     }
 
     private void handleTestSourceParsed(TestSourceParsed event) {
@@ -232,12 +225,8 @@ public final class JUnitFormatter implements EventListener, StrictAware {
                 addStackTrace(sb, result);
                 child = createFailure(doc, sb, result.getError().getMessage(), result.getError().getClass());
             } else if (status.is(Status.PENDING) || status.is(Status.UNDEFINED)) {
-                if (strict) {
-                    Throwable error = result.getError();
-                    child = createFailure(doc, sb, "The scenario has pending or undefined step(s)", error == null ? Exception.class : error.getClass());
-                } else {
-                    child = createElement(doc, sb, "skipped");
-                }
+                Throwable error = result.getError();
+                child = createFailure(doc, sb, "The scenario has pending or undefined step(s)", error == null ? Exception.class : error.getClass());
             } else if (status.is(Status.SKIPPED) && result.getError() != null) {
                 addStackTrace(sb, result);
                 child = createSkipped(doc, sb, printStackTrace(result.getError()));
@@ -250,14 +239,7 @@ public final class JUnitFormatter implements EventListener, StrictAware {
 
         void handleEmptyTestCase(Document doc, Element tc, Result result) {
             tc.setAttribute("time", calculateTotalDurationString(result.getDuration()));
-
-            Element child;
-            if (strict) {
-                child = createFailure(doc, new StringBuilder(), "The scenario has no steps", Exception.class);
-            } else {
-                child = createSkipped(doc, new StringBuilder(), "The scenario has no steps");
-            }
-
+            Element child = createFailure(doc, new StringBuilder(), "The scenario has no steps", Exception.class);
             tc.appendChild(child);
         }
 

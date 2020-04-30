@@ -31,16 +31,14 @@ class RerunFormatterTest {
             "Feature: feature name\n" +
             "  Scenario: passed scenario\n" +
             "    Given passed step\n" +
-            "  Scenario: pending scenario\n" +
-            "    Given pending step\n" +
-            "  Scenario: undefined scenario\n" +
-            "    Given undefined step\n");
+            "  Scenario: skipped scenario\n" +
+            "    Given skipped step\n"
+        );
         features.add(feature);
         stepsToResult.put("passed step", result("passed"));
-        stepsToResult.put("pending step", result("pending"));
-        stepsToResult.put("undefined step", result("undefined"));
+        stepsToResult.put("skipped step", result("skipped"));
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo(""));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo(""));
     }
 
     @Test
@@ -58,7 +56,7 @@ class RerunFormatterTest {
         stepsToResult.put("pending step", result("pending"));
         stepsToResult.put("undefined step", result("undefined"));
 
-        assertThat(runFeaturesWithFormatter(true), isBytesEqualTo("classpath:path/test.feature:2:4:6\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2:4:6\n"));
     }
 
     @Test
@@ -74,7 +72,7 @@ class RerunFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("failed"));
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("file:path/test.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("file:path/test.feature:2\n"));
     }
 
     @Test
@@ -91,7 +89,7 @@ class RerunFormatterTest {
         stepsToResult.put("second step", result("passed"));
         stepsToResult.put("third step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("file:path/test.feature:4\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("file:path/test.feature:4\n"));
     }
 
     @Test
@@ -110,7 +108,7 @@ class RerunFormatterTest {
         stepsToResult.put("executing second row", result("failed"));
         stepsToResult.put("everything is ok", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:8\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:8\n"));
     }
 
     @Test
@@ -128,7 +126,7 @@ class RerunFormatterTest {
         hooks.add(TestHelper.hookEntry("before", result("failed")));
         hookLocations.add("hook-location");
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2\n"));
     }
 
     @Test
@@ -146,7 +144,7 @@ class RerunFormatterTest {
         hooks.add(TestHelper.hookEntry("after", result("failed")));
         hookLocations.add("hook-location");
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2\n"));
     }
 
     @Test
@@ -165,7 +163,7 @@ class RerunFormatterTest {
         stepsToResult.put("third step", result("failed"));
         stepsToResult.put("forth step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/test.feature:2:5\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2:5\n"));
     }
 
     @Test
@@ -187,13 +185,12 @@ class RerunFormatterTest {
         stepsToResult.put("third step", result("failed"));
         stepsToResult.put("forth step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(false), isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
+        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
     }
 
-    private ByteArrayOutputStream runFeaturesWithFormatter(boolean isStrict) {
+    private ByteArrayOutputStream runFeaturesWithFormatter() {
         final ByteArrayOutputStream report = new ByteArrayOutputStream();
         final RerunFormatter formatter = new RerunFormatter(report);
-        formatter.setStrict(isStrict);
 
         TestHelper.builder()
             .withFormatterUnderTest(formatter)

@@ -40,7 +40,6 @@ class JUnitFormatterTest {
     private final List<String> hookLocations = new ArrayList<>();
     private final List<Answer<Object>> hookActions = new ArrayList<>();
     private Duration stepDuration = null;
-    private boolean strict = false;
 
     private static void assertXmlEqual(Object expected, Object actual) {
         assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
@@ -67,8 +66,7 @@ class JUnitFormatterTest {
 
     @Test
     void featureSimpleStrictTest() throws Exception {
-        boolean strict = true;
-        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"), strict);
+        File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"));
         assertXmlEqual(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/JUnitFormatterTest_1_strict.report.xml"), report);
     }
 
@@ -112,9 +110,9 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-            "        <skipped message=\"The scenario has no steps\"/>\n" +
+            "        <failure message=\"The scenario has no steps\" type=\"java.lang.Exception\"/>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -127,7 +125,6 @@ class JUnitFormatterTest {
                 "  Scenario: scenario name\n");
         features.add(feature);
         stepDuration = Duration.ofMillis(1L);
-        strict = true;
 
         String formatterOutput = runFeaturesWithFormatter();
 
@@ -191,13 +188,14 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0.003\">\n" +
+            "<testsuite errors=\"0\" failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0.003\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.003\">\n" +
-            "        <skipped><![CDATA[" +
-            "Given first step............................................................pending\n" +
+            "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.runner.TestPendingException\">\n" +
+            "            <![CDATA[Given first step............................................................pending\n" +
             "When second step............................................................skipped\n" +
-            "Then third step.............................................................undefined\n" +
-            "]]></skipped>\n" +
+            "Then third step.............................................................skipped\n" +
+            "]]>\n" +
+            "        </failure>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -287,13 +285,14 @@ class JUnitFormatterTest {
         String formatterOutput = runFeaturesWithFormatter();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-            "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
+            "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n" +
             "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
-            "        <skipped><![CDATA[" +
-            "Given first step............................................................skipped\n" +
+            "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.runner.TestPendingException\">\n" +
+            "            <![CDATA[Given first step............................................................skipped\n" +
             "When second step............................................................skipped\n" +
             "Then third step.............................................................skipped\n" +
-            "]]></skipped>\n" +
+            "]]>\n" +
+            "        </failure>\n" +
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
@@ -542,14 +541,9 @@ class JUnitFormatterTest {
     }
 
     private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
-        return runFeaturesWithJunitFormatter(featurePaths, false);
-    }
-
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths, boolean strict) throws IOException {
         File report = File.createTempFile("cucumber-jvm-junit", "xml");
 
         RuntimeOptionsBuilder options = new RuntimeOptionsBuilder()
-            .setStrict(strict)
             .addPluginName("junit:" + report.getAbsolutePath());
         featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
 
@@ -572,7 +566,6 @@ class JUnitFormatterTest {
     private String runFeaturesWithFormatter() throws IOException {
         final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
         final JUnitFormatter formatter = createJUnitFormatter(report);
-        formatter.setStrict(strict);
         TestHelper.builder()
             .withFormatterUnderTest(formatter)
             .withFeatures(features)

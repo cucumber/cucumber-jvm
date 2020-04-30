@@ -3,6 +3,8 @@ package io.cucumber.core.options;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
@@ -32,6 +34,8 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 public final class CommandlineOptionsParser {
+
+    private static final Logger log = LoggerFactory.getLogger(CommandlineOptionsParser.class);
 
     private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
@@ -89,8 +93,12 @@ public final class CommandlineOptionsParser {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
                 parsedOptions.setDryRun(!arg.startsWith("--no-"));
-            } else if (arg.equals("--no-strict") || arg.equals("--strict") || arg.equals("-s")) {
-                parsedOptions.setStrict(!arg.startsWith("--no-"));
+            } else if (arg.equals("--no-strict")) {
+                out.println("--no-strict is no longer effective");
+                exitCode = 1;
+                return parsedOptions;
+            } else if (arg.equals("--strict") || arg.equals("-s")) {
+                log.warn(() -> "--strict is enabled by default. This option will be removed in a future release.");
             } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
                 parsedOptions.setMonochrome(!arg.startsWith("--no-"));
             } else if (arg.equals("--snippets")) {

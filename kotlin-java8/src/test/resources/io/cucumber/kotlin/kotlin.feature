@@ -6,6 +6,7 @@ Feature: Kotlin
 
   Scenario: another scenario which should have isolated state
     Given I have 42 cukes in my belly
+    And something that is skipped
     And something that isn't defined
 
   Scenario: Parameterless lambdas

@@ -38,11 +38,6 @@ class CucumberEngineOptions implements
     }
 
     @Override
-    public boolean isStrict() {
-        return true;
-    }
-
-    @Override
     public boolean isWip() {
         return false;
     }

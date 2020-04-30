@@ -152,8 +152,8 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addStrict(CucumberOptions options, RuntimeOptionsBuilder args) {
-        if (options.strict()) {
-            args.setStrict(true);
+        if (!options.strict()) {
+            throw new CucumberException("@CucumberOptions(strict=false) is no longer supported. Please use strict=true");
         }
     }
 

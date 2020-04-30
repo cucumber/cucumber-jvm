@@ -79,7 +79,7 @@ public final class CucumberPropertiesParser {
         parse(properties,
             EXECUTION_STRICT_PROPERTY_NAME,
             Boolean::parseBoolean,
-            builder::setStrict
+            CucumberPropertiesParser::errorOnNonStrict
         );
 
         parseAll(properties,
@@ -135,6 +135,12 @@ public final class CucumberPropertiesParser {
         );
 
         return builder;
+    }
+
+    private static void errorOnNonStrict(Boolean strict) {
+        if (!strict) {
+            throw new CucumberException(EXECUTION_STRICT_PROPERTY_NAME + "=false is no longer effective. Please use =true (the default) or remove this property");
+        }
     }
 
     private static Stream<FeatureWithLines> parseFeatureFile(String property) {

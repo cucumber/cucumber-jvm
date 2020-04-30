@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
-import static io.cucumber.core.runtime.Meta.makeMeta;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.synchronizedList;
@@ -44,14 +43,40 @@ public final class CucumberExecutionContext {
         this.runnerSupplier = runnerSupplier;
     }
 
-    public void emitMeta() {
-        bus.send(Messages.Envelope.newBuilder()
-            .setMeta(makeMeta())
+    public void startTestRun() {
+        emitMeta();
+        emitTestRunStarted();
+    }
+
+    private void emitMeta() {
+        String version = CucumberExecutionContext.class.getPackage().getImplementationVersion();
+        if (version == null) {
+            // Development version
+            version = "unreleased";
+        }
+        bus.send(Envelope.newBuilder()
+            .setMeta(Messages.Meta.newBuilder()
+                .setProtocolVersion(Messages.class.getPackage().getImplementationVersion())
+                .setRuntime(Messages.Meta.Product.newBuilder()
+                    .setName(System.getProperty("java.vendor"))
+                    .setVersion(System.getProperty("java.version"))
+                )
+                .setImplementation(Messages.Meta.Product.newBuilder()
+                    .setName("cucumber-jvm")
+                    .setVersion(version)
+                )
+                .setOs(Messages.Meta.Product.newBuilder()
+                    .setName(System.getProperty("os.name"))
+                )
+                .setCpu(Messages.Meta.Product.newBuilder()
+                    .setName(System.getProperty("os.arch"))
+                )
+                .build())
             .build()
         );
     }
 
-    public void startTestRun() {
+    private void emitTestRunStarted() {
         log.debug(() -> "Sending run test started event");
         start = bus.getInstant();
         bus.send(new TestRunStarted(start));

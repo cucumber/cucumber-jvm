@@ -9,11 +9,9 @@ import static java.util.stream.Collectors.joining;
 
 final class UndefinedStepException extends SkipException {
     private static final long serialVersionUID = 1L;
-    private final boolean strict;
 
-    UndefinedStepException(List<Suggestion> suggestions, boolean strict) {
+    UndefinedStepException(List<Suggestion> suggestions) {
         super(createMessage(suggestions));
-        this.strict = strict;
     }
 
     private static String createMessage(List<Suggestion> suggestions) {
@@ -43,6 +41,6 @@ final class UndefinedStepException extends SkipException {
 
     @Override
     public boolean isSkip() {
-        return !strict;
+        return false;
     }
 }

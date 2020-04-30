@@ -53,14 +53,14 @@ class CucumberTest {
     @Test
     void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
-        assertThat(cucumber.getChildren().size(), is(equalTo(3)));
+        assertThat(cucumber.getChildren().size(), is(equalTo(6)));
         assertThat(cucumber.getChildren().get(1).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 
     @Test
     void finds_features_based_on_explicit_root_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
-        assertThat(cucumber.getChildren().size(), is(equalTo(3)));
+        assertThat(cucumber.getChildren().size(), is(equalTo(6)));
         assertThat(cucumber.getChildren().get(1).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 

@@ -20,7 +20,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 5,
             "name": "bg_2",
@@ -29,7 +30,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 6,
             "name": "bg_3",
@@ -58,7 +60,8 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 9,
             "name": "step_1",
@@ -67,7 +70,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 10,
             "name": "step_2",
@@ -76,7 +80,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 11,
             "name": "step_3",
@@ -85,7 +90,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 12,
             "name": "cliché",
@@ -112,7 +118,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 5,
             "name": "bg_2",
@@ -121,7 +128,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 6,
             "name": "bg_3",
@@ -150,7 +158,8 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 15,
             "name": "so_1 12",
@@ -159,7 +168,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 16,
             "name": "so_2 7 cucumbers",
@@ -168,7 +178,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 17,
             "name": "5 so_3",
@@ -195,7 +206,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 5,
             "name": "bg_2",
@@ -204,7 +216,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 6,
             "name": "bg_3",
@@ -233,7 +246,8 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 15,
             "name": "so_1 20",
@@ -242,7 +256,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 16,
             "name": "so_2 15 cucumbers",
@@ -251,7 +266,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 17,
             "name": "5 so_3",
@@ -278,7 +294,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 5,
             "name": "bg_2",
@@ -287,7 +304,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 6,
             "name": "bg_3",
@@ -316,7 +334,8 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 25,
             "name": "a",
@@ -325,7 +344,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 26,
             "name": "b",
@@ -334,7 +354,8 @@
           },
           {
             "result": {
-              "status": "undefined"
+              "duration": 1234000000,
+              "status": "skipped"
             },
             "line": 27,
             "name": "c",

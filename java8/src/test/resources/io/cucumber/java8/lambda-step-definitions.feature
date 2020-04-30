@@ -5,7 +5,7 @@ Feature: Java8
     Then I really have 42 cukes in my belly
 
   Scenario: another scenario which should have isolated state
-    Given I have 42 cukes in my belly
+    Given a step that is skipped
     And something that isn't defined
 
   Scenario: Parameterless lambdas
