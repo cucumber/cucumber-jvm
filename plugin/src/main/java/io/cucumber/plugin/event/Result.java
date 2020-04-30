@@ -7,6 +7,9 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * The result of a step, scenario or test run.
+ */
 @API(status = API.Status.STABLE)
 public final class Result {
 
@@ -15,7 +18,7 @@ public final class Result {
     private final Throwable error;
 
     /**
-     * The result of a step or scenario
+     * Creates a new result.
      *
      * @param status   status of the step or scenario
      * @param duration the duration
@@ -36,11 +39,13 @@ public final class Result {
     }
 
     /**
-     * Returns the error encountered while executing a step or scenario. Will
-     * return null when passed. May return null when undefined in case of the
-     * empty scenario or when skipped due to a failing prior step.
+     * Returns the error encountered while executing a step, scenario or
+     * test run.
+     * <p>
+     * Will return null when passed. May return null when status is undefined
+     * or when skipped due to a failing prior step.
      *
-     * @return the error encountered while executing a step or scenario.
+     * @return the error encountered while executing a step or scenario or null.
      */
     public Throwable getError() {
         return error;
