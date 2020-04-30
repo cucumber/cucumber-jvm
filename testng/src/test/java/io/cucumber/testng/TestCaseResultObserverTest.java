@@ -116,7 +116,7 @@ public class TestCaseResultObserverTest {
     }
 
     @Test
-    public void should_not_be_skipped_for_undefined_result_in_strict_mode() {
+    public void should_not_be_skipped_for_undefined_result() {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
@@ -165,7 +165,7 @@ public class TestCaseResultObserverTest {
     }
 
     @Test
-    public void should_not_be_skipped_for_pending_result_in_strict_mode() {
+    public void should_not_be_skipped_for_pending_result() {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
         TestPendingException error = new TestPendingException();

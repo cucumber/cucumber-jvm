@@ -25,6 +25,7 @@ public @interface CucumberOptions {
      * @return true if undefined and pending steps should be treated as errors.
      * @deprecated will be removed and cucumber will default to strict
      */
+    @Deprecated
     boolean strict() default true;
 
     /**
