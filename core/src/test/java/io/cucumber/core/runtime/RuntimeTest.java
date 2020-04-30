@@ -63,7 +63,7 @@ class RuntimeTest {
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     @Test
-    void strict_with_passed_scenarios() {
+    void with_passed_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
@@ -71,14 +71,14 @@ class RuntimeTest {
     }
 
     @Test
-    void strict_with_undefined_scenarios() {
+    void with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
-    void strict_with_pending_scenarios() {
+    void with_pending_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
@@ -86,7 +86,7 @@ class RuntimeTest {
     }
 
     @Test
-    void strict_with_skipped_scenarios() {
+    void with_skipped_scenarios() {
         Runtime runtime = createNonStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
@@ -94,7 +94,7 @@ class RuntimeTest {
     }
 
     @Test
-    void strict_with_failed_scenarios() {
+    void with_failed_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
@@ -102,7 +102,7 @@ class RuntimeTest {
     }
 
     @Test
-    void strict_with_ambiguous_scenarios() {
+    void with_ambiguous_scenarios() {
         Runtime runtime = createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
