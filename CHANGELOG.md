@@ -34,12 +34,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
  * [Java] Invoke static methods without instantiating target object ([#1953](https://github.com/cucumber/cucumber-jvm/issues/1953) M.P. Korstanje)
  
-## [v5.x.x Unreleased] (In Git)
+## [5.7.0] (2020-05-01)
 
 ### Added
- * [Java]  `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
-
-### Changed
+ * [Java] `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
+ * [JUnit Platform] Map tags to exclusive resources ([#1944](https://github.com/cucumber/cucumber-jvm/issues/1944) M.P. Korstanje)
 
 ### Deprecated
  * [Java] `Scenario.write(String)` & `Scenario.embed(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
@@ -47,10 +46,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    - See [spring/README.md](https://github.com/cucumber/cucumber-jvm/tree/master/spring) for more information
  * [Core] Deprecate multiple tag arguments in @CucumberOptions ([#1955](https://github.com/cucumber/cucumber-jvm/issues/1955) M.P. Korstanje)
    - use a tag expresion instead `@CucumberOptions(tags="(@cucumber or @pickle) and not @salad")`
-
-### Removed
-
-### Fixed
 
 ## [5.6.0] (2020-04-02)
 
@@ -1391,7 +1386,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 <!-- Releases -->
 [Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC1...master
-[6.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...v6.0.0-RC1
+[6.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.7.0...v6.0.0-RC1
+[5.7.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...v5.7.0
 [5.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...v5.6.0
 [5.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...v5.5.0
 [5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2

@@ -125,41 +125,45 @@ configuration options below.
 
 ### Exclusive Resources ###
 
-Using exclusive resources it is possible to control which scenarios will
-not run concurrently with other scenarios that use the same resource.
- 
-Cucumber tags can be mapped to exclusive resources. A resource can be
-either locked with a read-write-lock, or a read lock.  
+The JUnit Platform supports parallel execution. To avoid flakey tests when
+multiple scenarios manipulate the same resource tests can be 
+[synchronized][junit5-user-guide-synchronization] on that resource.
+
+[junit5-user-guide-synchronization]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization
+
+To synchronize a scenario on a specific resource the scenario must be tagged
+and this tag mapped to a lock for a specific resource. A resource is identified
+by a string and can be either locked with a read-write-lock, or a read-lock.
   
 For example:
- 
+
 ```gherkin
 Feature: Exclusive resources
 
- @my-tag-ab-rw
+ @reads-and-writes-system-properties
  Scenario: first example
-   Given this reads and writes resource a
-   And this reads and writes resource b
-   When it is executed it will   
+   Given this reads and writes system properties
+   When it is executed 
    Then it will not be executed concurrently with the second example
 
- @my-tag-a-r
+ @reads-system-properties
  Scenario: second example
-   Given this reads resource a
-   When it is executed it will
+   Given this reads system properties
+   When it is executed
    Then it will not be executed concurrently with the first example
+
 ```
- 
-With this configuration: 
- 
+
+With this configuration:
+
 ```
-cucumber.execution.exclusive-resources.my-tag-ab-rw.read-write=resource-a,resource-b
-cucumber.execution.exclusive-resources.my-tag-a-r.read=resource-a
+cucumber.execution.exclusive-resources.reads-and-writes-system-properties.read-write=SYSTEM_PROPERTIES
+cucumber.execution.exclusive-resources.reads-system-properties.read=SYSTEM_PROPERTIES
 ```
- 
-The first scenario tagged with `@my-tag-ab-rw` will lock resource `a` and `b`
-with a read-write lock and will not be concurrently executed with the second
-scenario that locks resource `a` with a read lock.
+
+The first scenario tagged with `@reads-and-writes-system-properties` will lock 
+the `SYSTEM_PROPERTIES` with a read-write lock and will not be concurrently
+executed with the second scenario that uses a read lock.
 
 Note: The `@` is not included.
 
