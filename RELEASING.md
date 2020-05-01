@@ -23,6 +23,12 @@ make update-dependency-versions
 Remove the empty sections in the changelog. Don't commit these but run: 
 
 ```
+make version
+```
+
+Check if branch name and version are as expected.
+
+```
 make release
 ``` 
 
