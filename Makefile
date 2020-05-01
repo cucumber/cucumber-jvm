@@ -6,6 +6,7 @@ default:
 
 VERSION = $(shell mvn org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout 2> /dev/null)
 NEW_VERSION = $(subst -SNAPSHOT,,$(VERSION))
+CURRENT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 
 clean:
 	mvn clean release:clean
@@ -13,7 +14,7 @@ clean:
 
 version:
 	@echo ""
-	@echo "The next version of Cucumber-JVM will be $(NEW_VERSION)"
+	@echo "The next version of Cucumber-JVM will be $(NEW_VERSION) and released from '$(CURRENT_BRANCH)'"
 	@echo ""
 .PHONY: version
 
@@ -41,5 +42,5 @@ release: default update-changelog .commit-and-push-changelog
 	mvn --batch-mode release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true -Darchetype.test.skip=true"
 	git checkout "v$(NEW_VERSION)"
 	mvn deploy -P-examples -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
-	git checkout master
+	git checkout $(CURRENT_BRANCH)
 .PHONY: release
