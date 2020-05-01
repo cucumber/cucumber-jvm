@@ -8,10 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [5.7.0] (2020-05-01)
+
+### Added
  * [Java] `Scenario.log(String)` & `Scenario.attach(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
  * [JUnit Platform] Map tags to exclusive resources ([#1944](https://github.com/cucumber/cucumber-jvm/issues/1944) M.P. Korstanje)
- 
-### Changed
 
 ### Deprecated
  * [Java] `Scenario.write(String)` & `Scenario.embed(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
@@ -19,10 +29,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    - See [spring/README.md](https://github.com/cucumber/cucumber-jvm/tree/master/spring) for more information
  * [Core] Deprecate multiple tag arguments in @CucumberOptions ([#1955](https://github.com/cucumber/cucumber-jvm/issues/1955) M.P. Korstanje)
    - use a tag expresion instead `@CucumberOptions(tags="(@cucumber or @pickle) and not @salad")`
-
-### Removed
-
-### Fixed
 
 ## [5.6.0] (2020-04-02)
 
@@ -1362,7 +1368,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v5.7.0...master
+[5.7.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...v5.7.0
 [5.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.5.0...v5.6.0
 [5.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.2...v5.5.0
 [5.4.2]:  https://github.com/cucumber/cucumber-jvm/compare/v5.4.1...v5.4.2
