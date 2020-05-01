@@ -51,16 +51,9 @@
         <cucumber-expressions.version>10.1.0</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
-        <!--
-        IMPORTANT!
-        Whenever messages.version is updated, also update the files from the compatibility kit:
-        cd ../cucumber # the monorepo
-        git checkout messages/vMAJOR.MINOR.PATCH
-        cd ../cucumber-jvm
-        ./compatibility/copy-cck-expectations.sh
-        -->
+        <!-- When ever messages is updated run `make update-compatibility` -->
         <messages.version>12.1.1</messages.version>
-        <gherkin-messages.version>13.0.0</gherkin-messages.version>
+        <gherkin.version>13.0.0</gherkin.version>
         <html-formatter.version>6.0.1</html-formatter.version>
 
         <!--Test Dependencies-->
@@ -224,7 +217,8 @@
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-console</artifactId>
                 <version>${junit-platform.version}</version>
-            </dependency>            <dependency>
+            </dependency>
+            <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-engine</artifactId>
                 <version>${junit-platform.version}</version>
@@ -381,7 +375,7 @@
                         <dependency>
                             <groupId>io.cucumber</groupId>
                             <artifactId>gherkin</artifactId>
-                            <version>${gherkin-messages.version}</version>
+                            <version>${gherkin.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -553,16 +547,6 @@
                                     <code>java.class.nonPublicPartOfAPI</code>
                                     <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
                                     </newArchive>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.nonPublicPartOfAPI</code>
-                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
                                     <justification>Internal API</justification>
                                 </item>
                             </revapi.ignore>

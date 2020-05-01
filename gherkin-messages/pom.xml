@@ -19,7 +19,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
-            <version>${gherkin-messages.version}</version>
+            <version>${gherkin.version}</version>
         </dependency>
 
         <dependency>
