@@ -8,15 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * [Plugin] Add TestSourceParsed event ([#1895](https://github.com/cucumber/cucumber-jvm/issues/1895) M.P. Korstanje)
 
 ### Changed
+ * [Core] Default to `--strict` mode ([#1960](https://github.com/cucumber/cucumber-jvm/issues/1960) M.P. Korstanje)
+ * [Java] Switch `useRegexpMatchAsStrongTypeHint` default to false ([#1915](https://github.com/cucumber/cucumber-jvm/issues/1915) M.P. Korstanje)
 
-### Deprecated
+### Deprecated 
 
 ### Removed
-
+ * [Core] Remove multiple tag arguments in `@CucumberOptions` ([#1948](https://github.com/cucumber/cucumber-jvm/issues/1948) M.P. Korstanje)
+ * [Core] Remove `cucumber.options` property ([#1958](https://github.com/cucumber/cucumber-jvm/issues/1958) M.P. Korstanje)
+ * [Spring] Remove cucumber.xml and implied context configuration ([#1959](https://github.com/cucumber/cucumber-jvm/issues/1959) M.P. Korstanje)
+ * [Guice] Remove deprecated scenario scope and module constant
+    
 ### Fixed
-
+ * [Core] Include all fields in `JsonFormatters` failure feature ([#1954](https://github.com/cucumber/cucumber-jvm/issues/1954) M.P. Korstanje) 
+ 
 ## [6.0.0-RC1] (2020-04-23)
 
 ### Added
