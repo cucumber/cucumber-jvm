@@ -4,7 +4,7 @@ default:
 	mvn clean install
 .PHONY: default
 
-VERSION = $(shell mvn org.apache.maven.plugins:maven-help-plugin:evaluate -Dexpression=project.version -q -DforceStdout 2> /dev/null)
+VERSION = $(shell mvn help:evaluate -Dexpression=project.version -q -DforceStdout 2> /dev/null)
 NEW_VERSION = $(subst -SNAPSHOT,,$(VERSION))
 CURRENT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 
@@ -17,6 +17,14 @@ version:
 	@echo "The next version of Cucumber-JVM will be $(NEW_VERSION) and released from '$(CURRENT_BRANCH)'"
 	@echo ""
 .PHONY: version
+
+update-compatibility:
+	MSG_VERSION=$$(mvn help:evaluate -Dexpression=messages.version -q -DforceStdout 2> /dev/null) && \
+	git clone --branch messages/v$$MSG_VERSION git@github.com:cucumber/cucumber.git target/cucumber
+	rm -rf compatibility/src/test/resources/*
+	cp -r target/cucumber/compatibility-kit/javascript/features compatibility/src/test/resources
+	rm -rf target/cucumber
+.PHONY: update-cck
 
 update-dependency-versions:
 	mvn versions:force-releases
@@ -44,3 +52,4 @@ release: default update-changelog .commit-and-push-changelog
 	mvn deploy -P-examples -P-compatibility -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
 	git checkout $(CURRENT_BRANCH)
 .PHONY: release
+

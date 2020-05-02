@@ -32,8 +32,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
  * [Core] Use Gherkin 6+ and Cucumber messages ([#1841](https://github.com/cucumber/cucumber-jvm/issues/1841), [#1941](https://github.com/cucumber/cucumber-jvm/issues/1941), [#1942](https://github.com/cucumber/cucumber-jvm/issues/1942) M.P. Korstanje, Aslak Hellesøy) 
-   - Implements the `message` formatter which will output cucumber messages as ndjson as well as an improved `html`
-     formatter which renders a html report based on these messages.
+   - Implements the `message` formatter which will output cucumber messages as ndjson
+   - Implements improved `html`formatter
+      - Change your plugin options `html:target/cucumber-html` to `html:target/cucumber-html/index.html`
    - Switches the default parser to Gherkin 6+. This will enable rule support by default. 
    - Adds exception to `TestRunFinished` event.
    - Adds error state json to `JsonFormatter` output.
