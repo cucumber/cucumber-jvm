@@ -25,4 +25,5 @@ class IsEnumValueDescriptor extends TypeSafeDiagnosingMatcher<EnumValueDescripto
         }
         return true;
     }
+
 }

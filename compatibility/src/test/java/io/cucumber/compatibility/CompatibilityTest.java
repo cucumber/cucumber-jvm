@@ -87,18 +87,6 @@ public class CompatibilityTest {
         );
     }
 
-    private void sortStepDefinitions(Map<String, List<GeneratedMessageV3>> envelopes) {
-        Comparator<GeneratedMessageV3> stepDefinitionPatternComparator = (a, b) -> {
-            Messages.StepDefinition sa = (Messages.StepDefinition) a;
-            Messages.StepDefinition sb = (Messages.StepDefinition) b;
-            return sa.getPattern().getSource().compareTo(sb.getPattern().getSource());
-        };
-        List<GeneratedMessageV3> actualStepDefinitions = envelopes.get("stepDefinition");
-        if (actualStepDefinitions != null) {
-            actualStepDefinitions.sort(stepDefinitionPatternComparator);
-        }
-    }
-
     private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {
         List<Messages.Envelope> expectedEnvelopes = new ArrayList<>();
         InputStream input = Files.newInputStream(output);
@@ -119,10 +107,22 @@ public class CompatibilityTest {
         return map;
     }
 
+    private void sortStepDefinitions(Map<String, List<GeneratedMessageV3>> envelopes) {
+        Comparator<GeneratedMessageV3> stepDefinitionPatternComparator = (a, b) -> {
+            Messages.StepDefinition sa = (Messages.StepDefinition) a;
+            Messages.StepDefinition sb = (Messages.StepDefinition) b;
+            return sa.getPattern().getSource().compareTo(sb.getPattern().getSource());
+        };
+        List<GeneratedMessageV3> actualStepDefinitions = envelopes.get("stepDefinition");
+        if (actualStepDefinitions != null) {
+            actualStepDefinitions.sort(stepDefinitionPatternComparator);
+        }
+    }
 
     private static List<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> expectedMessages) {
         return expectedMessages.stream()
             .map(AComparableMessage::new)
             .collect(Collectors.toList());
     }
+
 }

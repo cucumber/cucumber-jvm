@@ -91,27 +91,6 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
         return expected;
     }
 
-    @Override
-    public void describeTo(Description description) {
-        StringBuilder padding = new StringBuilder();
-        for (int i = 0; i < depth + 1; i++) {
-            padding.append("\t");
-        }
-        description.appendList("\n" + padding.toString(), ",\n" + padding.toString(), "\n", expectedFields);
-    }
-
-    @Override
-    protected boolean matchesSafely(GeneratedMessageV3 actual, Description mismatchDescription) {
-        Map<String, Object> actualFields = asMapOfJsonNameToField(actual);
-        for (Matcher<?> expectedField : expectedFields) {
-            if (!expectedField.matches(actualFields)) {
-                expectedField.describeMismatch(actualFields, mismatchDescription);
-                return false;
-            }
-        }
-        return true;
-    }
-
     @SuppressWarnings("unchecked")
     private static Matcher<?> aComparableValue(Object value, int depth) {
         if (value instanceof GeneratedMessageV3) {
@@ -140,6 +119,27 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
             return CoreMatchers.is(value);
         }
         throw new IllegalArgumentException("Unsupported type " + value.getClass() + ": " + value);
+    }
+
+    @Override
+    public void describeTo(Description description) {
+        StringBuilder padding = new StringBuilder();
+        for (int i = 0; i < depth + 1; i++) {
+            padding.append("\t");
+        }
+        description.appendList("\n" + padding.toString(), ",\n" + padding.toString(), "\n", expectedFields);
+    }
+
+    @Override
+    protected boolean matchesSafely(GeneratedMessageV3 actual, Description mismatchDescription) {
+        Map<String, Object> actualFields = asMapOfJsonNameToField(actual);
+        for (Matcher<?> expectedField : expectedFields) {
+            if (!expectedField.matches(actualFields)) {
+                expectedField.describeMismatch(actualFields, mismatchDescription);
+                return false;
+            }
+        }
+        return true;
     }
 
     private static Map<String, Object> asMapOfJsonNameToField(GeneratedMessageV3 envelope) {

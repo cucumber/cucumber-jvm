@@ -54,4 +54,5 @@ public class Attachments {
         String fileName = path.getFileName().toString();
         scenario.attach(bytes, "image/jpg", fileName);
     }
+
 }
