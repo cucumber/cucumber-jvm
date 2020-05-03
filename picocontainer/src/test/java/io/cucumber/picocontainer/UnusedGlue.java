@@ -18,4 +18,5 @@ public class UnusedGlue {
     public void unusedHook() {
         throw new IllegalStateException();
     }
+
 }

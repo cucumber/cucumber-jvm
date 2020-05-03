@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -66,8 +67,9 @@
                         </goals>
                         <configuration>
                             <target>
-                                <echo message="Running CLI test for picocontainer" />
-                                <java classname="io.cucumber.core.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
+                                <echo message="Running CLI test for picocontainer"/>
+                                <java classname="io.cucumber.core.cli.Main" fork="true" failonerror="true"
+                                      newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
                                 </java>
                             </target>
                         </configuration>

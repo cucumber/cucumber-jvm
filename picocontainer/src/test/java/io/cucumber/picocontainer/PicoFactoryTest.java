@@ -68,5 +68,7 @@ class PicoFactoryTest {
 
     @SuppressWarnings("InnerClassMayBeStatic")
     public class NonStaticInnerClass {
+
     }
+
 }

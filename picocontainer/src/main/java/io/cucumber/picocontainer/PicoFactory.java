@@ -12,6 +12,7 @@ import java.util.Set;
 
 @API(status = API.Status.STABLE)
 public final class PicoFactory implements ObjectFactory {
+
     private final Set<Class<?>> classes = new HashSet<>();
     private MutablePicoContainer pico;
 
@@ -54,4 +55,5 @@ public final class PicoFactory implements ObjectFactory {
             }
         }
     }
+
 }
