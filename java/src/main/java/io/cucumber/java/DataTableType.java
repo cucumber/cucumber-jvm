@@ -39,4 +39,5 @@ public @interface DataTableType {
      * @return strings to be replaced with empty strings.
      */
     String[] replaceWithEmptyString() default {};
+
 }

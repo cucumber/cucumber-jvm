@@ -34,4 +34,5 @@ public @interface DocStringType {
      * @return content type
      */
     String contentType() default "";
+
 }

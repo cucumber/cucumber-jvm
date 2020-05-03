@@ -19,16 +19,16 @@ public class DataTableSteps {
     private final Person mononymousPerson = new Person("Plato", "");
 
     @DataTableType
+    public Author singleAuthorTransformer(DataTable table) {
+        return authorEntryTransformer(table.asMaps().get(0));
+    }
+
+    @DataTableType
     public Author authorEntryTransformer(Map<String, String> entry) {
         return new DataTableSteps.Author(
             entry.get("firstName"),
             entry.get("lastName"),
             entry.get("birthDate"));
-    }
-
-    @DataTableType
-    public Author singleAuthorTransformer(DataTable table) {
-        return authorEntryTransformer(table.asMaps().get(0));
     }
 
     @Given("a list of authors in a table")
@@ -51,7 +51,19 @@ public class DataTableSteps {
         assertEquals(expectedAuthor, author);
     }
 
+    @Given("a list of people in a table")
+    public void this_table_of_authors(List<DataTableSteps.Person> persons) {
+        assertTrue(persons.contains(expectedPerson));
+        assertTrue(persons.contains(mononymousPerson));
+    }
+
+    @DataTableType(replaceWithEmptyString = "[blank]")
+    public DataTableSteps.Person transform(Map<String, String> tableEntry) {
+        return new Person(tableEntry.get("first"), tableEntry.get("last"));
+    }
+
     public static class Author {
+
         final String firstName;
         final String lastName;
         final String birthDate;
@@ -63,12 +75,11 @@ public class DataTableSteps {
         }
 
         @Override
-        public String toString() {
-            return "Author{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                '}';
+        public int hashCode() {
+            int result = firstName.hashCode();
+            result = 31 * result + lastName.hashCode();
+            result = 31 * result + birthDate.hashCode();
+            return result;
         }
 
         @Override
@@ -84,26 +95,18 @@ public class DataTableSteps {
         }
 
         @Override
-        public int hashCode() {
-            int result = firstName.hashCode();
-            result = 31 * result + lastName.hashCode();
-            result = 31 * result + birthDate.hashCode();
-            return result;
+        public String toString() {
+            return "Author{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                '}';
         }
-    }
 
-    @Given("a list of people in a table")
-    public void this_table_of_authors(List<DataTableSteps.Person> persons) {
-        assertTrue(persons.contains(expectedPerson));
-        assertTrue(persons.contains(mononymousPerson));
-    }
-
-    @DataTableType(replaceWithEmptyString = "[blank]")
-    public DataTableSteps.Person transform(Map<String, String> tableEntry) {
-        return new Person(tableEntry.get("first"), tableEntry.get("last"));
     }
 
     public static class Person {
+
         private final String first;
         private final String last;
 
@@ -112,6 +115,10 @@ public class DataTableSteps {
             this.last = last;
         }
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(first, last);
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -121,12 +128,6 @@ public class DataTableSteps {
             return first.equals(person.first) &&
                 last.equals(person.last);
         }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(first, last);
-        }
-
 
     }
 

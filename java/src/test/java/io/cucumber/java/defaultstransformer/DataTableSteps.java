@@ -48,6 +48,7 @@ public class DataTableSteps {
 
 
     public static class Author {
+
         String firstName;
         String lastName;
         String birthDate;
@@ -86,12 +87,11 @@ public class DataTableSteps {
         }
 
         @Override
-        public String toString() {
-            return "Author{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                '}';
+        public int hashCode() {
+            int result = firstName.hashCode();
+            result = 31 * result + lastName.hashCode();
+            result = 31 * result + birthDate.hashCode();
+            return result;
         }
 
         @Override
@@ -107,12 +107,14 @@ public class DataTableSteps {
         }
 
         @Override
-        public int hashCode() {
-            int result = firstName.hashCode();
-            result = 31 * result + lastName.hashCode();
-            result = 31 * result + birthDate.hashCode();
-            return result;
+        public String toString() {
+            return "Author{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                '}';
         }
+
     }
 
 }

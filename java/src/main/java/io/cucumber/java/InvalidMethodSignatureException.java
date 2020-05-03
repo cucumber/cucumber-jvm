@@ -55,18 +55,6 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
             );
         }
 
-        private String describeNote() {
-            return String.join("\n", notes);
-        }
-
-        private Object describeLocation() {
-            return MethodFormat.FULL.format(method);
-        }
-
-        private String describeAvailableSignature() {
-            return String.join("\n * ", signatures);
-        }
-
         private String describeAnnotations() {
             if (annotations.size() == 1) {
                 return "A @" + annotations.get(0).getSimpleName() + " annotated method";
@@ -85,5 +73,19 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
 
             return "A method annotated with " + builder.toString();
         }
+
+        private String describeAvailableSignature() {
+            return String.join("\n * ", signatures);
+        }
+
+        private Object describeLocation() {
+            return MethodFormat.FULL.format(method);
+        }
+
+        private String describeNote() {
+            return String.join("\n", notes);
+        }
+
     }
+
 }

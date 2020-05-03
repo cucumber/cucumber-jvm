@@ -1,5 +1,5 @@
-import io.cucumber.gherkin.GherkinDialectProvider
 import groovy.text.SimpleTemplateEngine
+import io.cucumber.gherkin.GherkinDialectProvider
 
 import java.text.Normalizer
 
@@ -33,7 +33,7 @@ dialectProvider.getLanguages().each { language ->
 
         // package-info.java
         def name = dialect.name + ((dialect.name == dialect.nativeName) ? '' : ' - ' + dialect.nativeName)
-        def binding = [ "normalized_language": normalized_language,  "language_name": name]
+        def binding = ["normalized_language": normalized_language, "language_name": name]
         def html = engine.createTemplate(packageInfoSource).make(binding).toString()
         def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java/${normalized_language}/package-info.java")
         file.write(html, "UTF-8")

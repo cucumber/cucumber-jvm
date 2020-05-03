@@ -8,6 +8,7 @@ import io.cucumber.cucumberexpressions.ParameterType;
 import java.time.LocalDate;
 
 public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
+
     private final CaptureGroupTransformer<LocalDate> localDateParameterType =
         (String[] args) -> LocalDate.of(
             Integer.parseInt(args[0]),
@@ -24,4 +25,5 @@ public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
             localDateParameterType
         ));
     }
+
 }

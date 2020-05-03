@@ -19,18 +19,18 @@ class JavaStepDefinitionTransposeTest {
         assertFalse(isTransposed(m));
     }
 
-    @Test
-    void transforms_transposed_to_map_of_double_to_double() throws Throwable {
-        Method m = Steps.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
-        assertTrue(isTransposed(m));
-    }
-
     private boolean isTransposed(Method method) {
         Steps steps = new Steps();
         Lookup lookup = new SingletonFactory(steps);
         StepDefinition stepDefinition = new JavaStepDefinition(method, "some text", lookup);
 
         return stepDefinition.parameterInfos().get(0).isTransposed();
+    }
+
+    @Test
+    void transforms_transposed_to_map_of_double_to_double() throws Throwable {
+        Method m = Steps.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
+        assertTrue(isTransposed(m));
     }
 
     public static class Steps {
@@ -41,6 +41,7 @@ class JavaStepDefinitionTransposeTest {
 
         public void transposedMapOfDoubleToListOfDouble(@Transpose Map<Double, List<Double>> mapOfDoubleToListOfDouble) {
         }
+
     }
 
 }

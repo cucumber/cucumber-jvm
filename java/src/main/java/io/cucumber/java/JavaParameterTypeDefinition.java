@@ -54,6 +54,18 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
         return method;
     }
 
+    private Object execute(String[] captureGroups) {
+        Object[] args;
+
+        if (String[].class.equals(method.getParameterTypes()[0])) {
+            args = new Object[][]{captureGroups};
+        } else {
+            args = captureGroups;
+        }
+
+        return invokeMethod(args);
+    }
+
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(io.cucumber.java.ParameterType.class)
@@ -67,18 +79,6 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
     @Override
     public ParameterType<?> parameterType() {
         return parameterType;
-    }
-
-    private Object execute(String[] captureGroups) {
-        Object[] args;
-
-        if (String[].class.equals(method.getParameterTypes()[0])) {
-            args = new Object[][]{captureGroups};
-        } else {
-            args = captureGroups;
-        }
-
-        return invokeMethod(args);
     }
 
 }

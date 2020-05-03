@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
  * Helper class for formatting a method signature to a shorter form.
  */
 final class MethodFormat {
+
     static final MethodFormat FULL = new MethodFormat("%qc.%m(%qa)");
     private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private final MessageFormat format;
@@ -56,4 +57,5 @@ final class MethodFormat {
             throw new CucumberBackendException("Cucumber bug: Couldn't format " + signature);
         }
     }
+
 }

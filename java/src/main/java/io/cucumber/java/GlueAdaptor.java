@@ -59,7 +59,7 @@ final class GlueAdaptor {
             DefaultDataTableCellTransformer cellTransformer = (DefaultDataTableCellTransformer) annotation;
             String[] emptyPatterns = cellTransformer.replaceWithEmptyString();
             glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup, emptyPatterns));
-        } else if (annotationType.equals(DocStringType.class)){
+        } else if (annotationType.equals(DocStringType.class)) {
             DocStringType docStringType = (DocStringType) annotation;
             String contentType = docStringType.contentType();
             glue.addDocStringType(new JavaDocStringTypeDefinition(contentType, method, lookup));
@@ -75,4 +75,5 @@ final class GlueAdaptor {
             throw new IllegalStateException(e);
         }
     }
+
 }

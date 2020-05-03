@@ -28,13 +28,13 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
     }
 
     @Override
-    public String getPattern() {
-        return expression;
+    public List<ParameterInfo> parameterInfos() {
+        return parameterInfos;
     }
 
     @Override
-    public List<ParameterInfo> parameterInfos() {
-        return parameterInfos;
+    public String getPattern() {
+        return expression;
     }
 
 }

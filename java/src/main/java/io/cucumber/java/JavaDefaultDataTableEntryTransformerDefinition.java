@@ -73,6 +73,16 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
         return method;
     }
 
+    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) {
+        Object[] args;
+        if (method.getParameterTypes().length == 3) {
+            args = new Object[]{fromValue, toValueType, cellTransformer};
+        } else {
+            args = new Object[]{fromValue, toValueType};
+        }
+        return invokeMethod(args);
+    }
+
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DefaultDataTableEntryTransformer.class)
@@ -82,23 +92,13 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
     }
 
     @Override
-    public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
-        return transformer;
-    }
-
-    @Override
     public boolean headersToProperties() {
         return headersToProperties;
     }
 
-    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) {
-        Object[] args;
-        if (method.getParameterTypes().length == 3) {
-            args = new Object[]{fromValue, toValueType, cellTransformer};
-        } else {
-            args = new Object[]{fromValue, toValueType};
-        }
-        return invokeMethod(args);
+    @Override
+    public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
+        return transformer;
     }
 
 }

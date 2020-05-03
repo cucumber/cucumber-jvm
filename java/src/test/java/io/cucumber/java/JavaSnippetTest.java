@@ -33,6 +33,22 @@ class JavaSnippetTest {
         assertThat(snippetFor("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
     }
 
+    private String snippetFor(String stepText) {
+        Step step = createStep(stepText);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
+    }
+
+    private Step createStep(String stepText) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    Given " + stepText + "\n";
+
+        Feature feature = TestFeatureParser.parse(source);
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
     @Test
     void generatesPlainSnippetUsingCustomParameterTypes() {
         ParameterType<Size> customParameterType = new ParameterType<Size>(
@@ -51,6 +67,14 @@ class JavaSnippetTest {
             "    throw new io.cucumber.java.PendingException();\n" +
             "}";
         assertThat(snippetFor("I have 4.2 cukes in my large belly", customParameterType), is(equalTo(expected)));
+    }
+
+    private String snippetFor(String stepText, ParameterType<?> parameterType) {
+        Step step = createStep(stepText);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        parameterTypeRegistry.defineParameterType(parameterType);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
     }
 
     @Test
@@ -162,6 +186,25 @@ class JavaSnippetTest {
         assertThat(snippetForDocString("I have:", "hello"), is(equalTo(expected)));
     }
 
+    private String snippetForDocString(String stepText, String docString) {
+        Step step = createStepWithDocString(stepText, docString);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
+    }
+
+    private Step createStepWithDocString(String stepText, String docString) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    Given " + stepText + "\n" +
+            "      \"\"\"\n" +
+            "      " + docString + "\n" +
+            "      \"\"\"";
+
+        Feature feature = TestFeatureParser.parse(source);
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
     @Test
     void generatesSnippetWithMultipleArgumentsNamedDocString() {
         ParameterType<String> customParameterType = new ParameterType<>(
@@ -186,6 +229,14 @@ class JavaSnippetTest {
             "    throw new io.cucumber.java.PendingException();\n" +
             "}";
         assertThat(snippetForDocString("I have a \"Documentation String\":", "hello", customParameterType), is(equalTo(expected)));
+    }
+
+    private String snippetForDocString(String stepText, String docString, ParameterType<String> parameterType) {
+        Step step = createStepWithDocString(stepText, docString);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        parameterTypeRegistry.defineParameterType(parameterType);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
     }
 
     @Test
@@ -216,6 +267,23 @@ class JavaSnippetTest {
         assertThat(snippetForDataTable("I have:"), is(equalTo(expected)));
     }
 
+    private String snippetForDataTable(String stepText) {
+        Step step = createStepWithDataTable(stepText);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
+    }
+
+    private Step createStepWithDataTable(String stepText) {
+        String source = "" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test Scenario\n" +
+            "    Given " + stepText + "\n" +
+            "      | key   | \n" +
+            "      | value | \n";
+
+        Feature feature = TestFeatureParser.parse(source);
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
 
     @Test
     void generatesSnippetWithMultipleArgumentsNamedDataTable() {
@@ -254,6 +322,14 @@ class JavaSnippetTest {
         assertThat(snippetForDataTable("I have in table \"M6\":", customParameterType), is(equalTo(expected)));
     }
 
+    private String snippetForDataTable(String stepText, ParameterType<String> parameterType) {
+        Step step = createStepWithDataTable(stepText);
+        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
+        parameterTypeRegistry.defineParameterType(parameterType);
+        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
+        return String.join("\n", snippet);
+    }
+
     @Test
     void generateSnippetWithOutlineParam() {
         String expected = "" +
@@ -277,23 +353,6 @@ class JavaSnippetTest {
         assertThat(snippetForWhenAnd("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
     }
 
-    @Test
-    void generatesSnippetDefaultsToGiven() {
-        String expected = "" +
-            "@Given(\"I have {int} cukes in my {string} belly\")\n" +
-            "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
-            "    // Write code here that turns the phrase above into concrete actions\n" +
-            "    throw new io.cucumber.java.PendingException();\n" +
-            "}";
-        assertThat(snippetForWildCard("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
-    }
-
-    private String snippetFor(String stepText) {
-        Step step = createStep(stepText);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
-        return String.join("\n", snippet);
-    }
-
     private String snippetForWhenAnd(String stepText) {
         String source = "" +
             "Feature: Test feature\n" +
@@ -307,6 +366,17 @@ class JavaSnippetTest {
         return String.join("\n", snippet);
     }
 
+    @Test
+    void generatesSnippetDefaultsToGiven() {
+        String expected = "" +
+            "@Given(\"I have {int} cukes in my {string} belly\")\n" +
+            "public void i_have_cukes_in_my_belly(Integer int1, String string) {\n" +
+            "    // Write code here that turns the phrase above into concrete actions\n" +
+            "    throw new io.cucumber.java.PendingException();\n" +
+            "}";
+        assertThat(snippetForWildCard("I have 4 cukes in my \"big\" belly"), is(equalTo(expected)));
+    }
+
     private String snippetForWildCard(String stepText) {
         String source = "" +
             "Feature: Test feature\n" +
@@ -316,82 +386,6 @@ class JavaSnippetTest {
         Step step = feature.getPickles().get(0).getSteps().get(0);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
         return String.join("\n", snippet);
-    }
-
-
-    private String snippetFor(String stepText, ParameterType<?> parameterType) {
-        Step step = createStep(stepText);
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
-        parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
-        return String.join("\n", snippet);
-    }
-
-
-    private String snippetForDocString(String stepText, String docString) {
-        Step step = createStepWithDocString(stepText, docString);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
-        return String.join("\n", snippet);
-    }
-
-
-    private String snippetForDocString(String stepText, String docString, ParameterType<String> parameterType) {
-        Step step = createStepWithDocString(stepText, docString);
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
-        parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
-        return String.join("\n", snippet);
-    }
-
-
-    private String snippetForDataTable(String stepText) {
-        Step step = createStepWithDataTable(stepText);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH)).getSnippet(step, snippetType);
-        return String.join("\n", snippet);
-    }
-
-
-    private String snippetForDataTable(String stepText, ParameterType<String> parameterType) {
-        Step step = createStepWithDataTable(stepText);
-        ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
-        parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step, snippetType);
-        return String.join("\n", snippet);
-    }
-
-    private Step createStep(String stepText) {
-        String source = "" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test Scenario\n" +
-            "    Given " + stepText + "\n";
-
-        Feature feature = TestFeatureParser.parse(source);
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
-    private Step createStepWithDocString(String stepText, String docString) {
-        String source = "" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test Scenario\n" +
-            "    Given " + stepText + "\n" +
-            "      \"\"\"\n" +
-            "      " + docString + "\n" +
-            "      \"\"\"";
-
-        Feature feature = TestFeatureParser.parse(source);
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
-    private Step createStepWithDataTable(String stepText) {
-        String source = "" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test Scenario\n" +
-            "    Given " + stepText + "\n" +
-            "      | key   | \n" +
-            "      | value | \n";
-
-        Feature feature = TestFeatureParser.parse(source);
-        return feature.getPickles().get(0).getSteps().get(0);
     }
 
     private static class Size {

@@ -87,4 +87,5 @@ public @interface ParameterType {
      * expression match
      */
     boolean useRegexpMatchAsStrongTypeHint() default false;
+
 }

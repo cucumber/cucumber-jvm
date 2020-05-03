@@ -57,4 +57,5 @@ final class JavaBackend implements Backend {
     public Snippet getSnippet() {
         return new JavaSnippet();
     }
+
 }

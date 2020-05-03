@@ -42,6 +42,10 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
         return method;
     }
 
+    private Object execute(String fromValue, Type toValueType) {
+        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
+    }
+
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
             .addAnnotation(DefaultParameterTransformer.class)
@@ -53,10 +57,6 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
     @Override
     public ParameterByTypeTransformer parameterByTypeTransformer() {
         return transformer;
-    }
-
-    private Object execute(String fromValue, Type toValueType) {
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
 }

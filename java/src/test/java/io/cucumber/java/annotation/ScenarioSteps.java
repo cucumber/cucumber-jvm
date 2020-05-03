@@ -14,7 +14,7 @@ public class ScenarioSteps {
 
     @Before
     public void get_scenario_name(Scenario scenario) {
-       scenarioName = scenario.getName();
+        scenarioName = scenario.getName();
     }
 
     @Given("I am running a scenario")
@@ -31,4 +31,5 @@ public class ScenarioSteps {
     public void the_scenario_name_is(String scenarioName) {
         assertEquals(this.scenarioName, scenarioName);
     }
+
 }

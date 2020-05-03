@@ -37,4 +37,5 @@ class MethodFormatTest {
     void shouldUseSimpleFormatWhenMethodHasNoException() {
         assertThat(MethodFormat.FULL.format(methodWithArgsAndException), startsWith("io.cucumber.java.MethodFormatTest.methodWithArgsAndException(java.lang.String,java.util.Map)"));
     }
+
 }

@@ -1,8 +1,8 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.TestCaseState;
 
 import java.lang.reflect.Method;
 
@@ -68,4 +68,5 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     public int getOrder() {
         return order;
     }
+
 }

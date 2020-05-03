@@ -13,18 +13,12 @@ import static io.cucumber.datatable.DataTable.create;
 import static java.util.stream.Collectors.toList;
 
 class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefinition {
+
     private final String[] emptyPatterns;
 
     AbstractDatatableElementTransformerDefinition(Method method, Lookup lookup, String[] emptyPatterns) {
         super(method, lookup);
         this.emptyPatterns = emptyPatterns;
-    }
-
-
-    List<String> replaceEmptyPatternsWithEmptyString(List<String> row) {
-        return row.stream()
-            .map(this::replaceEmptyPatternsWithEmptyString)
-            .collect(toList());
     }
 
     DataTable replaceEmptyPatternsWithEmptyString(DataTable table) {
@@ -33,6 +27,21 @@ class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefiniti
             .collect(toList());
 
         return create(rawWithEmptyStrings, table.getTableConverter());
+    }
+
+    List<String> replaceEmptyPatternsWithEmptyString(List<String> row) {
+        return row.stream()
+            .map(this::replaceEmptyPatternsWithEmptyString)
+            .collect(toList());
+    }
+
+    String replaceEmptyPatternsWithEmptyString(String t) {
+        for (String emptyPattern : emptyPatterns) {
+            if (emptyPattern.equals(t)) {
+                return "";
+            }
+        }
+        return t;
     }
 
     Map<String, String> replaceEmptyPatternsWithEmptyString(Map<String, String> fromValue) {
@@ -62,12 +71,4 @@ class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefiniti
         return new IllegalArgumentException(String.format(msg, conflict.get(0), conflict.get(1), fromValue));
     }
 
-    String replaceEmptyPatternsWithEmptyString(String t) {
-        for (String emptyPattern : emptyPatterns) {
-            if (emptyPattern.equals(t)) {
-                return "";
-            }
-        }
-        return t;
-    }
 }

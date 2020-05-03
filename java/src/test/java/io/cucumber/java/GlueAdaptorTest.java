@@ -125,7 +125,6 @@ public class GlueAdaptorTest {
             GlueAdaptorTest.this.docStringTypeDefinition = docStringType;
         }
     };
-
     private final GlueAdaptor adaptor = new GlueAdaptor(lookup, container);
 
     @Test

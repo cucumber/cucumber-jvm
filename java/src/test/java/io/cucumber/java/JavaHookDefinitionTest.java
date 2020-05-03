@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.TestCaseState;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

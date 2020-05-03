@@ -54,4 +54,5 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
     public DocStringType docStringType() {
         return docStringType;
     }
+
 }

@@ -57,20 +57,28 @@ class MethodScannerTest {
     }
 
     public static class ExtendedSteps extends BaseSteps {
+
         public interface Interface1 {
+
         }
+
     }
 
     public static class BaseSteps {
+
         @Before
         public void m() {
         }
+
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
     public class NonStaticInnerClass {
+
         @Before
         public void m() {
         }
+
     }
+
 }

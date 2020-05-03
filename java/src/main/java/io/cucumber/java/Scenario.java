@@ -124,4 +124,5 @@ public final class Scenario {
     public Integer getLine() {
         return delegate.getLine();
     }
+
 }

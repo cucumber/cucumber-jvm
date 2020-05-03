@@ -19,30 +19,9 @@ final class Invoker {
         return invoke(null, annotation, expressionMethod);
     }
 
-    static Object invokeStatic(Located located, Method method, Object... args) {
-        return doInvoke(located, null, method, args);
-    }
-
     static Object invoke(Located located, Object target, Method method, Object... args) {
         Method targetMethod = targetMethod(target, method);
         return doInvoke(located, target, targetMethod, args);
-    }
-
-    private static Object doInvoke(Located located, Object target, Method targetMethod, Object[] args) {
-        boolean accessible = targetMethod.isAccessible();
-        try {
-            targetMethod.setAccessible(true);
-            return targetMethod.invoke(target, args);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
-        } catch (InvocationTargetException e) {
-            if (located == null) { // Reflecting into annotations
-                throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
-            }
-            throw new CucumberInvocationTargetException(located, e);
-        } finally {
-            targetMethod.setAccessible(accessible);
-        }
     }
 
     private static Method targetMethod(Object target, Method method) {
@@ -76,4 +55,26 @@ final class Invoker {
             throw new CucumberBackendException("Could not find target method", e);
         }
     }
+
+    private static Object doInvoke(Located located, Object target, Method targetMethod, Object[] args) {
+        boolean accessible = targetMethod.isAccessible();
+        try {
+            targetMethod.setAccessible(true);
+            return targetMethod.invoke(target, args);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
+        } catch (InvocationTargetException e) {
+            if (located == null) { // Reflecting into annotations
+                throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
+            }
+            throw new CucumberInvocationTargetException(located, e);
+        } finally {
+            targetMethod.setAccessible(accessible);
+        }
+    }
+
+    static Object invokeStatic(Located located, Method method, Object... args) {
+        return doInvoke(located, null, method, args);
+    }
+
 }
