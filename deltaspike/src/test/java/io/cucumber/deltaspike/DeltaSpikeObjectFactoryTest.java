@@ -2,6 +2,7 @@ package io.cucumber.deltaspike;
 
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
