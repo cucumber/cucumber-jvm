@@ -7,8 +7,9 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class RpnCalculator {
-    private final Deque<Number> stack = new LinkedList<>();
+
     private static final List<String> OPS = asList("-", "+", "*", "/");
+    private final Deque<Number> stack = new LinkedList<>();
 
     public void push(Object arg) {
         if (OPS.contains(arg)) {
@@ -37,4 +38,5 @@ public class RpnCalculator {
     public Number value() {
         return stack.getLast();
     }
+
 }

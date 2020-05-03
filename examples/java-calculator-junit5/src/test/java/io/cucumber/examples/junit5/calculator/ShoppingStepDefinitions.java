@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ShoppingStepDefinitions {
+
     private final RpnCalculator calc = new RpnCalculator();
 
     @Given("the following groceries:")
@@ -32,28 +33,30 @@ public class ShoppingStepDefinitions {
     }
 
     static class Grocery {
+
         private String name;
         private Price price;
-
-        public void setPrice(Price price) {
-            this.price = price;
-        }
 
         public Price getPrice() {
             return price;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setPrice(Price price) {
+            this.price = price;
         }
 
         public String getName() {
             return name;
         }
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
     }
 
     static final class Price {
+
         private final int value;
 
         Price(int value) {
@@ -65,4 +68,5 @@ public class ShoppingStepDefinitions {
         }
 
     }
+
 }

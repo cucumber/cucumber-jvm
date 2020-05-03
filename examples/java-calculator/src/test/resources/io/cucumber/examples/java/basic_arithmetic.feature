@@ -2,5 +2,5 @@
 Feature: Basic Arithmetic
 
 
-    Scenario: Addition
+  Scenario: Addition
 

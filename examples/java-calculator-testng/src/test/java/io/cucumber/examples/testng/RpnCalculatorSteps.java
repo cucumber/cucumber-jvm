@@ -14,6 +14,7 @@ import java.util.Map;
 import static org.testng.Assert.assertEquals;
 
 public class RpnCalculatorSteps {
+
     private RpnCalculator calc;
 
     @Given("a calculator I just turned on")
@@ -67,6 +68,7 @@ public class RpnCalculatorSteps {
     }
 
     static final class Entry {
+
         private final Integer first;
         private final Integer second;
         private final String operation;
@@ -76,5 +78,7 @@ public class RpnCalculatorSteps {
             this.second = second;
             this.operation = operation;
         }
+
     }
+
 }

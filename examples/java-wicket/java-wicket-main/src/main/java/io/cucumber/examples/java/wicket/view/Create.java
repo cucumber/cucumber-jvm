@@ -9,6 +9,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 
 public class Create extends WebPage {
+
     private int numberOfCars;
 
     public Create() {
@@ -27,6 +28,7 @@ public class Create extends WebPage {
     }
 
     private class CreateCarsForm extends Form<ValueMap> {
+
         public CreateCarsForm(String id) {
             super(id, new CompoundPropertyModel<>(new ValueMap()));
 
@@ -47,5 +49,7 @@ public class Create extends WebPage {
 
             setResponsePage(Available.class);
         }
+
     }
+
 }

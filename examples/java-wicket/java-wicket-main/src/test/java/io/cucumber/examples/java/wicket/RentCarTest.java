@@ -10,6 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class RentCarTest {
+
     private final Application application = new Application();
     private final WicketTester wicketTester = new WicketTester(application);
 
@@ -32,4 +33,5 @@ class RentCarTest {
 
         assertThat(actual, is(expected));
     }
+
 }

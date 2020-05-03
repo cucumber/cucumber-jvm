@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class RentACarSupport {
+
     public static final String BASE_URL = "http://localhost:9878/java-wicket-main/";
 
     public void createCars(int availableCars) {
@@ -49,4 +50,5 @@ public class RentACarSupport {
             driver.close();
         }
     }
+
 }

@@ -1,9 +1,8 @@
 package io.cucumber.examples.java8;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Currency;
@@ -11,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShoppingSteps implements En {
 
@@ -39,7 +40,7 @@ public class ShoppingSteps implements En {
             assertEquals(-calc.value().intValue(), change.intValue());
         });
 
-        Given("the following shopping list:", (Grocery [] array) -> {
+        Given("the following shopping list:", (Grocery[] array) -> {
             shoppingList = Arrays.asList(array);
         });
 
@@ -48,7 +49,7 @@ public class ShoppingSteps implements En {
         });
 
         When("I count shopping price", () -> shoppingList.forEach(grocery -> {
-            for (Grocery shopGrocery: shopStock) {
+            for (Grocery shopGrocery : shopStock) {
                 if (grocery.equals(shopGrocery)) {
                     groceriesPrice += shopGrocery.price.value;
                 }
@@ -63,7 +64,7 @@ public class ShoppingSteps implements En {
         ));
 
         ParameterType("amount", "\\d+\\.\\d+\\s[a-zA-Z]+", (String value) -> {
-            String [] arr = value.split("\\s");
+            String[] arr = value.split("\\s");
             return new Amount(new BigDecimal(arr[0]), Currency.getInstance(arr[1]));
         });
 
@@ -75,6 +76,7 @@ public class ShoppingSteps implements En {
     }
 
     static class Grocery {
+
         private final String name;
         private Price price;
 
@@ -98,6 +100,7 @@ public class ShoppingSteps implements En {
     }
 
     static final class Price {
+
         private final int value;
 
         Price(int value) {
@@ -111,6 +114,7 @@ public class ShoppingSteps implements En {
     }
 
     static final class Amount {
+
         private final BigDecimal price;
         private final Currency currency;
 
@@ -118,5 +122,7 @@ public class ShoppingSteps implements En {
             this.price = price;
             this.currency = currency;
         }
+
     }
+
 }

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryCarDAO implements CarDAO {
+
     private static List<Car> cars;
 
     public InMemoryCarDAO() {
@@ -39,4 +40,5 @@ public class InMemoryCarDAO implements CarDAO {
         }
         return availableCars;
     }
+
 }
