@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ThirdStepDef {
+
     int cucumbers;
 
     @Then("{int} have been pushed to a third step def class")

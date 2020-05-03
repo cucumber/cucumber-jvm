@@ -9,10 +9,12 @@ import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 @Component
 @Scope(SCOPE_CUCUMBER_GLUE)
 public class GlueScopedComponent {
+
     @Autowired
     private Belly belly;
 
     public Belly getBelly() {
         return belly;
     }
+
 }

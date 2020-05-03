@@ -9,4 +9,5 @@ import org.junit.runner.RunWith;
     features = {"classpath:io/cucumber/spring/contextCaching.feature"}
 )
 public class RunCucumberTest {
+
 }

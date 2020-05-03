@@ -24,6 +24,10 @@ class GlueCodeContext {
         counter++;
     }
 
+    private void cleanUp() {
+        localContext.remove();
+    }
+
     public String getId() {
         return "cucumber_glue_" + counter;
     }
@@ -48,11 +52,8 @@ class GlueCodeContext {
         return objects.remove(name);
     }
 
-    private void cleanUp() {
-        localContext.remove();
-    }
-
     public void registerDestructionCallback(String name, Runnable callback) {
         callbacks.put(name, callback);
     }
+
 }

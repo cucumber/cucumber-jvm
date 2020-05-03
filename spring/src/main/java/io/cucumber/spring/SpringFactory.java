@@ -100,6 +100,32 @@ public final class SpringFactory implements ObjectFactory {
         }
     }
 
+    private static boolean hasComponentAnnotation(Annotation annotation) {
+        return hasAnnotation(annotation, Collections.singleton(Component.class));
+    }
+
+    private static boolean hasAnnotation(Annotation annotation, Collection<Class<? extends Annotation>> desired) {
+        Set<Class<? extends Annotation>> seen = new HashSet<>();
+        Deque<Class<? extends Annotation>> toCheck = new ArrayDeque<>();
+        toCheck.add(annotation.annotationType());
+
+        while (!toCheck.isEmpty()) {
+            Class<? extends Annotation> annotationType = toCheck.pop();
+            if (desired.contains(annotationType)) {
+                return true;
+            }
+
+            seen.add(annotationType);
+            for (Annotation annotationTypesAnnotations : annotationType.getAnnotations()) {
+                if (!seen.contains(annotationTypesAnnotations.annotationType())) {
+                    toCheck.add(annotationTypesAnnotations.annotationType());
+                }
+            }
+
+        }
+        return false;
+    }
+
     @Override
     public void start() {
         if (withCucumberContextConfiguration == null) {
@@ -144,29 +170,4 @@ public final class SpringFactory implements ObjectFactory {
         }
     }
 
-    private static boolean hasComponentAnnotation(Annotation annotation) {
-        return hasAnnotation(annotation, Collections.singleton(Component.class));
-    }
-
-    private static boolean hasAnnotation(Annotation annotation, Collection<Class<? extends Annotation>> desired) {
-        Set<Class<? extends Annotation>> seen = new HashSet<>();
-        Deque<Class<? extends Annotation>> toCheck = new ArrayDeque<>();
-        toCheck.add(annotation.annotationType());
-
-        while (!toCheck.isEmpty()) {
-            Class<? extends Annotation> annotationType = toCheck.pop();
-            if (desired.contains(annotationType)) {
-                return true;
-            }
-
-            seen.add(annotationType);
-            for (Annotation annotationTypesAnnotations : annotationType.getAnnotations()) {
-                if (!seen.contains(annotationTypesAnnotations.annotationType())) {
-                    toCheck.add(annotationTypesAnnotations.annotationType());
-                }
-            }
-
-        }
-        return false;
-    }
 }

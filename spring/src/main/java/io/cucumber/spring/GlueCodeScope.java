@@ -39,4 +39,5 @@ class GlueCodeScope implements Scope {
         GlueCodeContext context = GlueCodeContext.getInstance();
         return context.getId();
     }
+
 }

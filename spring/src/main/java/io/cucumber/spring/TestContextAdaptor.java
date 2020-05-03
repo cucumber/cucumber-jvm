@@ -13,6 +13,7 @@ import java.util.Collection;
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
 abstract class TestContextAdaptor {
+
     private static final Object monitor = new Object();
 
     private final TestContextManager delegate;
@@ -50,12 +51,10 @@ abstract class TestContextAdaptor {
         GlueCodeContext.getInstance().start();
     }
 
-    public final void stop() {
-        GlueCodeContext.getInstance().stop();
-        try {
-            delegate.afterTestClass();
-        } catch (Exception e) {
-            throw new CucumberBackendException(e.getMessage(), e);
+    final void registerGlueCodeScope(ConfigurableApplicationContext context) {
+        while (context != null) {
+            context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
+            context = (ConfigurableApplicationContext) context.getParent();
         }
     }
 
@@ -64,17 +63,6 @@ abstract class TestContextAdaptor {
             delegate.beforeTestClass();
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
-        }
-    }
-
-    final <T> T getInstance(Class<T> type) {
-        return applicationContext.getBean(type);
-    }
-
-    final void registerGlueCodeScope(ConfigurableApplicationContext context) {
-        while (context != null) {
-            context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
-            context = (ConfigurableApplicationContext) context.getParent();
         }
     }
 
@@ -98,4 +86,18 @@ abstract class TestContextAdaptor {
             .getBeanDefinition()
         );
     }
+
+    public final void stop() {
+        GlueCodeContext.getInstance().stop();
+        try {
+            delegate.afterTestClass();
+        } catch (Exception e) {
+            throw new CucumberBackendException(e.getMessage(), e);
+        }
+    }
+
+    final <T> T getInstance(Class<T> type) {
+        return applicationContext.getBean(type);
+    }
+
 }

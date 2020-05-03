@@ -15,4 +15,5 @@ public class AnnotationContextConfigurationDefinitions {
     public void pickUpContext() {
         assertNotNull(wac);
     }
+
 }

@@ -10,4 +10,5 @@ import org.junit.runner.RunWith;
     features = {"classpath:io/cucumber/spring/annotationContextConfiguration.feature"}
 )
 public class RunCucumberContextConfigurationTest {
+
 }

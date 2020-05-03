@@ -9,4 +9,5 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration("classpath:cucumber.xml")
 @CucumberContextConfiguration
 public class AnnotationContextConfiguration {
+
 }

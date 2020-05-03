@@ -15,4 +15,5 @@ import java.lang.annotation.Target;
 @ContextConfiguration("classpath:cucumber.xml")
 @DirtiesContext
 public @interface DirtiesMetaConfiguration {
+
 }

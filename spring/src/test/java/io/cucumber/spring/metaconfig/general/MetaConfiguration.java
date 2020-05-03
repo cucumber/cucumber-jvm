@@ -13,4 +13,5 @@ import java.lang.annotation.Target;
 
 @ContextConfiguration("classpath:cucumber.xml")
 public @interface MetaConfiguration {
+
 }
