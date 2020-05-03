@@ -1,6 +1,7 @@
 package io.cucumber.core.gherkin;
 
 public interface DocStringArgument extends Argument, io.cucumber.plugin.event.DocStringArgument {
+
     @Override
     String getContent();
 
@@ -12,4 +13,5 @@ public interface DocStringArgument extends Argument, io.cucumber.plugin.event.Do
 
     @Override
     int getLine();
+
 }

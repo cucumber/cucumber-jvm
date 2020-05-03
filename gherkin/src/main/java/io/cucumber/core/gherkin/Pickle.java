@@ -39,4 +39,5 @@ public interface Pickle {
     URI getUri();
 
     String getId();
+
 }
