@@ -86,6 +86,25 @@ class TeamCityPluginTest {
         ));
     }
 
+    private String runFeaturesWithFormatter() {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(byteArrayOutputStream);
+        final TeamCityPlugin formatter = new TeamCityPlugin(printStream);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .build()
+            .run();
+
+        return new String(byteArrayOutputStream.toByteArray(), UTF_8);
+    }
+
     @Test
     void should_handle_nameless_attach_events() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
@@ -204,25 +223,6 @@ class TeamCityPluginTest {
             "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n" +
             "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'Before']"
         ));
-    }
-
-    private String runFeaturesWithFormatter() {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        final TeamCityPlugin formatter = new TeamCityPlugin(printStream);
-
-        TestHelper.builder()
-            .withFormatterUnderTest(formatter)
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withHookActions(hookActions)
-            .build()
-            .run();
-
-        return new String(byteArrayOutputStream.toByteArray(), UTF_8);
     }
 
 }

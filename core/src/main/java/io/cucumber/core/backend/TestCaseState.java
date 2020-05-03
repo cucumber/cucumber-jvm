@@ -7,6 +7,7 @@ import java.util.Collection;
 
 @API(status = API.Status.STABLE)
 public interface TestCaseState {
+
     /**
      * @return tags of this scenario.
      */

@@ -54,6 +54,7 @@ public final class TestNGFormatter implements EventListener {
     private final Element results;
     private final Element suite;
     private final Element test;
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
     private Element clazz;
     private Element root;
     private TestCase testCase;
@@ -61,7 +62,6 @@ public final class TestNGFormatter implements EventListener {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
     public TestNGFormatter(OutputStream out) {
         this.writer = new UTF8OutputStreamWriter(out);
@@ -296,5 +296,7 @@ public final class TestNGFormatter implements EventListener {
 
             return exceptionElement;
         }
+
     }
+
 }

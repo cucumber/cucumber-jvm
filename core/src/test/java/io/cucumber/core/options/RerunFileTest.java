@@ -55,6 +55,12 @@ class RerunFileTest {
         );
     }
 
+    private void mockFileResource(String... contents) throws IOException {
+        Path path = Files.createTempFile(temp, "rerun", ".txt");
+        Files.write(path, Arrays.asList(contents), UTF_8, WRITE);
+        this.rerunPath = path;
+    }
+
     @Test
     void loads_no_features_when_rerun_file_is_empty() throws Exception {
         mockFileResource("");
@@ -165,7 +171,6 @@ class RerunFileTest {
         );
     }
 
-
     @Test
     void loads_features_specified_in_rerun_file_with_empty_cucumber_options() throws Exception {
         mockFileResource("file:path/bar.feature:2\n");
@@ -180,7 +185,6 @@ class RerunFileTest {
         );
     }
 
-
     @Test
     void strips_lines_from_rerun_file_from_cli_if_filters_are_specified_in_cucumber_options_property() throws IOException {
         mockFileResource("file:path/file.feature:3\n");
@@ -188,12 +192,6 @@ class RerunFileTest {
             .parse("@" + rerunPath)
             .build();
         assertThat(options.getFeaturePaths(), contains(new File("path/file.feature").toURI()));
-    }
-
-    private void mockFileResource(String... contents) throws IOException {
-        Path path = Files.createTempFile(temp, "rerun", ".txt");
-        Files.write(path, Arrays.asList(contents), UTF_8, WRITE);
-        this.rerunPath = path;
     }
 
 }

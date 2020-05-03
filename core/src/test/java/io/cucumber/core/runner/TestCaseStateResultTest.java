@@ -158,6 +158,7 @@ class TestCaseStateResultTest {
     }
 
     private static final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
+
         private final byte[] data;
         private final String mediaType;
 
@@ -171,9 +172,11 @@ class TestCaseStateResultTest {
             return (argument != null &&
                 Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType));
         }
+
     }
 
     private static final class WriteEventMatcher implements ArgumentMatcher<WriteEvent> {
+
         private final String text;
 
         WriteEventMatcher(String text) {
@@ -184,6 +187,7 @@ class TestCaseStateResultTest {
         public boolean matches(WriteEvent argument) {
             return (argument != null && argument.getText().equals(text));
         }
+
     }
 
 }

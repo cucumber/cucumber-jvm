@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 final class AnsiFormats implements Formats {
+
     private static final Map<String, Format> formats = new HashMap<String, Format>() {{
         put("undefined", new ColorFormat(AnsiEscapes.YELLOW));
         put("undefined_arg", new ColorFormat(AnsiEscapes.YELLOW, AnsiEscapes.INTENSITY_BOLD)); // Never used, but avoids NPE in formatters.
@@ -28,7 +29,18 @@ final class AnsiFormats implements Formats {
         put("output", new ColorFormat(AnsiEscapes.BLUE));
     }};
 
+    public Format get(String key) {
+        Format format = formats.get(key);
+        if (format == null) throw new NullPointerException("No format for key " + key);
+        return format;
+    }
+
+    public String up(int n) {
+        return AnsiEscapes.up(n).toString();
+    }
+
     private static final class ColorFormat implements Format {
+
         private final AnsiEscapes[] escapes;
 
         ColorFormat(AnsiEscapes... escapes) {
@@ -44,15 +56,7 @@ final class AnsiFormats implements Formats {
             AnsiEscapes.RESET.appendTo(sb);
             return sb.toString();
         }
+
     }
 
-    public Format get(String key) {
-        Format format = formats.get(key);
-        if (format == null) throw new NullPointerException("No format for key " + key);
-        return format;
-    }
-
-    public String up(int n) {
-        return AnsiEscapes.up(n).toString();
-    }
 }

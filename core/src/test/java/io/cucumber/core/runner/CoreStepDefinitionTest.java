@@ -2,9 +2,9 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepExpression;
@@ -87,22 +87,6 @@ class CoreStepDefinitionTest {
         assertEquals(DataTable.create(singletonList(singletonList(null))), arguments.get(0).getValue());
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
-    public static class Steps {
-        public void listOfListOfDoubles(List<List<Double>> listOfListOfDoubles) {
-        }
-
-        public void plainDataTable(DataTable dataTable) {
-        }
-
-        public void mapOfDoubleToDouble(Map<Double, Double> mapOfDoubleToDouble) {
-        }
-
-        public void transposedMapOfDoubleToListOfDouble(Map<Double, List<Double>> mapOfDoubleToListOfDouble) {
-        }
-
-    }
-
     @Test
     void transforms_to_map_of_double_to_double() throws Throwable {
         Method m = Steps.class.getMethod("mapOfDoubleToDouble", Map.class);
@@ -121,6 +105,23 @@ class CoreStepDefinitionTest {
             () -> assertThat(stepDefs, hasEntry(0.5, -0.5)),
             () -> assertThat(stepDefs, hasEntry(100.5, 99.5))
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T runStepDef(Method method, boolean transposed, Feature feature) {
+        StubStepDefinition stepDefinition = new StubStepDefinition("some text", transposed, method.getGenericParameterTypes());
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
+        Step stepWithTable = feature.getPickles().get(0).getSteps().get(0);
+        List<Argument> arguments = coreStepDefinition.matchedArguments(stepWithTable);
+
+        List<Object> result = new ArrayList<>();
+        for (Argument argument : arguments) {
+            result.add(argument.getValue());
+        }
+        coreStepDefinition.getStepDefinition().execute(result.toArray(new Object[0]));
+
+        return (T) stepDefinition.getArgs().get(0);
     }
 
     @Test
@@ -203,20 +204,21 @@ class CoreStepDefinitionTest {
         );
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T runStepDef(Method method, boolean transposed, Feature feature) {
-        StubStepDefinition stepDefinition = new StubStepDefinition("some text", transposed, method.getGenericParameterTypes());
-        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
-        Step stepWithTable = feature.getPickles().get(0).getSteps().get(0);
-        List<Argument> arguments = coreStepDefinition.matchedArguments(stepWithTable);
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    public static class Steps {
 
-        List<Object> result = new ArrayList<>();
-        for (Argument argument : arguments) {
-            result.add(argument.getValue());
+        public void listOfListOfDoubles(List<List<Double>> listOfListOfDoubles) {
         }
-        coreStepDefinition.getStepDefinition().execute(result.toArray(new Object[0]));
 
-        return (T) stepDefinition.getArgs().get(0);
+        public void plainDataTable(DataTable dataTable) {
+        }
+
+        public void mapOfDoubleToDouble(Map<Double, Double> mapOfDoubleToDouble) {
+        }
+
+        public void transposedMapOfDoubleToListOfDouble(Map<Double, List<Double>> mapOfDoubleToListOfDouble) {
+        }
+
     }
+
 }

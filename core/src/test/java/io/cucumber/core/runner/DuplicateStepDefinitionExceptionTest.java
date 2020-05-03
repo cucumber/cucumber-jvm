@@ -26,5 +26,6 @@ class DuplicateStepDefinitionExceptionTest {
             () -> assertThat(expectedThrown.getCause(), is(nullValue()))
         );
     }
+
 }
 

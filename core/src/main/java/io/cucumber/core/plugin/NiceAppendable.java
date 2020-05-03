@@ -8,11 +8,16 @@ import java.io.IOException;
  * A nice appendable that doesn't throw checked exceptions
  */
 final class NiceAppendable implements Appendable {
+
     private static final CharSequence NL = "\n";
     private final Appendable out;
 
     public NiceAppendable(Appendable out) {
         this.out = out;
+    }
+
+    public NiceAppendable println() {
+        return append(NL);
     }
 
     public NiceAppendable append(CharSequence csq) {
@@ -45,8 +50,16 @@ final class NiceAppendable implements Appendable {
         }
     }
 
-    public NiceAppendable println() {
-        return append(NL);
+    private void tryFlush() {
+        if (!(out instanceof Flushable)) {
+            return;
+        }
+
+        try {
+            ((Flushable) out).flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public NiceAppendable println(CharSequence csq) {
@@ -70,13 +83,4 @@ final class NiceAppendable implements Appendable {
         }
     }
 
-    private void tryFlush()  {
-        if (!(out instanceof Flushable))
-            return;
-        try {
-            ((Flushable) out).flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -33,7 +33,8 @@ public final class RuntimeOptions implements
     private final List<String> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
-
+    private final List<Plugin> formatters = new ArrayList<>();
+    private final List<Plugin> summaryPrinters = new ArrayList<>();
     private boolean dryRun;
     private boolean monochrome = false;
     private boolean wip = false;
@@ -41,9 +42,6 @@ public final class RuntimeOptions implements
     private int threads = 1;
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
-
-    private final List<Plugin> formatters = new ArrayList<>();
-    private final List<Plugin> summaryPrinters = new ArrayList<>();
     private Class<? extends ObjectFactory> objectFactoryClass;
 
     private RuntimeOptions() {
@@ -54,12 +52,13 @@ public final class RuntimeOptions implements
         return new RuntimeOptions();
     }
 
-    void addDefaultFormatterIfAbsent(){
+    void addDefaultFormatterIfAbsent() {
         if (formatters.isEmpty()) {
             formatters.add(PluginOption.parse("progress"));
         }
     }
-    void addDefaultSummaryPrinterIfAbsent(){
+
+    void addDefaultSummaryPrinterIfAbsent() {
         if (summaryPrinters.isEmpty()) {
             summaryPrinters.add(PluginOption.parse("default_summary"));
         }
@@ -76,9 +75,6 @@ public final class RuntimeOptions implements
             featurePaths.add(FeatureWithLines.create(rootPackageUri(), emptyList()));
         }
     }
-    public int getCount() {
-        return count;
-    }
 
     List<Plugin> getFormatters() {
         return formatters;
@@ -92,12 +88,37 @@ public final class RuntimeOptions implements
         return getThreads() > 1;
     }
 
+    public int getThreads() {
+        return threads;
+    }
+
+    void setThreads(int threads) {
+        this.threads = threads;
+    }
+
     @Override
     public List<Plugin> plugins() {
         List<Plugin> plugins = new ArrayList<>();
         plugins.addAll(formatters);
         plugins.addAll(summaryPrinters);
         return plugins;
+    }
+
+    @Override
+    public boolean isMonochrome() {
+        return monochrome;
+    }
+
+    public boolean isWip() {
+        return wip;
+    }
+
+    void setWip(boolean wip) {
+        this.wip = wip;
+    }
+
+    void setMonochrome(boolean monochrome) {
+        this.monochrome = monochrome;
     }
 
     @Override
@@ -110,8 +131,31 @@ public final class RuntimeOptions implements
         return dryRun;
     }
 
-    public boolean isWip() {
-        return wip;
+    @Override
+    public SnippetType getSnippetType() {
+        return snippetType;
+    }
+
+    @Override
+    public Class<? extends ObjectFactory> getObjectFactoryClass() {
+        return objectFactoryClass;
+    }
+
+    void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
+        this.objectFactoryClass = objectFactoryClass;
+    }
+
+    void setSnippetType(SnippetType snippetType) {
+        this.snippetType = snippetType;
+    }
+
+    void setDryRun(boolean dryRun) {
+        this.dryRun = dryRun;
+    }
+
+    void setGlue(List<URI> parsedGlue) {
+        glue.clear();
+        glue.addAll(parsedGlue);
     }
 
     @Override
@@ -121,6 +165,11 @@ public final class RuntimeOptions implements
             .sorted()
             .distinct()
             .collect(Collectors.toList()));
+    }
+
+    void setFeaturePaths(List<FeatureWithLines> featurePaths) {
+        this.featurePaths.clear();
+        this.featurePaths.addAll(featurePaths);
     }
 
     @Override
@@ -133,32 +182,9 @@ public final class RuntimeOptions implements
         return unmodifiableList(nameFilters);
     }
 
-    void setCount(int count) {
-        this.count = count;
-    }
-
-    void setFeaturePaths(List<FeatureWithLines> featurePaths) {
-        this.featurePaths.clear();
-        this.featurePaths.addAll(featurePaths);
-    }
-
-    void setGlue(List<URI> parsedGlue) {
-        glue.clear();
-        glue.addAll(parsedGlue);
-    }
-
     void setNameFilters(List<Pattern> nameFilters) {
         this.nameFilters.clear();
         this.nameFilters.addAll(nameFilters);
-    }
-
-    void setPickleOrder(PickleOrder pickleOrder) {
-        this.pickleOrder = pickleOrder;
-    }
-
-    void setTagExpressions(List<String> tagExpressions) {
-        this.tagExpressions.clear();
-        this.tagExpressions.addAll(tagExpressions);
     }
 
     @Override
@@ -181,50 +207,25 @@ public final class RuntimeOptions implements
         return getCount();
     }
 
-    @Override
-    public boolean isMonochrome() {
-        return monochrome;
+    public int getCount() {
+        return count;
     }
 
-    @Override
-    public SnippetType getSnippetType() {
-        return snippetType;
+    void setCount(int count) {
+        this.count = count;
     }
 
-    @Override
-    public Class<? extends ObjectFactory> getObjectFactoryClass() {
-        return objectFactoryClass;
-    }
-
-    public int getThreads() {
-        return threads;
+    void setTagExpressions(List<String> tagExpressions) {
+        this.tagExpressions.clear();
+        this.tagExpressions.addAll(tagExpressions);
     }
 
     public PickleOrder getPickleOrder() {
         return pickleOrder;
     }
 
-    void setDryRun(boolean dryRun) {
-        this.dryRun = dryRun;
+    void setPickleOrder(PickleOrder pickleOrder) {
+        this.pickleOrder = pickleOrder;
     }
 
-    void setMonochrome(boolean monochrome) {
-        this.monochrome = monochrome;
-    }
-
-    void setSnippetType(SnippetType snippetType) {
-        this.snippetType = snippetType;
-    }
-
-    void setThreads(int threads) {
-        this.threads = threads;
-    }
-
-    void setWip(boolean wip) {
-        this.wip = wip;
-    }
-
-    void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
-        this.objectFactoryClass = objectFactoryClass;
-    }
 }

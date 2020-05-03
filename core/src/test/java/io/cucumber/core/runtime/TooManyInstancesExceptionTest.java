@@ -23,4 +23,5 @@ class TooManyInstancesExceptionTest {
             () -> assertThat(expectedThrown.getCause(), is(nullValue()))
         );
     }
+
 }

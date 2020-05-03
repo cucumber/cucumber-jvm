@@ -65,4 +65,5 @@ class StepTypeRegistryTest {
         TableEntryByTypeTransformer expected = (entry, toValueType, tableCellByTypeTransformer) -> null;
         registry.setDefaultDataTableEntryTransformer(expected);
     }
+
 }

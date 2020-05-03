@@ -207,14 +207,17 @@ class PluginFactoryTest {
     }
 
     public static class WantsOutputStream extends StubFormatter {
+
         public OutputStream printStream;
 
         public WantsOutputStream(OutputStream outputStream) {
             this.printStream = Objects.requireNonNull(outputStream);
         }
+
     }
 
     public static class WantsFileOrEmpty extends StubFormatter {
+
         public File out = null;
 
         public WantsFileOrEmpty(File out) {
@@ -223,34 +226,43 @@ class PluginFactoryTest {
 
         public WantsFileOrEmpty() {
         }
+
     }
 
     public static class WantsFile extends StubFormatter {
+
         public final File out;
 
         public WantsFile(File out) {
             this.out = Objects.requireNonNull(out);
         }
+
     }
 
     public static class WantsFileOrURL extends StubFormatter {
+
         public WantsFileOrURL(File out) {
             Objects.requireNonNull(out);
         }
+
         public WantsFileOrURL(URL out) {
             Objects.requireNonNull(out);
         }
+
     }
 
     public static class WantsString extends StubFormatter {
+
         public final String arg;
 
         public WantsString(String arg) {
             this.arg = Objects.requireNonNull(arg);
         }
+
     }
 
     public static class WantsAppendable extends StubFormatter {
+
         public final NiceAppendable arg;
 
         public WantsAppendable(Appendable arg) {
@@ -261,13 +273,18 @@ class PluginFactoryTest {
             this.arg.println(s);
             this.arg.close();
         }
+
     }
 
     public static class WantsNothing extends StubFormatter {
+
     }
 
     public static class WantsTooMuch extends StubFormatter {
+
         public WantsTooMuch(String too, String much) {
         }
+
     }
+
 }

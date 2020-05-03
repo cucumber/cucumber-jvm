@@ -21,13 +21,14 @@ final class ArgumentPattern {
         return replaceMatchWith(name, replacement);
     }
 
-    String replaceMatchesWithSpace(String name) {
-        return replaceMatchWith(name, " ");
-    }
-
     private String replaceMatchWith(String name, String replacement) {
         Matcher matcher = pattern.matcher(name);
         String quotedReplacement = Matcher.quoteReplacement(replacement);
         return matcher.replaceAll(quotedReplacement);
     }
+
+    String replaceMatchesWithSpace(String name) {
+        return replaceMatchWith(name, " ");
+    }
+
 }

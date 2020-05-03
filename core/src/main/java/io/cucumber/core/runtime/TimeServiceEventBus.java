@@ -1,13 +1,14 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.eventbus.AbstractEventBus;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import io.cucumber.core.eventbus.AbstractEventBus;
-
 public final class TimeServiceEventBus extends AbstractEventBus {
+
     private final Clock clock;
     private final Supplier<UUID> idGenerator;
 
@@ -25,4 +26,5 @@ public final class TimeServiceEventBus extends AbstractEventBus {
     public UUID generateId() {
         return idGenerator.get();
     }
+
 }

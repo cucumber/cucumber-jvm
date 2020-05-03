@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class BytesEqualTo {
+
     static DiagnosingMatcher<ByteArrayOutputStream> isBytesEqualTo(String expected) {
         return new DiagnosingMatcher<ByteArrayOutputStream>() {
             @Override
@@ -29,4 +30,5 @@ final class BytesEqualTo {
             }
         };
     }
+
 }

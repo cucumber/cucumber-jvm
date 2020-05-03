@@ -39,41 +39,11 @@ class StepExpressionFactoryTest {
 
     private static final Type UNKNOWN_TYPE = Object.class;
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    static class Ingredient {
-        public String name;
-        public Integer amount;
-        public String unit;
-
-        Ingredient() {
-        }
-    }
-
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
     private final StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
     private final List<List<String>> table = asList(asList("name", "amount", "unit"), asList("chocolate", "2", "tbsp"));
     private final List<List<String>> tableTransposed = asList(asList("name", "chocolate"), asList("amount", "2"), asList("unit", "tbsp"));
-
-
-    private TableEntryTransformer<Ingredient> listBeanMapper(final StepTypeRegistry registry) {
-        //Just pretend this is a bean mapper.
-        return tableRow -> {
-            Ingredient bean = new Ingredient();
-            bean.amount = Integer.valueOf(tableRow.get("amount"));
-            bean.name = tableRow.get("name");
-            bean.unit = tableRow.get("unit");
-            return bean;
-        };
-    }
-
-
-    private TableTransformer<Ingredient> beanMapper(final StepTypeRegistry registry) {
-        return table -> {
-            Map<String, String> tableRow = table.transpose().asMaps().get(0);
-            return listBeanMapper(registry).transform(tableRow);
-        };
-    }
 
     @Test
     void creates_a_step_expression() {
@@ -129,6 +99,24 @@ class StepExpressionFactoryTest {
         assertThat(ingredient.name, is(equalTo("chocolate")));
     }
 
+    private TableTransformer<Ingredient> beanMapper(final StepTypeRegistry registry) {
+        return table -> {
+            Map<String, String> tableRow = table.transpose().asMaps().get(0);
+            return listBeanMapper(registry).transform(tableRow);
+        };
+    }
+
+    private TableEntryTransformer<Ingredient> listBeanMapper(final StepTypeRegistry registry) {
+        //Just pretend this is a bean mapper.
+        return tableRow -> {
+            Ingredient bean = new Ingredient();
+            bean.amount = Integer.valueOf(tableRow.get("amount"));
+            bean.name = tableRow.get("name");
+            bean.unit = tableRow.get("unit");
+            return bean;
+        };
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     void table_expression_with_list_type_creates_list_of_ingredients_from_table() {
@@ -142,6 +130,15 @@ class StepExpressionFactoryTest {
         List<Ingredient> ingredients = (List<Ingredient>) match.get(0).getValue();
         Ingredient ingredient = ingredients.get(0);
         assertThat(ingredient.amount, is(equalTo(2)));
+    }
+
+    private Type getTypeFromStepDefinition() {
+        for (Method method : this.getClass().getMethods()) {
+            if (method.getName().equals("fake_step_definition")) {
+                return method.getGenericParameterTypes()[0];
+            }
+        }
+        throw new IllegalStateException();
     }
 
     @Test
@@ -205,18 +202,19 @@ class StepExpressionFactoryTest {
 
     }
 
-    private Type getTypeFromStepDefinition() {
-        for (Method method : this.getClass().getMethods()) {
-            if (method.getName().equals("fake_step_definition")) {
-                return method.getGenericParameterTypes()[0];
-            }
-        }
-        throw new IllegalStateException();
-    }
-
-
     @SuppressWarnings("unused")
     public void fake_step_definition(List<Ingredient> ingredients) {
+
+    }
+
+    static class Ingredient {
+
+        public String name;
+        public Integer amount;
+        public String unit;
+
+        Ingredient() {
+        }
 
     }
 

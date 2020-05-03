@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class TestStepResultStatus {
+
     private static final Map<Status, Messages.TestStepFinished.TestStepResult.Status> STATUS = new HashMap<Status, Messages.TestStepFinished.TestStepResult.Status>() {{
         put(Status.FAILED, Messages.TestStepFinished.TestStepResult.Status.FAILED);
         put(Status.PASSED, Messages.TestStepFinished.TestStepResult.Status.PASSED);

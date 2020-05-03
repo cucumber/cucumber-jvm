@@ -58,18 +58,13 @@ public class GluePath {
         return parseAssumeClasspathScheme(gluePath);
     }
 
-    private static boolean isProbablyPackage(String gluePath) {
-        return gluePath.contains(PACKAGE_SEPARATOR_STRING)
-            && !gluePath.contains(RESOURCE_SEPARATOR_STRING);
+    private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
+        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
+            && featureIdentifier.contains(File.separator);
     }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {
         return featureIdentifier.replace(File.separatorChar, RESOURCE_SEPARATOR_CHAR);
-    }
-
-    private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
-        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
-            && featureIdentifier.contains(File.separator);
     }
 
     private static URI parseAssumeClasspathScheme(String gluePath) {
@@ -95,6 +90,11 @@ public class GluePath {
         return uri;
     }
 
+    private static boolean isProbablyPackage(String gluePath) {
+        return gluePath.contains(PACKAGE_SEPARATOR_STRING)
+            && !gluePath.contains(RESOURCE_SEPARATOR_STRING);
+    }
+
     private static boolean isValidIdentifier(String schemeSpecificPart) {
         for (String part : schemeSpecificPart.split("/")) {
             for (int i = 0; i < part.length(); i++) {
@@ -105,4 +105,5 @@ public class GluePath {
         }
         return true;
     }
+
 }

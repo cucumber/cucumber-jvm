@@ -1,9 +1,9 @@
 package io.cucumber.core.eventbus;
 
+import io.cucumber.plugin.event.EventPublisher;
+
 import java.time.Instant;
 import java.util.UUID;
-
-import io.cucumber.plugin.event.EventPublisher;
 
 public interface EventBus extends EventPublisher {
 

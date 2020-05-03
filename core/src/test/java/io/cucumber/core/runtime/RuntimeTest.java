@@ -72,6 +72,20 @@ class RuntimeTest {
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
+    private Runtime createStrictRuntime() {
+        return Runtime.builder()
+            .withRuntimeOptions(
+                new RuntimeOptionsBuilder()
+                    .build()
+            )
+            .withEventBus(bus)
+            .build();
+    }
+
+    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
+        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
+    }
+
     @Test
     void with_undefined_scenarios() {
         Runtime runtime = createStrictRuntime();
@@ -93,6 +107,12 @@ class RuntimeTest {
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
+    }
+
+    private Runtime createNonStrictRuntime() {
+        return Runtime.builder()
+            .withEventBus(bus)
+            .build();
     }
 
     @Test
@@ -165,6 +185,30 @@ class RuntimeTest {
         };
     }
 
+    private void mockMatch(Glue glue, String text) {
+        io.cucumber.core.backend.StepDefinition stepDefinition = new StubStepDefinition(text);
+        glue.addStepDefinition(stepDefinition);
+    }
+
+    private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {
+        switch (hookType) {
+            case BEFORE:
+                glue.addBeforeHook(hook);
+                return;
+            case AFTER:
+                glue.addAfterHook(hook);
+                return;
+            case AFTER_STEP:
+                glue.addAfterStepHook(hook);
+                return;
+            case BEFORE_STEP:
+                glue.addBeforeStepHook(hook);
+                return;
+            default:
+                throw new IllegalArgumentException(hookType.name());
+        }
+    }
+
     @Test
     void should_call_formatter_for_two_scenarios_with_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
@@ -200,6 +244,20 @@ class RuntimeTest {
                 "  TestStep finished\n" +
                 "TestCase finished\n" +
                 "TestRun finished\n")));
+    }
+
+    private String runFeatureWithFormatterSpy(Feature feature, Map<String, Result> stepsToResult) {
+        FormatterSpy formatterSpy = new FormatterSpy();
+
+        TestHelper.builder()
+            .withFeatures(feature)
+            .withStepsToResult(stepsToResult)
+            .withFormatterUnderTest(formatterSpy)
+            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+            .build()
+            .run();
+
+        return formatterSpy.toString();
     }
 
     @Test
@@ -456,75 +514,7 @@ class RuntimeTest {
         assertThat(meta.getCpu().getName(), matchesPattern(".+"));
     }
 
-    private String runFeatureWithFormatterSpy(Feature feature, Map<String, Result> stepsToResult) {
-        FormatterSpy formatterSpy = new FormatterSpy();
-
-        TestHelper.builder()
-            .withFeatures(feature)
-            .withStepsToResult(stepsToResult)
-            .withFormatterUnderTest(formatterSpy)
-            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .build()
-            .run();
-
-        return formatterSpy.toString();
-    }
-
-    private Runtime createStrictRuntime() {
-        return Runtime.builder()
-            .withRuntimeOptions(
-                new RuntimeOptionsBuilder()
-                    .build()
-            )
-            .withEventBus(bus)
-            .build();
-    }
-
-    private Runtime createNonStrictRuntime() {
-        return Runtime.builder()
-            .withEventBus(bus)
-            .build();
-    }
-
-    private void mockMatch(Glue glue, String text) {
-        io.cucumber.core.backend.StepDefinition stepDefinition = new StubStepDefinition(text);
-        glue.addStepDefinition(stepDefinition);
-    }
-
-    private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {
-        switch (hookType) {
-            case BEFORE:
-                glue.addBeforeHook(hook);
-                return;
-            case AFTER:
-                glue.addAfterHook(hook);
-                return;
-            case AFTER_STEP:
-                glue.addAfterStepHook(hook);
-                return;
-            case BEFORE_STEP:
-                glue.addBeforeStepHook(hook);
-                return;
-            default:
-                throw new IllegalArgumentException(hookType.name());
-        }
-    }
-
-    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
-        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
-    }
-
     private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
-
-        @Override
-        public String getLocation() {
-            return "mocked step definition";
-        }
-
-        @Override
-        public List<ParameterInfo> parameterInfos() {
-            return emptyList();
-        }
 
         @Override
         public void execute(Object[] args) {
@@ -532,8 +522,8 @@ class RuntimeTest {
         }
 
         @Override
-        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-            return false;
+        public List<ParameterInfo> parameterInfos() {
+            return emptyList();
         }
 
         @Override
@@ -541,13 +531,23 @@ class RuntimeTest {
             return "global scoped";
         }
 
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return "mocked step definition";
+        }
+
     }
 
     private static final class MockedScenarioScopedStepDefinition implements ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
         @Override
-        public String getLocation() {
-            return "mocked scenario scoped step definition";
+        public void execute(Object[] args) {
+
         }
 
         @Override
@@ -556,8 +556,8 @@ class RuntimeTest {
         }
 
         @Override
-        public void execute(Object[] args) {
-
+        public String getPattern() {
+            return "scenario scoped";
         }
 
         @Override
@@ -566,8 +566,8 @@ class RuntimeTest {
         }
 
         @Override
-        public String getPattern() {
-            return "scenario scoped";
+        public String getLocation() {
+            return "mocked scenario scoped step definition";
         }
 
     }

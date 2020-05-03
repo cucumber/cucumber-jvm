@@ -18,4 +18,5 @@ public final class SingletonObjectFactorySupplier implements ObjectFactorySuppli
         }
         return objectFactory;
     }
+
 }

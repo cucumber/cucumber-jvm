@@ -27,4 +27,5 @@ public class Main {
         log.warn(() -> "You are using deprecated Main class. Please use io.cucumber.core.cli.Main");
         return io.cucumber.core.cli.Main.run(argv, classLoader);
     }
+
 }

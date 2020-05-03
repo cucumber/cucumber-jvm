@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,6 +80,19 @@ class TestCaseTest {
         order.verify(bus).send(isA(TestCaseFinished.class));
     }
 
+    private TestCase createTestCase(PickleStepTestStep... steps) {
+        return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
+    }
+
+    private Pickle pickle() {
+        Feature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
+        return feature.getPickles().get(0);
+    }
+
     @Test
     void run_all_steps() throws Throwable {
         TestCase testCase = createTestCase(testStep1, testStep2);
@@ -102,7 +115,6 @@ class TestCaseTest {
         order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
         order.verify(afterStep1HookDefinition1).execute(isA(TestCaseState.class));
     }
-
 
     @Test
     void skip_hooks_of_step_after_skipped_step() throws Throwable {
@@ -127,19 +139,6 @@ class TestCaseTest {
         InOrder order = inOrder(definitionMatch1, definitionMatch2);
         order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
         order.verify(definitionMatch2).dryRunStep(isA(TestCaseState.class));
-    }
-
-    private TestCase createTestCase(PickleStepTestStep... steps) {
-        return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
-    }
-
-    private Pickle pickle() {
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
-        return feature.getPickles().get(0);
     }
 
 }

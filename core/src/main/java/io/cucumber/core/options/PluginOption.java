@@ -22,7 +22,6 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.SummaryPrinter;
-import io.cucumber.core.plugin.MessageFormatter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,29 +81,6 @@ public class PluginOption implements Options.Plugin {
         this.argument = argument;
     }
 
-    @Override
-    public Class<? extends Plugin> pluginClass() {
-        return pluginClass;
-    }
-
-    @Override
-    public String argument() {
-        return argument;
-    }
-
-    @Override
-    public String pluginString() {
-        return pluginString;
-    }
-
-    boolean isFormatter() {
-        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
-    }
-
-    boolean isSummaryPrinter() {
-        return SummaryPrinter.class.isAssignableFrom(pluginClass);
-    }
-
     public static PluginOption parse(String pluginArgumentPattern) {
         Matcher pluginWithFile = PLUGIN_WITH_ARGUMENT_PATTERN.matcher(pluginArgumentPattern);
         if (!pluginWithFile.matches()) {
@@ -139,6 +115,29 @@ public class PluginOption implements Options.Plugin {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             throw new CucumberException("Couldn't load plugin class: " + className, e);
         }
+    }
+
+    @Override
+    public Class<? extends Plugin> pluginClass() {
+        return pluginClass;
+    }
+
+    @Override
+    public String argument() {
+        return argument;
+    }
+
+    @Override
+    public String pluginString() {
+        return pluginString;
+    }
+
+    boolean isFormatter() {
+        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
+    }
+
+    boolean isSummaryPrinter() {
+        return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
 

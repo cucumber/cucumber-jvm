@@ -34,6 +34,7 @@ import static java.util.Arrays.asList;
  * @see Plugin for specific requirements
  */
 public final class PluginFactory {
+
     private static final Logger log = LoggerFactory.getLogger(PluginFactory.class);
 
     private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{
@@ -88,6 +89,18 @@ public final class PluginFactory {
         return newInstance(singleArgConstructor, convert(argument, parameterType, pluginString, pluginClass));
     }
 
+    private <T> Map<Class<?>, Constructor<T>> findSingleArgConstructors(Class<T> pluginClass) {
+        Map<Class<?>, Constructor<T>> result = new HashMap<>();
+
+        for (Class<?> ctorArgClass : CTOR_PARAMETERS) {
+            try {
+                result.put(ctorArgClass, pluginClass.getConstructor(ctorArgClass));
+            } catch (NoSuchMethodException ignore) {
+            }
+        }
+        return result;
+    }
+
     private <T extends Plugin> T newInstance(Constructor<T> constructor, Object... ctorArgs) {
         try {
             return constructor.newInstance(ctorArgs);
@@ -95,6 +108,29 @@ public final class PluginFactory {
             throw new CucumberException(e);
         } catch (InvocationTargetException e) {
             throw new CucumberException(e.getTargetException());
+        }
+    }
+
+    private PrintStream defaultOutOrFailIfAlreadyUsed(String pluginString) {
+        try {
+            if (defaultOut != null) {
+                pluginUsingDefaultOut = pluginString;
+                return defaultOut;
+            } else {
+                throw new CucumberException("Only one plugin can use STDOUT, now both " +
+                    pluginUsingDefaultOut + " and " + pluginString + " use it. " +
+                    "If you use more than one plugin you must specify output path with " + pluginString + ":DIR|FILE|URL");
+            }
+        } finally {
+            defaultOut = null;
+        }
+    }
+
+    private <T extends Plugin> Constructor<T> findEmptyConstructor(Class<T> pluginClass) {
+        try {
+            return pluginClass.getConstructor();
+        } catch (NoSuchMethodException ignore) {
+            return null;
         }
     }
 
@@ -166,38 +202,4 @@ public final class PluginFactory {
         }
     }
 
-    private <T> Map<Class<?>, Constructor<T>> findSingleArgConstructors(Class<T> pluginClass) {
-        Map<Class<?>, Constructor<T>> result = new HashMap<>();
-
-        for (Class<?> ctorArgClass : CTOR_PARAMETERS) {
-            try {
-                result.put(ctorArgClass, pluginClass.getConstructor(ctorArgClass));
-            } catch (NoSuchMethodException ignore) {
-            }
-        }
-        return result;
-    }
-
-    private <T extends Plugin> Constructor<T> findEmptyConstructor(Class<T> pluginClass) {
-        try {
-            return pluginClass.getConstructor();
-        } catch (NoSuchMethodException ignore) {
-            return null;
-        }
-    }
-
-    private PrintStream defaultOutOrFailIfAlreadyUsed(String pluginString) {
-        try {
-            if (defaultOut != null) {
-                pluginUsingDefaultOut = pluginString;
-                return defaultOut;
-            } else {
-                throw new CucumberException("Only one plugin can use STDOUT, now both " +
-                    pluginUsingDefaultOut + " and " + pluginString + " use it. " +
-                    "If you use more than one plugin you must specify output path with " + pluginString + ":DIR|FILE|URL");
-            }
-        } finally {
-            defaultOut = null;
-        }
-    }
 }

@@ -52,15 +52,11 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
     }
 
     static final class Reflections {
+
         private final ClasspathScanner classFinder;
 
         Reflections(ClasspathScanner classFinder) {
             this.classFinder = classFinder;
-        }
-
-        static boolean isInstantiable(Class<?> clazz) {
-            boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
-            return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
         }
 
         <T> T instantiateExactlyOneSubclass(Class<T> parentType, List<URI> packageNames, T fallback) {
@@ -87,6 +83,11 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
                 .filter(Reflections::isInstantiable)
                 .map(Reflections::newInstance)
                 .collect(toSet());
+        }
+
+        static boolean isInstantiable(Class<?> clazz) {
+            boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
+            return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
         }
 
         private static <T> T newInstance(Class<? extends T> clazz) {
@@ -128,5 +129,7 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
             Objects.requireNonNull(instances);
             return String.format("Expected only one instance, but found too many: %s", instances);
         }
+
     }
+
 }

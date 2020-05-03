@@ -60,4 +60,5 @@ class CamelCaseConverterTest {
             "'TitleCaseHeader' also converted to 'titleCaseHeader'"
         ));
     }
+
 }

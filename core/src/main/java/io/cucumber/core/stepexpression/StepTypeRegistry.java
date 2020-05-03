@@ -55,7 +55,7 @@ public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry
     }
 
     @Override
-    public void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer){
+    public void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer) {
         parameterTypeRegistry.setDefaultParameterTransformer(defaultParameterByTypeTransformer);
     }
 
@@ -68,4 +68,5 @@ public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry
     public void setDefaultDataTableCellTransformer(TableCellByTypeTransformer defaultDataTableByTypeTransformer) {
         dataTableTypeRegistry.setDefaultDataTableCellTransformer(defaultDataTableByTypeTransformer);
     }
+
 }

@@ -18,4 +18,5 @@ public class CucumberBackendException extends RuntimeException {
     public CucumberBackendException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

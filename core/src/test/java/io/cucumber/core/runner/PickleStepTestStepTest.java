@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseEvent;
@@ -75,9 +75,6 @@ class PickleStepTestStepTest {
         singletonList(afterHook),
         definitionMatch
     );
-    private static ArgumentMatcher<TestCaseState> scenarioDoesNotHave(final Throwable type) {
-        return argument -> !type.equals(argument.getError());
-    }
 
     @BeforeEach
     void init() {
@@ -200,6 +197,10 @@ class PickleStepTestStepTest {
         doThrow(new RuntimeException()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
         step.run(testCase, bus, state, false);
         assertThat(state.getError(), is(expectedError));
+    }
+
+    private static ArgumentMatcher<TestCaseState> scenarioDoesNotHave(final Throwable type) {
+        return argument -> !type.equals(argument.getError());
     }
 
     @Test

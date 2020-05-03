@@ -85,5 +85,7 @@ final class DefinitionArgument implements Argument {
         public int getEnd() {
             return group.getEnd();
         }
+
     }
+
 }

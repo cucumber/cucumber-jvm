@@ -4,7 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 
 public final class ObjectFactoryParser {
 
-    private ObjectFactoryParser(){
+    private ObjectFactoryParser() {
 
     }
 
@@ -21,4 +21,5 @@ public final class ObjectFactoryParser {
         }
         return (Class<? extends ObjectFactory>) objectFactoryClass;
     }
+
 }

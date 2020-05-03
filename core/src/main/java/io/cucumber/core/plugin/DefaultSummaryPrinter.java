@@ -28,6 +28,13 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
         this.out = new PrintStream(out);
     }
 
+    @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        stats.setEventPublisher(publisher);
+        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetsSuggestedEvent);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> print());
+    }
+
     private void handleSnippetsSuggestedEvent(SnippetsSuggestedEvent event) {
         this.snippets.addAll(event.getSnippets());
     }
@@ -69,13 +76,6 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
             out.println(snippet);
             out.println();
         }
-    }
-
-    @Override
-    public void setEventPublisher(EventPublisher publisher) {
-        stats.setEventPublisher(publisher);
-        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetsSuggestedEvent);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> print());
     }
 
     @Override

@@ -26,6 +26,19 @@ class TestCaseStateTest {
         assertThat(state.getUri(), is(new File("path/file.feature").toURI()));
     }
 
+    private TestCaseState createTestCaseState(Feature feature) {
+        return new TestCaseState(mock(EventBus.class),
+            UUID.randomUUID(),
+            new TestCase(
+                UUID.randomUUID(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                feature.getPickles().get(0),
+                false
+            ));
+    }
+
     @Test
     void provides_the_scenario_line() {
         Feature feature = TestFeatureParser.parse("" +
@@ -79,19 +92,6 @@ class TestCaseStateTest {
         TestCaseState state = createTestCaseState(feature);
 
         assertThat(state.getId(), is(new File("path/file.feature:6").toURI().toString()));
-    }
-
-    private TestCaseState createTestCaseState(Feature feature) {
-        return new TestCaseState(mock(EventBus.class),
-            UUID.randomUUID(),
-            new TestCase(
-            UUID.randomUUID(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.emptyList(),
-            feature.getPickles().get(0),
-            false
-        ));
     }
 
 }

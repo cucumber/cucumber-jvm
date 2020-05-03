@@ -1,8 +1,8 @@
 package io.cucumber.core.filter;
 
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

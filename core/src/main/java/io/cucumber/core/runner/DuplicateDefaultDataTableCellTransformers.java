@@ -9,6 +9,7 @@ import java.util.List;
 import static java.util.stream.Collectors.joining;
 
 class DuplicateDefaultDataTableCellTransformers extends CucumberException {
+
     DuplicateDefaultDataTableCellTransformers(List<DefaultDataTableCellTransformerDefinition> definitions) {
         super(createMessage(definitions));
     }
@@ -18,4 +19,5 @@ class DuplicateDefaultDataTableCellTransformers extends CucumberException {
             .map(Located::getLocation)
             .collect(joining("\n - ", "\n - ", "\n"));
     }
+
 }

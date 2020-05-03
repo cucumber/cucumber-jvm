@@ -20,6 +20,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.newOutputStream;
 
 class UrlOutputStream extends OutputStream {
+
     private final CurlOption option;
     private final Path temp;
     private final OutputStream tempOutputStream;
@@ -31,8 +32,8 @@ class UrlOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(byte[] buffer, int offset, int count) throws IOException {
-        tempOutputStream.write(buffer, offset, count);
+    public void write(int b) throws IOException {
+        tempOutputStream.write(b);
     }
 
     @Override
@@ -41,8 +42,8 @@ class UrlOutputStream extends OutputStream {
     }
 
     @Override
-    public void write(int b) throws IOException {
-        tempOutputStream.write(b);
+    public void write(byte[] buffer, int offset, int count) throws IOException {
+        tempOutputStream.write(buffer, offset, count);
     }
 
     @Override
@@ -120,4 +121,5 @@ class UrlOutputStream extends OutputStream {
                 })
             ).collect(Collectors.joining("\n", "", "\n"));
     }
+
 }

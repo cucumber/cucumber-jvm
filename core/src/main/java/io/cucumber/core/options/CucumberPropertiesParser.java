@@ -33,22 +33,6 @@ import static java.util.stream.Collectors.toList;
 
 public final class CucumberPropertiesParser {
 
-    private static <T> Function<String, Collection<T>> splitAndMap(Function<String, T> parse) {
-        return combined -> stream(combined.split(","))
-            .map(String::trim)
-            .filter(part -> !part.isEmpty())
-            .map(parse)
-            .collect(toList());
-    }
-
-    private static <T> Function<String, Collection<T>> splitAndThenFlatMap(Function<String, Stream<T>> parse) {
-        return combined -> stream(combined.split(","))
-            .map(String::trim)
-            .filter(part -> !part.isEmpty())
-            .flatMap(parse)
-            .collect(toList());
-    }
-
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
         RuntimeOptionsBuilder builder = new RuntimeOptionsBuilder();
 
@@ -137,25 +121,14 @@ public final class CucumberPropertiesParser {
         return builder;
     }
 
+    private <T> void parse(Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter) {
+        parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
+    }
+
     private static void errorOnNonStrict(Boolean strict) {
         if (!strict) {
             throw new CucumberException(EXECUTION_STRICT_PROPERTY_NAME + "=false is no longer effective. Please use =true (the default) or remove this property");
         }
-    }
-
-    private static Stream<FeatureWithLines> parseFeatureFile(String property) {
-        if (property.startsWith("@")) {
-            return Stream.empty();
-        }
-        return Stream.of(FeatureWithLines.parse(property));
-    }
-
-    private static Collection<FeatureWithLines> parseRerunFile(String property) {
-        if (property.startsWith("@")) {
-            Path rerunFile = Paths.get(property.substring(1));
-            return parseFeatureWithLinesFile(rerunFile);
-        }
-        return Collections.emptyList();
     }
 
     private <T> void parseAll(Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser, Consumer<T> setter) {
@@ -171,8 +144,35 @@ public final class CucumberPropertiesParser {
         }
     }
 
-    private <T> void parse(Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter) {
-        parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
+    private static <T> Function<String, Collection<T>> splitAndThenFlatMap(Function<String, Stream<T>> parse) {
+        return combined -> stream(combined.split(","))
+            .map(String::trim)
+            .filter(part -> !part.isEmpty())
+            .flatMap(parse)
+            .collect(toList());
+    }
+
+    private static Stream<FeatureWithLines> parseFeatureFile(String property) {
+        if (property.startsWith("@")) {
+            return Stream.empty();
+        }
+        return Stream.of(FeatureWithLines.parse(property));
+    }
+
+    private static <T> Function<String, Collection<T>> splitAndMap(Function<String, T> parse) {
+        return combined -> stream(combined.split(","))
+            .map(String::trim)
+            .filter(part -> !part.isEmpty())
+            .map(parse)
+            .collect(toList());
+    }
+
+    private static Collection<FeatureWithLines> parseRerunFile(String property) {
+        if (property.startsWith("@")) {
+            Path rerunFile = Paths.get(property.substring(1));
+            return parseFeatureWithLinesFile(rerunFile);
+        }
+        return Collections.emptyList();
     }
 
 }

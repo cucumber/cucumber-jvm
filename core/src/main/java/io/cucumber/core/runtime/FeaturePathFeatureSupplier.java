@@ -30,7 +30,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
 
     private final Options featureOptions;
 
-    public FeaturePathFeatureSupplier(Supplier<ClassLoader> classLoader, Options featureOptions,  FeatureParser parser) {
+    public FeaturePathFeatureSupplier(Supplier<ClassLoader> classLoader, Options featureOptions, FeatureParser parser) {
         this.featureOptions = featureOptions;
         this.featureScanner = new ResourceScanner<>(
             classLoader,
@@ -113,6 +113,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
             int i = uri.lastIndexOf("/");
             return i > 0 ? uri.substring(i) : uri;
         }
+
     }
 
 }

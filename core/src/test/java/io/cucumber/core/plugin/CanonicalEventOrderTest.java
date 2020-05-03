@@ -16,7 +16,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,18 +31,6 @@ class CanonicalEventOrderTest {
     private static final int GREATER_THAN = 1;
 
     private final CanonicalEventOrder comparator = new CanonicalEventOrder();
-
-    private static Instant getInstant() {
-        return Instant.now();
-    }
-
-    private static Event createTestCaseEvent(final URI uri, final int line) {
-        final TestCase testCase = mock(TestCase.class);
-        given(testCase.getUri()).willReturn(uri);
-        given(testCase.getLocation()).willReturn(new Location(line, -1));
-        return new TestCaseStarted(getInstant(), testCase);
-    }
-
     private final Event runStarted = new TestRunStarted(getInstant());
     private final Event testRead = new TestSourceRead(getInstant(), URI.create("file:path/to.feature"), "source");
     private final Event testParsed = new TestSourceParsed(getInstant(), URI.create("file:path/to.feature"), Collections.emptyList());
@@ -53,6 +40,17 @@ class CanonicalEventOrderTest {
     private final Event feature1Case3Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 11);
     private final Event feature2Case1Started = createTestCaseEvent(URI.create("file:path/to/2.feature"), 1);
     private final Event runFinished = new TestRunFinished(getInstant());
+
+    private static Event createTestCaseEvent(final URI uri, final int line) {
+        final TestCase testCase = mock(TestCase.class);
+        given(testCase.getUri()).willReturn(uri);
+        given(testCase.getLocation()).willReturn(new Location(line, -1));
+        return new TestCaseStarted(getInstant(), testCase);
+    }
+
+    private static Instant getInstant() {
+        return Instant.now();
+    }
 
     @Test
     void verifyTestRunStartedSortedCorrectly() {

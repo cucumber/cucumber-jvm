@@ -41,15 +41,38 @@ class JUnitFormatterTest {
     private final List<Answer<Object>> hookActions = new ArrayList<>();
     private Duration stepDuration = null;
 
-    private static void assertXmlEqual(Object expected, Object actual) {
-        assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
-        assertThat(actual, valid(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/surefire-test-report-3.0.xsd")));
-    }
-
     @Test
     void featureSimpleTest() throws Exception {
         File report = runFeaturesWithJunitFormatter(singletonList("classpath:io/cucumber/core/plugin//JUnitFormatterTest_1.feature"));
         assertXmlEqual(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/JUnitFormatterTest_1.report.xml"), report);
+    }
+
+    private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
+        File report = File.createTempFile("cucumber-jvm-junit", "xml");
+
+        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder()
+            .addPluginName("junit:" + report.getAbsolutePath());
+        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
+
+        TestHelper.builder()
+            .withRuntimeArgs(options.build())
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceType(TestHelper.TimeServiceType.FIXED_INCREMENT)
+            .withTimeServiceIncrement(ZERO)
+            .build()
+            .run();
+
+        return report;
+    }
+
+    private static void assertXmlEqual(Object expected, Object actual) {
+        assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
+        assertThat(actual, valid(JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/surefire-test-report-3.0.xsd")));
     }
 
     @Test
@@ -97,6 +120,31 @@ class JUnitFormatterTest {
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
+    }
+
+    private String runFeaturesWithFormatter() throws IOException {
+        final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
+        final JUnitFormatter formatter = createJUnitFormatter(report);
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceIncrement(stepDuration)
+            .build()
+            .run();
+
+        Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
+        String formatterOutput = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return formatterOutput;
+    }
+
+    private JUnitFormatter createJUnitFormatter(final File report) throws IOException {
+        return new JUnitFormatter(new FileOutputStream(report));
     }
 
     @Test
@@ -169,6 +217,12 @@ class JUnitFormatterTest {
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
+    }
+
+    private String getStackTrace(Throwable exception) {
+        StringWriter sw = new StringWriter();
+        exception.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 
     @Test
@@ -538,60 +592,6 @@ class JUnitFormatterTest {
             "    </testcase>\n" +
             "</testsuite>\n";
         assertXmlEqual(expected, formatterOutput);
-    }
-
-    private File runFeaturesWithJunitFormatter(final List<String> featurePaths) throws IOException {
-        File report = File.createTempFile("cucumber-jvm-junit", "xml");
-
-        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder()
-            .addPluginName("junit:" + report.getAbsolutePath());
-        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
-
-        TestHelper.builder()
-            .withRuntimeArgs(options.build())
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withHookActions(hookActions)
-            .withTimeServiceType(TestHelper.TimeServiceType.FIXED_INCREMENT)
-            .withTimeServiceIncrement(ZERO)
-            .build()
-            .run();
-
-        return report;
-    }
-
-    private String runFeaturesWithFormatter() throws IOException {
-        final File report = File.createTempFile("cucumber-jvm-junit", ".xml");
-        final JUnitFormatter formatter = createJUnitFormatter(report);
-        TestHelper.builder()
-            .withFormatterUnderTest(formatter)
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDuration)
-            .build()
-            .run();
-
-        Scanner scanner = new Scanner(new FileInputStream(report), "UTF-8");
-        String formatterOutput = scanner.useDelimiter("\\A").next();
-        scanner.close();
-        return formatterOutput;
-    }
-
-    private JUnitFormatter createJUnitFormatter(final File report) throws IOException {
-        return new JUnitFormatter(new FileOutputStream(report));
-    }
-
-    private String getStackTrace(Throwable exception) {
-        StringWriter sw = new StringWriter();
-        exception.printStackTrace(new PrintWriter(sw));
-        return sw.toString();
     }
 
 }

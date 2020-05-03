@@ -59,12 +59,18 @@ public class FeaturePath {
         return parseAssumeFileScheme(featureIdentifier);
     }
 
-    private static URI parseProbableURI(String featureIdentifier) {
-        URI uri = URI.create(featureIdentifier);
-        if ("file".equals(uri.getScheme())) {
-            return parseAssumeFileScheme(uri.getSchemeSpecificPart());
-        }
-        return uri;
+    private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
+        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
+            && featureIdentifier.contains(File.separator);
+    }
+
+    private static String replaceNonStandardPathSeparator(String featureIdentifier) {
+        return featureIdentifier.replace(File.separatorChar, RESOURCE_SEPARATOR_CHAR);
+    }
+
+    private static URI parseAssumeFileScheme(String featureIdentifier) {
+        File featureFile = new File(featureIdentifier);
+        return featureFile.toURI();
     }
 
     private static boolean isWindowsOS() {
@@ -80,18 +86,12 @@ public class FeaturePath {
         return featureIdentifier.matches("^[a-zA-Z+.\\-]+:.*$");
     }
 
-    private static String replaceNonStandardPathSeparator(String featureIdentifier) {
-        return featureIdentifier.replace(File.separatorChar, RESOURCE_SEPARATOR_CHAR);
-    }
-
-    private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
-        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
-            && featureIdentifier.contains(File.separator);
-    }
-
-    private static URI parseAssumeFileScheme(String featureIdentifier) {
-        File featureFile = new File(featureIdentifier);
-        return featureFile.toURI();
+    private static URI parseProbableURI(String featureIdentifier) {
+        URI uri = URI.create(featureIdentifier);
+        if ("file".equals(uri.getScheme())) {
+            return parseAssumeFileScheme(uri.getSchemeSpecificPart());
+        }
+        return uri;
     }
 
     private static String normalize(final String value) {

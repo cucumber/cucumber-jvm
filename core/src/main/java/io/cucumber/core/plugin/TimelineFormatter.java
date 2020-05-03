@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.messages.internal.com.google.gson.annotations.SerializedName;
@@ -118,6 +117,10 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 //            "****************************************\n");
     }
 
+    private String getId(final TestCaseEvent testCaseEvent) {
+        return testCaseEvent.getTestCase().getId().toString();
+    }
+
     private void appendAsJsonToJs(final Gson gson, final NiceAppendable out, final String pushTo, final Collection<?> content) {
         out.append("CucumberHTML.").append(pushTo).append(".pushArray(");
         gson.toJson(content, out);
@@ -166,11 +169,22 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
     }
 
-    private String getId(final TestCaseEvent testCaseEvent) {
-        return testCaseEvent.getTestCase().getId().toString();
+    static class GroupData {
+
+        @SerializedName("id")
+        final long id;
+        @SerializedName("content")
+        final String content;
+
+        GroupData(Thread thread) {
+            id = thread.getId();
+            content = thread.toString();
+        }
+
     }
 
     class TestData {
+
         @SerializedName("id")
         final String id;
         @SerializedName("feature")
@@ -179,16 +193,16 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         final String scenario;
         @SerializedName("start")
         final long startTime;
-        @SerializedName("end")
-        long endTime;
         @SerializedName("group")
         final long threadId;
         @SerializedName("content")
         final String content = ""; //Replaced in JS file
-        @SerializedName("className")
-        String className;
         @SerializedName("tags")
         final String tags;
+        @SerializedName("end")
+        long endTime;
+        @SerializedName("className")
+        String className;
 
         TestData(final TestCaseStarted started, final Long threadId) {
             this.id = getId(started);
@@ -228,18 +242,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.endTime = event.getInstant().toEpochMilli();
             this.className = event.getResult().getStatus().name().toLowerCase(ROOT);
         }
-    }
 
-    static class GroupData {
-        @SerializedName("id")
-        final long id;
-        @SerializedName("content")
-        final String content;
-
-        GroupData(Thread thread) {
-            id = thread.getId();
-            content = thread.toString();
-        }
     }
 
 }

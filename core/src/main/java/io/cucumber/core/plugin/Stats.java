@@ -25,19 +25,20 @@ import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 class Stats implements ConcurrentEventListener, ColorAware {
+
     private static final long ONE_SECOND = SECONDS.toNanos(1);
     private static final long ONE_MINUTE = 60 * ONE_SECOND;
     private final SubCounts scenarioSubCounts = new SubCounts();
     private final SubCounts stepSubCounts = new SubCounts();
-    private Instant startTime = Instant.EPOCH;
-    private Duration totalDuration = Duration.ZERO;
-    private Formats formats = new AnsiFormats();
     private final Locale locale;
     private final List<String> failedScenarios = new ArrayList<>();
     private final List<String> ambiguousScenarios = new ArrayList<>();
     private final List<String> pendingScenarios = new ArrayList<>();
     private final List<String> undefinedScenarios = new ArrayList<>();
     private final List<Throwable> errors = new ArrayList<>();
+    private Instant startTime = Instant.EPOCH;
+    private Duration totalDuration = Duration.ZERO;
+    private Formats formats = new AnsiFormats();
 
     Stats() {
         this(Locale.getDefault());
@@ -62,6 +63,89 @@ class Stats implements ConcurrentEventListener, ColorAware {
         publisher.registerHandlerFor(TestStepFinished.class, this::addStepResult);
         publisher.registerHandlerFor(TestCaseFinished.class, this::addScenario);
         publisher.registerHandlerFor(TestRunFinished.class, this::setFinishTime);
+    }
+
+    private void setStartTime(TestRunStarted event) {
+        setStartTime(event.getInstant());
+    }
+
+    private void addStepResult(TestStepFinished event) {
+        Result result = event.getResult();
+        if (result.getError() != null) {
+            addError(result.getError());
+        }
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            addStep(result.getStatus());
+        }
+    }
+
+    private void addScenario(TestCaseFinished event) {
+        TestCase testCase = event.getTestCase();
+        String location = testCase.getUri() + ":" + testCase.getLocation().getLine();
+        String scenarioDesignation = location + "# " + testCase.getName();
+        addScenario(event.getResult().getStatus(), scenarioDesignation);
+    }
+
+    private void setFinishTime(TestRunFinished event) {
+        setFinishTime(event.getInstant());
+    }
+
+    void setStartTime(Instant startTime) {
+        this.startTime = startTime;
+    }
+
+    private void addError(Throwable error) {
+        errors.add(error);
+    }
+
+    void addStep(Status resultStatus) {
+        addResultToSubCount(stepSubCounts, resultStatus);
+    }
+
+    void addScenario(Status resultStatus, String scenarioDesignation) {
+        addResultToSubCount(scenarioSubCounts, resultStatus);
+        switch (resultStatus) {
+            case FAILED:
+                failedScenarios.add(scenarioDesignation);
+                break;
+            case AMBIGUOUS:
+                ambiguousScenarios.add(scenarioDesignation);
+                break;
+            case PENDING:
+                pendingScenarios.add(scenarioDesignation);
+                break;
+            case UNDEFINED:
+                undefinedScenarios.add(scenarioDesignation);
+                break;
+            default:
+                // intentionally left blank
+        }
+    }
+
+    void setFinishTime(Instant finishTime) {
+        this.totalDuration = Duration.between(startTime, finishTime);
+    }
+
+    private void addResultToSubCount(SubCounts subCounts, Status resultStatus) {
+        switch (resultStatus) {
+            case FAILED:
+                subCounts.failed++;
+                break;
+            case AMBIGUOUS:
+                subCounts.ambiguous++;
+                break;
+            case PENDING:
+                subCounts.pending++;
+                break;
+            case UNDEFINED:
+                subCounts.undefined++;
+                break;
+            case SKIPPED:
+                subCounts.skipped++;
+                break;
+            default:
+                subCounts.passed++;
+        }
     }
 
     public List<Throwable> getErrors() {
@@ -151,91 +235,8 @@ class Stats implements ConcurrentEventListener, ColorAware {
         return name.substring(0, 1) + name.substring(1).toLowerCase(ROOT);
     }
 
-    void addStep(Status resultStatus) {
-        addResultToSubCount(stepSubCounts, resultStatus);
-    }
-
-    private void addError(Throwable error) {
-        errors.add(error);
-    }
-
-    void setStartTime(Instant startTime) {
-        this.startTime = startTime;
-    }
-
-    private void setStartTime(TestRunStarted event) {
-        setStartTime(event.getInstant());
-    }
-
-    void setFinishTime(Instant finishTime) {
-        this.totalDuration = Duration.between(startTime, finishTime);
-    }
-
-    private void setFinishTime(TestRunFinished event) {
-        setFinishTime(event.getInstant());
-    }
-
-    private void addResultToSubCount(SubCounts subCounts, Status resultStatus) {
-        switch (resultStatus) {
-            case FAILED:
-                subCounts.failed++;
-                break;
-            case AMBIGUOUS:
-                subCounts.ambiguous++;
-                break;
-            case PENDING:
-                subCounts.pending++;
-                break;
-            case UNDEFINED:
-                subCounts.undefined++;
-                break;
-            case SKIPPED:
-                subCounts.skipped++;
-                break;
-            default:
-                subCounts.passed++;
-        }
-    }
-
-    void addScenario(Status resultStatus, String scenarioDesignation) {
-        addResultToSubCount(scenarioSubCounts, resultStatus);
-        switch (resultStatus) {
-            case FAILED:
-                failedScenarios.add(scenarioDesignation);
-                break;
-            case AMBIGUOUS:
-                ambiguousScenarios.add(scenarioDesignation);
-                break;
-            case PENDING:
-                pendingScenarios.add(scenarioDesignation);
-                break;
-            case UNDEFINED:
-                undefinedScenarios.add(scenarioDesignation);
-                break;
-            default:
-                // intentionally left blank
-        }
-    }
-
-    private void addStepResult(TestStepFinished event) {
-        Result result = event.getResult();
-        if (result.getError() != null) {
-            addError(result.getError());
-        }
-        if (event.getTestStep() instanceof PickleStepTestStep) {
-            addStep(result.getStatus());
-        }
-    }
-
-    private void addScenario(TestCaseFinished event) {
-        TestCase testCase = event.getTestCase();
-        String location = testCase.getUri() + ":" + testCase.getLocation().getLine();
-        String scenarioDesignation = location + "# " + testCase.getName();
-        addScenario(event.getResult().getStatus(), scenarioDesignation);
-    }
-
-
     static class SubCounts {
+
         public int passed = 0;
         public int failed = 0;
         public int ambiguous = 0;
@@ -246,5 +247,7 @@ class Stats implements ConcurrentEventListener, ColorAware {
         int getTotal() {
             return passed + failed + ambiguous + skipped + pending + undefined;
         }
+
     }
+
 }

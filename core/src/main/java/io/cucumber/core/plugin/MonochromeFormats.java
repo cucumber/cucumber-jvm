@@ -9,4 +9,5 @@ final class MonochromeFormats implements Formats {
     public String up(int n) {
         return "";
     }
+
 }

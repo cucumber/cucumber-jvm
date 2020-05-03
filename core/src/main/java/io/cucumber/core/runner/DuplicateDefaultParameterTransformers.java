@@ -8,6 +8,7 @@ import java.util.List;
 import static java.util.stream.Collectors.joining;
 
 class DuplicateDefaultParameterTransformers extends CucumberException {
+
     DuplicateDefaultParameterTransformers(List<DefaultParameterTransformerDefinition> definitions) {
         super(createMessage(definitions));
     }
@@ -17,4 +18,5 @@ class DuplicateDefaultParameterTransformers extends CucumberException {
             .map(d -> d.getLocation())
             .collect(joining("\n - ", "\n - ", "\n"));
     }
+
 }

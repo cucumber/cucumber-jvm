@@ -85,14 +85,6 @@ public class TestHelper {
         return result(fromLowerCaseName(status));
     }
 
-    public static Result result(String status, Throwable error) {
-        return result(fromLowerCaseName(status), error);
-    }
-
-    private static Status fromLowerCaseName(String lowerCaseName) {
-        return Status.valueOf(lowerCaseName.toUpperCase(ROOT));
-    }
-
     public static Result result(Status status) {
         switch (status) {
             case FAILED:
@@ -106,8 +98,49 @@ public class TestHelper {
         }
     }
 
+    private static Status fromLowerCaseName(String lowerCaseName) {
+        return Status.valueOf(lowerCaseName.toUpperCase(ROOT));
+    }
+
     public static Result result(Status status, Throwable error) {
         return new Result(status, Duration.ZERO, error);
+    }
+
+    private static TestAbortedException mockAssertionFailedError() {
+        class MockedTestAbortedException extends TestAbortedException {
+
+            MockedTestAbortedException() {
+                super("the message");
+            }
+
+            @Override
+            public void printStackTrace(PrintStream s) {
+                s.print("the stack trace");
+            }
+
+            @Override
+            public void printStackTrace(PrintWriter s) {
+                s.print("the stack trace");
+            }
+
+        }
+        return new MockedTestAbortedException();
+    }
+
+    private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
+        AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
+        Answer<Object> printStackTraceHandler = invocation -> {
+            PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+            writer.print("the stack trace");
+            return null;
+        };
+        doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
+        when(exception.getMessage()).thenReturn("the message");
+        return exception;
+    }
+
+    public static Result result(String status, Throwable error) {
+        return result(fromLowerCaseName(status), error);
     }
 
     public static Answer<Object> createWriteHookAction(final String output) {
@@ -133,37 +166,6 @@ public class TestHelper {
             }
             return null;
         };
-    }
-
-    private static TestAbortedException mockAssertionFailedError() {
-        class MockedTestAbortedException extends TestAbortedException {
-            MockedTestAbortedException() {
-                super("the message");
-            }
-
-            @Override
-            public void printStackTrace(PrintStream s) {
-                s.print("the stack trace");
-            }
-
-            @Override
-            public void printStackTrace(PrintWriter s) {
-                s.print("the stack trace");
-            }
-        }
-        return new MockedTestAbortedException();
-    }
-
-    private static AmbiguousStepDefinitionsException mockAmbiguousStepDefinitionException() {
-        AmbiguousStepDefinitionsException exception = mock(AmbiguousStepDefinitionsException.class);
-        Answer<Object> printStackTraceHandler = invocation -> {
-            PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
-            writer.print("the stack trace");
-            return null;
-        };
-        doAnswer(printStackTraceHandler).when(exception).printStackTrace((PrintWriter) any());
-        when(exception.getMessage()).thenReturn("the message");
-        return exception;
     }
 
     public static SimpleEntry<String, Result> hookEntry(String type, Result result) {
@@ -235,15 +237,6 @@ public class TestHelper {
         private final List<String> hookLocations;
         private final List<Answer<Object>> hookActions;
 
-        TestHelperBackendSupplier(List<Feature> features, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
-            this.features = features;
-            this.stepsToResult = stepsToResult;
-            this.stepsToLocation = stepsToLocation;
-            this.hooks = hooks;
-            this.hookLocations = hookLocations;
-            this.hookActions = hookActions;
-        }
-
         public TestHelperBackendSupplier(List<Feature> features) {
             this(
                 features,
@@ -253,6 +246,21 @@ public class TestHelper {
                 Collections.emptyList(),
                 Collections.emptyList()
             );
+        }
+
+        TestHelperBackendSupplier(List<Feature> features, Map<String, Result> stepsToResult, Map<String, String> stepsToLocation, List<SimpleEntry<String, Result>> hooks, List<String> hookLocations, List<Answer<Object>> hookActions) {
+            this.features = features;
+            this.stepsToResult = stepsToResult;
+            this.stepsToLocation = stepsToLocation;
+            this.hooks = hooks;
+            this.hookLocations = hookLocations;
+            this.hookActions = hookActions;
+        }
+
+        @Override
+        public void loadGlue(Glue glue, List<URI> gluePaths) {
+            mockSteps(glue, features, stepsToResult, stepsToLocation);
+            mockHooks(glue, hooks, hookLocations, hookActions);
         }
 
         private static void mockSteps(Glue glue, List<Feature> features,
@@ -314,34 +322,6 @@ public class TestHelper {
             }
         }
 
-        private static Result getResultWithDefaultPassed(Map<String, Result> stepsToResult, String step) {
-            return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(PASSED, ZERO, null);
-        }
-
-        private static boolean containsStep(List<Step> steps, Step step) {
-            for (Step definedSteps : steps) {
-                if (definedSteps.getText().equals(step.getText())
-                    && (definedSteps.getArgument() == null) == (step.getArgument() == null)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static Type[] mapArgumentToTypes(Step step) {
-            Type[] types = new Type[0];
-            StepArgument argument = step.getArgument();
-            if (argument == null) {
-                return types;
-            } else if (argument instanceof DocStringArgument) {
-                types = new Type[]{String.class};
-            } else if (argument instanceof DataTableArgument) {
-                types = new Type[]{DataTable.class};
-            }
-            return types;
-        }
-
         private static void mockHooks(Glue glue, final List<SimpleEntry<String, Result>> hooks,
                                       final List<String> hookLocations,
                                       final List<Answer<Object>> hookActions) {
@@ -368,6 +348,34 @@ public class TestHelper {
             }
         }
 
+        private static boolean containsStep(List<Step> steps, Step step) {
+            for (Step definedSteps : steps) {
+                if (definedSteps.getText().equals(step.getText())
+                    && (definedSteps.getArgument() == null) == (step.getArgument() == null)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static Result getResultWithDefaultPassed(Map<String, Result> stepsToResult, String step) {
+            return stepsToResult.containsKey(step) ? stepsToResult.get(step) : new Result(PASSED, ZERO, null);
+        }
+
+        private static Type[] mapArgumentToTypes(Step step) {
+            Type[] types = new Type[0];
+            StepArgument argument = step.getArgument();
+            if (argument == null) {
+                return types;
+            } else if (argument instanceof DocStringArgument) {
+                types = new Type[]{String.class};
+            } else if (argument instanceof DataTableArgument) {
+                types = new Type[]{DataTable.class};
+            }
+            return types;
+        }
+
         private static void mockHook(final SimpleEntry<String, Result> hookEntry,
                                      final String hookLocation,
                                      final Answer<Object> action,
@@ -376,7 +384,7 @@ public class TestHelper {
                                      final List<HookDefinition> beforeStepHooks,
                                      final List<HookDefinition> afterStepHooks) {
             HookDefinition hook = mock(HookDefinition.class);
-            if(hookLocation == null) {
+            if (hookLocation == null) {
                 throw new RuntimeException("hookLocation cannot be null");
             }
             when(hook.getTagExpression()).thenReturn("");
@@ -419,15 +427,10 @@ public class TestHelper {
             }
         }
 
-        @Override
-        public void loadGlue(Glue glue, List<URI> gluePaths) {
-            mockSteps(glue, features, stepsToResult, stepsToLocation);
-            mockHooks(glue, hooks, hookLocations, hookActions);
-        }
-
     }
 
     public static final class Builder {
+
         private final TestHelper instance = new TestHelper();
 
         private Builder() {
@@ -517,6 +520,7 @@ public class TestHelper {
         public TestHelper build() {
             return this.instance;
         }
+
     }
 
 }

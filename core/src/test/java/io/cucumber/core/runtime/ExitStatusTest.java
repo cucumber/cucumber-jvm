@@ -26,25 +26,20 @@ class ExitStatusTest {
     private EventBus bus;
     private ExitStatus exitStatus;
 
-
-    private void createNonStrictWipExitStatus() {
-        createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
+    @Test
+    void should_pass_if_no_features_are_found() {
+        createStrictRuntime();
+        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
-    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
-        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
+    private void createStrictRuntime() {
+        createExitStatus(new RuntimeOptionsBuilder().build());
     }
 
     private void createExitStatus(RuntimeOptions runtimeOptions) {
         this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         exitStatus = new ExitStatus(runtimeOptions);
         exitStatus.setEventPublisher(bus);
-    }
-
-    @Test
-    void should_pass_if_no_features_are_found() {
-        createStrictRuntime();
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
@@ -57,6 +52,10 @@ class ExitStatusTest {
 
     private void createStrictWipRuntime() {
         createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
+    }
+
+    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
+        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
     @Test
@@ -118,6 +117,10 @@ class ExitStatusTest {
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
+    private void createNonStrictWipExitStatus() {
+        createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
+    }
+
     @Test
     void wip_with_undefined_scenarios() {
         createStrictWipRuntime();
@@ -131,10 +134,6 @@ class ExitStatusTest {
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    private void createStrictRuntime() {
-        createExitStatus(new RuntimeOptionsBuilder().build());
     }
 
     @Test

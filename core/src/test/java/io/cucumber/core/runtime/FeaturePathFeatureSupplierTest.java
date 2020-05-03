@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FeaturePathFeatureSupplierTest {
 
-    private LogRecordListener logRecordListener;
     private final Supplier<ClassLoader> classLoader = FeaturePathFeatureSupplierTest.class::getClassLoader;
     private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+    private LogRecordListener logRecordListener;
 
     @BeforeEach
     void setup() {

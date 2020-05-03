@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.Collections;
 
 final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatch {
+
     private final AmbiguousStepDefinitionsException exception;
 
     AmbiguousPickleStepDefinitionsMatch(URI uri, Step step, AmbiguousStepDefinitionsException e) {
@@ -23,4 +24,5 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
     public void dryRunStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
         runStep(state);
     }
+
 }

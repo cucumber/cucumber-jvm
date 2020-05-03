@@ -3,9 +3,9 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -61,6 +61,18 @@ class HookOrderTest {
         inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
         inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
         inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
+    }
+
+    private List<HookDefinition> mockHooks(int... ordering) {
+        List<HookDefinition> hooks = new ArrayList<>();
+        for (int order : ordering) {
+            HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
+            when(hook.getOrder()).thenReturn(order);
+            when(hook.getTagExpression()).thenReturn("");
+            when(hook.getLocation()).thenReturn("Mock location");
+            hooks.add(hook);
+        }
+        return hooks;
     }
 
     @Test
@@ -178,18 +190,6 @@ class HookOrderTest {
         inOrder.verify(backend2Hooks.get(2)).execute(ArgumentMatchers.any());
         inOrder.verify(backend1Hooks.get(1)).execute(ArgumentMatchers.any());
         inOrder.verify(backend2Hooks.get(1)).execute(ArgumentMatchers.any());
-    }
-
-    private List<HookDefinition> mockHooks(int... ordering) {
-        List<HookDefinition> hooks = new ArrayList<>();
-        for (int order : ordering) {
-            HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
-            when(hook.getOrder()).thenReturn(order);
-            when(hook.getTagExpression()).thenReturn("");
-            when(hook.getLocation()).thenReturn("Mock location");
-            hooks.add(hook);
-        }
-        return hooks;
     }
 
 }

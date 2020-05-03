@@ -49,19 +49,20 @@ import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
 
 public final class JsonFormatter implements EventListener {
+
     private static final String before = "before";
     private static final String after = "after";
-    private URI currentFeatureFile;
     private final List<Map<String, Object>> featureMaps = new ArrayList<>();
+    private final Map<String, Object> currentBeforeStepHookList = new HashMap<>();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final OutputStreamWriter out;
+    private final TestSourcesModel testSources = new TestSourcesModel();
+    private URI currentFeatureFile;
     private List<Map<String, Object>> currentElementsList;
     private Map<String, Object> currentElementMap;
     private Map<String, Object> currentTestCaseMap;
     private List<Map<String, Object>> currentStepsList;
     private Map<String, Object> currentStepOrHookMap;
-    private final Map<String, Object> currentBeforeStepHookList = new HashMap<>();
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final OutputStreamWriter out;
-    private final TestSourcesModel testSources = new TestSourcesModel();
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JsonFormatter(OutputStream out) {
@@ -126,17 +127,17 @@ public final class JsonFormatter implements EventListener {
         }
     }
 
+    private void handleTestStepFinished(TestStepFinished event) {
+        currentStepOrHookMap.put("match", createMatchMap(event.getTestStep(), event.getResult()));
+        currentStepOrHookMap.put("result", createResultMap(event.getResult()));
+    }
+
     private void handleWrite(WriteEvent event) {
         addOutputToHookMap(event.getText());
     }
 
     private void handleEmbed(EmbedEvent event) {
         addEmbeddingToHookMap(event.getData(), event.getMediaType(), event.getName());
-    }
-
-    private void handleTestStepFinished(TestStepFinished event) {
-        currentStepOrHookMap.put("match", createMatchMap(event.getTestStep(), event.getResult()));
-        currentStepOrHookMap.put("result", createResultMap(event.getResult()));
     }
 
     private void finishReport(TestRunFinished event) {
@@ -151,69 +152,6 @@ public final class JsonFormatter implements EventListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private Map<String, Object> createDummyFeatureForFailure(TestRunFinished event) {
-        Throwable exception = event.getResult().getError();
-
-        Map<String, Object> feature = new LinkedHashMap<>();
-        feature.put("line", 1);
-        {
-            Map<String, Object> scenario = new LinkedHashMap<>();
-            feature.put("elements", singletonList(scenario));
-
-            scenario.put("start_timestamp", getDateTimeFromTimeStamp(event.getInstant()));
-            scenario.put("line", 2);
-            scenario.put("name", "Could not execute Cucumber");
-            scenario.put("description", "");
-            scenario.put("id", "failure;could-not-execute-cucumber");
-            scenario.put("type", "scenario");
-            scenario.put("keyword", "Scenario");
-
-            Map<String, Object> when = new LinkedHashMap<>();
-            Map<String, Object> then = new LinkedHashMap<>();
-            scenario.put("steps", Arrays.asList(when, then));
-            {
-
-                {
-                    Map<String, Object> whenResult = new LinkedHashMap<>();
-                    when.put("result", whenResult);
-                    whenResult.put("duration", 0);
-                    whenResult.put("status", "passed");
-                }
-                when.put("line", 3);
-                when.put("name", "Cucumber could not execute");
-                Map<String, Object> whenMatch = new LinkedHashMap<>();
-                when.put("match", whenMatch);
-                whenMatch.put("arguments", new ArrayList<>());
-                whenMatch.put("location", "io.cucumber.core.Failure.cucumber_could_not_execute()");
-                when.put("keyword", "When ");
-
-                {
-                    Map<String, Object> thenResult = new LinkedHashMap<>();
-                    then.put("result", thenResult);
-                    thenResult.put("duration", 0);
-                    thenResult.put("error_message", exception.getMessage());
-                    thenResult.put("status", "failed");
-                }
-                then.put("line", 4);
-                then.put("name", "Cucumber will report this error:");
-                Map<String, Object> thenMatch = new LinkedHashMap<>();
-                then.put("match", thenMatch);
-                thenMatch.put("arguments", new ArrayList<>());
-                thenMatch.put("location", "io.cucumber.core.Failure.cucumber_reports_this_error()");
-                then.put("keyword", "Then ");
-            }
-
-            feature.put("name", "Test run failed");
-            feature.put("description", "There were errors during the execution");
-            feature.put("id", "failure");
-            feature.put("keyword", "Feature");
-            feature.put("uri", "classpath:io/cucumber/core/failure.feature");
-            feature.put("tags", new ArrayList<>());
-        }
-
-        return feature;
     }
 
     private Map<String, Object> createFeatureMap(TestCase testCase) {
@@ -321,24 +259,6 @@ public final class JsonFormatter implements EventListener {
         return stepMap;
     }
 
-    private Map<String, Object> createDocStringMap(DocStringArgument docString) {
-        Map<String, Object> docStringMap = new HashMap<>();
-        docStringMap.put("value", docString.getContent());
-        docStringMap.put("line", docString.getLine());
-        docStringMap.put("content_type", docString.getMediaType());
-        return docStringMap;
-    }
-
-    private List<Map<String, List<String>>> createDataTableList(DataTableArgument argument) {
-        List<Map<String, List<String>>> rowList = new ArrayList<>();
-        for (List<String> row : argument.cells()) {
-            Map<String, List<String>> rowMap = new HashMap<>();
-            rowMap.put("cells", new ArrayList<>(row));
-            rowList.add(rowMap);
-        }
-        return rowList;
-    }
-
     private Map<String, Object> createHookStep(HookTestStep hookTestStep) {
         return new HashMap<>();
     }
@@ -372,31 +292,6 @@ public final class JsonFormatter implements EventListener {
             mapToAddTo.put(hookName, new ArrayList<Map<String, Object>>());
         }
         ((List<Map<String, Object>>) mapToAddTo.get(hookName)).add(currentStepOrHookMap);
-    }
-
-    private void addOutputToHookMap(String text) {
-        if (!currentStepOrHookMap.containsKey("output")) {
-            currentStepOrHookMap.put("output", new ArrayList<String>());
-        }
-        ((List<String>) currentStepOrHookMap.get("output")).add(text);
-    }
-
-    private void addEmbeddingToHookMap(byte[] data, String mediaType, String name) {
-        if (!currentStepOrHookMap.containsKey("embeddings")) {
-            currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
-        }
-        Map<String, Object> embedMap = createEmbeddingMap(data, mediaType, name);
-        ((List<Map<String, Object>>) currentStepOrHookMap.get("embeddings")).add(embedMap);
-    }
-
-    private Map<String, Object> createEmbeddingMap(byte[] data, String mediaType, String name) {
-        Map<String, Object> embedMap = new HashMap<>();
-        embedMap.put("mime_type", mediaType); // Should be media-type but not worth migrating for
-        embedMap.put("data", Base64.getEncoder().encodeToString(data));
-        if (name != null) {
-            embedMap.put("name", name);
-        }
-        return embedMap;
     }
 
     private Map<String, Object> createMatchMap(TestStep step, Result result) {
@@ -434,10 +329,116 @@ public final class JsonFormatter implements EventListener {
         return resultMap;
     }
 
+    private void addOutputToHookMap(String text) {
+        if (!currentStepOrHookMap.containsKey("output")) {
+            currentStepOrHookMap.put("output", new ArrayList<String>());
+        }
+        ((List<String>) currentStepOrHookMap.get("output")).add(text);
+    }
+
+    private void addEmbeddingToHookMap(byte[] data, String mediaType, String name) {
+        if (!currentStepOrHookMap.containsKey("embeddings")) {
+            currentStepOrHookMap.put("embeddings", new ArrayList<Map<String, Object>>());
+        }
+        Map<String, Object> embedMap = createEmbeddingMap(data, mediaType, name);
+        ((List<Map<String, Object>>) currentStepOrHookMap.get("embeddings")).add(embedMap);
+    }
+
+    private Map<String, Object> createDummyFeatureForFailure(TestRunFinished event) {
+        Throwable exception = event.getResult().getError();
+
+        Map<String, Object> feature = new LinkedHashMap<>();
+        feature.put("line", 1);
+        {
+            Map<String, Object> scenario = new LinkedHashMap<>();
+            feature.put("elements", singletonList(scenario));
+
+            scenario.put("start_timestamp", getDateTimeFromTimeStamp(event.getInstant()));
+            scenario.put("line", 2);
+            scenario.put("name", "Could not execute Cucumber");
+            scenario.put("description", "");
+            scenario.put("id", "failure;could-not-execute-cucumber");
+            scenario.put("type", "scenario");
+            scenario.put("keyword", "Scenario");
+
+            Map<String, Object> when = new LinkedHashMap<>();
+            Map<String, Object> then = new LinkedHashMap<>();
+            scenario.put("steps", Arrays.asList(when, then));
+            {
+
+                {
+                    Map<String, Object> whenResult = new LinkedHashMap<>();
+                    when.put("result", whenResult);
+                    whenResult.put("duration", 0);
+                    whenResult.put("status", "passed");
+                }
+                when.put("line", 3);
+                when.put("name", "Cucumber could not execute");
+                Map<String, Object> whenMatch = new LinkedHashMap<>();
+                when.put("match", whenMatch);
+                whenMatch.put("arguments", new ArrayList<>());
+                whenMatch.put("location", "io.cucumber.core.Failure.cucumber_could_not_execute()");
+                when.put("keyword", "When ");
+
+                {
+                    Map<String, Object> thenResult = new LinkedHashMap<>();
+                    then.put("result", thenResult);
+                    thenResult.put("duration", 0);
+                    thenResult.put("error_message", exception.getMessage());
+                    thenResult.put("status", "failed");
+                }
+                then.put("line", 4);
+                then.put("name", "Cucumber will report this error:");
+                Map<String, Object> thenMatch = new LinkedHashMap<>();
+                then.put("match", thenMatch);
+                thenMatch.put("arguments", new ArrayList<>());
+                thenMatch.put("location", "io.cucumber.core.Failure.cucumber_reports_this_error()");
+                then.put("keyword", "Then ");
+            }
+
+            feature.put("name", "Test run failed");
+            feature.put("description", "There were errors during the execution");
+            feature.put("id", "failure");
+            feature.put("keyword", "Feature");
+            feature.put("uri", "classpath:io/cucumber/core/failure.feature");
+            feature.put("tags", new ArrayList<>());
+        }
+
+        return feature;
+    }
+
     private String getDateTimeFromTimeStamp(Instant instant) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             .withZone(ZoneOffset.UTC);
         return formatter.format(instant);
+    }
+
+    private Map<String, Object> createDocStringMap(DocStringArgument docString) {
+        Map<String, Object> docStringMap = new HashMap<>();
+        docStringMap.put("value", docString.getContent());
+        docStringMap.put("line", docString.getLine());
+        docStringMap.put("content_type", docString.getMediaType());
+        return docStringMap;
+    }
+
+    private List<Map<String, List<String>>> createDataTableList(DataTableArgument argument) {
+        List<Map<String, List<String>>> rowList = new ArrayList<>();
+        for (List<String> row : argument.cells()) {
+            Map<String, List<String>> rowMap = new HashMap<>();
+            rowMap.put("cells", new ArrayList<>(row));
+            rowList.add(rowMap);
+        }
+        return rowList;
+    }
+
+    private Map<String, Object> createEmbeddingMap(byte[] data, String mediaType, String name) {
+        Map<String, Object> embedMap = new HashMap<>();
+        embedMap.put("mime_type", mediaType); // Should be media-type but not worth migrating for
+        embedMap.put("data", Base64.getEncoder().encodeToString(data));
+        if (name != null) {
+            embedMap.put("name", name);
+        }
+        return embedMap;
     }
 
 }

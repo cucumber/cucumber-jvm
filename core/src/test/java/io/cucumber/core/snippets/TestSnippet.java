@@ -7,6 +7,7 @@ import java.text.MessageFormat;
 import java.util.Map;
 
 public class TestSnippet implements Snippet {
+
     @Override
     public MessageFormat template() {
         return new MessageFormat("");
@@ -26,4 +27,5 @@ public class TestSnippet implements Snippet {
     public String escapePattern(String pattern) {
         return "";
     }
+
 }

@@ -68,61 +68,14 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         }
     }
 
-    private CucumberInvocationTargetException causedByCucumberInvocationTargetException(RuntimeException e) {
-        Throwable cause = e.getCause();
-        if (cause instanceof CucumberInvocationTargetException) {
-            return (CucumberInvocationTargetException) cause;
-        }
-        return null;
-    }
-
-    private Throwable couldNotInvokeStep(CucumberBackendException e, List<Object> result) {
-        String argumentTypes = createArgumentTypes(result);
-        return new CucumberException(String.format("" +
-                "Could not invoke step [%s] defined at '%s'.\n" +
-                "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (" + argumentTypes + ")", //TODO: Add doc URL
-            stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
-    }
-
-    private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
-        return new CucumberException(String.format("" +
-                "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears there was a problem with a hook or transformer definition.", //TODO: Add doc URL
-            stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
-    }
-
-    private String createArgumentTypes(List<Object> result) {
-        return result.stream()
-            .map(o -> o == null ? "null" : o.getClass().getName())
-            .collect(Collectors.joining(", "));
-    }
-
-    private CucumberException registerDataTableTypeInConfiguration(Exception e) {
-        return new CucumberException(String.format("" +
-                "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears you did not register a data table type.", //TODO: Add doc URL
-            stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
-    }
-
-
-    private CucumberException couldNotConvertArguments(Exception e) {
-        return new CucumberException(String.format(
-            "Could not convert arguments for step [%s] defined at '%s'.",
-            stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
-    }
-
     @Override
     public void dryRunStep(TestCaseState state) throws Throwable {
         // Do nothing
+    }
+
+    @Override
+    public String getCodeLocation() {
+        return stepDefinition.getLocation();
     }
 
     private CucumberException arityMismatch(int parameterCount) {
@@ -139,6 +92,63 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         ));
     }
 
+    private CucumberException registerDataTableTypeInConfiguration(Exception e) {
+        return new CucumberException(String.format("" +
+                "Could not convert arguments for step [%s] defined at '%s'.\n" +
+                "It appears you did not register a data table type.", //TODO: Add doc URL
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation()
+        ), e);
+    }
+
+    private CucumberInvocationTargetException causedByCucumberInvocationTargetException(RuntimeException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof CucumberInvocationTargetException) {
+            return (CucumberInvocationTargetException) cause;
+        }
+        return null;
+    }
+
+    private CucumberException couldNotConvertArguments(Exception e) {
+        return new CucumberException(String.format(
+            "Could not convert arguments for step [%s] defined at '%s'.",
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation()
+        ), e);
+    }
+
+    private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
+        return new CucumberException(String.format("" +
+                "Could not convert arguments for step [%s] defined at '%s'.\n" +
+                "It appears there was a problem with a hook or transformer definition.", //TODO: Add doc URL
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation()
+        ), e);
+    }
+
+    private Throwable couldNotInvokeStep(CucumberBackendException e, List<Object> result) {
+        String argumentTypes = createArgumentTypes(result);
+        return new CucumberException(String.format("" +
+                "Could not invoke step [%s] defined at '%s'.\n" +
+                "It appears there was a problem with the step definition.\n" +
+                "The converted arguments types were (" + argumentTypes + ")", //TODO: Add doc URL
+            stepDefinition.getPattern(),
+            stepDefinition.getLocation()
+        ), e);
+    }
+
+    private StackTraceElement getStepLocation() {
+        return new StackTraceElement("✽", step.getText(), uri.toString(), step.getLine());
+    }
+
+    private List<String> createArgumentsForErrorMessage() {
+        List<String> arguments = new ArrayList<>(getArguments().size());
+        for (Argument argument : getArguments()) {
+            arguments.add(argument.toString());
+        }
+        return arguments;
+    }
+
     private String formatArguments(List<String> arguments) {
         if (arguments.isEmpty()) {
             return ".\n";
@@ -151,28 +161,18 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         return formatted.toString();
     }
 
-    private List<String> createArgumentsForErrorMessage() {
-        List<String> arguments = new ArrayList<>(getArguments().size());
-        for (Argument argument : getArguments()) {
-            arguments.add(argument.toString());
-        }
-        return arguments;
+    private String createArgumentTypes(List<Object> result) {
+        return result.stream()
+            .map(o -> o == null ? "null" : o.getClass().getName())
+            .collect(Collectors.joining(", "));
     }
 
     public String getPattern() {
         return stepDefinition.getPattern();
     }
 
-    private StackTraceElement getStepLocation() {
-        return new StackTraceElement("✽", step.getText(), uri.toString(), step.getLine());
-    }
-
     StepDefinition getStepDefinition() {
         return stepDefinition;
     }
 
-    @Override
-    public String getCodeLocation() {
-        return stepDefinition.getLocation();
-    }
 }

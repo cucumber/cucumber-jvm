@@ -33,4 +33,5 @@ public interface ParameterInfo {
      * @return a type resolver
      */
     TypeResolver getTypeResolver();
+
 }

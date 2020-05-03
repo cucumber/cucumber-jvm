@@ -61,6 +61,34 @@ class JsonFormatterTest {
         assertThat(actual, sameJSONAs(expected));
     }
 
+    private String runFeaturesWithFormatter(final List<String> featurePaths) {
+        final HookDefinition hook = mock(HookDefinition.class);
+        when(hook.getTagExpression()).thenReturn("");
+
+        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
+            @Override
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+                glue.addBeforeHook(hook);
+
+            }
+        };
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
+        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
+        Runtime.builder()
+            .withRuntimeOptions(options.build())
+            .withEventBus(bus)
+            .withBackendSupplier(backendSupplier)
+            .withAdditionalPlugins(new JsonFormatter(out))
+            .build()
+            .run();
+
+        return new String(out.toByteArray(), UTF_8);
+    }
+
     @Test
     void featureWithOutlineTestParallel() throws Exception {
         List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature");
@@ -71,6 +99,32 @@ class JsonFormatterTest {
             .next();
 
         assertThat(actual, sameJSONAs(expected));
+    }
+
+    private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
+        final HookDefinition hook = mock(HookDefinition.class);
+        when(hook.getTagExpression()).thenReturn("");
+        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
+            @Override
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+                glue.addBeforeHook(hook);
+
+            }
+        };
+        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
+        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
+        Runtime.builder()
+            .withRuntimeOptions(options.build())
+            .withEventBus(bus)
+            .withBackendSupplier(backendSupplier)
+            .withAdditionalPlugins(new JsonFormatter(out))
+            .build()
+            .run();
+
+        return new String(out.toByteArray(), UTF_8);
     }
 
     @Test
@@ -120,6 +174,24 @@ class JsonFormatterTest {
             "  }\n" +
             "]";
         assertThat(formatterOutput, sameJSONAs(expected));
+    }
+
+    private String runFeaturesWithFormatter() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        TestHelper.builder()
+            .withFormatterUnderTest(new JsonFormatter(out))
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceIncrement(stepDuration)
+            .build()
+            .run();
+
+        return new String(out.toByteArray(), UTF_8);
     }
 
     @Test
@@ -1374,79 +1446,6 @@ class JsonFormatterTest {
             "  }\n" +
             "]";
         assertThat(formatterOutput, sameJSONAs(expected));
-    }
-
-    private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
-        final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
-        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addBeforeHook(hook);
-
-            }
-        };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
-        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
-        Runtime.builder()
-            .withRuntimeOptions(options.build())
-            .withEventBus(bus)
-            .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(new JsonFormatter(out))
-            .build()
-            .run();
-
-        return new String(out.toByteArray(), UTF_8);
-    }
-
-
-    private String runFeaturesWithFormatter(final List<String> featurePaths) {
-        final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
-
-        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addBeforeHook(hook);
-
-            }
-        };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
-        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
-        Runtime.builder()
-            .withRuntimeOptions(options.build())
-            .withEventBus(bus)
-            .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(new JsonFormatter(out))
-            .build()
-            .run();
-
-        return new String(out.toByteArray(), UTF_8);
-    }
-
-    private String runFeaturesWithFormatter() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        TestHelper.builder()
-            .withFormatterUnderTest(new JsonFormatter(out))
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDuration)
-            .build()
-            .run();
-
-        return new String(out.toByteArray(), UTF_8);
     }
 
 }

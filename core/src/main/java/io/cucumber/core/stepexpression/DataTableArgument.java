@@ -19,12 +19,13 @@ public final class DataTableArgument implements Argument {
         return tableType.transform(argument);
     }
 
-    private String getText() {
-        return DataTable.create(argument).toString();
-    }
-
     @Override
     public String toString() {
         return "Table:\n" + getText();
     }
+
+    private String getText() {
+        return DataTable.create(argument).toString();
+    }
+
 }

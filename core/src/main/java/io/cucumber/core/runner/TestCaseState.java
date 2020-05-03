@@ -81,6 +81,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             .build()
         );
     }
+
     @Override
     public void attach(String data, String mediaType, String name) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));

@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.time.Instant;
@@ -26,10 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 class UsageFormatterTest {
@@ -50,6 +45,13 @@ class UsageFormatterTest {
         assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
         assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
         assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ofNanos(12345L))));
+    }
+
+    private PickleStepTestStep mockTestStep() {
+        PickleStepTestStep testStep = mock(PickleStepTestStep.class, Mockito.RETURNS_MOCKS);
+        when(testStep.getPattern()).thenReturn("stepDef");
+        when(testStep.getStepText()).thenReturn("step");
+        return testStep;
     }
 
     @Test
@@ -239,13 +241,6 @@ class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
         Duration result = usageFormatter.calculateMedian(Collections.emptyList());
         assertThat(result, is(equalTo(Duration.ZERO)));
-    }
-
-    private PickleStepTestStep mockTestStep() {
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class, Mockito.RETURNS_MOCKS);
-        when(testStep.getPattern()).thenReturn("stepDef");
-        when(testStep.getStepText()).thenReturn("step");
-        return testStep;
     }
 
 }

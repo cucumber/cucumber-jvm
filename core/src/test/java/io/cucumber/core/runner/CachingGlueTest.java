@@ -48,40 +48,6 @@ class CachingGlueTest {
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
     private final CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
-    private static Step getPickleStep(String text) {
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + text + "\n"
-        );
-
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
-    private static Step getPickleStepWithSingleCellTable(String stepText, String cell) {
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + stepText + "\n" +
-            "       | " + cell + " |\n"
-        );
-
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
-    private static Step getPickleStepWithDocString(String stepText, String doc) {
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + stepText + "\n" +
-            "       \"\"\"\n" +
-            "       " + doc + "\n" +
-            "       \"\"\"\n"
-        );
-
-        return feature.getPickles().get(0).getSteps().get(0);
-    }
-
     @Test
     void throws_duplicate_error_on_dupe_stepdefs() {
         StepDefinition a = mock(StepDefinition.class);
@@ -210,6 +176,16 @@ class CachingGlueTest {
         assertThat(glue.stepDefinitionMatch(uri, pickleStep), is(nullValue()));
     }
 
+    private static Step getPickleStep(String text) {
+        Feature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + text + "\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
     @Test
     void returns_match_from_cache_if_single_found() throws AmbiguousStepDefinitionsException {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1");
@@ -268,6 +244,17 @@ class CachingGlueTest {
         assertThat(((DataTable) match2.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 2")));
     }
 
+    private static Step getPickleStepWithSingleCellTable(String stepText, String cell) {
+        Feature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + stepText + "\n" +
+            "       | " + cell + " |\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
+    }
+
     @Test
     void returns_match_from_cache_for_ste_with_doc_string() throws AmbiguousStepDefinitionsException {
         StepDefinition stepDefinition1 = new MockedStepDefinition("^pattern1", String.class);
@@ -297,6 +284,19 @@ class CachingGlueTest {
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(uri, pickleStep2);
         //check arguments
         assertThat(match2.getArguments().get(0).getValue(), is(equalTo("doc string 2")));
+    }
+
+    private static Step getPickleStepWithDocString(String stepText, String doc) {
+        Feature feature = TestFeatureParser.parse("" +
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given " + stepText + "\n" +
+            "       \"\"\"\n" +
+            "       " + doc + "\n" +
+            "       \"\"\"\n"
+        );
+
+        return feature.getPickles().get(0).getSteps().get(0);
     }
 
     @Test
@@ -364,6 +364,18 @@ class CachingGlueTest {
         checkAmbiguousCalled(uri);
     }
 
+    private void checkAmbiguousCalled(URI uri) {
+        boolean ambiguousCalled = false;
+        try {
+
+            glue.stepDefinitionMatch(uri, getPickleStep("pattern1"));
+        } catch (AmbiguousStepDefinitionsException e) {
+            assertThat(e.getMatches().size(), is(equalTo(2)));
+            ambiguousCalled = true;
+        }
+        assertTrue(ambiguousCalled);
+    }
+
     @Test
     void sorts_before_hooks_by_order() {
         HookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition(12);
@@ -415,18 +427,6 @@ class CachingGlueTest {
         assertThat(hooks, contains(hookDefinition2, hookDefinition1, hookDefinition3));
     }
 
-    private void checkAmbiguousCalled(URI uri) {
-        boolean ambiguousCalled = false;
-        try {
-
-            glue.stepDefinitionMatch(uri, getPickleStep("pattern1"));
-        } catch (AmbiguousStepDefinitionsException e) {
-            assertThat(e.getMatches().size(), is(equalTo(2)));
-            ambiguousCalled = true;
-        }
-        assertTrue(ambiguousCalled);
-    }
-
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
 
 
@@ -437,6 +437,7 @@ class CachingGlueTest {
         MockedScenarioScopedStepDefinition(String pattern, boolean transposed, Type... types) {
             super(pattern, transposed, types);
         }
+
     }
 
     private static class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
@@ -455,6 +456,7 @@ class CachingGlueTest {
         public String getLocation() {
             return "mocked data table type definition";
         }
+
     }
 
     private static class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
@@ -473,6 +475,7 @@ class CachingGlueTest {
         public String getLocation() {
             return "mocked parameter type location";
         }
+
     }
 
 
@@ -513,6 +516,7 @@ class CachingGlueTest {
         public int getOrder() {
             return order;
         }
+
     }
 
     private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
@@ -552,6 +556,7 @@ class CachingGlueTest {
         public int getOrder() {
             return order;
         }
+
     }
 
     private static class MockedStepDefinition extends StubStepDefinition {
@@ -559,6 +564,7 @@ class CachingGlueTest {
         MockedStepDefinition(String pattern, Type... types) {
             super(pattern, types);
         }
+
     }
 
     private static class MockedDefaultParameterTransformer implements DefaultParameterTransformerDefinition, ScenarioScoped {
@@ -577,6 +583,7 @@ class CachingGlueTest {
         public String getLocation() {
             return "mocked default parameter transformer";
         }
+
     }
 
     private static class MockedDefaultDataTableCellTransformer implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
@@ -595,6 +602,7 @@ class CachingGlueTest {
         public String getLocation() {
             return "mocked default data table cell transformer";
         }
+
     }
 
     private static class MockedDefaultDataTableEntryTransformer implements DefaultDataTableEntryTransformerDefinition, ScenarioScoped {
@@ -618,6 +626,7 @@ class CachingGlueTest {
         public String getLocation() {
             return "mocked default data table entry transformer";
         }
+
     }
 
     private static class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {

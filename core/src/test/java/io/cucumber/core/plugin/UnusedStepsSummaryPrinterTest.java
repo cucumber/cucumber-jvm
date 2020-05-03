@@ -1,10 +1,5 @@
 package io.cucumber.core.plugin;
 
-import java.io.ByteArrayOutputStream;
-import java.time.Clock;
-import java.time.Duration;
-import java.util.UUID;
-
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
@@ -16,9 +11,13 @@ import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.time.Clock;
+import java.time.Duration;
+import java.util.UUID;
+
 import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

@@ -54,13 +54,13 @@ public final class JUnitFormatter implements EventListener {
     private final Writer writer;
     private final Document document;
     private final Element rootElement;
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
     private Element root;
     private TestCase testCase;
     private URI currentFeatureFile = null;
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
     public JUnitFormatter(OutputStream out) {
         this.writer = new UTF8OutputStreamWriter(out);
@@ -75,12 +75,6 @@ public final class JUnitFormatter implements EventListener {
 
     private static String getUniqueTestNameForScenarioExample(String testCaseName, int exampleNumber) {
         return testCaseName + (testCaseName.contains(" ") ? " " : "_") + exampleNumber;
-    }
-
-    private static String calculateTotalDurationString(Duration result) {
-        DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        double duration = (double) result.toMillis() / MILLIS_PER_SECOND;
-        return numberFormat.format(duration);
     }
 
     @Override
@@ -115,18 +109,18 @@ public final class JUnitFormatter implements EventListener {
         increaseTestCount(rootElement);
     }
 
-    private void handleTestStepFinished(TestStepFinished event) {
-        if (event.getTestStep() instanceof PickleStepTestStep) {
-            testCase.steps.add((PickleStepTestStep) event.getTestStep());
-            testCase.results.add(event.getResult());
-        }
-    }
-
     private void handleTestCaseFinished(TestCaseFinished event) {
         if (testCase.steps.isEmpty()) {
             testCase.handleEmptyTestCase(document, root, event.getResult());
         } else {
             testCase.addTestCaseElement(document, root, event.getResult());
+        }
+    }
+
+    private void handleTestStepFinished(TestStepFinished event) {
+        if (event.getTestStep() instanceof PickleStepTestStep) {
+            testCase.steps.add((PickleStepTestStep) event.getTestStep());
+            testCase.results.add(event.getResult());
         }
     }
 
@@ -153,20 +147,26 @@ public final class JUnitFormatter implements EventListener {
         }
     }
 
-    private void closeQuietly(Closeable out) {
-        try {
-            out.close();
-        } catch (IOException ignored) {
-            // go gentle into that good night
-        }
-    }
-
     private void increaseTestCount(Element element) {
         int value = 0;
         if (element.hasAttribute("tests")) {
             value = Integer.parseInt(element.getAttribute("tests"));
         }
         element.setAttribute("tests", String.valueOf(++value));
+    }
+
+    private static String calculateTotalDurationString(Duration result) {
+        DecimalFormat numberFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+        double duration = (double) result.toMillis() / MILLIS_PER_SECOND;
+        return numberFormat.format(duration);
+    }
+
+    private void closeQuietly(Closeable out) {
+        try {
+            out.close();
+        } catch (IOException ignored) {
+            // go gentle into that good night
+        }
     }
 
     final class TestCase {
@@ -237,12 +237,6 @@ public final class JUnitFormatter implements EventListener {
             tc.appendChild(child);
         }
 
-        void handleEmptyTestCase(Document doc, Element tc, Result result) {
-            tc.setAttribute("time", calculateTotalDurationString(result.getDuration()));
-            Element child = createFailure(doc, new StringBuilder(), "The scenario has no steps", Exception.class);
-            tc.appendChild(child);
-        }
-
         private void addStepAndResultListing(StringBuilder sb) {
             for (int i = 0; i < steps.size(); i++) {
                 int length = sb.length();
@@ -265,16 +259,16 @@ public final class JUnitFormatter implements EventListener {
             sb.append(printStackTrace(failed.getError()));
         }
 
-        private Element createSkipped(Document doc, StringBuilder sb, String message) {
-            Element child = createElement(doc, sb, "skipped");
-            child.setAttribute("message", message);
-            return child;
-        }
-
         private Element createFailure(Document doc, StringBuilder sb, String message, Class<? extends Throwable> type) {
             Element child = createElement(doc, sb, "failure");
             child.setAttribute("message", message);
             child.setAttribute("type", type.getName());
+            return child;
+        }
+
+        private Element createSkipped(Document doc, StringBuilder sb, String message) {
+            Element child = createElement(doc, sb, "skipped");
+            child.setAttribute("message", message);
             return child;
         }
 
@@ -287,6 +281,13 @@ public final class JUnitFormatter implements EventListener {
             child.appendChild(doc.createCDATASection(normalizedLineEndings));
             return child;
         }
+
+        void handleEmptyTestCase(Document doc, Element tc, Result result) {
+            tc.setAttribute("time", calculateTotalDurationString(result.getDuration()));
+            Element child = createFailure(doc, new StringBuilder(), "The scenario has no steps", Exception.class);
+            tc.appendChild(child);
+        }
+
     }
 
 }

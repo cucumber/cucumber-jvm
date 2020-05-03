@@ -6,6 +6,7 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 
 import java.io.File;
 import java.net.URI;
+
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -157,4 +158,5 @@ class FeaturePathTest {
             () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature"))
         );
     }
+
 }

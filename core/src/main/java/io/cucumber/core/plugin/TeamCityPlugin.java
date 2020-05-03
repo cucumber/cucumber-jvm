@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import static java.util.Collections.emptyList;
 
 public class TeamCityPlugin implements EventListener {
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
 
     private static final String TEAMCITY_PREFIX = "##teamcity";

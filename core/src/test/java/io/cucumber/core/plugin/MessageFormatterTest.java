@@ -6,7 +6,6 @@ import io.cucumber.messages.Messages;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.Clock;
 import java.util.UUID;
 
@@ -46,4 +45,5 @@ public class MessageFormatterTest {
             "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}"
         ));
     }
+
 }

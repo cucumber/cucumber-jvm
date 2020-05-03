@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ProgressFormatter implements ConcurrentEventListener, ColorAware {
+
     private static final Map<Status, Character> CHARS = new HashMap<Status, Character>() {{
         put(Status.PASSED, '.');
         put(Status.UNDEFINED, 'U');
@@ -70,4 +71,5 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         out.println();
         out.close();
     }
+
 }

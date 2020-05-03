@@ -57,6 +57,14 @@ class JarUriFileSystemService {
         return hasJarUriScheme(uri) || hasFileUriSchemeWithJarExtension(uri);
     }
 
+    private static boolean hasJarUriScheme(URI uri) {
+        return JAR_URI_SCHEME.equals(uri.getScheme());
+    }
+
+    private static boolean hasFileUriSchemeWithJarExtension(URI uri) {
+        return FILE_URI_SCHEME.equals(uri.getScheme()) && uri.getPath().endsWith(JAR_FILE_SUFFIX);
+    }
+
     static CloseablePath open(URI uri) throws URISyntaxException, IOException {
         if (hasJarUriScheme(uri)) {
             return handleJarUriScheme(uri);
@@ -103,11 +111,4 @@ class JarUriFileSystemService {
         );
     }
 
-    private static boolean hasFileUriSchemeWithJarExtension(URI uri) {
-        return FILE_URI_SCHEME.equals(uri.getScheme()) && uri.getPath().endsWith(JAR_FILE_SUFFIX);
-    }
-
-    private static boolean hasJarUriScheme(URI uri) {
-        return JAR_URI_SCHEME.equals(uri.getScheme());
-    }
 }

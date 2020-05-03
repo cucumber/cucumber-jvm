@@ -32,6 +32,12 @@ class StatsTest {
                 "0 Steps%n")));
     }
 
+    private Stats createMonochromeSummaryCounter() {
+        Stats stats = new Stats(Locale.US);
+        stats.setMonochrome(true);
+        return stats;
+    }
+
     @Test
     void should_only_print_sub_counts_if_not_zero() {
         Stats counter = createMonochromeSummaryCounter();
@@ -66,6 +72,11 @@ class StatsTest {
             "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
     }
 
+    private void addOneStepScenario(Stats counter, Status status) {
+        counter.addStep(status);
+        counter.addScenario(status, "scenario designation");
+    }
+
     @Test
     void should_print_sub_counts_in_order_failed_ambiguous_skipped_undefined_passed_in_color() {
         Stats counter = createColorSummaryCounter();
@@ -89,6 +100,10 @@ class StatsTest {
         assertThat(baos.toString(), containsString(String.format("" +
             "6 Scenarios (" + colorSubCounts + ")%n" +
             "6 Steps (" + colorSubCounts + ")%n")));
+    }
+
+    private Stats createColorSummaryCounter() {
+        return new Stats(Locale.US);
     }
 
     @Test
@@ -213,21 +228,6 @@ class StatsTest {
             "path/file.feature:3 # Scenario: scenario_name%n" +
             "%n" +
             "4 Scenarios")));
-    }
-
-    private void addOneStepScenario(Stats counter, Status status) {
-        counter.addStep(status);
-        counter.addScenario(status, "scenario designation");
-    }
-
-    private Stats createMonochromeSummaryCounter() {
-        Stats stats = new Stats(Locale.US);
-        stats.setMonochrome(true);
-        return stats;
-    }
-
-    private Stats createColorSummaryCounter() {
-        return new Stats(Locale.US);
     }
 
 }

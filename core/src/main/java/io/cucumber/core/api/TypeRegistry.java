@@ -13,20 +13,24 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface TypeRegistry {
+
     /**
      * Defines a new parameter type.
+     *
      * @param parameterType The new parameter type.
      */
     void defineParameterType(ParameterType<?> parameterType);
 
     /**
      * Defines a new docstring type.
+     *
      * @param docStringType The new docstring type.
      */
     void defineDocStringType(DocStringType docStringType);
 
     /**
      * Defines a new data table type.
+     *
      * @param tableType The new table type.
      */
     void defineDataTableType(DataTableType tableType);
@@ -38,6 +42,7 @@ public interface TypeRegistry {
      * @param defaultParameterByTypeTransformer default transformer
      */
     void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer);
+
     /**
      * Set default transformer for entries which are not defined by
      * {@code defineDataTableType(new DataTableType(Class<T>,TableEntryTransformer<T>))}
@@ -53,4 +58,5 @@ public interface TypeRegistry {
      * @param tableCellByTypeTransformer default transformer
      */
     void setDefaultDataTableCellTransformer(TableCellByTypeTransformer tableCellByTypeTransformer);
+
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 @API(status = API.Status.STABLE)
 public interface Snippet {
+
     /**
      * @return a {@link java.text.MessageFormat} template used to generate a snippet. The template can access the
      * following variables:
@@ -41,4 +42,5 @@ public interface Snippet {
      * @return an escaped representation of the pattern, if escaping is necessary.
      */
     String escapePattern(String pattern);
+
 }

@@ -41,6 +41,23 @@ class RerunFormatterTest {
         assertThat(runFeaturesWithFormatter(), isBytesEqualTo(""));
     }
 
+    private ByteArrayOutputStream runFeaturesWithFormatter() {
+        final ByteArrayOutputStream report = new ByteArrayOutputStream();
+        final RerunFormatter formatter = new RerunFormatter(report);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withTimeServiceIncrement(ZERO)
+            .build()
+            .run();
+
+        return report;
+    }
+
     @Test
     void should_put_data_in_report_when_exit_code_is_non_zero() {
         Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
@@ -186,23 +203,6 @@ class RerunFormatterTest {
         stepsToResult.put("forth step", result("passed"));
 
         assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
-    }
-
-    private ByteArrayOutputStream runFeaturesWithFormatter() {
-        final ByteArrayOutputStream report = new ByteArrayOutputStream();
-        final RerunFormatter formatter = new RerunFormatter(report);
-
-        TestHelper.builder()
-            .withFormatterUnderTest(formatter)
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withTimeServiceIncrement(ZERO)
-            .build()
-            .run();
-
-        return report;
     }
 
 }

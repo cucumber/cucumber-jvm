@@ -60,26 +60,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CommandlineOptionsParserTest {
 
     private final Map<String, String> properties = new HashMap<>();
-
-    public static URI uri(String s) {
-        return URI.create(s);
-    }
-
-    private static Matcher<Plugin> plugin(final String pluginName) {
-        return new TypeSafeDiagnosingMatcher<Plugin>() {
-            @Override
-            protected boolean matchesSafely(Plugin plugin, Description description) {
-                description.appendValue(plugin.getClass().getName());
-                return plugin.getClass().getName().equals(pluginName);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendValue(pluginName);
-            }
-        };
-    }
-
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final CommandlineOptionsParser parser = new CommandlineOptionsParser(out);
 
@@ -92,33 +72,15 @@ class CommandlineOptionsParserTest {
         assertThat(options.getObjectFactoryClass(), Is.is(equalTo(TestObjectFactory.class)));
     }
 
-    private static final class TestObjectFactory implements ObjectFactory {
-
-        @Override
-        public boolean addClass(Class<?> glueClass) {
-            return false;
-        }
-
-        @Override
-        public <T> T getInstance(Class<T> glueClass) {
-            return null;
-        }
-
-        @Override
-        public void start() {
-        }
-
-        @Override
-        public void stop() {
-        }
-
-    }
-
     @Test
     void has_version_from_properties_file() {
         parser.parse("--version");
         assertThat(output(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?\n"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x0)));
+    }
+
+    private String output() {
+        return new String(out.toByteArray(), UTF_8);
     }
 
     @Test
@@ -127,10 +89,6 @@ class CommandlineOptionsParserTest {
         assertThat(output(), startsWith("Unknown option: --not-an-option"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
 
-    }
-
-    private String output() {
-        return new String(out.toByteArray(), UTF_8);
     }
 
     @Test
@@ -170,7 +128,6 @@ class CommandlineOptionsParserTest {
         assertThat(options.getLineFilters(), hasEntry(new File("somewhere_else.feature").toURI(), lines));
     }
 
-
     @Test
     void combines_line_filters_from_repeated_features() {
         RuntimeOptions options = parser
@@ -179,6 +136,10 @@ class CommandlineOptionsParserTest {
         assertThat(options.getFeaturePaths(), contains(uri("classpath:somewhere_else.feature")));
         Set<Integer> lines = new HashSet<>(asList(3, 5));
         assertThat(options.getLineFilters(), hasEntry(uri("classpath:somewhere_else.feature"), lines));
+    }
+
+    public static URI uri(String s) {
+        return URI.create(s);
     }
 
     @Test
@@ -230,6 +191,21 @@ class CommandlineOptionsParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
+    }
+
+    private static Matcher<Plugin> plugin(final String pluginName) {
+        return new TypeSafeDiagnosingMatcher<Plugin>() {
+            @Override
+            protected boolean matchesSafely(Plugin plugin, Description description) {
+                description.appendValue(plugin.getClass().getName());
+                return plugin.getClass().getName().equals(pluginName);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendValue(pluginName);
+            }
+        };
     }
 
     @Test
@@ -413,6 +389,15 @@ class CommandlineOptionsParserTest {
             .orderPickles(Arrays.asList(a, b)), contains(a, b));
     }
 
+    private Pickle createPickle(String uri, String name) {
+        Feature feature = TestFeatureParser.parse(uri, "" +
+            "Feature: Test feature\n" +
+            "  Scenario: " + name + "\n" +
+            "     Given I have 4 cukes in my belly\n"
+        );
+        return feature.getPickles().get(0);
+    }
+
     @Test
     void ensure_order_type_reverse_is_used() {
         RuntimeOptions options = parser
@@ -441,15 +426,6 @@ class CommandlineOptionsParserTest {
         Pickle c = createPickle("file:path/file3.feature", "c");
         assertThat(options.getPickleOrder()
             .orderPickles(Arrays.asList(a, b, c)), contains(c, a, b));
-    }
-
-    private Pickle createPickle(String uri, String name) {
-        Feature feature = TestFeatureParser.parse(uri, "" +
-            "Feature: Test feature\n" +
-            "  Scenario: " + name + "\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
-        return feature.getPickles().get(0);
     }
 
     @Test
@@ -489,6 +465,28 @@ class CommandlineOptionsParserTest {
         assertThat(options.getLineFilters(), is(emptyMap()));
     }
 
+    private static final class TestObjectFactory implements ObjectFactory {
+
+        @Override
+        public boolean addClass(Class<?> glueClass) {
+            return false;
+        }
+
+        @Override
+        public <T> T getInstance(Class<T> glueClass) {
+            return null;
+        }
+
+        @Override
+        public void start() {
+        }
+
+        @Override
+        public void stop() {
+        }
+
+    }
+
     public static final class AwareFormatter implements StrictAware, ColorAware, EventListener {
 
         private boolean strict;
@@ -516,6 +514,7 @@ class CommandlineOptionsParserTest {
         public void setEventPublisher(EventPublisher publisher) {
 
         }
+
     }
 
 }

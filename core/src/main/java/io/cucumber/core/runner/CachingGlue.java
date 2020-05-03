@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
+
     private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
         .comparingInt(CoreHookDefinition::getOrder)
         .thenComparing(ScenarioScoped.class::isInstance);
@@ -84,15 +85,15 @@ final class CachingGlue implements Glue {
     }
 
     @Override
-    public void addBeforeStepHook(HookDefinition hookDefinition) {
-        beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        beforeStepHooks.sort(ASCENDING);
-    }
-
-    @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(CoreHookDefinition.create(hookDefinition));
         afterHooks.sort(ASCENDING);
+    }
+
+    @Override
+    public void addBeforeStepHook(HookDefinition hookDefinition) {
+        beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
+        beforeStepHooks.sort(ASCENDING);
     }
 
     @Override

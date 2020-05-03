@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.is;
 
 @ExtendWith({VertxExtension.class})
 public class UrlOutputStreamTest {
+
     private int port;
     private Exception exception;
 
@@ -54,6 +55,22 @@ public class UrlOutputStreamTest {
             "< transfer-encoding: chunked\n" +
             "Oh noes"
         ));
+    }
+
+    private void verifyRequest(CurlOption url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody) {
+        vertx.deployVerticle(testServer, testContext.succeeding(id -> {
+            try {
+                OutputStream out = new UrlOutputStream(url);
+                Writer w = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                w.write(requestBody);
+                w.flush();
+                w.close();
+                testContext.completeNow();
+            } catch (Exception e) {
+                exception = e;
+                testContext.completeNow();
+            }
+        }));
     }
 
     @Test
@@ -89,6 +106,12 @@ public class UrlOutputStreamTest {
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
+    private String makeOneKilobyteStringWithEmoji() {
+        String base = "abcå\uD83D\uDE02";
+        int baseLength = base.length();
+        return IntStream.range(0, 1024).mapToObj(i -> base.substring(i % baseLength, i % baseLength + 1)).collect(Collectors.joining());
+    }
+
     @Test
     void overrides_request_method(Vertx vertx, VertxTestContext testContext) {
         String requestBody = "hello";
@@ -105,29 +128,8 @@ public class UrlOutputStreamTest {
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
-    private void verifyRequest(CurlOption url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody) {
-        vertx.deployVerticle(testServer, testContext.succeeding(id -> {
-            try {
-                OutputStream out = new UrlOutputStream(url);
-                Writer w = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-                w.write(requestBody);
-                w.flush();
-                w.close();
-                testContext.completeNow();
-            } catch (Exception e) {
-                exception = e;
-                testContext.completeNow();
-            }
-        }));
-    }
-
-    private String makeOneKilobyteStringWithEmoji() {
-        String base = "abcå\uD83D\uDE02";
-        int baseLength = base.length();
-        return IntStream.range(0, 1024).mapToObj(i -> base.substring(i % baseLength, i % baseLength + 1)).collect(Collectors.joining());
-    }
-
     public static class TestServer extends AbstractVerticle {
+
         private final int port;
         private final VertxTestContext testContext;
         private final String expectedBody;
@@ -191,5 +193,7 @@ public class UrlOutputStreamTest {
                 .requestHandler(router)
                 .listen(port, e -> startPromise.complete());
         }
+
     }
+
 }

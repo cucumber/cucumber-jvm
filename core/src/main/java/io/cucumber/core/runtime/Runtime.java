@@ -67,6 +67,10 @@ public final class Runtime {
         this.pickleOrder = pickleOrder;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public void run() {
         context.startTestRun();
         final List<Feature> features = featureSupplier.get();
@@ -101,15 +105,11 @@ public final class Runtime {
     }
 
     private Runnable execute(Pickle pickle) {
-        return () -> context.runTestCase(runner ->  runner.runPickle(pickle));
+        return () -> context.runTestCase(runner -> runner.runPickle(pickle));
     }
 
     public byte exitStatus() {
         return exitStatus.exitStatus();
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static class Builder {
@@ -200,6 +200,7 @@ public final class Runtime {
 
             return new Runtime(exitStatus, context, filter, limit, featureSupplier, executor, pickleOrder);
         }
+
     }
 
     private static final class CucumberThreadFactory implements ThreadFactory {
@@ -216,6 +217,7 @@ public final class Runtime {
         public Thread newThread(Runnable r) {
             return new Thread(r, namePrefix + this.threadNumber.getAndIncrement());
         }
+
     }
 
     private static final class SameThreadExecutorService extends AbstractExecutorService {
@@ -249,6 +251,7 @@ public final class Runtime {
         public boolean awaitTermination(long timeout, TimeUnit unit) {
             return true;
         }
+
     }
 
 }

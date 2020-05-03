@@ -150,5 +150,7 @@ public final class LoggerFactory {
 
             return logRecord;
         }
+
     }
+
 }

@@ -37,22 +37,6 @@ public final class ClasspathScanner {
         this.classLoaderSupplier = classLoaderSupplier;
     }
 
-    private static boolean isClassFile(Path file) {
-        return file.getFileName().toString().endsWith(CLASS_FILE_SUFFIX);
-    }
-
-    private static boolean isNotPackageInfo(Path path) {
-        return !path.endsWith(PACKAGE_INFO_FILE_NAME);
-    }
-
-    private static boolean isNotModuleInfo(Path path) {
-        return !path.endsWith(MODULE_INFO_FILE_NAME);
-    }
-
-    private static <T> Predicate<Class<?>> isSubClassOf(Class<T> parentClass) {
-        return aClass -> !parentClass.equals(aClass) && parentClass.isAssignableFrom(aClass);
-    }
-
     public <T> List<Class<? extends T>> scanForSubClassesInPackage(String packageName, Class<T> parentClass) {
         return scanForClassesInPackage(packageName, isSubClassOf(parentClass))
             .stream()
@@ -60,15 +44,19 @@ public final class ClasspathScanner {
             .collect(toList());
     }
 
-    public List<Class<?>> scanForClassesInPackage(String packageName) {
-        return scanForClassesInPackage(packageName, NULL_FILTER);
-    }
-
     private List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classFilter) {
         requireValidPackageName(packageName);
         requireNonNull(classFilter, "classFilter must not be null");
         List<URI> rootUris = getUrisForPackage(getClassLoader(), packageName);
         return findClassesForUris(rootUris, packageName, classFilter);
+    }
+
+    private static <T> Predicate<Class<?>> isSubClassOf(Class<T> parentClass) {
+        return aClass -> !parentClass.equals(aClass) && parentClass.isAssignableFrom(aClass);
+    }
+
+    private ClassLoader getClassLoader() {
+        return this.classLoaderSupplier.get();
     }
 
     private List<Class<?>> findClassesForUris(List<URI> baseUris, String packageName, Predicate<Class<?>> classFilter) {
@@ -89,6 +77,18 @@ public final class ClasspathScanner {
         return classes;
     }
 
+    private static boolean isNotModuleInfo(Path path) {
+        return !path.endsWith(MODULE_INFO_FILE_NAME);
+    }
+
+    private static boolean isNotPackageInfo(Path path) {
+        return !path.endsWith(PACKAGE_INFO_FILE_NAME);
+    }
+
+    private static boolean isClassFile(Path file) {
+        return file.getFileName().toString().endsWith(CLASS_FILE_SUFFIX);
+    }
+
     private Function<Path, Consumer<Path>> processClassFiles(String basePackageName,
                                                              Predicate<Class<?>> classFilter,
                                                              Consumer<Class<?>> classConsumer) {
@@ -104,8 +104,8 @@ public final class ClasspathScanner {
         };
     }
 
-    private ClassLoader getClassLoader() {
-        return this.classLoaderSupplier.get();
+    public List<Class<?>> scanForClassesInPackage(String packageName) {
+        return scanForClassesInPackage(packageName, NULL_FILTER);
     }
 
 }

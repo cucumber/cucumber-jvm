@@ -39,6 +39,7 @@ public final class StandardPickleOrders {
         public int compare(Pickle a, Pickle b) {
             return a.getUri().compareTo(b.getUri());
         }
+
     }
 
 }

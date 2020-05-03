@@ -32,4 +32,5 @@ public final class Filters implements Predicate<Pickle> {
     public boolean test(Pickle pickle) {
         return this.filter.test(pickle);
     }
+
 }

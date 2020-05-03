@@ -7,6 +7,7 @@ import java.util.List;
 
 @API(status = API.Status.STABLE)
 public interface Backend {
+
     /**
      * Invoked once before all features. This is where steps and hooks should be loaded.
      *
@@ -29,4 +30,5 @@ public interface Backend {
     void disposeWorld();
 
     Snippet getSnippet();
+
 }

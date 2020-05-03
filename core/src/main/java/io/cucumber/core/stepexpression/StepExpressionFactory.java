@@ -74,6 +74,15 @@ public final class StepExpressionFactory {
         return new StepExpression(expression, docStringTransform, tableTransform);
     }
 
+    private static Supplier<Type> stepDefinitionDoesNotTakeAnyParameter(StepDefinition stepDefinition) {
+        return () -> {
+            throw new CucumberException(format(
+                "step definition at %s does not take any parameters",
+                stepDefinition.getLocation()
+            ));
+        };
+    }
+
     private Expression crateExpression(String expressionString) {
         final Expression expression;
         try {
@@ -88,15 +97,6 @@ public final class StepExpressionFactory {
             throw registerTypeInConfiguration(expressionString, e);
         }
         return expression;
-    }
-
-    private static Supplier<Type> stepDefinitionDoesNotTakeAnyParameter(StepDefinition stepDefinition) {
-        return () -> {
-            throw new CucumberException(format(
-                "step definition at %s does not take any parameters",
-                stepDefinition.getLocation()
-            ));
-        };
     }
 
     private CucumberException registerTypeInConfiguration(String expressionString, UndefinedParameterTypeException e) {

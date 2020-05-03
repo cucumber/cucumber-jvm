@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StubStepDefinition implements StepDefinition {
+
     private final List<ParameterInfo> parameterInfos;
     private final String expression;
     private final RuntimeException exception;
@@ -80,6 +81,7 @@ public class StubStepDefinition implements StepDefinition {
         public TypeResolver getTypeResolver() {
             return () -> type;
         }
+
     }
 
 }

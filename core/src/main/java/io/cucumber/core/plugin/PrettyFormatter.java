@@ -32,6 +32,7 @@ import static java.lang.Math.max;
 import static java.util.Locale.ROOT;
 
 public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
+
     private static final String SCENARIO_INDENT = "";
     private static final String STEP_INDENT = "  ";
     private static final String STEP_SCENARIO_INDENT = "    ";
@@ -54,20 +55,34 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         publisher.registerHandlerFor(TestRunFinished.class, this::handleTestRunFinished);
     }
 
-    @Override
-    public void setMonochrome(boolean monochrome) {
-        if (monochrome) {
-            formats = new MonochromeFormats();
-        } else {
-            formats = new AnsiFormats();
-        }
-    }
-
     private void handleTestCaseStarted(TestCaseStarted event) {
         out.println();
         preCalculateLocationIndent(event);
         printTags(event);
         printScenarioDefinition(event);
+    }
+
+    private void handleTestStepFinished(TestStepFinished event) {
+        printStep(event);
+        printError(event);
+    }
+
+    private void handleWrite(WriteEvent event) {
+        out.println();
+        printText(event);
+        out.println();
+
+    }
+
+    private void handleEmbed(EmbedEvent event) {
+        out.println();
+        printEmbedding(event);
+        out.println();
+
+    }
+
+    private void handleTestRunFinished(TestRunFinished event) {
+        out.close();
     }
 
     private void preCalculateLocationIndent(TestCaseStarted event) {
@@ -84,7 +99,6 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         commentStartIndex.put(testCase.getId(), max(longestStep, scenarioLength) + 1);
     }
 
-
     private void printTags(TestCaseStarted event) {
         List<String> tags = event.getTestCase().getTags();
         if (!tags.isEmpty()) {
@@ -100,15 +114,6 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         out.println(SCENARIO_INDENT + definitionText + locationIndent + formatLocation(path + ":" + testCase.getLocation().getLine()));
     }
 
-    private String formatScenarioDefinition(TestCase testCase) {
-        return testCase.getKeyword() + ": " + testCase.getName();
-    }
-
-    private void handleTestStepFinished(TestStepFinished event) {
-        printStep(event);
-        printError(event);
-    }
-
     private void printStep(TestStepFinished event) {
         if (event.getTestStep() instanceof PickleStepTestStep) {
             PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
@@ -121,8 +126,56 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         }
     }
 
+    private void printError(TestStepFinished event) {
+        Result result = event.getResult();
+        Throwable error = result.getError();
+        if (error != null) {
+            String name = result.getStatus().name().toLowerCase(ROOT);
+            String text = printStackTrace(error);
+            out.println("      " + formats.get(name).text(text));
+        }
+    }
+
+    private void printText(WriteEvent event) {
+        try (BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
+            String line;
+            while ((line = lines.readLine()) != null) {
+                out.println(STEP_SCENARIO_INDENT + line);
+            }
+        } catch (IOException e) {
+            throw new CucumberException(e);
+        }
+    }
+
+    private void printEmbedding(EmbedEvent event) {
+        String line = "Embedding " + event.getName() + " [" + event.getMediaType() + " " + event.getData().length + " bytes]";
+        out.println(STEP_SCENARIO_INDENT + line);
+    }
+
     private String formatPlainStep(String keyword, String stepText) {
         return STEP_INDENT + keyword + stepText;
+    }
+
+    private String formatScenarioDefinition(TestCase testCase) {
+        return testCase.getKeyword() + ": " + testCase.getName();
+    }
+
+    static URI relativize(URI uri) {
+        if (!"file".equals(uri.getScheme())) {
+            return uri;
+        }
+        if (!uri.isAbsolute()) {
+            return uri;
+        }
+
+        try {
+            URI root = new File("").toURI();
+            URI relative = root.relativize(uri);
+            // Scheme is lost by relativize
+            return new URI("file", relative.getSchemeSpecificPart(), relative.getFragment());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 
     private String calculateLocationIndent(TestCase testStep, String prefix) {
@@ -140,49 +193,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         return builder.toString();
     }
 
-    private void printError(TestStepFinished event) {
-        Result result = event.getResult();
-        Throwable error = result.getError();
-        if (error != null) {
-            String name = result.getStatus().name().toLowerCase(ROOT);
-            String text = printStackTrace(error);
-            out.println("      " + formats.get(name).text(text));
-        }
-    }
-
-
-    private void handleWrite(WriteEvent event) {
-        out.println();
-        printText(event);
-        out.println();
-
-    }
-
-    private void printText(WriteEvent event) {
-        try (BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
-            String line;
-            while ((line = lines.readLine()) != null) {
-                out.println(STEP_SCENARIO_INDENT + line);
-            }
-        } catch (IOException e) {
-            throw new CucumberException(e);
-        }
-    }
-
-    private void handleEmbed(EmbedEvent event) {
-        out.println();
-        printEmbedding(event);
-        out.println();
-
-    }
-
-    private void printEmbedding(EmbedEvent event) {
-        String line = "Embedding " + event.getName() + " [" + event.getMediaType() + " " + event.getData().length + " bytes]";
-        out.println(STEP_SCENARIO_INDENT + line);
-    }
-
-    private void handleTestRunFinished(TestRunFinished event) {
-        out.close();
+    private String formatLocation(String location) {
+        return formats.get("comment").text("# " + location);
     }
 
     String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
@@ -214,25 +226,13 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         return result.toString();
     }
 
-    private String formatLocation(String location) {
-        return formats.get("comment").text("# " + location);
-    }
-
-    static URI relativize(URI uri) {
-        if (!"file".equals(uri.getScheme())) {
-            return uri;
-        }
-        if (!uri.isAbsolute()) {
-            return uri;
-        }
-
-        try {
-            URI root = new File("").toURI();
-            URI relative = root.relativize(uri);
-            // Scheme is lost by relativize
-            return new URI("file", relative.getSchemeSpecificPart(), relative.getFragment());
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+    @Override
+    public void setMonochrome(boolean monochrome) {
+        if (monochrome) {
+            formats = new MonochromeFormats();
+        } else {
+            formats = new AnsiFormats();
         }
     }
+
 }

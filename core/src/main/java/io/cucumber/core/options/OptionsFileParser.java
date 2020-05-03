@@ -14,6 +14,7 @@ import static java.lang.String.format;
 import static java.nio.file.Files.readAllLines;
 
 class OptionsFileParser {
+
     private static final Pattern RERUN_PATH_SPECIFICATION = Pattern.compile("(?m:^| |)(.*?\\.feature(?:(?::\\d+)*))");
 
     private OptionsFileParser() {
@@ -34,4 +35,5 @@ class OptionsFileParser {
             throw new CucumberException(format("Failed to parse '%s'", path), e);
         }
     }
+
 }

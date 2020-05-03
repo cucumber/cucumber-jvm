@@ -16,10 +16,10 @@ Feature: Feature executed in parallel
     When so_2 <c> cucumbers_parallel
     Then <b> so_3_parallel
 
-  Examples:
-    | a  | b | c  |
-    | 12 | 5 | 7  |
-    | 20 | 5 | 15 |
+    Examples:
+      | a  | b | c  |
+      | 12 | 5 | 7  |
+      | 20 | 5 | 15 |
 
   Scenario: Scenario_2
     Given a_parallel

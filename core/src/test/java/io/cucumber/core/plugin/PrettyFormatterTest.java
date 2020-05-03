@@ -63,6 +63,25 @@ class PrettyFormatterTest {
             "  Then third step       # path/step_definitions.java:11\n"));
     }
 
+    private ByteArrayOutputStream runFeaturesWithFormatter(boolean monochrome) {
+        final ByteArrayOutputStream report = new ByteArrayOutputStream();
+        final PrettyFormatter formatter = new PrettyFormatter(report);
+        formatter.setMonochrome(monochrome);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .build()
+            .run();
+
+        return report;
+    }
+
     @Test
     void should_handle_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
@@ -360,25 +379,6 @@ class PrettyFormatterTest {
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
             AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
-    }
-
-    private ByteArrayOutputStream runFeaturesWithFormatter(boolean monochrome) {
-        final ByteArrayOutputStream report = new ByteArrayOutputStream();
-        final PrettyFormatter formatter = new PrettyFormatter(report);
-        formatter.setMonochrome(monochrome);
-
-        TestHelper.builder()
-            .withFormatterUnderTest(formatter)
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withHookActions(hookActions)
-            .build()
-            .run();
-
-        return report;
     }
 
 }

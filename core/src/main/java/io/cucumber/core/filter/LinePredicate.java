@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 final class LinePredicate implements Predicate<Pickle> {
+
     private final Map<URI, ? extends Collection<Integer>> lineFilters;
 
     LinePredicate(Map<URI, ? extends Collection<Integer>> lineFilters) {
@@ -27,4 +28,5 @@ final class LinePredicate implements Predicate<Pickle> {
         }
         return false;
     }
+
 }

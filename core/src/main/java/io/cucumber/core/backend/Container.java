@@ -4,6 +4,7 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
 public interface Container {
+
     /**
      * Add a glue class to the test context.
      * <p>
@@ -13,4 +14,5 @@ public interface Container {
      * @return should always return true, should be ignored.
      */
     boolean addClass(Class<?> glueClass);
+
 }

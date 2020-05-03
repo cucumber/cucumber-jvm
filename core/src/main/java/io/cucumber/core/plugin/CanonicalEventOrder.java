@@ -90,6 +90,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
             }
             return -1;
         }
+
     }
 
     private static final class TestCaseEventComparator implements Comparator<TestCaseEvent> {
@@ -105,11 +106,13 @@ final class CanonicalEventOrder implements Comparator<Event> {
                 a.getTestCase().getLocation().getLine(),
                 b.getTestCase().getLocation().getLine()
             );
-            if(line != 0){
+            if (line != 0) {
                 return line;
             }
 
             return a.getInstant().compareTo(b.getInstant());
         }
+
     }
+
 }

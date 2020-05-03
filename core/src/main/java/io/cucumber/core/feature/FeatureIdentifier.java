@@ -1,4 +1,5 @@
 package io.cucumber.core.feature;
+
 import java.net.URI;
 import java.nio.file.Path;
 
@@ -36,4 +37,5 @@ public class FeatureIdentifier {
     public static boolean isFeature(Path path) {
         return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
     }
+
 }

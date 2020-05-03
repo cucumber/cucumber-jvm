@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public final class SnippetGenerator {
+
     @SuppressWarnings("RegExpRedundantEscape") // Android can't parse unescaped braces.
     private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
         new ArgumentPattern(Pattern.compile("\\{.*?\\}"))
@@ -53,18 +54,6 @@ public final class SnippetGenerator {
         return snippets;
     }
 
-    private String tableHint(Step step) {
-        if (step.getArgument() == null) {
-            return "";
-        }
-
-        if (step.getArgument() instanceof DataTableArgument) {
-            return snippet.tableHint();
-        }
-
-        return "";
-    }
-
     private static String sanitize(String keyWord) {
         return keyWord.replaceAll("[\\s',!]", "");
     }
@@ -78,7 +67,6 @@ public final class SnippetGenerator {
         }
         return functionNameGenerator.generateFunctionName(sentence);
     }
-
 
     private Map<String, Type> arguments(Step step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
         Map<String, Type> arguments = new LinkedHashMap<>(parameterTypes.size() + 1);
@@ -101,6 +89,22 @@ public final class SnippetGenerator {
         return arguments;
     }
 
+    private String tableHint(Step step) {
+        if (step.getArgument() == null) {
+            return "";
+        }
+
+        if (step.getArgument() instanceof DataTableArgument) {
+            return snippet.tableHint();
+        }
+
+        return "";
+    }
+
+    private ArgumentPattern[] argumentPatterns() {
+        return DEFAULT_ARGUMENT_PATTERNS;
+    }
+
     private String parameterName(String name, List<String> parameterNames) {
         if (!parameterNames.contains(name)) {
             return name;
@@ -111,10 +115,6 @@ public final class SnippetGenerator {
                 return name + i;
             }
         }
-    }
-
-    private ArgumentPattern[] argumentPatterns() {
-        return DEFAULT_ARGUMENT_PATTERNS;
     }
 
 }

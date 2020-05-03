@@ -50,12 +50,55 @@ public final class ResourceScanner<R> {
         return findResourcesForUri(root, DEFAULT_PACKAGE_NAME, packageFilter, createResource);
     }
 
+    private List<R> findResourcesForUri(URI baseUri,
+                                        String basePackageName,
+                                        Predicate<String> packageFilter,
+                                        BiFunction<Path, Path, Resource> createResource) {
+        List<R> resources = new ArrayList<>();
+        pathScanner.findResourcesForUri(
+            baseUri,
+            canLoad,
+            processResource(basePackageName, packageFilter, createResource, resources::add)
+        );
+        return resources;
+    }
+
+    private Function<Path, Consumer<Path>> processResource(String basePackageName,
+                                                           Predicate<String> packageFilter,
+                                                           BiFunction<Path, Path, Resource> createResource,
+                                                           Consumer<R> consumer) {
+        return baseDir -> path -> {
+            String packageName = determinePackageName(baseDir, basePackageName, path);
+            if (packageFilter.test(packageName)) {
+                createResource
+                    .andThen(loadResource)
+                    .apply(baseDir, path)
+                    .ifPresent(consumer);
+            }
+        };
+    }
+
     public List<R> scanForResourcesInPackage(String packageName, Predicate<String> packageFilter) {
         requireValidPackageName(packageName);
         requireNonNull(packageFilter, "packageFilter must not be null");
         BiFunction<Path, Path, Resource> createResource = createPackageResource(packageName);
         List<URI> rootUrisForPackage = getUrisForPackage(getClassLoader(), packageName);
         return findResourcesForUris(rootUrisForPackage, packageName, packageFilter, createResource);
+    }
+
+    private ClassLoader getClassLoader() {
+        return this.classLoaderSupplier.get();
+    }
+
+    private List<R> findResourcesForUris(List<URI> baseUris,
+                                         String basePackageName,
+                                         Predicate<String> packageFilter,
+                                         BiFunction<Path, Path, Resource> createResource) {
+        return baseUris.stream()
+            .map(baseUri -> findResourcesForUri(baseUri, basePackageName, packageFilter, createResource))
+            .flatMap(Collection::stream)
+            .distinct()
+            .collect(toList());
     }
 
     public List<R> scanForClasspathResource(String resourceName, Predicate<String> packageFilter) {
@@ -84,49 +127,6 @@ public final class ResourceScanner<R> {
         }
 
         return findResourcesForUri(classpathResourceUri, DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
-    }
-
-    private ClassLoader getClassLoader() {
-        return this.classLoaderSupplier.get();
-    }
-
-    private List<R> findResourcesForUris(List<URI> baseUris,
-                                         String basePackageName,
-                                         Predicate<String> packageFilter,
-                                         BiFunction<Path, Path, Resource> createResource) {
-        return baseUris.stream()
-            .map(baseUri -> findResourcesForUri(baseUri, basePackageName, packageFilter, createResource))
-            .flatMap(Collection::stream)
-            .distinct()
-            .collect(toList());
-    }
-
-    private List<R> findResourcesForUri(URI baseUri,
-                                        String basePackageName,
-                                        Predicate<String> packageFilter,
-                                        BiFunction<Path, Path, Resource> createResource) {
-        List<R> resources = new ArrayList<>();
-        pathScanner.findResourcesForUri(
-            baseUri,
-            canLoad,
-            processResource(basePackageName, packageFilter, createResource, resources::add)
-        );
-        return resources;
-    }
-
-    private Function<Path, Consumer<Path>> processResource(String basePackageName,
-                                                           Predicate<String> packageFilter,
-                                                           BiFunction<Path, Path, Resource> createResource,
-                                                           Consumer<R> consumer) {
-        return baseDir -> path -> {
-            String packageName = determinePackageName(baseDir, basePackageName, path);
-            if (packageFilter.test(packageName)) {
-                createResource
-                    .andThen(loadResource)
-                    .apply(baseDir, path)
-                    .ifPresent(consumer);
-            }
-        };
     }
 
 }

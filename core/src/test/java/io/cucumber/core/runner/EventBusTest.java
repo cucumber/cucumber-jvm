@@ -1,5 +1,7 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
@@ -7,8 +9,6 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

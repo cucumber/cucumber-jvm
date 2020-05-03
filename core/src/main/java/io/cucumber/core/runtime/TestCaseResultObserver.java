@@ -118,9 +118,11 @@ public final class TestCaseResultObserver implements AutoCloseable {
         public TestCaseFailed(Throwable throwable) {
             super(throwable);
         }
+
     }
 
     private static final class StepLocation implements Comparable<StepLocation> {
+
         private final URI uri;
         private final int line;
 
@@ -134,9 +136,11 @@ public final class TestCaseResultObserver implements AutoCloseable {
             int order = uri.compareTo(o.uri);
             return order != 0 ? order : Integer.compare(line, o.line);
         }
+
     }
 
     public static final class Suggestion {
+
         final String step;
         final List<String> snippets;
 
@@ -152,5 +156,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
         public List<String> getSnippets() {
             return snippets;
         }
+
     }
+
 }

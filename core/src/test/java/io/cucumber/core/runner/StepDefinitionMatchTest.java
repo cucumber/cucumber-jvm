@@ -505,6 +505,7 @@ class StepDefinitionMatchTest {
         public String toString() {
             return s;
         }
+
     }
 
     private static final class UndefinedDataTableType {

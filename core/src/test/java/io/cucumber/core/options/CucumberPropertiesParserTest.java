@@ -162,6 +162,7 @@ class CucumberPropertiesParserTest {
     }
 
     private static final class CustomObjectFactory implements ObjectFactory {
+
         @Override
         public boolean addClass(Class<?> glueClass) {
             return false;
@@ -181,6 +182,7 @@ class CucumberPropertiesParserTest {
         public void stop() {
 
         }
+
     }
 
 }

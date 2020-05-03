@@ -7,4 +7,5 @@ import org.apiguardian.api.API;
 public interface DataTableTypeDefinition extends Located {
 
     DataTableType dataTableType();
+
 }

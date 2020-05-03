@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * numbers each preceded by a colon.
  */
 public class FeatureWithLines implements Serializable {
+
     private static final long serialVersionUID = 20190126L;
     private static final Pattern FEATURE_COLON_LINE_PATTERN = Pattern.compile("^(.*?):([\\d:]+)$");
     private static final String INVALID_PATH_MESSAGE = " is not valid. Try <uri or path>/<name>.feature[:LINE]*";
@@ -32,18 +33,6 @@ public class FeatureWithLines implements Serializable {
     private FeatureWithLines(URI uri, Collection<Integer> lines) {
         this.uri = uri;
         this.lines = Collections.unmodifiableSortedSet(new TreeSet<>(lines));
-    }
-
-    public static FeatureWithLines create(URI uri, Collection<Integer> lines) {
-        if (lines.isEmpty()) {
-            return new FeatureWithLines(uri, lines);
-        }
-
-        return new FeatureWithLines(FeatureIdentifier.parse(uri), lines);
-    }
-
-    public static FeatureWithLines parse(String uri, Collection<Integer> lines) {
-        return create(FeaturePath.parse(uri), lines);
     }
 
     public static FeatureWithLines parse(String featurePath) {
@@ -69,13 +58,21 @@ public class FeatureWithLines implements Serializable {
         }
     }
 
+    private static FeatureWithLines parseFeaturePath(String pathName) {
+        return create(FeaturePath.parse(pathName), Collections.emptyList());
+    }
+
     private static FeatureWithLines parseFeatureIdentifierAndLines(String uriGroup, String linesGroup) {
         List<Integer> lines = toInts(linesGroup.split(":"));
         return parse(uriGroup, lines);
     }
 
-    private static FeatureWithLines parseFeaturePath(String pathName) {
-        return create(FeaturePath.parse(pathName), Collections.emptyList());
+    public static FeatureWithLines create(URI uri, Collection<Integer> lines) {
+        if (lines.isEmpty()) {
+            return new FeatureWithLines(uri, lines);
+        }
+
+        return new FeatureWithLines(FeatureIdentifier.parse(uri), lines);
     }
 
     private static List<Integer> toInts(String[] strings) {
@@ -84,13 +81,8 @@ public class FeatureWithLines implements Serializable {
             .collect(Collectors.toList());
     }
 
-    public String toString() {
-        StringBuilder builder = new StringBuilder(uri.toString());
-        for (Integer line : lines) {
-            builder.append(':');
-            builder.append(line);
-        }
-        return builder.toString();
+    public static FeatureWithLines parse(String uri, Collection<Integer> lines) {
+        return create(FeaturePath.parse(uri), lines);
     }
 
     public SortedSet<Integer> lines() {
@@ -102,6 +94,11 @@ public class FeatureWithLines implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(uri, lines);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -109,8 +106,13 @@ public class FeatureWithLines implements Serializable {
         return uri.equals(that.uri) && lines.equals(that.lines);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(uri, lines);
+    public String toString() {
+        StringBuilder builder = new StringBuilder(uri.toString());
+        for (Integer line : lines) {
+            builder.append(':');
+            builder.append(line);
+        }
+        return builder.toString();
     }
+
 }

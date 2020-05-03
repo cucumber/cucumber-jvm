@@ -12,6 +12,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 public final class MessageFormatter implements ConcurrentEventListener {
+
     private final Writer writer;
     private final JsonFormat.Printer jsonPrinter = JsonFormat.printer()
         .omittingInsignificantWhitespace();

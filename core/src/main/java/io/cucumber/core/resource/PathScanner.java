@@ -82,6 +82,7 @@ class PathScanner {
             }
             return CONTINUE;
         }
+
     }
 
 }

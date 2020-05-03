@@ -68,6 +68,29 @@ final class TestNGFormatterTest {
             "</testng-results>\n", actual);
     }
 
+    private String runFeaturesWithFormatter() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final TestNGFormatter formatter = new TestNGFormatter(out);
+
+        TestHelper.builder()
+            .withFormatterUnderTest(formatter)
+            .withFeatures(features)
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withHooks(hooks)
+            .withHookLocations(hookLocations)
+            .withHookActions(hookActions)
+            .withTimeServiceIncrement(stepDuration)
+            .build()
+            .run();
+
+        return new String(out.toByteArray(), UTF_8);
+    }
+
+    private static void assertXmlEqual(String expected, String actual) {
+        assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
+    }
+
     @Test
     void testScenarioWithUndefinedStepsStrict() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
@@ -394,29 +417,6 @@ final class TestNGFormatterTest {
             "</testng-results>", actual);
     }
 
-    private static void assertXmlEqual(String expected, String actual) {
-        assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
-    }
-
-    private String runFeaturesWithFormatter() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final TestNGFormatter formatter = new TestNGFormatter(out);
-
-        TestHelper.builder()
-            .withFormatterUnderTest(formatter)
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withHookActions(hookActions)
-            .withTimeServiceIncrement(stepDuration)
-            .build()
-            .run();
-
-        return new String(out.toByteArray(), UTF_8);
-    }
-
     private static class TestNGException extends Exception {
 
         private final String stacktrace;
@@ -430,6 +430,7 @@ final class TestNGFormatterTest {
         public void printStackTrace(PrintWriter printWriter) {
             printWriter.print(stacktrace);
         }
+
     }
 
 }

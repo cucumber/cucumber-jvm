@@ -8,6 +8,7 @@ import io.cucumber.core.exception.CucumberException;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
 
 final class HookDefinitionMatch implements StepDefinitionMatch {
+
     private final CoreHookDefinition hookDefinition;
 
     HookDefinitionMatch(CoreHookDefinition hookDefinition) {

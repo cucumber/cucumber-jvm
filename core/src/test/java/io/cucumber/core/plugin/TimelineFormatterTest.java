@@ -127,6 +127,24 @@ class TimelineFormatterTest {
         }
     }
 
+    private void runFormatterWithPlugin() {
+        TestHelper.builder()
+            .withFeatures(failingFeature, successfulFeature, pendingFeature)
+            .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).build())
+            .withStepsToResult(stepsToResult)
+            .withStepsToLocation(stepsToLocation)
+            .withTimeServiceIncrement(STEP_DURATION)
+            .build()
+            .run();
+    }
+
+    private String readFileContents(final String outputPath) throws IOException {
+        final Scanner scanner = new Scanner(new FileInputStream(outputPath), "UTF-8");
+        final String contents = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return contents;
+    }
+
     @Test
     void shouldWriteItemsCorrectlyToReportJsWhenRunInParallel() throws Throwable {
         TestHelper.builder()
@@ -157,39 +175,6 @@ class TimelineFormatterTest {
         //Sort the tests, output order is not a problem but obviously asserting it is
         actualOutput.tests.sort(TEST_DATA_COMPARATOR);
         assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, false, false);
-    }
-
-    @Test
-    void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
-        runFormatterWithPlugin();
-
-        assertThat(REPORT_JS + " was not found", reportJsFile.exists(), is(equalTo(true)));
-
-        final Long groupId = Thread.currentThread().getId();
-        final String groupName = Thread.currentThread().toString();
-
-        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(groupId);
-
-        final TimelineFormatter.GroupData[] expectedGroups = gson.fromJson(
-            ("[\n" +
-                "  {\n" +
-                "    \"id\": groupId,\n" +
-                "    \"content\": \"groupName\"\n" +
-                "  }\n" +
-                "]")
-                .replaceAll("groupId", groupId.toString())
-                .replaceAll("groupName", groupName)
-            , TimelineFormatter.GroupData[].class);
-
-        final ActualReportOutput actualOutput = readReport();
-
-        //Sort the tests, output order is not a problem but obviously asserting it is
-        actualOutput.tests.sort(TEST_DATA_COMPARATOR);
-
-        assertAll("Checking Timeline",
-            () -> assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, true, true),
-            () -> assertTimelineGroupDataIsAsExpected(expectedGroups, actualOutput.groups)
-        );
     }
 
     private TimelineFormatter.TestData[] getExpectedTestData(Long groupId) {
@@ -239,17 +224,6 @@ class TimelineFormatterTest {
         return gson.fromJson(expectedJson, TimelineFormatter.TestData[].class);
     }
 
-    private void runFormatterWithPlugin() {
-        TestHelper.builder()
-            .withFeatures(failingFeature, successfulFeature, pendingFeature)
-            .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).build())
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withTimeServiceIncrement(STEP_DURATION)
-            .build()
-            .run();
-    }
-
     private ActualReportOutput readReport() throws IOException {
         final String[] actualLines = readFileContents(reportJsFile.getAbsolutePath()).split("\n");
         final StringBuilder itemLines = new StringBuilder().append("[");
@@ -271,13 +245,6 @@ class TimelineFormatterTest {
         final TimelineFormatter.TestData[] tests = gson.fromJson(itemLines.toString(), TimelineFormatter.TestData[].class);
         final TimelineFormatter.GroupData[] groups = gson.fromJson(groupLines.toString(), TimelineFormatter.GroupData[].class);
         return new ActualReportOutput(tests, groups);
-    }
-
-    private String readFileContents(final String outputPath) throws IOException {
-        final Scanner scanner = new Scanner(new FileInputStream(outputPath), "UTF-8");
-        final String contents = scanner.useDelimiter("\\A").next();
-        scanner.close();
-        return contents;
     }
 
     private void assertTimelineTestDataIsAsExpected(final TimelineFormatter.TestData[] expectedTests,
@@ -319,6 +286,39 @@ class TimelineFormatterTest {
         }
     }
 
+    @Test
+    void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
+        runFormatterWithPlugin();
+
+        assertThat(REPORT_JS + " was not found", reportJsFile.exists(), is(equalTo(true)));
+
+        final Long groupId = Thread.currentThread().getId();
+        final String groupName = Thread.currentThread().toString();
+
+        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(groupId);
+
+        final TimelineFormatter.GroupData[] expectedGroups = gson.fromJson(
+            ("[\n" +
+                "  {\n" +
+                "    \"id\": groupId,\n" +
+                "    \"content\": \"groupName\"\n" +
+                "  }\n" +
+                "]")
+                .replaceAll("groupId", groupId.toString())
+                .replaceAll("groupName", groupName)
+            , TimelineFormatter.GroupData[].class);
+
+        final ActualReportOutput actualOutput = readReport();
+
+        //Sort the tests, output order is not a problem but obviously asserting it is
+        actualOutput.tests.sort(TEST_DATA_COMPARATOR);
+
+        assertAll("Checking Timeline",
+            () -> assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, true, true),
+            () -> assertTimelineGroupDataIsAsExpected(expectedGroups, actualOutput.groups)
+        );
+    }
+
     private void assertTimelineGroupDataIsAsExpected(final TimelineFormatter.GroupData[] expectedGroups,
                                                      final List<TimelineFormatter.GroupData> actualOutput) {
         assertThat("Number of groups was not as expected", actualOutput.size(), is(equalTo(expectedGroups.length)));
@@ -343,6 +343,7 @@ class TimelineFormatterTest {
             this.tests = Arrays.asList(tests);
             this.groups = Arrays.asList(groups);
         }
+
     }
 
 }

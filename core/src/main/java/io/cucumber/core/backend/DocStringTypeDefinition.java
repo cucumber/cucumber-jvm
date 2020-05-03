@@ -4,7 +4,7 @@ import io.cucumber.docstring.DocStringType;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.EXPERIMENTAL)
-public interface DocStringTypeDefinition extends Located{
+public interface DocStringTypeDefinition extends Located {
 
     DocStringType docStringType();
 

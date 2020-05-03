@@ -4,7 +4,8 @@ import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Located;
 
 final class StackManipulation {
-    private StackManipulation(){
+
+    private StackManipulation() {
 
     }
 
@@ -55,4 +56,5 @@ final class StackManipulation {
         error.setStackTrace(newStackTrace);
         return error;
     }
+
 }

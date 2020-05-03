@@ -188,4 +188,5 @@ class ResourceScannerTest {
             URI.create("classpath:io/cucumber/core/resource/test/spaces%20in%20name%20resource.txt")
         ));
     }
+
 }

@@ -24,6 +24,7 @@ class CompositeCucumberExceptionTest {
             () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes)))
         );
     }
+
     @Test
     void throws_for_one_exception() {
         final List<Throwable> causes = Collections.singletonList(new IllegalArgumentException());
@@ -45,4 +46,5 @@ class CompositeCucumberExceptionTest {
             () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes)))
         );
     }
+
 }

@@ -20,12 +20,14 @@ class CurlOptionTest {
         CurlOption option = CurlOption.parse("https://example.com");
         assertThat(option.getUri(), is(URI.create("https://example.com")));
     }
+
     @Test
     public void must_contain_a_url() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(""));
         assertThat(exception.getMessage(), is("'' was not a valid curl command"));
 
     }
+
     @Test
     public void can_parse_url_with_method() {
         CurlOption option = CurlOption.parse("https://example.com -X POST");

@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
  * to invoke the glue.
  */
 @API(status = API.Status.STABLE)
-public final class CucumberInvocationTargetException extends RuntimeException   {
+public final class CucumberInvocationTargetException extends RuntimeException {
 
     private final Located located;
     private final InvocationTargetException invocationTargetException;
@@ -27,4 +27,5 @@ public final class CucumberInvocationTargetException extends RuntimeException   
     public Located getLocated() {
         return located;
     }
+
 }

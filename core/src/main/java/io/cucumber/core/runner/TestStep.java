@@ -23,6 +23,7 @@ import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
+
     private static final String[] TEST_ABORTED_OR_SKIPPED_EXCEPTIONS = {
         "org.junit.AssumptionViolatedException",
         "org.junit.internal.AssumptionViolatedException",
@@ -43,13 +44,13 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     }
 
     @Override
-    public UUID getId() {
-        return id;
+    public String getCodeLocation() {
+        return stepDefinitionMatch.getCodeLocation();
     }
 
     @Override
-    public String getCodeLocation() {
-        return stepDefinitionMatch.getCodeLocation();
+    public UUID getId() {
+        return id;
     }
 
     boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
@@ -84,32 +85,6 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
                 .setTimestamp(javaInstantToTimestamp(startTime))
             ).build()
         );
-    }
-
-    private void emitTestStepFinished(TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
-        bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        Messages.TestStepFinished.TestStepResult.Builder builder = Messages.TestStepFinished.TestStepResult.newBuilder();
-
-        if (result.getError() != null) {
-            builder.setMessage(extractStackTrace(result.getError()));
-        }
-        Messages.TestStepFinished.TestStepResult testResult = builder.setStatus(from(result.getStatus()))
-            .setDuration(javaDurationToDuration(duration))
-            .build();
-        bus.send(Messages.Envelope.newBuilder()
-            .setTestStepFinished(Messages.TestStepFinished.newBuilder()
-                .setTestCaseStartedId(textExecutionId.toString())
-                .setTestStepId(id.toString())
-                .setTimestamp(javaInstantToTimestamp(stopTime))
-                .setTestStepResult(testResult)
-            ).build()
-        );
-    }
-    private String extractStackTrace(Throwable error) {
-        ByteArrayOutputStream s = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(s);
-        error.printStackTrace(printStream);
-        return new String(s.toByteArray(), StandardCharsets.UTF_8);
     }
 
     private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {
@@ -149,4 +124,32 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         }
         return new Result(status, duration, error);
     }
+
+    private void emitTestStepFinished(TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
+        bus.send(new TestStepFinished(stopTime, testCase, this, result));
+        Messages.TestStepFinished.TestStepResult.Builder builder = Messages.TestStepFinished.TestStepResult.newBuilder();
+
+        if (result.getError() != null) {
+            builder.setMessage(extractStackTrace(result.getError()));
+        }
+        Messages.TestStepFinished.TestStepResult testResult = builder.setStatus(from(result.getStatus()))
+            .setDuration(javaDurationToDuration(duration))
+            .build();
+        bus.send(Messages.Envelope.newBuilder()
+            .setTestStepFinished(Messages.TestStepFinished.newBuilder()
+                .setTestCaseStartedId(textExecutionId.toString())
+                .setTestStepId(id.toString())
+                .setTimestamp(javaInstantToTimestamp(stopTime))
+                .setTestStepResult(testResult)
+            ).build()
+        );
+    }
+
+    private String extractStackTrace(Throwable error) {
+        ByteArrayOutputStream s = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(s);
+        error.printStackTrace(printStream);
+        return new String(s.toByteArray(), StandardCharsets.UTF_8);
+    }
+
 }

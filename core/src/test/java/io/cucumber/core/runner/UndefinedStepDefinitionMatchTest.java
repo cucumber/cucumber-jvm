@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 

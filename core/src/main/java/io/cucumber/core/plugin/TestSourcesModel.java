@@ -4,9 +4,13 @@ import io.cucumber.gherkin.Gherkin;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument;
 import io.cucumber.messages.Messages.GherkinDocument.Feature;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.*;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Background;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
 import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
 import io.cucumber.messages.internal.com.google.protobuf.Message;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -24,30 +28,14 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 final class TestSourcesModel {
+
     private final Map<URI, TestSourceRead> pathToReadEventMap = new HashMap<>();
     private final Map<URI, GherkinDocument> pathToAstMap = new HashMap<>();
     private final Map<URI, Map<Integer, AstNode>> pathToNodeMap = new HashMap<>();
 
-    private static Feature getFeatureForTestCase(AstNode astNode) {
-        while (astNode.parent != null) {
-            astNode = astNode.parent;
-        }
-        return (Feature) astNode.node;
-    }
-
-    static Background getBackgroundForTestCase(AstNode astNode) {
-        Feature feature = getFeatureForTestCase(astNode);
-        return feature.getChildrenList()
-            .stream()
-            .filter(FeatureChild::hasBackground)
-            .map(FeatureChild::getBackground)
-            .findFirst()
-            .orElse(null);
-    }
-
     static Scenario getScenarioDefinition(AstNode astNode) {
         AstNode candidate = astNode;
-        while (candidate != null && !(candidate.node instanceof Scenario)){
+        while (candidate != null && !(candidate.node instanceof Scenario)) {
             candidate = candidate.parent;
         }
         return candidate == null ? null : (Scenario) candidate.node;
@@ -111,27 +99,6 @@ final class TestSourcesModel {
             return pathToAstMap.get(path).getFeature();
         }
         return null;
-    }
-
-    AstNode getAstNode(URI path, int line) {
-        if (!pathToNodeMap.containsKey(path)) {
-            parseGherkinSource(path);
-        }
-        if (pathToNodeMap.containsKey(path)) {
-            return pathToNodeMap.get(path).get(line);
-        }
-        return null;
-    }
-
-    boolean hasBackground(URI path, int line) {
-        if (!pathToNodeMap.containsKey(path)) {
-            parseGherkinSource(path);
-        }
-        if (pathToNodeMap.containsKey(path)) {
-            AstNode astNode = pathToNodeMap.get(path).get(line);
-            return getBackgroundForTestCase(astNode) != null;
-        }
-        return false;
     }
 
     private void parseGherkinSource(URI path) {
@@ -224,7 +191,46 @@ final class TestSourcesModel {
         }
     }
 
+    AstNode getAstNode(URI path, int line) {
+        if (!pathToNodeMap.containsKey(path)) {
+            parseGherkinSource(path);
+        }
+        if (pathToNodeMap.containsKey(path)) {
+            return pathToNodeMap.get(path).get(line);
+        }
+        return null;
+    }
+
+    boolean hasBackground(URI path, int line) {
+        if (!pathToNodeMap.containsKey(path)) {
+            parseGherkinSource(path);
+        }
+        if (pathToNodeMap.containsKey(path)) {
+            AstNode astNode = pathToNodeMap.get(path).get(line);
+            return getBackgroundForTestCase(astNode) != null;
+        }
+        return false;
+    }
+
+    static Background getBackgroundForTestCase(AstNode astNode) {
+        Feature feature = getFeatureForTestCase(astNode);
+        return feature.getChildrenList()
+            .stream()
+            .filter(FeatureChild::hasBackground)
+            .map(FeatureChild::getBackground)
+            .findFirst()
+            .orElse(null);
+    }
+
+    private static Feature getFeatureForTestCase(AstNode astNode) {
+        while (astNode.parent != null) {
+            astNode = astNode.parent;
+        }
+        return (Feature) astNode.node;
+    }
+
     static class ExamplesRowWrapperNode extends GeneratedMessageV3 {
+
         final int bodyRowIndex;
 
         ExamplesRowWrapperNode(GeneratedMessageV3 examplesRow, int bodyRowIndex) {
@@ -255,9 +261,11 @@ final class TestSourcesModel {
         public Message getDefaultInstanceForType() {
             throw new UnsupportedOperationException("not implemented");
         }
+
     }
 
     static class AstNode {
+
         final GeneratedMessageV3 node;
         final AstNode parent;
 
@@ -265,5 +273,7 @@ final class TestSourcesModel {
             this.node = node;
             this.parent = parent;
         }
+
     }
+
 }

@@ -53,9 +53,11 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         ScenarioCoreDefaultDataTableEntryTransformerDefinition(DefaultDataTableEntryTransformerDefinition delegate) {
             super(delegate);
         }
+
     }
 
     private static class ConvertingTransformer implements TableEntryByTypeTransformer {
+
         private final CamelCaseStringConverter converter = new CamelCaseStringConverter();
         private final TableEntryByTypeTransformer delegate;
 
@@ -67,5 +69,7 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         public Object transform(Map<String, String> entryValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
             return delegate.transform(converter.toCamelCase(entryValue), toValueType, cellTransformer);
         }
+
     }
+
 }

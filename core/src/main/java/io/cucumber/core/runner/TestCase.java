@@ -27,6 +27,7 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
+
     private final Pickle pickle;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
@@ -45,6 +46,33 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         this.afterHooks = afterHooks;
         this.pickle = pickle;
         this.dryRun = dryRun;
+    }
+
+    private static Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group makeMessageGroup(Group group) {
+        Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.newBuilder();
+        if (group == null) {
+            return builder.build();
+        }
+
+        if (group.getValue() != null) {
+            builder.setValue(group.getValue());
+        }
+
+        if (group.getStart() != -1) {
+            builder.setStart(group.getStart());
+        }
+
+        return builder
+            .addAllChildren(group.getChildren().stream()
+                .map(TestCase::makeMessageGroup)
+                .collect(toList()))
+            .build();
+    }
+
+    private static String toString(Throwable error) {
+        StringWriter stringWriter = new StringWriter();
+        error.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
     }
 
     void run(EventBus bus) {
@@ -77,38 +105,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
-    public List<TestStep> getTestSteps() {
-        List<TestStep> testSteps = new ArrayList<>(beforeHooks);
-        for (PickleStepTestStep step : this.testSteps) {
-            testSteps.addAll(step.getBeforeStepHookSteps());
-            testSteps.add(step);
-            testSteps.addAll(step.getAfterStepHookSteps());
-        }
-        testSteps.addAll(afterHooks);
-        return testSteps;
-    }
-
-    @Override
-    public String getName() {
-        return pickle.getName();
-    }
-
-    @Override
-    public String getScenarioDesignation() {
-        return fileColonLine(getLocation().getLine()) + " # " + getName();
-    }
-
-    @Override
-    public URI getUri() {
-        return pickle.getUri();
-    }
-
-    @Override
-    public UUID getId() {
-        return id;
-    }
-
-    @Override
     public Integer getLine() {
         return pickle.getLocation().getLine();
     }
@@ -123,6 +119,16 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return pickle.getKeyword();
     }
 
+    @Override
+    public String getName() {
+        return pickle.getName();
+    }
+
+    @Override
+    public String getScenarioDesignation() {
+        return fileColonLine(getLocation().getLine()) + " # " + getName();
+    }
+
     private String fileColonLine(Integer line) {
         return pickle.getUri().getSchemeSpecificPart() + ":" + line;
     }
@@ -130,6 +136,28 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     @Override
     public List<String> getTags() {
         return pickle.getTags();
+    }
+
+    @Override
+    public List<TestStep> getTestSteps() {
+        List<TestStep> testSteps = new ArrayList<>(beforeHooks);
+        for (PickleStepTestStep step : this.testSteps) {
+            testSteps.addAll(step.getBeforeStepHookSteps());
+            testSteps.add(step);
+            testSteps.addAll(step.getAfterStepHookSteps());
+        }
+        testSteps.addAll(afterHooks);
+        return testSteps;
+    }
+
+    @Override
+    public URI getUri() {
+        return pickle.getUri();
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
     }
 
     private void emitTestCaseMessage(EventBus bus) {
@@ -177,27 +205,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return builder.build();
     }
 
-    private static Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group makeMessageGroup(Group group) {
-        Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.newBuilder();
-        if (group == null) {
-            return builder.build();
-        }
-
-        if (group.getValue() != null) {
-            builder.setValue(group.getValue());
-        }
-
-        if (group.getStart() != -1) {
-            builder.setStart(group.getStart());
-        }
-
-        return builder
-            .addAllChildren(group.getChildren().stream()
-                .map(TestCase::makeMessageGroup)
-                .collect(toList()))
-            .build();
-    }
-
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
         bus.send(new TestCaseStarted(start, this));
         bus.send(Messages.Envelope.newBuilder()
@@ -226,9 +233,4 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             .build());
     }
 
-    private static String toString(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        error.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
-    }
 }

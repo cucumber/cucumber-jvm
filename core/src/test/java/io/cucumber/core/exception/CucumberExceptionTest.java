@@ -64,4 +64,5 @@ class CucumberExceptionTest {
             () -> assertThat(expectedThrown.getCause(), is(nullValue()))
         );
     }
+
 }

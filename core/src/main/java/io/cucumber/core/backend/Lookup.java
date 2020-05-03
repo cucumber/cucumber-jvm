@@ -4,6 +4,7 @@ import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
 public interface Lookup {
+
     /**
      * Provides an instance of a glue class.
      *
@@ -12,4 +13,5 @@ public interface Lookup {
      * @return new instance of type T
      */
     <T> T getInstance(Class<T> glueClass);
+
 }
