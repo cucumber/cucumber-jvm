@@ -7,7 +7,6 @@ import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Test
 public final class AbstractTestNGCucumberTestsTest {
@@ -42,4 +41,5 @@ public final class AbstractTestNGCucumberTestsTest {
         Assert.assertEquals(Collections.frequency(invokedTestMethodNames, "runScenario"), 3,
             "runScenario() must be invoked three times");
     }
+
 }

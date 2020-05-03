@@ -3,11 +3,11 @@ package io.cucumber.testng;
 import io.cucumber.core.backend.ObjectFactory;
 
 /**
- * This object factory does nothing. It is solely needed for marking purposes. 
+ * This object factory does nothing. It is solely needed for marking purposes.
  */
 final class NoObjectFactory implements ObjectFactory {
 
-    private  NoObjectFactory() {
+    private NoObjectFactory() {
         // No need for instantiation
     }
 
@@ -22,9 +22,11 @@ final class NoObjectFactory implements ObjectFactory {
     }
 
     @Override
-    public void start() {}
+    public void start() {
+    }
 
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 
 }

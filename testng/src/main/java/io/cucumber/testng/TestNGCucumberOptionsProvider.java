@@ -5,6 +5,7 @@ import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.snippets.SnippetType;
 
 final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
+
     @Override
     public CucumberOptionsAnnotationParser.CucumberOptions getOptions(Class<?> clazz) {
         CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
@@ -15,6 +16,7 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
     }
 
     private static class TestNGCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
+
         private final CucumberOptions annotation;
 
         TestNGCucumberOptions(CucumberOptions annotation) {
@@ -82,5 +84,7 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
         public Class<? extends ObjectFactory> objectFactory() {
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
+
     }
+
 }

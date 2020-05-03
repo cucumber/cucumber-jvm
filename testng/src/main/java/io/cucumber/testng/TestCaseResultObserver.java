@@ -34,5 +34,6 @@ class TestCaseResultObserver implements AutoCloseable {
     public void close() {
         delegate.close();
     }
+
 }
 

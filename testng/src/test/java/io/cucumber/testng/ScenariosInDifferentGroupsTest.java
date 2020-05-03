@@ -33,6 +33,13 @@ public class ScenariosInDifferentGroupsTest {
         return filter(testNGCucumberRunner.provideScenarios(), isSerial.negate());
     }
 
+    private Object[][] filter(Object[][] scenarios, Predicate<Pickle> accept) {
+        return Arrays.stream(scenarios).filter(objects -> {
+            PickleWrapper candidate = (PickleWrapper) objects[0];
+            return accept.test(candidate.getPickle());
+        }).toArray(Object[][]::new);
+    }
+
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios in the Serial group", dataProvider = "serialScenarios")
     public void runSerialScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) {
         testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
@@ -53,13 +60,6 @@ public class ScenariosInDifferentGroupsTest {
             return;
         }
         testNGCucumberRunner.finish();
-    }
-
-    private Object[][] filter(Object[][] scenarios, Predicate<Pickle> accept) {
-        return Arrays.stream(scenarios).filter(objects -> {
-            PickleWrapper candidate = (PickleWrapper) objects[0];
-            return accept.test(candidate.getPickle());
-        }).toArray(Object[][]::new);
     }
 
 }

@@ -1,4 +1,5 @@
 Feature: In cucumber.testng
+
   Scenario: first
     When step
     Then another step

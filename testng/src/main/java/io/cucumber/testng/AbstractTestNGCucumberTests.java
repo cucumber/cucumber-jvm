@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
  */
 @API(status = API.Status.STABLE)
 public abstract class AbstractTestNGCucumberTests {
+
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
@@ -50,4 +51,5 @@ public abstract class AbstractTestNGCucumberTests {
         }
         testNGCucumberRunner.finish();
     }
+
 }

@@ -79,14 +79,17 @@ public class TestNGCucumberRunnerTest {
         features = "classpath:io/cucumber/undefined/undefined_steps.feature"
     )
     static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {
+
     }
 
     @CucumberOptions
     static class RunCucumberTest extends AbstractTestNGCucumberTests {
+
     }
 
     @CucumberOptions(plugin = "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin")
     static class RunCucumberTestWithPlugin extends AbstractTestNGCucumberTests {
+
     }
 
     public static class Plugin implements ConcurrentEventListener {
@@ -99,10 +102,12 @@ public class TestNGCucumberRunnerTest {
             publisher.registerHandlerFor(TestRunStarted.class, event -> events.add(event));
             publisher.registerHandlerFor(TestRunFinished.class, event -> events.add(event));
         }
+
     }
 
     @CucumberOptions(features = "classpath:io/cucumber/error/parse-error.feature")
     static class ParseError extends AbstractTestNGCucumberTests {
+
     }
 
 }

@@ -5,4 +5,5 @@ package io.cucumber.testng;
     features = "classpath:io/cucumber/testng/three-scenarios.feature"
 )
 public class RunFeatureWithThreeScenariosTest extends AbstractTestNGCucumberTests {
+
 }

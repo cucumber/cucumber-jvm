@@ -193,4 +193,5 @@ public class TestCaseResultObserverTest {
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
         assertThat(exception.getCause(), instanceOf(SkipException.class));
     }
+
 }
