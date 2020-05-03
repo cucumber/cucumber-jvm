@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class GherkinMessagesFeature implements Feature {
+
     private final URI uri;
     private final List<Pickle> pickles;
     private final List<Messages.Envelope> envelopes;
@@ -51,13 +52,19 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
+    public Location getLocation() {
+        return GherkinMessagesLocation.from(gherkinDocument.getFeature().getLocation());
+    }
+
+    @Override
     public Optional<String> getKeyword() {
         return Optional.of(gherkinDocument.getFeature().getKeyword());
     }
 
     @Override
-    public Location getLocation() {
-        return GherkinMessagesLocation.from(gherkinDocument.getFeature().getLocation());
+    public Optional<String> getName() {
+        String name = gherkinDocument.getFeature().getName();
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override
@@ -72,12 +79,6 @@ final class GherkinMessagesFeature implements Feature {
     @Override
     public List<Pickle> getPickles() {
         return pickles;
-    }
-
-    @Override
-    public Optional<String> getName() {
-        String name = gherkinDocument.getFeature().getName();
-        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
     @Override
@@ -96,16 +97,16 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(uri);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GherkinMessagesFeature that = (GherkinMessagesFeature) o;
         return uri.equals(that.uri);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uri);
     }
 
 }

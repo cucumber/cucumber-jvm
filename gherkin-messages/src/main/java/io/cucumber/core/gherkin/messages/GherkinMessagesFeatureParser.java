@@ -88,4 +88,5 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
     public String version() {
         return "8";
     }
+
 }

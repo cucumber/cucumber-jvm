@@ -27,6 +27,7 @@ final class GherkinMessagesDataTableArgument implements DataTableArgument {
     }
 
     private static class CellView extends AbstractList<List<String>> {
+
         private final PickleTable table;
 
         CellView(PickleTable table) {
@@ -52,5 +53,7 @@ final class GherkinMessagesDataTableArgument implements DataTableArgument {
         public int size() {
             return table.getRowsCount();
         }
+
     }
+
 }

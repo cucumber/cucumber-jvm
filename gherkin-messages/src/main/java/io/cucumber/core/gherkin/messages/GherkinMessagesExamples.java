@@ -30,6 +30,11 @@ final class GherkinMessagesExamples implements Node.Examples {
     }
 
     @Override
+    public Location getLocation() {
+        return location;
+    }
+
+    @Override
     public Optional<String> getKeyword() {
         return Optional.of(examples.getKeyword());
     }
@@ -38,11 +43,6 @@ final class GherkinMessagesExamples implements Node.Examples {
     public Optional<String> getName() {
         String name = examples.getName();
         return name.isEmpty() ? Optional.empty() : Optional.of(name);
-    }
-
-    @Override
-    public Location getLocation() {
-        return location;
     }
 
 }

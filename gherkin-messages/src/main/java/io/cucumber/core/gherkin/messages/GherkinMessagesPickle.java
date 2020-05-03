@@ -1,6 +1,5 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.plugin.event.Location;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
@@ -8,6 +7,7 @@ import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Pickle.PickleStep;
 import io.cucumber.messages.Messages.Pickle.PickleTag;
+import io.cucumber.plugin.event.Location;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ final class GherkinMessagesPickle implements Pickle {
     @Override
     public Location getLocation() {
         List<String> sourceIds = pickle.getAstNodeIdsList();
-        String sourceId = sourceIds.get(sourceIds.size() -1);
+        String sourceId = sourceIds.get(sourceIds.size() - 1);
         Messages.Location location = cucumberQuery.getLocation(sourceId);
         return GherkinMessagesLocation.from(location);
     }

@@ -1,7 +1,7 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.plugin.event.Location;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
 import java.util.Optional;
@@ -17,6 +17,11 @@ final class GherkinMessagesExample implements Node.Example {
     }
 
     @Override
+    public Location getLocation() {
+        return GherkinMessagesLocation.from(tableRow.getLocation());
+    }
+
+    @Override
     public Optional<String> getKeyword() {
         return Optional.empty();
     }
@@ -26,8 +31,4 @@ final class GherkinMessagesExample implements Node.Example {
         return Optional.of("Example #" + rowIndex);
     }
 
-    @Override
-    public Location getLocation() {
-        return GherkinMessagesLocation.from(tableRow.getLocation());
-    }
 }

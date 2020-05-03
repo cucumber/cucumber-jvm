@@ -16,6 +16,7 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 final class CucumberQuery {
+
     private final Map<String, Step> gherkinStepById = new HashMap<>();
     private final Map<String, Scenario> gherkinScenarioById = new HashMap<>();
     private final Map<String, Location> locationBySourceId = new HashMap<>();
@@ -56,20 +57,20 @@ final class CucumberQuery {
         }
     }
 
+    private void updateBackground(GherkinDocument.Feature.Background background, String uri) {
+        updateStep(background.getStepsList());
+    }
+
     private void updateScenario(Scenario scenario, String uri) {
         gherkinScenarioById.put(requireNonNull(scenario.getId()), scenario);
         locationBySourceId.put(requireNonNull(scenario.getId()), scenario.getLocation());
         updateStep(scenario.getStepsList());
 
-        for (Examples examples: scenario.getExamplesList()) {
-            for (TableRow tableRow: examples.getTableBodyList()) {
+        for (Examples examples : scenario.getExamplesList()) {
+            for (TableRow tableRow : examples.getTableBodyList()) {
                 this.locationBySourceId.put(requireNonNull(tableRow.getId()), tableRow.getLocation());
             }
         }
-    }
-
-    private void updateBackground(GherkinDocument.Feature.Background background, String uri) {
-        updateStep(background.getStepsList());
     }
 
     private void updateStep(List<Step> stepsList) {
@@ -91,4 +92,5 @@ final class CucumberQuery {
         Location location = locationBySourceId.get(requireNonNull(sourceId));
         return requireNonNull(location);
     }
+
 }

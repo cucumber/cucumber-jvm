@@ -94,6 +94,7 @@ class FeatureParserTest {
             assertEquals("text/plain", ((DocStringArgument) steps.get(1).getArgument()).getContentType());
         });
     }
+
     @Test
     void backgrounds_can_occur_twice() throws IOException {
         URI uri = URI.create("classpath:com/example.feature");

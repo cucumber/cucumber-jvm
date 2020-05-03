@@ -29,6 +29,20 @@ final class GherkinMessagesStep implements Step {
         this.location = location;
     }
 
+    private static Argument extractArgument(PickleStep pickleStep, Messages.Location location) {
+        PickleStepArgument argument = pickleStep.getArgument();
+        if (argument.hasDocString()) {
+            PickleDocString docString = argument.getDocString();
+            //TODO: Fix this work around
+            return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
+        }
+        if (argument.hasDataTable()) {
+            PickleTable table = argument.getDataTable();
+            return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
+        }
+        return null;
+    }
+
     private static StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
         if (StepType.isAstrix(keyWord)) {
             return StepType.OTHER;
@@ -51,18 +65,9 @@ final class GherkinMessagesStep implements Step {
         throw new IllegalStateException("Keyword " + keyWord + " was neither given, when, then, and, but nor *");
     }
 
-    private static Argument extractArgument(PickleStep pickleStep, Messages.Location location) {
-        PickleStepArgument argument = pickleStep.getArgument();
-        if (argument.hasDocString()) {
-            PickleDocString docString = argument.getDocString();
-            //TODO: Fix this work around
-            return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
-        }
-        if (argument.hasDataTable()) {
-            PickleTable table = argument.getDataTable();
-            return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
-        }
-        return null;
+    @Override
+    public String getKeyword() {
+        return keyWord;
     }
 
     @Override
@@ -76,16 +81,6 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
-    public Argument getArgument() {
-        return argument;
-    }
-
-    @Override
-    public String getKeyword() {
-        return keyWord;
-    }
-
-    @Override
     public StepType getType() {
         return stepType;
     }
@@ -96,12 +91,18 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
+    public String getId() {
+        return pickleStep.getId();
+    }
+
+    @Override
+    public Argument getArgument() {
+        return argument;
+    }
+
+    @Override
     public String getText() {
         return pickleStep.getText();
     }
 
-    @Override
-    public String getId() {
-        return pickleStep.getId();
-    }
 }

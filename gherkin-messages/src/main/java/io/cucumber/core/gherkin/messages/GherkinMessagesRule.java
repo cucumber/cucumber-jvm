@@ -1,9 +1,9 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.plugin.event.Location;
-import io.cucumber.plugin.event.Node;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +36,11 @@ final class GherkinMessagesRule implements Node.Rule {
     }
 
     @Override
+    public Location getLocation() {
+        return GherkinMessagesLocation.from(rule.getLocation());
+    }
+
+    @Override
     public Optional<String> getKeyword() {
         return Optional.of(rule.getKeyword());
     }
@@ -46,8 +51,4 @@ final class GherkinMessagesRule implements Node.Rule {
         return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
-    @Override
-    public Location getLocation() {
-        return GherkinMessagesLocation.from(rule.getLocation());
-    }
 }

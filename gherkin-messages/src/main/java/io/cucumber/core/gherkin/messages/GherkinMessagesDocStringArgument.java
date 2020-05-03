@@ -36,4 +36,5 @@ final class GherkinMessagesDocStringArgument implements DocStringArgument {
     public int getLine() {
         return line;
     }
+
 }

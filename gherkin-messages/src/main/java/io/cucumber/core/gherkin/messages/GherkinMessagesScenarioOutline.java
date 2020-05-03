@@ -28,6 +28,11 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
     }
 
     @Override
+    public Location getLocation() {
+        return GherkinMessagesLocation.from(scenario.getLocation());
+    }
+
+    @Override
     public Optional<String> getKeyword() {
         return Optional.of(scenario.getKeyword());
     }
@@ -38,8 +43,4 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
         return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
-    @Override
-    public Location getLocation() {
-        return GherkinMessagesLocation.from(scenario.getLocation());
-    }
 }
