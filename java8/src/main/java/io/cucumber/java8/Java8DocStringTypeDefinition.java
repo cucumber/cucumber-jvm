@@ -8,11 +8,6 @@ final class Java8DocStringTypeDefinition extends AbstractGlueDefinition implemen
 
     private final DocStringType docStringType;
 
-    @Override
-    public DocStringType docStringType() {
-        return docStringType;
-    }
-
     Java8DocStringTypeDefinition(String contentType, DocStringDefinitionBody<?> body) {
         super(body, new Exception().getStackTrace()[3]);
         if (contentType == null) {
@@ -32,4 +27,10 @@ final class Java8DocStringTypeDefinition extends AbstractGlueDefinition implemen
     private Object execute(String content) {
         return Invoker.invoke(this, body, method, content);
     }
+
+    @Override
+    public DocStringType docStringType() {
+        return docStringType;
+    }
+
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import static java.lang.String.format;
 
 final class LambdaTypeResolver implements TypeResolver {
+
     private final Type type;
     private final String expression;
     private final StackTraceElement location;
@@ -25,10 +26,6 @@ final class LambdaTypeResolver implements TypeResolver {
         return requireNonMapOrListType(getType());
     }
 
-    public Type getType() {
-        return type;
-    }
-
     private Type requireNonMapOrListType(Type argumentType) {
         if (argumentType instanceof Class) {
             Class<?> argumentClass = (Class<?>) argumentType;
@@ -42,6 +39,10 @@ final class LambdaTypeResolver implements TypeResolver {
             }
         }
         return argumentType;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     private CucumberBackendException withLocation(CucumberBackendException exception) {

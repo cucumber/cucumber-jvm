@@ -15,18 +15,18 @@ class Java8AnonInnerClassStepDefinitionTest {
         assertThat(java8StepDefinition.parameterInfos().size(), is(equalTo(1)));
     }
 
-    @Test
-    void should_calculate_parameters_count_from_body_with_two_params() {
-        Java8StepDefinition java8StepDefinition = Java8StepDefinition.create("I have some step", StepDefinitionBody.A2.class, twoParamStep());
-        assertThat(java8StepDefinition.parameterInfos().size(), is(equalTo(2)));
-    }
-
     private StepDefinitionBody.A1<?> oneParamStep() {
         return new StepDefinitionBody.A1<String>() {
             @Override
             public void accept(String p1) {
             }
         };
+    }
+
+    @Test
+    void should_calculate_parameters_count_from_body_with_two_params() {
+        Java8StepDefinition java8StepDefinition = Java8StepDefinition.create("I have some step", StepDefinitionBody.A2.class, twoParamStep());
+        assertThat(java8StepDefinition.parameterInfos().size(), is(equalTo(2)));
     }
 
     private StepDefinitionBody.A2<?, ?> twoParamStep() {
@@ -36,4 +36,5 @@ class Java8AnonInnerClassStepDefinitionTest {
             }
         };
     }
+
 }

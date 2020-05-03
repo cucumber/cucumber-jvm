@@ -141,5 +141,7 @@ final class Java8Backend implements Backend {
         public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
             glue.addDefaultDataTableEntryTransformer(defaultDataTableEntryTransformer);
         }
+
     }
+
 }

@@ -18,12 +18,13 @@ final class Java8DataTableRowDefinition extends AbstractDatatableElementTransfor
         );
     }
 
+    private Object execute(List<String> row) {
+        return Invoker.invoke(this, body, method, row);
+    }
+
     @Override
     public DataTableType dataTableType() {
         return dataTableType;
     }
 
-    private Object execute(List<String> row) {
-        return Invoker.invoke(this, body, method, row);
-    }
 }

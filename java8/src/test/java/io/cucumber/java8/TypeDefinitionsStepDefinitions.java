@@ -1,7 +1,6 @@
 package io.cucumber.java8;
 
 import io.cucumber.datatable.DataTable;
-import org.hamcrest.MatcherAssert;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -16,6 +15,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TypeDefinitionsStepDefinitions implements En {
+
     public TypeDefinitionsStepDefinitions() {
         Given("docstring, defined by lambda",
             (StringBuilder builder) -> assertThat(builder.getClass(), equalTo(StringBuilder.class)));
@@ -117,6 +117,7 @@ public class TypeDefinitionsStepDefinitions implements En {
     }
 
     public static final class Author {
+
         private final String name;
         private final String surname;
         private final String famousBook;
@@ -125,6 +126,11 @@ public class TypeDefinitionsStepDefinitions implements En {
             this.name = name;
             this.surname = surname;
             this.famousBook = famousBook;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, surname, famousBook);
         }
 
         @Override
@@ -146,13 +152,10 @@ public class TypeDefinitionsStepDefinitions implements En {
                 '}';
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, surname, famousBook);
-        }
     }
 
     public static final class Point {
+
         private final int x, y;
 
         public Point(int x, int y) {
@@ -164,9 +167,11 @@ public class TypeDefinitionsStepDefinitions implements En {
         public String toString() {
             return getClass().getSimpleName() + "[x=" + x + ",y=" + y + "]";
         }
+
     }
 
     public static final class Book {
+
         private final String name;
         private final String mainCharacter;
 
@@ -199,20 +204,15 @@ public class TypeDefinitionsStepDefinitions implements En {
                 ", mainCharacter='" + mainCharacter + '\'' +
                 '}';
         }
+
     }
 
     public static final class Cell {
+
         private final String name;
 
         public Cell(String name) {
             this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return "Cell{" +
-                "name='" + name + '\'' +
-                '}';
         }
 
         @Override
@@ -223,9 +223,17 @@ public class TypeDefinitionsStepDefinitions implements En {
             return Objects.equals(name, cell.name);
         }
 
+        @Override
+        public String toString() {
+            return "Cell{" +
+                "name='" + name + '\'' +
+                '}';
+        }
+
     }
 
     public static final class Literature {
+
         private final List<String> types;
         private final List<String> characters;
 
@@ -241,14 +249,6 @@ public class TypeDefinitionsStepDefinitions implements En {
         }
 
         @Override
-        public String toString() {
-            return "Literature{" +
-                "types=" + types +
-                ", characters=" + characters +
-                '}';
-        }
-
-        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -257,5 +257,14 @@ public class TypeDefinitionsStepDefinitions implements En {
                 characters.containsAll(that.characters);
         }
 
+        @Override
+        public String toString() {
+            return "Literature{" +
+                "types=" + types +
+                ", characters=" + characters +
+                '}';
+        }
+
     }
+
 }

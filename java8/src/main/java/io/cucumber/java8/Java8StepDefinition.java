@@ -14,6 +14,7 @@ final class Java8StepDefinition extends AbstractGlueDefinition implements StepDe
 
     private final List<ParameterInfo> parameterInfos;
     private final String expression;
+
     private <T extends StepDefinitionBody> Java8StepDefinition(String expression,
                                                                Class<T> bodyClass,
                                                                T body) {
@@ -22,16 +23,16 @@ final class Java8StepDefinition extends AbstractGlueDefinition implements StepDe
         this.parameterInfos = fromTypes(expression, location, resolveRawArguments(bodyClass, body.getClass()));
     }
 
-    public static <T extends StepDefinitionBody> Java8StepDefinition create(
-        String expression, Class<T> bodyClass, T body) {
-        return new Java8StepDefinition(expression, bodyClass, body);
-    }
-
     private static List<ParameterInfo> fromTypes(String expression, StackTraceElement location, Type[] genericParameterTypes) {
         return Arrays.stream(genericParameterTypes)
             .map(type -> new LambdaTypeResolver(type, expression, location))
             .map(Java8ParameterInfo::new)
             .collect(toList());
+    }
+
+    public static <T extends StepDefinitionBody> Java8StepDefinition create(
+        String expression, Class<T> bodyClass, T body) {
+        return new Java8StepDefinition(expression, bodyClass, body);
     }
 
     @Override

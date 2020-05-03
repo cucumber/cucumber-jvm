@@ -35,6 +35,14 @@ class Java8SnippetTest {
         assertThat(getSnippet(feature), is(equalTo(expected)));
     }
 
+    private String getSnippet(Feature feature) {
+        Step step = feature.getPickles().get(0).getSteps().get(0);
+        return String.join(
+            "\n",
+            snippetGenerator.getSnippet(step, SnippetType.UNDERSCORE)
+        );
+    }
+
     @Test
     void generatesDataTableSnippet() {
         Feature feature = TestFeatureParser.parse("" +
@@ -56,14 +64,6 @@ class Java8SnippetTest {
             "    throw new io.cucumber.java8.PendingException();\n" +
             "});";
         assertThat(getSnippet(feature), is(equalTo(expected)));
-    }
-
-    private String getSnippet(Feature feature) {
-        Step step = feature.getPickles().get(0).getSteps().get(0);
-        return String.join(
-            "\n",
-            snippetGenerator.getSnippet(step, SnippetType.UNDERSCORE)
-        );
     }
 
 }

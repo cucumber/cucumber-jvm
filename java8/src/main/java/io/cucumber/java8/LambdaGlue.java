@@ -587,4 +587,5 @@ public interface LambdaGlue {
     default <T> void DefaultDataTableEntryTransformer(String replaceWithEmptyString, DefaultDataTableEntryTransformerBody definitionBody) {
         LambdaGlueRegistry.INSTANCE.get().addDefaultDataTableEntryTransformer(new Java8DefaultDataTableEntryTransformerDefinition(new String[]{replaceWithEmptyString}, definitionBody));
     }
+
 }

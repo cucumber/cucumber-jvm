@@ -13,6 +13,11 @@ class Java8DefaultDataTableEntryTransformerDefinition extends AbstractDatatableE
     }
 
     @Override
+    public boolean headersToProperties() {
+        return true;
+    }
+
+    @Override
     public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
         return (fromValue, toValueType, tableCellByTypeTransformer) -> execute(
             replaceEmptyPatternsWithEmptyString(fromValue),
@@ -24,8 +29,4 @@ class Java8DefaultDataTableEntryTransformerDefinition extends AbstractDatatableE
         return Invoker.invoke(this, body, method, fromValue, toValueType);
     }
 
-    @Override
-    public boolean headersToProperties() {
-        return true;
-    }
 }

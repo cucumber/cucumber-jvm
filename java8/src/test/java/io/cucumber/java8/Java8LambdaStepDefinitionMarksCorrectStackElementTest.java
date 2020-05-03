@@ -55,12 +55,12 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
-        public void addBeforeHookDefinition(HookDefinition beforeHook) {
+        public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
 
         }
 
         @Override
-        public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
+        public void addBeforeHookDefinition(HookDefinition beforeHook) {
 
         }
 
@@ -102,6 +102,7 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         StepDefinition getStepDefinition() {
             return stepDefinition;
         }
+
     }
 
     public static final class SomeLambdaStepDefs implements En {
@@ -113,4 +114,5 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
     }
+
 }

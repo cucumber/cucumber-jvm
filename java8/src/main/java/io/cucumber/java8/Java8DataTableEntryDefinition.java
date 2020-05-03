@@ -18,12 +18,13 @@ final class Java8DataTableEntryDefinition extends AbstractDatatableElementTransf
         );
     }
 
+    private Object execute(Map<String, String> entry) {
+        return Invoker.invoke(this, body, method, entry);
+    }
+
     @Override
     public DataTableType dataTableType() {
         return dataTableType;
     }
 
-    private Object execute(Map<String, String> entry) {
-        return Invoker.invoke(this, body, method, entry);
-    }
 }

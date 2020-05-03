@@ -19,4 +19,5 @@ class Java8DefaultParameterTypeDefinition extends AbstractGlueDefinition impleme
     private Object execute(String fromValue, Type toValue) {
         return Invoker.invoke(this, body, method, fromValue, toValue);
     }
+
 }

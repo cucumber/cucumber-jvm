@@ -22,14 +22,6 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         this.location = requireNonNull(location);
     }
 
-    public final String getLocation() {
-        return location.toString();
-    }
-
-    public final boolean isDefinedAt(StackTraceElement stackTraceElement) {
-        return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
-    }
-
     private Method getAcceptMethod(Class<?> bodyClass) {
         List<Method> acceptMethods = new ArrayList<>();
         for (Method method : bodyClass.getDeclaredMethods()) {
@@ -42,6 +34,14 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
                 "Expected single 'accept' method on body class, found '%s'", acceptMethods));
         }
         return acceptMethods.get(0);
+    }
+
+    public final String getLocation() {
+        return location.toString();
+    }
+
+    public final boolean isDefinedAt(StackTraceElement stackTraceElement) {
+        return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
     }
 
     Class<?>[] resolveRawArguments(Class<?> bodyClass, Class<?> body) {
@@ -57,4 +57,5 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         }
         return rawArguments;
     }
+
 }

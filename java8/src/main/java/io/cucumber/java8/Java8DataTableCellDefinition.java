@@ -16,12 +16,13 @@ final class Java8DataTableCellDefinition extends AbstractDatatableElementTransfo
         );
     }
 
+    private Object execute(Object cell) {
+        return Invoker.invoke(this, body, method, cell);
+    }
+
     @Override
     public DataTableType dataTableType() {
         return dataTableType;
     }
 
-    private Object execute(Object cell) {
-        return Invoker.invoke(this, body, method, cell);
-    }
 }

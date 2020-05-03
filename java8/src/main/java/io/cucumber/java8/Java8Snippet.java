@@ -12,4 +12,5 @@ final class Java8Snippet extends AbstractJavaSnippet {
             "{5}    throw new " + PendingException.class.getName() + "();\n" +
             "'}');");
     }
+
 }

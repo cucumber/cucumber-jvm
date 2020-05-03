@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LambdaStepDefinitions implements io.cucumber.java8.En {
+
     private static LambdaStepDefinitions lastInstance;
 
     private final int outside = 41;
@@ -112,11 +113,10 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
 
     }
 
-    public static void staticMethodWithAnArgument(Integer cuckes) {
-        assertEquals(42, cuckes.intValue());
+    private void methodThatDeclaresException() {
     }
 
-    private void methodThatDeclaresException() {
+    private void hookWithArgs(Scenario scenario) {
     }
 
     private void methodWithAnArgument(Integer cuckes) {
@@ -127,12 +127,15 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         assertEquals(42, cuckes);
     }
 
-    private void hookWithArgs(Scenario scenario) {
+    public static void staticMethodWithAnArgument(Integer cuckes) {
+        assertEquals(42, cuckes.intValue());
     }
 
     public static class Person {
+
         String first;
         String last;
+
     }
 
     public static class Contact {
@@ -152,6 +155,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
             assertEquals("42", this.number);
             assertEquals("314", number);
         }
+
     }
 
 
