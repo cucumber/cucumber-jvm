@@ -18,6 +18,7 @@ import java.util.StringJoiner;
 @Table(name = "users")
 @Access(AccessType.PROPERTY)
 public class User implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Access(AccessType.FIELD)
@@ -65,4 +66,5 @@ public class User implements Serializable {
             .add("username='" + username + "'")
             .toString();
     }
+
 }

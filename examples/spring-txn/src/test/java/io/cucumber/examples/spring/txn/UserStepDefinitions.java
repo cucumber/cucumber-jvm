@@ -18,4 +18,5 @@ public class UserStepDefinitions {
     public User getCurrentUser() {
         return currentUser;
     }
+
 }

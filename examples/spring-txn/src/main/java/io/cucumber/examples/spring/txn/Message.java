@@ -16,6 +16,7 @@ import java.util.StringJoiner;
 @Table(name = "messages")
 @Access(AccessType.PROPERTY)
 public class Message implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Access(AccessType.FIELD)
@@ -60,4 +61,5 @@ public class Message implements Serializable {
             .add("content='" + content + "'")
             .toString();
     }
+
 }
