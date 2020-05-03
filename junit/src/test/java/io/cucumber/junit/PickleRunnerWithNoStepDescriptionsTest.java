@@ -31,6 +31,10 @@ class PickleRunnerWithNoStepDescriptionsTest {
         assertThat(runner.getDescription().getDisplayName(), is(equalTo("scenario name(feature name)")));
     }
 
+    private JUnitOptions createJunitOptions() {
+        return new JUnitOptionsBuilder().build();
+    }
+
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
         List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
@@ -46,6 +50,10 @@ class PickleRunnerWithNoStepDescriptionsTest {
         );
 
         assertThat(runner.getDescription().getDisplayName(), is(equalTo("scenario_name(feature_name)")));
+    }
+
+    private JUnitOptions createFileNameCompatibleJUnitOptions() {
+        return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).build();
     }
 
     @Test
@@ -64,14 +72,6 @@ class PickleRunnerWithNoStepDescriptionsTest {
         );
 
         assertThat(runner.getDescription().getDisplayName(), is(equalTo("____________(___________)")));
-    }
-
-    private JUnitOptions createJunitOptions() {
-        return new JUnitOptionsBuilder().build();
-    }
-
-    private JUnitOptions createFileNameCompatibleJUnitOptions() {
-        return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).build();
     }
 
 }

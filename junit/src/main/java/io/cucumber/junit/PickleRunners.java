@@ -22,15 +22,6 @@ import static io.cucumber.junit.FileNameCompatibleNames.createName;
 
 final class PickleRunners {
 
-    interface PickleRunner {
-        void run(RunNotifier notifier);
-
-        Description getDescription();
-
-        Description describeChild(Step step);
-
-    }
-
     static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions options) {
         try {
             return new WithStepDescriptions(runnerSupplier, pickle, options);
@@ -39,13 +30,23 @@ final class PickleRunners {
         }
     }
 
-
     static PickleRunner withNoStepDescriptions(String featureName, RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions) {
         return new NoStepDescriptions(featureName, runnerSupplier, pickle, jUnitOptions);
     }
 
 
+    interface PickleRunner {
+
+        void run(RunNotifier notifier);
+
+        Description getDescription();
+
+        Description describeChild(Step step);
+
+    }
+
     static class WithStepDescriptions extends ParentRunner<Step> implements PickleRunner {
+
         private final RunnerSupplier runnerSupplier;
         private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
@@ -112,6 +113,7 @@ final class PickleRunners {
 
 
     static final class NoStepDescriptions implements PickleRunner {
+
         private final String featureName;
         private final RunnerSupplier runnerSupplier;
         private final Pickle pickle;
@@ -123,6 +125,16 @@ final class PickleRunners {
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
+        }
+
+        @Override
+        public void run(final RunNotifier notifier) {
+            // Possibly invoked by a thread other then the creating thread
+            Runner runner = runnerSupplier.get();
+            JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
+            jUnitReporter.startExecutionUnit(this, notifier);
+            runner.runPickle(pickle);
+            jUnitReporter.finishExecutionUnit();
         }
 
         @Override
@@ -140,29 +152,28 @@ final class PickleRunners {
             throw new UnsupportedOperationException("This pickle runner does not wish to describe its children");
         }
 
-        @Override
-        public void run(final RunNotifier notifier) {
-            // Possibly invoked by a thread other then the creating thread
-            Runner runner = runnerSupplier.get();
-            JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
-            jUnitReporter.startExecutionUnit(this, notifier);
-            runner.runPickle(pickle);
-            jUnitReporter.finishExecutionUnit();
-        }
     }
 
     static final class PickleId implements Serializable {
+
         private static final long serialVersionUID = 1L;
         private final URI uri;
         private final int pickleLine;
+
+        PickleId(Pickle pickle) {
+            this(pickle.getUri(), pickle.getLocation().getLine());
+        }
 
         PickleId(URI uri, int pickleLine) {
             this.uri = uri;
             this.pickleLine = pickleLine;
         }
 
-        PickleId(Pickle pickle) {
-            this(pickle.getUri(), pickle.getLocation().getLine());
+        @Override
+        public int hashCode() {
+            int result = uri.hashCode();
+            result = 31 * result + pickleLine;
+            return result;
         }
 
         @Override
@@ -174,19 +185,14 @@ final class PickleRunners {
         }
 
         @Override
-        public int hashCode() {
-            int result = uri.hashCode();
-            result = 31 * result + pickleLine;
-            return result;
-        }
-
-        @Override
         public String toString() {
             return uri + ":" + pickleLine;
         }
+
     }
 
     private static final class PickleStepId implements Serializable {
+
         private static final long serialVersionUID = 1L;
         private final URI uri;
         private final int pickleLine;
@@ -199,14 +205,6 @@ final class PickleRunners {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            PickleStepId that = (PickleStepId) o;
-            return pickleLine == that.pickleLine && pickleStepLine == that.pickleStepLine && uri.equals(that.uri);
-        }
-
-        @Override
         public int hashCode() {
             int result = pickleLine;
             result = 31 * result + uri.hashCode();
@@ -215,9 +213,18 @@ final class PickleRunners {
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PickleStepId that = (PickleStepId) o;
+            return pickleLine == that.pickleLine && pickleStepLine == that.pickleStepLine && uri.equals(that.uri);
+        }
+
+        @Override
         public String toString() {
             return uri + ":" + pickleLine + ":" + pickleStepLine;
         }
+
     }
 
 }

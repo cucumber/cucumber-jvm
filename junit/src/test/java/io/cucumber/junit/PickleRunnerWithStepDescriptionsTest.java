@@ -52,6 +52,10 @@ class PickleRunnerWithStepDescriptionsTest {
         assertNotEquals(stepDescription1, stepDescription2);
     }
 
+    private JUnitOptions createJunitOptions() {
+        return new JUnitOptionsBuilder().build();
+    }
+
     @Test
     void shouldAssignUnequalDescriptionsToDifferentStepsInAScenarioOutline() {
         Feature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
@@ -154,10 +158,6 @@ class PickleRunnerWithStepDescriptionsTest {
         assertEquals("scenario_name", runner.getDescription().getDisplayName());
         assertEquals("scenario_name", runner.getDescription().getChildren().get(0).getClassName());
         assertEquals("it_works", runner.getDescription().getChildren().get(0).getMethodName());
-    }
-
-    private JUnitOptions createJunitOptions() {
-        return new JUnitOptionsBuilder().build();
     }
 
     private JUnitOptions createFileNameCompatibleJunitOptions() {

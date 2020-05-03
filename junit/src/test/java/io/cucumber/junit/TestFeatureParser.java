@@ -1,8 +1,8 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.resource.Resource;
 
 import java.io.ByteArrayInputStream;
@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 class TestFeatureParser {
+
     static Feature parse(final String source) {
         return parse("file:test.feature", source);
     }
@@ -34,4 +35,5 @@ class TestFeatureParser {
 
         }).orElse(null);
     }
+
 }

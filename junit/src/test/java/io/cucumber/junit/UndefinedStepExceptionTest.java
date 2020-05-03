@@ -65,4 +65,5 @@ class UndefinedStepExceptionTest {
             "snippet\n"
         ));
     }
+
 }

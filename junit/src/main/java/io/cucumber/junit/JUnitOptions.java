@@ -20,4 +20,5 @@ final class JUnitOptions {
     void setStepNotifications(boolean stepNotifications) {
         this.stepNotifications = stepNotifications;
     }
+
 }

@@ -29,4 +29,5 @@ final class JUnitOptionsBuilder {
         this.stepNotifications = stepNotifications;
         return this;
     }
+
 }

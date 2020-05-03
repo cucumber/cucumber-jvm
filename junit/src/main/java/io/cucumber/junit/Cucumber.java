@@ -191,6 +191,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     }
 
     class RunCucumber extends Statement {
+
         private final Statement runFeatures;
 
         RunCucumber(Statement runFeatures) {
@@ -214,5 +215,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 context.finishTestRun();
             }
         }
+
     }
+
 }

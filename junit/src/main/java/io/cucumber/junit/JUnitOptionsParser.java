@@ -29,5 +29,6 @@ final class JUnitOptionsParser {
         }
         return args;
     }
+
 }
 

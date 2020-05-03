@@ -29,6 +29,7 @@ public class StubBackendProviderService implements BackendProviderService {
      * We need an implementation of Backend to prevent Runtime from blowing up.
      */
     public static class StubBackend implements Backend {
+
         StubBackend() {
 
         }
@@ -69,16 +70,6 @@ public class StubBackendProviderService implements BackendProviderService {
                 }
 
                 @Override
-                public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-                    return false;
-                }
-
-                @Override
-                public String getLocation() {
-                    return "stubbed location";
-                }
-
-                @Override
                 public List<ParameterInfo> parameterInfos() {
                     return Collections.emptyList();
                 }
@@ -86,6 +77,16 @@ public class StubBackendProviderService implements BackendProviderService {
                 @Override
                 public String getPattern() {
                     return pattern;
+                }
+
+                @Override
+                public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+                    return false;
+                }
+
+                @Override
+                public String getLocation() {
+                    return "stubbed location";
                 }
             };
         }

@@ -89,6 +89,37 @@ class FeatureRunnerTest {
         assertTrue(scenarioC2.getChildren().isEmpty());
     }
 
+    private FeatureRunner createFeatureRunner(Feature feature, JUnitOptions junitOption) {
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(RuntimeOptions.defaultOptions());
+        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+        final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+
+        final Clock clockStub = new Clock() {
+            @Override
+            public ZoneId getZone() {
+                return null;
+            }
+
+            @Override
+            public Clock withZone(ZoneId zone) {
+                return null;
+            }
+
+            @Override
+            public Instant instant() {
+                return Instant.EPOCH;
+            }
+        };
+        BackendSupplier backendSupplier = () -> singleton(new StubBackendProviderService.StubBackend());
+
+        EventBus bus = new TimeServiceEventBus(clockStub, UUID::randomUUID);
+        Filters filters = new Filters(runtimeOptions);
+        Supplier<ClassLoader> classLoader = FeatureRunnerTest.class::getClassLoader;
+        ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory, typeRegistrySupplier);
+        return FeatureRunner.create(feature, filters, runnerSupplier, junitOption);
+    }
+
     @Test
     void should_not_issue_notification_for_steps_by_default_scenario_outline_with_two_examples_table_and_background() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
@@ -120,6 +151,13 @@ class FeatureRunnerTest {
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #3(feature name)")));
     }
 
+    private RunNotifier runFeatureWithNotifier(Feature feature, JUnitOptions options) {
+        FeatureRunner runner = createFeatureRunner(feature, options);
+        RunNotifier notifier = mock(RunNotifier.class);
+        runner.run(notifier);
+        return notifier;
+    }
+
     @Test
     void should_not_issue_notification_for_steps_by_default_two_scenarios_with_background() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
@@ -142,44 +180,6 @@ class FeatureRunnerTest {
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
         order.verify(notifier, times(1)).fireTestFailure(argThat(new FailureMatcher("scenario_2 name(feature name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
-    }
-
-    private RunNotifier runFeatureWithNotifier(Feature feature, JUnitOptions options) {
-        FeatureRunner runner = createFeatureRunner(feature, options);
-        RunNotifier notifier = mock(RunNotifier.class);
-        runner.run(notifier);
-        return notifier;
-    }
-
-    private FeatureRunner createFeatureRunner(Feature feature, JUnitOptions junitOption) {
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(RuntimeOptions.defaultOptions());
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
-        final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-
-        final Clock clockStub = new Clock() {
-            @Override
-            public Instant instant() {
-                return Instant.EPOCH;
-            }
-
-            @Override
-            public ZoneId getZone() {
-                return null;
-            }
-
-            @Override
-            public Clock withZone(ZoneId zone) {
-                return null;
-            }
-        };
-        BackendSupplier backendSupplier = () -> singleton(new StubBackendProviderService.StubBackend());
-
-        EventBus bus = new TimeServiceEventBus(clockStub, UUID::randomUUID);
-        Filters filters = new Filters(runtimeOptions);
-        Supplier<ClassLoader> classLoader = FeatureRunnerTest.class::getClassLoader;
-        ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory, typeRegistrySupplier);
-        return FeatureRunner.create(feature, filters, runnerSupplier, junitOption);
     }
 
     @Test

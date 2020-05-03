@@ -3,6 +3,7 @@ package io.cucumber.junit;
 import static java.util.Locale.ROOT;
 
 final class SkippedThrowable extends Throwable {
+
     private static final long serialVersionUID = 1L;
 
     SkippedThrowable(NotificationLevel scenarioOrStep) {
@@ -17,4 +18,5 @@ final class SkippedThrowable extends Throwable {
             return name().toLowerCase(ROOT);
         }
     }
+
 }

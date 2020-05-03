@@ -22,6 +22,11 @@ class AssertionsTest {
         assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.AssertionsTest$WithCucumberMethod\n")));
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface StubCucumberAnnotation {
+
+    }
+
     @RunWith(Cucumber.class)
     private static final class WithCucumberMethod {
 
@@ -30,10 +35,6 @@ class AssertionsTest {
 
         }
 
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface StubCucumberAnnotation {
     }
 
 }

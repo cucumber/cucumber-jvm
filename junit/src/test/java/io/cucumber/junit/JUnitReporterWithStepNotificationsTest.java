@@ -76,15 +76,6 @@ class JUnitReporterWithStepNotificationsTest {
     @Captor
     private ArgumentCaptor<Failure> failureArgumentCaptor;
 
-    private static PickleStepTestStep mockTestStep(Step step) {
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        lenient().when(testStep.getStepText()).thenReturn(step.getText());
-        lenient().when(testStep.getStepLine()).thenReturn(scenarioLine);
-        lenient().when(testStep.getUri()).thenReturn(featureUri);
-        lenient().when(testStep.getStep()).thenReturn(step);
-        return testStep;
-    }
-
     @BeforeEach
     void mockPickleRunner() {
         when(pickleRunner.getDescription()).thenReturn(pickleRunnerDescription);
@@ -98,6 +89,15 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestCaseStarted(now(), testCase));
         bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
         jUnitReporter.finishExecutionUnit();
+    }
+
+    private static PickleStepTestStep mockTestStep(Step step) {
+        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
+        lenient().when(testStep.getStepText()).thenReturn(step.getText());
+        lenient().when(testStep.getStepLine()).thenReturn(scenarioLine);
+        lenient().when(testStep.getUri()).thenReturn(featureUri);
+        lenient().when(testStep.getStep()).thenReturn(step);
+        return testStep;
     }
 
     @Test

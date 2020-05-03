@@ -147,4 +147,5 @@ public @interface CucumberOptions {
     enum SnippetType {
         UNDERSCORE, CAMELCASE
     }
+
 }

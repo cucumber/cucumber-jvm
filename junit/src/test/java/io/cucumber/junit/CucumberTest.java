@@ -141,24 +141,6 @@ class CucumberTest {
         assertThat(pickle.getDisplayName(), is("A good start(Feature A)"));
     }
 
-
-    @RunWith(Cucumber.class)
-    public static class ValidEmpty {
-    }
-
-    @RunWith(Cucumber.class)
-    public static class ValidIgnored {
-        public void ignoreMe() {
-        }
-    }
-
-    @RunWith(Cucumber.class)
-    private static class Invalid {
-        @DummyWhen
-        public void ignoreMe() {
-        }
-    }
-
     @Test
     void no_stepdefs_in_cucumber_runner_valid() {
         Assertions.assertNoCucumberAnnotatedMethods(ValidEmpty.class);
@@ -172,18 +154,49 @@ class CucumberTest {
         assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @interface DummyWhen {
+
+    }
+
+    @RunWith(Cucumber.class)
+    public static class ValidEmpty {
+
+    }
+
+    @RunWith(Cucumber.class)
+    public static class ValidIgnored {
+
+        public void ignoreMe() {
+        }
+
+    }
+
+    @RunWith(Cucumber.class)
+    private static class Invalid {
+
+        @DummyWhen
+        public void ignoreMe() {
+        }
+
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static class ImplicitFeatureAndGluePath {
+
     }
 
     @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = {"classpath:io/cucumber/junit"})
     public static class ExplicitFeaturePath {
+
     }
 
     @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = {"classpath:gibber/ish"})
     public static class ExplicitFeaturePathWithNoFeatures {
+
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -195,12 +208,6 @@ class CucumberTest {
     @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"message:target/lexor_error_feature.ndjson"})
     public static class FormatterWithLexerErrorFeature {
-
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    @interface DummyWhen {
 
     }
 

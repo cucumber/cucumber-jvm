@@ -1,11 +1,12 @@
 package io.cucumber.junit;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.cucumber.core.backend.ObjectFactory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 final class JUnitCucumberOptionsProviderTest {
 
@@ -30,12 +31,17 @@ final class JUnitCucumberOptionsProviderTest {
     }
 
     @CucumberOptions()
-    private static final class ClassWithDefault {}
+    private static final class ClassWithDefault {
+
+    }
 
     @CucumberOptions(objectFactory = TestObjectFactory.class)
-    private static final class ClassWithCustomObjectFactory {}
-    
+    private static final class ClassWithCustomObjectFactory {
+
+    }
+
     private static final class TestObjectFactory implements ObjectFactory {
+
         @Override
         public boolean addClass(Class<?> glueClass) {
             return false;
@@ -47,9 +53,13 @@ final class JUnitCucumberOptionsProviderTest {
         }
 
         @Override
-        public void start() {}
+        public void start() {
+        }
 
         @Override
-        public void stop() {}
+        public void stop() {
+        }
+
     }
+
 }
