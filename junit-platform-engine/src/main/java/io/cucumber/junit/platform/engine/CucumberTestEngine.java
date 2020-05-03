@@ -45,11 +45,6 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
     }
 
     @Override
-    protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
-    }
-
-    @Override
     protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {
         ConfigurationParameters config = request.getConfigurationParameters();
         if (config.getBoolean(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME).orElse(false)) {
@@ -57,6 +52,11 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
                 new PrefixedConfigurationParameters(config, PARALLEL_CONFIG_PREFIX));
         }
         return super.createExecutorService(request);
+    }
+
+    @Override
+    protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
+        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
     }
 
 }

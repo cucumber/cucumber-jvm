@@ -116,4 +116,5 @@ class CucumberEngineOptionsTest {
         assertFalse(new CucumberEngineOptions(absent).isParallelExecutionEnabled());
 
     }
+
 }

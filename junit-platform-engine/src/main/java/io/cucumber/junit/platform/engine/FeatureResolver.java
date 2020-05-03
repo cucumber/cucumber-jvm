@@ -56,37 +56,7 @@ final class FeatureResolver {
         return new FeatureResolver(parameters, engineDescriptor, packageFilter);
     }
 
-    private static URI stripQuery(URI uri) {
-        if (uri.getQuery() == null) {
-            return uri;
-        }
-        String uriString = uri.toString();
-        return URI.create(uriString.substring(0, uriString.indexOf('?')));
-    }
-
-    private static Predicate<TestDescriptor> testDescriptorOnLine(Integer line) {
-        return descriptor -> descriptor.getSource()
-            .flatMap(testSource -> {
-                if (testSource instanceof FileSource) {
-                    FileSource fileSystemSource = (FileSource) testSource;
-                    return fileSystemSource.getPosition();
-                }
-                if (testSource instanceof ClasspathResourceSource) {
-                    ClasspathResourceSource classpathResourceSource = (ClasspathResourceSource) testSource;
-                    return classpathResourceSource.getPosition();
-                }
-                return Optional.empty();
-            })
-            .map(FilePosition::getLine)
-            .map(line::equals)
-            .orElse(false);
-    }
-
     void resolveFile(FileSelector selector) {
-        resolvePath(selector.getPath());
-    }
-
-    void resolveDirectory(DirectorySelector selector) {
         resolvePath(selector.getPath());
     }
 
@@ -97,91 +67,6 @@ final class FeatureResolver {
             .sorted(comparing(Feature::getUri))
             .map(this::createFeatureDescriptor)
             .forEach(engineDescriptor::mergeFeature);
-    }
-
-    void resolvePackageResource(PackageSelector selector) {
-        resolvePackageResource(selector.getPackageName());
-    }
-
-    void resolveClass(ClassSelector classSelector) {
-        Class<?> javaClass = classSelector.getJavaClass();
-        Cucumber annotation = javaClass.getAnnotation(Cucumber.class);
-        if (annotation != null) {
-            resolvePackageResource(javaClass.getPackage().getName());
-        }
-    }
-
-    private void resolvePackageResource(String packageName) {
-        featureScanner
-            .scanForResourcesInPackage(packageName, packageFilter)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor)
-            .forEach(engineDescriptor::mergeFeature);
-    }
-
-    void resolveClasspathResource(ClasspathResourceSelector selector) {
-        String classpathResourceName = selector.getClasspathResourceName();
-        featureScanner
-            .scanForClasspathResource(classpathResourceName, packageFilter)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor)
-            .forEach(engineDescriptor::mergeFeature);
-    }
-
-    void resolveClasspathRoot(ClasspathRootSelector selector) {
-        featureScanner
-            .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor)
-            .forEach(engineDescriptor::mergeFeature);
-    }
-
-    void resolveUniqueId(UniqueIdSelector uniqueIdSelector) {
-        UniqueId uniqueId = uniqueIdSelector.getUniqueId();
-        // Ignore any ids not from our own engine
-        if (!engineDescriptor.getUniqueId().getEngineId().equals(uniqueId.getEngineId())) {
-            return;
-        }
-
-        Predicate<TestDescriptor> keepTestWithSelectedId = testDescriptor
-            -> uniqueId.equals(testDescriptor.getUniqueId());
-
-        uniqueId.getSegments()
-            .stream()
-            .filter(FeatureOrigin::isFeatureSegment)
-            .map(UniqueId.Segment::getValue)
-            .map(URI::create)
-            .flatMap(this::resolveUri)
-            .forEach(featureDescriptor -> {
-                featureDescriptor.prune(keepTestWithSelectedId);
-                engineDescriptor.mergeFeature(featureDescriptor);
-            });
-    }
-
-    void resolveUri(UriSelector selector) {
-        URI uri = selector.getUri();
-
-        Predicate<TestDescriptor> keepTestOnSelectedLine = fromQuery(uri.getQuery())
-            .map(FilePosition::getLine)
-            .map(FeatureResolver::testDescriptorOnLine)
-            .orElse(testDescriptor -> true);
-
-        resolveUri(stripQuery(uri))
-            .forEach(featureDescriptor -> {
-                featureDescriptor.prune(keepTestOnSelectedLine);
-                engineDescriptor.mergeFeature(featureDescriptor);
-            });
-    }
-
-    private Stream<FeatureDescriptor> resolveUri(URI uri) {
-        return featureScanner
-            .scanForResourcesUri(uri)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor);
     }
 
     private FeatureDescriptor createFeatureDescriptor(Feature feature) {
@@ -251,6 +136,121 @@ final class FeatureResolver {
     private String getNameOrKeyWord(Node node) {
         Supplier<String> keyword = () -> node.getKeyword().orElse("Unknown");
         return node.getName().orElseGet(keyword);
+    }
+
+    void resolveDirectory(DirectorySelector selector) {
+        resolvePath(selector.getPath());
+    }
+
+    void resolvePackageResource(PackageSelector selector) {
+        resolvePackageResource(selector.getPackageName());
+    }
+
+    private void resolvePackageResource(String packageName) {
+        featureScanner
+            .scanForResourcesInPackage(packageName, packageFilter)
+            .stream()
+            .sorted(comparing(Feature::getUri))
+            .map(this::createFeatureDescriptor)
+            .forEach(engineDescriptor::mergeFeature);
+    }
+
+    void resolveClass(ClassSelector classSelector) {
+        Class<?> javaClass = classSelector.getJavaClass();
+        Cucumber annotation = javaClass.getAnnotation(Cucumber.class);
+        if (annotation != null) {
+            resolvePackageResource(javaClass.getPackage().getName());
+        }
+    }
+
+    void resolveClasspathResource(ClasspathResourceSelector selector) {
+        String classpathResourceName = selector.getClasspathResourceName();
+        featureScanner
+            .scanForClasspathResource(classpathResourceName, packageFilter)
+            .stream()
+            .sorted(comparing(Feature::getUri))
+            .map(this::createFeatureDescriptor)
+            .forEach(engineDescriptor::mergeFeature);
+    }
+
+    void resolveClasspathRoot(ClasspathRootSelector selector) {
+        featureScanner
+            .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter)
+            .stream()
+            .sorted(comparing(Feature::getUri))
+            .map(this::createFeatureDescriptor)
+            .forEach(engineDescriptor::mergeFeature);
+    }
+
+    void resolveUniqueId(UniqueIdSelector uniqueIdSelector) {
+        UniqueId uniqueId = uniqueIdSelector.getUniqueId();
+        // Ignore any ids not from our own engine
+        if (!engineDescriptor.getUniqueId().getEngineId().equals(uniqueId.getEngineId())) {
+            return;
+        }
+
+        Predicate<TestDescriptor> keepTestWithSelectedId = testDescriptor
+            -> uniqueId.equals(testDescriptor.getUniqueId());
+
+        uniqueId.getSegments()
+            .stream()
+            .filter(FeatureOrigin::isFeatureSegment)
+            .map(UniqueId.Segment::getValue)
+            .map(URI::create)
+            .flatMap(this::resolveUri)
+            .forEach(featureDescriptor -> {
+                featureDescriptor.prune(keepTestWithSelectedId);
+                engineDescriptor.mergeFeature(featureDescriptor);
+            });
+    }
+
+    private Stream<FeatureDescriptor> resolveUri(URI uri) {
+        return featureScanner
+            .scanForResourcesUri(uri)
+            .stream()
+            .sorted(comparing(Feature::getUri))
+            .map(this::createFeatureDescriptor);
+    }
+
+    void resolveUri(UriSelector selector) {
+        URI uri = selector.getUri();
+
+        Predicate<TestDescriptor> keepTestOnSelectedLine = fromQuery(uri.getQuery())
+            .map(FilePosition::getLine)
+            .map(FeatureResolver::testDescriptorOnLine)
+            .orElse(testDescriptor -> true);
+
+        resolveUri(stripQuery(uri))
+            .forEach(featureDescriptor -> {
+                featureDescriptor.prune(keepTestOnSelectedLine);
+                engineDescriptor.mergeFeature(featureDescriptor);
+            });
+    }
+
+    private static Predicate<TestDescriptor> testDescriptorOnLine(Integer line) {
+        return descriptor -> descriptor.getSource()
+            .flatMap(testSource -> {
+                if (testSource instanceof FileSource) {
+                    FileSource fileSystemSource = (FileSource) testSource;
+                    return fileSystemSource.getPosition();
+                }
+                if (testSource instanceof ClasspathResourceSource) {
+                    ClasspathResourceSource classpathResourceSource = (ClasspathResourceSource) testSource;
+                    return classpathResourceSource.getPosition();
+                }
+                return Optional.empty();
+            })
+            .map(FilePosition::getLine)
+            .map(line::equals)
+            .orElse(false);
+    }
+
+    private static URI stripQuery(URI uri) {
+        if (uri.getQuery() == null) {
+            return uri;
+        }
+        String uriString = uri.toString();
+        return URI.create(uriString.substring(0, uriString.indexOf('?')));
     }
 
 }

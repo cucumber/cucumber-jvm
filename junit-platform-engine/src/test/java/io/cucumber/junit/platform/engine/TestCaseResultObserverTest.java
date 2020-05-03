@@ -243,4 +243,5 @@ class TestCaseResultObserverTest {
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         observer.assertTestCasePassed();
     }
+
 }

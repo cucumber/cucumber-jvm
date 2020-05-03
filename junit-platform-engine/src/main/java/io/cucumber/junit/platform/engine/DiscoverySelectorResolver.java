@@ -49,6 +49,10 @@ class DiscoverySelectorResolver {
         applyPackagePredicate(packageFilter, engineDescriptor);
     }
 
+    private void pruneTree(TestDescriptor rootDescriptor) {
+        rootDescriptor.accept(TestDescriptor::prune);
+    }
+
     private void applyPackagePredicate(Predicate<String> packageFilter, TestDescriptor engineDescriptor) {
         engineDescriptor.accept(descriptor -> {
             if (descriptor instanceof PickleDescriptor) {
@@ -64,10 +68,6 @@ class DiscoverySelectorResolver {
         return pickleDescriptor.getPackage()
             .map(packageFilter::test)
             .orElse(true);
-    }
-
-    private void pruneTree(TestDescriptor rootDescriptor) {
-        rootDescriptor.accept(TestDescriptor::prune);
     }
 
 }

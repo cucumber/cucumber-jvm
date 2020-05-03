@@ -38,11 +38,6 @@ class CucumberEngineOptions implements
     }
 
     @Override
-    public boolean isWip() {
-        return false;
-    }
-
-    @Override
     public List<Plugin> plugins() {
         return configurationParameters.get(PLUGIN_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
             .map(String::trim)
@@ -52,19 +47,24 @@ class CucumberEngineOptions implements
             .orElse(Collections.emptyList());
     }
 
+    @Override
+    public boolean isMonochrome() {
+        return configurationParameters
+            .getBoolean(ANSI_COLORS_DISABLED_PROPERTY_NAME)
+            .orElse(false);
+    }
+
+    @Override
+    public boolean isWip() {
+        return false;
+    }
+
     public Expression tagFilter() {
         return new TagExpressionParser()
             .parse(configurationParameters
                 .get(FILTER_TAGS_PROPERTY_NAME)
                 .orElse("")
             );
-    }
-
-    @Override
-    public boolean isMonochrome() {
-        return configurationParameters
-            .getBoolean(ANSI_COLORS_DISABLED_PROPERTY_NAME)
-            .orElse(false);
     }
 
     @Override

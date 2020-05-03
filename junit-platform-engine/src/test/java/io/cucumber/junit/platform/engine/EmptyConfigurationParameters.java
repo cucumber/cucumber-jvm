@@ -5,6 +5,7 @@ import org.junit.platform.engine.ConfigurationParameters;
 import java.util.Optional;
 
 class EmptyConfigurationParameters implements ConfigurationParameters {
+
     @Override
     public Optional<String> get(String key) {
         return Optional.empty();
@@ -19,4 +20,5 @@ class EmptyConfigurationParameters implements ConfigurationParameters {
     public int size() {
         return 0;
     }
+
 }

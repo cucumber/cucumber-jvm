@@ -65,6 +65,11 @@ class FeatureResolverTest {
         );
     }
 
+    private TestDescriptor getFeature() {
+        Set<? extends TestDescriptor> features = testDescriptor.getChildren();
+        return features.iterator().next();
+    }
+
     @Test
     void scenario() {
         TestDescriptor scenario = getScenario();
@@ -91,6 +96,15 @@ class FeatureResolverTest {
         );
     }
 
+    private TestDescriptor getScenario() {
+        return getFeature().getChildren().iterator().next();
+    }
+
+    @SafeVarargs
+    private static <T> Set<T> asSet(T... tags) {
+        return new HashSet<>(asList(tags));
+    }
+
     @Test
     void outline() {
         TestDescriptor outline = getOutline();
@@ -106,6 +120,12 @@ class FeatureResolverTest {
                 .append("scenario", "11"),
             outline.getUniqueId()
         );
+    }
+
+    private TestDescriptor getOutline() {
+        Iterator<? extends TestDescriptor> iterator = getFeature().getChildren().iterator();
+        iterator.next();
+        return iterator.next();
     }
 
     @Test
@@ -131,27 +151,8 @@ class FeatureResolverTest {
         assertEquals(Optional.of("io.cucumber.junit.platform.engine"), pickleDescriptor.getPackage());
     }
 
-    @SafeVarargs
-    private static <T> Set<T> asSet(T... tags) {
-        return new HashSet<>(asList(tags));
-    }
-
-    private TestDescriptor getFeature() {
-        Set<? extends TestDescriptor> features = testDescriptor.getChildren();
-        return features.iterator().next();
-    }
-
-    private TestDescriptor getScenario() {
-        return getFeature().getChildren().iterator().next();
-    }
-
-    private TestDescriptor getOutline() {
-        Iterator<? extends TestDescriptor> iterator = getFeature().getChildren().iterator();
-        iterator.next();
-        return iterator.next();
-    }
-
     private TestDescriptor getExample() {
         return getOutline().getChildren().iterator().next().getChildren().iterator().next();
     }
+
 }

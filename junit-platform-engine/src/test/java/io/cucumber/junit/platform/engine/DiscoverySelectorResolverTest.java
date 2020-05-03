@@ -44,21 +44,9 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 
 
 class DiscoverySelectorResolverTest {
+
     private final DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
     private CucumberEngineDescriptor testDescriptor;
-
-    private static Matcher<TestDescriptor> allDescriptorsPrefixedBy(UniqueId targetId) {
-        return new CustomTypeSafeMatcher<TestDescriptor>("All descendants are prefixed by " + targetId) {
-            @Override
-            protected boolean matchesSafely(TestDescriptor descriptor) {
-                return descriptor.getDescendants()
-                    .stream()
-                    .filter(TestDescriptor::isTest)
-                    .map(TestDescriptor::getUniqueId)
-                    .allMatch(selectedId -> selectedId.hasPrefix(targetId));
-            }
-        };
-    }
 
     @BeforeEach
     void before() {
@@ -134,7 +122,6 @@ class DiscoverySelectorResolverTest {
         assertEquals(2, tests.size()); // 2 examples in the examples section
     }
 
-
     @Test
     void resolveRequestWithUriSelectorWithExampleLine() {
         File file = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
@@ -200,6 +187,30 @@ class DiscoverySelectorResolverTest {
         });
     }
 
+    private void resetTestDescriptor() {
+        Set<? extends TestDescriptor> descendants = new HashSet<>(testDescriptor.getDescendants());
+        descendants.forEach(o -> testDescriptor.removeChild(o));
+    }
+
+    private void resolveRequestWithUniqueIdSelector(UniqueId targetId) {
+        UniqueIdSelector uniqueIdSelector = selectUniqueId(targetId);
+        EngineDiscoveryRequest descendantRequest = new SelectorRequest(uniqueIdSelector);
+        resolver.resolveSelectors(descendantRequest, testDescriptor);
+    }
+
+    private static Matcher<TestDescriptor> allDescriptorsPrefixedBy(UniqueId targetId) {
+        return new CustomTypeSafeMatcher<TestDescriptor>("All descendants are prefixed by " + targetId) {
+            @Override
+            protected boolean matchesSafely(TestDescriptor descriptor) {
+                return descriptor.getDescendants()
+                    .stream()
+                    .filter(TestDescriptor::isTest)
+                    .map(TestDescriptor::getUniqueId)
+                    .allMatch(selectedId -> selectedId.hasPrefix(targetId));
+            }
+        };
+    }
+
     @Test
     void resolveRequestWithUniqueIdSelectorFromFileUri() {
         DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
@@ -215,7 +226,6 @@ class DiscoverySelectorResolverTest {
             assertThat(testDescriptor, allDescriptorsPrefixedBy(targetDescriptor.getUniqueId()));
         });
     }
-
 
     @Test
     void resolveRequestWithUniqueIdSelectorFromJarFileUri() {
@@ -267,14 +277,6 @@ class DiscoverySelectorResolverTest {
         );
     }
 
-    @Test
-    void resolveRequestWithClassSelector() {
-        DiscoverySelector resource = selectClass(RunCucumberTest.class);
-        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
-        resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(5, testDescriptor.getChildren().size());
-    }
-
     private Optional<UniqueId> selectSomePickle(DiscoverySelector resource) {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
@@ -286,15 +288,12 @@ class DiscoverySelectorResolverTest {
             .findFirst();
     }
 
-    private void resolveRequestWithUniqueIdSelector(UniqueId targetId) {
-        UniqueIdSelector uniqueIdSelector = selectUniqueId(targetId);
-        EngineDiscoveryRequest descendantRequest = new SelectorRequest(uniqueIdSelector);
-        resolver.resolveSelectors(descendantRequest, testDescriptor);
-    }
-
-    private void resetTestDescriptor() {
-        Set<? extends TestDescriptor> descendants = new HashSet<>(testDescriptor.getDescendants());
-        descendants.forEach(o -> testDescriptor.removeChild(o));
+    @Test
+    void resolveRequestWithClassSelector() {
+        DiscoverySelector resource = selectClass(RunCucumberTest.class);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(5, testDescriptor.getChildren().size());
     }
 
     private static class SelectorRequest implements EngineDiscoveryRequest {
@@ -331,5 +330,7 @@ class DiscoverySelectorResolverTest {
         public ConfigurationParameters getConfigurationParameters() {
             return new EmptyConfigurationParameters();
         }
+
     }
+
 }

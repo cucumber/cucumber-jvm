@@ -55,7 +55,7 @@ abstract class FeatureOrigin {
 
     abstract UniqueId featureSegment(UniqueId parent, Feature feature);
 
-    UniqueId ruleSegment(UniqueId parent, Node rule){
+    UniqueId ruleSegment(UniqueId parent, Node rule) {
         return parent.append(RULE_SEGMENT_TYPE, String.valueOf(rule.getLocation().getLine()));
     }
 
@@ -93,6 +93,7 @@ abstract class FeatureOrigin {
         UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, source.getUri().toString());
         }
+
     }
 
     private static class UriFeatureOrigin extends FeatureOrigin {
@@ -117,6 +118,7 @@ abstract class FeatureOrigin {
         UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, source.getUri().toString());
         }
+
     }
 
     private static class ClasspathFeatureOrigin extends FeatureOrigin {
@@ -141,6 +143,7 @@ abstract class FeatureOrigin {
         UniqueId featureSegment(UniqueId parent, Feature feature) {
             return parent.append(FEATURE_SEGMENT_TYPE, feature.getUri().toString());
         }
+
     }
 
 }

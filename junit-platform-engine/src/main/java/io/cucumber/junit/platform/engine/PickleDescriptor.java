@@ -50,15 +50,18 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         );
     }
 
-    @Override
-    public Type getType() {
-        return Type.TEST;
+    private Set<TestTag> getTags(Pickle pickleEvent) {
+        return pickleEvent.getTags().stream()
+            .map(tag -> tag.substring(1))
+            .filter(TestTag::isValid)
+            .map(TestTag::create)
+            // Retain input order
+            .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
     }
 
     @Override
-    public CucumberEngineExecutionContext execute(CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor) {
-        context.runTestCase(pickleEvent);
-        return context;
+    public Type getType() {
+        return Type.TEST;
     }
 
     @Override
@@ -69,6 +72,17 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
             return SkipResult.doNotSkip();
         }
         return SkipResult.skip("'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression + "' did not match this scenario");
+    }
+
+    @Override
+    public CucumberEngineExecutionContext execute(CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor) {
+        context.runTestCase(pickleEvent);
+        return context;
+    }
+
+    @Override
+    public Set<ExclusiveResource> getExclusiveResources() {
+        return exclusiveResources;
     }
 
     /**
@@ -85,26 +99,12 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         return tags;
     }
 
-    private Set<TestTag> getTags(Pickle pickleEvent) {
-        return pickleEvent.getTags().stream()
-            .map(tag -> tag.substring(1))
-            .filter(TestTag::isValid)
-            .map(TestTag::create)
-            // Retain input order
-            .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
-    }
-
     Optional<String> getPackage() {
         return getSource()
             .filter(ClasspathResourceSource.class::isInstance)
             .map(ClasspathResourceSource.class::cast)
             .map(ClasspathResourceSource::getClasspathResourceName)
             .map(ClasspathSupport::packageNameOfResource);
-    }
-
-    @Override
-    public Set<ExclusiveResource> getExclusiveResources() {
-        return exclusiveResources;
     }
 
     private static final class ExclusiveResourceOptions {
@@ -131,4 +131,5 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         }
 
     }
+
 }

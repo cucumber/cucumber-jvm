@@ -6,6 +6,7 @@ import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
 
 class EmptyEngineExecutionListener implements EngineExecutionListener {
+
     @Override
     public void dynamicTestRegistered(TestDescriptor testDescriptor) {
 
@@ -30,4 +31,5 @@ class EmptyEngineExecutionListener implements EngineExecutionListener {
     public void reportingEntryPublished(TestDescriptor testDescriptor, ReportEntry entry) {
 
     }
+
 }
