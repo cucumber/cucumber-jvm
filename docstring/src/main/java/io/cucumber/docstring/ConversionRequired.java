@@ -16,4 +16,5 @@ final class ConversionRequired implements DocStringConverter {
             type
         ));
     }
+
 }

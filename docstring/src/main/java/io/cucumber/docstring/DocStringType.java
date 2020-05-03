@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
  */
 @API(status = API.Status.STABLE)
 public final class DocStringType {
+
     private final Type type;
     private final String contentType;
     private final Transformer<?> transformer;
@@ -54,7 +55,9 @@ public final class DocStringType {
 
     @FunctionalInterface
     public interface Transformer<T> {
+
         T transform(String content) throws Throwable;
+
     }
 
 }

@@ -28,20 +28,27 @@ import static java.util.stream.Collectors.joining;
  */
 @API(status = API.Status.STABLE)
 public final class DocString {
+
     private final String content;
     private final String contentType;
     private final DocStringConverter converter;
 
-    public static DocString create(String content, String contentType, DocStringConverter converter) {
-        return new DocString(content, contentType, converter);
+    private DocString(String content, String contentType, DocStringConverter converter) {
+        this.content = requireNonNull(content);
+        this.contentType = contentType;
+        this.converter = requireNonNull(converter);
+    }
+
+    public static DocString create(String content) {
+        return create(content, null);
     }
 
     public static DocString create(String content, String contentType) {
         return create(content, contentType, new ConversionRequired());
     }
 
-    public static DocString create(String content) {
-        return create(content, null);
+    public static DocString create(String content, String contentType, DocStringConverter converter) {
+        return new DocString(content, contentType, converter);
     }
 
     public Object convert(Type type) {
@@ -56,14 +63,9 @@ public final class DocString {
         return contentType;
     }
 
-    private DocString(String content, String contentType, DocStringConverter converter) {
-        this.content = requireNonNull(content);
-        this.contentType = contentType;
-        this.converter = requireNonNull(converter);
-    }
-
-    public interface DocStringConverter {
-        <T> T convert(DocString docString, Type targetType);
+    @Override
+    public int hashCode() {
+        return Objects.hash(content, contentType);
     }
 
     @Override
@@ -76,11 +78,6 @@ public final class DocString {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(content, contentType);
-    }
-
-    @Override
     public String toString() {
         return stream(content.split("\n"))
             .collect(joining(
@@ -89,4 +86,11 @@ public final class DocString {
                 "\n      \"\"\""
             ));
     }
+
+    public interface DocStringConverter {
+
+        <T> T convert(DocString docString, Type targetType);
+
+    }
+
 }

@@ -18,14 +18,6 @@ public final class DocStringTypeRegistry {
         defineDocStringType(new DocStringType(String.class, "", (String docString) -> docString));
     }
 
-    DocStringType lookupByContentType(String contentType) {
-        return docStringTypesByContentType.get(contentType);
-    }
-
-    DocStringType lookupByType(Type type) {
-        return docStringTypesByType.get(type);
-    }
-
     public void defineDocStringType(DocStringType docStringType) {
         DocStringType byContentType = docStringTypesByContentType.get(docStringType.getContentType());
         if (byContentType != null) {
@@ -55,4 +47,13 @@ public final class DocStringTypeRegistry {
     private static String emptyToAnonymous(String contentType) {
         return contentType.isEmpty() ? "[anonymous]" : contentType;
     }
+
+    DocStringType lookupByContentType(String contentType) {
+        return docStringTypesByContentType.get(contentType);
+    }
+
+    DocStringType lookupByType(Type type) {
+        return docStringTypesByType.get(type);
+    }
+
 }
