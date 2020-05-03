@@ -13,31 +13,6 @@
     <description>Cucumber for the JVM</description>
     <url>http://cucumber.io/</url>
 
-    <developers>
-        <developer>
-            <id>ahellesoy</id>
-            <name>Aslak Hellesøy</name>
-            <email>aslak.hellesoy@gmail.com</email>
-            <organization>Cucumber</organization>
-            <organizationUrl>https://github.com/cucumber</organizationUrl>
-        </developer>
-        <developer>
-            <id>brasmusson</id>
-            <name>Björn Rasmusson</name>
-            <email>brasmusson@computer.org</email>
-            <organization>Cucumber</organization>
-            <organizationUrl>https://github.com/cucumber</organizationUrl>
-        </developer>
-        <developer>
-            <id>mpkorstanje</id>
-            <name>M.P. Korstanje</name>
-            <email>rien.korstanje@gmail.com</email>
-            <organization>Cucumber</organization>
-            <organizationUrl>https://github.com/cucumber</organizationUrl>
-        </developer>
-    </developers>
-
-
     <properties>
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
