@@ -7,6 +7,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface Step {
+
     /**
      * Returns this Gherkin step argument. Can be either a data table or doc
      * string.
@@ -52,4 +53,5 @@ public interface Step {
      * @return location in the source
      */
     Location getLocation();
+
 }

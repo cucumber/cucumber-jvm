@@ -7,6 +7,7 @@ import java.util.Objects;
 
 @API(status = API.Status.STABLE)
 public final class WriteEvent extends TestCaseEvent {
+
     private final String text;
 
     public WriteEvent(Instant timeInstant, TestCase testCase, String text) {
@@ -17,4 +18,5 @@ public final class WriteEvent extends TestCaseEvent {
     public String getText() {
         return text;
     }
+
 }

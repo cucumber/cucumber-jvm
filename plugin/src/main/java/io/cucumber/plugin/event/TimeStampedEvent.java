@@ -19,4 +19,5 @@ abstract class TimeStampedEvent implements Event {
     public Instant getInstant() {
         return instant;
     }
+
 }

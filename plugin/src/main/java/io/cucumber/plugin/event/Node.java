@@ -108,8 +108,6 @@ public interface Node {
 
     interface Container<T extends Node> extends Node {
 
-        Collection<T> elements();
-
         @Override
         default Optional<List<Node>> findPathTo(Predicate<Node> predicate) {
             List<Node> path = new ArrayList<>();
@@ -139,6 +137,9 @@ public interface Node {
             }
             return Optional.empty();
         }
+
+        Collection<T> elements();
+
     }
 
     /**
@@ -182,4 +183,5 @@ public interface Node {
     interface Example extends Node {
 
     }
+
 }

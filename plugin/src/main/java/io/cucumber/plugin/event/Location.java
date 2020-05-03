@@ -24,6 +24,11 @@ public final class Location {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(line, column);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -32,8 +37,4 @@ public final class Location {
             column == location.column;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(line, column);
-    }
 }

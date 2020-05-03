@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 /**
  * Provides abstract representation of a parsed test source.
@@ -33,6 +32,7 @@ import java.util.function.Predicate;
  */
 @API(status = API.Status.EXPERIMENTAL)
 public final class TestSourceParsed extends TimeStampedEvent {
+
     private final URI uri;
     private final List<Node> nodes;
 
@@ -54,4 +54,5 @@ public final class TestSourceParsed extends TimeStampedEvent {
     public URI getUri() {
         return uri;
     }
+
 }

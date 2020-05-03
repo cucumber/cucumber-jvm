@@ -27,7 +27,8 @@ public final class StepDefinition {
     /**
      * @return the pattern associated with this instance. Used for error reporting only.
      */
-    public String getPattern(){
+    public String getPattern() {
         return pattern;
     }
+
 }

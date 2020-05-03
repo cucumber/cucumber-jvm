@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @API(status = API.Status.STABLE)
 public final class StepDefinedEvent extends TimeStampedEvent {
+
     private final StepDefinition stepDefinition;
 
     public StepDefinedEvent(Instant timeInstant, StepDefinition stepDefinition) {
@@ -18,4 +19,5 @@ public final class StepDefinedEvent extends TimeStampedEvent {
     public StepDefinition getStepDefinition() {
         return stepDefinition;
     }
+
 }

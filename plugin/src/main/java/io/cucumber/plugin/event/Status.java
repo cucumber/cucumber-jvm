@@ -12,10 +12,6 @@ public enum Status {
     FAILED,
     UNUSED;
 
-    public boolean is(Status status) {
-        return this == status;
-    }
-
     /**
      * Does this state allow the build to pass
      *
@@ -35,6 +31,10 @@ public enum Status {
      */
     public boolean isOk() {
         return is(Status.PASSED) || is(Status.SKIPPED);
+    }
+
+    public boolean is(Status status) {
+        return this == status;
     }
 
 }

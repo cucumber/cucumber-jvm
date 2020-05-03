@@ -38,4 +38,5 @@ import java.net.URL;
  */
 @API(status = API.Status.STABLE)
 public interface Plugin {
+
 }

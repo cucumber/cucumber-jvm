@@ -45,4 +45,5 @@ public interface TestCase {
     URI getUri();
 
     UUID getId();
+
 }

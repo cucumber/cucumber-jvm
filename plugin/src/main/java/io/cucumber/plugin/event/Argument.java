@@ -22,4 +22,5 @@ public interface Argument {
     int getEnd();
 
     Group getGroup();
+
 }

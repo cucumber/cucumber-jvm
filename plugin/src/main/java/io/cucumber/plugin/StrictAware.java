@@ -10,6 +10,7 @@ import org.apiguardian.api.API;
 @Deprecated
 @API(status = API.Status.STABLE)
 public interface StrictAware extends Plugin {
+
     /**
      * When set to strict the plugin should indicate failure for undefined and
      * pending steps
@@ -17,4 +18,5 @@ public interface StrictAware extends Plugin {
      * @param strict true if the runtime is in strict mode
      */
     void setStrict(boolean strict);
+
 }

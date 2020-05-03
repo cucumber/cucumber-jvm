@@ -24,6 +24,7 @@ import java.util.Objects;
 
 @API(status = API.Status.STABLE)
 public final class TestStepFinished extends TestCaseEvent {
+
     private final TestStep testStep;
     private final Result result;
 
@@ -40,4 +41,5 @@ public final class TestStepFinished extends TestCaseEvent {
     public TestStep getTestStep() {
         return testStep;
     }
+
 }

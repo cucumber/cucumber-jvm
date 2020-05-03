@@ -333,6 +333,7 @@ class NodeTest {
         Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
+
     @Test
     void findNothingInEmptyOutline() {
         Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));

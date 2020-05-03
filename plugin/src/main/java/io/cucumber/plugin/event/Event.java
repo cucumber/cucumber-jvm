@@ -14,4 +14,5 @@ public interface Event {
      * @see Instant#now()
      */
     Instant getInstant();
+
 }

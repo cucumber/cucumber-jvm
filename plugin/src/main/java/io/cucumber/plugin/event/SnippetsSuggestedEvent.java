@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
 public final class SnippetsSuggestedEvent extends TimeStampedEvent {
+
     private final URI uri;
     private final Location scenarioLocation;
     private final Location stepLocation;

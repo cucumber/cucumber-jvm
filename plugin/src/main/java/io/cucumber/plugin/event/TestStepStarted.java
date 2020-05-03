@@ -25,6 +25,7 @@ import java.util.Objects;
 
 @API(status = API.Status.STABLE)
 public final class TestStepStarted extends TestCaseEvent {
+
     private final TestStep testStep;
 
     public TestStepStarted(Instant timeInstant, TestCase testCase, TestStep testStep) {
@@ -35,4 +36,5 @@ public final class TestStepStarted extends TestCaseEvent {
     public TestStep getTestStep() {
         return testStep;
     }
+
 }

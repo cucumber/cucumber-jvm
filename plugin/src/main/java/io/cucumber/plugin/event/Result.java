@@ -52,12 +52,8 @@ public final class Result {
     }
 
     @Override
-    public String toString() {
-        return "Result{" +
-            "status=" + status +
-            ", duration=" + duration.getSeconds() +
-            ", error=" + error +
-            '}';
+    public int hashCode() {
+        return Objects.hash(status, duration, error);
     }
 
     @Override
@@ -71,7 +67,12 @@ public final class Result {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(status, duration, error);
+    public String toString() {
+        return "Result{" +
+            "status=" + status +
+            ", duration=" + duration.getSeconds() +
+            ", error=" + error +
+            '}';
     }
+
 }

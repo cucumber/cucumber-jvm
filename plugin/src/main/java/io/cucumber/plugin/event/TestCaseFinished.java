@@ -7,14 +7,15 @@ import java.util.Objects;
 
 @API(status = API.Status.STABLE)
 public final class TestCaseFinished extends TestCaseEvent {
+
     private final Result result;
     private final TestCase testCase;
 
     public TestCaseFinished(Instant timeInstant, TestCase testCase, Result result) {
-      super(timeInstant, testCase);
-      this.testCase = Objects.requireNonNull(testCase);
-      this.result = Objects.requireNonNull(result);
-  }
+        super(timeInstant, testCase);
+        this.testCase = Objects.requireNonNull(testCase);
+        this.result = Objects.requireNonNull(result);
+    }
 
     public Result getResult() {
         return result;
@@ -24,4 +25,5 @@ public final class TestCaseFinished extends TestCaseEvent {
     public TestCase getTestCase() {
         return testCase;
     }
+
 }

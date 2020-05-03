@@ -70,4 +70,5 @@ public interface PickleStepTestStep extends TestStep {
      */
     @Deprecated
     String getStepText();
+
 }
