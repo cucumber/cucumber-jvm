@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-
+ * Restored `Status.isOk(boolean isStrict)` to avoid breaking existing plugins 
+ 
 ## [6.0.0-RC2] (2020-05-03)
 
 ### Added
@@ -25,8 +26,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
  * [Core] Default to `--strict` mode ([#1960](https://github.com/cucumber/cucumber-jvm/issues/1960) M.P. Korstanje)
  * [Java] Switch `useRegexpMatchAsStrongTypeHint` default to false ([#1915](https://github.com/cucumber/cucumber-jvm/issues/1915) M.P. Korstanje)
-
-### Deprecated 
 
 ### Removed
  * [Core] Remove multiple tag arguments in `@CucumberOptions` ([#1948](https://github.com/cucumber/cucumber-jvm/issues/1948) M.P. Korstanje)
