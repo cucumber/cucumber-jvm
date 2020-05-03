@@ -15,4 +15,5 @@ public class BellyStepDefinitions {
     public void haveCukes(int n) {
         belly.setCukes(n);
     }
+
 }

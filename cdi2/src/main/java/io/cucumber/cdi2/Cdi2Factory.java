@@ -13,9 +13,9 @@ import java.util.Map;
 @API(status = API.Status.STABLE)
 public final class Cdi2Factory implements ObjectFactory {
 
+    private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
     private SeContainerInitializer initializer;
     private SeContainer container;
-    private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
 
     @Override
     public void start() {
@@ -34,6 +34,13 @@ public final class Cdi2Factory implements ObjectFactory {
             unmanaged.dispose();
         }
         standaloneInstances.clear();
+    }
+
+    private SeContainerInitializer getInitializer() {
+        if (initializer == null) {
+            initializer = SeContainerInitializer.newInstance();
+        }
+        return initializer;
     }
 
     @Override
@@ -60,10 +67,4 @@ public final class Cdi2Factory implements ObjectFactory {
         return selected.get();
     }
 
-    private SeContainerInitializer getInitializer() {
-        if (initializer == null) {
-            initializer = SeContainerInitializer.newInstance();
-        }
-        return initializer;
-    }
 }

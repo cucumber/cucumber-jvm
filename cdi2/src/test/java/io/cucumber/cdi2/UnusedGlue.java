@@ -4,6 +4,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 
 public class UnusedGlue {
+
     public UnusedGlue() {
         throw new IllegalStateException();
     }
@@ -17,4 +18,5 @@ public class UnusedGlue {
     public void unusedHook() {
         throw new IllegalStateException();
     }
+
 }
