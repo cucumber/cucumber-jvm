@@ -16,6 +16,11 @@ enum LoadResourceBundle {
     public static final ResourceBundle EMPTY_RESOURCE_BUNDLE = new ResourceBundle() {
 
         @Override
+        protected Object handleGetObject(final String key) {
+            return "";
+        }
+
+        @Override
         public Enumeration<String> getKeys() {
             return new Enumeration<String>() {
 
@@ -29,11 +34,6 @@ enum LoadResourceBundle {
                     return null;
                 }
             };
-        }
-
-        @Override
-        protected Object handleGetObject(final String key) {
-            return "";
         }
     };
 

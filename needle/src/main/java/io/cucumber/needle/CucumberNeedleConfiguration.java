@@ -10,6 +10,7 @@ import java.util.Set;
  * Reads cucumber-needle.properties to initialize additional {@link InjectionProvider}s.
  */
 class CucumberNeedleConfiguration {
+
     /**
      * Default properties fiel name.
      */
@@ -71,4 +72,5 @@ class CucumberNeedleConfiguration {
     InjectionProvider<?>[] getInjectionProviders() {
         return injectionProviders.toArray(new InjectionProvider<?>[0]);
     }
+
 }

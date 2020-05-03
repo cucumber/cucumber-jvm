@@ -5,22 +5,10 @@ import de.akquinet.jbosscc.needle.injection.InjectionTargetInformation;
 
 /**
  * InjectionProvider that provides a singleton instance of type T whenever injection is required
- * 
- * @param <T>
- *            target type
+ *
+ * @param <T> target type
  */
 public class DefaultInstanceInjectionProvider<T> implements InjectionProvider<T> {
-
-    /**
-     * Factory method.
-     * 
-     * @param instance
-     *            returns a provider for given instance.
-     * @return injection provider.
-     */
-    public static <T> DefaultInstanceInjectionProvider<T> providerFor(final T instance) {
-        return new DefaultInstanceInjectionProvider<>(instance);
-    }
 
     /**
      * always return this instance
@@ -29,12 +17,21 @@ public class DefaultInstanceInjectionProvider<T> implements InjectionProvider<T>
 
     /**
      * Constructs an injection provider responsible for returning the same instance.
-     * 
-     * @param instance
-     *            instance to return.
+     *
+     * @param instance instance to return.
      */
     public DefaultInstanceInjectionProvider(final T instance) {
         this.instance = instance;
+    }
+
+    /**
+     * Factory method.
+     *
+     * @param instance returns a provider for given instance.
+     * @return injection provider.
+     */
+    public static <T> DefaultInstanceInjectionProvider<T> providerFor(final T instance) {
+        return new DefaultInstanceInjectionProvider<>(instance);
     }
 
     /**

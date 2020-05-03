@@ -1,8 +1,8 @@
 package io.cucumber.needle;
 
-import io.cucumber.core.backend.ObjectFactory;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import io.cucumber.core.backend.ObjectFactory;
 import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +27,31 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
         super(setUpInjectionProviders());
     }
 
+    static InjectionProvider<?>[] setUpInjectionProviders() {
+        return new CucumberNeedleConfiguration().getInjectionProviders();
+    }
+
     @Override
     public <T> T getInstance(final Class<T> type) {
         logger.trace("getInstance: {}", type.getCanonicalName());
         assertTypeHasBeenAdded(type);
         return nullSafeGetInstance(type);
+    }
+
+    private void assertTypeHasBeenAdded(final Class<?> type) {
+        if (!cachedStepsInstances.containsKey(type)) {
+            throw new IllegalStateException(format("%s was not added during addClass()", type.getSimpleName()));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T nullSafeGetInstance(final Class<T> type) {
+        final Object instance = cachedStepsInstances.get(type);
+        if (instance == null) {
+            throw new IllegalStateException(format("instance of type %s has not been initialized in start()!",
+                type.getSimpleName()));
+        }
+        return (T) instance;
     }
 
     @Override
@@ -59,6 +79,11 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
         cachedStepsInstances.replaceAll((t, v) -> null);
     }
 
+    private <T> T createStepsInstance(final Class<T> type) {
+        logger.trace("createInstance(): {}", type.getCanonicalName());
+        return createInstanceByDefaultConstructor.apply(type);
+    }
+
     @Override
     public boolean addClass(final Class<?> type) {
         logger.trace("addClass(): {}", type.getCanonicalName());
@@ -70,28 +95,4 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
         return true;
     }
 
-    private void assertTypeHasBeenAdded(final Class<?> type) {
-        if (!cachedStepsInstances.containsKey(type)) {
-            throw new IllegalStateException(format("%s was not added during addClass()", type.getSimpleName()));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T nullSafeGetInstance(final Class<T> type) {
-        final Object instance = cachedStepsInstances.get(type);
-        if (instance == null) {
-            throw new IllegalStateException(format("instance of type %s has not been initialized in start()!",
-                type.getSimpleName()));
-        }
-        return (T) instance;
-    }
-
-    private <T> T createStepsInstance(final Class<T> type) {
-        logger.trace("createInstance(): {}", type.getCanonicalName());
-        return createInstanceByDefaultConstructor.apply(type);
-    }
-
-    static InjectionProvider<?>[] setUpInjectionProviders() {
-        return new CucumberNeedleConfiguration().getInjectionProviders();
-    }
 }

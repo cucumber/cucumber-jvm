@@ -46,6 +46,7 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
         protected void initMyTestcase(final Object test) throws Exception {
             initTestcase(test);
         }
+
     }
 
     public static class A {
@@ -53,6 +54,7 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
         @Inject
         @Named("foo")
         private String bar;
+
     }
 
 }

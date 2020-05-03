@@ -30,24 +30,20 @@ public class AtmWithdrawalSteps {
 
     private static final String BIC = "12345";
     /*
-     * Inject will be mocked.
-     */
-    @Inject
-    private BicGetter bicGetter;
-
-    @Inject
-    private MoreSteps moreSteps;
-
-    /*
      * Provider instance will be added dynamically.
      */
     @NeedleInjectionProvider
     private final InjectionProvider<?> valueProvider = new ValueInjectionProvider(VALUE);
-
     @NeedleInjectionProvider
     private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier =
         () -> singleton(new DefaultInstanceInjectionProvider<>(AtmWithdrawalSteps.this));
-
+    /*
+     * Inject will be mocked.
+     */
+    @Inject
+    private BicGetter bicGetter;
+    @Inject
+    private MoreSteps moreSteps;
     /*
      * This is what we test
      */
@@ -84,4 +80,5 @@ public class AtmWithdrawalSteps {
     public boolean isThisReallyYouOrJustAMock() {
         return true;
     }
+
 }

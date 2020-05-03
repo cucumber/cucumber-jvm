@@ -44,7 +44,7 @@ enum CollectInjectionProvidersFromStepsInstance {
                     providers.addAll(((InjectionProviderInstancesSupplier) value).get());
                 } else {
                     throw new IllegalStateException("Fields annotated with NeedleInjectionProviders must be of type "
-                            + "InjectionProviderInstancesSupplier, InjectionProvider " + "or InjectionProvider[]");
+                        + "InjectionProviderInstancesSupplier, InjectionProvider " + "or InjectionProvider[]");
                 }
             } catch (final Exception e) {
                 throw new IllegalStateException(e);

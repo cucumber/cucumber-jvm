@@ -16,4 +16,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @API(status = API.Status.STABLE)
 public @interface NeedleInjectionProvider {
+
 }

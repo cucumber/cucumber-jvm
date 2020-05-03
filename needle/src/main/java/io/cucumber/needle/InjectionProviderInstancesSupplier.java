@@ -20,4 +20,5 @@ public interface InjectionProviderInstancesSupplier {
      * @return InjectionProviders that can be added to {@link NeedleTestcase}
      */
     Set<InjectionProvider<?>> get();
+
 }
