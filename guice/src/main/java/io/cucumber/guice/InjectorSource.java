@@ -10,5 +10,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface InjectorSource {
+
     Injector getInjector();
+
 }

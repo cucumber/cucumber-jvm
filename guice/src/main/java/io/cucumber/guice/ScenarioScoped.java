@@ -19,4 +19,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @ScopeAnnotation
 @API(status = API.Status.STABLE)
 public @interface ScenarioScoped {
+
 }

@@ -103,4 +103,5 @@ class ElementsAreAllUniqueMatcherTest {
     void testCopesWithUnknownTypes() {
         assertUnknownTypeSafe(matcher);
     }
+
 }

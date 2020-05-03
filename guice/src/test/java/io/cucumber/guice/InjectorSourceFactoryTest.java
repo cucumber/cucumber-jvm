@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InjectorSourceFactoryTest {
 
-    private InjectorSourceFactory createInjectorSourceFactory(Map<String, String> properties) {
-        return new InjectorSourceFactory(properties);
-    }
-
     @Test
     void createsDefaultInjectorSourceWhenGuiceModulePropertyIsNotSet() {
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(Collections.emptyMap());
         assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
+    }
+
+    private InjectorSourceFactory createInjectorSourceFactory(Map<String, String> properties) {
+        return new InjectorSourceFactory(properties);
     }
 
     @Test
@@ -122,13 +122,16 @@ class InjectorSourceFactoryTest {
     }
 
     public static class CustomInjectorSource implements InjectorSource {
+
         @Override
         public Injector getInjector() {
             return null;
         }
+
     }
 
     public static class PrivateConstructor implements InjectorSource {
+
         private PrivateConstructor() {
         }
 
@@ -136,9 +139,11 @@ class InjectorSourceFactoryTest {
         public Injector getInjector() {
             return null;
         }
+
     }
 
     public static class NoDefaultConstructor implements InjectorSource {
+
         private NoDefaultConstructor(String someParameter) {
         }
 
@@ -146,9 +151,11 @@ class InjectorSourceFactoryTest {
         public Injector getInjector() {
             return null;
         }
+
     }
 
     private static class MyChildClassLoader extends ClassLoader {
+
         MyChildClassLoader(ClassLoader parent) {
             super(parent);
         }
@@ -177,6 +184,7 @@ class InjectorSourceFactoryTest {
             }
             return super.loadClass(name, resolve);
         }
+
     }
 
 }

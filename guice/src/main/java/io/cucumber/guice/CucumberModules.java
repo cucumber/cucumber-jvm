@@ -10,7 +10,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public final class CucumberModules {
 
-    private CucumberModules(){
+    private CucumberModules() {
 
     }
 
@@ -21,4 +21,5 @@ public final class CucumberModules {
     public static Module createScenarioModule(ScenarioScope scenarioScope) {
         return new ScenarioModule(scenarioScope);
     }
+
 }

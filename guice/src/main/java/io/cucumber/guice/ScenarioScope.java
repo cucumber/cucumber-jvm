@@ -9,6 +9,9 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface ScenarioScope extends Scope {
+
     void enterScope();
+
     void exitScope();
+
 }

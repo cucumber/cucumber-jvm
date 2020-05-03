@@ -30,6 +30,12 @@ public class UnScopedSteps {
         provide();
     }
 
+    private void provide() {
+        UnScopedObject unScopedObject = unScopedObjectProvider.get();
+        assertThat(unScopedObject, notNullValue());
+        OBJECTS.add(unScopedObject);
+    }
+
     @When("another un-scoped instance is provided")
     public void another_un_scoped_instance_is_provided() {
         provide();
@@ -41,9 +47,4 @@ public class UnScopedSteps {
         assertThat(OBJECTS, elementsAreAllUnique());
     }
 
-    private void provide() {
-        UnScopedObject unScopedObject = unScopedObjectProvider.get();
-        assertThat(unScopedObject, notNullValue());
-        OBJECTS.add(unScopedObject);
-    }
 }

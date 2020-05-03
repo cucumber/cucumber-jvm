@@ -18,4 +18,5 @@ public class ScenarioModule extends AbstractModule {
         bindScope(ScenarioScoped.class, scenarioScope);
         bind(ScenarioScope.class).toInstance(scenarioScope);
     }
+
 }

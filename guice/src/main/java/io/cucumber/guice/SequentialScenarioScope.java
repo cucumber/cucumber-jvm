@@ -9,6 +9,8 @@ import java.util.Map;
 
 class SequentialScenarioScope implements ScenarioScope {
 
+    private Map<Key<?>, Object> scenarioValues = null;
+
     /**
      * Scopes a provider. The returned provider returns objects from this scope.
      * If an object does not exist in this scope, the provider can use the given
@@ -41,8 +43,6 @@ class SequentialScenarioScope implements ScenarioScope {
             return current;
         };
     }
-
-    private Map<Key<?>, Object> scenarioValues = null;
 
     @Override
     public void enterScope() {

@@ -15,6 +15,12 @@ abstract class AbstractMatcherTest {
         assertTrue(matcher.matches(arg), "Expected match, but mismatched because: '" + mismatchDescription(matcher, arg) + "'");
     }
 
+    private static <T> String mismatchDescription(Matcher<? super T> matcher, T arg) {
+        Description description = new StringDescription();
+        matcher.describeMismatch(arg, description);
+        return description.toString().trim();
+    }
+
     static <T> void assertDoesNotMatch(Matcher<? super T> c, T arg) {
         assertFalse(c.matches(arg), "Unexpected match");
     }
@@ -46,12 +52,8 @@ abstract class AbstractMatcherTest {
         }
     }
 
-    private static <T> String mismatchDescription(Matcher<? super T> matcher, T arg) {
-        Description description = new StringDescription();
-        matcher.describeMismatch(arg, description);
-        return description.toString().trim();
+    private static class UnknownType {
+
     }
 
-    private static class UnknownType {
-    }
 }

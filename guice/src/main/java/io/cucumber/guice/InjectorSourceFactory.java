@@ -35,7 +35,7 @@ final class InjectorSourceFactory {
         } catch (Exception e) {
             String message = format("Instantiation of ''{0}'' failed. Check the caused by exception and ensure your" +
                     "InjectorSource implementation is accessible and has a public zero args constructor.",
-                    injectorSourceClassName);
+                injectorSourceClassName);
             throw new InjectorSourceInstantiationFailed(message, e);
         }
     }

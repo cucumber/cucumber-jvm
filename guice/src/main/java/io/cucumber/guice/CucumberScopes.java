@@ -15,7 +15,7 @@ import org.apiguardian.api.API;
 @API(status = API.Status.STABLE)
 public final class CucumberScopes {
 
-    private CucumberScopes(){
+    private CucumberScopes() {
 
     }
 
