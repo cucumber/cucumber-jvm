@@ -22,7 +22,7 @@ Add the `cucumber-spring` dependency to your `pom.xml`:
 ## Configuring the Test Application Context
 
 To make Cucumber aware of your test configuration you can annotate a
-configuration class with `@CucumberContextConfiguration` and with one of the
+configuration class on your glue path with `@CucumberContextConfiguration` and with one of the
 following annotations: `@ContextConfiguration`, `@ContextHierarchy` or
 `@BootstrapWith`. If you are using SpringBoot, you can annotate configuration
 class with `@SpringBootTest`.
