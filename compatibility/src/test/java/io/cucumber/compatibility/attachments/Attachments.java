@@ -46,7 +46,6 @@ public class Attachments {
         scenario.attach(bytes, mediaType, null);
     }
 
-
     @When("a JPEG image is attached")
     public void aJPEGImageIsAttached() throws IOException {
         Path path = Paths.get("src/test/resources/features/attachments/cucumber-growing-on-vine.jpg");

@@ -50,7 +50,8 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
-                // exception: the CCK expects source references but java can not provide them
+                // exception: the CCK expects source references but java can not
+                // provide them
                 case "sourceReference":
                     expected.add(not(hasKey(is(fieldName))));
                     break;
@@ -64,6 +65,8 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 case "testCaseId":
                 case "testStepId":
                 case "testCaseStartedId":
+                    expected.add(hasEntry(is(fieldName), isA(String.class)));
+                    break;
                 // exception: protocolVersion can vary
                 case "protocolVersion":
                     expected.add(hasEntry(is(fieldName), isA(String.class)));
@@ -76,6 +79,9 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 // exception: timestamps and durations are not predictable
                 case "timestamp":
                 case "duration":
+                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
+                    break;
+
                 // exception: Mata fields depend on the platform
                 case "implementation":
                 case "runtime":
@@ -101,9 +107,9 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
         if (value instanceof List) {
             List<?> values = (List<?>) value;
             List<Matcher<? super Object>> allComparableValues = values.stream()
-                .map(o -> aComparableValue(o, depth))
-                .map(o -> (Matcher<? super Object>) o)
-                .collect(Collectors.toList());
+                    .map(o -> aComparableValue(o, depth))
+                    .map(o -> (Matcher<? super Object>) o)
+                    .collect(Collectors.toList());
             return contains(allComparableValues);
         }
 
@@ -145,10 +151,10 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
     private static Map<String, Object> asMapOfJsonNameToField(GeneratedMessageV3 envelope) {
         Map<String, Object> map = new LinkedHashMap<>();
         envelope.getAllFields()
-            .forEach((fieldDescriptor, value) -> {
-                String jsonName = fieldDescriptor.getJsonName();
-                map.put(jsonName, value);
-            });
+                .forEach((fieldDescriptor, value) -> {
+                    String jsonName = fieldDescriptor.getJsonName();
+                    map.put(jsonName, value);
+                });
         return map;
     }
 
