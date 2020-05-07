@@ -23,11 +23,10 @@ class TestCaseResultObserver implements AutoCloseable {
         delegate.assertTestCasePassed(
             () -> new SkipException(SKIP_MESSAGE),
             (exception) -> exception instanceof SkipException
-                ? exception
-                : new SkipException(exception.getMessage(), exception),
+                    ? exception
+                    : new SkipException(exception.getMessage(), exception),
             UndefinedStepException::new,
-            Function.identity()
-        );
+            Function.identity());
     }
 
     @Override
@@ -36,4 +35,3 @@ class TestCaseResultObserver implements AutoCloseable {
     }
 
 }
-

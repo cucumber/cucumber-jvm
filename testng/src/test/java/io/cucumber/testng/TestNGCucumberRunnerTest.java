@@ -42,8 +42,7 @@ public class TestNGCucumberRunnerTest {
 
         assertThrows(
             UndefinedStepException.class,
-            () -> testNGCucumberRunner.runScenario(wrapper.getPickle())
-        );
+            () -> testNGCucumberRunner.runScenario(wrapper.getPickle()));
     }
 
     @Test
@@ -54,8 +53,7 @@ public class TestNGCucumberRunnerTest {
         } catch (FeatureParserException e) {
             assertEquals(e.getMessage(),
                 "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature\n" +
-                    "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'"
-            );
+                        "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'");
         }
     }
 
@@ -68,15 +66,15 @@ public class TestNGCucumberRunnerTest {
         testNGCucumberRunner.finish();
 
         assertEquals(1, events.stream()
-            .map(Object::getClass)
-            .filter(TestRunStarted.class::isAssignableFrom).count());
+                .map(Object::getClass)
+                .filter(TestRunStarted.class::isAssignableFrom).count());
         assertEquals(1, events.stream()
-            .map(Object::getClass)
-            .filter(TestRunFinished.class::isAssignableFrom).count());
+                .map(Object::getClass)
+                .filter(TestRunFinished.class::isAssignableFrom).count());
     }
 
     @CucumberOptions(
-        features = "classpath:io/cucumber/undefined/undefined_steps.feature"
+            features = "classpath:io/cucumber/undefined/undefined_steps.feature"
     )
     static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {
 
@@ -95,7 +93,6 @@ public class TestNGCucumberRunnerTest {
     public static class Plugin implements ConcurrentEventListener {
 
         static List<Event> events = new ArrayList<>();
-
 
         @Override
         public void setEventPublisher(EventPublisher publisher) {

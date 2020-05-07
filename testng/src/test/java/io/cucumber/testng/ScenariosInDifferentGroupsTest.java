@@ -8,7 +8,10 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-@CucumberOptions(features = "classpath:io/cucumber/testng/scenarios-with-tags.feature", plugin = "timeline:target/timeline")
+@CucumberOptions(
+        features = "classpath:io/cucumber/testng/scenarios-with-tags.feature",
+        plugin = "timeline:target/timeline"
+)
 public class ScenariosInDifferentGroupsTest {
 
     private static final Predicate<Pickle> isSerial = pickle -> pickle.getTags().contains("@Serial");
@@ -40,7 +43,11 @@ public class ScenariosInDifferentGroupsTest {
         }).toArray(Object[][]::new);
     }
 
-    @Test(groups = "cucumber", description = "Runs Cucumber Scenarios in the Serial group", dataProvider = "serialScenarios")
+    @Test(
+            groups = "cucumber",
+            description = "Runs Cucumber Scenarios in the Serial group",
+            dataProvider = "serialScenarios"
+    )
     public void runSerialScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) {
         testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }

@@ -58,33 +58,35 @@ public final class TestNGCucumberRunner {
     /**
      * Bootstrap the cucumber runtime
      *
-     * @param clazz Which has the {@link CucumberOptions}
-     *              and {@link org.testng.annotations.Test} annotations
+     * @param clazz Which has the {@link CucumberOptions} and
+     *              {@link org.testng.annotations.Test} annotations
      */
     public TestNGCucumberRunner(Class<?> clazz) {
-        // Parse the options early to provide fast feedback about invalid options
+        // Parse the options early to provide fast feedback about invalid
+        // options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
-            .parse(CucumberProperties.fromPropertiesFile())
-            .build();
+                .parse(CucumberProperties.fromPropertiesFile())
+                .build();
 
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser()
-            .withOptionsProvider(new TestNGCucumberOptionsProvider())
-            .parse(clazz)
-            .build(propertiesFileOptions);
+                .withOptionsProvider(new TestNGCucumberOptionsProvider())
+                .parse(clazz)
+                .build(propertiesFileOptions);
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser()
-            .parse(CucumberProperties.fromEnvironment())
-            .build(annotationOptions);
+                .parse(CucumberProperties.fromEnvironment())
+                .build(annotationOptions);
 
         RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
-            .parse(CucumberProperties.fromSystemProperties())
-            .build(environmentOptions);
+                .parse(CucumberProperties.fromSystemProperties())
+                .build(environmentOptions);
 
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeatureParser parser = new FeatureParser(bus::generateId);
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
+            parser);
 
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ExitStatus exitStatus = new ExitStatus(runtimeOptions);
@@ -93,8 +95,10 @@ public final class TestNGCucumberRunner {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
+            classLoader, runtimeOptions);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
+            objectFactorySupplier, typeRegistryConfigurerSupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
 
         // Start test execution now.
@@ -123,23 +127,22 @@ public final class TestNGCucumberRunner {
 
     /**
      * @return returns the cucumber scenarios as a two dimensional array of
-     * {@link PickleWrapper} scenarios combined with their
-     * {@link FeatureWrapper} feature.
+     *         {@link PickleWrapper} scenarios combined with their
+     *         {@link FeatureWrapper} feature.
      */
     public Object[][] provideScenarios() {
-        //Possibly invoked in a multi-threaded context
+        // Possibly invoked in a multi-threaded context
         try {
             return features.stream()
-                .flatMap(feature ->
-                    feature.getPickles().stream()
-                        .filter(filters)
-                        .map(cucumberPickle -> new Object[]{
-                            new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle)),
-                            new FeatureWrapperImpl(feature)}))
-                .collect(toList())
-                .toArray(new Object[0][0]);
+                    .flatMap(feature -> feature.getPickles().stream()
+                            .filter(filters)
+                            .map(cucumberPickle -> new Object[] {
+                                    new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle)),
+                                    new FeatureWrapperImpl(feature) }))
+                    .collect(toList())
+                    .toArray(new Object[0][0]);
         } catch (CucumberException e) {
-            return new Object[][]{new Object[]{new CucumberExceptionWrapper(e), null}};
+            return new Object[][] { new Object[] { new CucumberExceptionWrapper(e), null } };
         }
     }
 

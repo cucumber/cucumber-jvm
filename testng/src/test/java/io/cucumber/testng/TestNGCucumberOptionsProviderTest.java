@@ -1,6 +1,5 @@
 package io.cucumber.testng;
 
-
 import io.cucumber.core.backend.ObjectFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -8,7 +7,6 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
-
 
 final class TestNGCucumberOptionsProviderTest {
 
@@ -21,13 +19,15 @@ final class TestNGCucumberOptionsProviderTest {
 
     @Test
     void testObjectFactoryWhenNotSpecified() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider.getOptions(ClassWithDefault.class);
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithDefault.class);
         assertNull(options.objectFactory());
     }
 
     @Test
     void testObjectFactory() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider.getOptions(ClassWithCustomObjectFactory.class);
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithCustomObjectFactory.class);
         assertNotNull(options.objectFactory());
         assertEquals(TestObjectFactory.class, options.objectFactory());
     }
