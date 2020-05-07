@@ -1,6 +1,5 @@
 package io.cucumber.spring.beans;
 
-
 public class BellyBean {
 
     private int cukes = 0;

@@ -50,12 +50,11 @@ class SpringFactoryTest {
         final BellyStepDefinitions o2 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
-        assertAll("Checking BellyStepdefs",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
     @Test
@@ -74,12 +73,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory2.getInstance(BellyStepDefinitions.class).getBellyBean();
         factory2.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(equalTo(o1))),
-            () -> assertThat(o2, is(equalTo(o2)))
-        );
+            () -> assertThat(o2, is(equalTo(o2))));
     }
 
     @Test
@@ -98,12 +96,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory2.getInstance(BellyMetaStepDefinitions.class).getBellyBean();
         factory2.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(equalTo(o1))),
-            () -> assertThat(o2, is(equalTo(o2)))
-        );
+            () -> assertThat(o2, is(equalTo(o2))));
     }
 
     @Test
@@ -118,12 +115,11 @@ class SpringFactoryTest {
         final ThirdStepDef o2 = factory1.getInstance(ThirdStepDef.class);
         factory1.stop();
 
-        assertAll("Checking ThirdStepDef",
+        assertAll(
             () -> assertThat(o1.getThirdStepDef(), is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1.getThirdStepDef(), is(equalTo(o2))),
-            () -> assertThat(o2, is(equalTo(o1.getThirdStepDef())))
-        );
+            () -> assertThat(o2, is(equalTo(o1.getThirdStepDef()))));
     }
 
     @Test
@@ -138,12 +134,11 @@ class SpringFactoryTest {
         final AutowiresThirdStepDef o3 = factory1.getInstance(AutowiresThirdStepDef.class);
         factory1.stop();
 
-        assertAll("Checking AutowiresThirdStepDef",
+        assertAll(
             () -> assertThat(o1.getThirdStepDef(), is(notNullValue())),
             () -> assertThat(o3.getThirdStepDef(), is(notNullValue())),
             () -> assertThat(o1.getThirdStepDef(), is(equalTo(o3.getThirdStepDef()))),
-            () -> assertThat(o3.getThirdStepDef(), is(equalTo(o1.getThirdStepDef())))
-        );
+            () -> assertThat(o3.getThirdStepDef(), is(equalTo(o1.getThirdStepDef()))));
     }
 
     @Test
@@ -186,12 +181,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepDefinitions.class).getBellyBean();
         factory.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
     @Test
@@ -210,12 +204,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory.getInstance(DirtiesContextBellyMetaStepDefinitions.class).getBellyBean();
         factory.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
     @Test
@@ -236,10 +229,10 @@ class SpringFactoryTest {
 
         Executable testMethod = () -> factory.addClass(BellyStepDefinitions.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both annotated with @CucumberContextConfiguration.\n" +
-                "Please ensure only one class configures the spring context"
-        )));
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both annotated with @CucumberContextConfiguration.\n"
+                    +
+                    "Please ensure only one class configures the spring context")));
     }
 
     @Test
@@ -248,9 +241,8 @@ class SpringFactoryTest {
 
         Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component annotation"
-        )));
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component annotation")));
     }
 
     @Test
@@ -259,9 +251,8 @@ class SpringFactoryTest {
 
         Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Controller annotation"
-        )));
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Controller annotation")));
     }
 
     @Test
@@ -274,10 +265,9 @@ class SpringFactoryTest {
         final Belly belly1 = factory.getInstance(Belly.class);
         final GlueScopedComponent glue1 = factory.getInstance(GlueScopedComponent.class);
 
-        assertAll("Checking factory.getInstance(Class)",
+        assertAll(
             () -> assertThat(belly1, is(notNullValue())),
-            () -> assertThat(glue1, is(notNullValue()))
-        );
+            () -> assertThat(glue1, is(notNullValue())));
 
         factory.stop();
 
@@ -285,14 +275,13 @@ class SpringFactoryTest {
         final Belly belly2 = factory.getInstance(Belly.class);
         final GlueScopedComponent glue2 = factory.getInstance(GlueScopedComponent.class);
 
-        assertAll("Checking factory.getInstance(Class)",
+        assertAll(
             () -> assertThat(belly2, is(notNullValue())),
             () -> assertThat(glue2, is(notNullValue())),
             () -> assertThat(glue1, is(not(equalTo(glue2)))),
             () -> assertThat(glue2, is(not(equalTo(glue1)))),
             () -> assertThat(belly1, is(equalTo(belly2))),
-            () -> assertThat(belly2, is(equalTo(belly1)))
-        );
+            () -> assertThat(belly2, is(equalTo(belly1))));
     }
 
     @Test
@@ -301,7 +290,8 @@ class SpringFactoryTest {
         factory.addClass(WithEmptySpringAnnotations.class);
 
         IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
-        assertThat(exception.getMessage(), containsString("DelegatingSmartContextLoader was unable to detect defaults"));
+        assertThat(exception.getMessage(),
+            containsString("DelegatingSmartContextLoader was unable to detect defaults"));
         assertDoesNotThrow(factory::stop);
     }
 

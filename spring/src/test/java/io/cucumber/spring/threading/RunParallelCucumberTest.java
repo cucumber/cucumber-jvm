@@ -21,12 +21,11 @@ class RunParallelCucumberTest {
         Callable<Byte> runCucumber = () -> {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             String[] args = {
-                "--glue", "io.cucumber.spring.threading",
-                "classpath:io/cucumber/spring/threadingCukes.feature"
+                    "--glue", "io.cucumber.spring.threading",
+                    "classpath:io/cucumber/spring/threadingCukes.feature"
             };
             return Main.run(args, classLoader);
         };
-
 
         ExecutorService executorService = newFixedThreadPool(ThreadingStepDefinitions.concurrency);
         List<Future<Byte>> results = new ArrayList<>();

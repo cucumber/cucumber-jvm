@@ -5,8 +5,7 @@ import java.util.Map;
 
 class GlueCodeContext {
 
-    private static final ThreadLocal<GlueCodeContext> localContext =
-        ThreadLocal.withInitial(GlueCodeContext::new);
+    private static final ThreadLocal<GlueCodeContext> localContext = ThreadLocal.withInitial(GlueCodeContext::new);
 
     private final Map<String, Object> objects = new HashMap<>();
     private final Map<String, Runnable> callbacks = new HashMap<>();

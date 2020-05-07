@@ -27,12 +27,12 @@ final class SpringBackend implements Backend {
     @Override
     public void loadGlue(Glue glue, List<URI> gluePaths) {
         gluePaths.stream()
-            .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-            .map(ClasspathSupport::packageName)
-            .map(classFinder::scanForClassesInPackage)
-            .flatMap(Collection::stream)
-            .filter((Class clazz) -> clazz.getAnnotation(CucumberContextConfiguration.class) != null)
-            .forEach(container::addClass);
+                .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
+                .map(ClasspathSupport::packageName)
+                .map(classFinder::scanForClassesInPackage)
+                .flatMap(Collection::stream)
+                .filter((Class clazz) -> clazz.getAnnotation(CucumberContextConfiguration.class) != null)
+                .forEach(container::addClass);
     }
 
     @Override

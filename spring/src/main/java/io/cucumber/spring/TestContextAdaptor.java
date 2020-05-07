@@ -20,20 +20,24 @@ abstract class TestContextAdaptor {
     private final ConfigurableApplicationContext applicationContext;
     private final Collection<Class<?>> glueClasses;
 
-    protected TestContextAdaptor(TestContextManager delegate, ConfigurableApplicationContext applicationContext,
-                                 Collection<Class<?>> glueClasses) {
+    protected TestContextAdaptor(
+            TestContextManager delegate,
+            ConfigurableApplicationContext applicationContext,
+            Collection<Class<?>> glueClasses
+    ) {
         this.delegate = delegate;
         this.applicationContext = applicationContext;
         this.glueClasses = glueClasses;
     }
 
-    static TestContextAdaptor createTestContextManagerAdaptor(TestContextManager delegate,
-                                                              Collection<Class<?>> glueClasses) {
+    static TestContextAdaptor createTestContextManagerAdaptor(
+            TestContextManager delegate,
+            Collection<Class<?>> glueClasses
+    ) {
         TestContext testContext = delegate.getTestContext();
-        ConfigurableApplicationContext applicationContext =
-            (ConfigurableApplicationContext) testContext.getApplicationContext();
+        ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) testContext
+                .getApplicationContext();
         return new TestContextAdaptor(delegate, applicationContext, glueClasses) {
-
 
         };
     }
@@ -81,10 +85,9 @@ abstract class TestContextAdaptor {
             return;
         }
         registry.registerBeanDefinition(beanName, BeanDefinitionBuilder
-            .genericBeanDefinition(glueClass)
-            .setScope(SCOPE_CUCUMBER_GLUE)
-            .getBeanDefinition()
-        );
+                .genericBeanDefinition(glueClass)
+                .setScope(SCOPE_CUCUMBER_GLUE)
+                .getBeanDefinition());
     }
 
     public final void stop() {

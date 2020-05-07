@@ -6,15 +6,12 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-    glue = {
-        "io.cucumber.spring.contextconfig",
-        "io.cucumber.spring.commonglue",
-        "io.cucumber.spring.api"
-    },
-    features = {
-        "classpath:io/cucumber/spring/stepdefInjection.feature",
-    }
-)
+        glue = {
+                "io.cucumber.spring.contextconfig",
+                "io.cucumber.spring.commonglue",
+                "io.cucumber.spring.api"
+        },
+        features = "classpath:io/cucumber/spring/stepdefInjection.feature")
 public class RunCucumberTest {
 
 }
