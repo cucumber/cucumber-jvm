@@ -23,30 +23,27 @@ class ElementsAreAllUniqueMatcherTest {
     void testDoesNotMatchNullCollection() {
         Collection<?> arg = null;
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("was null", matcher, arg)
-        );
+            () -> assertMismatchDescription("was null", matcher, arg));
     }
 
     @Test
     void testDoesNotMatchCollectionWithLessThanTwoElements() {
         Collection<String> arg = Collections.singletonList("foo");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection did not contain more than one element <[foo]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection did not contain more than one element <[foo]>", matcher, arg));
     }
 
     @Test
     void testDoesNotMatchCollectionWithNullElement() {
         Collection<String> arg = Arrays.asList("foo", null);
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained null element <[foo, null]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained null element <[foo, null]>", matcher, arg));
     }
 
     @Test
@@ -58,10 +55,10 @@ class ElementsAreAllUniqueMatcherTest {
     void testDoesNotMatchCollectionWithTwoElementsThatAreNotUnique() {
         Collection<String> arg = Arrays.asList("foo", "foo");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained elements that are not unique <[foo, foo]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained elements that are not unique <[foo, foo]>", matcher,
+                arg));
     }
 
     @Test
@@ -73,20 +70,20 @@ class ElementsAreAllUniqueMatcherTest {
     void testDoesNotMatchCollectionWithElementsThatAreNotUnique() {
         Collection<String> arg = Arrays.asList("foo", "bar", "foo");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained elements that are not unique <[foo, bar, foo]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained elements that are not unique <[foo, bar, foo]>",
+                matcher, arg));
     }
 
     @Test
     void testDoesNotMatchCollectionWithThreeElementsThatAreNotUnique() {
         Collection<String> arg = Arrays.asList("foo", "foo", "foo");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained elements that are not unique <[foo, foo, foo]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained elements that are not unique <[foo, foo, foo]>",
+                matcher, arg));
     }
 
     @Test

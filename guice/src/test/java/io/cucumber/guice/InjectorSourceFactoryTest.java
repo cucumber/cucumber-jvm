@@ -46,11 +46,13 @@ class InjectorSourceFactoryTest {
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
         Executable testMethod = injectorSourceFactory::create;
-        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
-        assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
-            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(ClassNotFoundException.class))
-        );
+        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
+            testMethod);
+        assertAll(
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+                "Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
+                isA(ClassNotFoundException.class)));
     }
 
     @Test
@@ -60,11 +62,13 @@ class InjectorSourceFactoryTest {
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
         Executable testMethod = injectorSourceFactory::create;
-        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
-        assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
-            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(ClassCastException.class))
-        );
+        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
+            testMethod);
+        assertAll(
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+                "Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
+                isA(ClassCastException.class)));
     }
 
     @Test
@@ -74,11 +78,13 @@ class InjectorSourceFactoryTest {
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
         Executable testMethod = injectorSourceFactory::create;
-        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
-        assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
-            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(IllegalAccessException.class))
-        );
+        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
+            testMethod);
+        assertAll(
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+                "Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
+                isA(IllegalAccessException.class)));
     }
 
     @Test
@@ -88,26 +94,34 @@ class InjectorSourceFactoryTest {
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
         Executable testMethod = injectorSourceFactory::create;
-        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class, testMethod);
-        assertAll("Checking Exception including cause",
-            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo("Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
-            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(), isA(InstantiationException.class))
-        );
+        InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
+            testMethod);
+        assertAll(
+            () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+                "Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+            () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
+                isA(InstantiationException.class)));
     }
 
     /**
-     * <p>Simulates enterprise applications which often use a hierarchy of classloaders.
-     *
-     * <p>MyChildClassLoader is the only classloader with knowledge of c.r.j.guice.impl.LivesInChildClassLoader
-     *
-     * <p>The bytecode of LivesInChildClassLoader is intentionally renamed to 'LivesInChildClassLoader.class.bin.txt' to prevent
-     * this test's ClassLoader from resolving it.
-     *
-     * <p>If InjectorSourceFactory calls Class#forName without an explicit ClassLoader argument, which is the behavior of
-     * 1.2.4 and earlier, Class#forName will default to the test's ClassLoader which has no knowledge
-     * of class LivesInChildClassLoader and the test will fail.
-     *
-     * <p>See <a href="https://github.com/cucumber/cucumber-jvm/issues/1036">https://github.com/cucumber/cucumber-jvm/issues/1036</a>
+     * <p>
+     * Simulates enterprise applications which often use a hierarchy of
+     * classloaders.
+     * <p>
+     * MyChildClassLoader is the only classloader with knowledge of
+     * c.r.j.guice.impl.LivesInChildClassLoader
+     * <p>
+     * The bytecode of LivesInChildClassLoader is intentionally renamed to
+     * 'LivesInChildClassLoader.class.bin.txt' to prevent this test's
+     * ClassLoader from resolving it.
+     * <p>
+     * If InjectorSourceFactory calls Class#forName without an explicit
+     * ClassLoader argument, which is the behavior of 1.2.4 and earlier,
+     * Class#forName will default to the test's ClassLoader which has no
+     * knowledge of class LivesInChildClassLoader and the test will fail.
+     * <p>
+     * 
+     * @see https://github.com/cucumber/cucumber-jvm/issues/1036
      */
     @Test
     void instantiateClassInChildClassLoader() {
@@ -115,7 +129,8 @@ class InjectorSourceFactoryTest {
         Thread.currentThread().setContextClassLoader(childClassLoader);
 
         Map<String, String> properties = new HashMap<>();
-        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, "io.cucumber.guice.impl.LivesInChildClassLoader");
+        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY,
+            "io.cucumber.guice.impl.LivesInChildClassLoader");
         InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
         assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
@@ -163,7 +178,8 @@ class InjectorSourceFactoryTest {
         @Override
         protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
             if (name.equals("io.cucumber.guice.impl.LivesInChildClassLoader")) {
-                String filename = getClass().getClassLoader().getResource("io/cucumber/guice/impl/LivesInChildClassLoader.class.bin").getFile();
+                String filename = getClass().getClassLoader()
+                        .getResource("io/cucumber/guice/impl/LivesInChildClassLoader.class.bin").getFile();
                 File file = new File(filename);
                 try {
                     FileInputStream in = new FileInputStream(file);

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import javax.inject.Singleton;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,8 @@ class GuiceFactoryTest {
 
     @AfterEach
     void tearDown() {
-        // If factory is left in start state it can cause cascading failures due to scope being left open
+        // If factory is left in start state it can cause cascading failures due
+        // to scope being left open
         try {
             factory.stop();
         } catch (Exception ignored) {
@@ -71,10 +73,9 @@ class GuiceFactoryTest {
         ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalToCompressingWhiteSpace(
             "Guice configuration errors:\n\n" +
-                "1) No implementation for io.cucumber.guice.ScenarioScope was bound.\n" +
-                "  while locating io.cucumber.guice.ScenarioScope\n\n" +
-                "1 error"
-        )));
+                    "1) No implementation for io.cucumber.guice.ScenarioScope was bound.\n" +
+                    "  while locating io.cucumber.guice.ScenarioScope\n\n" +
+                    "1 error")));
     }
 
     @Test
@@ -137,7 +138,8 @@ class GuiceFactoryTest {
     @Test
     void shouldGiveNewInstanceOfAnnotatedScenarioScopedClassForEachScenario() {
         factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
-        instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, AnnotatedScenarioScopedClass.class);
+        instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory,
+            AnnotatedScenarioScopedClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
 

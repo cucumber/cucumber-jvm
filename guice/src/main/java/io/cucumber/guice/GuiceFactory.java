@@ -6,7 +6,8 @@ import io.cucumber.core.options.CucumberProperties;
 import org.apiguardian.api.API;
 
 /**
- * Guice implementation of the <code>io.cucumber.core.backend.ObjectFactory</code>.
+ * Guice implementation of the
+ * <code>io.cucumber.core.backend.ObjectFactory</code>.
  */
 @API(status = API.Status.STABLE)
 public final class GuiceFactory implements ObjectFactory {
@@ -18,10 +19,11 @@ public final class GuiceFactory implements ObjectFactory {
     }
 
     /**
-     * Package private constructor that is called by the public constructor at runtime and is also called directly by
-     * tests.
+     * Package private constructor that is called by the public constructor at
+     * runtime and is also called directly by tests.
      *
-     * @param injector an injector configured with a binding for <code>ScenarioScope</code>.
+     * @param injector an injector configured with a binding for
+     *                 <code>ScenarioScope</code>.
      */
     GuiceFactory(Injector injector) {
         this.injector = injector;

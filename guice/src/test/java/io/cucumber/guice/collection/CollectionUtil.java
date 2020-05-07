@@ -10,9 +10,9 @@ public class CollectionUtil {
     /**
      * Removes all elements in the supplied list except the first element.
      *
-     * @param list the list to be modified
-     * @throws java.lang.NullPointerException     if the list is null
-     * @throws java.lang.IllegalArgumentException if the list is empty
+     * @param  list                     the list to be modified
+     * @throws NullPointerException     if the list is null
+     * @throws IllegalArgumentException if the list is empty
      */
     public static <E> void removeAllExceptFirstElement(List<E> list) {
         if (list == null) {

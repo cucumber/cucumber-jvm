@@ -44,10 +44,9 @@ class CollectionUtilTest {
     }
 
     private void assertThatListContainsOneElement(String element) {
-        assertAll("Checking list",
+        assertAll(
             () -> assertThat(list.size(), equalTo(1)),
-            () -> assertThat(list.get(0), equalTo(element))
-        );
+            () -> assertThat(list.get(0), equalTo(element)));
     }
 
     @Test

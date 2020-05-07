@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 abstract class AbstractMatcherTest {
 
     static <T> void assertMatches(Matcher<T> matcher, T arg) {
-        assertTrue(matcher.matches(arg), "Expected match, but mismatched because: '" + mismatchDescription(matcher, arg) + "'");
+        assertTrue(matcher.matches(arg),
+            "Expected match, but mismatched because: '" + mismatchDescription(matcher, arg) + "'");
     }
 
     private static <T> String mismatchDescription(Matcher<? super T> matcher, T arg) {
