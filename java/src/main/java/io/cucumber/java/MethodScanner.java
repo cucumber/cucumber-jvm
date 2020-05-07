@@ -28,18 +28,21 @@ final class MethodScanner {
 
     private static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
-        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
+        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())
+                && !isNonStaticInnerClass;
     }
 
     private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {
-        //prevent unnecessary checking of Object methods
+        // prevent unnecessary checking of Object methods
         if (Object.class.equals(method.getDeclaringClass())) {
             return;
         }
         scan(consumer, aClass, method, method.getAnnotations());
     }
 
-    private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method, Annotation[] methodAnnotations) {
+    private static void scan(
+            BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method, Annotation[] methodAnnotations
+    ) {
         for (Annotation annotation : methodAnnotations) {
             if (isHookAnnotation(annotation) || isStepDefinitionAnnotation(annotation)) {
                 validateMethod(aClass, method);
@@ -59,23 +62,21 @@ final class MethodScanner {
     private static boolean isHookAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.equals(Before.class)
-            || annotationClass.equals(After.class)
-            || annotationClass.equals(BeforeStep.class)
-            || annotationClass.equals(AfterStep.class)
-            || annotationClass.equals(ParameterType.class)
-            || annotationClass.equals(DataTableType.class)
-            || annotationClass.equals(DefaultParameterTransformer.class)
-            || annotationClass.equals(DefaultDataTableEntryTransformer.class)
-            || annotationClass.equals(DefaultDataTableCellTransformer.class)
-            || annotationClass.equals(DocStringType.class)
-            ;
+                || annotationClass.equals(After.class)
+                || annotationClass.equals(BeforeStep.class)
+                || annotationClass.equals(AfterStep.class)
+                || annotationClass.equals(ParameterType.class)
+                || annotationClass.equals(DataTableType.class)
+                || annotationClass.equals(DefaultParameterTransformer.class)
+                || annotationClass.equals(DefaultDataTableEntryTransformer.class)
+                || annotationClass.equals(DefaultDataTableCellTransformer.class)
+                || annotationClass.equals(DocStringType.class);
     }
 
     private static boolean isStepDefinitionAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.getAnnotation(StepDefinitionAnnotation.class) != null;
     }
-
 
     private static boolean isRepeatedStepDefinitionAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();

@@ -1,6 +1,5 @@
 package io.cucumber.java;
 
-
 import io.cucumber.core.backend.CucumberBackendException;
 
 import java.lang.reflect.Method;
@@ -35,7 +34,6 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
             return this;
         }
 
-
         InvalidMethodSignatureExceptionBuilder addSignature(String signature) {
             signatures.add(signature);
             return this;
@@ -48,11 +46,10 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
 
         public InvalidMethodSignatureException build() {
             return new InvalidMethodSignatureException("" +
-                describeAnnotations() + " must have one of these signatures:\n" +
-                " * " + describeAvailableSignature() + "\n" +
-                "at " + describeLocation() + "\n" +
-                describeNote() + "\n"
-            );
+                    describeAnnotations() + " must have one of these signatures:\n" +
+                    " * " + describeAvailableSignature() + "\n" +
+                    "at " + describeLocation() + "\n" +
+                    describeNote() + "\n");
         }
 
         private String describeAnnotations() {

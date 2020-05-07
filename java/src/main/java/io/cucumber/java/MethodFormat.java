@@ -13,11 +13,13 @@ import java.util.regex.Pattern;
 final class MethodFormat {
 
     static final MethodFormat FULL = new MethodFormat("%qc.%m(%qa)");
-    private static final Pattern METHOD_PATTERN = Pattern.compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
+    private static final Pattern METHOD_PATTERN = Pattern
+            .compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private final MessageFormat format;
 
     /**
-     * @param format the format string to use. There are several pattern tokens that can be used:
+     * @param format the format string to use. There are several pattern tokens
+     *               that can be used:
      *               <ul>
      *               <li><strong>%M</strong>: Modifiers</li>
      *               <li><strong>%qr</strong>: Qualified return type</li>
@@ -34,9 +36,9 @@ final class MethodFormat {
      */
     private MethodFormat(String format) {
         String pattern = format
-            .replaceAll("%qc", "{0}")
-            .replaceAll("%m", "{1}")
-            .replaceAll("%qa", "{2}");
+                .replaceAll("%qc", "{0}")
+                .replaceAll("%m", "{1}")
+                .replaceAll("%qa", "{2}");
         this.format = new MessageFormat(pattern);
     }
 
@@ -48,10 +50,10 @@ final class MethodFormat {
             String m = matcher.group(4);
             String qa = matcher.group(5);
 
-            return format.format(new Object[]{
-                qc,
-                m,
-                qa,
+            return format.format(new Object[] {
+                    qc,
+                    m,
+                    qa,
             });
         } else {
             throw new CucumberBackendException("Cucumber bug: Couldn't format " + signature);

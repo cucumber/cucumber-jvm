@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * <p>
  * The method must have this signature:
  * <ul>
- * <li>{@code String -> Author} </li>
+ * <li>{@code String -> Author}</li>
  * </ul>
  * NOTE: {@code Author} is an example of the type of the parameter type.
  *

@@ -9,10 +9,11 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * This annotation can be specified on step definition method parameters to give Cucumber a hint
- * to transpose a DataTable.
+ * This annotation can be specified on step definition method parameters to give
+ * Cucumber a hint to transpose a DataTable.
  * <p>
  * For example, if you have the following Gherkin step with a table
+ * 
  * <pre>
  * Given the user is
  *    | firstname	| Roberto	|
@@ -24,7 +25,7 @@ import java.lang.annotation.Target;
  *
  * <pre>
  * {@code
- * @DataTableType
+ * &#64;DataTableType
  * public User convert(Map<String, String> entry){
  *    return new User(
  *        entry.get("firstname"),
@@ -34,7 +35,10 @@ import java.lang.annotation.Target;
  * }
  * }
  * </pre>
- * Then the following Java Step Definition would convert that into an User object:
+ * 
+ * Then the following Java Step Definition would convert that into an User
+ * object:
+ * 
  * <pre>
  * &#064;Given("^the user is$")
  * public void the_user_is(&#064;Transpose User user) {
@@ -43,7 +47,7 @@ import java.lang.annotation.Target;
  * </pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER})
+@Target({ ElementType.PARAMETER })
 @API(status = API.Status.STABLE)
 public @interface Transpose {
 

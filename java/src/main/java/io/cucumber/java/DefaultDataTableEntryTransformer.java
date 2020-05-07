@@ -38,9 +38,9 @@ public @interface DefaultDataTableEntryTransformer {
     /**
      * Replace these strings in the Datatable with empty strings.
      * <p>
-     * A data table can only represent absent and non-empty strings. By replacing
-     * a known value (for example [empty]) a data table can also represent
-     * empty strings.
+     * A data table can only represent absent and non-empty strings. By
+     * replacing a known value (for example [empty]) a data table can also
+     * represent empty strings.
      * <p>
      * It is not recommended to use multiple replacements in the same table.
      *

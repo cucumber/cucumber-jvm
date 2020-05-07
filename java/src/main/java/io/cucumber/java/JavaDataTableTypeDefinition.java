@@ -13,7 +13,8 @@ import java.util.Map;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
+class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDefinition
+        implements DataTableTypeDefinition {
 
     private final DataTableType dataTableType;
 
@@ -30,36 +31,28 @@ class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDef
             return new DataTableType(
                 returnType,
                 (DataTable table) -> invokeMethod(
-                    replaceEmptyPatternsWithEmptyString(table)
-                )
-            );
+                    replaceEmptyPatternsWithEmptyString(table)));
         }
 
         if (List.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
                 (List<String> row) -> invokeMethod(
-                    replaceEmptyPatternsWithEmptyString(row)
-                )
-            );
+                    replaceEmptyPatternsWithEmptyString(row)));
         }
 
         if (Map.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
                 (Map<String, String> entry) -> invokeMethod(
-                    replaceEmptyPatternsWithEmptyString(entry)
-                )
-            );
+                    replaceEmptyPatternsWithEmptyString(entry)));
         }
 
         if (String.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
                 (String cell) -> invokeMethod(
-                    replaceEmptyPatternsWithEmptyString(cell)
-                )
-            );
+                    replaceEmptyPatternsWithEmptyString(cell)));
         }
 
         throw createInvalidSignatureException(method);
@@ -98,13 +91,13 @@ class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDef
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(io.cucumber.java.DataTableType.class)
-            .addSignature("public Author author(DataTable table)")
-            .addSignature("public Author author(List<String> row)")
-            .addSignature("public Author author(Map<String, String> entry)")
-            .addSignature("public Author author(String cell)")
-            .addNote("Note: Author is an example of the class you want to convert the table to.")
-            .build();
+                .addAnnotation(io.cucumber.java.DataTableType.class)
+                .addSignature("public Author author(DataTable table)")
+                .addSignature("public Author author(List<String> row)")
+                .addSignature("public Author author(Map<String, String> entry)")
+                .addSignature("public Author author(String cell)")
+                .addNote("Note: Author is an example of the class you want to convert the table to.")
+                .build();
     }
 
     @Override

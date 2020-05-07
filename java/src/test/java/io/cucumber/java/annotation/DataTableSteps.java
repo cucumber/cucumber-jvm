@@ -84,23 +84,27 @@ public class DataTableSteps {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
             Author author = (Author) o;
 
-            if (!firstName.equals(author.firstName)) return false;
-            if (!lastName.equals(author.lastName)) return false;
+            if (!firstName.equals(author.firstName))
+                return false;
+            if (!lastName.equals(author.lastName))
+                return false;
             return birthDate.equals(author.birthDate);
         }
 
         @Override
         public String toString() {
             return "Author{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                '}';
+                    "firstName='" + firstName + '\'' +
+                    ", lastName='" + lastName + '\'' +
+                    ", birthDate='" + birthDate + '\'' +
+                    '}';
         }
 
     }
@@ -122,14 +126,15 @@ public class DataTableSteps {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Person person = (Person) o;
             return first.equals(person.first) &&
-                last.equals(person.last);
+                    last.equals(person.last);
         }
 
     }
-
 
 }

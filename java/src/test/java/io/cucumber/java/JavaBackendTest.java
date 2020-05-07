@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith({ MockitoExtension.class })
 class JavaBackendTest {
 
     @Captor
@@ -55,9 +55,11 @@ class JavaBackendTest {
 
     @Test
     void detects_subclassed_glue_and_throws_exception() {
-        Executable testMethod = () -> backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/steps"), URI.create("classpath:io/cucumber/java/incorrectlysubclassedsteps")));
+        Executable testMethod = () -> backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/steps"),
+            URI.create("classpath:io/cucumber/java/incorrectlysubclassedsteps")));
         InvalidMethodException expectedThrown = assertThrows(InvalidMethodException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps extends class io.cucumber.java.steps.Steps")));
+        assertThat(expectedThrown.getMessage(), is(equalTo(
+            "You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps extends class io.cucumber.java.steps.Steps")));
     }
 
     @Test
@@ -66,9 +68,9 @@ class JavaBackendTest {
         verify(glue, times(2)).addStepDefinition(stepDefinition.capture());
 
         List<String> patterns = stepDefinition.getAllValues()
-            .stream()
-            .map(StepDefinition::getPattern)
-            .collect(toList());
+                .stream()
+                .map(StepDefinition::getPattern)
+                .collect(toList());
         assertThat(patterns, equalTo(asList("test", "test again")));
 
     }

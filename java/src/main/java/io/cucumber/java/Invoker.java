@@ -28,18 +28,21 @@ final class Invoker {
         Class<?> targetClass = target.getClass();
         Class<?> declaringClass = method.getDeclaringClass();
 
-        // Immediately return the provided method if the class loaders are the same.
+        // Immediately return the provided method if the class loaders are the
+        // same.
         if (targetClass.getClassLoader().equals(declaringClass.getClassLoader())) {
             return method;
         }
 
         try {
-            // Check if the method is publicly accessible. Note that methods from interfaces are always public.
+            // Check if the method is publicly accessible. Note that methods
+            // from interfaces are always public.
             if (Modifier.isPublic(method.getModifiers())) {
                 return targetClass.getMethod(method.getName(), method.getParameterTypes());
             }
 
-            // Loop through all the super classes until the declared method is found.
+            // Loop through all the super classes until the declared method is
+            // found.
             Class<?> currentClass = targetClass;
             while (currentClass != Object.class) {
                 try {

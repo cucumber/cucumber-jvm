@@ -39,7 +39,9 @@ class JavaStepDefinitionTransposeTest {
 
         }
 
-        public void transposedMapOfDoubleToListOfDouble(@Transpose Map<Double, List<Double>> mapOfDoubleToListOfDouble) {
+        public void transposedMapOfDoubleToListOfDouble(
+                @Transpose Map<Double, List<Double>> mapOfDoubleToListOfDouble
+        ) {
         }
 
     }

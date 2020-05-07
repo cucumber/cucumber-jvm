@@ -9,7 +9,8 @@ import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition implements DefaultParameterTransformerDefinition {
+class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
+        implements DefaultParameterTransformerDefinition {
 
     private final Lookup lookup;
     private final ParameterByTypeTransformer transformer;
@@ -48,10 +49,10 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(DefaultParameterTransformer.class)
-            .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")
-            .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
-            .build();
+                .addAnnotation(DefaultParameterTransformer.class)
+                .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")
+                .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
+                .build();
     }
 
     @Override

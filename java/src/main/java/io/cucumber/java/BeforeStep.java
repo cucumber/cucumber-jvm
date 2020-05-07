@@ -16,16 +16,16 @@ import java.lang.annotation.Target;
 public @interface BeforeStep {
 
     /**
-     * Tag expression. If the expression applies to the current
-     * scenario this hook will be executed.
+     * Tag expression. If the expression applies to the current scenario this
+     * hook will be executed.
      *
      * @return a tag expression
      */
     String value() default "";
 
     /**
-     * @return the order in which this hook should run. Lower numbers are run first.
-     * The default order is 10000.
+     * @return the order in which this hook should run. Lower numbers are run
+     *         first. The default order is 10000.
      */
     int order() default 10000;
 

@@ -38,20 +38,20 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(Before.class)
-            .addAnnotation(After.class)
-            .addAnnotation(BeforeStep.class)
-            .addAnnotation(AfterStep.class)
-            .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
-            .addSignature("public void before_or_after()")
-            .build();
+                .addAnnotation(Before.class)
+                .addAnnotation(After.class)
+                .addAnnotation(BeforeStep.class)
+                .addAnnotation(AfterStep.class)
+                .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
+                .addSignature("public void before_or_after()")
+                .build();
     }
 
     @Override
     public void execute(TestCaseState state) {
         Object[] args;
         if (method.getParameterTypes().length == 1) {
-            args = new Object[]{new io.cucumber.java.Scenario(state)};
+            args = new Object[] { new io.cucumber.java.Scenario(state) };
         } else {
             args = new Object[0];
         }

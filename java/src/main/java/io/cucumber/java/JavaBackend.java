@@ -33,14 +33,14 @@ final class JavaBackend implements Backend {
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
 
         gluePaths.stream()
-            .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-            .map(ClasspathSupport::packageName)
-            .map(classFinder::scanForClassesInPackage)
-            .flatMap(Collection::stream)
-            .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
-                container.addClass(method.getDeclaringClass());
-                glueAdaptor.addDefinition(method, annotation);
-            }));
+                .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
+                .map(ClasspathSupport::packageName)
+                .map(classFinder::scanForClassesInPackage)
+                .flatMap(Collection::stream)
+                .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
+                    container.addClass(method.getDeclaringClass());
+                    glueAdaptor.addDefinition(method, annotation);
+                }));
     }
 
     @Override
