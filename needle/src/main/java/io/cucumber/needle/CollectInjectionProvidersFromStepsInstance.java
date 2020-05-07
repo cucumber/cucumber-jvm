@@ -27,8 +27,8 @@ enum CollectInjectionProvidersFromStepsInstance {
     /**
      * Collect providers direct in the step definition.
      *
-     * @param instance step definition instance
-     * @return collected injection providers.
+     * @param  instance step definition instance
+     * @return          collected injection providers.
      */
     final <T> InjectionProvider<?>[] apply(final T instance) {
         final Set<InjectionProvider<?>> providers = new LinkedHashSet<>();
@@ -44,7 +44,7 @@ enum CollectInjectionProvidersFromStepsInstance {
                     providers.addAll(((InjectionProviderInstancesSupplier) value).get());
                 } else {
                     throw new IllegalStateException("Fields annotated with NeedleInjectionProviders must be of type "
-                        + "InjectionProviderInstancesSupplier, InjectionProvider " + "or InjectionProvider[]");
+                            + "InjectionProviderInstancesSupplier, InjectionProvider " + "or InjectionProvider[]");
                 }
             } catch (final Exception e) {
                 throw new IllegalStateException(e);

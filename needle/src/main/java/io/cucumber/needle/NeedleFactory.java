@@ -64,7 +64,8 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
             for (Object stepsInstance : cachedStepsInstances.values()) {
                 addInjectionProvider(collectInjectionProvidersFromStepsInstance.apply(stepsInstance));
             }
-            // Now init all instances, having the injection providers from all other instances available
+            // Now init all instances, having the injection providers from all
+            // other instances available
             for (Object stepsInstance : cachedStepsInstances.values()) {
                 initTestcase(stepsInstance);
             }

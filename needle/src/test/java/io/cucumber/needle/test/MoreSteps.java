@@ -11,7 +11,8 @@ import javax.inject.Inject;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Just here to show that injection providers from this class also work in other classes.
+ * Just here to show that injection providers from this class also work in other
+ * classes.
  *
  * @author Lars Bilger
  */
@@ -25,7 +26,8 @@ public class MoreSteps {
 
     @Before
     public void checkInjectionWorked() {
-        assertTrue(atmWithdrawalSteps.isThisReallyYouOrJustAMock(), "Got a mock injected instead of the real instance.");
+        assertTrue(atmWithdrawalSteps.isThisReallyYouOrJustAMock(),
+            "Got a mock injected instead of the real instance.");
     }
 
     @Given("i call a step that i don't really need")

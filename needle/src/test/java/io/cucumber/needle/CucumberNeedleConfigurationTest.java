@@ -16,19 +16,19 @@ class CucumberNeedleConfigurationTest {
     @Test
     void shouldReturnEmptyInstances() {
         final InjectionProvider<?>[] allInjectionProviders = new CucumberNeedleConfiguration("resource-bundles/empty")
-            .getInjectionProviders();
+                .getInjectionProviders();
         assertThat(allInjectionProviders, is(notNullValue()));
         assertThat(allInjectionProviders.length, is(0));
     }
 
     @Test
     void shouldEvaluateIfTypeIsInjectionProviderOrSupplier() {
-        assertAll("Checking Needle Configuration",
+        assertAll(
             () -> assertTrue(CucumberNeedleConfiguration.isInjectionProvider(SimpleNameGetterProvider.class)),
-            () -> assertFalse(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(SimpleNameGetterProvider.class)),
+            () -> assertFalse(
+                CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(SimpleNameGetterProvider.class)),
             () -> assertFalse(CucumberNeedleConfiguration.isInjectionProvider(A.class)),
-            () -> assertTrue(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(A.class))
-        );
+            () -> assertTrue(CucumberNeedleConfiguration.isInjectionProviderInstanceSupplier(A.class)));
     }
 
     public abstract static class A implements InjectionProviderInstancesSupplier {

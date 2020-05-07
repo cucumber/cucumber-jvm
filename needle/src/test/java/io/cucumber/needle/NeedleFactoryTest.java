@@ -14,7 +14,7 @@ class NeedleFactoryTest {
     void shouldSetUpInjectionProviders() {
 
         final InjectionProvider<?>[] injectionProviders = NeedleFactory
-            .setUpInjectionProviders();
+                .setUpInjectionProviders();
 
         assertThat(injectionProviders, is(notNullValue()));
         assertThat(injectionProviders.length, is(1));

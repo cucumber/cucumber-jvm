@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.util.HashSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;

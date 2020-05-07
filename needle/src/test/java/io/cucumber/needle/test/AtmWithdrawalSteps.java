@@ -35,8 +35,8 @@ public class AtmWithdrawalSteps {
     @NeedleInjectionProvider
     private final InjectionProvider<?> valueProvider = new ValueInjectionProvider(VALUE);
     @NeedleInjectionProvider
-    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier =
-        () -> singleton(new DefaultInstanceInjectionProvider<>(AtmWithdrawalSteps.this));
+    private final InjectionProviderInstancesSupplier thisInjectionProviderSupplier = () -> singleton(
+        new DefaultInstanceInjectionProvider<>(AtmWithdrawalSteps.this));
     /*
      * Inject will be mocked.
      */

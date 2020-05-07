@@ -8,7 +8,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Null safe Resource Loader. If ResourceBundle does not exist, an empty Bundle is returned.
+ * Null safe Resource Loader. If ResourceBundle does not exist, an empty Bundle
+ * is returned.
  */
 enum LoadResourceBundle {
     INSTANCE;

@@ -61,10 +61,9 @@ class ReadInjectionProviderClassNamesTest {
     void shouldReturnTwoTrimmedClassNames() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/two-classname"));
 
-        assertAll("Checking function",
+        assertAll(
             () -> assertThat(classNames.size(), is(2)),
-            () -> assertThat(classNames, hasItems("java.lang.String", "java.util.Set"))
-        );
+            () -> assertThat(classNames, hasItems("java.lang.String", "java.util.Set")));
     }
 
 }
