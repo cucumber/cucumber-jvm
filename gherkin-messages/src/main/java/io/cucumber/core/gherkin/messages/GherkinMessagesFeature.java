@@ -29,7 +29,8 @@ final class GherkinMessagesFeature implements Feature {
             URI uri,
             String gherkinSource,
             List<Pickle> pickles,
-            List<Messages.Envelope> envelopes) {
+            List<Messages.Envelope> envelopes
+    ) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;

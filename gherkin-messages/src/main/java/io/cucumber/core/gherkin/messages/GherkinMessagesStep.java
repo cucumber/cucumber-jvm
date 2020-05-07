@@ -20,8 +20,13 @@ final class GherkinMessagesStep implements Step {
     private final String previousGwtKeyWord;
     private final Messages.Location location;
 
-    GherkinMessagesStep(PickleStep pickleStep, GherkinDialect dialect, String previousGwtKeyWord,
-            Messages.Location location, String keyword) {
+    GherkinMessagesStep(
+            PickleStep pickleStep,
+            GherkinDialect dialect,
+            String previousGwtKeyWord,
+            Messages.Location location,
+            String keyword
+    ) {
         this.pickleStep = pickleStep;
         this.argument = extractArgument(pickleStep, location);
         this.keyWord = keyword;

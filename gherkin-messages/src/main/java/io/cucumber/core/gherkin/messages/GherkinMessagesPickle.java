@@ -35,7 +35,8 @@ final class GherkinMessagesPickle implements Pickle {
     private static List<Step> createCucumberSteps(
             Messages.Pickle pickle,
             GherkinDialect dialect,
-            CucumberQuery cucumberQuery) {
+            CucumberQuery cucumberQuery
+    ) {
         List<Step> list = new ArrayList<>();
         String previousGivenWhenThen = dialect.getGivenKeywords()
                 .stream()
