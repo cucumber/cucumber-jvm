@@ -33,7 +33,7 @@ class InvokeMethodsAroundEventsTest {
         assertThat(events, contains("BeforeClass", "TestRunStarted", "TestRunFinished", "AfterClass"));
     }
 
-    @CucumberOptions(plugin = {"io.cucumber.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener"})
+    @CucumberOptions(plugin = "io.cucumber.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener")
     public static class BeforeAfterClass {
 
         @BeforeClass

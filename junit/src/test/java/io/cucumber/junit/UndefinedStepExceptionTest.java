@@ -13,10 +13,9 @@ class UndefinedStepExceptionTest {
     void should_generate_a_message_for_a_single_snippet() {
         UndefinedStepException exception = new UndefinedStepException(singletonList("snippet"));
         assertThat(exception.getMessage(), is("" +
-            "This step is undefined. You can implement it using the snippet(s) below:\n" +
-            "\n" +
-            "snippet\n"
-        ));
+                "This step is undefined. You can implement it using the snippet(s) below:\n" +
+                "\n" +
+                "snippet\n"));
     }
 
     @Test
@@ -24,13 +23,11 @@ class UndefinedStepExceptionTest {
         UndefinedStepException exception = new UndefinedStepException(
             "step text",
             singletonList("snippet"),
-            emptyList()
-        );
+            emptyList());
         assertThat(exception.getMessage(), is("" +
-            "The step \"step text\" is undefined. You can implement it using the snippet(s) below:\n" +
-            "\n" +
-            "snippet\n"
-        ));
+                "The step \"step text\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "\n" +
+                "snippet\n"));
     }
 
     @Test
@@ -38,18 +35,16 @@ class UndefinedStepExceptionTest {
         UndefinedStepException exception = new UndefinedStepException(
             "step text",
             singletonList("snippet"),
-            singletonList(singletonList("additional snippet"))
-        );
+            singletonList(singletonList("additional snippet")));
         assertThat(exception.getMessage(), is("" +
-            "The step \"step text\" is undefined. You can implement it using the snippet(s) below:\n" +
-            "\n" +
-            "snippet\n" +
-            "\n" +
-            "\n" +
-            "Some other steps were also undefined:\n" +
-            "\n" +
-            "additional snippet\n"
-        ));
+                "The step \"step text\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "\n" +
+                "snippet\n" +
+                "\n" +
+                "\n" +
+                "Some other steps were also undefined:\n" +
+                "\n" +
+                "additional snippet\n"));
     }
 
     @Test
@@ -57,13 +52,11 @@ class UndefinedStepExceptionTest {
         UndefinedStepException exception = new UndefinedStepException(
             "step text",
             singletonList("snippet"),
-            singletonList(singletonList("snippet"))
-        );
+            singletonList(singletonList("snippet")));
         assertThat(exception.getMessage(), is("" +
-            "The step \"step text\" is undefined. You can implement it using the snippet(s) below:\n" +
-            "\n" +
-            "snippet\n"
-        ));
+                "The step \"step text\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "\n" +
+                "snippet\n"));
     }
 
 }

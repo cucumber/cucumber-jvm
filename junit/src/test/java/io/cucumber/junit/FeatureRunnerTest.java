@@ -47,7 +47,8 @@ class FeatureRunnerTest {
     }
 
     private static void assertDescriptionIsUnique(Description description, Set<Description> descriptions) {
-        // Note: JUnit uses the the serializable parameter as the unique id when comparing Descriptions
+        // Note: JUnit uses the the serializable parameter as the unique id when
+        // comparing Descriptions
         assertTrue(descriptions.add(description));
         for (Description each : description.getChildren()) {
             assertDescriptionIsUnique(each, descriptions);
@@ -57,20 +58,20 @@ class FeatureRunnerTest {
     @Test
     void should_not_create_step_descriptions_by_default() {
         Feature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background:\n" +
-            "    Given background step\n" +
-            "  Scenario: A\n" +
-            "    Then scenario name\n" +
-            "  Scenario: B\n" +
-            "    Then scenario name\n" +
-            "  Scenario Outline: C\n" +
-            "    Then scenario <name>\n" +
-            "  Examples:\n" +
-            "    | name |\n" +
-            "    | C    |\n" +
-            "    | D    |\n" +
-            "    | E    |\n"
+                "Feature: feature name\n" +
+                "  Background:\n" +
+                "    Given background step\n" +
+                "  Scenario: A\n" +
+                "    Then scenario name\n" +
+                "  Scenario: B\n" +
+                "    Then scenario name\n" +
+                "  Scenario Outline: C\n" +
+                "    Then scenario <name>\n" +
+                "  Examples:\n" +
+                "    | name |\n" +
+                "    | C    |\n" +
+                "    | D    |\n" +
+                "    | E    |\n"
 
         );
 
@@ -90,7 +91,8 @@ class FeatureRunnerTest {
     }
 
     private FeatureRunner createFeatureRunner(Feature feature, JUnitOptions junitOption) {
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(RuntimeOptions.defaultOptions());
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(
+            RuntimeOptions.defaultOptions());
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
 
@@ -115,27 +117,29 @@ class FeatureRunnerTest {
         EventBus bus = new TimeServiceEventBus(clockStub, UUID::randomUUID);
         Filters filters = new Filters(runtimeOptions);
         Supplier<ClassLoader> classLoader = FeatureRunnerTest.class::getClassLoader;
-        ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
-        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier, objectFactory, typeRegistrySupplier);
+        ScanningTypeRegistryConfigurerSupplier typeRegistrySupplier = new ScanningTypeRegistryConfigurerSupplier(
+            classLoader, runtimeOptions);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
+            objectFactory, typeRegistrySupplier);
         return FeatureRunner.create(feature, filters, runnerSupplier, junitOption);
     }
 
     @Test
     void should_not_issue_notification_for_steps_by_default_scenario_outline_with_two_examples_table_and_background() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given step #1\n" +
-            "  Scenario Outline: scenario <id>\n" +
-            "    When step #2 \n" +
-            "    Then step #3 \n" +
-            "    Examples: examples 1 name\n" +
-            "      | id | \n" +
-            "      | #1 |\n" +
-            "      | #2  |\n" +
-            "    Examples: examples 2 name\n" +
-            "      | id |\n" +
-            "      | #3 |\n");
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given step #1\n" +
+                "  Scenario Outline: scenario <id>\n" +
+                "    When step #2 \n" +
+                "    Then step #3 \n" +
+                "    Examples: examples 1 name\n" +
+                "      | id | \n" +
+                "      | #1 |\n" +
+                "      | #2  |\n" +
+                "    Examples: examples 2 name\n" +
+                "      | id |\n" +
+                "      | #3 |\n");
         RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
         InOrder order = inOrder(notifier);
@@ -161,14 +165,14 @@ class FeatureRunnerTest {
     @Test
     void should_not_issue_notification_for_steps_by_default_two_scenarios_with_background() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given step #1\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    When step #2\n" +
-            "    Then step #3\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Then step #2\n");
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given step #1\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    When step #2\n" +
+                "    Then step #3\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Then step #2\n");
 
         RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
@@ -185,20 +189,20 @@ class FeatureRunnerTest {
     @Test
     void should_populate_descriptions_with_stable_unique_ids() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background:\n" +
-            "    Given background step\n" +
-            "  Scenario: A\n" +
-            "    Then scenario name\n" +
-            "  Scenario: B\n" +
-            "    Then scenario name\n" +
-            "  Scenario Outline: C\n" +
-            "    Then scenario <name>\n" +
-            "  Examples:\n" +
-            "    | name |\n" +
-            "    | C    |\n" +
-            "    | D    |\n" +
-            "    | E    |\n"
+                "Feature: feature name\n" +
+                "  Background:\n" +
+                "    Given background step\n" +
+                "  Scenario: A\n" +
+                "    Then scenario name\n" +
+                "  Scenario: B\n" +
+                "    Then scenario name\n" +
+                "  Scenario Outline: C\n" +
+                "    Then scenario <name>\n" +
+                "  Examples:\n" +
+                "    | name |\n" +
+                "    | C    |\n" +
+                "    | D    |\n" +
+                "    | E    |\n"
 
         );
 
@@ -215,20 +219,20 @@ class FeatureRunnerTest {
     @Test
     void step_descriptions_can_be_turned_on() {
         Feature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background:\n" +
-            "    Given background step\n" +
-            "  Scenario: A\n" +
-            "    Then scenario name\n" +
-            "  Scenario: B\n" +
-            "    Then scenario name\n" +
-            "  Scenario Outline: C\n" +
-            "    Then scenario <name>\n" +
-            "  Examples:\n" +
-            "    | name |\n" +
-            "    | C    |\n" +
-            "    | D    |\n" +
-            "    | E    |\n"
+                "Feature: feature name\n" +
+                "  Background:\n" +
+                "    Given background step\n" +
+                "  Scenario: A\n" +
+                "    Then scenario name\n" +
+                "  Scenario: B\n" +
+                "    Then scenario name\n" +
+                "  Scenario Outline: C\n" +
+                "    Then scenario <name>\n" +
+                "  Examples:\n" +
+                "    | name |\n" +
+                "    | C    |\n" +
+                "    | D    |\n" +
+                "    | E    |\n"
 
         );
 
@@ -251,19 +255,19 @@ class FeatureRunnerTest {
     @Test
     void step_notification_can_be_turned_on_scenario_outline_with_two_examples_table_and_background() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given step #1\n" +
-            "  Scenario Outline: scenario <id>\n" +
-            "    When step #2 \n" +
-            "    Then step #3 \n" +
-            "    Examples: examples 1 name\n" +
-            "      | id | \n" +
-            "      | #1 |\n" +
-            "      | #2  |\n" +
-            "    Examples: examples 2 name\n" +
-            "      | id |\n" +
-            "      | #3 |\n");
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given step #1\n" +
+                "  Scenario Outline: scenario <id>\n" +
+                "    When step #2 \n" +
+                "    Then step #3 \n" +
+                "    Examples: examples 1 name\n" +
+                "      | id | \n" +
+                "      | #1 |\n" +
+                "      | #2  |\n" +
+                "    Examples: examples 2 name\n" +
+                "      | id |\n" +
+                "      | #3 |\n");
 
         JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
         RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
@@ -310,14 +314,14 @@ class FeatureRunnerTest {
     @Test
     void step_notification_can_be_turned_on_two_scenarios_with_background() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given step #1\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    When step #2\n" +
-            "    Then step #3\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Then another step #2\n");
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given step #1\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    When step #2\n" +
+                "    Then step #3\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Then another step #2\n");
 
         JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
         RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
@@ -341,7 +345,8 @@ class FeatureRunnerTest {
         order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario_2 name)")));
         order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("another step #2(scenario_2 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("another step #2(scenario_2 name)")));
+        order.verify(notifier)
+                .fireTestAssumptionFailed(argThat(new FailureMatcher("another step #2(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("another step #2(scenario_2 name)")));
         order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name")));
     }
@@ -349,10 +354,9 @@ class FeatureRunnerTest {
     @Test
     void should_notify_of_failure_to_create_runners_and_request_test_execution_to_stop() {
         Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    Given step #1\n"
-        );
+                "Feature: feature name\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    Given step #1\n");
 
         Filters filters = new Filters(RuntimeOptions.defaultOptions());
 

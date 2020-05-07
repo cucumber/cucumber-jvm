@@ -1,6 +1,5 @@
 package io.cucumber.junit;
 
-
 import org.junit.jupiter.api.Test;
 
 class SanityTest {

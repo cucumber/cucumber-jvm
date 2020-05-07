@@ -34,10 +34,12 @@ final class UndefinedStepException extends RuntimeException {
         super(createMessage(stepText, snippets, otherSnippets), null, false, false);
     }
 
-    private static String createMessage(String stepText, Collection<String> snippets, Collection<Collection<String>> otherSnippets) {
+    private static String createMessage(
+            String stepText, Collection<String> snippets, Collection<Collection<String>> otherSnippets
+    ) {
         Set<String> otherUniqueSnippets = otherSnippets.stream()
-            .flatMap(Collection::stream)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         otherUniqueSnippets.removeAll(snippets);
 

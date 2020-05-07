@@ -19,13 +19,15 @@ final class JUnitCucumberOptionsProviderTest {
 
     @Test
     void testObjectFactoryWhenNotSpecified() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider.getOptions(ClassWithDefault.class);
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithDefault.class);
         assertNull(options.objectFactory());
     }
 
     @Test
     void testObjectFactory() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider.getOptions(ClassWithCustomObjectFactory.class);
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithCustomObjectFactory.class);
         assertNotNull(options.objectFactory());
         assertEquals(TestObjectFactory.class, options.objectFactory());
     }

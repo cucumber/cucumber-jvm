@@ -28,20 +28,22 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final JUnitOptions options;
     private Description description;
 
-    private FeatureRunner(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
+    private FeatureRunner(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options)
+            throws InitializationError {
         super((Class<?>) null);
         this.feature = feature;
         this.options = options;
         String name = feature.getName().orElse("EMPTY_NAME");
         this.children = feature.getPickles().stream()
-            .filter(filter).
-                map(pickle -> options.stepNotifications()
-                    ? withStepDescriptions(runners, pickle, options)
-                    : withNoStepDescriptions(name, runners, pickle, options))
-            .collect(toList());
+                .filter(filter).map(pickle -> options.stepNotifications()
+                        ? withStepDescriptions(runners, pickle, options)
+                        : withNoStepDescriptions(name, runners, pickle, options))
+                .collect(toList());
     }
 
-    static FeatureRunner create(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options) {
+    static FeatureRunner create(
+            Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options
+    ) {
         try {
             return new FeatureRunner(feature, filter, runners, options);
         } catch (InitializationError e) {
@@ -69,8 +71,10 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             FeatureId featureId = (FeatureId) o;
             return uri.equals(featureId.uri);
         }
@@ -119,6 +123,5 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
             notifier.fireTestFinished(describeChild(child));
         }
     }
-
 
 }

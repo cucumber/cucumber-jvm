@@ -54,11 +54,9 @@ final class JUnitReporter {
 
     private void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
         snippetsPerStep.putIfAbsent(new StepLocation(
-                snippetsSuggestedEvent.getUri(),
-                snippetsSuggestedEvent.getStepLine()
-            ),
-            snippetsSuggestedEvent.getSnippets()
-        );
+            snippetsSuggestedEvent.getUri(),
+            snippetsSuggestedEvent.getStepLine()),
+            snippetsSuggestedEvent.getSnippets());
     }
 
     void finishExecutionUnit() {
@@ -126,13 +124,11 @@ final class JUnitReporter {
                 break;
             case UNDEFINED:
                 Collection<String> snippets = snippetsPerStep.remove(
-                    new StepLocation(testStep.getUri(), testStep.getStepLine())
-                );
+                    new StepLocation(testStep.getUri(), testStep.getStepLine()));
                 stepErrors.add(new UndefinedStepException(
                     testStep.getStepText(),
                     snippets,
-                    snippetsPerStep.values()
-                ));
+                    snippetsPerStep.values()));
                 stepNotifier.addFailure(error == null ? new UndefinedStepException(snippets) : error);
                 break;
             default:
@@ -158,14 +154,14 @@ final class JUnitReporter {
                     stepErrors.add(new SkippedThrowable(SCENARIO));
                 }
                 stepErrors.stream()
-                    .findFirst()
-                    .ifPresent(pickleRunnerNotifier::addFailedAssumption);
+                        .findFirst()
+                        .ifPresent(pickleRunnerNotifier::addFailedAssumption);
                 break;
             case PENDING:
             case UNDEFINED:
                 stepErrors.stream()
-                    .findFirst()
-                    .ifPresent(pickleRunnerNotifier::addFailure);
+                        .findFirst()
+                        .ifPresent(pickleRunnerNotifier::addFailure);
                 break;
             case AMBIGUOUS:
             case FAILED:

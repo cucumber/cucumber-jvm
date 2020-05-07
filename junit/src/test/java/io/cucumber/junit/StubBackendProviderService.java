@@ -1,6 +1,5 @@
 package io.cucumber.junit;
 
-
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
@@ -33,7 +32,6 @@ public class StubBackendProviderService implements BackendProviderService {
         StubBackend() {
 
         }
-
 
         @Override
         public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -90,7 +88,6 @@ public class StubBackendProviderService implements BackendProviderService {
                 }
             };
         }
-
 
         @Override
         public void buildWorld() {

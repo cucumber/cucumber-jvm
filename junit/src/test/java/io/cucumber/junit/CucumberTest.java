@@ -69,27 +69,23 @@ class CucumberTest {
         Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
         FeatureParserException actualThrown = assertThrows(FeatureParserException.class, testMethod);
         assertThat(
-            actualThrown.getMessage(),
-            equalTo("" +
-                "Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature\n" +
-                "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Feature  FA'\n" +
-                "(3:3): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Scenario SA'\n" +
-                "(4:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Given GA'\n" +
-                "(5:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'When GA'\n" +
-                "(6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'"
-            )
-        );
+                actualThrown.getMessage(),
+                equalTo("" +
+                        "Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature\n" +
+                        "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Feature  FA'\n" +
+                        "(3:3): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Scenario SA'\n" +
+                        "(4:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Given GA'\n" +
+                        "(5:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'When GA'\n" +
+                        "(6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'"));
     }
 
     @Test
     void testThatFileIsNotCreatedOnParsingError() {
         assertThrows(FeatureParserException.class,
-            () -> new Cucumber(FormatterWithLexerErrorFeature.class)
-        );
+                () -> new Cucumber(FormatterWithLexerErrorFeature.class));
         assertFalse(
-            new File("target/lexor_error_feature.ndjson").exists(),
-            "File is created despite Lexor Error"
-        );
+                new File("target/lexor_error_feature.ndjson").exists(),
+                "File is created despite Lexor Error");
     }
 
     @Test
@@ -109,11 +105,14 @@ class CucumberTest {
         {
             InOrder order = Mockito.inOrder(listener);
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
+            order.verify(listener)
+                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
+            order.verify(listener)
+                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
+            order.verify(listener)
+                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
         }
         {
             InOrder order = Mockito.inOrder(listener);
@@ -151,7 +150,8 @@ class CucumberTest {
     void no_stepdefs_in_cucumber_runner_invalid() {
         Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(Invalid.class);
         CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
+        assertThat(expectedThrown.getMessage(), is(equalTo(
+                "\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
     }
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -188,25 +188,27 @@ class CucumberTest {
     }
 
     @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:io/cucumber/junit"})
+    @CucumberOptions(features = "classpath:io/cucumber/junit")
     public static class ExplicitFeaturePath {
 
     }
 
     @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:gibber/ish"})
+    @CucumberOptions(features = "classpath:gibber/ish")
     public static class ExplicitFeaturePathWithNoFeatures {
 
     }
 
     @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"})
+    @CucumberOptions(features = "classpath:io/cucumber/error/lexer_error.feature")
     public static class LexerErrorFeature {
 
     }
 
     @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"message:target/lexor_error_feature.ndjson"})
+    @CucumberOptions(
+            features = "classpath:io/cucumber/error/lexer_error.feature",
+            plugin = "message:target/lexor_error_feature.ndjson")
     public static class FormatterWithLexerErrorFeature {
 
     }
