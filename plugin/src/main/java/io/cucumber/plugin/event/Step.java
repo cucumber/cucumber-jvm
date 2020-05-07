@@ -19,7 +19,7 @@ public interface Step {
     /**
      * Returns this steps keyword. I.e. Given, When, Then.
      *
-     * @return step key word
+     * @return     step key word
      * @deprecated use {@link #getKeyword()} instead
      */
     default String getKeyWord() {

@@ -11,8 +11,8 @@ public interface TestCase {
 
     /**
      * Returns the line of this Scenario in the feature file. If this Scenario
-     * is an example in a Scenario Outline the method wil return the line of
-     * the example.
+     * is an example in a Scenario Outline the method wil return the line of the
+     * example.
      *
      * @return the line of this scenario.
      */
@@ -20,9 +20,9 @@ public interface TestCase {
     Integer getLine();
 
     /**
-     * Returns the location of this Scenario in the feature file. If this Scenario
-     * is an example in a Scenario Outline the method wil return the location of
-     * the example.
+     * Returns the location of this Scenario in the feature file. If this
+     * Scenario is an example in a Scenario Outline the method wil return the
+     * location of the example.
      *
      * @return the location of this scenario.
      */

@@ -30,11 +30,13 @@ public final class Location {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Location location = (Location) o;
         return line == location.line &&
-            column == location.column;
+                column == location.column;
     }
 
 }

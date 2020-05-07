@@ -1,6 +1,5 @@
 package io.cucumber.plugin.event;
 
-
 import org.apiguardian.api.API;
 
 import java.time.Instant;

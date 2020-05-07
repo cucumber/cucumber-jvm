@@ -33,7 +33,7 @@ public final class EmbedEvent extends TestCaseEvent {
     }
 
     /**
-     * @return media type of the embedding.
+     * @return     media type of the embedding.
      * @deprecated use {@link #getMediaType()}
      */
     @Deprecated

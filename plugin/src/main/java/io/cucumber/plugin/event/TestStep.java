@@ -5,8 +5,8 @@ import org.apiguardian.api.API;
 import java.util.UUID;
 
 /**
- * A test step can either represent the execution of a hook
- * or a pickle step. Each step is tied to some glue code.
+ * A test step can either represent the execution of a hook or a pickle step.
+ * Each step is tied to some glue code.
  *
  * @see TestCaseStarted
  * @see TestCaseFinished

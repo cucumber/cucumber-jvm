@@ -27,11 +27,11 @@ import static java.util.Collections.singletonList;
  * root node to a node with the same location as a test case.
  *
  * <pre>
- * {@code
- *       Location location = testCase.getLocation();
- *       Predicate<Node> withLocation = candidate ->
- *          location.equals(candidate.getLocation());
- *       Optional<List<Node>> path = node.findPathTo(withLocation);
+ * {
+ *     &#64;code
+ *     Location location = testCase.getLocation();
+ *     Predicate<Node> withLocation = candidate -> location.equals(candidate.getLocation());
+ *     Optional<List<Node>> path = node.findPathTo(withLocation);
  * }
  * </pre>
  */
@@ -47,23 +47,30 @@ public interface Node {
     /**
      * Recursively maps a node into another tree-like structure.
      *
-     * @param parent             the parent node of the target structure
-     * @param mapFeature         a function that takes a feature and a parent node and returns a mapped feature
-     * @param mapRule            a function that takes a rule and a parent node and returns a mapped rule
-     * @param mapScenario        a function that takes a scenario and a parent node and returns a mapped scenario
-     * @param mapScenarioOutline a function that takes a scenario outline and a parent node and returns a mapped scenario outline
-     * @param mapExamples        a function that takes an examples and a parent node and returns a mapped examples
-     * @param mapExample         a function that takes an example and a parent node and returns a mapped example
-     * @param <T>                the type of the target structure
-     * @return the mapped version of this instance
+     * @param  parent             the parent node of the target structure
+     * @param  mapFeature         a function that takes a feature and a parent
+     *                            node and returns a mapped feature
+     * @param  mapRule            a function that takes a rule and a parent node
+     *                            and returns a mapped rule
+     * @param  mapScenario        a function that takes a scenario and a parent
+     *                            node and returns a mapped scenario
+     * @param  mapScenarioOutline a function that takes a scenario outline and a
+     *                            parent node and returns a mapped scenario
+     *                            outline
+     * @param  mapExamples        a function that takes an examples and a parent
+     *                            node and returns a mapped examples
+     * @param  mapExample         a function that takes an example and a parent
+     *                            node and returns a mapped example
+     * @param  <T>                the type of the target structure
+     * @return                    the mapped version of this instance
      */
     default <T> T map(
-        T parent,
-        BiFunction<Feature, T, T> mapFeature,
-        BiFunction<Rule, T, T> mapRule, BiFunction<Scenario, T, T> mapScenario,
-        BiFunction<ScenarioOutline, T, T> mapScenarioOutline,
-        BiFunction<Examples, T, T> mapExamples,
-        BiFunction<Example, T, T> mapExample
+            T parent,
+            BiFunction<Feature, T, T> mapFeature,
+            BiFunction<Rule, T, T> mapRule, BiFunction<Scenario, T, T> mapScenario,
+            BiFunction<ScenarioOutline, T, T> mapScenarioOutline,
+            BiFunction<Examples, T, T> mapExamples,
+            BiFunction<Example, T, T> mapExample
     ) {
         if (this instanceof Scenario) {
             return mapScenario.apply((Scenario) this, parent);
@@ -83,7 +90,8 @@ public interface Node {
                 throw new IllegalArgumentException(this.getClass().getName());
             }
             Container<?> container = (Container<?>) this;
-            container.elements().forEach(node -> node.map(mapped, mapFeature, mapRule, mapScenario, mapScenarioOutline, mapExamples, mapExample));
+            container.elements().forEach(node -> node.map(mapped, mapFeature, mapRule, mapScenario, mapScenarioOutline,
+                mapExamples, mapExample));
             return mapped;
         } else {
             throw new IllegalArgumentException(this.getClass().getName());
@@ -94,8 +102,9 @@ public interface Node {
      * Finds a path down tree starting at this node to the first node that
      * matches the predicate using depth first search.
      *
-     * @param predicate to match the target node.
-     * @return a path to the first node or an empty optional if none was found.
+     * @param  predicate to match the target node.
+     * @return           a path to the first node or an empty optional if none
+     *                   was found.
      */
     default Optional<List<Node>> findPathTo(Predicate<Node> predicate) {
         if (predicate.test(this)) {
