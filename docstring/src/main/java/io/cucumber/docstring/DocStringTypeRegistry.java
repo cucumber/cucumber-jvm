@@ -32,7 +32,9 @@ public final class DocStringTypeRegistry {
         docStringTypesByType.put(docStringType.getType(), docStringType);
     }
 
-    private static CucumberDocStringException createDuplicateTypeException(DocStringType existing, DocStringType docStringType) {
+    private static CucumberDocStringException createDuplicateTypeException(
+            DocStringType existing, DocStringType docStringType
+    ) {
         String contentType = existing.getContentType();
         return new CucumberDocStringException(format("" +
                 "There is already docstring type registered for '%s' and %s.\n" +
@@ -40,8 +42,7 @@ public final class DocStringTypeRegistry {
             emptyToAnonymous(contentType),
             existing.getType().getTypeName(),
             emptyToAnonymous(docStringType.getContentType()),
-            docStringType.getType().getTypeName()
-        ));
+            docStringType.getType().getTypeName()));
     }
 
     private static String emptyToAnonymous(String contentType) {

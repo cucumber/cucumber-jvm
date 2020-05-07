@@ -20,9 +20,9 @@ import static java.util.stream.Collectors.joining;
  * """
  * </pre>
  * <p>
- * A doc string is either empty or contains some content.
- * The content type is an optional description of the
- * content using a <a href=https://tools.ietf.org/html/rfc2616#section-3.7>media-type</a>.
+ * A doc string is either empty or contains some content. The content type is an
+ * optional description of the content using a <a
+ * href=https://tools.ietf.org/html/rfc2616#section-3.7>media-type</a>.
  * <p>
  * A DocString is immutable and thread safe.
  */
@@ -70,21 +70,22 @@ public final class DocString {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DocString docString = (DocString) o;
         return content.equals(docString.content) &&
-            Objects.equals(contentType, docString.contentType);
+                Objects.equals(contentType, docString.contentType);
     }
 
     @Override
     public String toString() {
         return stream(content.split("\n"))
-            .collect(joining(
-                "\n      ",
-                "      \"\"\"" + contentType + "\n      ",
-                "\n      \"\"\""
-            ));
+                .collect(joining(
+                    "\n      ",
+                    "      \"\"\"" + contentType + "\n      ",
+                    "\n      \"\"\""));
     }
 
     public interface DocStringConverter {
