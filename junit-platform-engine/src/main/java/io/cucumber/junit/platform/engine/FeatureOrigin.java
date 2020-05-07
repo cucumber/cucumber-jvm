@@ -29,7 +29,8 @@ abstract class FeatureOrigin {
     static FeatureOrigin fromUri(URI uri) {
         if (ClasspathResourceSource.CLASSPATH_SCHEME.equals(uri.getScheme())) {
             if (!uri.getSchemeSpecificPart().startsWith("/")) {
-                // ClasspathResourceSource.from expects all resources to start with /
+                // ClasspathResourceSource.from expects all resources to start
+                // with a forward slash
                 uri = URI.create(CLASSPATH_SCHEME_PREFIX + "/" + uri.getSchemeSpecificPart());
             }
             ClasspathResourceSource source = ClasspathResourceSource.from(uri);
@@ -136,7 +137,8 @@ abstract class FeatureOrigin {
 
         @Override
         TestSource nodeSource(Node node) {
-            return ClasspathResourceSource.from(source.getClasspathResourceName(), createFilePosition(node.getLocation()));
+            return ClasspathResourceSource.from(source.getClasspathResourceName(),
+                createFilePosition(node.getLocation()));
         }
 
         @Override

@@ -20,13 +20,13 @@ import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENA
  * Supports discovery and execution of {@code .feature} files using the
  * following selectors:
  * <ul>
- *     <li>{@link org.junit.platform.engine.discovery.ClasspathRootSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.ClasspathResourceSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.PackageSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.FileSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.DirectorySelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.UniqueIdSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.UriSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.ClasspathRootSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.ClasspathResourceSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.PackageSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.FileSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.DirectorySelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.UniqueIdSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.UriSelector}</li>
  * </ul>
  */
 @API(status = API.Status.STABLE)

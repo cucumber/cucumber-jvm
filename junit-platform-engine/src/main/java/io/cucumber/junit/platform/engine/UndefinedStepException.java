@@ -17,8 +17,8 @@ final class UndefinedStepException extends IncompleteExecutionException {
 
     private static String createMessage(List<Suggestion> suggestions) {
         return suggestions.stream()
-            .map(suggestion -> createStepMessage(suggestion.getStep(), suggestion.getSnippets()))
-            .collect(joining("\n", createPreAmble(suggestions), ""));
+                .map(suggestion -> createStepMessage(suggestion.getStep(), suggestion.getSnippets()))
+                .collect(joining("\n", createPreAmble(suggestions), ""));
     }
 
     private static String createStepMessage(String stepText, List<String> snippets) {

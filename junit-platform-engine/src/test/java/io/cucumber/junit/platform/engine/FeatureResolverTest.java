@@ -41,14 +41,17 @@ class FeatureResolverTest {
     void before() {
 
         ConfigurationParameters configurationParameters = new MapConfigurationParameters(
-            new HashMap<String, String>() {{
-                put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceA" + READ_WRITE_SUFFIX, "resource-a");
-                put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceAReadOnly" + READ_SUFFIX, "resource-a");
-            }});
+            new HashMap<String, String>() {
+                {
+                    put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceA" + READ_WRITE_SUFFIX, "resource-a");
+                    put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceAReadOnly" + READ_SUFFIX, "resource-a");
+                }
+            });
         EmptyEngineDiscoveryRequest request = new EmptyEngineDiscoveryRequest(configurationParameters);
         id = UniqueId.forEngine(new CucumberTestEngine().getId());
         testDescriptor = new CucumberEngineDescriptor(id);
-        FeatureResolver featureResolver = createFeatureResolver(request.getConfigurationParameters(), testDescriptor, aPackage -> true);
+        FeatureResolver featureResolver = createFeatureResolver(request.getConfigurationParameters(), testDescriptor,
+            aPackage -> true);
         featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
     }
 
@@ -61,8 +64,7 @@ class FeatureResolverTest {
         assertEquals(CONTAINER, feature.getType());
         assertEquals(
             id.append("feature", featureSegmentValue),
-            feature.getUniqueId()
-        );
+            feature.getUniqueId());
     }
 
     private TestDescriptor getFeature() {
@@ -76,24 +78,20 @@ class FeatureResolverTest {
         assertEquals("A scenario", scenario.getDisplayName());
         assertEquals(
             asSet(create("FeatureTag"), create("ScenarioTag"), create("ResourceA"), create("ResourceAReadOnly")),
-            scenario.getTags()
-        );
+            scenario.getTags());
         assertEquals(of(from(featurePath, from(5, 3))), scenario.getSource());
         assertEquals(TEST, scenario.getType());
         assertEquals(
             id.append("feature", featureSegmentValue)
-                .append("scenario", "5"),
-            scenario.getUniqueId()
-        );
+                    .append("scenario", "5"),
+            scenario.getUniqueId());
         PickleDescriptor pickleDescriptor = (PickleDescriptor) scenario;
         assertEquals(Optional.of("io.cucumber.junit.platform.engine"), pickleDescriptor.getPackage());
         assertEquals(
             asSet(
                 new ExclusiveResource("resource-a", LockMode.READ_WRITE),
-                new ExclusiveResource("resource-a", LockMode.READ)
-            ),
-            pickleDescriptor.getExclusiveResources()
-        );
+                new ExclusiveResource("resource-a", LockMode.READ)),
+            pickleDescriptor.getExclusiveResources());
     }
 
     private TestDescriptor getScenario() {
@@ -111,15 +109,13 @@ class FeatureResolverTest {
         assertEquals("A scenario outline", outline.getDisplayName());
         assertEquals(
             emptySet(),
-            outline.getTags()
-        );
+            outline.getTags());
         assertEquals(of(from(featurePath, from(11, 3))), outline.getSource());
         assertEquals(CONTAINER, outline.getType());
         assertEquals(
             id.append("feature", featureSegmentValue)
-                .append("scenario", "11"),
-            outline.getUniqueId()
-        );
+                    .append("scenario", "11"),
+            outline.getUniqueId());
     }
 
     private TestDescriptor getOutline() {
@@ -134,18 +130,16 @@ class FeatureResolverTest {
         assertEquals("Example #1", example.getDisplayName());
         assertEquals(
             asSet(create("FeatureTag"), create("Example1Tag"), create("ScenarioOutlineTag")),
-            example.getTags()
-        );
+            example.getTags());
         assertEquals(of(from(featurePath, from(19, 7))), example.getSource());
         assertEquals(TEST, example.getType());
 
         assertEquals(
             id.append("feature", featureSegmentValue)
-                .append("scenario", "11")
-                .append("examples", "17")
-                .append("example", "19"),
-            example.getUniqueId()
-        );
+                    .append("scenario", "11")
+                    .append("examples", "17")
+                    .append("example", "19"),
+            example.getUniqueId());
 
         PickleDescriptor pickleDescriptor = (PickleDescriptor) example;
         assertEquals(Optional.of("io.cucumber.junit.platform.engine"), pickleDescriptor.getPackage());

@@ -1,6 +1,5 @@
 package io.cucumber.junit.platform.engine;
 
-
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
@@ -78,7 +77,6 @@ public class StubBackendProviderService implements BackendProviderService {
                 }
             };
         }
-
 
         @Override
         public void buildWorld() {

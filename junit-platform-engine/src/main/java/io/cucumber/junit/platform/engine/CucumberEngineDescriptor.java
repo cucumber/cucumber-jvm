@@ -20,8 +20,7 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
         } else {
             byUniqueId.ifPresent(
                 existingParent -> descriptor.getChildren()
-                    .forEach(child -> recursivelyMerge(child, existingParent))
-            );
+                        .forEach(child -> recursivelyMerge(child, existingParent)));
         }
     }
 

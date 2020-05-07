@@ -46,7 +46,8 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         options = new CucumberEngineOptions(configurationParameters);
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
         EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
+            classLoader, options);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         ExitStatus exitStatus = new ExitStatus(options);
         plugins.addPlugin(exitStatus);
@@ -54,14 +55,18 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         RunnerSupplier runnerSupplier;
         if (options.isParallelExecutionEnabled()) {
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
-            ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
+            ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(
+                objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-            runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+            runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier,
+                typeRegistryConfigurerSupplier);
         } else {
             plugins.setEventBusOnEventListenerPlugins(bus);
-            ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+            ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(
+                objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-            runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+            runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier,
+                typeRegistryConfigurerSupplier);
         }
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
     }
@@ -94,4 +99,3 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     }
 
 }
-

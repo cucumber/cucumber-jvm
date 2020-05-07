@@ -27,9 +27,9 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
 class CucumberEngineOptions implements
-    io.cucumber.core.plugin.Options,
-    io.cucumber.core.runner.Options,
-    io.cucumber.core.backend.Options {
+        io.cucumber.core.plugin.Options,
+        io.cucumber.core.runner.Options,
+        io.cucumber.core.backend.Options {
 
     private final ConfigurationParameters configurationParameters;
 
@@ -40,18 +40,18 @@ class CucumberEngineOptions implements
     @Override
     public List<Plugin> plugins() {
         return configurationParameters.get(PLUGIN_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
-            .map(String::trim)
-            .map(PluginOption::parse)
-            .map(pluginOption -> (Plugin) pluginOption)
-            .collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
+                .map(String::trim)
+                .map(PluginOption::parse)
+                .map(pluginOption -> (Plugin) pluginOption)
+                .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
     @Override
     public boolean isMonochrome() {
         return configurationParameters
-            .getBoolean(ANSI_COLORS_DISABLED_PROPERTY_NAME)
-            .orElse(false);
+                .getBoolean(ANSI_COLORS_DISABLED_PROPERTY_NAME)
+                .orElse(false);
     }
 
     @Override
@@ -61,48 +61,47 @@ class CucumberEngineOptions implements
 
     public Expression tagFilter() {
         return new TagExpressionParser()
-            .parse(configurationParameters
-                .get(FILTER_TAGS_PROPERTY_NAME)
-                .orElse("")
-            );
+                .parse(configurationParameters
+                        .get(FILTER_TAGS_PROPERTY_NAME)
+                        .orElse(""));
     }
 
     @Override
     public List<URI> getGlue() {
         return configurationParameters
-            .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-            .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
-            .stream()
-            .map(String::trim)
-            .map(GluePath::parse)
-            .collect(Collectors.toList());
+                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
+                .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
+                .stream()
+                .map(String::trim)
+                .map(GluePath::parse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean isDryRun() {
         return configurationParameters
-            .getBoolean(EXECUTION_DRY_RUN_PROPERTY_NAME)
-            .orElse(false);
+                .getBoolean(EXECUTION_DRY_RUN_PROPERTY_NAME)
+                .orElse(false);
     }
 
     @Override
     public SnippetType getSnippetType() {
         return configurationParameters
-            .get(SNIPPET_TYPE_PROPERTY_NAME, SnippetTypeParser::parseSnippetType)
-            .orElse(SnippetType.UNDERSCORE);
+                .get(SNIPPET_TYPE_PROPERTY_NAME, SnippetTypeParser::parseSnippetType)
+                .orElse(SnippetType.UNDERSCORE);
     }
 
     @Override
     public Class<? extends ObjectFactory> getObjectFactoryClass() {
         return configurationParameters
-            .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
-            .orElse(null);
+                .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
+                .orElse(null);
     }
 
     boolean isParallelExecutionEnabled() {
         return configurationParameters
-            .get(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, Boolean::parseBoolean)
-            .orElse(false);
+                .get(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, Boolean::parseBoolean)
+                .orElse(false);
     }
 
 }

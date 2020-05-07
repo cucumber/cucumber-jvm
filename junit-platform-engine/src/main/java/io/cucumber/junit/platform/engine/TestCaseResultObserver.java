@@ -23,8 +23,7 @@ class TestCaseResultObserver implements AutoCloseable {
             TestAbortedException::new,
             Function.identity(),
             UndefinedStepException::new,
-            Function.identity()
-        );
+            Function.identity());
     }
 
     @Override

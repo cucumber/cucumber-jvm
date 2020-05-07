@@ -39,20 +39,25 @@ final class FeatureResolver {
     private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,
-        featureParser::parseResource
-    );
+        featureParser::parseResource);
 
     private final CucumberEngineDescriptor engineDescriptor;
     private final Predicate<String> packageFilter;
     private final ConfigurationParameters parameters;
 
-    private FeatureResolver(ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
+    private FeatureResolver(
+            ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor,
+            Predicate<String> packageFilter
+    ) {
         this.parameters = parameters;
         this.engineDescriptor = engineDescriptor;
         this.packageFilter = packageFilter;
     }
 
-    static FeatureResolver createFeatureResolver(ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter) {
+    static FeatureResolver createFeatureResolver(
+            ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor,
+            Predicate<String> packageFilter
+    ) {
         return new FeatureResolver(parameters, engineDescriptor, packageFilter);
     }
 
@@ -62,11 +67,11 @@ final class FeatureResolver {
 
     private void resolvePath(Path path) {
         featureScanner
-            .scanForResourcesPath(path)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor)
-            .forEach(engineDescriptor::mergeFeature);
+                .scanForResourcesPath(path)
+                .stream()
+                .sorted(comparing(Feature::getUri))
+                .map(this::createFeatureDescriptor)
+                .forEach(engineDescriptor::mergeFeature);
     }
 
     private FeatureDescriptor createFeatureDescriptor(Feature feature) {
@@ -78,14 +83,12 @@ final class FeatureResolver {
                 source.featureSegment(parent.getUniqueId(), feature),
                 getNameOrKeyWord(self),
                 source.featureSource(),
-                feature
-            ),
+                feature),
             (Node.Rule node, TestDescriptor parent) -> {
                 TestDescriptor descriptor = new NodeDescriptor(
                     source.ruleSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
-                    source.nodeSource(node)
-                );
+                    source.nodeSource(node));
                 parent.addChild(descriptor);
                 return descriptor;
             }, (Node.Scenario node, TestDescriptor parent) -> {
@@ -95,8 +98,7 @@ final class FeatureResolver {
                     source.scenarioSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
                     source.nodeSource(node),
-                    pickle
-                );
+                    pickle);
                 parent.addChild(descriptor);
                 return descriptor;
             },
@@ -104,8 +106,7 @@ final class FeatureResolver {
                 TestDescriptor descriptor = new NodeDescriptor(
                     source.scenarioSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
-                    source.nodeSource(node)
-                );
+                    source.nodeSource(node));
                 parent.addChild(descriptor);
                 return descriptor;
             },
@@ -113,8 +114,7 @@ final class FeatureResolver {
                 NodeDescriptor descriptor = new NodeDescriptor(
                     source.examplesSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
-                    source.nodeSource(node)
-                );
+                    source.nodeSource(node));
                 parent.addChild(descriptor);
                 return descriptor;
             },
@@ -125,12 +125,10 @@ final class FeatureResolver {
                     source.exampleSegment(parent.getUniqueId(), node),
                     getNameOrKeyWord(node),
                     source.nodeSource(node),
-                    pickle
-                );
+                    pickle);
                 parent.addChild(descriptor);
                 return descriptor;
-            }
-        );
+            });
     }
 
     private String getNameOrKeyWord(Node node) {
@@ -148,11 +146,11 @@ final class FeatureResolver {
 
     private void resolvePackageResource(String packageName) {
         featureScanner
-            .scanForResourcesInPackage(packageName, packageFilter)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor)
-            .forEach(engineDescriptor::mergeFeature);
+                .scanForResourcesInPackage(packageName, packageFilter)
+                .stream()
+                .sorted(comparing(Feature::getUri))
+                .map(this::createFeatureDescriptor)
+                .forEach(engineDescriptor::mergeFeature);
     }
 
     void resolveClass(ClassSelector classSelector) {
@@ -166,20 +164,20 @@ final class FeatureResolver {
     void resolveClasspathResource(ClasspathResourceSelector selector) {
         String classpathResourceName = selector.getClasspathResourceName();
         featureScanner
-            .scanForClasspathResource(classpathResourceName, packageFilter)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor)
-            .forEach(engineDescriptor::mergeFeature);
+                .scanForClasspathResource(classpathResourceName, packageFilter)
+                .stream()
+                .sorted(comparing(Feature::getUri))
+                .map(this::createFeatureDescriptor)
+                .forEach(engineDescriptor::mergeFeature);
     }
 
     void resolveClasspathRoot(ClasspathRootSelector selector) {
         featureScanner
-            .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor)
-            .forEach(engineDescriptor::mergeFeature);
+                .scanForResourcesInClasspathRoot(selector.getClasspathRoot(), packageFilter)
+                .stream()
+                .sorted(comparing(Feature::getUri))
+                .map(this::createFeatureDescriptor)
+                .forEach(engineDescriptor::mergeFeature);
     }
 
     void resolveUniqueId(UniqueIdSelector uniqueIdSelector) {
@@ -189,60 +187,60 @@ final class FeatureResolver {
             return;
         }
 
-        Predicate<TestDescriptor> keepTestWithSelectedId = testDescriptor
-            -> uniqueId.equals(testDescriptor.getUniqueId());
+        Predicate<TestDescriptor> keepTestWithSelectedId = testDescriptor -> uniqueId
+                .equals(testDescriptor.getUniqueId());
 
         uniqueId.getSegments()
-            .stream()
-            .filter(FeatureOrigin::isFeatureSegment)
-            .map(UniqueId.Segment::getValue)
-            .map(URI::create)
-            .flatMap(this::resolveUri)
-            .forEach(featureDescriptor -> {
-                featureDescriptor.prune(keepTestWithSelectedId);
-                engineDescriptor.mergeFeature(featureDescriptor);
-            });
+                .stream()
+                .filter(FeatureOrigin::isFeatureSegment)
+                .map(UniqueId.Segment::getValue)
+                .map(URI::create)
+                .flatMap(this::resolveUri)
+                .forEach(featureDescriptor -> {
+                    featureDescriptor.prune(keepTestWithSelectedId);
+                    engineDescriptor.mergeFeature(featureDescriptor);
+                });
     }
 
     private Stream<FeatureDescriptor> resolveUri(URI uri) {
         return featureScanner
-            .scanForResourcesUri(uri)
-            .stream()
-            .sorted(comparing(Feature::getUri))
-            .map(this::createFeatureDescriptor);
+                .scanForResourcesUri(uri)
+                .stream()
+                .sorted(comparing(Feature::getUri))
+                .map(this::createFeatureDescriptor);
     }
 
     void resolveUri(UriSelector selector) {
         URI uri = selector.getUri();
 
         Predicate<TestDescriptor> keepTestOnSelectedLine = fromQuery(uri.getQuery())
-            .map(FilePosition::getLine)
-            .map(FeatureResolver::testDescriptorOnLine)
-            .orElse(testDescriptor -> true);
+                .map(FilePosition::getLine)
+                .map(FeatureResolver::testDescriptorOnLine)
+                .orElse(testDescriptor -> true);
 
         resolveUri(stripQuery(uri))
-            .forEach(featureDescriptor -> {
-                featureDescriptor.prune(keepTestOnSelectedLine);
-                engineDescriptor.mergeFeature(featureDescriptor);
-            });
+                .forEach(featureDescriptor -> {
+                    featureDescriptor.prune(keepTestOnSelectedLine);
+                    engineDescriptor.mergeFeature(featureDescriptor);
+                });
     }
 
     private static Predicate<TestDescriptor> testDescriptorOnLine(Integer line) {
         return descriptor -> descriptor.getSource()
-            .flatMap(testSource -> {
-                if (testSource instanceof FileSource) {
-                    FileSource fileSystemSource = (FileSource) testSource;
-                    return fileSystemSource.getPosition();
-                }
-                if (testSource instanceof ClasspathResourceSource) {
-                    ClasspathResourceSource classpathResourceSource = (ClasspathResourceSource) testSource;
-                    return classpathResourceSource.getPosition();
-                }
-                return Optional.empty();
-            })
-            .map(FilePosition::getLine)
-            .map(line::equals)
-            .orElse(false);
+                .flatMap(testSource -> {
+                    if (testSource instanceof FileSource) {
+                        FileSource fileSystemSource = (FileSource) testSource;
+                        return fileSystemSource.getPosition();
+                    }
+                    if (testSource instanceof ClasspathResourceSource) {
+                        ClasspathResourceSource classpathResourceSource = (ClasspathResourceSource) testSource;
+                        return classpathResourceSource.getPosition();
+                    }
+                    return Optional.empty();
+                })
+                .map(FilePosition::getLine)
+                .map(line::equals)
+                .orElse(false);
     }
 
     private static URI stripQuery(URI uri) {

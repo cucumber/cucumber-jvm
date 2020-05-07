@@ -19,39 +19,34 @@ class CucumberEngineOptionsTest {
     void getPluginNames() {
         MapConfigurationParameters html = new MapConfigurationParameters(
             Constants.PLUGIN_PROPERTY_NAME,
-            "html:path/to/report.html"
-        );
+            "html:path/to/report.html");
 
         assertEquals(
             singletonList("html:path/to/report.html"),
             new CucumberEngineOptions(html).plugins().stream()
-                .map(Options.Plugin::pluginString)
-                .collect(toList())
-        );
+                    .map(Options.Plugin::pluginString)
+                    .collect(toList()));
 
         CucumberEngineOptions htmlAndJson = new CucumberEngineOptions(
-            new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME, "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson")
-        );
+            new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME,
+                "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson"));
         assertEquals(
             asList("html:path/with spaces/to/report.html", "message:path/with spaces/to/report.ndjson"),
             htmlAndJson.plugins().stream()
-                .map(Options.Plugin::pluginString)
-                .collect(toList())
-        );
+                    .map(Options.Plugin::pluginString)
+                    .collect(toList()));
     }
 
     @Test
     void isMonochrome() {
         MapConfigurationParameters ansiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,
-            "true"
-        );
+            "true");
         assertTrue(new CucumberEngineOptions(ansiColors).isMonochrome());
 
         MapConfigurationParameters noAnsiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,
-            "false"
-        );
+            "false");
         assertFalse(new CucumberEngineOptions(noAnsiColors).isMonochrome());
     }
 
@@ -59,26 +54,22 @@ class CucumberEngineOptionsTest {
     void getGlue() {
         MapConfigurationParameters glue = new MapConfigurationParameters(
             Constants.GLUE_PROPERTY_NAME,
-            "com.example.app, com.example.glue"
-        );
+            "com.example.app, com.example.glue");
         assertEquals(
             asList(URI.create("classpath:/com/example/app"), URI.create("classpath:/com/example/glue")),
-            new CucumberEngineOptions(glue).getGlue()
-        );
+            new CucumberEngineOptions(glue).getGlue());
     }
 
     @Test
     void isDryRun() {
         MapConfigurationParameters dryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
-            "true"
-        );
+            "true");
         assertTrue(new CucumberEngineOptions(dryRun).isDryRun());
 
         MapConfigurationParameters noDryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
-            "false"
-        );
+            "false");
         assertFalse(new CucumberEngineOptions(noDryRun).isDryRun());
     }
 
@@ -86,14 +77,12 @@ class CucumberEngineOptionsTest {
     void getSnippetType() {
         MapConfigurationParameters underscore = new MapConfigurationParameters(
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
-            "underscore"
-        );
+            "underscore");
         assertEquals(SnippetType.UNDERSCORE, new CucumberEngineOptions(underscore).getSnippetType());
 
         MapConfigurationParameters camelcase = new MapConfigurationParameters(
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
-            "camelcase"
-        );
+            "camelcase");
         assertEquals(SnippetType.CAMELCASE, new CucumberEngineOptions(camelcase).getSnippetType());
     }
 
@@ -101,18 +90,15 @@ class CucumberEngineOptionsTest {
     void isParallelExecutionEnabled() {
         MapConfigurationParameters enabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
-            "true"
-        );
+            "true");
         assertTrue(new CucumberEngineOptions(enabled).isParallelExecutionEnabled());
 
         MapConfigurationParameters disabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
-            "false"
-        );
+            "false");
         assertFalse(new CucumberEngineOptions(disabled).isParallelExecutionEnabled());
         MapConfigurationParameters absent = new MapConfigurationParameters(
-            "some key", "some value"
-        );
+            "some key", "some value");
         assertFalse(new CucumberEngineOptions(absent).isParallelExecutionEnabled());
 
     }
