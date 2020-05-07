@@ -23,10 +23,10 @@ class Cdi2FactoryTest {
         factory.start();
         final BellyStepDefinitions o1 = factory.getInstance(BellyStepDefinitions.class);
         final CdiBellyStepDefinitions cdiStep = factory.getInstance(CdiBellyStepDefinitions.class);
-        assertAll("Checking CDIBellyStepdefs",
-            () -> assertThat(cdiStep.getClass(), not(is(CdiBellyStepDefinitions.class))), // it is a CDI proxy
-            () -> assertThat(cdiStep.getClass().getSuperclass(), is(CdiBellyStepDefinitions.class))
-        );
+        assertAll(
+            // assert that it is is a CDI proxy
+            () -> assertThat(cdiStep.getClass(), not(is(CdiBellyStepDefinitions.class))),
+            () -> assertThat(cdiStep.getClass().getSuperclass(), is(CdiBellyStepDefinitions.class)));
         factory.stop();
 
         // Scenario 2
@@ -34,11 +34,10 @@ class Cdi2FactoryTest {
         final BellyStepDefinitions o2 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
-        assertAll("Checking BellyStepdefs",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
 }
