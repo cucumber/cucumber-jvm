@@ -37,8 +37,7 @@ public class ShoppingStepDefinitions {
     public Grocery grocery(Map<String, String> entry) {
         return new Grocery(
             entry.get("name"),
-            Price.fromString(entry.get("price"))
-        );
+            Price.fromString(entry.get("price")));
     }
 
     static class Grocery {

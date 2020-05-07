@@ -25,9 +25,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * specified bean name, from the runtime <code>BeanFactory</code>.
  * </p>
  * <p>
- * NOTE: This class is NOT threadsafe!  It relies on the fact that
- * cucumber-jvm will instantiate an instance of any applicable hookdef class
- * per scenario run.
+ * NOTE: This class is NOT threadsafe! It relies on the fact that cucumber-jvm
+ * will instantiate an instance of any applicable hookdef class per scenario
+ * run.
  * </p>
  */
 public class SpringTransactionHooks implements BeanFactoryAware {
@@ -43,7 +43,7 @@ public class SpringTransactionHooks implements BeanFactoryAware {
     @Before(value = "@txn", order = 100)
     public void startTransaction() {
         transactionStatus = obtainPlatformTransactionManager()
-            .getTransaction(new DefaultTransactionDefinition());
+                .getTransaction(new DefaultTransactionDefinition());
     }
 
     public PlatformTransactionManager obtainPlatformTransactionManager() {
@@ -53,7 +53,7 @@ public class SpringTransactionHooks implements BeanFactoryAware {
     @After(value = "@txn", order = 100)
     public void rollBackTransaction() {
         obtainPlatformTransactionManager()
-            .rollback(transactionStatus);
+                .rollback(transactionStatus);
     }
 
 }

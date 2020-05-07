@@ -19,7 +19,7 @@ jobs:
     # 1.2 Tests
     - stage: test
       jdk: openjdk11
-      script: mvn verify --toolchains .m2/travis-ci-toolchains.xml
+      script: mvn verify -P-spotless-apply --toolchains .m2/travis-ci-toolchains.xml
       env: VERIFY=true
 
       # 1.3 Coverage

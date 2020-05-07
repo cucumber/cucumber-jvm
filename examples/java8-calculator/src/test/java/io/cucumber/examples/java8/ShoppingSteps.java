@@ -60,8 +60,7 @@ public class ShoppingSteps implements En {
 
         DataTableType((Map<String, String> row) -> new ShoppingSteps.Grocery(
             row.get("name"),
-            ShoppingSteps.Price.fromString(row.get("price"))
-        ));
+            ShoppingSteps.Price.fromString(row.get("price"))));
 
         ParameterType("amount", "\\d+\\.\\d+\\s[a-zA-Z]+", (String value) -> {
             String[] arr = value.split("\\s");
@@ -70,8 +69,8 @@ public class ShoppingSteps implements En {
 
         DocStringType("shopping_list", (String docstring) -> {
             return Stream.of(docstring.split("\\s"))
-                .map(Grocery::new)
-                .toArray(Grocery[]::new);
+                    .map(Grocery::new)
+                    .toArray(Grocery[]::new);
         });
     }
 
@@ -91,8 +90,10 @@ public class ShoppingSteps implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Grocery grocery = (Grocery) o;
             return Objects.equals(name, grocery.name);
         }

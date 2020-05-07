@@ -25,8 +25,8 @@ public class SeeMessagesStepDefinitions {
     public void i_visit_the_page_for_the_user() throws Exception {
         User user = userStepDefinitions.getCurrentUser();
         resultActions = mockMvc
-            .perform(get("/users/" + user.getId()))
-            .andExpect(status().isOk());
+                .perform(get("/users/" + user.getId()))
+                .andExpect(status().isOk());
     }
 
     @Then("I should see {string}")

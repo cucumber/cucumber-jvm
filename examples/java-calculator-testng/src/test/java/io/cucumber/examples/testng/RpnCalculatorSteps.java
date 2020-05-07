@@ -63,8 +63,7 @@ public class RpnCalculatorSteps {
         return new Entry(
             Integer.valueOf(entry.get("first")),
             Integer.valueOf(entry.get("second")),
-            entry.get("operation")
-        );
+            entry.get("operation"));
     }
 
     static final class Entry {

@@ -262,6 +262,33 @@
         </profile>
 
         <profile>
+            <id>spotless-apply</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- Apply code format by default -->
+                        <plugin>
+                            <groupId>com.diffplug.spotless</groupId>
+                            <artifactId>spotless-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>spotless-apply</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>apply</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
             <id>check-semantic-version</id>
             <build>
                 <plugins>
@@ -321,6 +348,39 @@
                     <execution>
                         <id>java11</id>
                         <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>0.3</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>highest-basedir</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <property>main.basedir</property>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Check code format -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -543,6 +603,22 @@
                             <version>2.3.1</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>1.31.0</version>
+                    <configuration>
+                        <java>
+                            <eclipse>
+                                <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
+                            </eclipse>
+                            <importOrder>
+                                <file>${main.basedir}/.spotless/intelij-idea.importorder</file>
+                            </importOrder>
+                        </java>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

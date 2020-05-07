@@ -48,8 +48,7 @@ public class RpnCalculatorSteps implements En {
         DataTableType((Map<String, String> row) -> new RpnCalculatorSteps.Entry(
             Integer.valueOf(row.get("first")),
             Integer.valueOf(row.get("second")),
-            row.get("operation")
-        ));
+            row.get("operation")));
 
     }
 

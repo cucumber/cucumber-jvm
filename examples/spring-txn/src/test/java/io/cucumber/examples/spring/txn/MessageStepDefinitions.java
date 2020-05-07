@@ -43,14 +43,14 @@ public class MessageStepDefinitions {
     @Then("the results content should be:")
     public void the_result_should_be(List<String> contents) {
         User user = userStepDefinitions.getCurrentUser();
-        assertAll("The expected contents created by the user", () -> {
+        assertAll(() -> {
             assertThat(results)
-                .extracting(Message::getContent)
-                .isEqualTo(contents);
+                    .extracting(Message::getContent)
+                    .isEqualTo(contents);
             assertThat(results)
-                .extracting(Message::getAuthor)
-                .extracting(User::getId)
-                .allMatch(user.getId()::equals);
+                    .extracting(Message::getAuthor)
+                    .extracting(User::getId)
+                    .allMatch(user.getId()::equals);
         });
     }
 
