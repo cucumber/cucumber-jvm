@@ -18,14 +18,15 @@ public final class PicoFactory implements ObjectFactory {
 
     private static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
-        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
+        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())
+                && !isNonStaticInnerClass;
     }
 
     public void start() {
         pico = new PicoBuilder()
-            .withCaching()
-            .withLifecycle()
-            .build();
+                .withCaching()
+                .withLifecycle()
+                .build();
         for (Class<?> clazz : classes) {
             pico.addComponent(clazz);
         }
