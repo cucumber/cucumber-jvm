@@ -74,8 +74,7 @@ public class TestNGCucumberRunnerTest {
     }
 
     @CucumberOptions(
-            features = "classpath:io/cucumber/undefined/undefined_steps.feature"
-    )
+            features = "classpath:io/cucumber/undefined/undefined_steps.feature")
     static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {
 
     }
