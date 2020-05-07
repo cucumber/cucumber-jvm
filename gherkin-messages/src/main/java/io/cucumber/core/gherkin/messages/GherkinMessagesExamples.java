@@ -20,8 +20,8 @@ final class GherkinMessagesExamples implements Node.Examples {
         this.location = GherkinMessagesLocation.from(examples.getLocation());
         AtomicInteger row = new AtomicInteger(1);
         this.children = examples.getTableBodyList().stream()
-            .map(tableRow -> new GherkinMessagesExample(tableRow, row.getAndIncrement()))
-            .collect(Collectors.toList());
+                .map(tableRow -> new GherkinMessagesExample(tableRow, row.getAndIncrement()))
+                .collect(Collectors.toList());
     }
 
     @Override

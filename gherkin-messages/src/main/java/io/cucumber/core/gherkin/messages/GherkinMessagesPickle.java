@@ -32,13 +32,16 @@ final class GherkinMessagesPickle implements Pickle {
         this.steps = createCucumberSteps(pickle, dialect, this.cucumberQuery);
     }
 
-    private static List<Step> createCucumberSteps(Messages.Pickle pickle, GherkinDialect dialect, CucumberQuery cucumberQuery) {
+    private static List<Step> createCucumberSteps(
+            Messages.Pickle pickle,
+            GherkinDialect dialect,
+            CucumberQuery cucumberQuery) {
         List<Step> list = new ArrayList<>();
         String previousGivenWhenThen = dialect.getGivenKeywords()
-            .stream()
-            .filter(s -> !StepType.isAstrix(s))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
+                .stream()
+                .filter(s -> !StepType.isAstrix(s))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
         for (PickleStep pickleStep : pickle.getStepsList()) {
             String gherkinStepId = pickleStep.getAstNodeIds(0);
@@ -69,7 +72,6 @@ final class GherkinMessagesPickle implements Pickle {
     public String getName() {
         return pickle.getName();
     }
-
 
     @Override
     public Location getLocation() {

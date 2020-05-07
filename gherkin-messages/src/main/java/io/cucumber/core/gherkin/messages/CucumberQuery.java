@@ -26,15 +26,13 @@ final class CucumberQuery {
             if (featureChild.hasBackground()) {
                 this.updateBackground(
                     featureChild.getBackground(),
-                    gherkinDocument.getUri()
-                );
+                    gherkinDocument.getUri());
             }
 
             if (featureChild.hasScenario()) {
                 this.updateScenario(
                     featureChild.getScenario(),
-                    gherkinDocument.getUri()
-                );
+                    gherkinDocument.getUri());
             }
 
             if (featureChild.hasRule()) {
@@ -42,15 +40,13 @@ final class CucumberQuery {
                     if (ruleChild.hasBackground()) {
                         this.updateBackground(
                             ruleChild.getBackground(),
-                            gherkinDocument.getUri()
-                        );
+                            gherkinDocument.getUri());
                     }
 
                     if (ruleChild.hasScenario()) {
                         this.updateScenario(
                             ruleChild.getScenario(),
-                            gherkinDocument.getUri()
-                        );
+                            gherkinDocument.getUri());
                     }
                 }
             }

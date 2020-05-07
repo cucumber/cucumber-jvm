@@ -24,26 +24,31 @@ final class GherkinMessagesFeature implements Feature {
     private final String gherkinSource;
     private final List<Node> children;
 
-    GherkinMessagesFeature(GherkinDocument gherkinDocument, URI uri, String gherkinSource, List<Pickle> pickles, List<Messages.Envelope> envelopes) {
+    GherkinMessagesFeature(
+            GherkinDocument gherkinDocument,
+            URI uri,
+            String gherkinSource,
+            List<Pickle> pickles,
+            List<Messages.Envelope> envelopes) {
         this.gherkinDocument = gherkinDocument;
         this.uri = uri;
         this.gherkinSource = gherkinSource;
         this.pickles = pickles;
         this.envelopes = envelopes;
         this.children = gherkinDocument.getFeature().getChildrenList().stream()
-            .filter(featureChild -> featureChild.hasRule() || featureChild.hasScenario())
-            .map(featureChild -> {
-                if (featureChild.hasRule()) {
-                    return new GherkinMessagesRule(featureChild.getRule());
-                }
-                GherkinDocument.Feature.Scenario scenario = featureChild.getScenario();
-                if (scenario.getExamplesCount() > 0) {
-                    return new GherkinMessagesScenarioOutline(scenario);
-                } else {
-                    return new GherkinMessagesScenario(scenario);
-                }
-            })
-            .collect(Collectors.toList());
+                .filter(featureChild -> featureChild.hasRule() || featureChild.hasScenario())
+                .map(featureChild -> {
+                    if (featureChild.hasRule()) {
+                        return new GherkinMessagesRule(featureChild.getRule());
+                    }
+                    GherkinDocument.Feature.Scenario scenario = featureChild.getScenario();
+                    if (scenario.getExamplesCount() > 0) {
+                        return new GherkinMessagesScenarioOutline(scenario);
+                    } else {
+                        return new GherkinMessagesScenario(scenario);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -71,9 +76,9 @@ final class GherkinMessagesFeature implements Feature {
     public Pickle getPickleAt(Node node) {
         Location location = node.getLocation();
         return pickles.stream()
-            .filter(pickle -> pickle.getLocation().equals(location))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("No pickle in " + uri + " at " + location));
+                .filter(pickle -> pickle.getLocation().equals(location))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("No pickle in " + uri + " at " + location));
     }
 
     @Override
@@ -103,8 +108,10 @@ final class GherkinMessagesFeature implements Feature {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         GherkinMessagesFeature that = (GherkinMessagesFeature) o;
         return uri.equals(that.uri);
     }

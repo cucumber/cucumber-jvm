@@ -18,16 +18,16 @@ final class GherkinMessagesRule implements Node.Rule {
     GherkinMessagesRule(Messages.GherkinDocument.Feature.FeatureChild.Rule rule) {
         this.rule = rule;
         this.children = rule.getChildrenList().stream()
-            .filter(RuleChild::hasScenario)
-            .map(ruleChild -> {
-                Messages.GherkinDocument.Feature.Scenario scenario = ruleChild.getScenario();
-                if (scenario.getExamplesCount() > 0) {
-                    return new GherkinMessagesScenarioOutline(scenario);
-                } else {
-                    return new GherkinMessagesScenario(scenario);
-                }
-            })
-            .collect(Collectors.toList());
+                .filter(RuleChild::hasScenario)
+                .map(ruleChild -> {
+                    Messages.GherkinDocument.Feature.Scenario scenario = ruleChild.getScenario();
+                    if (scenario.getExamplesCount() > 0) {
+                        return new GherkinMessagesScenarioOutline(scenario);
+                    } else {
+                        return new GherkinMessagesScenario(scenario);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
