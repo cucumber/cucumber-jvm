@@ -5,7 +5,8 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 
 import java.lang.reflect.Type;
 
-class Java8DefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition implements DefaultDataTableCellTransformerDefinition {
+class Java8DefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition
+        implements DefaultDataTableCellTransformerDefinition {
 
     Java8DefaultDataTableCellTransformerDefinition(String[] emptyPatterns, DefaultDataTableCellTransformerBody body) {
         super(body, new Exception().getStackTrace()[3], emptyPatterns);
@@ -15,8 +16,7 @@ class Java8DefaultDataTableCellTransformerDefinition extends AbstractDatatableEl
     public TableCellByTypeTransformer tableCellByTypeTransformer() {
         return (fromValue, toValueType) -> execute(
             replaceEmptyPatternsWithEmptyString(fromValue),
-            toValueType
-        );
+            toValueType);
     }
 
     private Object execute(String fromValue, Type toValueType) {

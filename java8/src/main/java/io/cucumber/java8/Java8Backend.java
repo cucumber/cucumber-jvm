@@ -42,21 +42,22 @@ final class Java8Backend implements Backend {
         this.glue = glue;
         // Scan for Java8 style glue (lambdas)
         gluePaths.stream()
-            .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-            .map(ClasspathSupport::packageName)
-            .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
-            .flatMap(Collection::stream)
-            .filter(glueClass -> !glueClass.isInterface())
-            .filter(glueClass -> glueClass.getConstructors().length > 0)
-            .forEach(glueClass -> {
-                container.addClass(glueClass);
-                lambdaGlueClasses.add(glueClass);
-            });
+                .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
+                .map(ClasspathSupport::packageName)
+                .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
+                .flatMap(Collection::stream)
+                .filter(glueClass -> !glueClass.isInterface())
+                .filter(glueClass -> glueClass.getConstructors().length > 0)
+                .forEach(glueClass -> {
+                    container.addClass(glueClass);
+                    lambdaGlueClasses.add(glueClass);
+                });
     }
 
     @Override
     public void buildWorld() {
-        // Instantiate all the stepdef classes for java8 - the stepdef will be initialised
+        // Instantiate all the stepdef classes for java8 - the stepdef will be
+        // initialised
         // in the constructor.
         LambdaGlueRegistry.INSTANCE.set(new GlueAdaptor(glue));
         for (Class<? extends LambdaGlue> lambdaGlueClass : lambdaGlueClasses) {
@@ -73,7 +74,6 @@ final class Java8Backend implements Backend {
     public Snippet getSnippet() {
         return new Java8Snippet();
     }
-
 
     private static final class GlueAdaptor implements LambdaGlueRegistry {
 
@@ -133,12 +133,16 @@ final class Java8Backend implements Backend {
         }
 
         @Override
-        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+        public void addDefaultDataTableCellTransformer(
+                DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer
+        ) {
             glue.addDefaultDataTableCellTransformer(defaultDataTableCellTransformer);
         }
 
         @Override
-        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
+        public void addDefaultDataTableEntryTransformer(
+                DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+        ) {
             glue.addDefaultDataTableEntryTransformer(defaultDataTableEntryTransformer);
         }
 

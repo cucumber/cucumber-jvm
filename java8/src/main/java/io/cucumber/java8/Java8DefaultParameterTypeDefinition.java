@@ -5,7 +5,8 @@ import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 
 import java.lang.reflect.Type;
 
-class Java8DefaultParameterTypeDefinition extends AbstractGlueDefinition implements DefaultParameterTransformerDefinition {
+class Java8DefaultParameterTypeDefinition extends AbstractGlueDefinition
+        implements DefaultParameterTransformerDefinition {
 
     Java8DefaultParameterTypeDefinition(DefaultParameterTransformerBody body) {
         super(body, new Exception().getStackTrace()[3]);

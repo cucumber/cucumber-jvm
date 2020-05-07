@@ -13,20 +13,23 @@ abstract class AbstractJavaSnippet implements Snippet {
     @Override
     public final String tableHint() {
         return "" +
-            "    // For automatic transformation, change DataTable to one of\n" +
-            "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
-            "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
-            "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
-            "    //\n" +
-            "    // For other transformations you can register a DataTableType.\n"; //TODO: Add doc URL
+                "    // For automatic transformation, change DataTable to one of\n" +
+                "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
+                "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
+                "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
+                "    //\n" +
+                "    // For other transformations you can register a DataTableType.\n"; // TODO:
+                                                                                        // Add
+                                                                                        // doc
+                                                                                        // URL
     }
 
     @Override
     public final String arguments(Map<String, Type> arguments) {
         return arguments.entrySet()
-            .stream()
-            .map(argType -> getArgType(argType.getValue()) + " " + argType.getKey())
-            .collect(joining(", "));
+                .stream()
+                .map(argType -> getArgType(argType.getValue()) + " " + argType.getKey())
+                .collect(joining(", "));
     }
 
     private String getArgType(Type argType) {

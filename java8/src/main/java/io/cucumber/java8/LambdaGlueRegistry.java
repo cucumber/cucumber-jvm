@@ -33,6 +33,8 @@ interface LambdaGlueRegistry {
 
     void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer);
 
-    void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer);
+    void addDefaultDataTableEntryTransformer(
+            DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+    );
 
 }

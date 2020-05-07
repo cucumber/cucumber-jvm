@@ -46,7 +46,7 @@ final class LambdaTypeResolver implements TypeResolver {
     }
 
     private CucumberBackendException withLocation(CucumberBackendException exception) {
-        exception.setStackTrace(new StackTraceElement[]{location});
+        exception.setStackTrace(new StackTraceElement[] { location });
         return exception;
     }
 

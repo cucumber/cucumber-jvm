@@ -57,14 +57,16 @@ public interface ParameterDefinitionBody {
     @FunctionalInterface
     interface A8<R> extends ParameterDefinitionBody {
 
-        R accept(String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8) throws Throwable;
+        R accept(String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8)
+                throws Throwable;
 
     }
 
     @FunctionalInterface
     interface A9<R> extends ParameterDefinitionBody {
 
-        R accept(String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8, String p9) throws Throwable;
+        R accept(String p1, String p2, String p3, String p4, String p5, String p6, String p7, String p8, String p9)
+                throws Throwable;
 
     }
 

@@ -21,17 +21,14 @@ public class TypeDefinitionsStepDefinitions implements En {
             (StringBuilder builder) -> assertThat(builder.getClass(), equalTo(StringBuilder.class)));
         DocStringType("doc", (String docString) -> new StringBuilder(docString));
 
-        DataTableType((Map<String, String> entry) ->
-            new Author(entry.get("name"), entry.get("surname"), entry.get("famousBook")));
+        DataTableType((Map<String, String> entry) -> new Author(entry.get("name"), entry.get("surname"),
+            entry.get("famousBook")));
 
-        DataTableType((List<String> row) ->
-            new Book(row.get(0), row.get(1)));
+        DataTableType((List<String> row) -> new Book(row.get(0), row.get(1)));
 
-        DataTableType((String cellName) ->
-            new Cell(cellName));
+        DataTableType((String cellName) -> new Cell(cellName));
 
-        DataTableType((DataTable dataTable) ->
-            new Literature(dataTable));
+        DataTableType((DataTable dataTable) -> new Literature(dataTable));
 
         Given("single entry data table, defined by lambda", (Author author) -> {
             assertThat(author.name, equalTo("Fedor"));
@@ -40,7 +37,10 @@ public class TypeDefinitionsStepDefinitions implements En {
         });
 
         Given("data table, defined by lambda row transformer", (DataTable dataTable) -> {
-            List<Book> books = dataTable.subTable(1, 0).asList(Book.class); // throw away table headers
+            List<Book> books = dataTable.subTable(1, 0).asList(Book.class); // throw
+                                                                            // away
+                                                                            // table
+                                                                            // headers
             Book book1 = new Book("Crime and Punishment", "Raskolnikov");
             Book book2 = new Book("War and Peace", "Bolkonsky");
             assertThat(book1, equalTo(books.get(0)));
@@ -73,46 +73,46 @@ public class TypeDefinitionsStepDefinitions implements En {
         });
 
         // ParameterType with one argument
-        Given("{string-builder} parameter, defined by lambda", (StringBuilder builder) ->
-            assertThat(builder.toString(), equalTo("string builder")));
+        Given("{string-builder} parameter, defined by lambda",
+            (StringBuilder builder) -> assertThat(builder.toString(), equalTo("string builder")));
 
-        ParameterType("string-builder", ".*", (String str) ->
-            new StringBuilder(str));
+        ParameterType("string-builder", ".*", (String str) -> new StringBuilder(str));
 
         // ParameterType with two String arguments
-        Given("balloon coordinates {coordinates}, defined by lambda", (Point coordinates) ->
-            assertThat(coordinates.toString(), equalTo("Point[x=123,y=456]")));
+        Given("balloon coordinates {coordinates}, defined by lambda",
+            (Point coordinates) -> assertThat(coordinates.toString(), equalTo("Point[x=123,y=456]")));
 
         ParameterType("coordinates", "(.+),(.+)", (String x, String y) -> new Point(parseInt(x), parseInt(y)));
 
         // ParameterType with three arguments
-        Given("kebab made from {ingredients}, defined by lambda", (StringBuilder ingredients) ->
-            assertThat(ingredients.toString(), equalTo("-mushroom-meat-veg-")));
+        Given("kebab made from {ingredients}, defined by lambda",
+            (StringBuilder ingredients) -> assertThat(ingredients.toString(), equalTo("-mushroom-meat-veg-")));
 
-        ParameterType("ingredients", "(.+), (.+) and (.+)", (String x, String y, String z) ->
-            new StringBuilder().append('-').append(x).append('-').append(y).append('-').append(z).append('-'));
+        ParameterType("ingredients", "(.+), (.+) and (.+)", (String x, String y, String z) -> new StringBuilder()
+                .append('-').append(x).append('-').append(y).append('-').append(z).append('-'));
 
-        Given("kebab made from anonymous {}, defined by lambda", (StringBuilder coordinates) ->
-            assertThat(coordinates.toString(), equalTo("meat-class java.lang.StringBuilder")));
+        Given("kebab made from anonymous {}, defined by lambda",
+            (StringBuilder coordinates) -> assertThat(coordinates.toString(),
+                equalTo("meat-class java.lang.StringBuilder")));
 
-        DefaultParameterTransformer((String fromValue, Type toValueType) ->
-            new StringBuilder().append(fromValue).append('-').append(toValueType));
+        DefaultParameterTransformer((String fromValue, Type toValueType) -> new StringBuilder().append(fromValue)
+                .append('-').append(toValueType));
 
         Given("default data table cells, defined by lambda", (DataTable dataTable) -> {
             List<List<StringBuilder>> cells = dataTable.asLists(StringBuilder.class);
             assertThat(cells.get(0).get(0).toString(), equalTo("Kebab-class java.lang.StringBuilder"));
         });
 
-        DefaultDataTableCellTransformer((fromValue, toValueType) ->
-            new StringBuilder().append(fromValue).append('-').append(toValueType));
+        DefaultDataTableCellTransformer(
+            (fromValue, toValueType) -> new StringBuilder().append(fromValue).append('-').append(toValueType));
 
         Given("default data table entries, defined by lambda", (DataTable dataTable) -> {
             List<StringBuilder> cells = dataTable.asList(StringBuilder.class);
             assertThat(cells.get(0).toString(), equalTo("{dinner=Kebab}-class java.lang.StringBuilder"));
         });
 
-        DefaultDataTableEntryTransformer((fromValue, toValueType) ->
-            new StringBuilder().append(fromValue).append('-').append(toValueType));
+        DefaultDataTableEntryTransformer(
+            (fromValue, toValueType) -> new StringBuilder().append(fromValue).append('-').append(toValueType));
 
     }
 
@@ -135,21 +135,23 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Author author = (Author) o;
             return Objects.equals(name, author.name) &&
-                Objects.equals(surname, author.surname) &&
-                Objects.equals(famousBook, author.famousBook);
+                    Objects.equals(surname, author.surname) &&
+                    Objects.equals(famousBook, author.famousBook);
         }
 
         @Override
         public String toString() {
             return "Author{" +
-                "name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", famousBook='" + famousBook + '\'' +
-                '}';
+                    "name='" + name + '\'' +
+                    ", surname='" + surname + '\'' +
+                    ", famousBook='" + famousBook + '\'' +
+                    '}';
         }
 
     }
@@ -190,19 +192,21 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Book book = (Book) o;
             return Objects.equals(name, book.name) &&
-                Objects.equals(mainCharacter, book.mainCharacter);
+                    Objects.equals(mainCharacter, book.mainCharacter);
         }
 
         @Override
         public String toString() {
             return "Book{" +
-                "name='" + name + '\'' +
-                ", mainCharacter='" + mainCharacter + '\'' +
-                '}';
+                    "name='" + name + '\'' +
+                    ", mainCharacter='" + mainCharacter + '\'' +
+                    '}';
         }
 
     }
@@ -217,8 +221,10 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Cell cell = (Cell) o;
             return Objects.equals(name, cell.name);
         }
@@ -226,8 +232,8 @@ public class TypeDefinitionsStepDefinitions implements En {
         @Override
         public String toString() {
             return "Cell{" +
-                "name='" + name + '\'' +
-                '}';
+                    "name='" + name + '\'' +
+                    '}';
         }
 
     }
@@ -250,19 +256,21 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Literature that = (Literature) o;
             return types.containsAll(that.types) &&
-                characters.containsAll(that.characters);
+                    characters.containsAll(that.characters);
         }
 
         @Override
         public String toString() {
             return "Literature{" +
-                "types=" + types +
-                ", characters=" + characters +
-                '}';
+                    "types=" + types +
+                    ", characters=" + characters +
+                    '}';
         }
 
     }

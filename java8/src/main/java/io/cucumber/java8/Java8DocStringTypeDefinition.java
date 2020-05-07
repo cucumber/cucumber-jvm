@@ -20,8 +20,7 @@ final class Java8DocStringTypeDefinition extends AbstractGlueDefinition implemen
         this.docStringType = new DocStringType(
             returnType,
             contentType,
-            this::execute
-        );
+            this::execute);
     }
 
     private Object execute(String content) {

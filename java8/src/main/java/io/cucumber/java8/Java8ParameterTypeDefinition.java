@@ -9,8 +9,10 @@ class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements Par
 
     private final ParameterType<?> parameterType;
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    <T extends ParameterDefinitionBody> Java8ParameterTypeDefinition(String name, String regex, Class<T> bodyClass, T body) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    <T extends ParameterDefinitionBody> Java8ParameterTypeDefinition(
+            String name, String regex, Class<T> bodyClass, T body
+    ) {
         super(body, new Exception().getStackTrace()[3]);
         Class<?> returnType = resolveRawArguments(bodyClass, body.getClass())[0];
         this.parameterType = new ParameterType(name, Collections.singletonList(regex), returnType, this::execute);

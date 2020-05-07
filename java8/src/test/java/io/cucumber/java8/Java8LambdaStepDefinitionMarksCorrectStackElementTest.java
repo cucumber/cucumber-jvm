@@ -27,17 +27,20 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
 
-        CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class, () -> stepDefinition.execute(new Object[0]));
-        assertThat(exception.getInvocationTargetExceptionCause(), new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
-            @Override
-            protected boolean matchesSafely(Throwable item) {
-                return Arrays.stream(item.getStackTrace())
-                    .filter(stepDefinition::isDefinedAt)
-                    .findFirst()
-                    .filter(stackTraceElement -> SomeLambdaStepDefs.class.getName().equals(stackTraceElement.getClassName()))
-                    .isPresent();
-            }
-        });
+        CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class,
+            () -> stepDefinition.execute(new Object[0]));
+        assertThat(exception.getInvocationTargetExceptionCause(),
+            new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
+                @Override
+                protected boolean matchesSafely(Throwable item) {
+                    return Arrays.stream(item.getStackTrace())
+                            .filter(stepDefinition::isDefinedAt)
+                            .findFirst()
+                            .filter(stackTraceElement -> SomeLambdaStepDefs.class.getName()
+                                    .equals(stackTraceElement.getClassName()))
+                            .isPresent();
+                }
+            });
     }
 
     private static class MyLambdaGlueRegistry implements LambdaGlueRegistry {
@@ -90,12 +93,16 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         }
 
         @Override
-        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+        public void addDefaultDataTableCellTransformer(
+                DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer
+        ) {
 
         }
 
         @Override
-        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
+        public void addDefaultDataTableEntryTransformer(
+                DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+        ) {
 
         }
 

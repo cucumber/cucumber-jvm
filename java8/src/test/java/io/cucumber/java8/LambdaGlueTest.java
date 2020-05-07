@@ -81,12 +81,16 @@ class LambdaGlueTest {
         }
 
         @Override
-        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+        public void addDefaultDataTableCellTransformer(
+                DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer
+        ) {
 
         }
 
         @Override
-        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
+        public void addDefaultDataTableEntryTransformer(
+                DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+        ) {
 
         }
     };

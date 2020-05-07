@@ -21,16 +21,16 @@ class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefiniti
 
     DataTable replaceEmptyPatternsWithEmptyString(DataTable table) {
         List<List<String>> rawWithEmptyStrings = table.cells().stream()
-            .map(this::replaceEmptyPatternsWithEmptyString)
-            .collect(toList());
+                .map(this::replaceEmptyPatternsWithEmptyString)
+                .collect(toList());
 
         return create(rawWithEmptyStrings, table.getTableConverter());
     }
 
     List<String> replaceEmptyPatternsWithEmptyString(List<String> row) {
         return row.stream()
-            .map(this::replaceEmptyPatternsWithEmptyString)
-            .collect(toList());
+                .map(this::replaceEmptyPatternsWithEmptyString)
+                .collect(toList());
     }
 
     String replaceEmptyPatternsWithEmptyString(String t) {

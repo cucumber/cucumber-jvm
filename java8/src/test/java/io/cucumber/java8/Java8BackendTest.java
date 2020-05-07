@@ -15,7 +15,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith({ MockitoExtension.class })
 class Java8BackendTest {
 
     @Mock

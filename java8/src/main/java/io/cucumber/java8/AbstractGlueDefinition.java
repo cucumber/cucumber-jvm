@@ -49,10 +49,10 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         for (Class<?> aClass : rawArguments) {
             if (TypeResolver.Unknown.class.equals(aClass)) {
                 throw new IllegalStateException("" +
-                    "Could resolve the return type of the lambda at " + location.getFileName() + ":" + location.getLineNumber() + "\n" +
-                    "This version of cucumber-java8 is not compatible with Java 12+\n" +
-                    "See: https://github.com/cucumber/cucumber-jvm/issues/1817"
-                );
+                        "Could resolve the return type of the lambda at " + location.getFileName() + ":"
+                        + location.getLineNumber() + "\n" +
+                        "This version of cucumber-java8 is not compatible with Java 12+\n" +
+                        "See: https://github.com/cucumber/cucumber-jvm/issues/1817");
             }
         }
         return rawArguments;
