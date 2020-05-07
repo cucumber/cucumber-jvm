@@ -19,8 +19,8 @@ public final class CompositeCucumberException extends CucumberException {
 
     public String getMessage() {
         return super.getMessage() + this.causes.stream()
-            .map(e -> String.format("  %s(%s)", e.getClass().getName(), e.getMessage()))
-            .collect(Collectors.joining("\n", "\n", ""));
+                .map(e -> String.format("  %s(%s)", e.getClass().getName(), e.getMessage()))
+                .collect(Collectors.joining("\n", "\n", ""));
     }
 
 }

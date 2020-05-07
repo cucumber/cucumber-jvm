@@ -28,7 +28,8 @@ public final class CucumberOptionsAnnotationParser {
     public RuntimeOptionsBuilder parse(Class<?> clazz) {
         RuntimeOptionsBuilder args = new RuntimeOptionsBuilder();
 
-        for (Class<?> classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
+        for (Class<?> classWithOptions = clazz; hasSuperClass(
+            classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
             CucumberOptions options = requireNonNull(optionsProvider).getOptions(classWithOptions);
 
             if (options != null) {
@@ -80,7 +81,8 @@ public final class CucumberOptionsAnnotationParser {
 
     private void addStrict(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (!options.strict()) {
-            throw new CucumberException("@CucumberOptions(strict=false) is no longer supported. Please use strict=true");
+            throw new CucumberException(
+                "@CucumberOptions(strict=false) is no longer supported. Please use strict=true");
         }
     }
 
@@ -166,7 +168,6 @@ public final class CucumberOptionsAnnotationParser {
         String className = clazz.getName();
         return className.substring(0, Math.max(0, className.lastIndexOf('.')));
     }
-
 
     public interface OptionsProvider {
 

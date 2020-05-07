@@ -42,19 +42,19 @@ public final class StepExpressionFactory {
             return createExpression(
                 stepDefinition.getPattern(),
                 stepDefinitionDoesNotTakeAnyParameter(stepDefinition),
-                false
-            );
+                false);
         }
 
         ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
         return createExpression(
             stepDefinition.getPattern(),
             parameterInfo.getTypeResolver()::resolve,
-            parameterInfo.isTransposed()
-        );
+            parameterInfo.isTransposed());
     }
 
-    private StepExpression createExpression(String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose) {
+    private StepExpression createExpression(
+            String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose
+    ) {
         requireNonNull(expressionString, "expressionString can not be null");
         requireNonNull(tableOrDocStringType, "tableOrDocStringType can not be null");
 
@@ -78,8 +78,7 @@ public final class StepExpressionFactory {
         return () -> {
             throw new CucumberException(format(
                 "step definition at %s does not take any parameters",
-                stepDefinition.getLocation()
-            ));
+                stepDefinition.getLocation()));
         };
     }
 
@@ -89,11 +88,10 @@ public final class StepExpressionFactory {
             expression = expressionFactory.createExpression(expressionString);
         } catch (UndefinedParameterTypeException e) {
             bus.send(Envelope.newBuilder()
-                .setUndefinedParameterType(UndefinedParameterType.newBuilder()
-                    .setExpression(expressionString)
-                    .setName(e.getUndefinedParameterTypeName()))
-                .build()
-            );
+                    .setUndefinedParameterType(UndefinedParameterType.newBuilder()
+                            .setExpression(expressionString)
+                            .setName(e.getUndefinedParameterTypeName()))
+                    .build());
             throw registerTypeInConfiguration(expressionString, e);
         }
         return expression;
@@ -103,8 +101,7 @@ public final class StepExpressionFactory {
         return new CucumberException(format("" +
                 "Could not create a cucumber expression for '%s'.\n" +
                 "It appears you did not register a parameter type.",
-            expressionString
-        ), e);
+            expressionString), e);
     }
 
 }

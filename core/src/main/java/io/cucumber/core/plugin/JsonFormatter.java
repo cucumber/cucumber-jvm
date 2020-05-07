@@ -112,7 +112,7 @@ public final class JsonFormatter implements EventListener {
                 currentStepsList = (List<Map<String, Object>>) currentElementMap.get("steps");
             }
             currentStepOrHookMap = createTestStep(testStep);
-            //add beforeSteps list to current step
+            // add beforeSteps list to current step
             if (currentBeforeStepHookList.containsKey(before)) {
                 currentStepOrHookMap.put(before, currentBeforeStepHookList.get(before));
                 currentBeforeStepHookList.clear();
@@ -175,8 +175,7 @@ public final class JsonFormatter implements EventListener {
                     location.put("column", tag.getLocation().getColumn());
                     json.put("location", location);
                     return json;
-                }
-            ).collect(toList()));
+                }).collect(toList()));
 
         }
         return featureMap;
@@ -197,7 +196,8 @@ public final class JsonFormatter implements EventListener {
             testCaseMap.put("id", TestSourcesModel.calculateId(astNode));
             Scenario scenarioDefinition = TestSourcesModel.getScenarioDefinition(astNode);
             testCaseMap.put("keyword", scenarioDefinition.getKeyword());
-            testCaseMap.put("description", scenarioDefinition.getDescription() != null ? scenarioDefinition.getDescription() : "");
+            testCaseMap.put("description",
+                scenarioDefinition.getDescription() != null ? scenarioDefinition.getDescription() : "");
         }
         testCaseMap.put("steps", new ArrayList<Map<String, Object>>());
         if (!testCase.getTags().isEmpty()) {
@@ -409,7 +409,7 @@ public final class JsonFormatter implements EventListener {
 
     private String getDateTimeFromTimeStamp(Instant instant) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-            .withZone(ZoneOffset.UTC);
+                .withZone(ZoneOffset.UTC);
         return formatter.format(instant);
     }
 
@@ -433,7 +433,8 @@ public final class JsonFormatter implements EventListener {
 
     private Map<String, Object> createEmbeddingMap(byte[] data, String mediaType, String name) {
         Map<String, Object> embedMap = new HashMap<>();
-        embedMap.put("mime_type", mediaType); // Should be media-type but not worth migrating for
+        embedMap.put("mime_type", mediaType); // Should be media-type but not
+                                              // worth migrating for
         embedMap.put("data", Base64.getEncoder().encodeToString(data));
         if (name != null) {
             embedMap.put("name", name);

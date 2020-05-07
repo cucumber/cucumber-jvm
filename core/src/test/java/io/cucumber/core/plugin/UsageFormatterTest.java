@@ -36,7 +36,8 @@ class UsageFormatterTest {
         TestStep testStep = mockTestStep();
         Result result = new Result(Status.PASSED, Duration.ofNanos(12345L), null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
+        usageFormatter
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -61,10 +62,12 @@ class UsageFormatterTest {
         TestStep testStep = mockTestStep();
 
         Result passed = new Result(Status.PASSED, Duration.ofSeconds(12345L), null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, passed));
+        usageFormatter
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, passed));
 
         Result failed = new Result(Status.FAILED, Duration.ZERO, null);
-        usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, failed));
+        usageFormatter
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, failed));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -82,7 +85,8 @@ class UsageFormatterTest {
         TestStep testStep = mockTestStep();
         Result result = new Result(Status.PASSED, Duration.ZERO, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
+        usageFormatter
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -101,7 +105,8 @@ class UsageFormatterTest {
         PickleStepTestStep testStep = mockTestStep();
         Result result = new Result(Status.PASSED, Duration.ZERO, null);
 
-        usageFormatter.handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
+        usageFormatter
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -117,33 +122,34 @@ class UsageFormatterTest {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
-        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L), "location.feature");
+        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L),
+            "location.feature");
         stepContainer.getDurations().addAll(singletonList(stepDuration));
         usageFormatter.usageMap.put("a (.*)", singletonList(stepContainer));
 
         usageFormatter.finishReport();
 
         String json = "" +
-            "[\n" +
-            "  {\n" +
-            "    \"source\": \"a (.*)\",\n" +
-            "    \"steps\": [\n" +
-            "      {\n" +
-            "        \"name\": \"a step\",\n" +
-            "        \"aggregatedDurations\": {\n" +
-            "          \"median\": 0.012345678,\n" +
-            "          \"average\": 0.012345678\n" +
-            "        },\n" +
-            "        \"durations\": [\n" +
-            "          {\n" +
-            "            \"duration\": 0.012345678,\n" +
-            "            \"location\": \"location.feature\"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    ]\n" +
-            "  }\n" +
-            "]";
+                "[\n" +
+                "  {\n" +
+                "    \"source\": \"a (.*)\",\n" +
+                "    \"steps\": [\n" +
+                "      {\n" +
+                "        \"name\": \"a step\",\n" +
+                "        \"aggregatedDurations\": {\n" +
+                "          \"median\": 0.012345678,\n" +
+                "          \"average\": 0.012345678\n" +
+                "        },\n" +
+                "        \"durations\": [\n" +
+                "          {\n" +
+                "            \"duration\": 0.012345678,\n" +
+                "            \"location\": \"location.feature\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "]";
 
         assertThat(out.toString(), sameJSONAs(json));
     }
@@ -154,7 +160,8 @@ class UsageFormatterTest {
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
-        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L), "location.feature");
+        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L),
+            "location.feature");
         stepContainer.getDurations().addAll(singletonList(stepDuration));
 
         usageFormatter.usageMap.put("a (.*)", singletonList(stepContainer));
@@ -162,8 +169,7 @@ class UsageFormatterTest {
         usageFormatter.finishReport();
 
         assertThat(out.toString(), containsString("0.012345678"));
-        String json =
-            "[\n" +
+        String json = "[\n" +
                 "  {\n" +
                 "    \"source\": \"a (.*)\",\n" +
                 "    \"steps\": [\n" +
@@ -191,7 +197,8 @@ class UsageFormatterTest {
     void calculateAverageFromList() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
+        Duration result = usageFormatter
+                .calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
         assertThat(result, is(equalTo(Duration.ofSeconds(2L))));
     }
 
@@ -199,7 +206,8 @@ class UsageFormatterTest {
     void calculateAverageOf() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(1L), Duration.ofSeconds(2L)));
+        Duration result = usageFormatter
+                .calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(1L), Duration.ofSeconds(2L)));
         assertThat(result, is(equalTo(Duration.ofNanos(1333333333))));
     }
 
@@ -215,7 +223,8 @@ class UsageFormatterTest {
     void calculateMedianOfOddNumberOfEntries() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
+        Duration result = usageFormatter
+                .calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
         assertThat(result, is(equalTo(Duration.ofSeconds(2L))));
     }
 
@@ -223,7 +232,8 @@ class UsageFormatterTest {
     void calculateMedianOfEvenNumberOfEntries() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(3L), Duration.ofSeconds(10L), Duration.ofSeconds(5L)));
+        Duration result = usageFormatter.calculateMedian(
+            asList(Duration.ofSeconds(1L), Duration.ofSeconds(3L), Duration.ofSeconds(10L), Duration.ofSeconds(5L)));
         assertThat(result, is(equalTo(Duration.ofSeconds(4))));
     }
 

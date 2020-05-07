@@ -82,23 +82,23 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         List<String> arguments = createArgumentsForErrorMessage();
         return new CucumberException(String.format(
             "Step [%s] is defined with %s parameters at '%s'.\n" +
-                "However, the gherkin step has %s arguments%sStep text: %s",
+                    "However, the gherkin step has %s arguments%sStep text: %s",
             stepDefinition.getPattern(),
             parameterCount,
             stepDefinition.getLocation(),
             arguments.size(),
             formatArguments(arguments),
-            step.getText()
-        ));
+            step.getText()));
     }
 
     private CucumberException registerDataTableTypeInConfiguration(Exception e) {
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears you did not register a data table type.", //TODO: Add doc URL
+                "It appears you did not register a data table type.", // TODO:
+                                                                      // Add doc
+                                                                      // URL
             stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
+            stepDefinition.getLocation()), e);
     }
 
     private CucumberInvocationTargetException causedByCucumberInvocationTargetException(RuntimeException e) {
@@ -113,17 +113,18 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         return new CucumberException(String.format(
             "Could not convert arguments for step [%s] defined at '%s'.",
             stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
+            stepDefinition.getLocation()), e);
     }
 
     private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears there was a problem with a hook or transformer definition.", //TODO: Add doc URL
+                "It appears there was a problem with a hook or transformer definition.", // TODO:
+                                                                                         // Add
+                                                                                         // doc
+                                                                                         // URL
             stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
+            stepDefinition.getLocation()), e);
     }
 
     private Throwable couldNotInvokeStep(CucumberBackendException e, List<Object> result) {
@@ -131,10 +132,12 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         return new CucumberException(String.format("" +
                 "Could not invoke step [%s] defined at '%s'.\n" +
                 "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (" + argumentTypes + ")", //TODO: Add doc URL
+                "The converted arguments types were (" + argumentTypes + ")", // TODO:
+                                                                              // Add
+                                                                              // doc
+                                                                              // URL
             stepDefinition.getPattern(),
-            stepDefinition.getLocation()
-        ), e);
+            stepDefinition.getLocation()), e);
     }
 
     private StackTraceElement getStepLocation() {
@@ -163,8 +166,8 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private String createArgumentTypes(List<Object> result) {
         return result.stream()
-            .map(o -> o == null ? "null" : o.getClass().getName())
-            .collect(Collectors.joining(", "));
+                .map(o -> o == null ? "null" : o.getClass().getName())
+                .collect(Collectors.joining(", "));
     }
 
     public String getPattern() {

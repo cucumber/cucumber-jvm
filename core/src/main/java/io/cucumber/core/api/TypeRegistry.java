@@ -9,7 +9,8 @@ import io.cucumber.docstring.DocStringType;
 import org.apiguardian.api.API;
 
 /**
- * The type registry records defines parameter types, data table types and docstring transformers.
+ * The type registry records defines parameter types, data table types and
+ * docstring transformers.
  */
 @API(status = API.Status.STABLE)
 public interface TypeRegistry {

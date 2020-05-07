@@ -101,28 +101,28 @@ class CommandlineOptionsParserTest {
     @Test
     void assigns_feature_paths() {
         RuntimeOptions options = parser
-            .parse("somewhere_else")
-            .build();
+                .parse("somewhere_else")
+                .build();
         assertThat(options.getFeaturePaths(), contains(new File("somewhere_else").toURI()));
     }
 
     @Test
     void strips_line_filters_from_feature_paths_and_put_them_among_line_filters() {
         RuntimeOptions options = parser
-            .parse("somewhere_else.feature:3")
-            .build();
+                .parse("somewhere_else.feature:3")
+                .build();
 
         assertAll(
             () -> assertThat(options.getFeaturePaths(), contains(new File("somewhere_else.feature").toURI())),
-            () -> assertThat(options.getLineFilters(), hasEntry(new File("somewhere_else.feature").toURI(), singleton(3)))
-        );
+            () -> assertThat(options.getLineFilters(),
+                hasEntry(new File("somewhere_else.feature").toURI(), singleton(3))));
     }
 
     @Test
     void select_multiple_lines_in_a_features() {
         RuntimeOptions options = parser
-            .parse("somewhere_else.feature:3:5")
-            .build();
+                .parse("somewhere_else.feature:3:5")
+                .build();
         assertThat(options.getFeaturePaths(), contains(new File("somewhere_else.feature").toURI()));
         Set<Integer> lines = new HashSet<>(asList(3, 5));
         assertThat(options.getLineFilters(), hasEntry(new File("somewhere_else.feature").toURI(), lines));
@@ -131,8 +131,8 @@ class CommandlineOptionsParserTest {
     @Test
     void combines_line_filters_from_repeated_features() {
         RuntimeOptions options = parser
-            .parse("classpath:somewhere_else.feature:3", "classpath:somewhere_else.feature:5")
-            .build();
+                .parse("classpath:somewhere_else.feature:3", "classpath:somewhere_else.feature:5")
+                .build();
         assertThat(options.getFeaturePaths(), contains(uri("classpath:somewhere_else.feature")));
         Set<Integer> lines = new HashSet<>(asList(3, 5));
         assertThat(options.getLineFilters(), hasEntry(uri("classpath:somewhere_else.feature"), lines));
@@ -145,24 +145,24 @@ class CommandlineOptionsParserTest {
     @Test
     void assigns_filters_from_tags() {
         RuntimeOptions options = parser
-            .parse("--tags", "@keep_this")
-            .build();
+                .parse("--tags", "@keep_this")
+                .build();
         assertThat(options.getTagExpressions(), contains("@keep_this"));
     }
 
     @Test
     void assigns_glue() {
         RuntimeOptions options = parser
-            .parse("--glue", "somewhere")
-            .build();
+                .parse("--glue", "somewhere")
+                .build();
         assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
     }
 
     @Test
     void creates_html_formatter() {
         RuntimeOptions options = parser
-            .parse("--plugin", "html:target/deeply/nested.html", "--glue", "somewhere")
-            .build();
+                .parse("--plugin", "html:target/deeply/nested.html", "--glue", "somewhere")
+                .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
@@ -172,9 +172,9 @@ class CommandlineOptionsParserTest {
     @Test
     void creates_progress_formatter_as_default() {
         RuntimeOptions options = parser
-            .parse()
-            .addDefaultFormatterIfAbsent()
-            .build();
+                .parse()
+                .addDefaultFormatterIfAbsent()
+                .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
@@ -184,9 +184,9 @@ class CommandlineOptionsParserTest {
     @Test
     void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
         RuntimeOptions options = parser
-            .parse("--plugin", "pretty")
-            .addDefaultSummaryPrinterIfAbsent()
-            .build();
+                .parse("--plugin", "pretty")
+                .addDefaultSummaryPrinterIfAbsent()
+                .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
@@ -211,22 +211,22 @@ class CommandlineOptionsParserTest {
     @Test
     void creates_null_summary_printer() {
         RuntimeOptions options = parser
-            .parse("--plugin", "null_summary", "--glue", "somewhere")
-            .build();
+                .parse("--plugin", "null_summary", "--glue", "somewhere")
+                .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
             () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))),
-            () -> assertThat(plugins.getPlugins(), not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter"))))
-        );
+            () -> assertThat(plugins.getPlugins(),
+                not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")))));
     }
 
     @Test
     void replaces_incompatible_intellij_idea_plugin() {
         RuntimeOptions options = parser
-            .parse("--plugin", "org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter")
-            .build();
+                .parse("--plugin", "org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter")
+                .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
@@ -236,32 +236,32 @@ class CommandlineOptionsParserTest {
     @Test
     void assigns_wip() {
         RuntimeOptions options = parser
-            .parse("--wip")
-            .build();
+                .parse("--wip")
+                .build();
         assertThat(options.isWip(), is(true));
     }
 
     @Test
     void assigns_wip_short() {
         RuntimeOptions options = parser
-            .parse("-w")
-            .build();
+                .parse("-w")
+                .build();
         assertThat(options.isWip(), is(true));
     }
 
     @Test
     void default_wip() {
         RuntimeOptions options = parser
-            .parse()
-            .build();
+                .parse()
+                .build();
         assertThat(options.isWip(), is(false));
     }
 
     @Test
     void name_without_spaces_is_preserved() {
         RuntimeOptions options = parser
-            .parse("--name", "someName")
-            .build();
+                .parse("--name", "someName")
+                .build();
         Pattern actualPattern = options.getNameFilters().iterator().next();
         assertThat(actualPattern.pattern(), is("someName"));
     }
@@ -269,8 +269,8 @@ class CommandlineOptionsParserTest {
     @Test
     void name_with_spaces_is_preserved() {
         RuntimeOptions options = parser
-            .parse("--name", "some Name")
-            .build();
+                .parse("--name", "some Name")
+                .build();
         Pattern actualPattern = options.getNameFilters().iterator().next();
         assertThat(actualPattern.pattern(), is("some Name"));
     }
@@ -278,41 +278,40 @@ class CommandlineOptionsParserTest {
     @Test
     void combines_tag_filters_from_env_if_rerun_file_specified_in_cli() {
         RuntimeOptions runtimeOptions = parser
-            .parse("@src/test/resources/io/cucumber/core/options/runtime-options-rerun.txt")
-            .build();
+                .parse("@src/test/resources/io/cucumber/core/options/runtime-options-rerun.txt")
+                .build();
 
         RuntimeOptions options = new CucumberPropertiesParser()
-            .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
-            .build(runtimeOptions);
+                .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
+                .build(runtimeOptions);
 
         assertAll(
             () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
-            () -> assertThat(options.getLineFilters(), hasEntry(new File("this/should/be/rerun.feature").toURI(), singleton(12)))
-        );
+            () -> assertThat(options.getLineFilters(),
+                hasEntry(new File("this/should/be/rerun.feature").toURI(), singleton(12))));
     }
 
     @Test
     void clobbers_line_filters_from_cli_if_tags_are_specified_in_env() {
         RuntimeOptions runtimeOptions = parser
-            .parse("file:path/to.feature")
-            .build();
+                .parse("file:path/to.feature")
+                .build();
 
         RuntimeOptions options = new CucumberPropertiesParser()
-            .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
-            .build(runtimeOptions);
+                .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
+                .build(runtimeOptions);
 
         assertAll(
             () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
             () -> assertThat(options.getLineFilters(), is(emptyMap())),
-            () -> assertThat(options.getFeaturePaths(), contains(new File("path/to.feature").toURI()))
-        );
+            () -> assertThat(options.getFeaturePaths(), contains(new File("path/to.feature").toURI())));
     }
 
     @Test
     void fail_on_unsupported_options() {
         parser
-            .parse("-concreteUnsupportedOption", "somewhere", "somewhere_else")
-            .build();
+                .parse("-concreteUnsupportedOption", "somewhere", "somewhere_else")
+                .build();
         assertThat(output(), startsWith("Unknown option: -concreteUnsupportedOption"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
@@ -320,24 +319,24 @@ class CommandlineOptionsParserTest {
     @Test
     void threads_default_1() {
         RuntimeOptions options = parser
-            .parse()
-            .build();
+                .parse()
+                .build();
         assertThat(options.getThreads(), is(1));
     }
 
     @Test
     void ensure_threads_param_is_used() {
         RuntimeOptions options = parser
-            .parse("--threads", "10")
-            .build();
+                .parse("--threads", "10")
+                .build();
         assertThat(options.getThreads(), is(10));
     }
 
     @Test
     void ensure_less_than_1_thread_is_not_allowed() {
         parser
-            .parse("--threads", "0")
-            .build();
+                .parse("--threads", "0")
+                .build();
         assertThat(output(), is("--threads must be > 0\n"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
@@ -345,8 +344,8 @@ class CommandlineOptionsParserTest {
     @Test
     void set_monochrome_on_color_aware_formatters() {
         RuntimeOptions options = parser
-            .parse("--monochrome", "--plugin", AwareFormatter.class.getName())
-            .build();
+                .parse("--monochrome", "--plugin", AwareFormatter.class.getName())
+                .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
@@ -357,8 +356,8 @@ class CommandlineOptionsParserTest {
     @Test
     void set_strict_on_strict_aware_formatters() {
         RuntimeOptions options = parser
-            .parse("--strict", "--plugin", AwareFormatter.class.getName())
-            .build();
+                .parse("--strict", "--plugin", AwareFormatter.class.getName())
+                .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
@@ -370,78 +369,81 @@ class CommandlineOptionsParserTest {
     @Test
     void ensure_default_snippet_type_is_underscore() {
         RuntimeOptions runtimeOptions = parser
-            .parse()
-            .build();
+                .parse()
+                .build();
         RuntimeOptions options = new CucumberPropertiesParser()
-            .parse(properties)
-            .build(runtimeOptions);
+                .parse(properties)
+                .build(runtimeOptions);
         assertThat(options.getSnippetType(), is(SnippetType.UNDERSCORE));
     }
 
     @Test
     void order_type_default_none() {
         RuntimeOptions options = parser
-            .parse()
-            .build();
+                .parse()
+                .build();
         Pickle a = createPickle("file:path/file1.feature", "a");
         Pickle b = createPickle("file:path/file2.feature", "b");
         assertThat(options.getPickleOrder()
-            .orderPickles(Arrays.asList(a, b)), contains(a, b));
+                .orderPickles(Arrays.asList(a, b)),
+            contains(a, b));
     }
 
     private Pickle createPickle(String uri, String name) {
         Feature feature = TestFeatureParser.parse(uri, "" +
-            "Feature: Test feature\n" +
-            "  Scenario: " + name + "\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: " + name + "\n" +
+                "     Given I have 4 cukes in my belly\n");
         return feature.getPickles().get(0);
     }
 
     @Test
     void ensure_order_type_reverse_is_used() {
         RuntimeOptions options = parser
-            .parse("--order", "reverse")
-            .build();
+                .parse("--order", "reverse")
+                .build();
         Pickle a = createPickle("file:path/file1.feature", "a");
         Pickle b = createPickle("file:path/file2.feature", "b");
         assertThat(options.getPickleOrder()
-            .orderPickles(Arrays.asList(a, b)), contains(b, a));
+                .orderPickles(Arrays.asList(a, b)),
+            contains(b, a));
     }
 
     @Test
     void ensure_order_type_random_is_used() {
         parser
-            .parse("--order", "random")
-            .build();
+                .parse("--order", "random")
+                .build();
     }
 
     @Test
     void ensure_order_type_random_with_seed_is_used() {
         RuntimeOptions options = parser
-            .parse("--order", "random:5000")
-            .build();
+                .parse("--order", "random:5000")
+                .build();
         Pickle a = createPickle("file:path/file1.feature", "a");
         Pickle b = createPickle("file:path/file2.feature", "b");
         Pickle c = createPickle("file:path/file3.feature", "c");
         assertThat(options.getPickleOrder()
-            .orderPickles(Arrays.asList(a, b, c)), contains(c, a, b));
+                .orderPickles(Arrays.asList(a, b, c)),
+            contains(c, a, b));
     }
 
     @Test
     void ensure_invalid_ordertype_is_not_allowed() {
         Executable testMethod = () -> parser
-            .parse("--order", "invalid")
-            .build();
+                .parse("--order", "invalid")
+                .build();
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo("Invalid order. Must be either reverse, random or random:<long>")));
+        assertThat(actualThrown.getMessage(),
+            is(equalTo("Invalid order. Must be either reverse, random or random:<long>")));
     }
 
     @Test
     void ensure_less_than_1_count_is_not_allowed() {
         parser
-            .parse("--count", "0")
-            .build();
+                .parse("--count", "0")
+                .build();
         assertThat(output(), is("--count must be > 0\n"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
@@ -449,18 +451,18 @@ class CommandlineOptionsParserTest {
     @Test
     void scans_class_path_root_for_glue_by_default() {
         RuntimeOptions options = parser
-            .parse()
-            .addDefaultGlueIfAbsent()
-            .build();
+                .parse()
+                .addDefaultGlueIfAbsent()
+                .build();
         assertThat(options.getGlue(), is(singletonList(rootPackageUri())));
     }
 
     @Test
     void scans_class_path_root_for_features_by_default() {
         RuntimeOptions options = parser
-            .parse()
-            .addDefaultFeaturePathIfAbsent()
-            .build();
+                .parse()
+                .addDefaultFeaturePathIfAbsent()
+                .build();
         assertThat(options.getFeaturePaths(), is(singletonList(rootPackageUri())));
         assertThat(options.getLineFilters(), is(emptyMap()));
     }

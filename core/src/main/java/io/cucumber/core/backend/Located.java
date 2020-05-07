@@ -6,9 +6,9 @@ import org.apiguardian.api.API;
 public interface Located {
 
     /**
-     * @param stackTraceElement The location of the step.
-     * @return Return true if this matches the location. This is used to filter
-     * stack traces.
+     * @param  stackTraceElement The location of the step.
+     * @return                   Return true if this matches the location. This
+     *                           is used to filter stack traces.
      */
     boolean isDefinedAt(StackTraceElement stackTraceElement);
 
@@ -18,8 +18,10 @@ public interface Located {
      * <p>
      * Examples:
      * <ul>
-     *  <li> @{code com.example.StepDefinitions.given_an_example(io.cucumber.datatable.DataTable)}</li>
-     *  <li> @{code com.example.StepDefinitions.<init>(StepDefinitions.java:9)}</li>
+     * <li>@{code
+     * com.example.StepDefinitions.given_an_example(io.cucumber.datatable.DataTable)}</li>
+     * <li>@{code
+     * com.example.StepDefinitions.<init>(StepDefinitions.java:9)}</li>
      * </ul>
      *
      * @return The source line of the step definition.

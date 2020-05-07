@@ -53,28 +53,29 @@ import static org.mockito.Mockito.when;
 class PickleStepTestStepTest {
 
     private final Feature feature = TestFeatureParser.parse("" +
-        "Feature: Test feature\n" +
-        "  Scenario: Test scenario\n" +
-        "     Given I have 4 cukes in my belly\n"
-    );
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n");
     private final Pickle pickle = feature.getPickles().get(0);
-    private final TestCase testCase = new TestCase(UUID.randomUUID(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), pickle, false);
+    private final TestCase testCase = new TestCase(UUID.randomUUID(), Collections.emptyList(), Collections.emptyList(),
+        Collections.emptyList(), pickle, false);
     private final EventBus bus = mock(EventBus.class);
     private final UUID testExecutionId = UUID.randomUUID();
     private final TestCaseState state = new TestCaseState(bus, testExecutionId, testCase);
     private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
     private final CoreHookDefinition afterHookDefinition = mock(CoreHookDefinition.class);
-    private final HookTestStep afterHook = new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterHookDefinition));
+    private final HookTestStep afterHook = new HookTestStep(UUID.randomUUID(), AFTER_STEP,
+        new HookDefinitionMatch(afterHookDefinition));
     private final CoreHookDefinition beforeHookDefinition = mock(CoreHookDefinition.class);
-    private final HookTestStep beforeHook = new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeHookDefinition));
+    private final HookTestStep beforeHook = new HookTestStep(UUID.randomUUID(), BEFORE_STEP,
+        new HookDefinitionMatch(beforeHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(
         UUID.randomUUID(),
         URI.create("file:path/to.feature"),
         pickle.getSteps().get(0),
         singletonList(beforeHook),
         singletonList(afterHook),
-        definitionMatch
-    );
+        definitionMatch);
 
     @BeforeEach
     void init() {
@@ -245,17 +246,15 @@ class PickleStepTestStepTest {
     @Test
     void step_execution_time_is_measured() {
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given I have 4 cukes in my belly\n");
 
         TestStep step = new PickleStepTestStep(
             UUID.randomUUID(),
             URI.create("file:path/to.feature"),
             feature.getPickles().get(0).getSteps().get(0),
-            definitionMatch
-        );
+            definitionMatch);
         when(bus.getInstant()).thenReturn(ofEpochMilli(234L), ofEpochMilli(1234L));
         step.run(testCase, bus, state, false);
 
@@ -266,11 +265,10 @@ class PickleStepTestStepTest {
         TestStepStarted started = (TestStepStarted) allValues.get(0);
         TestStepFinished finished = (TestStepFinished) allValues.get(2);
 
-        assertAll("Checking TestStep",
+        assertAll(
             () -> assertThat(started.getInstant(), is(equalTo(ofEpochMilli(234L)))),
             () -> assertThat(finished.getInstant(), is(equalTo(ofEpochMilli(1234L)))),
-            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L))))
-        );
+            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L)))));
     }
 
 }

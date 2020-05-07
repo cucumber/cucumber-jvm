@@ -29,7 +29,7 @@ class StatsTest {
 
         assertThat(baos.toString(), startsWith(String.format(
             "0 Scenarios%n" +
-                "0 Steps%n")));
+                    "0 Steps%n")));
     }
 
     private Stats createMonochromeSummaryCounter() {
@@ -51,7 +51,7 @@ class StatsTest {
 
         assertThat(baos.toString(), startsWith(String.format(
             "1 Scenarios (1 passed)%n" +
-                "3 Steps (3 passed)%n")));
+                    "3 Steps (3 passed)%n")));
     }
 
     @Test
@@ -68,8 +68,8 @@ class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
-            "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
-            "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
+                "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
+                "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
     }
 
     private void addOneStepScenario(Stats counter, Status status) {
@@ -91,15 +91,15 @@ class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         String colorSubCounts = "" +
-            AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.RED + "1 ambiguous" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.CYAN + "1 skipped" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
+                AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.RED + "1 ambiguous" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.CYAN + "1 skipped" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
         assertThat(baos.toString(), containsString(String.format("" +
-            "6 Scenarios (" + colorSubCounts + ")%n" +
-            "6 Steps (" + colorSubCounts + ")%n")));
+                "6 Scenarios (" + colorSubCounts + ")%n" +
+                "6 Steps (" + colorSubCounts + ")%n")));
     }
 
     private Stats createColorSummaryCounter() {
@@ -184,19 +184,19 @@ class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
-            "Failed scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Ambiguous scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Pending scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Undefined scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "4 Scenarios")));
+                "Failed scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Ambiguous scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Pending scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Undefined scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "4 Scenarios")));
     }
 
     @Test
@@ -215,19 +215,19 @@ class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
-            "Failed scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Ambiguous scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Pending scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Undefined scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "4 Scenarios")));
+                "Failed scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Ambiguous scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Pending scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Undefined scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "4 Scenarios")));
     }
 
 }

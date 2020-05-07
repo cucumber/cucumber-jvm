@@ -50,11 +50,9 @@ public final class TestCaseResultObserver implements AutoCloseable {
 
     private void handleSnippetSuggestedEvent(SnippetsSuggestedEvent event) {
         snippetsPerStep.putIfAbsent(new StepLocation(
-                event.getUri(),
-                event.getStepLine()
-            ),
-            event.getSnippets()
-        );
+            event.getUri(),
+            event.getStepLine()),
+            event.getSnippets());
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -75,9 +73,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
         List<String> snippets = snippetsPerStep.get(
             new StepLocation(
                 pickleStepTestStep.getUri(),
-                pickleStepTestStep.getStepLine()
-            )
-        );
+                pickleStepTestStep.getStepLine()));
         suggestions.add(new Suggestion(stepText, snippets));
     }
 
@@ -86,10 +82,10 @@ public final class TestCaseResultObserver implements AutoCloseable {
     }
 
     public void assertTestCasePassed(
-        Supplier<Throwable> testCaseSkipped,
-        Function<Throwable, Throwable> testCaseSkippedWithException,
-        Function<List<Suggestion>, Throwable> testCaseWasUndefined,
-        Function<Throwable, Throwable> testCaseWasPending
+            Supplier<Throwable> testCaseSkipped,
+            Function<Throwable, Throwable> testCaseSkippedWithException,
+            Function<List<Suggestion>, Throwable> testCaseWasUndefined,
+            Function<Throwable, Throwable> testCaseWasPending
     ) {
         Status status = result.getStatus();
         if (status.is(PASSED)) {

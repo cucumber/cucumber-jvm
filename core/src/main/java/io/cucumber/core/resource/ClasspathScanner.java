@@ -39,9 +39,9 @@ public final class ClasspathScanner {
 
     public <T> List<Class<? extends T>> scanForSubClassesInPackage(String packageName, Class<T> parentClass) {
         return scanForClassesInPackage(packageName, isSubClassOf(parentClass))
-            .stream()
-            .map(aClass -> (Class<? extends T>) aClass.asSubclass(parentClass))
-            .collect(toList());
+                .stream()
+                .map(aClass -> (Class<? extends T>) aClass.asSubclass(parentClass))
+                .collect(toList());
     }
 
     private List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classFilter) {
@@ -61,10 +61,10 @@ public final class ClasspathScanner {
 
     private List<Class<?>> findClassesForUris(List<URI> baseUris, String packageName, Predicate<Class<?>> classFilter) {
         return baseUris.stream()
-            .map(baseUri -> findClassesForUri(baseUri, packageName, classFilter))
-            .flatMap(Collection::stream)
-            .distinct()
-            .collect(toList());
+                .map(baseUri -> findClassesForUri(baseUri, packageName, classFilter))
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(toList());
     }
 
     private List<Class<?>> findClassesForUri(URI baseUri, String packageName, Predicate<Class<?>> classFilter) {
@@ -72,8 +72,7 @@ public final class ClasspathScanner {
         pathScanner.findResourcesForUri(
             baseUri,
             path -> isNotModuleInfo(path) && isNotPackageInfo(path) && isClassFile(path),
-            processClassFiles(packageName, classFilter, classes::add)
-        );
+            processClassFiles(packageName, classFilter, classes::add));
         return classes;
     }
 
@@ -89,15 +88,17 @@ public final class ClasspathScanner {
         return file.getFileName().toString().endsWith(CLASS_FILE_SUFFIX);
     }
 
-    private Function<Path, Consumer<Path>> processClassFiles(String basePackageName,
-                                                             Predicate<Class<?>> classFilter,
-                                                             Consumer<Class<?>> classConsumer) {
+    private Function<Path, Consumer<Path>> processClassFiles(
+            String basePackageName,
+            Predicate<Class<?>> classFilter,
+            Consumer<Class<?>> classConsumer
+    ) {
         return baseDir -> classFile -> {
             String fqn = determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
             try {
                 Optional.of(getClassLoader().loadClass(fqn))
-                    .filter(classFilter)
-                    .ifPresent(classConsumer);
+                        .filter(classFilter)
+                        .ifPresent(classConsumer);
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
                 log.debug(e, () -> "Failed to load class " + fqn);
             }

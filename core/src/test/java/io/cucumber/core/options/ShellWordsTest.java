@@ -34,7 +34,8 @@ class ShellWordsTest {
 
     @Test
     void parses_both_single_and_double_quoted_strings() {
-        assertThat(ShellWords.parse("--name \"The Fox\" --fur 'Brown White'"), is(equalTo(asList("--name", "The Fox", "--fur", "Brown White"))));
+        assertThat(ShellWords.parse("--name \"The Fox\" --fur 'Brown White'"),
+            is(equalTo(asList("--name", "The Fox", "--fur", "Brown White"))));
     }
 
     @Test

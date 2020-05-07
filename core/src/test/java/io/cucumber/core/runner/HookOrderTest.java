@@ -30,10 +30,9 @@ class HookOrderTest {
 
     private final StubStepDefinition stepDefinition = new StubStepDefinition("I have 4 cukes in my belly");
     private final Feature feature = TestFeatureParser.parse("" +
-        "Feature: Test feature\n" +
-        "  Scenario: Test scenario\n" +
-        "     Given I have 4 cukes in my belly\n"
-    );
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n");
     private final Pickle pickle = feature.getPickles().get(0);
 
     @Test
@@ -160,7 +159,6 @@ class HookOrderTest {
     void hooks_order_across_many_backends() {
         final List<HookDefinition> backend1Hooks = mockHooks(3, Integer.MAX_VALUE, 1);
         final List<HookDefinition> backend2Hooks = mockHooks(2, Integer.MAX_VALUE, 4);
-
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override

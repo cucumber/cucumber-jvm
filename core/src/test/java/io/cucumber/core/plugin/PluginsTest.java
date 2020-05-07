@@ -23,7 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith({ MockitoExtension.class })
 class PluginsTest {
 
     private final PluginFactory pluginFactory = new PluginFactory();

@@ -62,4 +62,3 @@ public final class RerunFormatter implements ConcurrentEventListener {
     }
 
 }
-

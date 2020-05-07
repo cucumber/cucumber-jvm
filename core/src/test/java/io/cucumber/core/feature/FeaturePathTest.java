@@ -20,8 +20,7 @@ class FeaturePathTest {
     void can_parse_empty_feature_path() {
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            () -> FeaturePath.parse("")
-        );
+            () -> FeaturePath.parse(""));
         assertThat(exception.getMessage(), is("featureIdentifier may not be empty"));
     }
 
@@ -30,8 +29,7 @@ class FeaturePathTest {
         URI uri = FeaturePath.parse("classpath:/");
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/")));
     }
 
     @Test
@@ -41,8 +39,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/")));
     }
 
     @Test
@@ -51,8 +48,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to/file.feature")));
     }
 
     @Test
@@ -61,8 +57,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to")));
     }
 
     @Test
@@ -72,8 +67,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to/file.feature")));
     }
 
     @Test
@@ -83,8 +77,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to")));
     }
 
     @Test
@@ -93,8 +86,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature")));
     }
 
     @Test
@@ -112,8 +104,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature")));
     }
 
     @Test
@@ -123,8 +114,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature")));
     }
 
     @Test
@@ -134,8 +124,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is(is("file"))),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature")));
     }
 
     @Test
@@ -144,8 +133,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is(is("file"))),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to the/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to the/file.feature")));
     }
 
     @Test
@@ -155,8 +143,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature"))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature")));
     }
 
 }

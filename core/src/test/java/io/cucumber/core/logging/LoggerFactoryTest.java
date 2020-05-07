@@ -13,7 +13,6 @@ import java.util.logging.LogRecord;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-
 class LoggerFactoryTest {
 
     private final Exception exception = new Exception();
@@ -67,7 +66,6 @@ class LoggerFactoryTest {
                 description.appendValue(throwable);
             }
 
-
             @Override
             protected boolean matchesSafely(LogRecord logRecord, Description description) {
                 description.appendText("error=");
@@ -78,8 +76,8 @@ class LoggerFactoryTest {
                 description.appendValue(logRecord.getThrown());
 
                 return Objects.equals(logRecord.getMessage(), message)
-                    && Objects.equals(logRecord.getLevel(), level)
-                    && Objects.equals(logRecord.getThrown(), throwable);
+                        && Objects.equals(logRecord.getLevel(), level)
+                        && Objects.equals(logRecord.getThrown(), throwable);
             }
         };
     }
@@ -107,7 +105,6 @@ class LoggerFactoryTest {
         logger.config(exception, () -> "Config");
         assertThat(logged, logRecord("Config", Level.CONFIG, exception));
     }
-
 
     @Test
     void debug() {

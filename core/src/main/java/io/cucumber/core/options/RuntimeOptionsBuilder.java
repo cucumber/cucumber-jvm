@@ -145,8 +145,8 @@ public final class RuntimeOptionsBuilder {
 
     private boolean hasFeaturesWithLineFilters() {
         return parsedRerunPaths != null || !parsedFeaturePaths.stream()
-            .map(FeatureWithLines::lines)
-            .allMatch(Set::isEmpty);
+                .map(FeatureWithLines::lines)
+                .allMatch(Set::isEmpty);
     }
 
     public RuntimeOptionsBuilder setCount(int count) {
@@ -211,7 +211,6 @@ public final class RuntimeOptionsBuilder {
         this.addDefaultFeaturePathIfAbsent = true;
         return this;
     }
-
 
     public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.parsedObjectFactoryClass = objectFactoryClass;

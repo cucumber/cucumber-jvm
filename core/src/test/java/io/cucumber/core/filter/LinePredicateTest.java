@@ -19,14 +19,13 @@ class LinePredicateTest {
     private final Feature feature = TestFeatureParser.parse(
         "file:path/file.feature",
         "" +
-            "Feature: Test feature\n" +
-            "  Scenario Outline: Test scenario\n" +
-            "     Given I have 4 <thing> in my belly\n" +
-            "     Examples:\n" +
-            "       | thing    | \n" +
-            "       | cucumber | \n" +
-            "       | gherkin  | \n"
-    );
+                "Feature: Test feature\n" +
+                "  Scenario Outline: Test scenario\n" +
+                "     Given I have 4 <thing> in my belly\n" +
+                "     Examples:\n" +
+                "       | thing    | \n" +
+                "       | cucumber | \n" +
+                "       | gherkin  | \n");
     private final Pickle pickle = feature.getPickles().get(0);
 
     @Test
@@ -36,8 +35,7 @@ class LinePredicateTest {
         // but all pickles from path/file.feature shall also be executed.
         LinePredicate predicate = new LinePredicate(singletonMap(
             URI.create("file:another_path/file.feature"),
-            singletonList(8)
-        ));
+            singletonList(8)));
         assertTrue(predicate.test(pickle));
     }
 
@@ -45,8 +43,7 @@ class LinePredicateTest {
     void matches_pickles_for_any_line_in_predicate() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             URI.create("file:path/file.feature"),
-            asList(2, 4)
-        ));
+            asList(2, 4)));
         assertTrue(predicate.test(pickle));
     }
 
@@ -54,8 +51,7 @@ class LinePredicateTest {
     void matches_pickles_on_scenario_location_of_the_pickle() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             URI.create("file:path/file.feature"),
-            singletonList(2)
-        ));
+            singletonList(2)));
         assertTrue(predicate.test(pickle));
     }
 
@@ -63,8 +59,7 @@ class LinePredicateTest {
     void matches_pickles_on_example_location_of_the_pickle() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             URI.create("file:path/file.feature"),
-            singletonList(6)
-        ));
+            singletonList(6)));
         assertTrue(predicate.test(pickle));
     }
 
@@ -72,8 +67,7 @@ class LinePredicateTest {
     void does_not_matches_pickles_not_on_any_line_of_the_predicate() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             new File("path/file.feature").toURI(),
-            singletonList(4)
-        ));
+            singletonList(4)));
         assertFalse(predicate.test(pickle));
     }
 

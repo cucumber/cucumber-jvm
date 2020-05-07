@@ -62,8 +62,7 @@ class CachingGlueTest {
 
         DuplicateStepDefinitionException exception = assertThrows(
             DuplicateStepDefinitionException.class,
-            () -> glue.prepareGlue(stepTypeRegistry)
-        );
+            () -> glue.prepareGlue(stepTypeRegistry));
         assertThat(exception.getMessage(), equalTo("Duplicate step definitions in foo.bf:10 and bar.bf:90"));
     }
 
@@ -74,13 +73,11 @@ class CachingGlueTest {
 
         DuplicateDefaultParameterTransformers exception = assertThrows(
             DuplicateDefaultParameterTransformers.class,
-            () -> glue.prepareGlue(stepTypeRegistry)
-        );
+            () -> glue.prepareGlue(stepTypeRegistry));
         assertThat(exception.getMessage(), equalTo("" +
-            "There may not be more then one default parameter transformer. Found:\n" +
-            " - mocked default parameter transformer\n" +
-            " - mocked default parameter transformer\n"
-        ));
+                "There may not be more then one default parameter transformer. Found:\n" +
+                " - mocked default parameter transformer\n" +
+                " - mocked default parameter transformer\n"));
     }
 
     @Test
@@ -90,13 +87,11 @@ class CachingGlueTest {
 
         DuplicateDefaultDataTableEntryTransformers exception = assertThrows(
             DuplicateDefaultDataTableEntryTransformers.class,
-            () -> glue.prepareGlue(stepTypeRegistry)
-        );
+            () -> glue.prepareGlue(stepTypeRegistry));
         assertThat(exception.getMessage(), equalTo("" +
-            "There may not be more then one default data table entry. Found:\n" +
-            " - mocked default data table entry transformer\n" +
-            " - mocked default data table entry transformer\n"
-        ));
+                "There may not be more then one default data table entry. Found:\n" +
+                " - mocked default data table entry transformer\n" +
+                " - mocked default data table entry transformer\n"));
     }
 
     @Test
@@ -106,19 +101,18 @@ class CachingGlueTest {
 
         DuplicateDefaultDataTableCellTransformers exception = assertThrows(
             DuplicateDefaultDataTableCellTransformers.class,
-            () -> glue.prepareGlue(stepTypeRegistry)
-        );
+            () -> glue.prepareGlue(stepTypeRegistry));
         assertThat(exception.getMessage(), equalTo("" +
-            "There may not be more then one default table cell transformers. Found:\n" +
-            " - mocked default data table cell transformer\n" +
-            " - mocked default data table cell transformer\n"
-        ));
+                "There may not be more then one default table cell transformers. Found:\n" +
+                " - mocked default data table cell transformer\n" +
+                " - mocked default data table cell transformer\n"));
     }
 
     @Test
     void removes_glue_that_is_scenario_scoped() {
         // This test is a bit fragile - it is testing state, not behaviour.
-        // But it was too much hassle creating a better test without refactoring RuntimeGlue
+        // But it was too much hassle creating a better test without refactoring
+        // RuntimeGlue
         // and probably some of its immediate collaborators... Aslak.
 
         glue.addStepDefinition(new MockedScenarioScopedStepDefinition("pattern"));
@@ -135,7 +129,7 @@ class CachingGlueTest {
 
         glue.prepareGlue(stepTypeRegistry);
 
-        assertAll("Checking Glue",
+        assertAll(
             () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(1))),
             () -> assertThat(glue.getBeforeHooks().size(), is(equalTo(1))),
             () -> assertThat(glue.getAfterHooks().size(), is(equalTo(1))),
@@ -146,12 +140,11 @@ class CachingGlueTest {
             () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(1))),
             () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(1))),
             () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(1))),
-            () -> assertThat(glue.getDocStringTypeDefinitions().size(), is(equalTo(1)))
-        );
+            () -> assertThat(glue.getDocStringTypeDefinitions().size(), is(equalTo(1))));
 
         glue.removeScenarioScopedGlue();
 
-        assertAll("Checking Glue",
+        assertAll(
             () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(0))),
             () -> assertThat(glue.getBeforeHooks().size(), is(equalTo(0))),
             () -> assertThat(glue.getAfterHooks().size(), is(equalTo(0))),
@@ -162,8 +155,7 @@ class CachingGlueTest {
             () -> assertThat(glue.getDefaultParameterTransformers().size(), is(equalTo(0))),
             () -> assertThat(glue.getDefaultDataTableCellTransformers().size(), is(equalTo(0))),
             () -> assertThat(glue.getDefaultDataTableEntryTransformers().size(), is(equalTo(0))),
-            () -> assertThat(glue.getDocStringTypeDefinitions().size(), is(equalTo(0)))
-        );
+            () -> assertThat(glue.getDocStringTypeDefinitions().size(), is(equalTo(0))));
     }
 
     @Test
@@ -178,10 +170,9 @@ class CachingGlueTest {
 
     private static Step getPickleStep(String text) {
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + text + "\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given " + text + "\n");
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -202,8 +193,7 @@ class CachingGlueTest {
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
 
-
-        //check cache
+        // check cache
         assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
         assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
@@ -228,29 +218,28 @@ class CachingGlueTest {
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
-        //check cache
+        // check cache
         assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
         assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
-        //check arguments
+        // check arguments
         assertThat(((DataTable) match1.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 1")));
 
-        //check second match
+        // check second match
         Step pickleStep2 = getPickleStepWithSingleCellTable(stepText, "cell 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(uri, pickleStep2);
 
-        //check arguments
+        // check arguments
         assertThat(((DataTable) match2.getArguments().get(0).getValue()).cell(0, 0), is(equalTo("cell 2")));
     }
 
     private static Step getPickleStepWithSingleCellTable(String stepText, String cell) {
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + stepText + "\n" +
-            "       | " + cell + " |\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given " + stepText + "\n" +
+                "       | " + cell + " |\n");
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -271,30 +260,29 @@ class CachingGlueTest {
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
 
-        //check cache
+        // check cache
         assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
         assertThat(coreStepDefinition.getStepDefinition(), is(equalTo(stepDefinition1)));
 
-        //check arguments
+        // check arguments
         assertThat(match1.getArguments().get(0).getValue(), is(equalTo("doc string 1")));
 
-        //check second match
+        // check second match
         Step pickleStep2 = getPickleStepWithDocString(stepText, "doc string 2");
         PickleStepDefinitionMatch match2 = glue.stepDefinitionMatch(uri, pickleStep2);
-        //check arguments
+        // check arguments
         assertThat(match2.getArguments().get(0).getValue(), is(equalTo("doc string 2")));
     }
 
     private static Step getPickleStepWithDocString(String stepText, String doc) {
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + stepText + "\n" +
-            "       \"\"\"\n" +
-            "       " + doc + "\n" +
-            "       \"\"\"\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given " + stepText + "\n" +
+                "       \"\"\"\n" +
+                "       " + doc + "\n" +
+                "       \"\"\"\n");
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -305,11 +293,9 @@ class CachingGlueTest {
         String stepText = "pattern1";
         Step pickleStep1 = getPickleStep(stepText);
 
-
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition1);
         glue.prepareGlue(stepTypeRegistry);
-
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
@@ -330,11 +316,9 @@ class CachingGlueTest {
         String stepText = "pattern1";
         Step pickleStep1 = getPickleStep(stepText);
 
-
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition1);
         glue.prepareGlue(stepTypeRegistry);
-
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
@@ -360,7 +344,7 @@ class CachingGlueTest {
         URI uri = URI.create("file:path/to.feature");
 
         checkAmbiguousCalled(uri);
-        //try again to verify if we don't cache when there is ambiguous step
+        // try again to verify if we don't cache when there is ambiguous step
         checkAmbiguousCalled(uri);
     }
 
@@ -386,9 +370,9 @@ class CachingGlueTest {
         glue.addBeforeHook(hookDefinition3);
 
         List<HookDefinition> hooks = glue.getBeforeHooks()
-            .stream()
-            .map(CoreHookDefinition::getDelegate)
-            .collect(Collectors.toList());
+                .stream()
+                .map(CoreHookDefinition::getDelegate)
+                .collect(Collectors.toList());
 
         assertThat(hooks, contains(hookDefinition1, hookDefinition2, hookDefinition3));
     }
@@ -403,9 +387,9 @@ class CachingGlueTest {
         glue.addAfterHook(hookDefinition3);
 
         List<HookDefinition> hooks = glue.getAfterHooks()
-            .stream()
-            .map(CoreHookDefinition::getDelegate)
-            .collect(Collectors.toList());
+                .stream()
+                .map(CoreHookDefinition::getDelegate)
+                .collect(Collectors.toList());
 
         assertThat(hooks, contains(hookDefinition3, hookDefinition2, hookDefinition1));
     }
@@ -420,15 +404,14 @@ class CachingGlueTest {
         glue.addBeforeHook(hookDefinition3);
 
         List<HookDefinition> hooks = glue.getBeforeHooks()
-            .stream()
-            .map(CoreHookDefinition::getDelegate)
-            .collect(Collectors.toList());
+                .stream()
+                .map(CoreHookDefinition::getDelegate)
+                .collect(Collectors.toList());
 
         assertThat(hooks, contains(hookDefinition2, hookDefinition1, hookDefinition3));
     }
 
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
-
 
         MockedScenarioScopedStepDefinition(String pattern, Type... types) {
             super(pattern, types);
@@ -477,7 +460,6 @@ class CachingGlueTest {
         }
 
     }
-
 
     private static class MockedHookDefinition implements HookDefinition {
 
@@ -531,7 +513,6 @@ class CachingGlueTest {
             this.order = order;
         }
 
-
         @Override
         public boolean isDefinedAt(StackTraceElement stackTraceElement) {
             return false;
@@ -567,7 +548,8 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDefaultParameterTransformer implements DefaultParameterTransformerDefinition, ScenarioScoped {
+    private static class MockedDefaultParameterTransformer
+            implements DefaultParameterTransformerDefinition, ScenarioScoped {
 
         @Override
         public ParameterByTypeTransformer parameterByTypeTransformer() {
@@ -586,7 +568,8 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDefaultDataTableCellTransformer implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
+    private static class MockedDefaultDataTableCellTransformer
+            implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
 
         @Override
         public TableCellByTypeTransformer tableCellByTypeTransformer() {
@@ -605,7 +588,8 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDefaultDataTableEntryTransformer implements DefaultDataTableEntryTransformerDefinition, ScenarioScoped {
+    private static class MockedDefaultDataTableEntryTransformer
+            implements DefaultDataTableEntryTransformerDefinition, ScenarioScoped {
 
         @Override
         public boolean headersToProperties() {

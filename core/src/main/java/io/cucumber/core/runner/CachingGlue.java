@@ -42,8 +42,8 @@ import java.util.TreeMap;
 final class CachingGlue implements Glue {
 
     private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
-        .comparingInt(CoreHookDefinition::getOrder)
-        .thenComparing(ScenarioScoped.class::isInstance);
+            .comparingInt(CoreHookDefinition::getOrder)
+            .thenComparing(ScenarioScoped.class::isInstance);
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
@@ -58,16 +58,15 @@ final class CachingGlue implements Glue {
     private final List<CoreHookDefinition> afterHooks = new ArrayList<>();
 
     /*
-     * Storing the pattern that matches the step text allows us to cache the rather slow
-     * regex comparisons in `stepDefinitionMatches`.
-     * This cache does not need to be cleaned. The matching pattern be will used to look
-     * up a pickle specific step definition from `stepDefinitionsByPattern`.
+     * Storing the pattern that matches the step text allows us to cache the
+     * rather slow regex comparisons in `stepDefinitionMatches`. This cache does
+     * not need to be cleaned. The matching pattern be will used to look up a
+     * pickle specific step definition from `stepDefinitionsByPattern`.
      */
     private final Map<String, String> stepPatternByStepText = new HashMap<>();
     private final Map<String, CoreStepDefinition> stepDefinitionsByPattern = new TreeMap<>();
 
     private final EventBus bus;
-
 
     CachingGlue(EventBus bus) {
         this.bus = bus;
@@ -118,12 +117,17 @@ final class CachingGlue implements Glue {
     }
 
     @Override
-    public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
-        defaultDataTableEntryTransformers.add(CoreDefaultDataTableEntryTransformerDefinition.create(defaultDataTableEntryTransformer));
+    public void addDefaultDataTableEntryTransformer(
+            DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+    ) {
+        defaultDataTableEntryTransformers
+                .add(CoreDefaultDataTableEntryTransformerDefinition.create(defaultDataTableEntryTransformer));
     }
 
     @Override
-    public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+    public void addDefaultDataTableCellTransformer(
+            DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer
+    ) {
         defaultDataTableCellTransformers.add(defaultDataTableCellTransformer);
     }
 
@@ -224,12 +228,14 @@ final class CachingGlue implements Glue {
             throw new DuplicateDefaultDataTableCellTransformers(defaultDataTableCellTransformers);
         }
 
-        // TODO: Redefine hooks for each scenario, similar to how we're doing for CoreStepDefinition
+        // TODO: Redefine hooks for each scenario, similar to how we're doing
+        // for CoreStepDefinition
         beforeHooks.forEach(this::emitHook);
 
         stepDefinitions.forEach(stepDefinition -> {
             StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition, expression);
+            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition,
+                expression);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
             if (previous != null) {
                 throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
@@ -241,47 +247,39 @@ final class CachingGlue implements Glue {
         afterHooks.forEach(this::emitHook);
     }
 
-
     private void emitParameterTypeDefined(ParameterType<?> parameterType) {
         bus.send(Messages.Envelope.newBuilder()
-            .setParameterType(Messages.ParameterType.newBuilder()
-                .setId(bus.generateId().toString())
-                .setName(parameterType.getName())
-                .addAllRegularExpressions(parameterType.getRegexps())
-                .setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch())
-                .setUseForSnippets(parameterType.useForSnippets()))
-            .build()
-        );
+                .setParameterType(Messages.ParameterType.newBuilder()
+                        .setId(bus.generateId().toString())
+                        .setName(parameterType.getName())
+                        .addAllRegularExpressions(parameterType.getRegexps())
+                        .setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch())
+                        .setUseForSnippets(parameterType.useForSnippets()))
+                .build());
     }
 
     private void emitHook(CoreHookDefinition hook) {
         bus.send(Messages.Envelope.newBuilder()
-            .setHook(Messages.Hook.newBuilder()
-                .setId(hook.getId().toString())
-                .setTagExpression(hook.getTagExpression()))
-            .build()
-        );
+                .setHook(Messages.Hook.newBuilder()
+                        .setId(hook.getId().toString())
+                        .setTagExpression(hook.getTagExpression()))
+                .build());
     }
 
     private void emitStepDefined(CoreStepDefinition stepDefinition) {
         bus.send(new StepDefinedEvent(
-                bus.getInstant(),
-                new io.cucumber.plugin.event.StepDefinition(
-                    stepDefinition.getStepDefinition().getLocation(),
-                    stepDefinition.getExpression().getSource()
-                )
-            )
-        );
+            bus.getInstant(),
+            new io.cucumber.plugin.event.StepDefinition(
+                stepDefinition.getStepDefinition().getLocation(),
+                stepDefinition.getExpression().getSource())));
         bus.send(Messages.Envelope.newBuilder()
-            .setStepDefinition(
-                Messages.StepDefinition.newBuilder()
-                    .setId(stepDefinition.getId().toString())
-                    .setPattern(StepDefinitionPattern.newBuilder()
-                        .setSource(stepDefinition.getExpression().getSource())
-                        .setType(getExpressionType(stepDefinition))
-                    ))
-            .build()
-        );
+                .setStepDefinition(
+                    Messages.StepDefinition.newBuilder()
+                            .setId(stepDefinition.getId().toString())
+                            .setPattern(StepDefinitionPattern.newBuilder()
+                                    .setSource(stepDefinition.getExpression().getSource())
+                                    .setType(getExpressionType(stepDefinition))))
+                .build());
     }
 
     private StepDefinitionPatternType getExpressionType(CoreStepDefinition stepDefinition) {
@@ -303,7 +301,6 @@ final class CachingGlue implements Glue {
         return findStepDefinitionMatch(uri, step);
     }
 
-
     private PickleStepDefinitionMatch cachedStepDefinitionMatch(URI uri, Step step) {
         String stepDefinitionPattern = stepPatternByStepText.get(step.getText());
         if (stepDefinitionPattern == null) {
@@ -315,15 +312,19 @@ final class CachingGlue implements Glue {
             return null;
         }
 
-        // Step definition arguments consists of parameters included in the step text and
-        // gherkin step arguments (doc string and data table) which are not included in
-        // the step text. As such the step definition arguments can not be cached and
+        // Step definition arguments consists of parameters included in the step
+        // text and
+        // gherkin step arguments (doc string and data table) which are not
+        // included in
+        // the step text. As such the step definition arguments can not be
+        // cached and
         // must be recreated each time.
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         return new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), uri, step);
     }
 
-    private PickleStepDefinitionMatch findStepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {
+    private PickleStepDefinitionMatch findStepDefinitionMatch(URI uri, Step step)
+            throws AmbiguousStepDefinitionsException {
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         if (matches.isEmpty()) {
             return null;

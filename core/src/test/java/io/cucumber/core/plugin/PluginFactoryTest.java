@@ -55,8 +55,7 @@ class PluginFactoryTest {
     void fails_to_instantiates_html_plugin_with_dir_arg() {
         assertThrows(
             IllegalArgumentException.class,
-            () -> fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath()))
-        );
+            () -> fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath())));
     }
 
     @Test
@@ -65,8 +64,7 @@ class PluginFactoryTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         actualThrown.printStackTrace();
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFile. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFile:DIR|FILE|URL"
-        )));
+            "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFile. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFile:DIR|FILE|URL")));
     }
 
     @Test
@@ -101,14 +99,16 @@ class PluginFactoryTest {
         try {
             System.setOut(new PrintStream(mockSystemOut));
 
-            // Need to create a new plugin factory here since we need it to pick up the new value of System.out
+            // Need to create a new plugin factory here since we need it to pick
+            // up the new value of System.out
             fc = new PluginFactory();
 
             ProgressFormatter plugin = (ProgressFormatter) fc.create(parse("progress"));
             EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID);
             plugin.setEventPublisher(bus);
             Result result = new Result(Status.PASSED, ZERO, null);
-            TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class), mock(PickleStepTestStep.class), result);
+            TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class),
+                mock(PickleStepTestStep.class), result);
             bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not(equalTo(""))));
@@ -126,9 +126,8 @@ class PluginFactoryTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream " +
-                "and io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream use it. " +
-                "If you use more than one plugin you must specify output path with io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream:DIR|FILE|URL"
-        )));
+                    "and io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream use it. " +
+                    "If you use more than one plugin you must specify output path with io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream:DIR|FILE|URL")));
     }
 
     @Test
@@ -145,7 +144,8 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_file_or_empty_arg_plugin_with_arg() throws IOException {
-        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc.create(parse(WantsFileOrEmpty.class.getName() + ":" + File.createTempFile("blah", "txt")));
+        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc
+                .create(parse(WantsFileOrEmpty.class.getName() + ":" + File.createTempFile("blah", "txt")));
         assertThat(plugin.out, is(notNullValue()));
     }
 
@@ -158,7 +158,8 @@ class PluginFactoryTest {
     @Test
     void instantiates_custom_deprecated_appendable_arg_plugin() throws IOException {
         String tempDirPath = TempDir.createTempFile().getAbsolutePath();
-        WantsAppendable plugin = (WantsAppendable) fc.create(parse(WantsAppendable.class.getName() + ":" + tempDirPath));
+        WantsAppendable plugin = (WantsAppendable) fc
+                .create(parse(WantsAppendable.class.getName() + ":" + tempDirPath));
         plugin.writeAndClose("hello");
         String written = new BufferedReader(new FileReader(tempDirPath)).lines().collect(Collectors.joining());
         assertThat(written, is(equalTo("hello")));
@@ -182,8 +183,7 @@ class PluginFactoryTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         actualThrown.printStackTrace();
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "class io.cucumber.core.plugin.PluginFactoryTest$WantsTooMuch must have at least one empty constructor or a constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]"
-        )));
+            "class io.cucumber.core.plugin.PluginFactoryTest$WantsTooMuch must have at least one empty constructor or a constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]")));
     }
 
     @Test
@@ -192,8 +192,7 @@ class PluginFactoryTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         actualThrown.printStackTrace();
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "class io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL must have exactly one constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]"
-        )));
+            "class io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL must have exactly one constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]")));
     }
 
     @Test
@@ -202,8 +201,7 @@ class PluginFactoryTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         actualThrown.printStackTrace();
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL:DIR|FILE|URL"
-        )));
+            "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL:DIR|FILE|URL")));
     }
 
     public static class WantsOutputStream extends StubFormatter {

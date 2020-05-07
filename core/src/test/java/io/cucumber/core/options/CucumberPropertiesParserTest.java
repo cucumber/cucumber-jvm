@@ -57,18 +57,17 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
-            URI.create("classpath:com/example.feature")
-        ));
+            URI.create("classpath:com/example.feature")));
     }
 
     @Test
     void should_parse_features_list() {
-        properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example/app.feature, classpath:com/example/other.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME,
+            "classpath:com/example/app.feature, classpath:com/example/other.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
             URI.create("classpath:com/example/app.feature"),
-            URI.create("classpath:com/example/other.feature")
-        ));
+            URI.create("classpath:com/example/other.feature")));
     }
 
     @Test
@@ -76,8 +75,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FILTER_NAME_PROPERTY_NAME, "Test.*");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getNameFilters().get(0).pattern(), equalTo(
-            "Test.*"
-        ));
+            "Test.*"));
     }
 
     @Test
@@ -85,8 +83,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FILTER_TAGS_PROPERTY_NAME, "@No and not @Never");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getTagExpressions(), contains(
-            "@No and not @Never"
-        ));
+            "@No and not @Never"));
     }
 
     @Test
@@ -94,8 +91,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getGlue(), contains(
-            URI.create("classpath:/com/example/steps")
-        ));
+            URI.create("classpath:/com/example/steps")));
     }
 
     @Test
@@ -104,8 +100,7 @@ class CucumberPropertiesParserTest {
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getGlue(), contains(
             URI.create("classpath:/com/example/app/steps"),
-            URI.create("classpath:/com/example/other/steps")
-        ));
+            URI.create("classpath:/com/example/other/steps")));
     }
 
     @Test
@@ -142,8 +137,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.OBJECT_FACTORY_PROPERTY_NAME, "garbage");
         CucumberException exception = assertThrows(
             CucumberException.class,
-            () -> cucumberPropertiesParser.parse(properties).build()
-        );
+            () -> cucumberPropertiesParser.parse(properties).build());
         assertThat(exception.getMessage(), equalTo("Failed to parse 'cucumber.object-factory' with value 'garbage'"));
     }
 

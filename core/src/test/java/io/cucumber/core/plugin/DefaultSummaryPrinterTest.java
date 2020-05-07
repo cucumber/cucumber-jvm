@@ -25,8 +25,7 @@ class DefaultSummaryPrinterTest {
     private final DefaultSummaryPrinter summaryPrinter = new DefaultSummaryPrinter(out);
     private final EventBus bus = new TimeServiceEventBus(
         Clock.fixed(ofEpochSecond(0), ZoneId.of("UTC")),
-        UUID::randomUUID
-    );
+        UUID::randomUUID);
 
     @BeforeEach
     void setup() {
@@ -40,34 +39,30 @@ class DefaultSummaryPrinterTest {
             URI.create("classpath:com/example.feature"),
             12,
             13,
-            singletonList("snippet")
-        ));
+            singletonList("snippet")));
 
         bus.send(new SnippetsSuggestedEvent(
             bus.getInstant(),
             URI.create("classpath:com/example.feature"),
             12,
             14,
-            singletonList("snippet")
-        ));
+            singletonList("snippet")));
 
         bus.send(new TestRunFinished(
-            bus.getInstant()
-        ));
+            bus.getInstant()));
 
         assertThat(new String(out.toByteArray(), UTF_8), equalToCompressingWhiteSpace("" +
-            "\n" +
-            "0 Scenarios\n" +
-            "0 Steps\n" +
-            "0m0.000s\n" +
-            "\n" +
-            "\n" +
-            "You can implement missing steps with the snippets below:\n" +
-            "\n" +
-            "snippet\n" +
-            "\n" +
-            "\n"
-        ));
+                "\n" +
+                "0 Scenarios\n" +
+                "0 Steps\n" +
+                "0m0.000s\n" +
+                "\n" +
+                "\n" +
+                "You can implement missing steps with the snippets below:\n" +
+                "\n" +
+                "snippet\n" +
+                "\n" +
+                "\n"));
 
     }
 

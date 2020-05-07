@@ -21,7 +21,9 @@ public interface Glue {
 
     void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer);
 
-    void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer);
+    void addDefaultDataTableEntryTransformer(
+            DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+    );
 
     void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer);
 

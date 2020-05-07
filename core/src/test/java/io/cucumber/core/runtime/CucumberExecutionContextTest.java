@@ -31,32 +31,31 @@ class CucumberExecutionContextTest {
     private final Options options = new RuntimeOptionsBuilder().build();
     private final ExitStatus exitStatus = new ExitStatus(options);
     private final RuntimeException failure = new IllegalStateException("failure runner");
-    private final CucumberExecutionContext context = new CucumberExecutionContext(bus, exitStatus, mock(RunnerSupplier.class));
+    private final CucumberExecutionContext context = new CucumberExecutionContext(bus, exitStatus,
+        mock(RunnerSupplier.class));
 
     @Test
     public void collects_and_rethrows_failures_in_runner() {
-        IllegalStateException thrown = assertThrows(IllegalStateException.class, () ->
-            context.runTestCase(runner -> {
-                throw failure;
-            }));
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> context.runTestCase(runner -> {
+            throw failure;
+        }));
         assertThat(thrown, is(failure));
         assertThat(context.getException().getCause(), is(failure));
     }
 
     @Test
     public void rethrows_but_does_not_collect_failures_in_test_case() {
-        IllegalStateException thrown = assertThrows(IllegalStateException.class, () ->
-            context.runTestCase(runner -> {
-                try (TestCaseResultObserver r = new TestCaseResultObserver(bus)) {
-                    bus.send(new TestCaseFinished(bus.getInstant(), mock(TestCase.class), new Result(Status.FAILED, Duration.ZERO, failure)));
-                    r.assertTestCasePassed(
-                        Exception::new,
-                        Function.identity(),
-                        (suggestions) -> new Exception(),
-                        Function.identity()
-                    );
-                }
-            }));
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> context.runTestCase(runner -> {
+            try (TestCaseResultObserver r = new TestCaseResultObserver(bus)) {
+                bus.send(new TestCaseFinished(bus.getInstant(), mock(TestCase.class),
+                    new Result(Status.FAILED, Duration.ZERO, failure)));
+                r.assertTestCasePassed(
+                    Exception::new,
+                    Function.identity(),
+                    (suggestions) -> new Exception(),
+                    Function.identity());
+            }
+        }));
         assertThat(thrown, is(failure));
         assertThat(context.getException(), nullValue());
     }
@@ -70,10 +69,9 @@ class CucumberExecutionContextTest {
         bus.registerHandlerFor(TestRunFinished.class, testRunFinished::add);
 
         context.startTestRun();
-        assertThrows(IllegalStateException.class, () ->
-            context.runTestCase(runner -> {
-                throw failure;
-            }));
+        assertThrows(IllegalStateException.class, () -> context.runTestCase(runner -> {
+            throw failure;
+        }));
         context.finishTestRun();
 
         assertThat(testRunStarted.get(0), notNullValue());

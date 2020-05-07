@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Formatter to measure performance of steps. Includes average and median step duration.
+ * Formatter to measure performance of steps. Includes average and median step
+ * duration.
  */
 public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
@@ -60,8 +61,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
             StepDefContainer stepDefContainer = new StepDefContainer(
                 usageEntry.getKey(),
-                createStepContainers(usageEntry.getValue())
-            );
+                createStepContainers(usageEntry.getValue()));
             stepDefContainers.add(stepDefContainer);
         }
 
@@ -72,7 +72,8 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     private void addUsageEntry(Result result, PickleStepTestStep testStep) {
         List<StepContainer> stepContainers = usageMap.computeIfAbsent(testStep.getPattern(), k -> new ArrayList<>());
         StepContainer stepContainer = findOrCreateStepContainer(testStep.getStepText(), stepContainers);
-        StepDuration stepDuration = new StepDuration(result.getDuration(), testStep.getUri() + ":" + testStep.getStepLine());
+        StepDuration stepDuration = new StepDuration(result.getDuration(),
+            testStep.getUri() + ":" + testStep.getStepLine());
         stepContainer.getDurations().add(stepDuration);
     }
 
@@ -84,13 +85,13 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     }
 
     private Gson gson() {
-        JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal, jsonSerializationContext) ->
-            new JsonPrimitive((double) duration.getNano() / NANOS_PER_SECOND);
+        JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
+                jsonSerializationContext) -> new JsonPrimitive((double) duration.getNano() / NANOS_PER_SECOND);
 
         return new GsonBuilder()
-            .registerTypeAdapter(Duration.class, durationJsonSerializer)
-            .setPrettyPrinting()
-            .create();
+                .registerTypeAdapter(Duration.class, durationJsonSerializer)
+                .setPrettyPrinting()
+                .create();
     }
 
     private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {

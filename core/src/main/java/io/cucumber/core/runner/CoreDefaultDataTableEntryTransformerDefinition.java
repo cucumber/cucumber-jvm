@@ -19,11 +19,14 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         this.transformer = delegate.headersToProperties() ? new ConvertingTransformer(transformer) : transformer;
     }
 
-    public static CoreDefaultDataTableEntryTransformerDefinition create(DefaultDataTableEntryTransformerDefinition definition) {
+    public static CoreDefaultDataTableEntryTransformerDefinition create(
+            DefaultDataTableEntryTransformerDefinition definition
+    ) {
         // Ideally we would avoid this by keeping the scenario scoped
         // glue in a different bucket from the globally scoped glue.
         if (definition instanceof ScenarioScoped) {
-            return new CoreDefaultDataTableEntryTransformerDefinition.ScenarioCoreDefaultDataTableEntryTransformerDefinition(definition);
+            return new CoreDefaultDataTableEntryTransformerDefinition.ScenarioCoreDefaultDataTableEntryTransformerDefinition(
+                definition);
         }
         return new CoreDefaultDataTableEntryTransformerDefinition(definition);
     }
@@ -48,7 +51,8 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         return delegate.getLocation();
     }
 
-    private static class ScenarioCoreDefaultDataTableEntryTransformerDefinition extends CoreDefaultDataTableEntryTransformerDefinition implements ScenarioScoped {
+    private static class ScenarioCoreDefaultDataTableEntryTransformerDefinition
+            extends CoreDefaultDataTableEntryTransformerDefinition implements ScenarioScoped {
 
         ScenarioCoreDefaultDataTableEntryTransformerDefinition(DefaultDataTableEntryTransformerDefinition delegate) {
             super(delegate);
@@ -66,7 +70,9 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         }
 
         @Override
-        public Object transform(Map<String, String> entryValue, Type toValueType, TableCellByTypeTransformer cellTransformer) throws Throwable {
+        public Object transform(
+                Map<String, String> entryValue, Type toValueType, TableCellByTypeTransformer cellTransformer
+        ) throws Throwable {
             return delegate.transform(converter.toCamelCase(entryValue), toValueType, cellTransformer);
         }
 

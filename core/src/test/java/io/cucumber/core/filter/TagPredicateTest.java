@@ -21,11 +21,10 @@ class TagPredicateTest {
 
     private Pickle createPickleWithTags(String... tags) {
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  " + String.join(" ", tags) + "\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
+                "Feature: Test feature\n" +
+                "  " + String.join(" ", tags) + "\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given I have 4 cukes in my belly\n");
         return feature.getPickles().get(0);
     }
 

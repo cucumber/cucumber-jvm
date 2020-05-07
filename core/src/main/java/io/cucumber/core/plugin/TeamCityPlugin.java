@@ -52,21 +52,33 @@ public class TeamCityPlugin implements EventListener {
     private static final String TEAMCITY_PREFIX = "##teamcity";
 
     private static final String TEMPLATE_ENTER_THE_MATRIX = TEAMCITY_PREFIX + "[enteredTheMatrix timestamp = '%s']";
-    private static final String TEMPLATE_TEST_RUN_STARTED = TEAMCITY_PREFIX + "[testSuiteStarted timestamp = '%s' name = 'Cucumber']";
-    private static final String TEMPLATE_TEST_RUN_FINISHED = TEAMCITY_PREFIX + "[testSuiteFinished timestamp = '%s' name = 'Cucumber']";
+    private static final String TEMPLATE_TEST_RUN_STARTED = TEAMCITY_PREFIX
+            + "[testSuiteStarted timestamp = '%s' name = 'Cucumber']";
+    private static final String TEMPLATE_TEST_RUN_FINISHED = TEAMCITY_PREFIX
+            + "[testSuiteFinished timestamp = '%s' name = 'Cucumber']";
 
-    private static final String TEMPLATE_TEST_SUITE_STARTED = TEAMCITY_PREFIX + "[testSuiteStarted timestamp = '%s' locationHint = '%s' name = '%s']";
-    private static final String TEMPLATE_TEST_SUITE_FINISHED = TEAMCITY_PREFIX + "[testSuiteFinished timestamp = '%s' name = '%s']";
+    private static final String TEMPLATE_TEST_SUITE_STARTED = TEAMCITY_PREFIX
+            + "[testSuiteStarted timestamp = '%s' locationHint = '%s' name = '%s']";
+    private static final String TEMPLATE_TEST_SUITE_FINISHED = TEAMCITY_PREFIX
+            + "[testSuiteFinished timestamp = '%s' name = '%s']";
 
-    private static final String TEMPLATE_TEST_STARTED = TEAMCITY_PREFIX + "[testStarted timestamp = '%s' locationHint = '%s' captureStandardOutput = 'true' name = '%s']";
-    private static final String TEMPLATE_TEST_FINISHED = TEAMCITY_PREFIX + "[testFinished timestamp = '%s' duration = '%s' name = '%s']";
-    private static final String TEMPLATE_TEST_FAILED = TEAMCITY_PREFIX + "[testFailed timestamp = '%s' duration = '%s' message = '%s' details = '%s' name = '%s']";
-    private static final String TEMPLATE_TEST_IGNORED = TEAMCITY_PREFIX + "[testIgnored timestamp = '%s' duration = '%s' message = '%s' name = '%s']";
+    private static final String TEMPLATE_TEST_STARTED = TEAMCITY_PREFIX
+            + "[testStarted timestamp = '%s' locationHint = '%s' captureStandardOutput = 'true' name = '%s']";
+    private static final String TEMPLATE_TEST_FINISHED = TEAMCITY_PREFIX
+            + "[testFinished timestamp = '%s' duration = '%s' name = '%s']";
+    private static final String TEMPLATE_TEST_FAILED = TEAMCITY_PREFIX
+            + "[testFailed timestamp = '%s' duration = '%s' message = '%s' details = '%s' name = '%s']";
+    private static final String TEMPLATE_TEST_IGNORED = TEAMCITY_PREFIX
+            + "[testIgnored timestamp = '%s' duration = '%s' message = '%s' name = '%s']";
 
-    private static final String TEMPLATE_PROGRESS_COUNTING_STARTED = TEAMCITY_PREFIX + "[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '%s']";
-    private static final String TEMPLATE_PROGRESS_COUNTING_FINISHED = TEAMCITY_PREFIX + "[customProgressStatus testsCategory = '' count = '0' timestamp = '%s']";
-    private static final String TEMPLATE_PROGRESS_TEST_STARTED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testStarted' timestamp = '%s']";
-    private static final String TEMPLATE_PROGRESS_TEST_FINISHED = TEAMCITY_PREFIX + "[customProgressStatus type = 'testFinished' timestamp = '%s']";
+    private static final String TEMPLATE_PROGRESS_COUNTING_STARTED = TEAMCITY_PREFIX
+            + "[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '%s']";
+    private static final String TEMPLATE_PROGRESS_COUNTING_FINISHED = TEAMCITY_PREFIX
+            + "[customProgressStatus testsCategory = '' count = '0' timestamp = '%s']";
+    private static final String TEMPLATE_PROGRESS_TEST_STARTED = TEAMCITY_PREFIX
+            + "[customProgressStatus type = 'testStarted' timestamp = '%s']";
+    private static final String TEMPLATE_PROGRESS_TEST_FINISHED = TEAMCITY_PREFIX
+            + "[customProgressStatus type = 'testFinished' timestamp = '%s']";
 
     private static final String TEMPLATE_ATTACH_WRITE_EVENT = TEAMCITY_PREFIX + "[message text='%s' status='NORMAL']";
 
@@ -126,15 +138,14 @@ public class TeamCityPlugin implements EventListener {
         String timestamp = extractTimeStamp(event);
 
         Location location = testCase.getLocation();
-        Predicate<Node> withLocation = candidate ->
-            location.equals(candidate.getLocation());
+        Predicate<Node> withLocation = candidate -> location.equals(candidate.getLocation());
         List<Node> path = parsedTestSources.get(uri)
-            .stream()
-            .map(node -> node.findPathTo(withLocation))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .findFirst()
-            .orElse(emptyList());
+                .stream()
+                .map(node -> node.findPathTo(withLocation))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElse(emptyList());
 
         poppedNodes(path).forEach(node -> finishNode(timestamp, node));
         pushedNodes(path).forEach(node -> startNode(uri, timestamp, node));
@@ -186,7 +197,6 @@ public class TeamCityPlugin implements EventListener {
         return newStack.subList(currentStack.size(), newStack.size());
     }
 
-
     private void printTestStepStarted(TestStepStarted event) {
         String timestamp = extractTimeStamp(event);
         String name = extractName(event.getTestStep());
@@ -236,10 +246,12 @@ public class TeamCityPlugin implements EventListener {
         Status status = event.getResult().getStatus();
         switch (status) {
             case SKIPPED:
-                print(TEMPLATE_TEST_IGNORED, timeStamp, duration, error == null ? "Step skipped" : error.getMessage(), name);
+                print(TEMPLATE_TEST_IGNORED, timeStamp, duration, error == null ? "Step skipped" : error.getMessage(),
+                    name);
                 break;
             case PENDING:
-                print(TEMPLATE_TEST_IGNORED, timeStamp, duration, error == null ? "Step pending" : error.getMessage(), name);
+                print(TEMPLATE_TEST_IGNORED, timeStamp, duration, error == null ? "Step pending" : error.getMessage(),
+                    name);
                 break;
             case UNDEFINED:
                 PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
@@ -295,19 +307,16 @@ public class TeamCityPlugin implements EventListener {
         }
 
         snippets.stream()
-            .filter(snippet ->
-                snippet.getStepLocation().equals(testStep.getStep().getLocation()) &&
-                    snippet.getUri().equals(testStep.getUri())
-            )
-            .findFirst()
-            .ifPresent(event -> {
+                .filter(snippet -> snippet.getStepLocation().equals(testStep.getStep().getLocation()) &&
+                        snippet.getUri().equals(testStep.getUri()))
+                .findFirst()
+                .ifPresent(event -> {
                     builder.append("You can implement missing steps with the snippets below:\n");
                     event.getSnippets().forEach(snippet -> {
                         builder.append(snippet);
                         builder.append("\n");
                     });
-                }
-            );
+                });
         return builder.toString();
     }
 
@@ -338,7 +347,8 @@ public class TeamCityPlugin implements EventListener {
 
     private void handleEmbedEvent(EmbedEvent event) {
         String name = event.getName() == null ? "" : event.getName() + " ";
-        print(TEMPLATE_ATTACH_WRITE_EVENT, "Embed event: " + name + "[" + event.getMediaType() + " " + event.getData().length + " bytes]\n");
+        print(TEMPLATE_ATTACH_WRITE_EVENT,
+            "Embed event: " + name + "[" + event.getMediaType() + " " + event.getData().length + " bytes]\n");
     }
 
     private void handleWriteEvent(WriteEvent event) {
@@ -363,12 +373,12 @@ public class TeamCityPlugin implements EventListener {
             return "";
         }
         return source
-            .replace("|", "||")
-            .replace("'", "|'")
-            .replace("\n", "|n")
-            .replace("\r", "|r")
-            .replace("[", "|[")
-            .replace("]", "|]");
+                .replace("|", "||")
+                .replace("'", "|'")
+                .replace("\n", "|n")
+                .replace("\r", "|r")
+                .replace("[", "|[")
+                .replace("]", "|]");
     }
 
 }

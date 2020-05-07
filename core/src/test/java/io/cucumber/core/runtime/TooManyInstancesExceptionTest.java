@@ -19,9 +19,9 @@ class TooManyInstancesExceptionTest {
         Collection<String> instances = Arrays.asList("one", "two");
         TooManyInstancesException expectedThrown = new TooManyInstancesException(instances);
         assertAll(
-            () -> assertThat(expectedThrown.getMessage(), is(equalTo("Expected only one instance, but found too many: [one, two]"))),
-            () -> assertThat(expectedThrown.getCause(), is(nullValue()))
-        );
+            () -> assertThat(expectedThrown.getMessage(),
+                is(equalTo("Expected only one instance, but found too many: [one, two]"))),
+            () -> assertThat(expectedThrown.getCause(), is(nullValue())));
     }
 
 }

@@ -23,10 +23,9 @@ class NamePredicateTest {
 
     private Pickle createPickleWithName(String pickleName) {
         Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-            "Feature: Test feature\n" +
-            "  Scenario: " + pickleName + "\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: " + pickleName + "\n" +
+                "     Given I have 4 cukes in my belly\n");
         return feature.getPickles().get(0);
     }
 

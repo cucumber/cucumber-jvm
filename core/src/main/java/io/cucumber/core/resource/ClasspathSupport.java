@@ -1,6 +1,7 @@
 package io.cucumber.core.resource;
 
 import javax.lang.model.SourceVersion;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,7 +39,7 @@ public final class ClasspathSupport {
             return;
         }
         boolean valid = stream(DOT_PATTERN.split(packageName))
-            .allMatch(SourceVersion::isName);
+                .allMatch(SourceVersion::isName);
         if (!valid) {
             throw new IllegalArgumentException("Invalid part(s) in package name: " + packageName);
         }
@@ -69,8 +70,8 @@ public final class ClasspathSupport {
     static String determinePackageName(Path baseDir, String basePackageName, Path classFile) {
         String subPackageName = determineSubpackageName(baseDir, classFile);
         return of(basePackageName, subPackageName)
-            .filter(value -> !value.isEmpty()) // default package
-            .collect(joining(PACKAGE_SEPARATOR_STRING));
+                .filter(value -> !value.isEmpty()) // default package
+                .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
     private static String determineSubpackageName(Path baseDir, Path resource) {
@@ -83,8 +84,8 @@ public final class ClasspathSupport {
         String subPackageName = determineSubpackagePath(baseDir, resource);
         String resourceName = resource.getFileName().toString();
         String classpathResourcePath = of(basePackagePath, subPackageName, resourceName)
-            .filter(value -> !value.isEmpty()) // default package .
-            .collect(joining(RESOURCE_SEPARATOR_STRING));
+                .filter(value -> !value.isEmpty()) // default package .
+                .collect(joining(RESOURCE_SEPARATOR_STRING));
         return classpathResourceUri(classpathResourcePath);
     }
 
@@ -107,8 +108,8 @@ public final class ClasspathSupport {
         String subpackageName = determineSubpackageName(baseDir, classFile);
         String simpleClassName = determineSimpleClassName(classFile);
         return of(basePackageName, subpackageName, simpleClassName)
-            .filter(value -> !value.isEmpty()) // default package
-            .collect(joining(PACKAGE_SEPARATOR_STRING));
+                .filter(value -> !value.isEmpty()) // default package
+                .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
     private static String determineSimpleClassName(Path classFile) {

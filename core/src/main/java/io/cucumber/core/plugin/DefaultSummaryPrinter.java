@@ -83,5 +83,4 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
         stats.setMonochrome(monochrome);
     }
 
-
 }

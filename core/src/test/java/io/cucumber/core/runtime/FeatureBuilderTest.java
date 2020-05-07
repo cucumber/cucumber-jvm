@@ -68,8 +68,7 @@ class FeatureBuilderTest {
         assertAll(
             () -> assertThat(features.size(), equalTo(2)),
             () -> assertThat(features.get(0).getUri(), equalTo(featurePath1)),
-            () -> assertThat(features.get(1).getUri(), equalTo(featurePath2))
-        );
+            () -> assertThat(features.get(1).getUri(), equalTo(featurePath2)));
     }
 
     @Test
@@ -91,8 +90,7 @@ class FeatureBuilderTest {
         assertAll(
             () -> assertThat(features.get(0).getUri(), equalTo(featurePath3)),
             () -> assertThat(features.get(1).getUri(), equalTo(featurePath2)),
-            () -> assertThat(features.get(2).getUri(), equalTo(featurePath1))
-        );
+            () -> assertThat(features.get(2).getUri(), equalTo(featurePath1)));
     }
 
 }

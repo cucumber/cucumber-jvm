@@ -60,9 +60,8 @@ class RunnerTest {
             return null;
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
-
         new Runner(bus, singletonList(backend), objectFactory, typeRegistryConfigurer, runtimeOptions)
-            .runPickle(createPicklesWithSteps());
+                .runPickle(createPicklesWithSteps());
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
         inOrder.verify(backend).buildWorld();
@@ -81,10 +80,9 @@ class RunnerTest {
 
     private Pickle createPicklesWithSteps() {
         Feature feature = TestFeatureParser.parse("file:path/to.feature", "" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given some step\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given some step\n");
         return feature.getPickles().get(0);
     }
 
@@ -120,10 +118,9 @@ class RunnerTest {
     private Pickle createPickleMatchingStepDefinitions(StubStepDefinition stepDefinition) {
         String pattern = stepDefinition.getPattern();
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + pattern + "\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given " + pattern + "\n");
         return feature.getPickles().get(0);
     }
 
@@ -289,9 +286,8 @@ class RunnerTest {
 
     private Pickle createEmptyPickle() {
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n");
         return feature.getPickles().get(0);
     }
 

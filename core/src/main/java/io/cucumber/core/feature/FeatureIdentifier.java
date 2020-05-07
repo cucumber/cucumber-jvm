@@ -25,7 +25,8 @@ public class FeatureIdentifier {
 
     public static URI parse(URI featureIdentifier) {
         if (!isFeature(featureIdentifier)) {
-            throw new IllegalArgumentException("featureIdentifier does not reference a single feature file: " + featureIdentifier);
+            throw new IllegalArgumentException(
+                "featureIdentifier does not reference a single feature file: " + featureIdentifier);
         }
         return featureIdentifier;
     }

@@ -18,7 +18,8 @@ import static java.util.Locale.ROOT;
 final class Encoding {
 
     private static final Pattern COMMENT_OR_EMPTY_LINE_PATTERN = Pattern.compile("^\\s*#|^\\s*$");
-    private static final Pattern ENCODING_PATTERN = Pattern.compile("^\\s*#\\s*encoding\\s*:\\s*([0-9a-zA-Z\\-]+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ENCODING_PATTERN = Pattern.compile("^\\s*#\\s*encoding\\s*:\\s*([0-9a-zA-Z\\-]+)",
+        Pattern.CASE_INSENSITIVE);
     private static final String DEFAULT_ENCODING = UTF_8.name();
     private static final String UTF_8_BOM = "\uFEFF";
 
@@ -39,10 +40,9 @@ final class Encoding {
         char[] buffer = new char[2 * 1024];
         final StringBuilder out = new StringBuilder();
         try (
-            InputStream is = resource.getInputStream();
-            InputStreamReader in = new InputStreamReader(is, encoding);
-            BufferedReader reader = new BufferedReader(in);
-        ) {
+                InputStream is = resource.getInputStream();
+                InputStreamReader in = new InputStreamReader(is, encoding);
+                BufferedReader reader = new BufferedReader(in);) {
             int read;
             while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
                 out.append(buffer, 0, read);

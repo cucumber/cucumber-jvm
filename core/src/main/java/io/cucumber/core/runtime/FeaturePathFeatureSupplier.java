@@ -20,7 +20,8 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 
 /**
- * Supplies a list of features found on the the feature path provided to RuntimeOptions.
+ * Supplies a list of features found on the the feature path provided to
+ * RuntimeOptions.
  */
 public final class FeaturePathFeatureSupplier implements FeatureSupplier {
 
@@ -35,8 +36,7 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
         this.featureScanner = new ResourceScanner<>(
             classLoader,
             FeatureIdentifier::isFeature,
-            parser::parseResource
-        );
+            parser::parseResource);
     }
 
     @Override
@@ -47,7 +47,8 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
             if (featurePaths.isEmpty()) {
                 log.warn(() -> "Got no path to feature directory or feature file");
             } else {
-                log.warn(() -> "No features found at " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
+                log.warn(
+                    () -> "No features found at " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
             }
         }
         return features;
@@ -84,22 +85,22 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
 
             Map<String, Feature> existingFeatures = sourceToFeature.get(parsedFeature.getSource());
             if (existingFeatures != null) {
-                // Same contents but different file names was probably intentional
+                // Same contents but different file names was probably
+                // intentional
                 Feature existingFeature = existingFeatures.get(parsedFileName);
                 if (existingFeature != null) {
                     log.error(() -> "" +
-                        "Duplicate feature found: " +
-                        parsedFeature.getUri() + " was identical to " + existingFeature.getUri() + "\n" +
-                        "\n" +
-                        "This typically happens when you configure cucumber to look " +
-                        "for features in the root of your project.\nYour build tool " +
-                        "creates a copy of these features in a 'target' or 'build'" +
-                        "directory.\n" +
-                        "\n" +
-                        "If your features are on the class path consider using a class path URI.\n" +
-                        "For example: 'classpath:com/example/app.feature'\n" +
-                        "Otherwise you'll have to provide a more specific location"
-                    );
+                            "Duplicate feature found: " +
+                            parsedFeature.getUri() + " was identical to " + existingFeature.getUri() + "\n" +
+                            "\n" +
+                            "This typically happens when you configure cucumber to look " +
+                            "for features in the root of your project.\nYour build tool " +
+                            "creates a copy of these features in a 'target' or 'build'" +
+                            "directory.\n" +
+                            "\n" +
+                            "If your features are on the class path consider using a class path URI.\n" +
+                            "For example: 'classpath:com/example/app.feature'\n" +
+                            "Otherwise you'll have to provide a more specific location");
                     return;
                 }
             }

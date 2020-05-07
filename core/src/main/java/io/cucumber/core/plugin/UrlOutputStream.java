@@ -70,12 +70,14 @@ class UrlOutputStream extends OutputStream {
         }
     }
 
-    private static void handleResponse(HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders) throws IOException {
+    private static void handleResponse(HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders)
+            throws IOException {
         Map<String, List<String>> responseHeaders = urlConnection.getHeaderFields();
         int responseCode = urlConnection.getResponseCode();
         boolean success = 200 <= responseCode && responseCode < 300;
 
-        InputStream inputStream = urlConnection.getErrorStream() != null ? urlConnection.getErrorStream() : urlConnection.getInputStream();
+        InputStream inputStream = urlConnection.getErrorStream() != null ? urlConnection.getErrorStream()
+                : urlConnection.getInputStream();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, UTF_8))) {
             String responseBody = br.lines().collect(Collectors.joining(System.lineSeparator()));
             if (!success) {
@@ -87,11 +89,12 @@ class UrlOutputStream extends OutputStream {
     }
 
     static IOException createCurlLikeException(
-        String method,
-        URL url,
-        Map<String, List<String>> requestHeaders,
-        Map<String, List<String>> responseHeaders,
-        String responseBody) {
+            String method,
+            URL url,
+            Map<String, List<String>> requestHeaders,
+            Map<String, List<String>> responseHeaders,
+            String responseBody
+    ) {
         return new IOException(String.format(
             "%s:\n> %s %s%s%s%s",
             "HTTP request failed",
@@ -99,27 +102,26 @@ class UrlOutputStream extends OutputStream {
             url,
             headersToString("> ", requestHeaders),
             headersToString("< ", responseHeaders),
-            responseBody
-        ));
+            responseBody));
     }
 
     private static String headersToString(String prefix, Map<String, List<String>> headers) {
         return headers
-            .entrySet()
-            .stream()
-            .flatMap(header -> header
-                .getValue()
+                .entrySet()
                 .stream()
-                .map(value -> {
-                    if (header.getKey() == null) {
-                        return prefix + value;
-                    } else if (header.getValue() == null) {
-                        return prefix + header.getKey();
-                    } else {
-                        return prefix + header.getKey() + ": " + value;
-                    }
-                })
-            ).collect(Collectors.joining("\n", "", "\n"));
+                .flatMap(header -> header
+                        .getValue()
+                        .stream()
+                        .map(value -> {
+                            if (header.getKey() == null) {
+                                return prefix + value;
+                            } else if (header.getValue() == null) {
+                                return prefix + header.getKey();
+                            } else {
+                                return prefix + header.getKey() + ": " + value;
+                            }
+                        }))
+                .collect(Collectors.joining("\n", "", "\n"));
     }
 
 }

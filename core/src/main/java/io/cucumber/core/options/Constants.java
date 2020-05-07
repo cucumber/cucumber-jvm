@@ -5,8 +5,8 @@ import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 public final class Constants {
 
     /**
-     * Property name used to disable ansi colors in the output (not supported
-     * by all terminals): {@value}
+     * Property name used to disable ansi colors in the output (not supported by
+     * all terminals): {@value}
      * <p>
      * Ansi colors are enabled by default.
      */
@@ -38,7 +38,8 @@ public final class Constants {
     /**
      * Property name used to set execution order: {@value}
      * <p>
-     * Valid values are {@code lexical}, {@code reverse}, {@code random} or {@code random:[seed]}.
+     * Valid values are {@code lexical}, {@code reverse}, {@code random} or
+     * {@code random:[seed]}.
      * <p>
      * By default features are executed in lexical file name order
      */
@@ -69,18 +70,18 @@ public final class Constants {
      * <p>
      * A comma separated list of:
      * <ul>
-     * <li>{@code path/to/dir}  - Load the files with the extension ".feature" for the
-     * directory {@code path} and its sub directories.
-     * <li>{@code path/name.feature} - Load the feature file {@code path/name.feature}
-     * from the file system.</li>
+     * <li>{@code path/to/dir} - Load the files with the extension ".feature"
+     * for the directory {@code path} and its sub directories.
+     * <li>{@code path/name.feature} - Load the feature file
+     * {@code path/name.feature} from the file system.</li>
      * <li>{@code classpath:path/name.feature} - Load the feature file
      * {@code path/name.feature} from the classpath.</li>
-     * <li>{@code path/name.feature:3:9} - Load the scenarios on line 3 and line 9 in
-     * the file {@code path/name.feature}.</li>
-     * <li>{@code @path/file} - Load {@code path/file} from the file system and parse
-     * feature paths.</li>
-     * <li>{@code @classpath:path/file} - Load {@code path/file} from the classpath and
+     * <li>{@code path/name.feature:3:9} - Load the scenarios on line 3 and line
+     * 9 in the file {@code path/name.feature}.</li>
+     * <li>{@code @path/file} - Load {@code path/file} from the file system and
      * parse feature paths.</li>
+     * <li>{@code @classpath:path/file} - Load {@code path/file} from the
+     * classpath and parse feature paths.</li>
      * </ul>
      *
      * @see io.cucumber.core.feature.FeatureWithLines
@@ -99,8 +100,8 @@ public final class Constants {
      * Property name used to set tag filter: {@value}
      * <p>
      * Filters scenarios based on the provided tag expression e.g:
-     * {@code @Integration and not @Ignored}. Scenarios that do not
-     * match the expression are not executed.
+     * {@code @Integration and not @Ignored}. Scenarios that do not match the
+     * expression are not executed.
      * <p>
      * By default all scenarios are executed
      */
@@ -143,13 +144,14 @@ public final class Constants {
      * <li>testng</li>
      * </ul>
      * <p>
-     * {@code PLUGIN} can also be a fully qualified class name, allowing registration
-     * of 3rd party plugins.
+     * {@code PLUGIN} can also be a fully qualified class name, allowing
+     * registration of 3rd party plugins.
      */
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";
 
     /**
-     * Property name to control naming convention for generated snippets: {@value}
+     * Property name to control naming convention for generated snippets:
+     * {@value}
      * <p>
      * Valid values are {@code underscore} or {@code camelcase}.
      * <p>

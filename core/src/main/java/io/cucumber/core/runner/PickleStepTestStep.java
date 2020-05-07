@@ -23,11 +23,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
         this(id, uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
-    PickleStepTestStep(UUID id, URI uri,
-                       Step step,
-                       List<HookTestStep> beforeStepHookSteps,
-                       List<HookTestStep> afterStepHookSteps,
-                       PickleStepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(
+            UUID id, URI uri,
+            Step step,
+            List<HookTestStep> beforeStepHookSteps,
+            List<HookTestStep> afterStepHookSteps,
+            PickleStepDefinitionMatch definitionMatch
+    ) {
         super(id, definitionMatch);
         this.uri = uri;
         this.step = step;

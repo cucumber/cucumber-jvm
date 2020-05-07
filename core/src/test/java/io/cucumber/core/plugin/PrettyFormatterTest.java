@@ -45,22 +45,22 @@ class PrettyFormatterTest {
     @Test
     void should_align_the_indentation_of_location_strings() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n" +
-            "    When second step\n" +
-            "    Then third step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n" +
+                "    When second step\n" +
+                "    Then third step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
         assertThat(runFeaturesWithFormatter(true), isBytesEqualTo("" +
-            "\n" +
-            "Scenario: scenario name # path/test.feature:2\n" +
-            "  Given first step      # path/step_definitions.java:3\n" +
-            "  When second step      # path/step_definitions.java:7\n" +
-            "  Then third step       # path/step_definitions.java:11\n"));
+                "\n" +
+                "Scenario: scenario name # path/test.feature:2\n" +
+                "  Given first step      # path/step_definitions.java:3\n" +
+                "  When second step      # path/step_definitions.java:7\n" +
+                "  Then third step       # path/step_definitions.java:11\n"));
     }
 
     private ByteArrayOutputStream runFeaturesWithFormatter(boolean monochrome) {
@@ -69,15 +69,15 @@ class PrettyFormatterTest {
         formatter.setMonochrome(monochrome);
 
         TestHelper.builder()
-            .withFormatterUnderTest(formatter)
-            .withFeatures(features)
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withHooks(hooks)
-            .withHookLocations(hookLocations)
-            .withHookActions(hookActions)
-            .build()
-            .run();
+                .withFormatterUnderTest(formatter)
+                .withFeatures(features)
+                .withStepsToResult(stepsToResult)
+                .withStepsToLocation(stepsToLocation)
+                .withHooks(hooks)
+                .withHookLocations(hookLocations)
+                .withHookActions(hookActions)
+                .build()
+                .run();
 
         return report;
     }
@@ -85,108 +85,108 @@ class PrettyFormatterTest {
     @Test
     void should_handle_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background name\n" +
-            "    Given first step\n" +
-            "  Scenario: s1\n" +
-            "    Then second step\n" +
-            "  Scenario: s2\n" +
-            "    Then third step\n");
+                "Feature: feature name\n" +
+                "  Background: background name\n" +
+                "    Given first step\n" +
+                "  Scenario: s1\n" +
+                "    Then second step\n" +
+                "  Scenario: s2\n" +
+                "    Then third step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "\n" +
-            "Scenario: s1       # path/test.feature:4\n" +
-            "  Given first step # path/step_definitions.java:3\n" +
-            "  Then second step # path/step_definitions.java:7\n" +
-            "\n" +
-            "Scenario: s2       # path/test.feature:6\n" +
-            "  Given first step # path/step_definitions.java:3\n" +
-            "  Then third step  # path/step_definitions.java:11\n"));
+                "\n" +
+                "Scenario: s1       # path/test.feature:4\n" +
+                "  Given first step # path/step_definitions.java:3\n" +
+                "  Then second step # path/step_definitions.java:7\n" +
+                "\n" +
+                "Scenario: s2       # path/test.feature:6\n" +
+                "  Given first step # path/step_definitions.java:3\n" +
+                "  Then third step  # path/step_definitions.java:11\n"));
     }
 
     @Test
     void should_handle_scenario_outline() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario Outline: <name>\n" +
-            "    Given first step\n" +
-            "    Then <arg> step\n" +
-            "    Examples: examples name\n" +
-            "      |  name  |  arg   |\n" +
-            "      | name 1 | second |\n" +
-            "      | name 2 | third  |\n");
+                "Feature: feature name\n" +
+                "  Scenario Outline: <name>\n" +
+                "    Given first step\n" +
+                "    Then <arg> step\n" +
+                "    Examples: examples name\n" +
+                "      |  name  |  arg   |\n" +
+                "      | name 1 | second |\n" +
+                "      | name 2 | third  |\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "\n" +
-            "Scenario Outline: name 1 # path/test.feature:7\n" +
-            "  Given first step       # path/step_definitions.java:3\n" +
-            "  Then second step       # path/step_definitions.java:7\n" +
-            "\n" +
-            "Scenario Outline: name 2 # path/test.feature:8\n" +
-            "  Given first step       # path/step_definitions.java:3\n" +
-            "  Then third step        # path/step_definitions.java:11\n"));
+                "\n" +
+                "Scenario Outline: name 1 # path/test.feature:7\n" +
+                "  Given first step       # path/step_definitions.java:3\n" +
+                "  Then second step       # path/step_definitions.java:7\n" +
+                "\n" +
+                "Scenario Outline: name 2 # path/test.feature:8\n" +
+                "  Given first step       # path/step_definitions.java:3\n" +
+                "  Then third step        # path/step_definitions.java:11\n"));
     }
 
     @Test
     void should_print_tags() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "@feature_tag\n" +
-            "Feature: feature name\n" +
-            "  @scenario_tag\n" +
-            "  Scenario: scenario name\n" +
-            "    Then second step\n" +
-            "  @scenario_outline_tag\n" +
-            "  Scenario Outline: scenario outline name\n" +
-            "    Then <arg> step\n" +
-            "    @examples_tag\n" +
-            "    Examples: examples name\n" +
-            "      |  arg   |\n" +
-            "      | third  |\n");
+                "@feature_tag\n" +
+                "Feature: feature name\n" +
+                "  @scenario_tag\n" +
+                "  Scenario: scenario name\n" +
+                "    Then second step\n" +
+                "  @scenario_outline_tag\n" +
+                "  Scenario Outline: scenario outline name\n" +
+                "    Then <arg> step\n" +
+                "    @examples_tag\n" +
+                "    Examples: examples name\n" +
+                "      |  arg   |\n" +
+                "      | third  |\n");
         features.add(feature);
         stepsToLocation.put("second step", "path/step_definitions.java:7");
         stepsToLocation.put("third step", "path/step_definitions.java:11");
 
         assertThat(runFeaturesWithFormatter(true), isBytesEqualTo("" +
 
-            "\n" +
-            "@feature_tag @scenario_tag\n" +
-            "Scenario: scenario name # path/test.feature:4\n" +
-            "  Then second step      # path/step_definitions.java:7\n" +
-            "\n" +
-            "@feature_tag @scenario_outline_tag @examples_tag\n" +
-            "Scenario Outline: scenario outline name # path/test.feature:12\n" +
-            "  Then third step                       # path/step_definitions.java:11\n"));
+                "\n" +
+                "@feature_tag @scenario_tag\n" +
+                "Scenario: scenario name # path/test.feature:4\n" +
+                "  Then second step      # path/step_definitions.java:7\n" +
+                "\n" +
+                "@feature_tag @scenario_outline_tag @examples_tag\n" +
+                "Scenario Outline: scenario outline name # path/test.feature:12\n" +
+                "  Then third step                       # path/step_definitions.java:11\n"));
     }
 
     @Test
     void should_print_error_message_for_failed_steps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("failed"));
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "  Given first step      # path/step_definitions.java:3\n" +
-            "      the stack trace\n"));
+                "  Given first step      # path/step_definitions.java:3\n" +
+                "      the stack trace\n"));
     }
 
     @Test
     void should_print_error_message_for_before_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -194,17 +194,17 @@ class PrettyFormatterTest {
         hookLocations.add("hook-location");
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "Scenario: scenario name # path/test.feature:2\n" +
-            "      the stack trace\n" +
-            "  Given first step      # path/step_definitions.java:3\n"));
+                "Scenario: scenario name # path/test.feature:2\n" +
+                "      the stack trace\n" +
+                "  Given first step      # path/step_definitions.java:3\n"));
     }
 
     @Test
     void should_print_error_message_for_after_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -212,16 +212,16 @@ class PrettyFormatterTest {
         hookLocations.add("hook-location");
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "  Given first step      # path/step_definitions.java:3\n" +
-            "      the stack trace\n"));
+                "  Given first step      # path/step_definitions.java:3\n" +
+                "      the stack trace\n"));
     }
 
     @Test
     void should_print_output_from_before_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -230,19 +230,19 @@ class PrettyFormatterTest {
         hookActions.add(createWriteHookAction("printed from hook"));
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "Scenario: scenario name # path/test.feature:2\n" +
-            "\n" +
-            "    printed from hook\n" +
-            "\n" +
-            "  Given first step      # path/step_definitions.java:3\n"));
+                "Scenario: scenario name # path/test.feature:2\n" +
+                "\n" +
+                "    printed from hook\n" +
+                "\n" +
+                "  Given first step      # path/step_definitions.java:3\n"));
     }
 
     @Test
     void should_print_output_from_after_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
@@ -251,18 +251,18 @@ class PrettyFormatterTest {
         hookActions.add(createWriteHookAction("printed from hook"));
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "  Given first step      # path/step_definitions.java:3\n" +
-            "\n" +
-            "    printed from hook\n"));
+                "  Given first step      # path/step_definitions.java:3\n" +
+                "\n" +
+                "    printed from hook\n"));
     }
 
     @Test
     void should_print_output_from_afterStep_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n" +
-            "    When second step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n" +
+                "    When second step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToLocation.put("second step", "path/step_definitions.java:4");
@@ -273,56 +273,57 @@ class PrettyFormatterTest {
         hookActions.add(createWriteHookAction("printed from afterstep hook"));
 
         assertThat(runFeaturesWithFormatter(true), bytesContainsString("" +
-            "  Given first step      # path/step_definitions.java:3\n" +
-            "\n" +
-            "    printed from afterstep hook\n" +
-            "\n" +
-            "  When second step      # path/step_definitions.java:4\n" +
-            "\n" +
-            "    printed from afterstep hook" +
-            "\n"));
+                "  Given first step      # path/step_definitions.java:3\n" +
+                "\n" +
+                "    printed from afterstep hook\n" +
+                "\n" +
+                "  When second step      # path/step_definitions.java:4\n" +
+                "\n" +
+                "    printed from afterstep hook" +
+                "\n"));
     }
 
     @Test
     void should_color_code_steps_according_to_the_result() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
 
         assertThat(runFeaturesWithFormatter(false), bytesContainsString("" +
-            "  " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step" + AnsiEscapes.RESET));
+                "  " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step"
+                + AnsiEscapes.RESET));
     }
 
     @Test
     void should_color_code_locations_as_comments() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("passed"));
 
         assertThat(runFeaturesWithFormatter(false), bytesContainsString("" +
-            AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
+                AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
     }
 
     @Test
     void should_color_code_error_message_according_to_the_result() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: scenario name\n" +
-            "    Given first step\n");
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
         features.add(feature);
         stepsToLocation.put("first step", "path/step_definitions.java:3");
         stepsToResult.put("first step", result("failed"));
 
         assertThat(runFeaturesWithFormatter(false), bytesContainsString("" +
-            "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
+                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
     }
 
     @Test
@@ -336,13 +337,14 @@ class PrettyFormatterTest {
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         String stepText = "text 'arg1' text 'arg2'";
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
+            formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg1'" + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg2'" + AnsiEscapes.RESET));
+                AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
+                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg1'" + AnsiEscapes.RESET +
+                AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
+                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg2'" + AnsiEscapes.RESET));
     }
 
     @Test
@@ -351,17 +353,19 @@ class PrettyFormatterTest {
 
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not yet )?confirmed)?$", String.class);
+        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not yet )?confirmed)?$",
+            String.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
 
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         String stepText = "the order is placed and not yet confirmed";
 
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
+            formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
+                AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
+                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
     @Test
@@ -370,15 +374,16 @@ class PrettyFormatterTest {
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not( yet)? )?confirmed)?$", String.class);
+        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not( yet)? )?confirmed)?$",
+            String.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         String stepText = "the order is placed and not yet confirmed";
-        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"), formats.get("passed_arg"), createArguments(expression.match(stepText)));
-
+        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
+            formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-            AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
+                AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
+                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
 }

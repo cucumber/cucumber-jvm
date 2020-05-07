@@ -39,7 +39,9 @@ final class StackManipulation {
         return newStackTraceLength;
     }
 
-    static Throwable removeFrameworkFramesAndAppendStepLocation(CucumberInvocationTargetException invocationException, StackTraceElement stepLocation) {
+    static Throwable removeFrameworkFramesAndAppendStepLocation(
+            CucumberInvocationTargetException invocationException, StackTraceElement stepLocation
+    ) {
         Located located = invocationException.getLocated();
         Throwable error = invocationException.getInvocationTargetExceptionCause();
         if (stepLocation == null) {

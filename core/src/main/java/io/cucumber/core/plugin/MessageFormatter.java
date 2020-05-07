@@ -15,7 +15,7 @@ public final class MessageFormatter implements ConcurrentEventListener {
 
     private final Writer writer;
     private final JsonFormat.Printer jsonPrinter = JsonFormat.printer()
-        .omittingInsignificantWhitespace();
+            .omittingInsignificantWhitespace();
 
     public MessageFormatter(OutputStream outputStream) {
         this.writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
@@ -40,4 +40,3 @@ public final class MessageFormatter implements ConcurrentEventListener {
     }
 
 }
-

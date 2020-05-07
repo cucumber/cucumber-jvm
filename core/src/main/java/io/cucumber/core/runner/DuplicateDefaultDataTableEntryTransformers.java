@@ -14,8 +14,8 @@ class DuplicateDefaultDataTableEntryTransformers extends CucumberException {
 
     private static String createMessage(List<CoreDefaultDataTableEntryTransformerDefinition> definitions) {
         return "There may not be more then one default data table entry. Found:" + definitions.stream()
-            .map(CoreDefaultDataTableEntryTransformerDefinition::getLocation)
-            .collect(joining("\n - ", "\n - ", "\n"));
+                .map(CoreDefaultDataTableEntryTransformerDefinition::getLocation)
+                .collect(joining("\n - ", "\n - ", "\n"));
     }
 
 }

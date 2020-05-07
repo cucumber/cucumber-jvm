@@ -108,22 +108,20 @@ final class TestSourcesModel {
         String source = pathToReadEventMap.get(path).getSource();
 
         List<Messages.Envelope> sources = singletonList(
-            makeSourceEnvelope(source, path.toString())
-        );
+            makeSourceEnvelope(source, path.toString()));
 
         List<Messages.Envelope> envelopes = Gherkin.fromSources(
             sources,
             true,
             true,
             true,
-            () -> String.valueOf(UUID.randomUUID())
-        ).collect(toList());
+            () -> String.valueOf(UUID.randomUUID())).collect(toList());
 
         GherkinDocument gherkinDocument = envelopes.stream()
-            .filter(Messages.Envelope::hasGherkinDocument)
-            .map(Messages.Envelope::getGherkinDocument)
-            .findFirst()
-            .orElse(null);
+                .filter(Messages.Envelope::hasGherkinDocument)
+                .map(Messages.Envelope::getGherkinDocument)
+                .findFirst()
+                .orElse(null);
 
         pathToAstMap.put(path, gherkinDocument);
         Map<Integer, AstNode> nodeMap = new HashMap<>();
@@ -149,7 +147,9 @@ final class TestSourcesModel {
         }
     }
 
-    private void processBackgroundDefinition(Map<Integer, AstNode> nodeMap, Background background, AstNode currentParent) {
+    private void processBackgroundDefinition(
+            Map<Integer, AstNode> nodeMap, Background background, AstNode currentParent
+    ) {
         AstNode childNode = new AstNode(background, currentParent);
         nodeMap.put(background.getLocation().getLine(), childNode);
         for (Step step : background.getStepsList()) {
@@ -176,7 +176,9 @@ final class TestSourcesModel {
         }
     }
 
-    private void processScenarioOutlineExamples(Map<Integer, AstNode> nodeMap, Scenario scenarioOutline, AstNode parent) {
+    private void processScenarioOutlineExamples(
+            Map<Integer, AstNode> nodeMap, Scenario scenarioOutline, AstNode parent
+    ) {
         for (Examples examples : scenarioOutline.getExamplesList()) {
             AstNode examplesNode = new AstNode(examples, parent);
             TableRow headerRow = examples.getTableHeader();
@@ -215,11 +217,11 @@ final class TestSourcesModel {
     static Background getBackgroundForTestCase(AstNode astNode) {
         Feature feature = getFeatureForTestCase(astNode);
         return feature.getChildrenList()
-            .stream()
-            .filter(FeatureChild::hasBackground)
-            .map(FeatureChild::getBackground)
-            .findFirst()
-            .orElse(null);
+                .stream()
+                .filter(FeatureChild::hasBackground)
+                .map(FeatureChild::getBackground)
+                .findFirst()
+                .orElse(null);
     }
 
     private static Feature getFeatureForTestCase(AstNode astNode) {

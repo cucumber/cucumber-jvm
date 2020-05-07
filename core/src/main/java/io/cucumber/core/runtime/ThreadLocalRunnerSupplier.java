@@ -9,7 +9,8 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * Creates a distinct runner for each calling thread. Each runner has its own bus, backend- and glue-suppliers.
+ * Creates a distinct runner for each calling thread. Each runner has its own
+ * bus, backend- and glue-suppliers.
  * <p>
  * Each runners bus passes all events to the event bus of this supplier.
  */
@@ -24,11 +25,11 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
     private final ThreadLocal<Runner> runners = ThreadLocal.withInitial(this::createRunner);
 
     public ThreadLocalRunnerSupplier(
-        Options runnerOptions,
-        EventBus sharedEventBus,
-        BackendSupplier backendSupplier,
-        ObjectFactorySupplier objectFactorySupplier,
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier
+            Options runnerOptions,
+            EventBus sharedEventBus,
+            BackendSupplier backendSupplier,
+            ObjectFactorySupplier objectFactorySupplier,
+            TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier
     ) {
         this.runnerOptions = runnerOptions;
         this.sharedEventBus = SynchronizedEventBus.synchronize(sharedEventBus);
@@ -48,8 +49,7 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
             backendSupplier.get(),
             objectFactorySupplier.get(),
             typeRegistryConfigurerSupplier.get(),
-            runnerOptions
-        );
+            runnerOptions);
     }
 
     private static final class LocalEventBus extends AbstractEventBus {

@@ -37,7 +37,8 @@ public final class CommandlineOptionsParser {
 
     private static final Logger log = LoggerFactory.getLogger(CommandlineOptionsParser.class);
 
-    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
+    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
+            .getString("cucumber-jvm.version");
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
 
@@ -185,9 +186,8 @@ public final class CommandlineOptionsParser {
 
     private String loadUsageText() {
         try (
-            InputStream usageResourceStream = CommandlineOptionsParser.class.getResourceAsStream(USAGE_RESOURCE);
-            BufferedReader br = new BufferedReader(new InputStreamReader(usageResourceStream, UTF_8))
-        ) {
+                InputStream usageResourceStream = CommandlineOptionsParser.class.getResourceAsStream(USAGE_RESOURCE);
+                BufferedReader br = new BufferedReader(new InputStreamReader(usageResourceStream, UTF_8))) {
             return br.lines().collect(joining(System.lineSeparator()));
         } catch (Exception e) {
             return "Could not load usage text: " + e.toString();
@@ -196,10 +196,10 @@ public final class CommandlineOptionsParser {
 
     private int findWidest(List<GherkinDialect> dialects, Function<GherkinDialect, String> getNativeName) {
         return dialects.stream()
-            .map(getNativeName)
-            .mapToInt(String::length)
-            .max()
-            .orElse(0);
+                .map(getNativeName)
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
     }
 
     private void printDialect(GherkinDialect dialect, int widestLanguage, int widestName, int widestNativeName) {
@@ -249,8 +249,8 @@ public final class CommandlineOptionsParser {
         codeKeywordList.remove("* ");
 
         List<String> codeWords = codeKeywordList.stream()
-            .map(keyword -> keyword.replaceAll("[\\s',!]", ""))
-            .collect(Collectors.toList());
+                .map(keyword -> keyword.replaceAll("[\\s',!]", ""))
+                .collect(Collectors.toList());
 
         addKeywordRow(table, key + " (code)", codeWords);
     }

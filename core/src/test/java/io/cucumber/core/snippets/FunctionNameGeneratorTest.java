@@ -30,10 +30,9 @@ class FunctionNameGeneratorTest {
     }
 
     private void assertFunctionNames(String expectedUnderscore, String expectedCamelCase, String sentence) {
-        assertAll("Checking FunctionNameGenerator",
+        assertAll(
             () -> assertThat(underscore.generateFunctionName(sentence), is(equalTo(expectedUnderscore))),
-            () -> assertThat(camelCase.generateFunctionName(sentence), is(equalTo(expectedCamelCase)))
-        );
+            () -> assertThat(camelCase.generateFunctionName(sentence), is(equalTo(expectedCamelCase))));
     }
 
     @Test

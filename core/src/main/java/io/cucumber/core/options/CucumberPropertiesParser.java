@@ -39,99 +39,91 @@ public final class CucumberPropertiesParser {
         parse(properties,
             ANSI_COLORS_DISABLED_PROPERTY_NAME,
             Boolean::parseBoolean,
-            builder::setMonochrome
-        );
+            builder::setMonochrome);
 
         parse(properties,
             EXECUTION_DRY_RUN_PROPERTY_NAME,
             Boolean::parseBoolean,
-            builder::setDryRun
-        );
+            builder::setDryRun);
 
         parse(properties,
             EXECUTION_LIMIT_PROPERTY_NAME,
             Integer::parseInt,
-            builder::setCount
-        );
+            builder::setCount);
 
         parse(properties,
             EXECUTION_ORDER_PROPERTY_NAME,
             PickleOrderParser::parse,
-            builder::setPickleOrder
-        );
+            builder::setPickleOrder);
 
         parse(properties,
             EXECUTION_STRICT_PROPERTY_NAME,
             Boolean::parseBoolean,
-            CucumberPropertiesParser::errorOnNonStrict
-        );
+            CucumberPropertiesParser::errorOnNonStrict);
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
             splitAndThenFlatMap(CucumberPropertiesParser::parseFeatureFile),
-            builder::addFeature
-        );
+            builder::addFeature);
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
             splitAndMap(CucumberPropertiesParser::parseRerunFile),
-            builder::addRerun
-        );
+            builder::addRerun);
 
         parse(properties,
             FILTER_NAME_PROPERTY_NAME,
             Pattern::compile,
-            builder::addNameFilter
-        );
+            builder::addNameFilter);
 
         parse(properties,
             FILTER_TAGS_PROPERTY_NAME,
             Function.identity(),
-            builder::addTagFilter
-        );
+            builder::addTagFilter);
 
         parseAll(properties,
             GLUE_PROPERTY_NAME,
             splitAndMap(GluePath::parse),
-            builder::addGlue
-        );
+            builder::addGlue);
 
         parse(properties,
             OBJECT_FACTORY_PROPERTY_NAME,
             ObjectFactoryParser::parseObjectFactory,
-            builder::setObjectFactoryClass
-        );
+            builder::setObjectFactoryClass);
 
         parseAll(properties,
             PLUGIN_PROPERTY_NAME,
             splitAndMap(Function.identity()),
-            builder::addPluginName
-        );
+            builder::addPluginName);
 
         parse(properties,
             SNIPPET_TYPE_PROPERTY_NAME,
             SnippetTypeParser::parseSnippetType,
-            builder::setSnippetType
-        );
+            builder::setSnippetType);
         parse(properties,
             WIP_PROPERTY_NAME,
             Boolean::parseBoolean,
-            builder::setWip
-        );
+            builder::setWip);
 
         return builder;
     }
 
-    private <T> void parse(Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter) {
+    private <T> void parse(
+            Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter
+    ) {
         parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
     }
 
     private static void errorOnNonStrict(Boolean strict) {
         if (!strict) {
-            throw new CucumberException(EXECUTION_STRICT_PROPERTY_NAME + "=false is no longer effective. Please use =true (the default) or remove this property");
+            throw new CucumberException(EXECUTION_STRICT_PROPERTY_NAME
+                    + "=false is no longer effective. Please use =true (the default) or remove this property");
         }
     }
 
-    private <T> void parseAll(Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser, Consumer<T> setter) {
+    private <T> void parseAll(
+            Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser,
+            Consumer<T> setter
+    ) {
         String property = properties.get(propertyName);
         if (property == null || property.isEmpty()) {
             return;
@@ -146,10 +138,10 @@ public final class CucumberPropertiesParser {
 
     private static <T> Function<String, Collection<T>> splitAndThenFlatMap(Function<String, Stream<T>> parse) {
         return combined -> stream(combined.split(","))
-            .map(String::trim)
-            .filter(part -> !part.isEmpty())
-            .flatMap(parse)
-            .collect(toList());
+                .map(String::trim)
+                .filter(part -> !part.isEmpty())
+                .flatMap(parse)
+                .collect(toList());
     }
 
     private static Stream<FeatureWithLines> parseFeatureFile(String property) {
@@ -161,10 +153,10 @@ public final class CucumberPropertiesParser {
 
     private static <T> Function<String, Collection<T>> splitAndMap(Function<String, T> parse) {
         return combined -> stream(combined.split(","))
-            .map(String::trim)
-            .filter(part -> !part.isEmpty())
-            .map(parse)
-            .collect(toList());
+                .map(String::trim)
+                .filter(part -> !part.isEmpty())
+                .map(parse)
+                .collect(toList());
     }
 
     private static Collection<FeatureWithLines> parseRerunFile(String property) {

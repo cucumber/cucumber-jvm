@@ -88,12 +88,12 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private void preCalculateLocationIndent(TestCaseStarted event) {
         TestCase testCase = event.getTestCase();
         Integer longestStep = testCase.getTestSteps().stream()
-            .filter(PickleStepTestStep.class::isInstance)
-            .map(PickleStepTestStep.class::cast)
-            .map(PickleStepTestStep::getStep)
-            .map(step -> formatPlainStep(step.getKeyword(), step.getText()).length())
-            .max(Comparator.naturalOrder())
-            .orElse(0);
+                .filter(PickleStepTestStep.class::isInstance)
+                .map(PickleStepTestStep.class::cast)
+                .map(PickleStepTestStep::getStep)
+                .map(step -> formatPlainStep(step.getKeyword(), step.getText()).length())
+                .max(Comparator.naturalOrder())
+                .orElse(0);
 
         int scenarioLength = formatScenarioDefinition(testCase).length();
         commentStartIndex.put(testCase.getId(), max(longestStep, scenarioLength) + 1);
@@ -111,7 +111,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         String definitionText = formatScenarioDefinition(testCase);
         String path = relativize(testCase.getUri()).getSchemeSpecificPart();
         String locationIndent = calculateLocationIndent(event.getTestCase(), SCENARIO_INDENT + definitionText);
-        out.println(SCENARIO_INDENT + definitionText + locationIndent + formatLocation(path + ":" + testCase.getLocation().getLine()));
+        out.println(SCENARIO_INDENT + definitionText + locationIndent
+                + formatLocation(path + ":" + testCase.getLocation().getLine()));
     }
 
     private void printStep(TestStepFinished event) {
@@ -120,7 +121,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             String keyword = testStep.getStep().getKeyword();
             String stepText = testStep.getStep().getText();
             String status = event.getResult().getStatus().name().toLowerCase(ROOT);
-            String formattedStepText = formatStepText(keyword, stepText, formats.get(status), formats.get(status + "_arg"), testStep.getDefinitionArgument());
+            String formattedStepText = formatStepText(keyword, stepText, formats.get(status),
+                formats.get(status + "_arg"), testStep.getDefinitionArgument());
             String locationIndent = calculateLocationIndent(event.getTestCase(), formatPlainStep(keyword, stepText));
             out.println(STEP_INDENT + formattedStepText + locationIndent + formatLocation(testStep.getCodeLocation()));
         }
@@ -148,7 +150,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     }
 
     private void printEmbedding(EmbedEvent event) {
-        String line = "Embedding " + event.getName() + " [" + event.getMediaType() + " " + event.getData().length + " bytes]";
+        String line = "Embedding " + event.getName() + " [" + event.getMediaType() + " " + event.getData().length
+                + " bytes]";
         out.println(STEP_SCENARIO_INDENT + line);
     }
 
@@ -197,21 +200,25 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         return formats.get("comment").text("# " + location);
     }
 
-    String formatStepText(String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments) {
+    String formatStepText(
+            String keyword, String stepText, Format textFormat, Format argFormat, List<Argument> arguments
+    ) {
         int beginIndex = 0;
         StringBuilder result = new StringBuilder(textFormat.text(keyword));
         for (Argument argument : arguments) {
             // can be null if the argument is missing.
             if (argument.getValue() != null) {
                 int argumentOffset = argument.getStart();
-                // a nested argument starts before the enclosing argument ends; ignore it when formatting
+                // a nested argument starts before the enclosing argument ends;
+                // ignore it when formatting
                 if (argumentOffset < beginIndex) {
                     continue;
                 }
                 String text = stepText.substring(beginIndex, argumentOffset);
                 result.append(textFormat.text(text));
             }
-            // val can be null if the argument isn't there, for example @And("(it )?has something")
+            // val can be null if the argument isn't there, for example
+            // @And("(it )?has something")
             if (argument.getValue() != null) {
                 String text = stepText.substring(argument.getStart(), argument.getEnd());
                 result.append(argFormat.text(text));

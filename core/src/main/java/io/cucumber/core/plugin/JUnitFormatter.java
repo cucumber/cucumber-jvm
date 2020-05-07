@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -129,8 +130,10 @@ public final class JUnitFormatter implements EventListener {
             Instant finished = event.getInstant();
             // set up a transformer
             rootElement.setAttribute("name", JUnitFormatter.class.getName());
-            rootElement.setAttribute("failures", String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
-            rootElement.setAttribute("skipped", String.valueOf(rootElement.getElementsByTagName("skipped").getLength()));
+            rootElement.setAttribute("failures",
+                String.valueOf(rootElement.getElementsByTagName("failure").getLength()));
+            rootElement.setAttribute("skipped",
+                String.valueOf(rootElement.getElementsByTagName("skipped").getLength()));
             rootElement.setAttribute("errors", "0");
             rootElement.setAttribute("time", calculateTotalDurationString(Duration.between(started, finished)));
 
@@ -190,17 +193,16 @@ public final class JUnitFormatter implements EventListener {
 
         private String findRootNodeName(io.cucumber.plugin.event.TestCase testCase) {
             Location location = testCase.getLocation();
-            Predicate<Node> withLocation = candidate ->
-                location.equals(candidate.getLocation());
+            Predicate<Node> withLocation = candidate -> location.equals(candidate.getLocation());
             return parsedTestSources.get(testCase.getUri())
-                .stream()
-                .map(node -> node.findPathTo(withLocation))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst()
-                .map(nodes -> nodes.get(0))
-                .flatMap(Node::getName)
-                .orElse("Unknown");
+                    .stream()
+                    .map(node -> node.findPathTo(withLocation))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .findFirst()
+                    .map(nodes -> nodes.get(0))
+                    .flatMap(Node::getName)
+                    .orElse("Unknown");
         }
 
         private String calculateElementName(io.cucumber.plugin.event.TestCase testCase) {
@@ -226,7 +228,8 @@ public final class JUnitFormatter implements EventListener {
                 child = createFailure(doc, sb, result.getError().getMessage(), result.getError().getClass());
             } else if (status.is(Status.PENDING) || status.is(Status.UNDEFINED)) {
                 Throwable error = result.getError();
-                child = createFailure(doc, sb, "The scenario has pending or undefined step(s)", error == null ? Exception.class : error.getClass());
+                child = createFailure(doc, sb, "The scenario has pending or undefined step(s)",
+                    error == null ? Exception.class : error.getClass());
             } else if (status.is(Status.SKIPPED) && result.getError() != null) {
                 addStackTrace(sb, result);
                 child = createSkipped(doc, sb, printStackTrace(result.getError()));
@@ -274,8 +277,10 @@ public final class JUnitFormatter implements EventListener {
 
         private Element createElement(Document doc, StringBuilder sb, String elementType) {
             Element child = doc.createElement(elementType);
-            // the createCDATASection method seems to convert "\n" to "\r\n" on Windows, in case
-            // data originally contains "\r\n" line separators the result becomes "\r\r\n", which
+            // the createCDATASection method seems to convert "\n" to "\r\n" on
+            // Windows, in case
+            // data originally contains "\r\n" line separators the result
+            // becomes "\r\r\n", which
             // are displayed as double line breaks.
             String normalizedLineEndings = sb.toString().replace(System.lineSeparator(), "\n");
             child.appendChild(doc.createCDATASection(normalizedLineEndings));

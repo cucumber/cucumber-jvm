@@ -23,27 +23,26 @@ public class MessageFormatterTest {
         formatter.setEventPublisher(bus);
 
         bus.send(Messages.Envelope.newBuilder()
-            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                .setTimestamp(Messages.Timestamp.newBuilder()
-                    .setSeconds(10)
-                    .build())
-                .build())
-            .build());
+                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                        .setTimestamp(Messages.Timestamp.newBuilder()
+                                .setSeconds(10)
+                                .build())
+                        .build())
+                .build());
 
         bus.send(
             Messages.Envelope.newBuilder()
-                .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                    .setTimestamp(Messages.Timestamp.newBuilder()
-                        .setSeconds(15)
-                        .build())
-                    .build())
-                .build());
+                    .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                            .setTimestamp(Messages.Timestamp.newBuilder()
+                                    .setSeconds(15)
+                                    .build())
+                            .build())
+                    .build());
 
         String html = new String(bytes.toByteArray(), UTF_8);
         assertThat(html, containsString("" +
-            "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}\n" +
-            "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}"
-        ));
+                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}\n" +
+                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}"));
     }
 
 }

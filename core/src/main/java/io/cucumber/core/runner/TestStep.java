@@ -25,10 +25,10 @@ import static java.time.Duration.ZERO;
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private static final String[] TEST_ABORTED_OR_SKIPPED_EXCEPTIONS = {
-        "org.junit.AssumptionViolatedException",
-        "org.junit.internal.AssumptionViolatedException",
-        "org.opentest4j.TestAbortedException",
-        "org.testng.SkipException",
+            "org.junit.AssumptionViolatedException",
+            "org.junit.internal.AssumptionViolatedException",
+            "org.opentest4j.TestAbortedException",
+            "org.testng.SkipException",
     };
 
     static {
@@ -75,16 +75,14 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return !result.getStatus().is(Status.PASSED);
     }
 
-
     private void emitTestStepStarted(TestCase testCase, EventBus bus, UUID textExecutionId, Instant startTime) {
         bus.send(new TestStepStarted(startTime, testCase, this));
         bus.send(Messages.Envelope.newBuilder()
-            .setTestStepStarted(Messages.TestStepStarted.newBuilder()
-                .setTestCaseStartedId(textExecutionId.toString())
-                .setTestStepId(id.toString())
-                .setTimestamp(javaInstantToTimestamp(startTime))
-            ).build()
-        );
+                .setTestStepStarted(Messages.TestStepStarted.newBuilder()
+                        .setTestCaseStartedId(textExecutionId.toString())
+                        .setTestStepId(id.toString())
+                        .setTimestamp(javaInstantToTimestamp(startTime)))
+                .build());
     }
 
     private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {
@@ -125,24 +123,26 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return new Result(status, duration, error);
     }
 
-    private void emitTestStepFinished(TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result) {
+    private void emitTestStepFinished(
+            TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result
+    ) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        Messages.TestStepFinished.TestStepResult.Builder builder = Messages.TestStepFinished.TestStepResult.newBuilder();
+        Messages.TestStepFinished.TestStepResult.Builder builder = Messages.TestStepFinished.TestStepResult
+                .newBuilder();
 
         if (result.getError() != null) {
             builder.setMessage(extractStackTrace(result.getError()));
         }
         Messages.TestStepFinished.TestStepResult testResult = builder.setStatus(from(result.getStatus()))
-            .setDuration(javaDurationToDuration(duration))
-            .build();
+                .setDuration(javaDurationToDuration(duration))
+                .build();
         bus.send(Messages.Envelope.newBuilder()
-            .setTestStepFinished(Messages.TestStepFinished.newBuilder()
-                .setTestCaseStartedId(textExecutionId.toString())
-                .setTestStepId(id.toString())
-                .setTimestamp(javaInstantToTimestamp(stopTime))
-                .setTestStepResult(testResult)
-            ).build()
-        );
+                .setTestStepFinished(Messages.TestStepFinished.newBuilder()
+                        .setTestCaseStartedId(textExecutionId.toString())
+                        .setTestStepId(id.toString())
+                        .setTimestamp(javaInstantToTimestamp(stopTime))
+                        .setTestStepResult(testResult))
+                .build());
     }
 
     private String extractStackTrace(Throwable error) {

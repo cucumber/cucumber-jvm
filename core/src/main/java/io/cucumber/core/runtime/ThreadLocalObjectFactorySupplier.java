@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-
 import io.cucumber.core.backend.ObjectFactory;
 
 import static java.lang.ThreadLocal.withInitial;

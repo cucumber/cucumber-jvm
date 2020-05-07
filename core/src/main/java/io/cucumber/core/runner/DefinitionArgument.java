@@ -62,8 +62,8 @@ final class DefinitionArgument implements Argument {
         private Group(io.cucumber.cucumberexpressions.Group group) {
             this.group = group;
             children = group.getChildren().stream()
-                .map(Group::new)
-                .collect(Collectors.toList());
+                    .map(Group::new)
+                    .collect(Collectors.toList());
         }
 
         @Override

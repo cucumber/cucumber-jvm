@@ -6,8 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * Thrown when an exception was thrown by glue code. Not to be confused with
- * {@link CucumberBackendException} which is thrown when the backend failed
- * to invoke the glue.
+ * {@link CucumberBackendException} which is thrown when the backend failed to
+ * invoke the glue.
  */
 @API(status = API.Status.STABLE)
 public final class CucumberInvocationTargetException extends RuntimeException {

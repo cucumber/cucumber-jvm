@@ -43,9 +43,10 @@ class FeaturePathFeatureSupplierTest {
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         supplier.get();
         assertAll(
-            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("No features found at file:")),
-            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("src/test/resources/io/cucumber/core/options"))
-        );
+            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
+                containsString("No features found at file:")),
+            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
+                containsString("src/test/resources/io/cucumber/core/options")));
     }
 
     @Test
@@ -54,7 +55,8 @@ class FeaturePathFeatureSupplierTest {
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         supplier.get();
-        assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("Got no path to feature directory or feature file"));
+        assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
+            containsString("Got no path to feature directory or feature file"));
     }
 
     @Test
@@ -63,8 +65,7 @@ class FeaturePathFeatureSupplierTest {
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            supplier::get
-        );
+            supplier::get);
         assertThat(exception.getMessage(), containsString("path must exist"));
     }
 
@@ -74,8 +75,7 @@ class FeaturePathFeatureSupplierTest {
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            supplier::get
-        );
+            supplier::get);
         assertThat(exception.getMessage(), containsString("Feature not found"));
     }
 

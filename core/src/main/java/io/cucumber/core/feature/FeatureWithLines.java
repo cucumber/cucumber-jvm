@@ -14,12 +14,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Identifies either a directory containing feature files, a specific
- * feature or specific scenarios and examples (pickles) in a feature.
+ * Identifies either a directory containing feature files, a specific feature or
+ * specific scenarios and examples (pickles) in a feature.
  * <p>
  * The syntax of a a feature with lines defined as either a {@link FeaturePath}
- * or a {@link FeatureIdentifier} followed by a sequence of line
- * numbers each preceded by a colon.
+ * or a {@link FeatureIdentifier} followed by a sequence of line numbers each
+ * preceded by a colon.
  */
 public class FeatureWithLines implements Serializable {
 
@@ -77,8 +77,8 @@ public class FeatureWithLines implements Serializable {
 
     private static List<Integer> toInts(String[] strings) {
         return Arrays.stream(strings)
-            .map(Integer::parseInt)
-            .collect(Collectors.toList());
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
     }
 
     public static FeatureWithLines parse(String uri, Collection<Integer> lines) {
@@ -100,8 +100,10 @@ public class FeatureWithLines implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         FeatureWithLines that = (FeatureWithLines) o;
         return uri.equals(that.uri) && lines.equals(that.lines);
     }

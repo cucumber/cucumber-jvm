@@ -43,7 +43,8 @@ class StepExpressionFactoryTest {
     private final StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
     private final StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
     private final List<List<String>> table = asList(asList("name", "amount", "unit"), asList("chocolate", "2", "tbsp"));
-    private final List<List<String>> tableTransposed = asList(asList("name", "chocolate"), asList("amount", "2"), asList("unit", "tbsp"));
+    private final List<List<String>> tableTransposed = asList(asList("name", "chocolate"), asList("amount", "2"),
+        asList("unit", "tbsp"));
 
     @Test
     void creates_a_step_expression() {
@@ -63,11 +64,10 @@ class StepExpressionFactoryTest {
 
         CucumberException exception = assertThrows(
             CucumberException.class,
-            () -> stepExpressionFactory.createExpression(stepDefinition)
-        );
+            () -> stepExpressionFactory.createExpression(stepDefinition));
         assertThat(exception.getMessage(), is("" +
-            "Could not create a cucumber expression for 'Given a {unknownParameterType}'.\n" +
-            "It appears you did not register a parameter type."
+                "Could not create a cucumber expression for 'Given a {unknownParameterType}'.\n" +
+                "It appears you did not register a parameter type."
 
         ));
         assertThat(events, iterableWithSize(1));
@@ -94,7 +94,6 @@ class StepExpressionFactoryTest {
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         List<Argument> match = expression.match("Given some stuff:", tableTransposed);
 
-
         Ingredient ingredient = (Ingredient) match.get(0).getValue();
         assertThat(ingredient.name, is(equalTo("chocolate")));
     }
@@ -107,7 +106,7 @@ class StepExpressionFactoryTest {
     }
 
     private TableEntryTransformer<Ingredient> listBeanMapper(final StepTypeRegistry registry) {
-        //Just pretend this is a bean mapper.
+        // Just pretend this is a bean mapper.
         return tableRow -> {
             Ingredient bean = new Ingredient();
             bean.amount = Integer.valueOf(tableRow.get("amount"));
@@ -175,8 +174,7 @@ class StepExpressionFactoryTest {
         registry.defineDocStringType(new DocStringType(
             JsonNode.class,
             contentType,
-            (String s) -> objectMapper.convertValue(docString, JsonNode.class)
-        ));
+            (String s) -> objectMapper.convertValue(docString, JsonNode.class)));
 
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", JsonNode.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
@@ -189,7 +187,8 @@ class StepExpressionFactoryTest {
     @Test
     void empty_table_cells_are_presented_as_null_to_transformer() {
         registry.setDefaultDataTableEntryTransformer(
-            (map, valueType, tableCellByTypeTransformer) -> objectMapper.convertValue(map, objectMapper.constructType(valueType)));
+            (map, valueType, tableCellByTypeTransformer) -> objectMapper.convertValue(map,
+                objectMapper.constructType(valueType)));
 
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", getTypeFromStepDefinition());
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);

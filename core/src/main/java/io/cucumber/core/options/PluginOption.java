@@ -35,41 +35,46 @@ public class PluginOption implements Options.Plugin {
     private static final Logger log = LoggerFactory.getLogger(PluginOption.class);
 
     private static final Pattern PLUGIN_WITH_ARGUMENT_PATTERN = Pattern.compile("([^:]+):(.*)");
-    private static final HashMap<String, Supplier<Class<? extends Plugin>>> PLUGIN_CLASSES = new HashMap<String, Supplier<Class<? extends Plugin>>>() {{
-        put("default_summary", () -> DefaultSummaryPrinter.class);
-        put("html", () -> HtmlFormatter.class);
-        put("json", () -> JsonFormatter.class);
-        put("junit", () -> JUnitFormatter.class);
-        put("null_summary", () -> NullSummaryPrinter.class);
-        put("pretty", () -> PrettyFormatter.class);
-        put("progress", () -> ProgressFormatter.class);
-        put("message", () -> MessageFormatter.class);
-        put("rerun", () -> RerunFormatter.class);
-        put("summary", () -> DefaultSummaryPrinter.class);
-        put("testng", () -> TestNGFormatter.class);
-        put("timeline", () -> TimelineFormatter.class);
-        put("unused", () -> UnusedStepsSummaryPrinter.class);
-        put("usage", () -> UsageFormatter.class);
-        put("teamcity", () -> TeamCityPlugin.class);
-    }};
-
+    private static final HashMap<String, Supplier<Class<? extends Plugin>>> PLUGIN_CLASSES = new HashMap<String, Supplier<Class<? extends Plugin>>>() {
+        {
+            put("default_summary", () -> DefaultSummaryPrinter.class);
+            put("html", () -> HtmlFormatter.class);
+            put("json", () -> JsonFormatter.class);
+            put("junit", () -> JUnitFormatter.class);
+            put("null_summary", () -> NullSummaryPrinter.class);
+            put("pretty", () -> PrettyFormatter.class);
+            put("progress", () -> ProgressFormatter.class);
+            put("message", () -> MessageFormatter.class);
+            put("rerun", () -> RerunFormatter.class);
+            put("summary", () -> DefaultSummaryPrinter.class);
+            put("testng", () -> TestNGFormatter.class);
+            put("timeline", () -> TimelineFormatter.class);
+            put("unused", () -> UnusedStepsSummaryPrinter.class);
+            put("usage", () -> UsageFormatter.class);
+            put("teamcity", () -> TeamCityPlugin.class);
+        }
+    };
 
     // Replace IDEA plugin with TeamCity
-    private static final Set<String> INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashSet<String>() {{
-        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter");
-        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter");
-        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter");
-        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter");
-        add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter");
-    }};
+    private static final Set<String> INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES = new HashSet<String>() {
+        {
+            add("org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter");
+            add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter");
+            add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter");
+            add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter");
+            add("org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter");
+        }
+    };
 
     // Refuse plugins known to implement the old API
-    private static final Set<String> INCOMPATIBLE_PLUGIN_CLASSES = new HashSet<String>() {{
-        add("io.qameta.allure.cucumberjvm.AllureCucumberJvm");
-        add("io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm");
-        add("io.qameta.allure.cucumber3jvm.AllureCucumber3Jvm");
-        add("io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm");
-    }};
+    private static final Set<String> INCOMPATIBLE_PLUGIN_CLASSES = new HashSet<String>() {
+        {
+            add("io.qameta.allure.cucumberjvm.AllureCucumberJvm");
+            add("io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm");
+            add("io.qameta.allure.cucumber3jvm.AllureCucumber3Jvm");
+            add("io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm");
+        }
+    };
 
     private final String pluginString;
     private final Class<? extends Plugin> pluginClass;
@@ -111,7 +116,8 @@ public class PluginOption implements Options.Plugin {
             if (Plugin.class.isAssignableFrom(aClass)) {
                 return (Class<? extends Plugin>) aClass;
             }
-            throw new CucumberException("Couldn't load plugin class: " + className + ". It does not implement " + Plugin.class.getName());
+            throw new CucumberException(
+                "Couldn't load plugin class: " + className + ". It does not implement " + Plugin.class.getName());
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             throw new CucumberException("Couldn't load plugin class: " + className, e);
         }
@@ -133,12 +139,12 @@ public class PluginOption implements Options.Plugin {
     }
 
     boolean isFormatter() {
-        return EventListener.class.isAssignableFrom(pluginClass) || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
+        return EventListener.class.isAssignableFrom(pluginClass)
+                || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
     }
 
     boolean isSummaryPrinter() {
         return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
-
 
 }

@@ -18,16 +18,16 @@ import static java.util.Objects.requireNonNull;
 /**
  * The glue path is a class path URI to a package.
  * <p>
- * The glue path can be written as either a package name: {@code com.example.app},
- * a path {@code com/example/app} or uri {@code classpath:com/example/app}.
+ * The glue path can be written as either a package name:
+ * {@code com.example.app}, a path {@code com/example/app} or uri
+ * {@code classpath:com/example/app}.
  * <p>
- * On file system with a path separator other then `{@code /}` {@code com\example\app}
- * is also a valid glue path.
+ * On file system with a path separator other then `{@code /}`
+ * {@code com\example\app} is also a valid glue path.
  * <p>
  * It is recommended to always use the package name form.
  */
 public class GluePath {
-
 
     private GluePath() {
 
@@ -60,7 +60,7 @@ public class GluePath {
 
     private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
         return File.separatorChar != RESOURCE_SEPARATOR_CHAR
-            && featureIdentifier.contains(File.separator);
+                && featureIdentifier.contains(File.separator);
     }
 
     private static String replaceNonStandardPathSeparator(String featureIdentifier) {
@@ -77,7 +77,9 @@ public class GluePath {
 
         if (uri.getScheme() == null) {
             try {
-                return new URI(CLASSPATH_SCHEME, schemeSpecificPart.startsWith("/") ? schemeSpecificPart : "/" + schemeSpecificPart, uri.getFragment());
+                return new URI(CLASSPATH_SCHEME,
+                    schemeSpecificPart.startsWith("/") ? schemeSpecificPart : "/" + schemeSpecificPart,
+                    uri.getFragment());
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
@@ -92,13 +94,14 @@ public class GluePath {
 
     private static boolean isProbablyPackage(String gluePath) {
         return gluePath.contains(PACKAGE_SEPARATOR_STRING)
-            && !gluePath.contains(RESOURCE_SEPARATOR_STRING);
+                && !gluePath.contains(RESOURCE_SEPARATOR_STRING);
     }
 
     private static boolean isValidIdentifier(String schemeSpecificPart) {
         for (String part : schemeSpecificPart.split("/")) {
             for (int i = 0; i < part.length(); i++) {
-                if (i == 0 && !isJavaIdentifierStart(part.charAt(i)) || (i != 0 && !isJavaIdentifierPart(part.charAt(i)))) {
+                if (i == 0 && !isJavaIdentifierStart(part.charAt(i))
+                        || (i != 0 && !isJavaIdentifierPart(part.charAt(i)))) {
                     return false;
                 }
             }

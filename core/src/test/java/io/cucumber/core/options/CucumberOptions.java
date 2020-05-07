@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface CucumberOptions {
 
     boolean dryRun() default false;
@@ -25,11 +25,9 @@ public @interface CucumberOptions {
 
     String[] plugin() default {};
 
-
     boolean monochrome() default false;
 
     String[] name() default {};
-
 
     SnippetType snippets() default SnippetType.UNDERSCORE;
 

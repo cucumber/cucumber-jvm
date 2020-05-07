@@ -28,8 +28,9 @@ import static java.util.Arrays.asList;
 /**
  * This class creates plugin instances from a String.
  * <p>
- * The String is of the form name[:output] where name is either a fully qualified class name or one of the built-in
- * short names. The output is optional for some plugins (and mandatory for some).
+ * The String is of the form name[:output] where name is either a fully
+ * qualified class name or one of the built-in short names. The output is
+ * optional for some plugins (and mandatory for some).
  *
  * @see Plugin for specific requirements
  */
@@ -37,14 +38,14 @@ public final class PluginFactory {
 
     private static final Logger log = LoggerFactory.getLogger(PluginFactory.class);
 
-    private final Class<?>[] CTOR_PARAMETERS = new Class<?>[]{
-        String.class,
-        File.class,
-        URI.class,
-        URL.class,
-        OutputStream.class,
-        // Deprecated
-        Appendable.class
+    private final Class<?>[] CTOR_PARAMETERS = new Class<?>[] {
+            String.class,
+            File.class,
+            URI.class,
+            URL.class,
+            OutputStream.class,
+            // Deprecated
+            Appendable.class
     };
 
     private String pluginUsingDefaultOut = null;
@@ -64,7 +65,8 @@ public final class PluginFactory {
         }
     }
 
-    private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String argument) throws IOException, URISyntaxException {
+    private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String argument)
+            throws IOException, URISyntaxException {
         Map<Class<?>, Constructor<T>> singleArgConstructors = findSingleArgConstructors(pluginClass);
         if (argument == null) {// No argument passed
             Constructor<T> outputStreamConstructor = singleArgConstructors.get(OutputStream.class);
@@ -76,14 +78,20 @@ public final class PluginFactory {
                 return newInstance(emptyConstructor);
             }
             if (!singleArgConstructors.isEmpty()) {
-                throw new CucumberException(String.format("You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString, pluginString));
+                throw new CucumberException(String.format(
+                    "You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString, pluginString));
             }
-            throw new CucumberException(String.format("%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
+            throw new CucumberException(String.format(
+                "%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s",
+                pluginClass, asList(CTOR_PARAMETERS)));
         }
         if (singleArgConstructors.size() != 1) {
-            throw new CucumberException(String.format("%s must have exactly one constructor that declares a single parameter of one of: %s", pluginClass, asList(CTOR_PARAMETERS)));
+            throw new CucumberException(
+                String.format("%s must have exactly one constructor that declares a single parameter of one of: %s",
+                    pluginClass, asList(CTOR_PARAMETERS)));
         }
-        Map.Entry<Class<?>, Constructor<T>> singleArgConstructorEntry = singleArgConstructors.entrySet().iterator().next();
+        Map.Entry<Class<?>, Constructor<T>> singleArgConstructorEntry = singleArgConstructors.entrySet().iterator()
+                .next();
         Class<?> parameterType = singleArgConstructorEntry.getKey();
         Constructor<T> singleArgConstructor = singleArgConstructorEntry.getValue();
         return newInstance(singleArgConstructor, convert(argument, parameterType, pluginString, pluginClass));
@@ -118,8 +126,9 @@ public final class PluginFactory {
                 return defaultOut;
             } else {
                 throw new CucumberException("Only one plugin can use STDOUT, now both " +
-                    pluginUsingDefaultOut + " and " + pluginString + " use it. " +
-                    "If you use more than one plugin you must specify output path with " + pluginString + ":DIR|FILE|URL");
+                        pluginUsingDefaultOut + " and " + pluginString + " use it. " +
+                        "If you use more than one plugin you must specify output path with " + pluginString
+                        + ":DIR|FILE|URL");
             }
         } finally {
             defaultOut = null;
@@ -134,7 +143,8 @@ public final class PluginFactory {
         }
     }
 
-    private Object convert(String arg, Class<?> ctorArgClass, String pluginString, Class<?> pluginClass) throws IOException, URISyntaxException {
+    private Object convert(String arg, Class<?> ctorArgClass, String pluginString, Class<?> pluginClass)
+            throws IOException, URISyntaxException {
         if (ctorArgClass.equals(URI.class)) {
             return makeURL(arg).toURI();
         }
@@ -157,13 +167,16 @@ public final class PluginFactory {
 
         if (ctorArgClass.equals(Appendable.class)) {
             String recommendedParameters = Arrays.stream(CTOR_PARAMETERS)
-                .filter(c -> c != Appendable.class)
-                .map(Class::getName)
-                .collect(Collectors.joining(", "));
-            log.error(() -> String.format("The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s", pluginClass.getName(), recommendedParameters));
+                    .filter(c -> c != Appendable.class)
+                    .map(Class::getName)
+                    .collect(Collectors.joining(", "));
+            log.error(() -> String.format(
+                "The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s",
+                pluginClass.getName(), recommendedParameters));
             return new UTF8OutputStreamWriter(openStream(arg));
         }
-        throw new CucumberException(String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
+        throw new CucumberException(
+            String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
     }
 
     private static URL makeURL(String arg) throws MalformedURLException {
@@ -194,11 +207,11 @@ public final class PluginFactory {
             return new FileOutputStream(file);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException(String.format("" +
-                "Couldn't create a file output stream for %s.\n" +
-                "Make sure the the file isn't a directory.\n" +
-                "The details are in the stack trace below:", file),
-                e
-            );
+                    "Couldn't create a file output stream for %s.\n" +
+                    "Make sure the the file isn't a directory.\n" +
+                    "The details are in the stack trace below:",
+                file),
+                e);
         }
     }
 

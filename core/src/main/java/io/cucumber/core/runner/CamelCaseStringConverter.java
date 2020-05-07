@@ -44,8 +44,7 @@ class CamelCaseStringConverter {
     private static CucumberException createDuplicateKeyException(String key, String conflictingKey, String newKey) {
         return new CucumberException(String.format(
             "Failed to convert header '%s' to property name. '%s' also converted to '%s'",
-            key, conflictingKey, newKey
-        ));
+            key, conflictingKey, newKey));
     }
 
     private static String normalizeSpace(String originalHeaderName) {

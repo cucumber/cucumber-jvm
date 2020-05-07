@@ -23,11 +23,11 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 public final class RuntimeOptions implements
-    io.cucumber.core.feature.Options,
-    io.cucumber.core.runner.Options,
-    io.cucumber.core.plugin.Options,
-    io.cucumber.core.filter.Options,
-    io.cucumber.core.backend.Options {
+        io.cucumber.core.feature.Options,
+        io.cucumber.core.runner.Options,
+        io.cucumber.core.plugin.Options,
+        io.cucumber.core.filter.Options,
+        io.cucumber.core.backend.Options {
 
     private final List<URI> glue = new ArrayList<>();
     private final List<String> tagExpressions = new ArrayList<>();
@@ -161,10 +161,10 @@ public final class RuntimeOptions implements
     @Override
     public List<URI> getFeaturePaths() {
         return unmodifiableList(featurePaths.stream()
-            .map(FeatureWithLines::uri)
-            .sorted()
-            .distinct()
-            .collect(Collectors.toList()));
+                .map(FeatureWithLines::uri)
+                .sorted()
+                .distinct()
+                .collect(Collectors.toList()));
     }
 
     void setFeaturePaths(List<FeatureWithLines> featurePaths) {

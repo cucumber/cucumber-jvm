@@ -74,12 +74,11 @@ class RuntimeTest {
 
     private Runtime createStrictRuntime() {
         return Runtime.builder()
-            .withRuntimeOptions(
-                new RuntimeOptionsBuilder()
-                    .build()
-            )
-            .withEventBus(bus)
-            .build();
+                .withRuntimeOptions(
+                    new RuntimeOptionsBuilder()
+                            .build())
+                .withEventBus(bus)
+                .build();
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
@@ -111,8 +110,8 @@ class RuntimeTest {
 
     private Runtime createNonStrictRuntime() {
         return Runtime.builder()
-            .withEventBus(bus)
-            .build();
+                .withEventBus(bus)
+                .build();
     }
 
     @Test
@@ -134,9 +133,9 @@ class RuntimeTest {
     @Test
     void should_pass_if_no_features_are_found() {
         Runtime runtime = Runtime.builder()
-            .withRuntimeOptions(new RuntimeOptionsBuilder()
-                .build())
-            .build();
+                .withRuntimeOptions(new RuntimeOptionsBuilder()
+                        .build())
+                .build();
 
         runtime.run();
 
@@ -147,10 +146,10 @@ class RuntimeTest {
     void should_make_scenario_name_available_to_hooks() {
         final Feature feature = TestFeatureParser.parse("path/test.feature",
             "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
         final HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.getLocation()).thenReturn("");
         when(beforeHook.getTagExpression()).thenReturn("");
@@ -160,10 +159,10 @@ class RuntimeTest {
         FeatureSupplier featureSupplier = new TestFeatureSupplier(feature);
 
         Runtime runtime = Runtime.builder()
-            .withBackendSupplier(testBackendSupplier)
-            .withFeatureSupplier(featureSupplier)
-            .withEventBus(bus)
-            .build();
+                .withBackendSupplier(testBackendSupplier)
+                .withFeatureSupplier(featureSupplier)
+                .withEventBus(bus)
+                .build();
         runtime.run();
 
         ArgumentCaptor<TestCaseState> capturedScenario = ArgumentCaptor.forClass(TestCaseState.class);
@@ -212,14 +211,14 @@ class RuntimeTest {
     @Test
     void should_call_formatter_for_two_scenarios_with_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given first step\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    When second step\n" +
-            "    Then third step\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Then second step\n");
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given first step\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    When second step\n" +
+                "    Then third step\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Then second step\n");
         Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
@@ -229,33 +228,33 @@ class RuntimeTest {
 
         assertThat(formatterOutput,
             is(equalTo("" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestRun finished\n")));
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestRun finished\n")));
     }
 
     private String runFeatureWithFormatterSpy(Feature feature, Map<String, Result> stepsToResult) {
         FormatterSpy formatterSpy = new FormatterSpy();
 
         TestHelper.builder()
-            .withFeatures(feature)
-            .withStepsToResult(stepsToResult)
-            .withFormatterUnderTest(formatterSpy)
-            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .build()
-            .run();
+                .withFeatures(feature)
+                .withStepsToResult(stepsToResult)
+                .withFormatterUnderTest(formatterSpy)
+                .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+                .build()
+                .run();
 
         return formatterSpy.toString();
     }
@@ -263,19 +262,19 @@ class RuntimeTest {
     @Test
     void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name\n" +
-            "  Background: background\n" +
-            "    Given first step\n" +
-            "  Scenario Outline: scenario outline name\n" +
-            "    When <x> step\n" +
-            "    Then <y> step\n" +
-            "    Examples: examples 1 name\n" +
-            "      |   x    |   y   |\n" +
-            "      | second | third |\n" +
-            "      | second | third |\n" +
-            "    Examples: examples 2 name\n" +
-            "      |   x    |   y   |\n" +
-            "      | second | third |\n");
+                "Feature: feature name\n" +
+                "  Background: background\n" +
+                "    Given first step\n" +
+                "  Scenario Outline: scenario outline name\n" +
+                "    When <x> step\n" +
+                "    Then <y> step\n" +
+                "    Examples: examples 1 name\n" +
+                "      |   x    |   y   |\n" +
+                "      | second | third |\n" +
+                "      | second | third |\n" +
+                "    Examples: examples 2 name\n" +
+                "      |   x    |   y   |\n" +
+                "      | second | third |\n");
         Map<String, Result> stepsToResult = new HashMap<>();
         stepsToResult.put("first step", result("passed"));
         stepsToResult.put("second step", result("passed"));
@@ -285,154 +284,155 @@ class RuntimeTest {
 
         assertThat(formatterOutput,
             is(equalTo("" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestRun finished\n")));
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestRun finished\n")));
     }
 
     @Test
     void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() {
         Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name 1\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    Given first step\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Given first step\n");
+                "Feature: feature name 1\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    Given first step\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Given first step\n");
 
         Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
-            "Feature: feature name 2\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Given first step\n");
+                "Feature: feature name 2\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Given first step\n");
 
         Feature feature3 = TestFeatureParser.parse("path/test3.feature", "" +
-            "Feature: feature name 3\n" +
-            "  Scenario: scenario_3 name\n" +
-            "    Given first step\n");
+                "Feature: feature name 3\n" +
+                "  Scenario: scenario_3 name\n" +
+                "    Given first step\n");
 
         FormatterSpy formatterSpy = new FormatterSpy();
         final List<Feature> features = Arrays.asList(feature1, feature2, feature3);
 
         Runtime.builder()
-            .withFeatureSupplier(new TestFeatureSupplier(features))
-            .withEventBus(bus)
-            .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(features.size()).build())
-            .withAdditionalPlugins(formatterSpy)
-            .withBackendSupplier(new TestHelper.TestHelperBackendSupplier(features))
-            .build()
-            .run();
+                .withFeatureSupplier(new TestFeatureSupplier(features))
+                .withEventBus(bus)
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(features.size()).build())
+                .withAdditionalPlugins(formatterSpy)
+                .withBackendSupplier(new TestHelper.TestHelperBackendSupplier(features))
+                .build()
+                .run();
 
         String formatterOutput = formatterSpy.toString();
 
         assertThat(formatterOutput,
             is(equalTo("" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestCase started\n" +
-                "  TestStep started\n" +
-                "  TestStep finished\n" +
-                "TestCase finished\n" +
-                "TestRun finished\n")));
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestCase started\n" +
+                    "  TestStep started\n" +
+                    "  TestStep finished\n" +
+                    "TestCase finished\n" +
+                    "TestRun finished\n")));
     }
 
     @Test
     void should_fail_on_event_listener_exception_when_running_in_parallel() {
         Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name 1\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    Given first step\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Given first step\n");
+                "Feature: feature name 1\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    Given first step\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Given first step\n");
 
         Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
-            "Feature: feature name 2\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Given first step\n");
+                "Feature: feature name 2\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Given first step\n");
 
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
-            throw new RuntimeException("This exception is expected");
-        });
+        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class,
+            (TestStepFinished event) -> {
+                throw new RuntimeException("This exception is expected");
+            });
 
         Executable testMethod = () -> TestHelper.builder()
-            .withFeatures(Arrays.asList(feature1, feature2))
-            .withFormatterUnderTest(brokenEventListener)
-            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
-            .build()
-            .run();
+                .withFeatures(Arrays.asList(feature1, feature2))
+                .withFormatterUnderTest(brokenEventListener)
+                .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+                .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
+                .build()
+                .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
             "There were 3 exceptions:\n" +
-                "  java.lang.RuntimeException(This exception is expected)\n" +
-                "  java.lang.RuntimeException(This exception is expected)\n" +
-                "  java.lang.RuntimeException(This exception is expected)"
-        )));
+                    "  java.lang.RuntimeException(This exception is expected)\n" +
+                    "  java.lang.RuntimeException(This exception is expected)\n" +
+                    "  java.lang.RuntimeException(This exception is expected)")));
     }
 
     @Test
     void should_interrupt_waiting_plugins() throws InterruptedException {
         final Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
-            "Feature: feature name 1\n" +
-            "  Scenario: scenario_1 name\n" +
-            "    Given first step\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Given first step\n");
+                "Feature: feature name 1\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    Given first step\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Given first step\n");
 
         final Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
-            "Feature: feature name 2\n" +
-            "  Scenario: scenario_2 name\n" +
-            "    Given first step\n");
+                "Feature: feature name 2\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Given first step\n");
 
         final CountDownLatch threadBlocked = new CountDownLatch(1);
         final CountDownLatch interruptHit = new CountDownLatch(1);
 
-        final ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
-            try {
-                threadBlocked.countDown();
-                HOURS.sleep(1);
-            } catch (InterruptedException ignored) {
-                interruptHit.countDown();
-            }
-        });
+        final ConcurrentEventListener brokenEventListener = publisher -> publisher
+                .registerHandlerFor(TestStepFinished.class, (TestStepFinished event) -> {
+                    try {
+                        threadBlocked.countDown();
+                        HOURS.sleep(1);
+                    } catch (InterruptedException ignored) {
+                        interruptHit.countDown();
+                    }
+                });
 
         Thread thread = new Thread(() -> TestHelper.builder()
-            .withFeatures(Arrays.asList(feature1, feature2))
-            .withFormatterUnderTest(brokenEventListener)
-            .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-            .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
-            .build()
-            .run());
+                .withFeatures(Arrays.asList(feature1, feature2))
+                .withFormatterUnderTest(brokenEventListener)
+                .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+                .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
+                .build()
+                .run());
 
         thread.start();
         threadBlocked.await(1, SECONDS);
@@ -444,21 +444,21 @@ class RuntimeTest {
     @Test
     void generates_events_for_glue_and_scenario_scoped_glue() {
         final Feature feature = TestFeatureParser.parse("test.feature", "" +
-            "Feature: feature name\n" +
-            "  Scenario: Run a scenario once\n" +
-            "    Given global scoped\n" +
-            "    And scenario scoped\n" +
-            "  Scenario: Then do it again\n" +
-            "    Given global scoped\n" +
-            "    And scenario scoped\n" +
-            "");
+                "Feature: feature name\n" +
+                "  Scenario: Run a scenario once\n" +
+                "    Given global scoped\n" +
+                "    And scenario scoped\n" +
+                "  Scenario: Then do it again\n" +
+                "    Given global scoped\n" +
+                "    And scenario scoped\n" +
+                "");
 
         final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
 
-        Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class, (StepDefinedEvent event) -> {
-            stepDefinedEvents.add(event.getStepDefinition());
-        });
-
+        Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class,
+            (StepDefinedEvent event) -> {
+                stepDefinedEvents.add(event.getStepDefinition());
+            });
 
         final MockedStepDefinition mockedStepDefinition = new MockedStepDefinition();
         final MockedScenarioScopedStepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
@@ -481,12 +481,12 @@ class RuntimeTest {
 
         FeatureSupplier featureSupplier = () -> singletonList(feature);
         Runtime.builder()
-            .withBackendSupplier(backendSupplier)
-            .withAdditionalPlugins(eventListener)
-            .withEventBus(new TimeServiceEventBus(new StepDurationTimeService(ZERO), UUID::randomUUID))
-            .withFeatureSupplier(featureSupplier)
-            .build()
-            .run();
+                .withBackendSupplier(backendSupplier)
+                .withAdditionalPlugins(eventListener)
+                .withEventBus(new TimeServiceEventBus(new StepDurationTimeService(ZERO), UUID::randomUUID))
+                .withFeatureSupplier(featureSupplier)
+                .build()
+                .run();
 
         assertThat(stepDefinedEvents.get(0).getPattern(), is(mockedStepDefinition.getPattern()));
         assertThat(stepDefinedEvents.get(1).getPattern(), is(mockedScenarioScopedStepDefinition.getPattern()));
@@ -499,12 +499,12 @@ class RuntimeTest {
     @Test
     void emits_a_meta_message() {
         List<Messages.Envelope> messages = new ArrayList<>();
-        ConcurrentEventListener messageListener =
-            publisher -> publisher.registerHandlerFor(Messages.Envelope.class, messages::add);
+        ConcurrentEventListener messageListener = publisher -> publisher.registerHandlerFor(Messages.Envelope.class,
+            messages::add);
         Runtime.builder()
-            .withAdditionalPlugins(messageListener)
-            .build()
-            .run();
+                .withAdditionalPlugins(messageListener)
+                .build()
+                .run();
 
         Messages.Meta meta = messages.get(0).getMeta();
         assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+"));
@@ -543,7 +543,8 @@ class RuntimeTest {
 
     }
 
-    private static final class MockedScenarioScopedStepDefinition implements ScenarioScoped, io.cucumber.core.backend.StepDefinition {
+    private static final class MockedScenarioScopedStepDefinition
+            implements ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
         @Override
         public void execute(Object[] args) {

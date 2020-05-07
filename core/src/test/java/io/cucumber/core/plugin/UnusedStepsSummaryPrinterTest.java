@@ -34,11 +34,13 @@ class UnusedStepsSummaryPrinterTest {
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/belly.feature:3", "a few cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/tummy.feature:5", "some more cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/gut.feature:7", "even more cukes")));
-        bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/belly.feature:3"), new Result(Status.UNUSED, Duration.ZERO, null)));
+        bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/belly.feature:3"),
+            new Result(Status.UNUSED, Duration.ZERO, null)));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/belly.feature:3", "a few cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/tummy.feature:5", "some more cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/gut.feature:7", "even more cukes")));
-        bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/gut.feature:7"), new Result(Status.UNUSED, Duration.ZERO, null)));
+        bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/gut.feature:7"),
+            new Result(Status.UNUSED, Duration.ZERO, null)));
         bus.send(new TestRunFinished(bus.getInstant()));
 
         // Verify produced output

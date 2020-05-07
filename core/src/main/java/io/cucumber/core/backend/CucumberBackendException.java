@@ -2,7 +2,6 @@ package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
 
-
 /**
  * Thrown when the backend could not invoke some glue code. Not to be confused
  * with {@link CucumberInvocationTargetException} which is thrown when the glue

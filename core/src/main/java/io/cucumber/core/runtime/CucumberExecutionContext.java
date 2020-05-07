@@ -55,25 +55,20 @@ public final class CucumberExecutionContext {
             version = "unreleased";
         }
         bus.send(Envelope.newBuilder()
-            .setMeta(Messages.Meta.newBuilder()
-                .setProtocolVersion(Messages.class.getPackage().getImplementationVersion())
-                .setRuntime(Messages.Meta.Product.newBuilder()
-                    .setName(System.getProperty("java.vendor"))
-                    .setVersion(System.getProperty("java.version"))
-                )
-                .setImplementation(Messages.Meta.Product.newBuilder()
-                    .setName("cucumber-jvm")
-                    .setVersion(version)
-                )
-                .setOs(Messages.Meta.Product.newBuilder()
-                    .setName(System.getProperty("os.name"))
-                )
-                .setCpu(Messages.Meta.Product.newBuilder()
-                    .setName(System.getProperty("os.arch"))
-                )
-                .build())
-            .build()
-        );
+                .setMeta(Messages.Meta.newBuilder()
+                        .setProtocolVersion(Messages.class.getPackage().getImplementationVersion())
+                        .setRuntime(Messages.Meta.Product.newBuilder()
+                                .setName(System.getProperty("java.vendor"))
+                                .setVersion(System.getProperty("java.version")))
+                        .setImplementation(Messages.Meta.Product.newBuilder()
+                                .setName("cucumber-jvm")
+                                .setVersion(version))
+                        .setOs(Messages.Meta.Product.newBuilder()
+                                .setName(System.getProperty("os.name")))
+                        .setCpu(Messages.Meta.Product.newBuilder()
+                                .setName(System.getProperty("os.arch")))
+                        .build())
+                .build());
     }
 
     private void emitTestRunStarted() {
@@ -81,10 +76,9 @@ public final class CucumberExecutionContext {
         start = bus.getInstant();
         bus.send(new TestRunStarted(start));
         bus.send(Envelope.newBuilder()
-            .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                .setTimestamp(javaInstantToTimestamp(start)))
-            .build()
-        );
+                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                        .setTimestamp(javaInstantToTimestamp(start)))
+                .build());
     }
 
     public void finishTestRun() {
@@ -108,20 +102,19 @@ public final class CucumberExecutionContext {
         Result result = new Result(
             cucumberException != null ? Status.FAILED : exitStatus.getStatus(),
             Duration.between(start, instant),
-            cucumberException
-        );
+            cucumberException);
         bus.send(new TestRunFinished(instant, result));
 
         Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
-            .setSuccess(exitStatus.isSuccess())
-            .setTimestamp(javaInstantToTimestamp(instant));
+                .setSuccess(exitStatus.isSuccess())
+                .setTimestamp(javaInstantToTimestamp(instant));
 
         if (cucumberException != null) {
             testRunFinished.setMessage(cucumberException.getMessage());
         }
         bus.send(Envelope.newBuilder()
-            .setTestRunFinished(testRunFinished)
-            .build());
+                .setTestRunFinished(testRunFinished)
+                .build());
     }
 
     public void beforeFeature(Feature feature) {

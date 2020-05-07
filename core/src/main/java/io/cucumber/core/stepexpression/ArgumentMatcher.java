@@ -40,10 +40,10 @@ public final class ArgumentMatcher {
 
     private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
         return cells.stream()
-            .map(row -> row.stream()
-                .map(s -> s.isEmpty() ? null : s)
-                .collect(Collectors.toList()))
-            .collect(Collectors.toList());
+                .map(row -> row.stream()
+                        .map(s -> s.isEmpty() ? null : s)
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 
 }

@@ -68,53 +68,47 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     public void attach(byte[] data, String mediaType, String name) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
         bus.send(Messages.Envelope.newBuilder()
-            .setAttachment(
-                Messages.Attachment.newBuilder()
-                    .setTestCaseStartedId(testExecutionId.toString())
-                    .setTestStepId(currentTestStepId.toString())
-                    .setBody(Base64.getEncoder().encodeToString(data))
-                    .setContentEncoding(ContentEncoding.BASE64)
-                    // Add file name to message protocol
-                    // https://github.com/cucumber/cucumber/issues/945
-                    .setMediaType(mediaType)
-            )
-            .build()
-        );
+                .setAttachment(
+                    Messages.Attachment.newBuilder()
+                            .setTestCaseStartedId(testExecutionId.toString())
+                            .setTestStepId(currentTestStepId.toString())
+                            .setBody(Base64.getEncoder().encodeToString(data))
+                            .setContentEncoding(ContentEncoding.BASE64)
+                            // Add file name to message protocol
+                            // https://github.com/cucumber/cucumber/issues/945
+                            .setMediaType(mediaType))
+                .build());
     }
 
     @Override
     public void attach(String data, String mediaType, String name) {
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
         bus.send(Messages.Envelope.newBuilder()
-            .setAttachment(
-                Messages.Attachment.newBuilder()
-                    .setTestCaseStartedId(testExecutionId.toString())
-                    .setTestStepId(currentTestStepId.toString())
-                    .setBody(data)
-                    .setContentEncoding(ContentEncoding.IDENTITY)
-                    // Add file name to message protocol
-                    // https://github.com/cucumber/cucumber/issues/945
-                    .setMediaType(mediaType)
-            )
-            .build()
-        );
+                .setAttachment(
+                    Messages.Attachment.newBuilder()
+                            .setTestCaseStartedId(testExecutionId.toString())
+                            .setTestStepId(currentTestStepId.toString())
+                            .setBody(data)
+                            .setContentEncoding(ContentEncoding.IDENTITY)
+                            // Add file name to message protocol
+                            // https://github.com/cucumber/cucumber/issues/945
+                            .setMediaType(mediaType))
+                .build());
     }
 
     @Override
     public void log(String text) {
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
         bus.send(Messages.Envelope.newBuilder()
-            .setAttachment(
-                Messages.Attachment.newBuilder()
-                    .setTestCaseStartedId(testExecutionId.toString())
-                    .setTestStepId(currentTestStepId.toString())
-                    .setBody(text)
-                    .setContentEncoding(ContentEncoding.IDENTITY)
-                    .setMediaType("text/x.cucumber.log+plain")
-                    .build()
-            )
-            .build()
-        );
+                .setAttachment(
+                    Messages.Attachment.newBuilder()
+                            .setTestCaseStartedId(testExecutionId.toString())
+                            .setTestStepId(currentTestStepId.toString())
+                            .setBody(text)
+                            .setContentEncoding(ContentEncoding.IDENTITY)
+                            .setMediaType("text/x.cucumber.log+plain")
+                            .build())
+                .build());
     }
 
     @Override

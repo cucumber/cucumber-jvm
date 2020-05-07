@@ -5,8 +5,8 @@ import org.apiguardian.api.API;
 import java.lang.reflect.Type;
 
 /**
- * Allows lazy resolution and validation of the type of a data table or
- * doc string argument.
+ * Allows lazy resolution and validation of the type of a data table or doc
+ * string argument.
  */
 @API(status = API.Status.STABLE)
 public interface TypeResolver {
@@ -21,7 +21,7 @@ public interface TypeResolver {
      * When the {@link Object} type is returned no transform will be applied to
      * the data table or doc string.
      *
-     * @return a type
+     * @return                  a type
      * @throws RuntimeException when the type could not adequately be determined
      */
     Type resolve() throws RuntimeException;
