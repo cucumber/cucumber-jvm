@@ -24,16 +24,13 @@ import static java.util.Collections.singletonList;
  * <p>
  * A node can be linked to a {@link TestCase} by {@link #getLocation()}. The
  * {@link Node#findPathTo(Predicate)} method can be used to find a path from the
- * root node to a node with the same location as a test case.
+ * root node to a node with the same location as a test case. <code><pre>
  *
- * <pre>
- * {
- *     &#64;code
- *     Location location = testCase.getLocation();
- *     Predicate<Node> withLocation = candidate -> location.equals(candidate.getLocation());
- *     Optional<List<Node>> path = node.findPathTo(withLocation);
- * }
+ * {@code Location location = testCase.getLocation();}
+ * {@code Predicate<Node> withLocation = candidate -> location.equals(candidate.getLocation());}
+ * {@code Optional<List<Node>> path = node.findPathTo(withLocation);}
  * </pre>
+ * </code>
  */
 @API(status = API.Status.EXPERIMENTAL)
 public interface Node {
