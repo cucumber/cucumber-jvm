@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+ * [Core] Upgrade the timeline formatter's jQuery dependency from 3.4.1 to 3.5.1. jQuery 3.4.1 has an [XSS vulnerability](https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/)
+   that wouldn't normally affect the timeline formatter. However, it did break OWASP dependency-check plugin runs against libraries containing cucumber-core.
+   ([#1971](https://github.com/cucumber/cucumber-jvm/issues/1971), [#1972](https://github.com/cucumber/cucumber-jvm/pull/1972) Tim te Beek)
 
 ### Deprecated
 
