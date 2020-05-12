@@ -14,6 +14,7 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestSourceParsed;
+import org.webjars.WebJarAssetLocator;
 
 import java.io.Closeable;
 import java.io.File;
@@ -38,7 +39,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             "/io/cucumber/core/plugin/timeline/index.html",
             "/io/cucumber/core/plugin/timeline/formatter.js",
             "/io/cucumber/core/plugin/timeline/report.css",
-            "/io/cucumber/core/plugin/timeline/jquery-3.4.1.min.js",
             "/io/cucumber/core/plugin/timeline/vis.min.css",
             "/io/cucumber/core/plugin/timeline/vis.min.js",
             "/io/cucumber/core/plugin/timeline/vis.override.css",
@@ -146,6 +146,12 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             copyFile(textAssetStream, new File(outputDir, fileName));
             closeQuietly(textAssetStream);
         }
+        // Add JQuery separately, as it's versioned through webjars
+        String jqueryFilename = "jquery.min.js";
+        String queryPath = new WebJarAssetLocator().getFullPath("jquery", jqueryFilename);
+        InputStream jqueryStream = getClass().getResourceAsStream("/" + queryPath);
+        copyFile(jqueryStream, new File(outputDir, jqueryFilename));
+        closeQuietly(jqueryStream);
     }
 
     private static void copyFile(final InputStream source, final File dest) throws CucumberException {

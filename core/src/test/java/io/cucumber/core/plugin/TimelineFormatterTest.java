@@ -118,8 +118,8 @@ class TimelineFormatterTest {
 
         assertThat(REPORT_JS + ": did not exist in output dir", reportJsFile.exists(), is(equalTo(true)));
 
-        final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.4.1.min.js", "vis.min.css",
-            "vis.min.js", "vis.override.css");
+        final List<String> files = Arrays.asList("index.html", "formatter.js", "vis.min.css", "vis.min.js",
+            "vis.override.css");
         for (final String e : files) {
             final File actualFile = new File(reportDir, e);
             assertThat(e + ": did not exist in output dir", actualFile.exists(), is(equalTo(true)));
@@ -127,6 +127,9 @@ class TimelineFormatterTest {
             final String expected = readFileContents(new File(REPORT_TEMPLATE_RESOURCE_DIR, e).getAbsolutePath());
             assertThat(e + " differs", actual, is(equalTo(expected)));
         }
+        // Ensure JQuery file was written
+        final File actualFile = new File(reportDir, "jquery.min.js");
+        assertThat("jquery.min.js: did not exist in output dir", actualFile.exists(), is(equalTo(true)));
     }
 
     private void runFormatterWithPlugin() {
