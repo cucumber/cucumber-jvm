@@ -1,20 +1,28 @@
 package io.cucumber.spring.beans;
 
+import io.cucumber.spring.ScenarioScope;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
-@Scope(SCOPE_CUCUMBER_GLUE)
+@ScenarioScope
 public class GlueScopedComponent {
+
+    private static final AtomicLong counter = new AtomicLong(0);
+
+    private final long instanceId = counter.incrementAndGet();
 
     @Autowired
     private Belly belly;
 
     public Belly getBelly() {
         return belly;
+    }
+
+    public long getInstanceId() {
+        return instanceId;
     }
 
 }

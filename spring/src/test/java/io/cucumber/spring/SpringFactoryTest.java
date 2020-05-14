@@ -18,6 +18,7 @@ import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefiniti
 import io.cucumber.spring.metaconfig.general.BellyMetaStepDefinitions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -262,26 +263,35 @@ class SpringFactoryTest {
 
         // Scenario 1
         factory.start();
-        final Belly belly1 = factory.getInstance(Belly.class);
-        final GlueScopedComponent glue1 = factory.getInstance(GlueScopedComponent.class);
-
-        assertAll(
-            () -> assertThat(belly1, is(notNullValue())),
-            () -> assertThat(glue1, is(notNullValue())));
-
+        long bellyInstance1 = factory.getInstance(Belly.class).getInstanceId();
+        long glueInstance1 = factory.getInstance(GlueScopedComponent.class).getInstanceId();
         factory.stop();
 
         // Scenario 2
-        final Belly belly2 = factory.getInstance(Belly.class);
-        final GlueScopedComponent glue2 = factory.getInstance(GlueScopedComponent.class);
+        factory.start();
+        long bellyInstance2 = factory.getInstance(Belly.class).getInstanceId();
+        long glueInstance2 = factory.getInstance(GlueScopedComponent.class).getInstanceId();
+        factory.stop();
 
         assertAll(
-            () -> assertThat(belly2, is(notNullValue())),
-            () -> assertThat(glue2, is(notNullValue())),
-            () -> assertThat(glue1, is(not(equalTo(glue2)))),
-            () -> assertThat(glue2, is(not(equalTo(glue1)))),
-            () -> assertThat(belly1, is(equalTo(belly2))),
-            () -> assertThat(belly2, is(equalTo(belly1))));
+            () -> assertThat(glueInstance1, is(not(glueInstance2))),
+            () -> assertThat(glueInstance2, is(not(glueInstance1))),
+            () -> assertThat(bellyInstance1, is(bellyInstance2)),
+            () -> assertThat(bellyInstance2, is(bellyInstance1)));
+    }
+
+    @Test
+    void shouldThrowWhenGlueScopedSpringBeanAreUsedOutsideLifecycle() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithSpringAnnotations.class);
+
+        factory.start();
+        final Belly belly = factory.getInstance(Belly.class);
+        final GlueScopedComponent glue = factory.getInstance(GlueScopedComponent.class);
+        factory.stop();
+
+        assertDoesNotThrow(belly::getInstanceId);
+        assertThrows(BeanCreationException.class, glue::getInstanceId);
     }
 
     @Test
