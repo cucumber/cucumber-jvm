@@ -38,7 +38,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             "/io/cucumber/core/plugin/timeline/index.html",
             "/io/cucumber/core/plugin/timeline/formatter.js",
             "/io/cucumber/core/plugin/timeline/report.css",
-            "/io/cucumber/core/plugin/timeline/jquery-3.4.1.min.js",
+            "/io/cucumber/core/plugin/timeline/jquery-3.5.1.min.js",
             "/io/cucumber/core/plugin/timeline/vis.min.css",
             "/io/cucumber/core/plugin/timeline/vis.min.js",
             "/io/cucumber/core/plugin/timeline/vis.override.css",

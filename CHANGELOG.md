@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Plugin] Restored `Status.isOk(boolean isStrict)` to avoid breaking existing plugins 
  * [Core] Execute features files without pickles ([#1973](https://github.com/cucumber/cucumber-jvm/issues/1973) M.P. Korstanje) 
  * [Spring] Require an active scenario before creating beans ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
+
 ## [6.0.0-RC2] (2020-05-03)
 
 ### Added
@@ -39,6 +40,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
  * [Core] Include all fields in `JsonFormatters` failure feature ([#1954](https://github.com/cucumber/cucumber-jvm/issues/1954) M.P. Korstanje) 
  
+### Security
+ * [Core] Upgrade jQuery to [3.5.1](https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/) ([#1971](https://github.com/cucumber/cucumber-jvm/issues/1971) M.P. Korstanje)
+
 ## [6.0.0-RC1] (2020-04-23)
 
 ### Added
