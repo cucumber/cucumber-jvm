@@ -3,11 +3,11 @@ package io.cucumber.spring;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
-class GlueCodeScope implements Scope {
+class CucumberScenarioScope implements Scope {
 
     @Override
     public Object get(String name, ObjectFactory<?> objectFactory) {
-        GlueCodeContext context = GlueCodeContext.getInstance();
+        CucumberTestContext context = CucumberTestContext.getInstance();
         Object obj = context.get(name);
         if (obj == null) {
             obj = objectFactory.getObject();
@@ -19,13 +19,13 @@ class GlueCodeScope implements Scope {
 
     @Override
     public Object remove(String name) {
-        GlueCodeContext context = GlueCodeContext.getInstance();
+        CucumberTestContext context = CucumberTestContext.getInstance();
         return context.remove(name);
     }
 
     @Override
     public void registerDestructionCallback(String name, Runnable callback) {
-        GlueCodeContext context = GlueCodeContext.getInstance();
+        CucumberTestContext context = CucumberTestContext.getInstance();
         context.registerDestructionCallback(name, callback);
     }
 
@@ -36,7 +36,7 @@ class GlueCodeScope implements Scope {
 
     @Override
     public String getConversationId() {
-        GlueCodeContext context = GlueCodeContext.getInstance();
+        CucumberTestContext context = CucumberTestContext.getInstance();
         return context.getId();
     }
 

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+* [Spring] Add `@ScenarioScope` annotation ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
+  * Preferable to `@Scope(value = SCOPE_CUCUMBER_GLUE)`
 
 ### Changed
 
@@ -18,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
  * [Plugin] Restored `Status.isOk(boolean isStrict)` to avoid breaking existing plugins 
  * [Core] Execute features files without pickles ([#1973](https://github.com/cucumber/cucumber-jvm/issues/1973) M.P. Korstanje) 
-
+ * [Spring] Require an active scenario before creating beans ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
 ## [6.0.0-RC2] (2020-05-03)
 
 ### Added

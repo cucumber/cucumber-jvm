@@ -52,12 +52,12 @@ abstract class TestContextAdaptor {
             notifyContextManagerAboutTestClassStarted();
             registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
         }
-        GlueCodeContext.getInstance().start();
+        CucumberTestContext.getInstance().start();
     }
 
     final void registerGlueCodeScope(ConfigurableApplicationContext context) {
         while (context != null) {
-            context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
+            context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new CucumberScenarioScope());
             context = (ConfigurableApplicationContext) context.getParent();
         }
     }
@@ -91,7 +91,7 @@ abstract class TestContextAdaptor {
     }
 
     public final void stop() {
-        GlueCodeContext.getInstance().stop();
+        CucumberTestContext.getInstance().stop();
         try {
             delegate.afterTestClass();
         } catch (Exception e) {
