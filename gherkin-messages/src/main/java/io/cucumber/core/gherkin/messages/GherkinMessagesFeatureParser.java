@@ -57,7 +57,8 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
         CucumberQuery cucumberQuery = new CucumberQuery();
         cucumberQuery.update(gherkinDocument);
         GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        String language = gherkinDocument.getFeature().getLanguage();
+        GherkinDocument.Feature feature = gherkinDocument.getFeature();
+        String language = feature.getLanguage();
         GherkinDialect dialect = dialectProvider.getDialect(language, null);
 
         List<Messages.Pickle> pickleMessages = envelopes.stream()
@@ -65,21 +66,17 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                 .map(Envelope::getPickle)
                 .collect(toList());
 
-        if (pickleMessages.isEmpty()) {
-            return Optional.empty();
-        }
-
         List<Pickle> pickles = pickleMessages.stream()
                 .map(pickle -> new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery))
                 .collect(toList());
 
-        GherkinMessagesFeature feature = new GherkinMessagesFeature(
-            gherkinDocument,
+        GherkinMessagesFeature messagesFeature = new GherkinMessagesFeature(
+            feature,
             path,
             source,
             pickles,
             envelopes);
-        return Optional.of(feature);
+        return Optional.of(messagesFeature);
     }
 
     @Override

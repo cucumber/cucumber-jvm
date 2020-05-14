@@ -15,6 +15,8 @@ import java.util.function.Supplier;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,7 +68,19 @@ class FeaturePathFeatureSupplierTest {
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             supplier::get);
-        assertThat(exception.getMessage(), containsString("path must exist"));
+        assertThat(exception.getMessage(), startsWith("path must exist: "));
+    }
+
+    @Test
+    void throws_if_feature_is_empty() {
+        Options featureOptions = () -> singletonList(
+            FeaturePath.parse("classpath:io/cucumber/core/runtime/empty.feature"));
+        FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            supplier::get);
+
+        assertThat(exception.getMessage(), is("Feature not found: classpath:io/cucumber/core/runtime/empty.feature"));
     }
 
     @Test
@@ -76,7 +90,8 @@ class FeaturePathFeatureSupplierTest {
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             supplier::get);
-        assertThat(exception.getMessage(), containsString("Feature not found"));
+
+        assertThat(exception.getMessage(), is("Feature not found: classpath:no-such.feature"));
     }
 
 }

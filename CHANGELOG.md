@@ -16,8 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
- * Restored `Status.isOk(boolean isStrict)` to avoid breaking existing plugins 
- 
+ * [Plugin] Restored `Status.isOk(boolean isStrict)` to avoid breaking existing plugins 
+ * [Core] Execute features files without pickles ([#1973](https://github.com/cucumber/cucumber-jvm/issues/1973) M.P. Korstanje) 
+
 ## [6.0.0-RC2] (2020-05-03)
 
 ### Added
