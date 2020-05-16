@@ -24,7 +24,7 @@ update-compatibility:
 	rm -rf compatibility/src/test/resources/*
 	cp -r target/cucumber/compatibility-kit/javascript/features compatibility/src/test/resources
 	rm -rf target/cucumber
-.PHONY: update-cck
+.PHONY: update-compatibility
 
 update-dependency-versions:
 	mvn versions:force-releases
