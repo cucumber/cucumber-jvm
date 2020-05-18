@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
@@ -28,6 +29,11 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.synchronizedList;
 
 public final class CucumberExecutionContext {
+
+    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
+            .getString("cucumber-jvm.version");
+    private static final String MESSAGE_PROTOCOL_VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
+            .getString("messages.version");
 
     private static final Logger log = LoggerFactory.getLogger(CucumberExecutionContext.class);
 
@@ -49,20 +55,15 @@ public final class CucumberExecutionContext {
     }
 
     private void emitMeta() {
-        String version = CucumberExecutionContext.class.getPackage().getImplementationVersion();
-        if (version == null) {
-            // Development version
-            version = "unreleased";
-        }
         bus.send(Envelope.newBuilder()
                 .setMeta(Messages.Meta.newBuilder()
-                        .setProtocolVersion(Messages.class.getPackage().getImplementationVersion())
+                        .setProtocolVersion(MESSAGE_PROTOCOL_VERSION)
                         .setRuntime(Messages.Meta.Product.newBuilder()
                                 .setName(System.getProperty("java.vendor"))
                                 .setVersion(System.getProperty("java.version")))
                         .setImplementation(Messages.Meta.Product.newBuilder()
                                 .setName("cucumber-jvm")
-                                .setVersion(version))
+                                .setVersion(VERSION))
                         .setOs(Messages.Meta.Product.newBuilder()
                                 .setName(System.getProperty("os.name")))
                         .setCpu(Messages.Meta.Product.newBuilder()

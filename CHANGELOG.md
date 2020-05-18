@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Plugin] Restored `Status.isOk(boolean isStrict)` to avoid breaking existing plugins 
  * [Core] Execute features files without pickles ([#1973](https://github.com/cucumber/cucumber-jvm/issues/1973) M.P. Korstanje) 
  * [Spring] Require an active scenario before creating beans ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
+ * [Core] Fix NPE in `CucumberExecutionContext.emitMeta` when in a shaded jar (M.P. Korstanje)
 
 ## [6.0.0-RC2] (2020-05-03)
 

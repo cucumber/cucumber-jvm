@@ -499,17 +499,16 @@ class RuntimeTest {
     @Test
     void emits_a_meta_message() {
         List<Messages.Envelope> messages = new ArrayList<>();
-        ConcurrentEventListener messageListener = publisher -> publisher.registerHandlerFor(Messages.Envelope.class,
-            messages::add);
+        EventListener listener = publisher -> publisher.registerHandlerFor(Messages.Envelope.class, messages::add);
         Runtime.builder()
-                .withAdditionalPlugins(messageListener)
+                .withAdditionalPlugins(listener)
                 .build()
                 .run();
 
         Messages.Meta meta = messages.get(0).getMeta();
         assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+"));
         assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
-        assertThat(meta.getImplementation().getVersion(), is("unreleased"));
+        assertThat(meta.getImplementation().getVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getOs().getName(), matchesPattern(".+"));
         assertThat(meta.getCpu().getName(), matchesPattern(".+"));
     }
