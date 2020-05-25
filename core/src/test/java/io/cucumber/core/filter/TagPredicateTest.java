@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TagPredicateTest {
@@ -112,4 +114,13 @@ class TagPredicateTest {
         assertFalse(predicate.test(pickle));
     }
 
+    @Test
+    void tag_predicate_throws_exception_on_invalid_tag_expression() {
+        RuntimeException e = assertThrows(RuntimeException.class, () -> {
+            new TagPredicate(singletonList("("));
+        });
+
+        assertEquals(e.getMessage(),
+            "Tag expression '(' could not be parsed because of syntax error: unmatched ( at 'io.cucumber.core.filter.TagPredicate'");
+    }
 }
