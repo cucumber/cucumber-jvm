@@ -23,9 +23,9 @@ final class TagPredicate implements Predicate<Pickle> {
         if (tagExpressions == null) {
             return;
         }
-        TagExpressionParser parser = new TagExpressionParser();
+
         for (String tagExpression : tagExpressions) {
-            expressions.add(parser.parse(tagExpression));
+            expressions.add(TagExpressionParser.parse(tagExpression));
         }
     }
 

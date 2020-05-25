@@ -20,7 +20,7 @@ class CoreHookDefinition {
     private CoreHookDefinition(UUID id, HookDefinition delegate) {
         this.id = requireNonNull(id);
         this.delegate = delegate;
-        this.tagExpression = new TagExpressionParser().parse(delegate.getTagExpression());
+        this.tagExpression = TagExpressionParser.parse(delegate.getTagExpression());
     }
 
     static CoreHookDefinition create(HookDefinition hookDefinition) {

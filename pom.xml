@@ -26,7 +26,7 @@
         <!--Dependencies -->
         <cucumber-expressions.version>10.1.0</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
-        <tag-expressions.version>2.0.4</tag-expressions.version>
+        <tag-expressions.version>2.0.5-SNAPSHOT</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
         <messages.version>12.1.1</messages.version>
         <gherkin.version>13.0.0</gherkin.version>

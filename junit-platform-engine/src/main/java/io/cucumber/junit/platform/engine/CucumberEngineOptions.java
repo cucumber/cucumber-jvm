@@ -60,7 +60,7 @@ class CucumberEngineOptions implements
     }
 
     public Expression tagFilter() {
-        return new TagExpressionParser()
+        return TagExpressionParser
                 .parse(configurationParameters
                         .get(FILTER_TAGS_PROPERTY_NAME)
                         .orElse(""));
