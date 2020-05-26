@@ -13,10 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -82,8 +84,12 @@ class CucumberPropertiesParserTest {
     void should_parse_filter_tag() {
         properties.put(Constants.FILTER_TAGS_PROPERTY_NAME, "@No and not @Never");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getTagExpressions(), contains(
-            "@No and not @Never"));
+
+        List<String> actual = options.getTagExpressions().stream()
+                .map(e -> e.toString())
+                .collect(toList());
+
+        assertThat(actual, contains("( @No and not ( @Never ) )"));
     }
 
     @Test

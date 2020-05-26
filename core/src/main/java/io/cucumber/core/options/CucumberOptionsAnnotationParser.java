@@ -5,6 +5,7 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,7 +70,7 @@ public final class CucumberOptionsAnnotationParser {
     private void addTags(CucumberOptions options, RuntimeOptionsBuilder args) {
         String tagExpression = options.tags();
         if (!tagExpression.isEmpty()) {
-            args.addTagFilter(tagExpression);
+            args.addTagFilter(TagExpressionParser.parse(tagExpression));
         }
     }
 

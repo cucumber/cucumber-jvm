@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -119,7 +121,12 @@ class CucumberOptionsAnnotationParserTest {
     @Test
     void create_with_tag_expression() {
         RuntimeOptions runtimeOptions = parser().parse(TagExpression.class).build();
-        assertThat(runtimeOptions.getTagExpressions(), contains("@cucumber or @gherkin"));
+
+        List<String> actual = runtimeOptions.getTagExpressions().stream()
+                .map(e -> e.toString())
+                .collect(toList());
+
+        assertThat(actual, contains("( @cucumber or @gherkin )"));
     }
 
     @Test

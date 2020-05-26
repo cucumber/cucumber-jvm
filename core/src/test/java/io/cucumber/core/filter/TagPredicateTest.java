@@ -3,6 +3,7 @@ package io.cucumber.core.filter;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
@@ -17,7 +18,7 @@ class TagPredicateTest {
     @Test
     void empty_tag_predicate_matches_pickle_with_any_tags() {
         Pickle pickle = createPickleWithTags("@FOO");
-        TagPredicate predicate = new TagPredicate("");
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse(""));
         assertTrue(predicate.test(pickle));
     }
 
@@ -33,94 +34,84 @@ class TagPredicateTest {
     @Test
     void list_of_empty_tag_predicates_matches_pickle_with_any_tags() {
         Pickle pickle = createPickleWithTags("@FOO");
-        TagPredicate predicate = new TagPredicate(asList("", ""));
+        TagPredicate predicate = new TagPredicate(asList(TagExpressionParser.parse(""), TagExpressionParser.parse("")));
         assertTrue(predicate.test(pickle));
     }
 
     @Test
     void single_tag_predicate_does_not_match_pickle_with_no_tags() {
         Pickle pickle = createPickleWithTags();
-        TagPredicate predicate = new TagPredicate("@FOO");
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO"));
         assertFalse(predicate.test(pickle));
     }
 
     @Test
     void single_tag_predicate_matches_pickle_with_same_single_tag() {
         Pickle pickle = createPickleWithTags("@FOO");
-        TagPredicate predicate = new TagPredicate("@FOO");
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO"));
         assertTrue(predicate.test(pickle));
     }
 
     @Test
     void single_tag_predicate_matches_pickle_with_more_tags() {
         Pickle pickle = createPickleWithTags("@FOO", "@BAR");
-        TagPredicate predicate = new TagPredicate("@FOO");
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO"));
         assertTrue(predicate.test(pickle));
     }
 
     @Test
     void single_tag_predicate_does_not_match_pickle_with_different_single_tag() {
         Pickle pickle = createPickleWithTags("@BAR");
-        TagPredicate predicate = new TagPredicate("@FOO");
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO"));
         assertFalse(predicate.test(pickle));
     }
 
     @Test
     void not_tag_predicate_matches_pickle_with_no_tags() {
         Pickle pickle = createPickleWithTags();
-        TagPredicate predicate = new TagPredicate(singletonList("not @FOO"));
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("not @FOO"));
         assertTrue(predicate.test(pickle));
     }
 
     @Test
     void not_tag_predicate_does_not_match_pickle_with_same_single_tag() {
         Pickle pickle = createPickleWithTags("@FOO");
-        TagPredicate predicate = new TagPredicate(singletonList("not @FOO"));
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("not @FOO"));
         assertFalse(predicate.test(pickle));
     }
 
     @Test
     void not_tag_predicate_matches_pickle_with_different_single_tag() {
         Pickle pickle = createPickleWithTags("@BAR");
-        TagPredicate predicate = new TagPredicate(singletonList("not @FOO"));
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("not @FOO"));
         assertTrue(predicate.test(pickle));
     }
 
     @Test
     void and_tag_predicate_matches_pickle_with_all_tags() {
         Pickle pickle = createPickleWithTags("@FOO", "@BAR");
-        TagPredicate predicate = new TagPredicate(singletonList("@FOO and @BAR"));
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO and @BAR"));
         assertTrue(predicate.test(pickle));
     }
 
     @Test
     void and_tag_predicate_does_not_match_pickle_with_one_of_the_tags() {
         Pickle pickle = createPickleWithTags("@FOO");
-        TagPredicate predicate = new TagPredicate(singletonList("@FOO and @BAR"));
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO and @BAR"));
         assertFalse(predicate.test(pickle));
     }
 
     @Test
     void or_tag_predicate_matches_pickle_with_one_of_the_tags() {
         Pickle pickle = createPickleWithTags("@FOO");
-        TagPredicate predicate = new TagPredicate(singletonList("@FOO or @BAR"));
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO or @BAR"));
         assertTrue(predicate.test(pickle));
     }
 
     @Test
     void or_tag_predicate_does_not_match_pickle_none_of_the_tags() {
         Pickle pickle = createPickleWithTags();
-        TagPredicate predicate = new TagPredicate(singletonList("@FOO or @BAR"));
+        TagPredicate predicate = new TagPredicate(TagExpressionParser.parse("@FOO or @BAR"));
         assertFalse(predicate.test(pickle));
-    }
-
-    @Test
-    void tag_predicate_throws_exception_on_invalid_tag_expression() {
-        RuntimeException e = assertThrows(RuntimeException.class, () -> {
-            new TagPredicate(singletonList("("));
-        });
-
-        assertEquals(e.getMessage(),
-            "Tag expression '(' could not be parsed because of syntax error: unmatched ( at 'io.cucumber.core.filter.TagPredicate'");
     }
 }
