@@ -158,6 +158,15 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
+    void throws_runtime_exception_on_malformed_tag_expression() {
+        RuntimeException e = assertThrows(RuntimeException.class, () -> {
+            RuntimeOptions options = parser
+                    .parse("--tags", ")")
+                    .build();
+        });
+    }
+
+    @Test
     void assigns_glue() {
         RuntimeOptions options = parser
                 .parse("--glue", "somewhere")

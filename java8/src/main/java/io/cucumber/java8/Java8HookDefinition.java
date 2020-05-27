@@ -2,25 +2,26 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.tagexpressions.Expression;
 
 import static java.util.Objects.requireNonNull;
 
 final class Java8HookDefinition extends AbstractGlueDefinition implements HookDefinition {
 
-    private final String tagExpression;
+    private final Expression tagExpression;
     private final int order;
 
-    Java8HookDefinition(String tagExpression, int order, HookBody hookBody) {
+    Java8HookDefinition(Expression tagExpression, int order, HookBody hookBody) {
         this(tagExpression, order, (Object) hookBody);
     }
 
-    private Java8HookDefinition(String tagExpression, int order, Object body) {
+    private Java8HookDefinition(Expression tagExpression, int order, Object body) {
         super(body, new Exception().getStackTrace()[3]);
         this.order = order;
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
     }
 
-    Java8HookDefinition(String tagExpression, int order, HookNoArgsBody hookNoArgsBody) {
+    Java8HookDefinition(Expression tagExpression, int order, HookNoArgsBody hookNoArgsBody) {
         this(tagExpression, order, (Object) hookNoArgsBody);
     }
 
@@ -36,7 +37,7 @@ final class Java8HookDefinition extends AbstractGlueDefinition implements HookDe
     }
 
     @Override
-    public String getTagExpression() {
+    public Expression getTagExpression() {
         return tagExpression;
     }
 

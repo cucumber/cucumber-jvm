@@ -13,6 +13,7 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
+import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
@@ -88,7 +89,7 @@ class RunnerTest {
 
     private HookDefinition addHook() {
         HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
+        when(hook.getTagExpression()).thenReturn(TagExpressionParser.parse(""));
         when(hook.getLocation()).thenReturn("");
         return hook;
     }

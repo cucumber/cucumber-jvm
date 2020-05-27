@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.tagexpressions.Expression;
 
 import java.lang.reflect.Method;
 
@@ -11,10 +12,10 @@ import static java.util.Objects.requireNonNull;
 
 final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
 
-    private final String tagExpression;
+    private final Expression tagExpression;
     private final int order;
 
-    JavaHookDefinition(Method method, String tagExpression, int order, Lookup lookup) {
+    JavaHookDefinition(Method method, Expression tagExpression, int order, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
@@ -60,7 +61,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     }
 
     @Override
-    public String getTagExpression() {
+    public Expression getTagExpression() {
         return tagExpression;
     }
 

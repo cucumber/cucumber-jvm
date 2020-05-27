@@ -9,7 +9,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
 import io.cucumber.gherkin.IGherkinDialectProvider;
-import io.cucumber.tagexpressions.Expression;
+import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.io.BufferedReader;
@@ -91,7 +91,11 @@ public final class CommandlineOptionsParser {
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
-                parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
+                try {
+                    parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
+                } catch (TagExpressionException tee) {
+                    throw new RuntimeException(tee.toString() + " on Command Line", tee);
+                }
             } else if (arg.equals("--plugin") || arg.equals("-p")) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {

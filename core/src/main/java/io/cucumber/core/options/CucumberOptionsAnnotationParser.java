@@ -5,10 +5,12 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
@@ -31,21 +33,26 @@ public final class CucumberOptionsAnnotationParser {
 
         for (Class<?> classWithOptions = clazz; hasSuperClass(
             classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
-            CucumberOptions options = requireNonNull(optionsProvider).getOptions(classWithOptions);
-
-            if (options != null) {
-                addDryRun(options, args);
-                addMonochrome(options, args);
-                addTags(options, args);
-                addPlugins(options, args);
-                addStrict(options, args);
-                addName(options, args);
-                addSnippets(options, args);
-                addGlue(options, args);
-                addFeatures(options, args);
-                addObjectFactory(options, args);
+            try {
+                Optional
+                        .ofNullable(requireNonNull(optionsProvider).getOptions(classWithOptions))
+                        .ifPresent((options) -> {
+                            addDryRun(options, args);
+                            addMonochrome(options, args);
+                            addTags(options, args);
+                            addPlugins(options, args);
+                            addStrict(options, args);
+                            addName(options, args);
+                            addSnippets(options, args);
+                            addGlue(options, args);
+                            addFeatures(options, args);
+                            addObjectFactory(options, args);
+                        });
+            } catch (TagExpressionException tee) {
+                throw new RuntimeException(tee.toString() + String.format(" at '%s'", clazz.getName()), tee);
             }
         }
+
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
         addDefaultGlueIfNoOverridingGlueIsSpecified(args, clazz);
         return args;

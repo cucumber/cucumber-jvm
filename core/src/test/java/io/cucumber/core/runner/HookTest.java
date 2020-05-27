@@ -12,6 +12,7 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
+import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
@@ -51,7 +52,7 @@ class HookTest {
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getLocation()).thenReturn("hook-location");
         TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
-        when(hook.getTagExpression()).thenReturn("");
+        when(hook.getTagExpression()).thenReturn(TagExpressionParser.parse(""));
 
         doAnswer(invocation -> {
             Glue glue = invocation.getArgument(0);
@@ -68,31 +69,5 @@ class HookTest {
         inOrder.verify(backend).buildWorld();
         inOrder.verify(hook).execute(ArgumentMatchers.any());
         inOrder.verify(backend).disposeWorld();
-    }
-
-    @Test
-    void hook_throws_exception_with_name_when_tag_expression_is_invalid() {
-        Backend backend = mock(Backend.class);
-        when(backend.getSnippet()).thenReturn(new TestSnippet());
-        ObjectFactory objectFactory = mock(ObjectFactory.class);
-        final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getLocation()).thenReturn("hook-location");
-        TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
-
-        when(hook.getTagExpression()).thenReturn("(");
-
-        doAnswer(invocation -> {
-            Glue glue = invocation.getArgument(0);
-            glue.addBeforeHook(hook);
-            return null;
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
-
-        RuntimeException e = assertThrows(RuntimeException.class,
-            () -> {
-                new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer,
-                    runtimeOptions);
-            });
-
-        assertThat(e.toString(), containsString("at 'io.cucumber.core.backend.HookDefinition$MockitoMock$"));
     }
 }

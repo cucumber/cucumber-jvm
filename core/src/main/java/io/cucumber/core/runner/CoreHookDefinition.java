@@ -4,8 +4,6 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.tagexpressions.Expression;
-import io.cucumber.tagexpressions.TagExpressionException;
-import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,17 +14,10 @@ class CoreHookDefinition {
 
     private final UUID id;
     private final HookDefinition delegate;
-    private final Expression tagExpression;
 
     private CoreHookDefinition(UUID id, HookDefinition delegate) {
         this.id = requireNonNull(id);
         this.delegate = delegate;
-
-        try {
-            this.tagExpression = TagExpressionParser.parse(delegate.getTagExpression());
-        } catch (TagExpressionException tee) {
-            throw new RuntimeException(String.format(tee.getMessage() + " at '%s'", delegate.getClass().getName()));
-        }
     }
 
     static CoreHookDefinition create(HookDefinition hookDefinition) {
@@ -59,10 +50,10 @@ class CoreHookDefinition {
     }
 
     boolean matches(List<String> tags) {
-        return tagExpression.evaluate(tags);
+        return delegate.getTagExpression().evaluate(tags);
     }
 
-    String getTagExpression() {
+    Expression getTagExpression() {
         return delegate.getTagExpression();
     }
 
