@@ -24,7 +24,7 @@
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
 
         <!--Dependencies -->
-        <cucumber-expressions.version>10.1.0</cucumber-expressions.version>
+        <cucumber-expressions.version>10.2.0</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
@@ -39,7 +39,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.3.3</mockito.version>
         <!--Maven plugins-->
-        <groovy.version>2.5.11</groovy.version>
+        <groovy.version>2.5.12</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
