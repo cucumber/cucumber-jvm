@@ -9,6 +9,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DateStepDefinitions {
+
     private String result;
     private DateCalculator calculator;
 
@@ -26,4 +27,5 @@ public class DateStepDefinitions {
     public void the_result_should_be(String expectedResult) {
         assertEquals(expectedResult, result);
     }
+
 }

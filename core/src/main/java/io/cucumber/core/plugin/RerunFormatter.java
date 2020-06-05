@@ -22,6 +22,7 @@ import static io.cucumber.core.plugin.PrettyFormatter.relativize;
  * Failed means: results that make the exit code non-zero.
  */
 public final class RerunFormatter implements ConcurrentEventListener {
+
     private final NiceAppendable out;
     private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new HashMap<>();
 
@@ -41,6 +42,15 @@ public final class RerunFormatter implements ConcurrentEventListener {
         }
     }
 
+    private void finishReport() {
+        for (Map.Entry<URI, Collection<Integer>> entry : featureAndFailedLinesMapping.entrySet()) {
+            FeatureWithLines featureWithLines = create(relativize(entry.getKey()), entry.getValue());
+            out.println(featureWithLines.toString());
+        }
+
+        out.close();
+    }
+
     private void recordTestFailed(TestCase testCase) {
         URI uri = testCase.getUri();
         Collection<Integer> failedTestCaseLines = getFailedTestCaseLines(uri);
@@ -51,13 +61,4 @@ public final class RerunFormatter implements ConcurrentEventListener {
         return featureAndFailedLinesMapping.computeIfAbsent(uri, k -> new ArrayList<>());
     }
 
-    private void finishReport() {
-        for (Map.Entry<URI, Collection<Integer>> entry : featureAndFailedLinesMapping.entrySet()) {
-            FeatureWithLines featureWithLines = create(relativize(entry.getKey()), entry.getValue());
-            out.println(featureWithLines.toString());
-        }
-
-        out.close();
-    }
 }
-

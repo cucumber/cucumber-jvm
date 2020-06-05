@@ -31,16 +31,20 @@ class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public String getLocation() {
-        return "{stubbed location with details}";
-    }
-
-    @Override
     public void execute(Object[] args) {
         assertEquals(parameterInfos.size(), args.length);
         this.args = Arrays.asList(args);
     }
 
+    @Override
+    public List<ParameterInfo> parameterInfos() {
+        return parameterInfos;
+    }
+
+    @Override
+    public String getPattern() {
+        return expression;
+    }
 
     public List<Object> getArgs() {
         return args;
@@ -52,13 +56,8 @@ class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<ParameterInfo> parameterInfos() {
-        return parameterInfos;
-    }
-
-    @Override
-    public String getPattern() {
-        return expression;
+    public String getLocation() {
+        return "{stubbed location with details}";
     }
 
     private final class StubParameterInfo implements ParameterInfo {
@@ -83,6 +82,7 @@ class StubStepDefinition implements StepDefinition {
         public TypeResolver getTypeResolver() {
             return () -> type;
         }
+
     }
 
 }

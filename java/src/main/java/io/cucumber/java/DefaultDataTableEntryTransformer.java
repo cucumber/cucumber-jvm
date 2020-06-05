@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)
 public @interface DefaultDataTableEntryTransformer {
+
     /**
      * Converts a data tables header headers to property names.
      * <p>
@@ -37,9 +38,9 @@ public @interface DefaultDataTableEntryTransformer {
     /**
      * Replace these strings in the Datatable with empty strings.
      * <p>
-     * A data table can only represent absent and non-empty strings. By replacing
-     * a known value (for example [empty]) a data table can also represent
-     * empty strings.
+     * A data table can only represent absent and non-empty strings. By
+     * replacing a known value (for example [empty]) a data table can also
+     * represent empty strings.
      * <p>
      * It is not recommended to use multiple replacements in the same table.
      *

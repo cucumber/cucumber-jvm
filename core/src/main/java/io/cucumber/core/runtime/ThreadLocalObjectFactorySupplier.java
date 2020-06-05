@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-
 import io.cucumber.core.backend.ObjectFactory;
 
 import static java.lang.ThreadLocal.withInitial;
@@ -18,4 +17,5 @@ public final class ThreadLocalObjectFactorySupplier implements ObjectFactorySupp
     public ObjectFactory get() {
         return runners.get();
     }
+
 }

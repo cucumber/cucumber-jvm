@@ -28,7 +28,22 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final JUnitOptions options;
     private Description description;
 
-    static FeatureRunner create(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options) {
+    private FeatureRunner(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options)
+            throws InitializationError {
+        super((Class<?>) null);
+        this.feature = feature;
+        this.options = options;
+        String name = feature.getName().orElse("EMPTY_NAME");
+        this.children = feature.getPickles().stream()
+                .filter(filter).map(pickle -> options.stepNotifications()
+                        ? withStepDescriptions(runners, pickle, options)
+                        : withNoStepDescriptions(name, runners, pickle, options))
+                .collect(toList());
+    }
+
+    static FeatureRunner create(
+            Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options
+    ) {
         try {
             return new FeatureRunner(feature, filter, runners, options);
         } catch (InitializationError e) {
@@ -36,17 +51,39 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         }
     }
 
-    private FeatureRunner(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options) throws InitializationError {
-        super((Class<?>) null);
-        this.feature = feature;
-        this.options = options;
-        String name = feature.getName().orElse("EMPTY_NAME");
-        this.children = feature.getPickles().stream()
-            .filter(filter).
-                map(pickle -> options.stepNotifications()
-                    ? withStepDescriptions(runners, pickle, options)
-                    : withNoStepDescriptions(name, runners, pickle, options))
-            .collect(toList());
+    boolean isEmpty() {
+        return children.isEmpty();
+    }
+
+    private static final class FeatureId implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+        private final URI uri;
+
+        FeatureId(Feature feature) {
+            this.uri = feature.getUri();
+        }
+
+        @Override
+        public int hashCode() {
+            return uri.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            FeatureId featureId = (FeatureId) o;
+            return uri.equals(featureId.uri);
+        }
+
+        @Override
+        public String toString() {
+            return uri.toString();
+        }
+
     }
 
     @Override
@@ -62,10 +99,6 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
             getChildren().forEach(child -> description.addChild(describeChild(child)));
         }
         return description;
-    }
-
-    boolean isEmpty() {
-        return children.isEmpty();
     }
 
     @Override
@@ -88,33 +121,6 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
             notifier.pleaseStop();
         } finally {
             notifier.fireTestFinished(describeChild(child));
-        }
-    }
-
-    private static final class FeatureId implements Serializable {
-        private static final long serialVersionUID = 1L;
-        private final URI uri;
-
-        FeatureId(Feature feature) {
-            this.uri = feature.getUri();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            FeatureId featureId = (FeatureId) o;
-            return uri.equals(featureId.uri);
-        }
-
-        @Override
-        public int hashCode() {
-            return uri.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return uri.toString();
         }
     }
 

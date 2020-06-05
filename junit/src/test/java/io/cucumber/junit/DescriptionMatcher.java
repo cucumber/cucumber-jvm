@@ -4,6 +4,7 @@ import org.junit.runner.Description;
 import org.mockito.ArgumentMatcher;
 
 final class DescriptionMatcher implements ArgumentMatcher<Description> {
+
     private final String name;
 
     DescriptionMatcher(String name) {
@@ -19,4 +20,5 @@ final class DescriptionMatcher implements ArgumentMatcher<Description> {
     public String toString() {
         return name;
     }
+
 }

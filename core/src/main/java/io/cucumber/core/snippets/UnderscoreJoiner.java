@@ -1,6 +1,7 @@
 package io.cucumber.core.snippets;
 
 class UnderscoreJoiner implements Joiner {
+
     @Override
     public String concatenate(String[] words) {
         StringBuilder functionName = new StringBuilder();
@@ -16,4 +17,5 @@ class UnderscoreJoiner implements Joiner {
         }
         return functionName.toString();
     }
+
 }

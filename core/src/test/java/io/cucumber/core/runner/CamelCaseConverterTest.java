@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-
 import io.cucumber.core.exception.CucumberException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,29 +19,29 @@ class CamelCaseConverterTest {
     private final CamelCaseStringConverter camelCaseConverter = new CamelCaseStringConverter();
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "testString", "TestString", "Test String",
-        "test String", "Test string"
-    })
+    @ValueSource(
+            strings = {
+                    "testString", "TestString", "Test String",
+                    "test String", "Test string"
+            })
     void convert_to_camel_case(String header) {
         assertThat(
             camelCaseConverter.toCamelCase(singletonMap(header, "value")),
-            equalTo(singletonMap("testString", "value"))
-        );
+            equalTo(singletonMap("testString", "value")));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "threeWordsString", "ThreeWordsString", "three Words String",
-        "Three Words String", "Three words String", "Three Words string",
-        "Three words string", "three Words string", "three words String",
-        "threeWords string", "three WordsString", "three wordsString",
-    })
+    @ValueSource(
+            strings = {
+                    "threeWordsString", "ThreeWordsString", "three Words String",
+                    "Three Words String", "Three words String", "Three Words string",
+                    "Three words string", "three Words string", "three words String",
+                    "threeWords string", "three WordsString", "three wordsString",
+            })
     void convert_three_words_to_camel_case(String header) {
         assertThat(
             camelCaseConverter.toCamelCase(singletonMap(header, "value")),
-            equalTo(singletonMap("threeWordsString", "value"))
-        );
+            equalTo(singletonMap("threeWordsString", "value")));
     }
 
     @Test
@@ -53,11 +52,10 @@ class CamelCaseConverterTest {
 
         CucumberException exception = assertThrows(
             CucumberException.class,
-            () -> camelCaseConverter.toCamelCase(table)
-        );
+            () -> camelCaseConverter.toCamelCase(table));
         assertThat(exception.getMessage(), is("" +
-            "Failed to convert header 'Title Case Header' to property name. " +
-            "'TitleCaseHeader' also converted to 'titleCaseHeader'"
-        ));
+                "Failed to convert header 'Title Case Header' to property name. " +
+                "'TitleCaseHeader' also converted to 'titleCaseHeader'"));
     }
+
 }

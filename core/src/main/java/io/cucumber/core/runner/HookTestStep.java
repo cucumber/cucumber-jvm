@@ -5,6 +5,7 @@ import io.cucumber.plugin.event.HookType;
 import java.util.UUID;
 
 final class HookTestStep extends TestStep implements io.cucumber.plugin.event.HookTestStep {
+
     private final HookType hookType;
 
     HookTestStep(UUID id, HookType hookType, HookDefinitionMatch definitionMatch) {

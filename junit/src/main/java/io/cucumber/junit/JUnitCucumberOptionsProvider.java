@@ -1,10 +1,11 @@
 package io.cucumber.junit;
 
-import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import io.cucumber.core.snippets.SnippetType;
 
 final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
+
     @Override
     public CucumberOptionsAnnotationParser.CucumberOptions getOptions(Class<?> clazz) {
         CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
@@ -15,6 +16,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
     }
 
     private static class JunitCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
+
         private final CucumberOptions annotation;
 
         JunitCucumberOptions(CucumberOptions annotation) {
@@ -69,12 +71,12 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         @Override
         public SnippetType snippets() {
             switch (annotation.snippets()) {
-            case UNDERSCORE:
-                return SnippetType.UNDERSCORE;
-            case CAMELCASE:
-                return SnippetType.CAMELCASE;
-            default:
-                throw new IllegalArgumentException("" + annotation.snippets());
+                case UNDERSCORE:
+                    return SnippetType.UNDERSCORE;
+                case CAMELCASE:
+                    return SnippetType.CAMELCASE;
+                default:
+                    throw new IllegalArgumentException("" + annotation.snippets());
             }
         }
 
@@ -82,5 +84,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         public Class<? extends ObjectFactory> objectFactory() {
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
+
     }
+
 }

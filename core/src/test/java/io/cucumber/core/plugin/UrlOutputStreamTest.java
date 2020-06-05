@@ -28,8 +28,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-@ExtendWith({VertxExtension.class})
+@ExtendWith({ VertxExtension.class })
 public class UrlOutputStreamTest {
+
     private int port;
     private Exception exception;
 
@@ -43,69 +44,22 @@ public class UrlOutputStreamTest {
     @Test
     void throws_exception_for_500_status(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
         String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 500, "Oh noes");
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 500,
+            "Oh noes");
         CurlOption option = CurlOption.parse(format("http://localhost:%d", port));
 
         verifyRequest(option, testServer, vertx, testContext, requestBody);
         assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
         assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
-            "> PUT http://localhost:" + port + "\n" +
-            "< HTTP/1.1 500 Internal Server Error\n" +
-            "< transfer-encoding: chunked\n" +
-            "Oh noes"
-        ));
+                "> PUT http://localhost:" + port + "\n" +
+                "< HTTP/1.1 500 Internal Server Error\n" +
+                "< transfer-encoding: chunked\n" +
+                "Oh noes"));
     }
 
-    @Test
-    void follows_307_temporary_redirects(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
-        String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
-        verifyRequest(url, testServer, vertx, testContext, requestBody);
-
-        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
-    }
-
-    @Test
-    void throws_exception_for_307_temporary_redirect_without_location(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
-        String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location -X POST", port));
-        verifyRequest(url, testServer, vertx, testContext, requestBody);
-
-        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
-        assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
-            "> POST http://localhost:" + port + "/redirect-no-location\n" +
-            "< HTTP/1.1 307 Temporary Redirect\n" +
-            "< content-length: 0\n"
-        ));
-    }
-
-    @Test
-    void streams_request_body_in_chunks(Vertx vertx, VertxTestContext testContext) {
-        String requestBody = makeOneKilobyteStringWithEmoji();
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d", port));
-        verifyRequest(url, testServer, vertx, testContext, requestBody);
-    }
-
-    @Test
-    void overrides_request_method(Vertx vertx, VertxTestContext testContext) {
-        String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null, "application/x-www-form-urlencoded", 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d -X POST", port));
-        verifyRequest(url, testServer, vertx, testContext, requestBody);
-    }
-
-    @Test
-    void sets_request_headers(Vertx vertx, VertxTestContext testContext) {
-        String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, "foo=bar", "application/x-ndjson", 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d?foo=bar -H 'Content-Type: application/x-ndjson'", port));
-        verifyRequest(url, testServer, vertx, testContext, requestBody);
-    }
-
-    private void verifyRequest(CurlOption url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody) {
+    private void verifyRequest(
+            CurlOption url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody
+    ) {
         vertx.deployVerticle(testServer, testContext.succeeding(id -> {
             try {
                 OutputStream out = new UrlOutputStream(url);
@@ -121,13 +75,68 @@ public class UrlOutputStreamTest {
         }));
     }
 
+    @Test
+    void follows_307_temporary_redirects(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+
+        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
+    }
+
+    @Test
+    void throws_exception_for_307_temporary_redirect_without_location(Vertx vertx, VertxTestContext testContext)
+            throws InterruptedException {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null,
+            "application/x-www-form-urlencoded", 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location -X POST", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+
+        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
+        assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
+                "> POST http://localhost:" + port + "/redirect-no-location\n" +
+                "< HTTP/1.1 307 Temporary Redirect\n" +
+                "< content-length: 0\n"));
+    }
+
+    @Test
+    void streams_request_body_in_chunks(Vertx vertx, VertxTestContext testContext) {
+        String requestBody = makeOneKilobyteStringWithEmoji();
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+    }
+
     private String makeOneKilobyteStringWithEmoji() {
         String base = "abcå\uD83D\uDE02";
         int baseLength = base.length();
-        return IntStream.range(0, 1024).mapToObj(i -> base.substring(i % baseLength, i % baseLength + 1)).collect(Collectors.joining());
+        return IntStream.range(0, 1024).mapToObj(i -> base.substring(i % baseLength, i % baseLength + 1))
+                .collect(Collectors.joining());
+    }
+
+    @Test
+    void overrides_request_method(Vertx vertx, VertxTestContext testContext) {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null,
+            "application/x-www-form-urlencoded", 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d -X POST", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+    }
+
+    @Test
+    void sets_request_headers(Vertx vertx, VertxTestContext testContext) {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, "foo=bar",
+            "application/x-ndjson", 200, "");
+        CurlOption url = CurlOption
+                .parse(format("http://localhost:%d?foo=bar -H 'Content-Type: application/x-ndjson'", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
     public static class TestServer extends AbstractVerticle {
+
         private final int port;
         private final VertxTestContext testContext;
         private final String expectedBody;
@@ -138,13 +147,14 @@ public class UrlOutputStreamTest {
         private final String responseBody;
 
         public TestServer(
-            int port,
-            VertxTestContext testContext,
-            String expectedBody,
-            HttpMethod expectedMethod,
-            String expectedQuery,
-            String expectedContentType,
-            int statusCode, String responseBody) {
+                int port,
+                VertxTestContext testContext,
+                String expectedBody,
+                HttpMethod expectedMethod,
+                String expectedQuery,
+                String expectedContentType,
+                int statusCode, String responseBody
+        ) {
             this.port = port;
             this.testContext = testContext;
             this.expectedBody = expectedBody;
@@ -187,9 +197,11 @@ public class UrlOutputStreamTest {
                 });
             });
             vertx
-                .createHttpServer()
-                .requestHandler(router)
-                .listen(port, e -> startPromise.complete());
+                    .createHttpServer()
+                    .requestHandler(router)
+                    .listen(port, e -> startPromise.complete());
         }
+
     }
+
 }

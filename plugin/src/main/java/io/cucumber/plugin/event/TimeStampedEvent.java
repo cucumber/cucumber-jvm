@@ -3,7 +3,6 @@ package io.cucumber.plugin.event;
 import java.time.Instant;
 import java.util.Objects;
 
-
 abstract class TimeStampedEvent implements Event {
 
     private final Instant instant;
@@ -19,4 +18,5 @@ abstract class TimeStampedEvent implements Event {
     public Instant getInstant() {
         return instant;
     }
+
 }

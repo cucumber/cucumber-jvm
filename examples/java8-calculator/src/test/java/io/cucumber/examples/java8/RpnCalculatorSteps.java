@@ -10,6 +10,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RpnCalculatorSteps implements En {
+
     private RpnCalculator calc;
 
     public RpnCalculatorSteps() {
@@ -47,12 +48,12 @@ public class RpnCalculatorSteps implements En {
         DataTableType((Map<String, String> row) -> new RpnCalculatorSteps.Entry(
             Integer.valueOf(row.get("first")),
             Integer.valueOf(row.get("second")),
-            row.get("operation")
-        ));
+            row.get("operation")));
 
     }
 
     static final class Entry {
+
         private final Integer first;
         private final Integer second;
         private final String operation;
@@ -62,5 +63,7 @@ public class RpnCalculatorSteps implements En {
             this.second = second;
             this.operation = operation;
         }
+
     }
+
 }

@@ -34,31 +34,35 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
     private final Set<TestTag> tags;
     private final Set<ExclusiveResource> exclusiveResources = new LinkedHashSet<>(0);
 
-    PickleDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, Pickle pickleEvent) {
+    PickleDescriptor(
+            ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, Pickle pickleEvent
+    ) {
         super(uniqueId, name, source);
         this.pickleEvent = pickleEvent;
         this.tags = getTags(pickleEvent);
         this.tags.forEach(tag -> {
-                ExclusiveResourceOptions exclusiveResourceOptions = new ExclusiveResourceOptions(parameters, tag);
-                exclusiveResourceOptions.exclusiveReadWriteResource()
+            ExclusiveResourceOptions exclusiveResourceOptions = new ExclusiveResourceOptions(parameters, tag);
+            exclusiveResourceOptions.exclusiveReadWriteResource()
                     .map(resource -> new ExclusiveResource(resource, LockMode.READ_WRITE))
                     .forEach(exclusiveResources::add);
-                exclusiveResourceOptions.exclusiveReadResource()
+            exclusiveResourceOptions.exclusiveReadResource()
                     .map(resource -> new ExclusiveResource(resource, LockMode.READ))
                     .forEach(exclusiveResources::add);
-            }
-        );
+        });
+    }
+
+    private Set<TestTag> getTags(Pickle pickleEvent) {
+        return pickleEvent.getTags().stream()
+                .map(tag -> tag.substring(1))
+                .filter(TestTag::isValid)
+                .map(TestTag::create)
+                // Retain input order
+                .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
     }
 
     @Override
     public Type getType() {
         return Type.TEST;
-    }
-
-    @Override
-    public CucumberEngineExecutionContext execute(CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor) {
-        context.runTestCase(pickleEvent);
-        return context;
     }
 
     @Override
@@ -68,7 +72,21 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         if (expression.evaluate(tags)) {
             return SkipResult.doNotSkip();
         }
-        return SkipResult.skip("'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression + "' did not match this scenario");
+        return SkipResult
+                .skip("'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression + "' did not match this scenario");
+    }
+
+    @Override
+    public CucumberEngineExecutionContext execute(
+            CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor
+    ) {
+        context.runTestCase(pickleEvent);
+        return context;
+    }
+
+    @Override
+    public Set<ExclusiveResource> getExclusiveResources() {
+        return exclusiveResources;
     }
 
     /**
@@ -85,26 +103,12 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         return tags;
     }
 
-    private Set<TestTag> getTags(Pickle pickleEvent) {
-        return pickleEvent.getTags().stream()
-            .map(tag -> tag.substring(1))
-            .filter(TestTag::isValid)
-            .map(TestTag::create)
-            // Retain input order
-            .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
-    }
-
     Optional<String> getPackage() {
         return getSource()
-            .filter(ClasspathResourceSource.class::isInstance)
-            .map(ClasspathResourceSource.class::cast)
-            .map(ClasspathResourceSource::getClasspathResourceName)
-            .map(ClasspathSupport::packageNameOfResource);
-    }
-
-    @Override
-    public Set<ExclusiveResource> getExclusiveResources() {
-        return exclusiveResources;
+                .filter(ClasspathResourceSource.class::isInstance)
+                .map(ClasspathResourceSource.class::cast)
+                .map(ClasspathResourceSource::getClasspathResourceName)
+                .map(ClasspathSupport::packageNameOfResource);
     }
 
     private static final class ExclusiveResourceOptions {
@@ -114,21 +118,21 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
         ExclusiveResourceOptions(ConfigurationParameters parameters, TestTag tag) {
             this.parameters = new PrefixedConfigurationParameters(
                 parameters,
-                EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + tag.getName()
-            );
+                EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + tag.getName());
         }
 
         public Stream<String> exclusiveReadWriteResource() {
             return parameters.get(READ_WRITE_SUFFIX, s -> Arrays.stream(s.split(","))
-                .map(String::trim))
-                .orElse(Stream.empty());
+                    .map(String::trim))
+                    .orElse(Stream.empty());
         }
 
         public Stream<String> exclusiveReadResource() {
             return parameters.get(READ_SUFFIX, s -> Arrays.stream(s.split(","))
-                .map(String::trim))
-                .orElse(Stream.empty());
+                    .map(String::trim))
+                    .orElse(Stream.empty());
         }
 
     }
+
 }

@@ -30,4 +30,5 @@ public class Rules {
     @Then("the customer's change should be {int} {float} coin(s)")
     public void theCustomerSChangeShouldBeCoin(int arg0, float arg1) {
     }
+
 }

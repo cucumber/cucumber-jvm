@@ -13,6 +13,17 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
         super(uniqueId, "Cucumber");
     }
 
+    private static void recursivelyMerge(TestDescriptor descriptor, TestDescriptor parent) {
+        Optional<? extends TestDescriptor> byUniqueId = parent.findByUniqueId(descriptor.getUniqueId());
+        if (!byUniqueId.isPresent()) {
+            parent.addChild(descriptor);
+        } else {
+            byUniqueId.ifPresent(
+                existingParent -> descriptor.getChildren()
+                        .forEach(child -> recursivelyMerge(child, existingParent)));
+        }
+    }
+
     @Override
     public CucumberEngineExecutionContext before(CucumberEngineExecutionContext context) {
         context.startTestRun();
@@ -28,15 +39,4 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
         recursivelyMerge(descriptor, this);
     }
 
-    private static void recursivelyMerge(TestDescriptor descriptor, TestDescriptor parent) {
-        Optional<? extends TestDescriptor> byUniqueId = parent.findByUniqueId(descriptor.getUniqueId());
-        if (!byUniqueId.isPresent()) {
-            parent.addChild(descriptor);
-        } else {
-            byUniqueId.ifPresent(
-                existingParent -> descriptor.getChildren()
-                    .forEach(child -> recursivelyMerge(child, existingParent))
-            );
-        }
-    }
 }

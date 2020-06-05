@@ -21,30 +21,30 @@ class JsonParallelRuntimeTest {
         ByteArrayOutputStream parallel = new ByteArrayOutputStream();
 
         Runtime.builder()
-            .withRuntimeOptions(
-                new RuntimeOptionsBuilder()
-                    .setThreads(3)
-                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
-                    .build()
-            )
-            .withAdditionalPlugins(new JsonFormatter(parallel))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
-            .build()
-            .run();
+                .withRuntimeOptions(
+                    new RuntimeOptionsBuilder()
+                            .setThreads(3)
+                            .addFeature(FeatureWithLines.parse(
+                                "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                            .build())
+                .withAdditionalPlugins(new JsonFormatter(parallel))
+                .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
+                .build()
+                .run();
 
         ByteArrayOutputStream serial = new ByteArrayOutputStream();
 
         Runtime.builder()
-            .withRuntimeOptions(
-                new RuntimeOptionsBuilder()
-                    .setThreads(1)
-                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
-                    .build()
-            )
-            .withAdditionalPlugins(new JsonFormatter(serial))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
-            .build()
-            .run();
+                .withRuntimeOptions(
+                    new RuntimeOptionsBuilder()
+                            .setThreads(1)
+                            .addFeature(FeatureWithLines.parse(
+                                "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                            .build())
+                .withAdditionalPlugins(new JsonFormatter(serial))
+                .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
+                .build()
+                .run();
 
         assertThat(parallel.toString(), sameJSONAs(serial.toString()).allowingAnyArrayOrdering());
     }
@@ -54,32 +54,34 @@ class JsonParallelRuntimeTest {
         ByteArrayOutputStream parallel = new ByteArrayOutputStream();
 
         Runtime.builder()
-            .withRuntimeOptions(
-                new RuntimeOptionsBuilder()
-                    .setThreads(3)
-                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
-                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
-                    .build()
-            )
-            .withAdditionalPlugins(new JsonFormatter(parallel))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
-            .build()
-            .run();
+                .withRuntimeOptions(
+                    new RuntimeOptionsBuilder()
+                            .setThreads(3)
+                            .addFeature(FeatureWithLines.parse(
+                                "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                            .addFeature(FeatureWithLines
+                                    .parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
+                            .build())
+                .withAdditionalPlugins(new JsonFormatter(parallel))
+                .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
+                .build()
+                .run();
 
         ByteArrayOutputStream serial = new ByteArrayOutputStream();
 
         Runtime.builder()
-            .withRuntimeOptions(
-                new RuntimeOptionsBuilder()
-                    .setThreads(1)
-                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
-                    .addFeature(FeatureWithLines.parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
-                    .build()
-            )
-            .withAdditionalPlugins(new JsonFormatter(serial))
-            .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
-            .build()
-            .run();
+                .withRuntimeOptions(
+                    new RuntimeOptionsBuilder()
+                            .setThreads(1)
+                            .addFeature(FeatureWithLines.parse(
+                                "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                            .addFeature(FeatureWithLines
+                                    .parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
+                            .build())
+                .withAdditionalPlugins(new JsonFormatter(serial))
+                .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
+                .build()
+                .run();
 
         assertThat(parallel.toString(), sameJSONAs(serial.toString()).allowingAnyArrayOrdering());
     }

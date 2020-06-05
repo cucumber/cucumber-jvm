@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @API(status = API.Status.STABLE)
 public @interface CucumberContextConfiguration {
+
 }

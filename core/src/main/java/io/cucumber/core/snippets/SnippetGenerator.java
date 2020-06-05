@@ -19,9 +19,11 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public final class SnippetGenerator {
-    @SuppressWarnings("RegExpRedundantEscape") // Android can't parse unescaped braces.
-    private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[]{
-        new ArgumentPattern(Pattern.compile("\\{.*?\\}"))
+
+    @SuppressWarnings("RegExpRedundantEscape") // Android can't parse unescaped
+                                               // braces.
+    private static final ArgumentPattern[] DEFAULT_ARGUMENT_PATTERNS = new ArgumentPattern[] {
+            new ArgumentPattern(Pattern.compile("\\{.*?\\}"))
     };
 
     private static final String REGEXP_HINT = "Write code here that turns the phrase above into concrete actions";
@@ -39,30 +41,18 @@ public final class SnippetGenerator {
         List<String> snippets = new ArrayList<>(generatedExpressions.size());
         FunctionNameGenerator functionNameGenerator = new FunctionNameGenerator(snippetType.joiner());
         for (GeneratedExpression expression : generatedExpressions) {
-            snippets.add(snippet.template().format(new String[]{
-                    sanitize(step.getType().isGivenWhenThen() ? step.getKeyword() : step.getPreviousGivenWhenThenKeyword()),
+            snippets.add(snippet.template().format(new String[] {
+                    sanitize(
+                        step.getType().isGivenWhenThen() ? step.getKeyword() : step.getPreviousGivenWhenThenKeyword()),
                     snippet.escapePattern(expression.getSource()),
                     functionName(expression.getSource(), functionNameGenerator),
                     snippet.arguments(arguments(step, expression.getParameterNames(), expression.getParameterTypes())),
                     REGEXP_HINT,
                     tableHint(step)
-                }
-            ));
+            }));
         }
 
         return snippets;
-    }
-
-    private String tableHint(Step step) {
-        if (step.getArgument() == null) {
-            return "";
-        }
-
-        if (step.getArgument() instanceof DataTableArgument) {
-            return snippet.tableHint();
-        }
-
-        return "";
     }
 
     private static String sanitize(String keyWord) {
@@ -78,7 +68,6 @@ public final class SnippetGenerator {
         }
         return functionNameGenerator.generateFunctionName(sentence);
     }
-
 
     private Map<String, Type> arguments(Step step, List<String> parameterNames, List<ParameterType<?>> parameterTypes) {
         Map<String, Type> arguments = new LinkedHashMap<>(parameterTypes.size() + 1);
@@ -101,20 +90,32 @@ public final class SnippetGenerator {
         return arguments;
     }
 
+    private String tableHint(Step step) {
+        if (step.getArgument() == null) {
+            return "";
+        }
+
+        if (step.getArgument() instanceof DataTableArgument) {
+            return snippet.tableHint();
+        }
+
+        return "";
+    }
+
+    private ArgumentPattern[] argumentPatterns() {
+        return DEFAULT_ARGUMENT_PATTERNS;
+    }
+
     private String parameterName(String name, List<String> parameterNames) {
         if (!parameterNames.contains(name)) {
             return name;
         }
 
-        for (int i = 1; ; i++) {
+        for (int i = 1;; i++) {
             if (!parameterNames.contains(name + i)) {
                 return name + i;
             }
         }
-    }
-
-    private ArgumentPattern[] argumentPatterns() {
-        return DEFAULT_ARGUMENT_PATTERNS;
     }
 
 }

@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataTables {
+
     private DataTable toTranspose;
 
     @When("the following table is transposed:")

@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +29,10 @@ import static org.mockito.Mockito.when;
 class TestCaseTest {
 
     private final Feature feature = TestFeatureParser.parse("" +
-        "Feature: Test feature\n" +
-        "  Scenario: Test scenario\n" +
-        "     Given I have 4 cukes in my belly\n" +
-        "     And I have 4 cucumber on my plate\n"
-    );
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n" +
+            "     And I have 4 cucumber on my plate\n");
 
     private final EventBus bus = mock(EventBus.class);
 
@@ -45,10 +44,11 @@ class TestCaseTest {
         UUID.randomUUID(),
         URI.create("file:path/to.feature"),
         feature.getPickles().get(0).getSteps().get(0),
-        singletonList(new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition1))),
-        singletonList(new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition1))),
-        definitionMatch1
-    );
+        singletonList(
+            new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition1))),
+        singletonList(
+            new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition1))),
+        definitionMatch1);
 
     private final PickleStepDefinitionMatch definitionMatch2 = mock(PickleStepDefinitionMatch.class);
     private final CoreHookDefinition beforeStep1HookDefinition2 = mock(CoreHookDefinition.class);
@@ -57,10 +57,11 @@ class TestCaseTest {
         UUID.randomUUID(),
         URI.create("file:path/to.feature"),
         feature.getPickles().get(0).getSteps().get(1),
-        singletonList(new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition2))),
-        singletonList(new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition2))),
-        definitionMatch2
-    );
+        singletonList(
+            new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeStep1HookDefinition2))),
+        singletonList(
+            new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterStep1HookDefinition2))),
+        definitionMatch2);
 
     @BeforeEach
     void init() {
@@ -78,6 +79,19 @@ class TestCaseTest {
         order.verify(bus).send(isA(TestCaseStarted.class));
         order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
         order.verify(bus).send(isA(TestCaseFinished.class));
+    }
+
+    private TestCase createTestCase(PickleStepTestStep... steps) {
+        return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(),
+            pickle(), false);
+    }
+
+    private Pickle pickle() {
+        Feature feature = TestFeatureParser.parse("" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given I have 4 cukes in my belly\n");
+        return feature.getPickles().get(0);
     }
 
     @Test
@@ -103,7 +117,6 @@ class TestCaseTest {
         order.verify(afterStep1HookDefinition1).execute(isA(TestCaseState.class));
     }
 
-
     @Test
     void skip_hooks_of_step_after_skipped_step() throws Throwable {
         doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(TestCaseState.class));
@@ -127,19 +140,6 @@ class TestCaseTest {
         InOrder order = inOrder(definitionMatch1, definitionMatch2);
         order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
         order.verify(definitionMatch2).dryRunStep(isA(TestCaseState.class));
-    }
-
-    private TestCase createTestCase(PickleStepTestStep... steps) {
-        return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(), pickle(), false);
-    }
-
-    private Pickle pickle() {
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
-        return feature.getPickles().get(0);
     }
 
 }

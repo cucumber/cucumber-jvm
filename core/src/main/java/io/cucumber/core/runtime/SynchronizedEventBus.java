@@ -10,26 +10,16 @@ public final class SynchronizedEventBus implements EventBus {
 
     private final EventBus delegate;
 
+    private SynchronizedEventBus(final EventBus delegate) {
+        this.delegate = delegate;
+    }
+
     public static SynchronizedEventBus synchronize(EventBus eventBus) {
         if (eventBus instanceof SynchronizedEventBus) {
             return (SynchronizedEventBus) eventBus;
         }
 
         return new SynchronizedEventBus(eventBus);
-    }
-
-    private SynchronizedEventBus(final EventBus delegate) {
-        this.delegate = delegate;
-    }
-
-    @Override
-    public synchronized <T> void send(final T event) {
-        delegate.send(event);
-    }
-
-    @Override
-    public synchronized <T> void sendAll(final Iterable<T> events) {
-        delegate.sendAll(events);
     }
 
     @Override
@@ -51,4 +41,15 @@ public final class SynchronizedEventBus implements EventBus {
     public UUID generateId() {
         return delegate.generateId();
     }
+
+    @Override
+    public synchronized <T> void send(final T event) {
+        delegate.send(event);
+    }
+
+    @Override
+    public synchronized <T> void sendAll(final Iterable<T> events) {
+        delegate.sendAll(events);
+    }
+
 }

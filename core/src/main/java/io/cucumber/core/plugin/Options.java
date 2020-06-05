@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 public interface Options {
+
     Iterable<Plugin> plugins();
 
     boolean isMonochrome();
@@ -14,5 +15,7 @@ public interface Options {
         String argument();
 
         String pluginString();
+
     }
+
 }

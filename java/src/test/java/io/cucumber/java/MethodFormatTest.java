@@ -25,16 +25,20 @@ class MethodFormatTest {
     @BeforeEach
     void lookupMethod() throws NoSuchMethodException {
         this.methodWithoutArgs = this.getClass().getMethod("methodWithoutArgs");
-        this.methodWithArgsAndException = this.getClass().getMethod("methodWithArgsAndException", String.class, Map.class);
+        this.methodWithArgsAndException = this.getClass().getMethod("methodWithArgsAndException", String.class,
+            Map.class);
     }
 
     @Test
     void shouldUseSimpleFormatWhenMethodHasException() {
-        assertThat(MethodFormat.FULL.format(methodWithoutArgs), startsWith("io.cucumber.java.MethodFormatTest.methodWithoutArgs()"));
+        assertThat(MethodFormat.FULL.format(methodWithoutArgs),
+            startsWith("io.cucumber.java.MethodFormatTest.methodWithoutArgs()"));
     }
 
     @Test
     void shouldUseSimpleFormatWhenMethodHasNoException() {
-        assertThat(MethodFormat.FULL.format(methodWithArgsAndException), startsWith("io.cucumber.java.MethodFormatTest.methodWithArgsAndException(java.lang.String,java.util.Map)"));
+        assertThat(MethodFormat.FULL.format(methodWithArgsAndException),
+            startsWith("io.cucumber.java.MethodFormatTest.methodWithArgsAndException(java.lang.String,java.util.Map)"));
     }
+
 }

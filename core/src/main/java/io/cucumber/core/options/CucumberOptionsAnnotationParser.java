@@ -20,21 +20,6 @@ public final class CucumberOptionsAnnotationParser {
     private boolean overridingGlueSpecified = false;
     private OptionsProvider optionsProvider;
 
-    private static String packagePath(Class<?> clazz) {
-        String packageName = packageName(clazz);
-
-        if (packageName.isEmpty()) {
-            return CLASSPATH_SCHEME_PREFIX + "/";
-        }
-
-        return CLASSPATH_SCHEME_PREFIX + "/" + packageName.replace('.', '/');
-    }
-
-    private static String packageName(Class<?> clazz) {
-        String className = clazz.getName();
-        return className.substring(0, Math.max(0, className.lastIndexOf('.')));
-    }
-
     public CucumberOptionsAnnotationParser withOptionsProvider(OptionsProvider optionsProvider) {
         this.optionsProvider = optionsProvider;
         return this;
@@ -43,7 +28,8 @@ public final class CucumberOptionsAnnotationParser {
     public RuntimeOptionsBuilder parse(Class<?> clazz) {
         RuntimeOptionsBuilder args = new RuntimeOptionsBuilder();
 
-        for (Class<?> classWithOptions = clazz; hasSuperClass(classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
+        for (Class<?> classWithOptions = clazz; hasSuperClass(
+            classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
             CucumberOptions options = requireNonNull(optionsProvider).getOptions(classWithOptions);
 
             if (options != null) {
@@ -64,15 +50,8 @@ public final class CucumberOptionsAnnotationParser {
         return args;
     }
 
-    private void addName(CucumberOptions options, RuntimeOptionsBuilder args) {
-        for (String name : options.name()) {
-            Pattern pattern = Pattern.compile(name);
-            args.addNameFilter(pattern);
-        }
-    }
-
-    private void addSnippets(CucumberOptions options, RuntimeOptionsBuilder args) {
-        args.setSnippetType(options.snippets());
+    private boolean hasSuperClass(Class<?> classWithOptions) {
+        return classWithOptions != Object.class;
     }
 
     private void addDryRun(CucumberOptions options, RuntimeOptionsBuilder args) {
@@ -100,27 +79,22 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private void addFeatures(CucumberOptions options, RuntimeOptionsBuilder args) {
-        if (options != null && options.features().length != 0) {
-            for (String feature : options.features()) {
-                if (feature.startsWith("@")) {
-                    Path rerunFile = Paths.get(feature.substring(1));
-                    args.addRerun(parseFeatureWithLinesFile(rerunFile));
-                } else {
-                    FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
-                    args.addFeature(featureWithLines);
-                }
-            }
-            featuresSpecified = true;
+    private void addStrict(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (!options.strict()) {
+            throw new CucumberException(
+                "@CucumberOptions(strict=false) is no longer supported. Please use strict=true");
         }
     }
 
-    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsBuilder args, Class<?> clazz) {
-        if (!featuresSpecified) {
-            String packageName = packagePath(clazz);
-            FeatureWithLines featureWithLines = FeatureWithLines.parse(packageName);
-            args.addFeature(featureWithLines);
+    private void addName(CucumberOptions options, RuntimeOptionsBuilder args) {
+        for (String name : options.name()) {
+            Pattern pattern = Pattern.compile(name);
+            args.addNameFilter(pattern);
         }
+    }
+
+    private void addSnippets(CucumberOptions options, RuntimeOptionsBuilder args) {
+        args.setSnippetType(options.snippets());
     }
 
     private void addGlue(CucumberOptions options, RuntimeOptionsBuilder args) {
@@ -145,15 +119,18 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private void addDefaultGlueIfNoOverridingGlueIsSpecified(RuntimeOptionsBuilder args, Class<?> clazz) {
-        if (!overridingGlueSpecified) {
-            args.addGlue(GluePath.parse(packageName(clazz)));
-        }
-    }
-
-    private void addStrict(CucumberOptions options, RuntimeOptionsBuilder args) {
-        if (!options.strict()) {
-            throw new CucumberException("@CucumberOptions(strict=false) is no longer supported. Please use strict=true");
+    private void addFeatures(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options != null && options.features().length != 0) {
+            for (String feature : options.features()) {
+                if (feature.startsWith("@")) {
+                    Path rerunFile = Paths.get(feature.substring(1));
+                    args.addRerun(parseFeatureWithLinesFile(rerunFile));
+                } else {
+                    FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
+                    args.addFeature(featureWithLines);
+                }
+            }
+            featuresSpecified = true;
         }
     }
 
@@ -163,13 +140,39 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private boolean hasSuperClass(Class<?> classWithOptions) {
-        return classWithOptions != Object.class;
+    private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsBuilder args, Class<?> clazz) {
+        if (!featuresSpecified) {
+            String packageName = packagePath(clazz);
+            FeatureWithLines featureWithLines = FeatureWithLines.parse(packageName);
+            args.addFeature(featureWithLines);
+        }
     }
 
+    private void addDefaultGlueIfNoOverridingGlueIsSpecified(RuntimeOptionsBuilder args, Class<?> clazz) {
+        if (!overridingGlueSpecified) {
+            args.addGlue(GluePath.parse(packageName(clazz)));
+        }
+    }
+
+    private static String packagePath(Class<?> clazz) {
+        String packageName = packageName(clazz);
+
+        if (packageName.isEmpty()) {
+            return CLASSPATH_SCHEME_PREFIX + "/";
+        }
+
+        return CLASSPATH_SCHEME_PREFIX + "/" + packageName.replace('.', '/');
+    }
+
+    private static String packageName(Class<?> clazz) {
+        String className = clazz.getName();
+        return className.substring(0, Math.max(0, className.lastIndexOf('.')));
+    }
 
     public interface OptionsProvider {
+
         CucumberOptions getOptions(Class<?> clazz);
+
     }
 
     public interface CucumberOptions {
@@ -195,5 +198,7 @@ public final class CucumberOptionsAnnotationParser {
         SnippetType snippets();
 
         Class<? extends ObjectFactory> objectFactory();
+
     }
+
 }

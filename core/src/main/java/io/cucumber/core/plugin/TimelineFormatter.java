@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.messages.internal.com.google.gson.annotations.SerializedName;
@@ -35,18 +34,18 @@ import static java.util.Locale.ROOT;
 
 public final class TimelineFormatter implements ConcurrentEventListener {
 
-    private static final String[] TEXT_ASSETS = new String[]{
-        "/io/cucumber/core/plugin/timeline/index.html",
-        "/io/cucumber/core/plugin/timeline/formatter.js",
-        "/io/cucumber/core/plugin/timeline/report.css",
-        "/io/cucumber/core/plugin/timeline/jquery-3.4.1.min.js",
-        "/io/cucumber/core/plugin/timeline/vis.min.css",
-        "/io/cucumber/core/plugin/timeline/vis.min.js",
-        "/io/cucumber/core/plugin/timeline/vis.override.css",
-        "/io/cucumber/core/plugin/timeline/chosen.jquery.min.js",
-        "/io/cucumber/core/plugin/timeline/chosen.min.css",
-        "/io/cucumber/core/plugin/timeline/chosen.override.css",
-        "/io/cucumber/core/plugin/timeline/chosen-sprite.png"
+    private static final String[] TEXT_ASSETS = new String[] {
+            "/io/cucumber/core/plugin/timeline/index.html",
+            "/io/cucumber/core/plugin/timeline/formatter.js",
+            "/io/cucumber/core/plugin/timeline/report.css",
+            "/io/cucumber/core/plugin/timeline/jquery-3.5.1.min.js",
+            "/io/cucumber/core/plugin/timeline/vis.min.css",
+            "/io/cucumber/core/plugin/timeline/vis.min.js",
+            "/io/cucumber/core/plugin/timeline/vis.override.css",
+            "/io/cucumber/core/plugin/timeline/chosen.jquery.min.js",
+            "/io/cucumber/core/plugin/timeline/chosen.min.css",
+            "/io/cucumber/core/plugin/timeline/chosen.override.css",
+            "/io/cucumber/core/plugin/timeline/chosen-sprite.png"
     };
 
     private final Map<String, TestData> allTests = new HashMap<>();
@@ -55,16 +54,17 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final NiceAppendable reportJs;
     private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
-
     @SuppressWarnings("unused") // Used by PluginFactory
     public TimelineFormatter(final File reportDir) throws FileNotFoundException {
         reportDir.mkdirs();
         if (!reportDir.isDirectory()) {
-            throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s", getClass().getName(), reportDir.getAbsolutePath()));
+            throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s",
+                getClass().getName(), reportDir.getAbsolutePath()));
         }
 
         this.reportDir = reportDir;
-        this.reportJs = new NiceAppendable(new UTF8OutputStreamWriter(new FileOutputStream(new File(reportDir, "report.js"))));
+        this.reportJs = new NiceAppendable(
+            new UTF8OutputStreamWriter(new FileOutputStream(new File(reportDir, "report.js"))));
     }
 
     @Override
@@ -100,25 +100,33 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         reportJs.println();
         appendAsJsonToJs(gson, reportJs, "timelineItems", allTests.values());
         reportJs.println();
-        //Need to sort groups by id, so can guarantee output of order in rendered timeline
+        // Need to sort groups by id, so can guarantee output of order in
+        // rendered timeline
         appendAsJsonToJs(gson, reportJs, "timelineGroups", new TreeMap<>(allGroups).values());
         reportJs.println();
         reportJs.append("});");
         reportJs.close();
         copyReportFiles();
 
-        // TODO: Enable this warning when cucumber-html-formatter is ready to be used
-//        System.err.println("" +
-//            "\n" +
-//            "****************************************\n" +
-//            "* WARNING: The timeline formatter will *\n" +
-//            "* be removed in cucumber-jvm 6.0.0 and *\n" +
-//            "* be replaced by the standalone        *\n" +
-//            "* cucumber-html-formatter.             *\n" +
-//            "****************************************\n");
+        // TODO: Enable this warning when cucumber-html-formatter is ready to be
+        // used
+        // System.err.println("" +
+        // "\n" +
+        // "****************************************\n" +
+        // "* WARNING: The timeline formatter will *\n" +
+        // "* be removed in cucumber-jvm 6.0.0 and *\n" +
+        // "* be replaced by the standalone *\n" +
+        // "* cucumber-html-formatter. *\n" +
+        // "****************************************\n");
     }
 
-    private void appendAsJsonToJs(final Gson gson, final NiceAppendable out, final String pushTo, final Collection<?> content) {
+    private String getId(final TestCaseEvent testCaseEvent) {
+        return testCaseEvent.getTestCase().getId().toString();
+    }
+
+    private void appendAsJsonToJs(
+            final Gson gson, final NiceAppendable out, final String pushTo, final Collection<?> content
+    ) {
         out.append("CucumberHTML.").append(pushTo).append(".pushArray(");
         gson.toJson(content, out);
         out.append(");");
@@ -166,11 +174,22 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
     }
 
-    private String getId(final TestCaseEvent testCaseEvent) {
-        return testCaseEvent.getTestCase().getId().toString();
+    static class GroupData {
+
+        @SerializedName("id")
+        final long id;
+        @SerializedName("content")
+        final String content;
+
+        GroupData(Thread thread) {
+            id = thread.getId();
+            content = thread.toString();
+        }
+
     }
 
     class TestData {
+
         @SerializedName("id")
         final String id;
         @SerializedName("feature")
@@ -179,16 +198,16 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         final String scenario;
         @SerializedName("start")
         final long startTime;
-        @SerializedName("end")
-        long endTime;
         @SerializedName("group")
         final long threadId;
         @SerializedName("content")
-        final String content = ""; //Replaced in JS file
-        @SerializedName("className")
-        String className;
+        final String content = ""; // Replaced in JS file
         @SerializedName("tags")
         final String tags;
+        @SerializedName("end")
+        long endTime;
+        @SerializedName("className")
+        String className;
 
         TestData(final TestCaseStarted started, final Long threadId) {
             this.id = getId(started);
@@ -203,17 +222,16 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
         private String findRootNodeName(TestCase testCase) {
             Location location = testCase.getLocation();
-            Predicate<Node> withLocation = candidate ->
-                candidate.getLocation().equals(location);
+            Predicate<Node> withLocation = candidate -> candidate.getLocation().equals(location);
             return parsedTestSources.get(testCase.getUri())
-                .stream()
-                .map(node -> node.findPathTo(withLocation))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst()
-                .map(nodes -> nodes.get(0))
-                .flatMap(Node::getName)
-                .orElse("Unknown");
+                    .stream()
+                    .map(node -> node.findPathTo(withLocation))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .findFirst()
+                    .map(nodes -> nodes.get(0))
+                    .flatMap(Node::getName)
+                    .orElse("Unknown");
         }
 
         private String buildTagsValue(final TestCase testCase) {
@@ -228,18 +246,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.endTime = event.getInstant().toEpochMilli();
             this.className = event.getResult().getStatus().name().toLowerCase(ROOT);
         }
-    }
 
-    static class GroupData {
-        @SerializedName("id")
-        final long id;
-        @SerializedName("content")
-        final String content;
-
-        GroupData(Thread thread) {
-            id = thread.getId();
-            content = thread.toString();
-        }
     }
 
 }

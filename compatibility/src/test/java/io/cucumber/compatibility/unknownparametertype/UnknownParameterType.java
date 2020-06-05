@@ -8,4 +8,5 @@ public class UnknownParameterType {
     public void test(String airport) throws Exception {
         throw new Exception("Should not be called because airport type not defined");
     }
+
 }

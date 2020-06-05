@@ -20,13 +20,15 @@ class EncodingTest {
 
     @Test
     void test_utf8_bom_encode() throws RuntimeException, IOException {
-        when(resource.getInputStream()).thenReturn(new FileInputStream("src/test/resources/io/cucumber/core/feature/UTF_8_BOM_Encoded.feature"));
+        when(resource.getInputStream()).thenReturn(
+            new FileInputStream("src/test/resources/io/cucumber/core/feature/UTF_8_BOM_Encoded.feature"));
         assertFalse(Encoding.readFile(resource).startsWith("\uFEFF"), "UTF-8 BOM encoding not removed.");
     }
 
     @Test
     void test_utf8_encode() throws RuntimeException, IOException {
-        when(resource.getInputStream()).thenReturn(new FileInputStream("src/test/resources/io/cucumber/core/feature/UTF_8_Encoded.feature"));
+        when(resource.getInputStream())
+                .thenReturn(new FileInputStream("src/test/resources/io/cucumber/core/feature/UTF_8_Encoded.feature"));
         assertFalse(Encoding.readFile(resource).startsWith("\uFEFF"), "UTF-8 BOM encoding should not be present.");
     }
 

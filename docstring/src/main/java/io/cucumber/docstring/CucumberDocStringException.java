@@ -12,4 +12,5 @@ public final class CucumberDocStringException extends RuntimeException {
     CucumberDocStringException(String message, Throwable throwable) {
         super(message, throwable);
     }
+
 }

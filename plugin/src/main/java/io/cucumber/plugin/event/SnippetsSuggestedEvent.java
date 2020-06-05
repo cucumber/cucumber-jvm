@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
 public final class SnippetsSuggestedEvent extends TimeStampedEvent {
+
     private final URI uri;
     private final Location scenarioLocation;
     private final Location stepLocation;
@@ -21,7 +22,9 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
         this(timeInstant, uri, new Location(scenarioLine, -1), new Location(stepLine, -1), snippets);
     }
 
-    public SnippetsSuggestedEvent(Instant instant, URI uri, Location scenarioLocation, Location stepLocation, List<String> snippets) {
+    public SnippetsSuggestedEvent(
+            Instant instant, URI uri, Location scenarioLocation, Location stepLocation, List<String> snippets
+    ) {
         super(instant);
         this.uri = requireNonNull(uri);
         this.scenarioLocation = scenarioLocation;

@@ -20,10 +20,6 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         this.feature = feature;
     }
 
-    void prune(Predicate<TestDescriptor> toKeep) {
-        pruneRecursively(this, toKeep);
-    }
-
     private static void pruneRecursively(TestDescriptor descriptor, Predicate<TestDescriptor> toKeep) {
         if (!toKeep.test(descriptor)) {
             if (descriptor.isTest()) {
@@ -32,6 +28,10 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
             List<TestDescriptor> children = new ArrayList<>(descriptor.getChildren());
             children.forEach(child -> pruneRecursively(child, toKeep));
         }
+    }
+
+    void prune(Predicate<TestDescriptor> toKeep) {
+        pruneRecursively(this, toKeep);
     }
 
     @Override

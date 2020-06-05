@@ -22,14 +22,6 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         this.location = requireNonNull(location);
     }
 
-    public final String getLocation() {
-        return location.toString();
-    }
-
-    public final boolean isDefinedAt(StackTraceElement stackTraceElement) {
-        return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
-    }
-
     private Method getAcceptMethod(Class<?> bodyClass) {
         List<Method> acceptMethods = new ArrayList<>();
         for (Method method : bodyClass.getDeclaredMethods()) {
@@ -44,17 +36,26 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         return acceptMethods.get(0);
     }
 
+    public final String getLocation() {
+        return location.toString();
+    }
+
+    public final boolean isDefinedAt(StackTraceElement stackTraceElement) {
+        return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
+    }
+
     Class<?>[] resolveRawArguments(Class<?> bodyClass, Class<?> body) {
         Class<?>[] rawArguments = TypeResolver.resolveRawArguments(bodyClass, body);
         for (Class<?> aClass : rawArguments) {
             if (TypeResolver.Unknown.class.equals(aClass)) {
                 throw new IllegalStateException("" +
-                    "Could resolve the return type of the lambda at " + location.getFileName() + ":" + location.getLineNumber() + "\n" +
-                    "This version of cucumber-java8 is not compatible with Java 12+\n" +
-                    "See: https://github.com/cucumber/cucumber-jvm/issues/1817"
-                );
+                        "Could resolve the return type of the lambda at " + location.getFileName() + ":"
+                        + location.getLineNumber() + "\n" +
+                        "This version of cucumber-java8 is not compatible with Java 12+\n" +
+                        "See: https://github.com/cucumber/cucumber-jvm/issues/1817");
             }
         }
         return rawArguments;
     }
+
 }

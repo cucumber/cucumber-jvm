@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 @API(status = API.Status.INTERNAL)
 public @interface StepDefinitionAnnotations {
+
 }

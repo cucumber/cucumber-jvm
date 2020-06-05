@@ -13,8 +13,14 @@ import java.util.List;
  * This class composes all interesting parameter information into one object.
  */
 class JavaParameterInfo implements ParameterInfo {
+
     private final Type type;
     private final boolean transposed;
+
+    private JavaParameterInfo(Type type, boolean transposed) {
+        this.type = type;
+        this.transposed = transposed;
+    }
 
     static List<ParameterInfo> fromMethod(Method method) {
         List<ParameterInfo> result = new ArrayList<>();
@@ -30,11 +36,6 @@ class JavaParameterInfo implements ParameterInfo {
             result.add(new JavaParameterInfo(genericParameterTypes[i], transposed));
         }
         return result;
-    }
-
-    private JavaParameterInfo(Type type, boolean transposed) {
-        this.type = type;
-        this.transposed = transposed;
     }
 
     public Type getType() {

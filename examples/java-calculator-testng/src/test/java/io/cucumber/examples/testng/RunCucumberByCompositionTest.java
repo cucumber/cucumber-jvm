@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
  */
 @CucumberOptions(plugin = "message:target/cucumber-report-feature-composite.ndjson")
 public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
+
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
@@ -37,4 +38,5 @@ public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
     public void tearDownClass() {
         testNGCucumberRunner.finish();
     }
+
 }

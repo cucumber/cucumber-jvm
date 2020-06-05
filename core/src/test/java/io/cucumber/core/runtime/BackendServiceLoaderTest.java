@@ -33,8 +33,7 @@ class BackendServiceLoaderTest {
         Executable testMethod = () -> backendSupplier.get(emptyList()).iterator().next();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "No backends were found. Please make sure you have a backend module on your CLASSPATH."
-        )));
+            "No backends were found. Please make sure you have a backend module on your CLASSPATH.")));
     }
 
 }

@@ -21,4 +21,5 @@ public class BellyStepDefinitions {
     public void checkCukes(int n) {
         assertEquals(n, belly.getCukes());
     }
+
 }

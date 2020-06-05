@@ -11,16 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateInstanceByDefaultConstructorTest {
 
-    public static class HasDefaultConstructor {
-        // empty
-    }
-
-    public static class DoesNotHaveDefaultConstructor {
-        public DoesNotHaveDefaultConstructor(final String name) {
-            // empty
-        }
-    }
-
     private final CreateInstanceByDefaultConstructor createInstanceByDefaultConstructor = CreateInstanceByDefaultConstructor.INSTANCE;
 
     @Test
@@ -33,6 +23,18 @@ class CreateInstanceByDefaultConstructorTest {
         Executable testMethod = () -> createInstanceByDefaultConstructor.apply(DoesNotHaveDefaultConstructor.class);
         IllegalStateException expectedThrown = assertThrows(IllegalStateException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo("Can not instantiate Instance by Default Constructor.")));
+    }
+
+    public static class HasDefaultConstructor {
+        // empty
+    }
+
+    public static class DoesNotHaveDefaultConstructor {
+
+        public DoesNotHaveDefaultConstructor(final String name) {
+            // empty
+        }
+
     }
 
 }

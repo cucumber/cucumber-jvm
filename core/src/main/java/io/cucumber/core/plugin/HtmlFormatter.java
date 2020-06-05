@@ -40,4 +40,5 @@ public final class HtmlFormatter implements ConcurrentEventListener {
             }
         }
     }
+
 }

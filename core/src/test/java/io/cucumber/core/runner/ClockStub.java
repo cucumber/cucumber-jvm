@@ -6,13 +6,14 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 public class ClockStub extends Clock {
+
     private final Duration duration;
     private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
 
     public ClockStub(Duration duration) {
         this.duration = duration;
     }
-    
+
     @Override
     public ZoneId getZone() {
         return null;
@@ -30,4 +31,5 @@ public class ClockStub extends Clock {
         currentInstant.set(result.plus(duration));
         return result;
     }
+
 }

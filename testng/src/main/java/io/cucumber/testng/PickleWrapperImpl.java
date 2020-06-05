@@ -16,4 +16,5 @@ final class PickleWrapperImpl implements PickleWrapper {
     public String toString() {
         return "\"" + pickle.getPickle().getName() + "\"";
     }
+
 }

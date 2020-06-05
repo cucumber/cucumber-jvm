@@ -1,6 +1,5 @@
 package io.cucumber.plugin.event;
 
-
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -50,7 +49,6 @@ class NodeTest {
         public Optional<String> getName() {
             return Optional.of(toString());
         }
-
 
         @Override
         public String toString() {
@@ -300,7 +298,8 @@ class NodeTest {
 
     @Test
     void findEmptyExamplesA() {
-        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Empty Examples A").equals(node.getName()));
+        Optional<List<Node>> pathTo = emptyOutline
+                .findPathTo(node -> Optional.of("Empty Examples A").equals(node.getName()));
         assertEquals(Optional.of(asList(emptyOutline, emptyExamplesA)), pathTo);
     }
 
@@ -312,7 +311,8 @@ class NodeTest {
 
     @Test
     void findEmptyExamplesB() {
-        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Empty Examples B").equals(node.getName()));
+        Optional<List<Node>> pathTo = emptyOutline
+                .findPathTo(node -> Optional.of("Empty Examples B").equals(node.getName()));
         assertEquals(Optional.of(asList(emptyOutline, emptyExamplesB)), pathTo);
     }
 
@@ -324,7 +324,8 @@ class NodeTest {
 
     @Test
     void findEmptyOutline() {
-        Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Empty Outline").equals(node.getName()));
+        Optional<List<Node>> pathTo = emptyOutline
+                .findPathTo(node -> Optional.of("Empty Outline").equals(node.getName()));
         assertEquals(Optional.of(asList(emptyOutline)), pathTo);
     }
 
@@ -333,6 +334,7 @@ class NodeTest {
         Optional<List<Node>> pathTo = outline.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
+
     @Test
     void findNothingInEmptyOutline() {
         Optional<List<Node>> pathTo = emptyOutline.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));
@@ -350,6 +352,5 @@ class NodeTest {
         Optional<List<Node>> pathTo = example1.findPathTo(node -> Optional.of("Nothing").equals(node.getName()));
         assertEquals(Optional.empty(), pathTo);
     }
-
 
 }

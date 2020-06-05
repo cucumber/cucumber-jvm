@@ -1,9 +1,9 @@
 package io.cucumber.junit;
 
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.ConcurrentEventListener;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +33,7 @@ class InvokeMethodsAroundEventsTest {
         assertThat(events, contains("BeforeClass", "TestRunStarted", "TestRunFinished", "AfterClass"));
     }
 
-    @CucumberOptions(plugin = {"io.cucumber.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener"})
+    @CucumberOptions(plugin = "io.cucumber.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener")
     public static class BeforeAfterClass {
 
         @BeforeClass
@@ -45,6 +45,7 @@ class InvokeMethodsAroundEventsTest {
         public static void afterClass() {
             events.add("AfterClass");
         }
+
     }
 
     @SuppressWarnings("unused") // Used as a plugin by BeforeAfterClass
@@ -57,4 +58,5 @@ class InvokeMethodsAroundEventsTest {
         }
 
     }
+
 }

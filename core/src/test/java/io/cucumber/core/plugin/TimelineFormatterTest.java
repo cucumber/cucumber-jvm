@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TimelineFormatterTest {
 
-    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = Comparator.comparing(o -> o.scenario);
+    private static final Comparator<TimelineFormatter.TestData> TEST_DATA_COMPARATOR = Comparator
+            .comparing(o -> o.scenario);
 
     private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/io/cucumber/core/plugin/timeline";
     private static final String REPORT_JS = "report.js";
@@ -42,52 +43,52 @@ class TimelineFormatterTest {
 
     private final Gson gson = new GsonBuilder().registerTypeAdapter(
         Instant.class,
-        (JsonDeserializer<Instant>) (json, type, jsonDeserializationContext) ->
-            json.isJsonObject()
+        (JsonDeserializer<Instant>) (json, type, jsonDeserializationContext) -> json.isJsonObject()
                 ? Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong())
-                : Instant.ofEpochMilli(json.getAsLong())).create();
+                : Instant.ofEpochMilli(json.getAsLong()))
+            .create();
 
     private final Map<String, Result> stepsToResult = new HashMap<>();
     private final Map<String, String> stepsToLocation = new HashMap<>();
 
     private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
-        "Feature: Failing Feature\n" +
-        "  Background:\n" +
-        "    Given bg_1\n" +
-        "    When bg_2\n" +
-        "    Then bg_3\n" +
-        "  @TagA\n" +
-        "  Scenario: Scenario 1\n" +
-        "    Given step_01\n" +
-        "    When step_02\n" +
-        "    Then step_03\n" +
-        "  Scenario: Scenario 2\n" +
-        "    Given step_01\n" +
-        "    When step_02\n" +
-        "    Then step_03");
+            "Feature: Failing Feature\n" +
+            "  Background:\n" +
+            "    Given bg_1\n" +
+            "    When bg_2\n" +
+            "    Then bg_3\n" +
+            "  @TagA\n" +
+            "  Scenario: Scenario 1\n" +
+            "    Given step_01\n" +
+            "    When step_02\n" +
+            "    Then step_03\n" +
+            "  Scenario: Scenario 2\n" +
+            "    Given step_01\n" +
+            "    When step_02\n" +
+            "    Then step_03");
 
     private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
-        "Feature: Successful Feature\n" +
-        "  Background:\n" +
-        "    Given bg_1\n" +
-        "    When bg_2\n" +
-        "    Then bg_3\n" +
-        "  @TagB @TagC\n" +
-        "  Scenario: Scenario 3\n" +
-        "    Given step_10\n" +
-        "    When step_20\n" +
-        "    Then step_30");
+            "Feature: Successful Feature\n" +
+            "  Background:\n" +
+            "    Given bg_1\n" +
+            "    When bg_2\n" +
+            "    Then bg_3\n" +
+            "  @TagB @TagC\n" +
+            "  Scenario: Scenario 3\n" +
+            "    Given step_10\n" +
+            "    When step_20\n" +
+            "    Then step_30");
 
     private final Feature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
-        "Feature: Pending Feature\n" +
-        "  Background:\n" +
-        "    Given bg_1\n" +
-        "    When bg_2\n" +
-        "    Then bg_3\n" +
-        "  Scenario: Scenario 4\n" +
-        "    Given step_10\n" +
-        "    When step_20\n" +
-        "    Then step_50");
+            "Feature: Pending Feature\n" +
+            "  Background:\n" +
+            "    Given bg_1\n" +
+            "    When bg_2\n" +
+            "    Then bg_3\n" +
+            "  Scenario: Scenario 4\n" +
+            "    Given step_10\n" +
+            "    When step_20\n" +
+            "    Then step_50");
 
     private File reportDir;
     private File reportJsFile;
@@ -117,7 +118,8 @@ class TimelineFormatterTest {
 
         assertThat(REPORT_JS + ": did not exist in output dir", reportJsFile.exists(), is(equalTo(true)));
 
-        final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.4.1.min.js", "vis.min.css", "vis.min.js", "vis.override.css");
+        final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.5.1.min.js", "vis.min.css",
+            "vis.min.js", "vis.override.css");
         for (final String e : files) {
             final File actualFile = new File(reportDir, e);
             assertThat(e + ": did not exist in output dir", actualFile.exists(), is(equalTo(true)));
@@ -127,127 +129,116 @@ class TimelineFormatterTest {
         }
     }
 
+    private void runFormatterWithPlugin() {
+        TestHelper.builder()
+                .withFeatures(failingFeature, successfulFeature, pendingFeature)
+                .withRuntimeArgs(
+                    new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).build())
+                .withStepsToResult(stepsToResult)
+                .withStepsToLocation(stepsToLocation)
+                .withTimeServiceIncrement(STEP_DURATION)
+                .build()
+                .run();
+    }
+
+    private String readFileContents(final String outputPath) throws IOException {
+        final Scanner scanner = new Scanner(new FileInputStream(outputPath), "UTF-8");
+        final String contents = scanner.useDelimiter("\\A").next();
+        scanner.close();
+        return contents;
+    }
+
     @Test
     void shouldWriteItemsCorrectlyToReportJsWhenRunInParallel() throws Throwable {
         TestHelper.builder()
-            .withFeatures(failingFeature, successfulFeature, pendingFeature)
-            .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).setThreads(2).build())
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withTimeServiceIncrement(STEP_DURATION)
-            .build()
-            .run();
+                .withFeatures(failingFeature, successfulFeature, pendingFeature)
+                .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath())
+                        .setThreads(2).build())
+                .withStepsToResult(stepsToResult)
+                .withStepsToLocation(stepsToLocation)
+                .withTimeServiceIncrement(STEP_DURATION)
+                .build()
+                .run();
 
-        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(0L); // Have to ignore actual thread id and just check not null
+        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(0L); // Have
+                                                                                    // to
+                                                                                    // ignore
+                                                                                    // actual
+                                                                                    // thread
+                                                                                    // id
+                                                                                    // and
+                                                                                    // just
+                                                                                    // check
+                                                                                    // not
+                                                                                    // null
 
         final ActualReportOutput actualOutput = readReport();
 
-        //Cannot verify size / contents of Groups as multi threading not guaranteed in Travis CI
+        // Cannot verify size / contents of Groups as multi threading not
+        // guaranteed in Travis CI
         assertThat(actualOutput.groups, not(empty()));
         for (int i = 0; i < actualOutput.groups.size(); i++) {
             final TimelineFormatter.GroupData actual = actualOutput.groups.get(i);
 
             final int idx = i;
-            assertAll("Checking TimelineFormatter.GroupData",
-                () -> assertThat(String.format("id on group %s, was not as expected", idx), actual.id > 0, is(equalTo(true))),
-                () -> assertThat(String.format("content on group %s, was not as expected", idx), actual.content, is(notNullValue()))
-            );
+            assertAll(
+                () -> assertThat(String.format("id on group %s, was not as expected", idx), actual.id > 0,
+                    is(equalTo(true))),
+                () -> assertThat(String.format("content on group %s, was not as expected", idx), actual.content,
+                    is(notNullValue())));
         }
 
-        //Sort the tests, output order is not a problem but obviously asserting it is
+        // Sort the tests, output order is not a problem but obviously asserting
+        // it is
         actualOutput.tests.sort(TEST_DATA_COMPARATOR);
         assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, false, false);
     }
 
-    @Test
-    void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
-        runFormatterWithPlugin();
-
-        assertThat(REPORT_JS + " was not found", reportJsFile.exists(), is(equalTo(true)));
-
-        final Long groupId = Thread.currentThread().getId();
-        final String groupName = Thread.currentThread().toString();
-
-        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(groupId);
-
-        final TimelineFormatter.GroupData[] expectedGroups = gson.fromJson(
-            ("[\n" +
-                "  {\n" +
-                "    \"id\": groupId,\n" +
-                "    \"content\": \"groupName\"\n" +
-                "  }\n" +
-                "]")
-                .replaceAll("groupId", groupId.toString())
-                .replaceAll("groupName", groupName)
-            , TimelineFormatter.GroupData[].class);
-
-        final ActualReportOutput actualOutput = readReport();
-
-        //Sort the tests, output order is not a problem but obviously asserting it is
-        actualOutput.tests.sort(TEST_DATA_COMPARATOR);
-
-        assertAll("Checking Timeline",
-            () -> assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, true, true),
-            () -> assertTimelineGroupDataIsAsExpected(expectedGroups, actualOutput.groups)
-        );
-    }
-
     private TimelineFormatter.TestData[] getExpectedTestData(Long groupId) {
         String expectedJson = ("[\n" +
-            "  {\n" +
-            "    \"feature\": \"Failing Feature\",\n" +
-            "    \"scenario\": \"Scenario 1\",\n" +
-            "    \"start\": 0,\n" +
-            "    \"end\": 6000,\n" +
-            "    \"group\": groupId,\n" +
-            "    \"content\": \"\",\n" +
-            "    \"tags\": \"@taga,\",\n" +
-            "    \"className\": \"failed\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"feature\": \"Failing Feature\",\n" +
-            "    \"scenario\": \"Scenario 2\",\n" +
-            "    \"start\": 6000,\n" +
-            "    \"end\": 12000,\n" +
-            "    \"group\": groupId,\n" +
-            "    \"content\": \"\",\n" +
-            "    \"tags\": \"\",\n" +
-            "    \"className\": \"failed\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"feature\": \"Successful Feature\",\n" +
-            "    \"scenario\": \"Scenario 3\",\n" +
-            "    \"start\": 18000,\n" +
-            "    \"end\": 24000,\n" +
-            "    \"group\": groupId,\n" +
-            "    \"content\": \"\",\n" +
-            "    \"tags\": \"@tagb,@tagc,\",\n" +
-            "    \"className\": \"passed\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"scenario\": \"Scenario 4\",\n" +
-            "    \"feature\": \"Pending Feature\",\n" +
-            "    \"start\": 12000,\n" +
-            "    \"end\": 18000,\n" +
-            "    \"group\": groupId,\n" +
-            "    \"content\": \"\",\n" +
-            "    \"tags\": \"\",\n" +
-            "    \"className\": \"undefined\"\n" +
-            "  }\n" +
-            "]").replaceAll("groupId", groupId.toString());
+                "  {\n" +
+                "    \"feature\": \"Failing Feature\",\n" +
+                "    \"scenario\": \"Scenario 1\",\n" +
+                "    \"start\": 0,\n" +
+                "    \"end\": 6000,\n" +
+                "    \"group\": groupId,\n" +
+                "    \"content\": \"\",\n" +
+                "    \"tags\": \"@taga,\",\n" +
+                "    \"className\": \"failed\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"feature\": \"Failing Feature\",\n" +
+                "    \"scenario\": \"Scenario 2\",\n" +
+                "    \"start\": 6000,\n" +
+                "    \"end\": 12000,\n" +
+                "    \"group\": groupId,\n" +
+                "    \"content\": \"\",\n" +
+                "    \"tags\": \"\",\n" +
+                "    \"className\": \"failed\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"feature\": \"Successful Feature\",\n" +
+                "    \"scenario\": \"Scenario 3\",\n" +
+                "    \"start\": 18000,\n" +
+                "    \"end\": 24000,\n" +
+                "    \"group\": groupId,\n" +
+                "    \"content\": \"\",\n" +
+                "    \"tags\": \"@tagb,@tagc,\",\n" +
+                "    \"className\": \"passed\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"scenario\": \"Scenario 4\",\n" +
+                "    \"feature\": \"Pending Feature\",\n" +
+                "    \"start\": 12000,\n" +
+                "    \"end\": 18000,\n" +
+                "    \"group\": groupId,\n" +
+                "    \"content\": \"\",\n" +
+                "    \"tags\": \"\",\n" +
+                "    \"className\": \"undefined\"\n" +
+                "  }\n" +
+                "]").replaceAll("groupId", groupId.toString());
 
         return gson.fromJson(expectedJson, TimelineFormatter.TestData[].class);
-    }
-
-    private void runFormatterWithPlugin() {
-        TestHelper.builder()
-            .withFeatures(failingFeature, successfulFeature, pendingFeature)
-            .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).build())
-            .withStepsToResult(stepsToResult)
-            .withStepsToLocation(stepsToLocation)
-            .withTimeServiceIncrement(STEP_DURATION)
-            .build()
-            .run();
     }
 
     private ActualReportOutput readReport() throws IOException {
@@ -268,69 +259,109 @@ class TimelineFormatterTest {
         itemLines.append("]");
         groupLines.append("]");
 
-        final TimelineFormatter.TestData[] tests = gson.fromJson(itemLines.toString(), TimelineFormatter.TestData[].class);
-        final TimelineFormatter.GroupData[] groups = gson.fromJson(groupLines.toString(), TimelineFormatter.GroupData[].class);
+        final TimelineFormatter.TestData[] tests = gson.fromJson(itemLines.toString(),
+            TimelineFormatter.TestData[].class);
+        final TimelineFormatter.GroupData[] groups = gson.fromJson(groupLines.toString(),
+            TimelineFormatter.GroupData[].class);
         return new ActualReportOutput(tests, groups);
     }
 
-    private String readFileContents(final String outputPath) throws IOException {
-        final Scanner scanner = new Scanner(new FileInputStream(outputPath), "UTF-8");
-        final String contents = scanner.useDelimiter("\\A").next();
-        scanner.close();
-        return contents;
-    }
-
-    private void assertTimelineTestDataIsAsExpected(final TimelineFormatter.TestData[] expectedTests,
-                                                    final List<TimelineFormatter.TestData> actualOutput,
-                                                    final boolean checkActualThreadData,
-                                                    final boolean checkActualTimeStamps) {
+    private void assertTimelineTestDataIsAsExpected(
+            final TimelineFormatter.TestData[] expectedTests,
+            final List<TimelineFormatter.TestData> actualOutput,
+            final boolean checkActualThreadData,
+            final boolean checkActualTimeStamps
+    ) {
         assertThat("Number of tests was not as expected", actualOutput.size(), is(equalTo(expectedTests.length)));
         for (int i = 0; i < expectedTests.length; i++) {
             final TimelineFormatter.TestData expected = expectedTests[i];
             final TimelineFormatter.TestData actual = actualOutput.get(i);
             final int idx = i;
 
-            assertAll("Checking TimelineFormatter.TestData",
-                () -> assertThat(String.format("feature on item %s, was not as expected", idx), actual.feature, is(equalTo(expected.feature))),
-                () -> assertThat(String.format("className on item %s, was not as expected", idx), actual.className, is(equalTo(expected.className))),
-                () -> assertThat(String.format("content on item %s, was not as expected", idx), actual.content, is(equalTo(expected.content))),
-                () -> assertThat(String.format("tags on item %s, was not as expected", idx), actual.tags, is(equalTo(expected.tags))),
+            assertAll(
+                () -> assertThat(String.format("feature on item %s, was not as expected", idx), actual.feature,
+                    is(equalTo(expected.feature))),
+                () -> assertThat(String.format("className on item %s, was not as expected", idx), actual.className,
+                    is(equalTo(expected.className))),
+                () -> assertThat(String.format("content on item %s, was not as expected", idx), actual.content,
+                    is(equalTo(expected.content))),
+                () -> assertThat(String.format("tags on item %s, was not as expected", idx), actual.tags,
+                    is(equalTo(expected.tags))),
                 () -> {
                     if (checkActualTimeStamps) {
-                        assertAll("Checking ActualTimeStamps",
-                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx), actual.startTime, is(equalTo(expected.startTime))),
-                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx), actual.endTime, is(equalTo(expected.endTime)))
-                        );
+                        assertAll(
+                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
+                                actual.startTime, is(equalTo(expected.startTime))),
+                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
+                                actual.endTime, is(equalTo(expected.endTime))));
                     } else {
-                        assertAll("Checking TimeStamps",
-                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx), actual.startTime, is(notNullValue())),
-                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx), actual.endTime, is(notNullValue()))
-                        );
+                        assertAll(
+                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
+                                actual.startTime, is(notNullValue())),
+                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
+                                actual.endTime, is(notNullValue())));
                     }
                 },
                 () -> {
                     if (checkActualThreadData) {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.threadId, is(equalTo(expected.threadId)));
+                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.threadId,
+                            is(equalTo(expected.threadId)));
                     } else {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.threadId, is(notNullValue()));
+                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.threadId,
+                            is(notNullValue()));
                     }
-                }
-            );
+                });
         }
     }
 
-    private void assertTimelineGroupDataIsAsExpected(final TimelineFormatter.GroupData[] expectedGroups,
-                                                     final List<TimelineFormatter.GroupData> actualOutput) {
+    @Test
+    void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
+        runFormatterWithPlugin();
+
+        assertThat(REPORT_JS + " was not found", reportJsFile.exists(), is(equalTo(true)));
+
+        final Long groupId = Thread.currentThread().getId();
+        final String groupName = Thread.currentThread().toString();
+
+        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(groupId);
+
+        final TimelineFormatter.GroupData[] expectedGroups = gson.fromJson(
+            ("[\n" +
+                    "  {\n" +
+                    "    \"id\": groupId,\n" +
+                    "    \"content\": \"groupName\"\n" +
+                    "  }\n" +
+                    "]")
+                            .replaceAll("groupId", groupId.toString())
+                            .replaceAll("groupName", groupName),
+            TimelineFormatter.GroupData[].class);
+
+        final ActualReportOutput actualOutput = readReport();
+
+        // Sort the tests, output order is not a problem but obviously asserting
+        // it is
+        actualOutput.tests.sort(TEST_DATA_COMPARATOR);
+
+        assertAll(
+            () -> assertTimelineTestDataIsAsExpected(expectedTests, actualOutput.tests, true, true),
+            () -> assertTimelineGroupDataIsAsExpected(expectedGroups, actualOutput.groups));
+    }
+
+    private void assertTimelineGroupDataIsAsExpected(
+            final TimelineFormatter.GroupData[] expectedGroups,
+            final List<TimelineFormatter.GroupData> actualOutput
+    ) {
         assertThat("Number of groups was not as expected", actualOutput.size(), is(equalTo(expectedGroups.length)));
         for (int i = 0; i < expectedGroups.length; i++) {
             final TimelineFormatter.GroupData expected = expectedGroups[i];
             final TimelineFormatter.GroupData actual = actualOutput.get(i);
 
             final int idx = i;
-            assertAll("Checking TimelineFormatter.GroupData",
-                () -> assertThat(String.format("id on group %s, was not as expected", idx), actual.id, is(equalTo(expected.id))),
-                () -> assertThat(String.format("content on group %s, was not as expected", idx), actual.content, is(equalTo(expected.content)))
-            );
+            assertAll(
+                () -> assertThat(String.format("id on group %s, was not as expected", idx), actual.id,
+                    is(equalTo(expected.id))),
+                () -> assertThat(String.format("content on group %s, was not as expected", idx), actual.content,
+                    is(equalTo(expected.content))));
         }
     }
 
@@ -343,6 +374,7 @@ class TimelineFormatterTest {
             this.tests = Arrays.asList(tests);
             this.groups = Arrays.asList(groups);
         }
+
     }
 
 }

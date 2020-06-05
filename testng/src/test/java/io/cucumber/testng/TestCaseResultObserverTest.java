@@ -109,10 +109,9 @@ public class TestCaseResultObserverTest {
         SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
-            "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
-            "\n" +
-            "stub snippet\n"
-        ));
+                "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "\n" +
+                "stub snippet\n"));
     }
 
     @Test
@@ -132,10 +131,9 @@ public class TestCaseResultObserverTest {
         SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
-            "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
-            "\n" +
-            "stub snippet\n"
-        ));
+                "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "\n" +
+                "stub snippet\n"));
     }
 
     @Test
@@ -193,4 +191,5 @@ public class TestCaseResultObserverTest {
         Exception exception = expectThrows(Exception.class, resultListener::assertTestCasePassed);
         assertThat(exception.getCause(), instanceOf(SkipException.class));
     }
+
 }

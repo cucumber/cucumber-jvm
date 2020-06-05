@@ -15,12 +15,11 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 /**
- * When pickles are executed in parallel events can be
- * produced with a partial ordering.
+ * When pickles are executed in parallel events can be produced with a partial
+ * ordering.
  * <p>
- * The canonical order is the order in which these events
- * would have been generated had cucumber executed these
- * pickles in a serial fashion.
+ * The canonical order is the order in which these events would have been
+ * generated had cucumber executed these pickles in a serial fashion.
  * <p>
  * In canonical order events are first ordered by type:
  * <ol>
@@ -66,8 +65,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
             SnippetsSuggestedEvent.class,
             StepDefinedEvent.class,
             TestCaseEvent.class,
-            TestRunFinished.class
-        );
+            TestRunFinished.class);
 
         @Override
         public int compare(final Event a, final Event b) {
@@ -90,6 +88,7 @@ final class CanonicalEventOrder implements Comparator<Event> {
             }
             return -1;
         }
+
     }
 
     private static final class TestCaseEventComparator implements Comparator<TestCaseEvent> {
@@ -103,13 +102,14 @@ final class CanonicalEventOrder implements Comparator<Event> {
 
             int line = Integer.compare(
                 a.getTestCase().getLocation().getLine(),
-                b.getTestCase().getLocation().getLine()
-            );
-            if(line != 0){
+                b.getTestCase().getLocation().getLine());
+            if (line != 0) {
                 return line;
             }
 
             return a.getInstant().compareTo(b.getInstant());
         }
+
     }
+
 }

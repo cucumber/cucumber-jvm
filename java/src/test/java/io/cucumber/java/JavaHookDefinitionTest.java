@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.TestCaseState;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -17,8 +17,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({"WeakerAccess"})
-@ExtendWith({MockitoExtension.class})
+@SuppressWarnings({ "WeakerAccess" })
+@ExtendWith({ MockitoExtension.class })
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class JavaHookDefinitionTest {
 
@@ -44,7 +44,6 @@ public class JavaHookDefinitionTest {
         assertTrue(invoked);
     }
 
-
     @Before
     public void no_arguments() {
         invoked = true;
@@ -68,15 +67,13 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_parameter", String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(method, "", 0, lookup)
-        );
+            () -> new JavaHookDefinition(method, "", 0, lookup));
         assertThat(exception.getMessage(), startsWith("" +
-            "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
-            " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
-            " * public void before_or_after()\n" +
-            "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"));
+                "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
+                " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
+                " * public void before_or_after()\n" +
+                "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"));
     }
-
 
     public void invalid_parameter(String badType) {
 
@@ -87,10 +84,8 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_generic_parameter", List.class);
         assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(method, "", 0, lookup)
-        );
+            () -> new JavaHookDefinition(method, "", 0, lookup));
     }
-
 
     public void invalid_generic_parameter(List<String> badType) {
 
@@ -101,10 +96,8 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("too_many_parameters", Scenario.class, String.class);
         assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(method, "", 0, lookup)
-        );
+            () -> new JavaHookDefinition(method, "", 0, lookup));
     }
-
 
     public void too_many_parameters(Scenario arg1, String arg2) {
 

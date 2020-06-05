@@ -53,14 +53,6 @@ public final class CurlOption {
         }
     }
 
-    private static SimpleEntry<String, String> parseHeader(String headerArg) {
-        String[] parts = headerArg.split(":", 2);
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("'" + headerArg + "' was not a valid header");
-        }
-        return new SimpleEntry<>(parts[0].trim(), parts[1].trim());
-    }
-
     private static String removeArgFor(String arg, List<String> args) {
         if (!args.isEmpty()) {
             return args.remove(0);
@@ -68,6 +60,13 @@ public final class CurlOption {
         throw new IllegalArgumentException("Missing argument for " + arg);
     }
 
+    private static SimpleEntry<String, String> parseHeader(String headerArg) {
+        String[] parts = headerArg.split(":", 2);
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("'" + headerArg + "' was not a valid header");
+        }
+        return new SimpleEntry<>(parts[0].trim(), parts[1].trim());
+    }
 
     public HttpMethod getMethod() {
         return method;
@@ -100,4 +99,5 @@ public final class CurlOption {
             throw new IllegalArgumentException(argument + " was not a http method");
         }
     }
+
 }

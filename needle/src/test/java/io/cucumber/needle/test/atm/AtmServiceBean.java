@@ -1,10 +1,10 @@
 package io.cucumber.needle.test.atm;
 
+import io.cucumber.needle.test.injectionprovider.ValueGetter;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-
-import io.cucumber.needle.test.injectionprovider.ValueGetter;
 
 @Stateless
 public class AtmServiceBean implements AtmService {

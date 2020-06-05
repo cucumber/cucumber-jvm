@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 class TempDir {
+
     private TempDir() {
     }
 
@@ -26,4 +27,5 @@ class TempDir {
     static File createTempFile() throws IOException {
         return File.createTempFile("temp", Long.toString(System.nanoTime()));
     }
+
 }

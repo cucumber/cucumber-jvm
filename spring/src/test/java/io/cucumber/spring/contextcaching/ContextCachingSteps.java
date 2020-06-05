@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @CucumberContextConfiguration
-@ContextConfiguration(classes = {ContextConfig.class})
+@ContextConfiguration(classes = ContextConfig.class)
 public class ContextCachingSteps {
 
     @Autowired

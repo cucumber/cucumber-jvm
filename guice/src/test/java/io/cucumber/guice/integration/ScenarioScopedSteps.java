@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,12 @@ public class ScenarioScopedSteps {
         provide();
     }
 
+    private void provide() {
+        ScenarioScopedObject scenarioScopedObject = scenarioScopedObjectProvider.get();
+        assertThat(scenarioScopedObject, notNullValue());
+        OBJECTS.add(scenarioScopedObject);
+    }
+
     @When("another scenario scope instance is provided")
     public void another_scenario_scope_instance_is_provided() {
         provide();
@@ -57,9 +64,4 @@ public class ScenarioScopedSteps {
         assertThat(OBJECTS, elementsAreAllUnique());
     }
 
-    private void provide() {
-        ScenarioScopedObject scenarioScopedObject = scenarioScopedObjectProvider.get();
-        assertThat(scenarioScopedObject, notNullValue());
-        OBJECTS.add(scenarioScopedObject);
-    }
 }

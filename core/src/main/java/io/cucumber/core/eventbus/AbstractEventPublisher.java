@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractEventPublisher implements EventPublisher {
+
     protected final Map<Class<?>, List<EventHandler>> handlers = new HashMap<>();
 
     @Override
@@ -30,26 +31,26 @@ public abstract class AbstractEventPublisher implements EventPublisher {
         }
     }
 
+    protected <T> void sendAll(Iterable<T> events) {
+        for (T event : events) {
+            send(event);
+        }
+    }
 
     protected <T> void send(T event) {
         if (handlers.containsKey(Event.class) && event instanceof Event) {
             for (EventHandler handler : handlers.get(Event.class)) {
-                //noinspection unchecked: protected by registerHandlerFor
+                // noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }
         }
 
         if (handlers.containsKey(event.getClass())) {
             for (EventHandler handler : handlers.get(event.getClass())) {
-                //noinspection unchecked: protected by registerHandlerFor
+                // noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }
         }
     }
 
-    protected <T> void sendAll(Iterable<T> events) {
-        for (T event : events) {
-            send(event);
-        }
-    }
 }

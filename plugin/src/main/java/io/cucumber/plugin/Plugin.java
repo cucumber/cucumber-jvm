@@ -25,7 +25,8 @@ import java.net.URL;
  * <li>{@link File}</li>
  * </ul>
  * <p>
- * To make the parameter optional the plugin must also have a public default constructor.
+ * To make the parameter optional the plugin must also have a public default
+ * constructor.
  * <p>
  * Plugins may also implement one of these interfaces:
  * <ul>
@@ -38,4 +39,5 @@ import java.net.URL;
  */
 @API(status = API.Status.STABLE)
 public interface Plugin {
+
 }

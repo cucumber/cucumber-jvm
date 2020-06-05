@@ -15,6 +15,7 @@ import java.util.List;
  * Listener that makes sure Cucumber fires events in the right order
  */
 public class SanityChecker implements TestListener {
+
     private static final String INDENT = "  ";
     private static final String INSANITY = "INSANITY";
 
@@ -42,19 +43,16 @@ public class SanityChecker implements TestListener {
         }
     }
 
+    private String getOutput() {
+        return out.toString();
+    }
+
     @Override
     public void addError(Test test, Throwable t) {
     }
 
     @Override
     public void addFailure(Test test, AssertionFailedError t) {
-    }
-
-    @Override
-    public void startTest(Test started) {
-        spaces();
-        out.append("START ").append(started.toString()).append("\n");
-        tests.add(started);
     }
 
     @Override
@@ -74,13 +72,17 @@ public class SanityChecker implements TestListener {
         }
     }
 
+    @Override
+    public void startTest(Test started) {
+        spaces();
+        out.append("START ").append(started.toString()).append("\n");
+        tests.add(started);
+    }
+
     private void spaces() {
         for (int i = 0; i < tests.size(); i++) {
             out.append(INDENT);
         }
     }
 
-    private String getOutput() {
-        return out.toString();
-    }
 }

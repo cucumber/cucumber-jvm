@@ -8,4 +8,5 @@ public class StackTraces {
     public void test() throws Exception {
         throw new Exception("BOOM");
     }
+
 }

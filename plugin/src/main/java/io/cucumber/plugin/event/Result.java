@@ -39,11 +39,11 @@ public final class Result {
     }
 
     /**
-     * Returns the error encountered while executing a step, scenario or
-     * test run.
+     * Returns the error encountered while executing a step, scenario or test
+     * run.
      * <p>
-     * Will return null when passed. May return null when status is undefined
-     * or when skipped due to a failing prior step.
+     * Will return null when passed. May return null when status is undefined or
+     * when skipped due to a failing prior step.
      *
      * @return the error encountered while executing a step or scenario or null.
      */
@@ -52,26 +52,29 @@ public final class Result {
     }
 
     @Override
-    public String toString() {
-        return "Result{" +
-            "status=" + status +
-            ", duration=" + duration.getSeconds() +
-            ", error=" + error +
-            '}';
+    public int hashCode() {
+        return Objects.hash(status, duration, error);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Result result = (Result) o;
         return status == result.status &&
-            Objects.equals(duration, result.duration) &&
-            Objects.equals(error, result.error);
+                Objects.equals(duration, result.duration) &&
+                Objects.equals(error, result.error);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(status, duration, error);
+    public String toString() {
+        return "Result{" +
+                "status=" + status +
+                ", duration=" + duration.getSeconds() +
+                ", error=" + error +
+                '}';
     }
+
 }

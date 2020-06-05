@@ -1,9 +1,9 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.plugin.event.Location;
-import io.cucumber.plugin.event.Node;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Node;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,21 +18,26 @@ final class GherkinMessagesRule implements Node.Rule {
     GherkinMessagesRule(Messages.GherkinDocument.Feature.FeatureChild.Rule rule) {
         this.rule = rule;
         this.children = rule.getChildrenList().stream()
-            .filter(RuleChild::hasScenario)
-            .map(ruleChild -> {
-                Messages.GherkinDocument.Feature.Scenario scenario = ruleChild.getScenario();
-                if (scenario.getExamplesCount() > 0) {
-                    return new GherkinMessagesScenarioOutline(scenario);
-                } else {
-                    return new GherkinMessagesScenario(scenario);
-                }
-            })
-            .collect(Collectors.toList());
+                .filter(RuleChild::hasScenario)
+                .map(ruleChild -> {
+                    Messages.GherkinDocument.Feature.Scenario scenario = ruleChild.getScenario();
+                    if (scenario.getExamplesCount() > 0) {
+                        return new GherkinMessagesScenarioOutline(scenario);
+                    } else {
+                        return new GherkinMessagesScenario(scenario);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
     public Collection<Node> elements() {
         return children;
+    }
+
+    @Override
+    public Location getLocation() {
+        return GherkinMessagesLocation.from(rule.getLocation());
     }
 
     @Override
@@ -46,8 +51,4 @@ final class GherkinMessagesRule implements Node.Rule {
         return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
-    @Override
-    public Location getLocation() {
-        return GherkinMessagesLocation.from(rule.getLocation());
-    }
 }

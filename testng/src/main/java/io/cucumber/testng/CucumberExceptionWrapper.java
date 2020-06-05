@@ -9,6 +9,7 @@ import io.cucumber.core.exception.CucumberException;
  * @see TestNGCucumberRunner#provideScenarios()
  */
 final class CucumberExceptionWrapper implements PickleWrapper {
+
     private final CucumberException exception;
 
     CucumberExceptionWrapper(CucumberException e) {
@@ -19,4 +20,5 @@ final class CucumberExceptionWrapper implements PickleWrapper {
     public Pickle getPickle() {
         throw this.exception;
     }
+
 }

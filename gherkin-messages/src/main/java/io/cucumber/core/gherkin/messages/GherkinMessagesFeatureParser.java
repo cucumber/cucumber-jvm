@@ -26,31 +26,30 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
     @Override
     public Optional<Feature> parse(URI path, String source, Supplier<UUID> idGenerator) {
         List<Envelope> sources = singletonList(
-            makeSourceEnvelope(source, path.toString())
-        );
+            makeSourceEnvelope(source, path.toString()));
 
         List<Envelope> envelopes = Gherkin.fromSources(
             sources,
             true,
             true,
             true,
-            () -> idGenerator.get().toString()
-        ).collect(toList());
+            () -> idGenerator.get().toString()).collect(toList());
 
         GherkinDocument gherkinDocument = envelopes.stream()
-            .filter(Envelope::hasGherkinDocument)
-            .map(Envelope::getGherkinDocument)
-            .findFirst()
-            .orElse(null);
+                .filter(Envelope::hasGherkinDocument)
+                .map(Envelope::getGherkinDocument)
+                .findFirst()
+                .orElse(null);
 
         if (gherkinDocument == null || !gherkinDocument.hasFeature()) {
             List<String> errors = envelopes.stream()
-                .filter(Envelope::hasParseError)
-                .map(Envelope::getParseError)
-                .map(Messages.ParseError::getMessage)
-                .collect(toList());
+                    .filter(Envelope::hasParseError)
+                    .map(Envelope::getParseError)
+                    .map(Messages.ParseError::getMessage)
+                    .collect(toList());
             if (!errors.isEmpty()) {
-                throw new FeatureParserException("Failed to parse resource at: " + path.toString() + "\n" + String.join("\n", errors));
+                throw new FeatureParserException(
+                    "Failed to parse resource at: " + path.toString() + "\n" + String.join("\n", errors));
             }
             return Optional.empty();
         }
@@ -58,34 +57,31 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
         CucumberQuery cucumberQuery = new CucumberQuery();
         cucumberQuery.update(gherkinDocument);
         GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        String language = gherkinDocument.getFeature().getLanguage();
+        GherkinDocument.Feature feature = gherkinDocument.getFeature();
+        String language = feature.getLanguage();
         GherkinDialect dialect = dialectProvider.getDialect(language, null);
 
         List<Messages.Pickle> pickleMessages = envelopes.stream()
-            .filter(Envelope::hasPickle)
-            .map(Envelope::getPickle)
-            .collect(toList());
-
-        if (pickleMessages.isEmpty()) {
-            return Optional.empty();
-        }
+                .filter(Envelope::hasPickle)
+                .map(Envelope::getPickle)
+                .collect(toList());
 
         List<Pickle> pickles = pickleMessages.stream()
-            .map(pickle -> new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery))
-            .collect(toList());
+                .map(pickle -> new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery))
+                .collect(toList());
 
-        GherkinMessagesFeature feature = new GherkinMessagesFeature(
-            gherkinDocument,
+        GherkinMessagesFeature messagesFeature = new GherkinMessagesFeature(
+            feature,
             path,
             source,
             pickles,
-            envelopes
-        );
-        return Optional.of(feature);
+            envelopes);
+        return Optional.of(messagesFeature);
     }
 
     @Override
     public String version() {
         return "8";
     }
+
 }

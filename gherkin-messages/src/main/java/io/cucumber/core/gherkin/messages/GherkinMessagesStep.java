@@ -20,13 +20,33 @@ final class GherkinMessagesStep implements Step {
     private final String previousGwtKeyWord;
     private final Messages.Location location;
 
-    GherkinMessagesStep(PickleStep pickleStep, GherkinDialect dialect, String previousGwtKeyWord, Messages.Location location, String keyword) {
+    GherkinMessagesStep(
+            PickleStep pickleStep,
+            GherkinDialect dialect,
+            String previousGwtKeyWord,
+            Messages.Location location,
+            String keyword
+    ) {
         this.pickleStep = pickleStep;
         this.argument = extractArgument(pickleStep, location);
         this.keyWord = keyword;
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
         this.location = location;
+    }
+
+    private static Argument extractArgument(PickleStep pickleStep, Messages.Location location) {
+        PickleStepArgument argument = pickleStep.getArgument();
+        if (argument.hasDocString()) {
+            PickleDocString docString = argument.getDocString();
+            // TODO: Fix this work around
+            return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
+        }
+        if (argument.hasDataTable()) {
+            PickleTable table = argument.getDataTable();
+            return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
+        }
+        return null;
     }
 
     private static StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
@@ -51,18 +71,9 @@ final class GherkinMessagesStep implements Step {
         throw new IllegalStateException("Keyword " + keyWord + " was neither given, when, then, and, but nor *");
     }
 
-    private static Argument extractArgument(PickleStep pickleStep, Messages.Location location) {
-        PickleStepArgument argument = pickleStep.getArgument();
-        if (argument.hasDocString()) {
-            PickleDocString docString = argument.getDocString();
-            //TODO: Fix this work around
-            return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
-        }
-        if (argument.hasDataTable()) {
-            PickleTable table = argument.getDataTable();
-            return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
-        }
-        return null;
+    @Override
+    public String getKeyword() {
+        return keyWord;
     }
 
     @Override
@@ -76,16 +87,6 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
-    public Argument getArgument() {
-        return argument;
-    }
-
-    @Override
-    public String getKeyword() {
-        return keyWord;
-    }
-
-    @Override
     public StepType getType() {
         return stepType;
     }
@@ -96,12 +97,18 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
+    public String getId() {
+        return pickleStep.getId();
+    }
+
+    @Override
+    public Argument getArgument() {
+        return argument;
+    }
+
+    @Override
     public String getText() {
         return pickleStep.getText();
     }
 
-    @Override
-    public String getId() {
-        return pickleStep.getId();
-    }
 }

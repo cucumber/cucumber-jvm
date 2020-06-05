@@ -19,7 +19,18 @@ class AssertionsTest {
     void should_throw_cucumber_exception_when_annotated() {
         Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(WithCucumberMethod.class);
         CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.AssertionsTest$WithCucumberMethod\n")));
+        assertThat(expectedThrown.getMessage(), is(equalTo(
+            "\n\n" +
+                    "Classes annotated with @RunWith(Cucumber.class) must not define any\n" +
+                    "Step Definition or Hook methods. Their sole purpose is to serve as\n" +
+                    "an entry point for JUnit. Step Definitions and Hooks should be defined\n" +
+                    "in their own classes. This allows them to be reused across features.\n" +
+                    "Offending class: class io.cucumber.junit.AssertionsTest$WithCucumberMethod\n")));
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface StubCucumberAnnotation {
+
     }
 
     @RunWith(Cucumber.class)
@@ -30,10 +41,6 @@ class AssertionsTest {
 
         }
 
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface StubCucumberAnnotation {
     }
 
 }

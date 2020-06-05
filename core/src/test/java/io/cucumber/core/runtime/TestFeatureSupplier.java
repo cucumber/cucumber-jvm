@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TestFeatureSupplier implements FeatureSupplier {
+
     private final List<Feature> features;
 
     public TestFeatureSupplier(Feature... features) {
@@ -20,4 +21,5 @@ public class TestFeatureSupplier implements FeatureSupplier {
     public List<Feature> get() {
         return features;
     }
+
 }

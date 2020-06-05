@@ -20,61 +20,62 @@ import static java.util.Locale.ROOT;
 
 public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener, SummaryPrinter {
 
-	private final Map<String, String> registeredSteps = new TreeMap<>();
-	private final Set<String> usedSteps = new TreeSet<>();
-	private final NiceAppendable out;
-	private Formats formats = new MonochromeFormats();
+    private final Map<String, String> registeredSteps = new TreeMap<>();
+    private final Set<String> usedSteps = new TreeSet<>();
+    private final NiceAppendable out;
+    private Formats formats = new MonochromeFormats();
 
     public UnusedStepsSummaryPrinter(OutputStream out) {
-		this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
-	}
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+    }
 
-	@Override
-	public void setEventPublisher(EventPublisher publisher) {
-		// Record any steps registered
-		publisher.registerHandlerFor(StepDefinedEvent.class, this::handleStepDefinedEvent);
-		// Remove any steps that run
-		publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
-		// Print summary when done
-		publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
-	}
+    @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        // Record any steps registered
+        publisher.registerHandlerFor(StepDefinedEvent.class, this::handleStepDefinedEvent);
+        // Remove any steps that run
+        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
+        // Print summary when done
+        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
+    }
 
-	private void handleStepDefinedEvent(StepDefinedEvent event) {
-		registeredSteps.put(event.getStepDefinition().getLocation(), event.getStepDefinition().getPattern());
-	}
+    private void handleStepDefinedEvent(StepDefinedEvent event) {
+        registeredSteps.put(event.getStepDefinition().getLocation(), event.getStepDefinition().getPattern());
+    }
 
-	private void handleTestStepFinished(TestStepFinished event) {
-		String codeLocation = event.getTestStep().getCodeLocation();
-		if (codeLocation != null) {
-			usedSteps.add(codeLocation);
-		}
-	}
+    private void handleTestStepFinished(TestStepFinished event) {
+        String codeLocation = event.getTestStep().getCodeLocation();
+        if (codeLocation != null) {
+            usedSteps.add(codeLocation);
+        }
+    }
 
-	private void finishReport() {
-		// Remove all used steps
-		usedSteps.forEach(registeredSteps::remove);
+    private void finishReport() {
+        // Remove all used steps
+        usedSteps.forEach(registeredSteps::remove);
 
-		if (registeredSteps.isEmpty()) {
-			return;
-		}
+        if (registeredSteps.isEmpty()) {
+            return;
+        }
 
-		Format format = formats.get(Status.UNUSED.name().toLowerCase(ROOT));
-		out.println(format.text(registeredSteps.size() + " Unused steps:"));
+        Format format = formats.get(Status.UNUSED.name().toLowerCase(ROOT));
+        out.println(format.text(registeredSteps.size() + " Unused steps:"));
 
-		// Output results when done
-		for (Entry<String, String> entry : registeredSteps.entrySet()) {
-			String location = entry.getKey();
-			String pattern = entry.getValue();
-			out.println(format.text(location) + " # " + pattern);
-		}
-	}
+        // Output results when done
+        for (Entry<String, String> entry : registeredSteps.entrySet()) {
+            String location = entry.getKey();
+            String pattern = entry.getValue();
+            out.println(format.text(location) + " # " + pattern);
+        }
+    }
 
-	@Override
-	public void setMonochrome(boolean monochrome) {
-		if (monochrome) {
-			formats = new MonochromeFormats();
-		} else {
-			formats = new AnsiFormats();
-		}
-	}
+    @Override
+    public void setMonochrome(boolean monochrome) {
+        if (monochrome) {
+            formats = new MonochromeFormats();
+        } else {
+            formats = new AnsiFormats();
+        }
+    }
+
 }

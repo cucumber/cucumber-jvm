@@ -17,14 +17,18 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
     GherkinMessagesScenarioOutline(Messages.GherkinDocument.Feature.Scenario scenario) {
         this.scenario = scenario;
         this.children = scenario.getExamplesList().stream()
-            .map(GherkinMessagesExamples::new)
-            .collect(Collectors.toList());
+                .map(GherkinMessagesExamples::new)
+                .collect(Collectors.toList());
     }
-
 
     @Override
     public Collection<Examples> elements() {
         return children;
+    }
+
+    @Override
+    public Location getLocation() {
+        return GherkinMessagesLocation.from(scenario.getLocation());
     }
 
     @Override
@@ -38,8 +42,4 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
         return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 
-    @Override
-    public Location getLocation() {
-        return GherkinMessagesLocation.from(scenario.getLocation());
-    }
 }

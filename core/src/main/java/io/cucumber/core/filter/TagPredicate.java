@@ -11,8 +11,8 @@ import java.util.function.Predicate;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
-
 final class TagPredicate implements Predicate<Pickle> {
+
     private final List<Expression> expressions = new ArrayList<>();
 
     TagPredicate(String tagExpression) {
@@ -37,6 +37,7 @@ final class TagPredicate implements Predicate<Pickle> {
 
         List<String> tags = pickle.getTags();
         return expressions.stream()
-            .allMatch(expression -> expression.evaluate(tags));
+                .allMatch(expression -> expression.evaluate(tags));
     }
+
 }

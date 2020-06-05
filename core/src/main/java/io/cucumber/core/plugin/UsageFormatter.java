@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Formatter to measure performance of steps. Includes average and median step duration.
+ * Formatter to measure performance of steps. Includes average and median step
+ * duration.
  */
 public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
@@ -60,8 +61,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
             StepDefContainer stepDefContainer = new StepDefContainer(
                 usageEntry.getKey(),
-                createStepContainers(usageEntry.getValue())
-            );
+                createStepContainers(usageEntry.getValue()));
             stepDefContainers.add(stepDefContainer);
         }
 
@@ -69,11 +69,40 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         out.close();
     }
 
+    private void addUsageEntry(Result result, PickleStepTestStep testStep) {
+        List<StepContainer> stepContainers = usageMap.computeIfAbsent(testStep.getPattern(), k -> new ArrayList<>());
+        StepContainer stepContainer = findOrCreateStepContainer(testStep.getStepText(), stepContainers);
+        StepDuration stepDuration = new StepDuration(result.getDuration(),
+            testStep.getUri() + ":" + testStep.getStepLine());
+        stepContainer.getDurations().add(stepDuration);
+    }
+
     private List<StepContainer> createStepContainers(List<StepContainer> stepContainers) {
         for (StepContainer stepContainer : stepContainers) {
             stepContainer.putAllAggregatedDurations(createAggregatedDurations(stepContainer));
         }
         return stepContainers;
+    }
+
+    private Gson gson() {
+        JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
+                jsonSerializationContext) -> new JsonPrimitive((double) duration.getNano() / NANOS_PER_SECOND);
+
+        return new GsonBuilder()
+                .registerTypeAdapter(Duration.class, durationJsonSerializer)
+                .setPrettyPrinting()
+                .create();
+    }
+
+    private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
+        for (StepContainer container : stepContainers) {
+            if (stepNameWithArgs.equals(container.getName())) {
+                return container;
+            }
+        }
+        StepContainer stepContainer = new StepContainer(stepNameWithArgs);
+        stepContainers.add(stepContainer);
+        return stepContainer;
     }
 
     private Map<String, Duration> createAggregatedDurations(StepContainer stepContainer) {
@@ -96,34 +125,6 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
             rawDurations.add(stepDuration.duration);
         }
         return rawDurations;
-    }
-
-    private Gson gson() {
-        JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal, jsonSerializationContext) ->
-            new JsonPrimitive((double) duration.getNano() / NANOS_PER_SECOND);
-
-        return new GsonBuilder()
-            .registerTypeAdapter(Duration.class, durationJsonSerializer)
-            .setPrettyPrinting()
-            .create();
-    }
-
-    private void addUsageEntry(Result result, PickleStepTestStep testStep) {
-        List<StepContainer> stepContainers = usageMap.computeIfAbsent(testStep.getPattern(), k -> new ArrayList<>());
-        StepContainer stepContainer = findOrCreateStepContainer(testStep.getStepText(), stepContainers);
-        StepDuration stepDuration = new StepDuration(result.getDuration(), testStep.getUri() + ":" + testStep.getStepLine());
-        stepContainer.getDurations().add(stepDuration);
-    }
-
-    private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
-        for (StepContainer container : stepContainers) {
-            if (stepNameWithArgs.equals(container.getName())) {
-                return container;
-            }
-        }
-        StepContainer stepContainer = new StepContainer(stepNameWithArgs);
-        stepContainers.add(stepContainer);
-        return stepContainer;
     }
 
     /**
@@ -163,6 +164,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
      * Container of Step Definitions (patterns)
      */
     static class StepDefContainer {
+
         private final String source;
         private final List<StepContainer> steps;
 
@@ -191,6 +193,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
      * Container for usage-entries of steps
      */
     static class StepContainer {
+
         private final String name;
         private final Map<String, Duration> aggregatedDurations = new HashMap<>();
         private final List<StepDuration> durations = new ArrayList<>();
@@ -218,6 +221,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     }
 
     static class StepDuration {
+
         private final Duration duration;
         private final String location;
 
@@ -233,5 +237,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         public String getLocation() {
             return location;
         }
+
     }
+
 }

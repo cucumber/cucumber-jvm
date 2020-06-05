@@ -27,7 +27,7 @@ class JarUriFileSystemService {
     private static final Map<URI, AtomicInteger> referenceCount = new HashMap<>();
 
     private static CloseablePath open(URI jarUri, Function<FileSystem, Path> pathProvider)
-        throws IOException {
+            throws IOException {
         FileSystem fileSystem = openFileSystem(jarUri);
         Path path = pathProvider.apply(fileSystem);
         return CloseablePath.open(path, () -> closeFileSystem(jarUri));
@@ -55,6 +55,14 @@ class JarUriFileSystemService {
 
     static boolean supports(URI uri) {
         return hasJarUriScheme(uri) || hasFileUriSchemeWithJarExtension(uri);
+    }
+
+    private static boolean hasJarUriScheme(URI uri) {
+        return JAR_URI_SCHEME.equals(uri.getScheme());
+    }
+
+    private static boolean hasFileUriSchemeWithJarExtension(URI uri) {
+        return FILE_URI_SCHEME.equals(uri.getScheme()) && uri.getPath().endsWith(JAR_FILE_SUFFIX);
     }
 
     static CloseablePath open(URI uri) throws URISyntaxException, IOException {
@@ -93,21 +101,13 @@ class JarUriFileSystemService {
 
     private static CucumberException nestedJarEntriesAreUnsupported(URI uri) {
         return new CucumberException("" +
-            "The resource " + uri + " is located in a nested jar.\n" +
-            "\n" +
-            "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
-            "Cucumber currently doesn't support classpath scanning in nested jars.\n" +
-            "Feel free to send a pull request to make this possible!\n" +
-            "\n" +
-            "You can avoid this error by unpacking your application before executing."
-        );
+                "The resource " + uri + " is located in a nested jar.\n" +
+                "\n" +
+                "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
+                "Cucumber currently doesn't support classpath scanning in nested jars.\n" +
+                "Feel free to send a pull request to make this possible!\n" +
+                "\n" +
+                "You can avoid this error by unpacking your application before executing.");
     }
 
-    private static boolean hasFileUriSchemeWithJarExtension(URI uri) {
-        return FILE_URI_SCHEME.equals(uri.getScheme()) && uri.getPath().endsWith(JAR_FILE_SUFFIX);
-    }
-
-    private static boolean hasJarUriScheme(URI uri) {
-        return JAR_URI_SCHEME.equals(uri.getScheme());
-    }
 }

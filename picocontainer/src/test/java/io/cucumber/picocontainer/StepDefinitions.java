@@ -35,7 +35,8 @@ public class StepDefinitions {
 
     @After
     public void after() {
-        // We might need to clean up the belly here, if it represented an external resource.
+        // We might need to clean up the belly here, if it represented an
+        // external resource.
         assert !belly.isDisposed();
     }
 
@@ -51,7 +52,8 @@ public class StepDefinitions {
     @Given("something pending")
     public void throw_pending() {
         throw new TestAbortedException("Skip this!");
-//        throw new PendingException("This should not fail (seeing this output is ok)");
+        // throw new PendingException("This should not fail (seeing this output
+        // is ok)");
     }
 
     @Then("there are {int} cukes in my belly")
@@ -73,7 +75,6 @@ public class StepDefinitions {
     public void I_should_be(String mood) {
         assertEquals("happy", mood);
     }
-
 
     @When("foo")
     public void foo() {
@@ -105,4 +106,5 @@ public class StepDefinitions {
             // Maybe take a screenshot!
         }
     }
+
 }

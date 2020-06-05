@@ -62,9 +62,11 @@ class Resources {
         public InputStream getInputStream() throws IOException {
             return Files.newInputStream(resource);
         }
+
     }
 
     private static class UriResource implements Resource {
+
         private final Path resource;
 
         UriResource(Path resource) {
@@ -80,9 +82,11 @@ class Resources {
         public InputStream getInputStream() throws IOException {
             return Files.newInputStream(resource);
         }
+
     }
 
     private static class PackageResource implements Resource {
+
         private final Path resource;
         private final URI uri;
 
@@ -101,6 +105,7 @@ class Resources {
         public InputStream getInputStream() throws IOException {
             return Files.newInputStream(resource);
         }
+
     }
 
 }

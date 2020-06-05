@@ -8,17 +8,7 @@ import java.util.List;
 final class NoStepDefinition implements StepDefinition {
 
     @Override
-    public String getLocation() {
-        return null;
-    }
-
-    @Override
     public void execute(Object[] args) {
-    }
-
-    @Override
-    public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-        return false;
     }
 
     @Override
@@ -28,6 +18,16 @@ final class NoStepDefinition implements StepDefinition {
 
     @Override
     public String getPattern() {
+        return null;
+    }
+
+    @Override
+    public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+        return false;
+    }
+
+    @Override
+    public String getLocation() {
         return null;
     }
 

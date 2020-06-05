@@ -218,8 +218,7 @@ class TestCaseResultObserverTest {
             asList(
                 "mocked snippet 1",
                 "mocked snippet 2",
-                "mocked snippet 3"
-            )));
+                "mocked snippet 3")));
         Result result = new Result(Status.UNDEFINED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
@@ -227,13 +226,13 @@ class TestCaseResultObserverTest {
         assertThat(exception.getCause(), instanceOf(UndefinedStepException.class));
 
         assertThat(exception.getCause().getMessage(), is("" +
-            "The step \"mocked\" is undefined. You can implement it using the snippet(s) below:\n" +
-            "\n" +
-            "mocked snippet 1\n" +
-            "---\n" +
-            "mocked snippet 2\n" +
-            "---\n" +
-            "mocked snippet 3\n"));
+                "The step \"mocked\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "\n" +
+                "mocked snippet 1\n" +
+                "---\n" +
+                "mocked snippet 2\n" +
+                "---\n" +
+                "mocked snippet 3\n"));
     }
 
     @Test
@@ -243,4 +242,5 @@ class TestCaseResultObserverTest {
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         observer.assertTestCasePassed();
     }
+
 }

@@ -10,6 +10,7 @@ import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 
 interface LambdaGlueRegistry {
+
     ThreadLocal<LambdaGlueRegistry> INSTANCE = new ThreadLocal<>();
 
     void addStepDefinition(StepDefinition stepDefinition);
@@ -32,5 +33,8 @@ interface LambdaGlueRegistry {
 
     void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer);
 
-    void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer);
+    void addDefaultDataTableEntryTransformer(
+            DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+    );
+
 }

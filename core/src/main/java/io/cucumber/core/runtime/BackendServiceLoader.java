@@ -12,15 +12,17 @@ import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
 /**
- * Supplies instances of {@link Backend} created by using a {@link ServiceLoader}
- * to locate instance of {@link BackendSupplier}.
+ * Supplies instances of {@link Backend} created by using a
+ * {@link ServiceLoader} to locate instance of {@link BackendSupplier}.
  */
 public final class BackendServiceLoader implements BackendSupplier {
 
     private final Supplier<ClassLoader> classLoaderSupplier;
     private final ObjectFactorySupplier objectFactorySupplier;
 
-    public BackendServiceLoader(Supplier<ClassLoader> classLoaderSupplier, ObjectFactorySupplier objectFactorySupplier) {
+    public BackendServiceLoader(
+            Supplier<ClassLoader> classLoaderSupplier, ObjectFactorySupplier objectFactorySupplier
+    ) {
         this.classLoaderSupplier = classLoaderSupplier;
         this.objectFactorySupplier = objectFactorySupplier;
     }
@@ -33,7 +35,8 @@ public final class BackendServiceLoader implements BackendSupplier {
     Collection<? extends Backend> get(Iterable<BackendProviderService> serviceLoader) {
         Collection<? extends Backend> backends = loadBackends(serviceLoader);
         if (backends.isEmpty()) {
-            throw new CucumberException("No backends were found. Please make sure you have a backend module on your CLASSPATH.");
+            throw new CucumberException(
+                "No backends were found. Please make sure you have a backend module on your CLASSPATH.");
         }
         return backends;
     }
@@ -46,6 +49,5 @@ public final class BackendServiceLoader implements BackendSupplier {
         }
         return backends;
     }
-
 
 }

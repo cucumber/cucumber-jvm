@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public interface Options {
+
     List<String> getTagExpressions();
 
     List<Pattern> getNameFilters();
@@ -14,4 +15,5 @@ public interface Options {
     Map<URI, Set<Integer>> getLineFilters();
 
     int getLimitCount();
+
 }

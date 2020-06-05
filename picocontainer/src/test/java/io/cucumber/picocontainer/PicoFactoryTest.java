@@ -30,11 +30,10 @@ class PicoFactoryTest {
         StepDefinitions o2 = factory.getInstance(StepDefinitions.class);
         factory.stop();
 
-        assertAll("Checking StepDefs",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
     @Test
@@ -68,5 +67,7 @@ class PicoFactoryTest {
 
     @SuppressWarnings("InnerClassMayBeStatic")
     public class NonStaticInnerClass {
+
     }
+
 }

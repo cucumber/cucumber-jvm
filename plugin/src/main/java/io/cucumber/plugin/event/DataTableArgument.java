@@ -9,6 +9,7 @@ import java.util.List;
  */
 @API(status = API.Status.STABLE)
 public interface DataTableArgument extends StepArgument {
+
     List<List<String>> cells();
 
     int getLine();

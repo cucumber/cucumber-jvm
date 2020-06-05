@@ -22,14 +22,6 @@ public final class StepExpression {
         return expression.getClass();
     }
 
-    public List<Argument> match(String text, Type... types) {
-        List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text, types);
-        if (match == null) {
-            return null;
-        }
-        return wrapPlusOne(match);
-    }
-
     public String getSource() {
         return expression.getSource();
     }
@@ -47,6 +39,22 @@ public final class StepExpression {
 
     }
 
+    public List<Argument> match(String text, Type... types) {
+        List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text, types);
+        if (match == null) {
+            return null;
+        }
+        return wrapPlusOne(match);
+    }
+
+    private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {
+        List<Argument> copy = new ArrayList<>(match.size() + 1);
+        for (io.cucumber.cucumberexpressions.Argument<?> argument : match) {
+            copy.add(new ExpressionArgument(argument));
+        }
+        return copy;
+    }
+
     public List<Argument> match(String text, String content, String contentType, Type... types) {
         List<Argument> list = match(text, types);
         if (list == null) {
@@ -58,11 +66,4 @@ public final class StepExpression {
         return list;
     }
 
-    private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {
-        List<Argument> copy = new ArrayList<>(match.size() + 1);
-        for (io.cucumber.cucumberexpressions.Argument<?> argument : match) {
-            copy.add(new ExpressionArgument(argument));
-        }
-        return copy;
-    }
 }

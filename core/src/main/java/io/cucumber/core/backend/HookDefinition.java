@@ -10,4 +10,5 @@ public interface HookDefinition extends Located {
     String getTagExpression();
 
     int getOrder();
+
 }

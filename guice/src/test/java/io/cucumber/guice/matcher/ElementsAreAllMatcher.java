@@ -19,6 +19,14 @@ abstract class ElementsAreAllMatcher<E> extends TypeSafeDiagnosingMatcher<Collec
         return item.size() > 1 || fail("collection did not contain more than one element", item, mismatchDescription);
     }
 
+    protected boolean fail(String reasonForFailure, Collection<? extends E> item, Description mismatchDescription) {
+        mismatchDescription.appendText(reasonForFailure);
+        mismatchDescription.appendText(" <");
+        mismatchDescription.appendText(item.toString());
+        mismatchDescription.appendText(">");
+        return false;
+    }
+
     boolean noElementIsNull(Collection<? extends E> item, Description mismatchDescription) {
         return !item.contains(null) || fail("collection contained null element", item, mismatchDescription);
     }
@@ -27,11 +35,4 @@ abstract class ElementsAreAllMatcher<E> extends TypeSafeDiagnosingMatcher<Collec
         return new HashSet<E>(item).size();
     }
 
-    protected boolean fail(String reasonForFailure, Collection<? extends E> item, Description mismatchDescription) {
-        mismatchDescription.appendText(reasonForFailure);
-        mismatchDescription.appendText(" <");
-        mismatchDescription.appendText(item.toString());
-        mismatchDescription.appendText(">");
-        return false;
-    }
 }

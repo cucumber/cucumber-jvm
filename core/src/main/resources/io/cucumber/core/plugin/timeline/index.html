@@ -8,7 +8,7 @@
     <link href="chosen.min.css" rel="stylesheet" type="text/css"/>
     <link href="chosen.override.css" rel="stylesheet" type="text/css"/>
     <link href="report.css" rel="stylesheet" type="text/css"/>
-    <script src="jquery-3.4.1.min.js"></script>
+    <script src="jquery-3.5.1.min.js"></script>
     <script src="chosen.jquery.min.js"></script>
     <script src="vis.min.js"></script>
     <script src="formatter.js"></script>
@@ -16,16 +16,20 @@
 </head>
 <body>
 <div class="navbar">
-    <select data-placeholder="Choose a scenario name..." id="scenarioSelect"><option /></select>
-    <select data-placeholder="Only show tests with tag..." id="tagSelect"><option /></select>
+    <select data-placeholder="Choose a scenario name..." id="scenarioSelect">
+        <option/>
+    </select>
+    <select data-placeholder="Only show tests with tag..." id="tagSelect">
+        <option/>
+    </select>
     <button onclick="resetTimeline()">Reset</button>
 </div>
 
-<div id="timeline" class="main"></div>
-<div id="scenarioDetail" class="main"></div>
+<div class="main" id="timeline"></div>
+<div class="main" id="scenarioDetail"></div>
 
 <script type="application/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         CucumberHTML.PrepareData();
         CucumberHTML.PreparePage();
     });

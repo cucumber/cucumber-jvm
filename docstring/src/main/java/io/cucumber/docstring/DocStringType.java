@@ -1,6 +1,5 @@
 package io.cucumber.docstring;
 
-
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
@@ -14,6 +13,7 @@ import static java.util.Objects.requireNonNull;
  */
 @API(status = API.Status.STABLE)
 public final class DocStringType {
+
     private final Type type;
     private final String contentType;
     private final Transformer<?> transformer;
@@ -22,7 +22,11 @@ public final class DocStringType {
      * Creates a doc string type that can convert a doc string to an object.
      *
      * @param type        the type of the object
-     * @param contentType the <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">media type</a> or <a href="https://github.github.com/gfm/#info-string">GFM info string</a>
+     * @param contentType the <a href=
+     *                    "https://www.iana.org/assignments/media-types/media-types.xhtml">media
+     *                    type</a> or <a href=
+     *                    "https://github.github.com/gfm/#info-string">GFM info
+     *                    string</a>
      * @param transformer a function that creates an instance of
      *                    <code>type</code> from the doc string
      * @param <T>         see <code>type</code>
@@ -54,7 +58,9 @@ public final class DocStringType {
 
     @FunctionalInterface
     public interface Transformer<T> {
+
         T transform(String content) throws Throwable;
+
     }
 
 }

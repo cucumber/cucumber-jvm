@@ -1,6 +1,5 @@
 package io.cucumber.plugin.event;
 
-
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
@@ -15,8 +14,8 @@ public final class StepDefinition {
     }
 
     /**
-     * The source line where the step definition is defined.
-     * Example: com/example/app/Cucumber.test():42
+     * The source line where the step definition is defined. Example:
+     * com/example/app/Cucumber.test():42
      *
      * @return The source line of the step definition.
      */
@@ -25,9 +24,11 @@ public final class StepDefinition {
     }
 
     /**
-     * @return the pattern associated with this instance. Used for error reporting only.
+     * @return the pattern associated with this instance. Used for error
+     *         reporting only.
      */
-    public String getPattern(){
+    public String getPattern() {
         return pattern;
     }
+
 }

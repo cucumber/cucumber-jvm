@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class BytesContainsString {
+
     static DiagnosingMatcher<ByteArrayOutputStream> bytesContainsString(String expected) {
         return new DiagnosingMatcher<ByteArrayOutputStream>() {
             @Override
@@ -29,4 +30,5 @@ final class BytesContainsString {
             }
         };
     }
+
 }

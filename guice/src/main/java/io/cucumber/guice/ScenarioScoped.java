@@ -14,9 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * A custom Guice scope annotation that is usually bound to an instance of
  * <code>ScenarioScope</code>.
  */
-@Target({TYPE, METHOD})
+@Target({ TYPE, METHOD })
 @Retention(RUNTIME)
 @ScopeAnnotation
 @API(status = API.Status.STABLE)
 public @interface ScenarioScoped {
+
 }

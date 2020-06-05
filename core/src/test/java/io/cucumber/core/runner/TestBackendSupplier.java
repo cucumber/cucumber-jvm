@@ -25,7 +25,6 @@ public abstract class TestBackendSupplier implements Backend, BackendSupplier {
         return new TestSnippet();
     }
 
-
     @Override
     public Collection<? extends Backend> get() {
         return Collections.singleton(this);

@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LambdaStepDefinitions implements io.cucumber.java8.En {
+
     private static LambdaStepDefinitions lastInstance;
 
     private final int outside = 41;
@@ -38,23 +39,19 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
             lastInstance = this;
         });
 
-
         AfterStep((Scenario scenario) -> {
             assertSame(this, lastInstance);
             lastInstance = this;
         });
-
 
         After((Scenario scenario) -> {
             assertSame(this, lastInstance);
             lastInstance = this;
         });
 
-
         Before(this::methodThatDeclaresException);
 
         Before(this::hookWithArgs);
-
 
         Given("this data table:", (DataTable peopleTable) -> {
             List<Person> people = peopleTable.asList(Person.class);
@@ -108,15 +105,15 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         Given("A constructor reference with an argument {string}", Contact::new);
         Given("A static method reference with an argument {int}", LambdaStepDefinitions::staticMethodWithAnArgument);
         Given("A method reference to an arbitrary object of a particular type {string}", Contact::call);
-        Given("A method reference to an arbitrary object of a particular type {string} with argument {string}", Contact::update);
+        Given("A method reference to an arbitrary object of a particular type {string} with argument {string}",
+            Contact::update);
 
-    }
-
-    public static void staticMethodWithAnArgument(Integer cuckes) {
-        assertEquals(42, cuckes.intValue());
     }
 
     private void methodThatDeclaresException() {
+    }
+
+    private void hookWithArgs(Scenario scenario) {
     }
 
     private void methodWithAnArgument(Integer cuckes) {
@@ -127,12 +124,15 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         assertEquals(42, cuckes);
     }
 
-    private void hookWithArgs(Scenario scenario) {
+    public static void staticMethodWithAnArgument(Integer cuckes) {
+        assertEquals(42, cuckes.intValue());
     }
 
     public static class Person {
+
         String first;
         String last;
+
     }
 
     public static class Contact {
@@ -152,7 +152,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
             assertEquals("42", this.number);
             assertEquals("314", number);
         }
-    }
 
+    }
 
 }

@@ -4,7 +4,7 @@ import io.cucumber.core.snippets.SnippetType;
 
 public final class SnippetTypeParser {
 
-    private SnippetTypeParser(){
+    private SnippetTypeParser() {
 
     }
 
@@ -19,4 +19,5 @@ public final class SnippetTypeParser {
         }
         return underscore;
     }
+
 }

@@ -9,6 +9,7 @@ import io.cucumber.examples.java.wicket.view.Rent;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public class Application extends WebApplication {
+
     private final CarDAO carDAO = new InMemoryCarDAO();
 
     @Override
@@ -36,4 +37,5 @@ public class Application extends WebApplication {
     public int getNumberOfAvailableCars() {
         return carDAO.getNumberOfAvailableCars();
     }
+
 }

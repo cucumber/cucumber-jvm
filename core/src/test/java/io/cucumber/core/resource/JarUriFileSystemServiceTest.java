@@ -25,9 +25,9 @@ class JarUriFileSystemServiceTest {
     void canOpenMultipleConcurrently() throws IOException, URISyntaxException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URI first = getUrisForPackage(classLoader, "io.cucumber").stream()
-            .filter(JarUriFileSystemService::supports)
-            .findFirst()
-            .orElseThrow(IllegalStateException::new);
+                .filter(JarUriFileSystemService::supports)
+                .findFirst()
+                .orElseThrow(IllegalStateException::new);
 
         CloseablePath path1 = JarUriFileSystemService.open(first);
         FileSystem fileSystem1 = path1.getPath().getFileSystem();
@@ -45,6 +45,5 @@ class JarUriFileSystemServiceTest {
         assertFalse(fileSystem1.isOpen());
         assertFalse(fileSystem2.isOpen());
     }
-
 
 }

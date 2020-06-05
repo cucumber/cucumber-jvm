@@ -10,12 +10,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Comparator.comparing;
 
 final class TestCase {
+
     private static final String FEATURES_DIRECTORY = "src/test/resources/features";
     private static final String FEATURES_PACKAGE = "io.cucumber.compatibility";
 
@@ -25,27 +25,6 @@ final class TestCase {
     private TestCase(String packageName, String id) {
         this.packageName = packageName;
         this.id = id;
-    }
-
-    String getId() {
-        return id;
-    }
-
-    URI getGlue() {
-        return GluePath.parse(FEATURES_PACKAGE +"."+ packageName);
-    }
-
-    FeatureWithLines getFeature() {
-        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id + "/" + id + ".feature");
-    }
-
-    Path getExpectedFile() {
-        return Paths.get(FEATURES_DIRECTORY + "/" + id + "/" + id + ".ndjson");
-    }
-
-    @Override
-    public String toString() {
-        return id;
     }
 
     static List<TestCase> testCases() throws IOException {
@@ -62,4 +41,26 @@ final class TestCase {
         testCases.sort(comparing(TestCase::getId));
         return testCases;
     }
+
+    String getId() {
+        return id;
+    }
+
+    URI getGlue() {
+        return GluePath.parse(FEATURES_PACKAGE + "." + packageName);
+    }
+
+    FeatureWithLines getFeature() {
+        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id + "/" + id + ".feature");
+    }
+
+    Path getExpectedFile() {
+        return Paths.get(FEATURES_DIRECTORY + "/" + id + "/" + id + ".ndjson");
+    }
+
+    @Override
+    public String toString() {
+        return id;
+    }
+
 }

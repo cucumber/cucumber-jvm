@@ -13,26 +13,31 @@ import java.util.Collection;
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
 abstract class TestContextAdaptor {
+
     private static final Object monitor = new Object();
 
     private final TestContextManager delegate;
     private final ConfigurableApplicationContext applicationContext;
     private final Collection<Class<?>> glueClasses;
 
-    protected TestContextAdaptor(TestContextManager delegate, ConfigurableApplicationContext applicationContext,
-                                 Collection<Class<?>> glueClasses) {
+    protected TestContextAdaptor(
+            TestContextManager delegate,
+            ConfigurableApplicationContext applicationContext,
+            Collection<Class<?>> glueClasses
+    ) {
         this.delegate = delegate;
         this.applicationContext = applicationContext;
         this.glueClasses = glueClasses;
     }
 
-    static TestContextAdaptor createTestContextManagerAdaptor(TestContextManager delegate,
-                                                              Collection<Class<?>> glueClasses) {
+    static TestContextAdaptor createTestContextManagerAdaptor(
+            TestContextManager delegate,
+            Collection<Class<?>> glueClasses
+    ) {
         TestContext testContext = delegate.getTestContext();
-        ConfigurableApplicationContext applicationContext =
-            (ConfigurableApplicationContext) testContext.getApplicationContext();
+        ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) testContext
+                .getApplicationContext();
         return new TestContextAdaptor(delegate, applicationContext, glueClasses) {
-
 
         };
     }
@@ -47,15 +52,13 @@ abstract class TestContextAdaptor {
             notifyContextManagerAboutTestClassStarted();
             registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
         }
-        GlueCodeContext.getInstance().start();
+        CucumberTestContext.getInstance().start();
     }
 
-    public final void stop() {
-        GlueCodeContext.getInstance().stop();
-        try {
-            delegate.afterTestClass();
-        } catch (Exception e) {
-            throw new CucumberBackendException(e.getMessage(), e);
+    final void registerGlueCodeScope(ConfigurableApplicationContext context) {
+        while (context != null) {
+            context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new CucumberScenarioScope());
+            context = (ConfigurableApplicationContext) context.getParent();
         }
     }
 
@@ -64,17 +67,6 @@ abstract class TestContextAdaptor {
             delegate.beforeTestClass();
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
-        }
-    }
-
-    final <T> T getInstance(Class<T> type) {
-        return applicationContext.getBean(type);
-    }
-
-    final void registerGlueCodeScope(ConfigurableApplicationContext context) {
-        while (context != null) {
-            context.getBeanFactory().registerScope(SCOPE_CUCUMBER_GLUE, new GlueCodeScope());
-            context = (ConfigurableApplicationContext) context.getParent();
         }
     }
 
@@ -93,9 +85,22 @@ abstract class TestContextAdaptor {
             return;
         }
         registry.registerBeanDefinition(beanName, BeanDefinitionBuilder
-            .genericBeanDefinition(glueClass)
-            .setScope(SCOPE_CUCUMBER_GLUE)
-            .getBeanDefinition()
-        );
+                .genericBeanDefinition(glueClass)
+                .setScope(SCOPE_CUCUMBER_GLUE)
+                .getBeanDefinition());
     }
+
+    public final void stop() {
+        CucumberTestContext.getInstance().stop();
+        try {
+            delegate.afterTestClass();
+        } catch (Exception e) {
+            throw new CucumberBackendException(e.getMessage(), e);
+        }
+    }
+
+    final <T> T getInstance(Class<T> type) {
+        return applicationContext.getBean(type);
+    }
+
 }

@@ -6,14 +6,10 @@ import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
-import io.cucumber.core.stepexpression.StepExpressionFactory;
-import io.cucumber.core.stepexpression.StepTypeRegistry;
-import io.cucumber.cucumberexpressions.Expression;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,6 +29,18 @@ final class CoreStepDefinition {
         this.types = getTypes(stepDefinition.parameterInfos());
     }
 
+    private static Type[] getTypes(List<ParameterInfo> parameterInfos) {
+        if (parameterInfos == null) {
+            return new Type[0];
+        }
+
+        Type[] types = new Type[parameterInfos.size()];
+        for (int i = 0; i < types.length; i++) {
+            types[i] = parameterInfos.get(i).getType();
+        }
+        return types;
+    }
+
     StepExpression getExpression() {
         return expression;
     }
@@ -49,15 +57,4 @@ final class CoreStepDefinition {
         return id;
     }
 
-    private static Type[] getTypes(List<ParameterInfo> parameterInfos) {
-        if (parameterInfos == null) {
-            return new Type[0];
-        }
-
-        Type[] types = new Type[parameterInfos.size()];
-        for (int i = 0; i < types.length; i++) {
-            types[i] = parameterInfos.get(i).getType();
-        }
-        return types;
-    }
 }

@@ -6,9 +6,9 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
@@ -31,15 +31,14 @@ class HookTest {
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final Feature feature = TestFeatureParser.parse("" +
-        "Feature: Test feature\n" +
-        "  Scenario: Test scenario\n" +
-        "     Given I have 4 cukes in my belly\n"
-    );
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n");
     private final Pickle pickle = feature.getPickles().get(0);
 
-
     /**
-     * Test for <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.
+     * Test for
+     * <a href="https://github.com/cucumber/cucumber-jvm/issues/23">#23</a>.
      */
     @Test
     void after_hooks_execute_before_objects_are_disposed() {
@@ -57,7 +56,8 @@ class HookTest {
             return null;
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
-        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer, runtimeOptions);
+        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer,
+            runtimeOptions);
 
         runner.runPickle(pickle);
 

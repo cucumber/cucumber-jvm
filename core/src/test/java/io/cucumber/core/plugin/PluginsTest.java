@@ -1,12 +1,12 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.plugin.event.Event;
-import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
+import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.EventPublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,16 +23,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith({ MockitoExtension.class })
 class PluginsTest {
 
+    private final PluginFactory pluginFactory = new PluginFactory();
     @Mock
     private EventPublisher rootEventPublisher;
-
     @Captor
     private ArgumentCaptor<EventPublisher> eventPublisher;
-
-    private final PluginFactory pluginFactory = new PluginFactory();
 
     @Test
     void shouldSetStrictOnPlugin() {

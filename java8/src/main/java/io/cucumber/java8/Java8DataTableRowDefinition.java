@@ -5,7 +5,8 @@ import io.cucumber.datatable.DataTableType;
 
 import java.util.List;
 
-final class Java8DataTableRowDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
+final class Java8DataTableRowDefinition extends AbstractDatatableElementTransformerDefinition
+        implements DataTableTypeDefinition {
 
     private final DataTableType dataTableType;
 
@@ -14,8 +15,11 @@ final class Java8DataTableRowDefinition extends AbstractDatatableElementTransfor
         Class<?> returnType = resolveRawArguments(DataTableRowDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
-            (List<String> row) -> execute(replaceEmptyPatternsWithEmptyString(row))
-        );
+            (List<String> row) -> execute(replaceEmptyPatternsWithEmptyString(row)));
+    }
+
+    private Object execute(List<String> row) {
+        return Invoker.invoke(this, body, method, row);
     }
 
     @Override
@@ -23,7 +27,4 @@ final class Java8DataTableRowDefinition extends AbstractDatatableElementTransfor
         return dataTableType;
     }
 
-    private Object execute(List<String> row) {
-        return Invoker.invoke(this, body, method, row);
-    }
 }

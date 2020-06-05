@@ -1,4 +1,5 @@
 Feature: Feature A
+
   Background: background
     Given first step
 
@@ -12,9 +13,9 @@ Feature: Feature A
     When <x> step
     Then <y> step
     Examples: examples 1 name
-      |   x    |   y   |
+      | x      | y     |
       | second | third |
       | second | third |
     Examples: examples 2 name
-      |   x    |   y   |
+      | x      | y     |
       | second | third |

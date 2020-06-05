@@ -1,8 +1,8 @@
 package io.cucumber.core.filter;
 
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
@@ -19,6 +19,14 @@ class NamePredicateTest {
         NamePredicate predicate = new NamePredicate(singletonList(Pattern.compile("^a pickle name$")));
 
         assertTrue(predicate.test(pickle));
+    }
+
+    private Pickle createPickleWithName(String pickleName) {
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: " + pickleName + "\n" +
+                "     Given I have 4 cukes in my belly\n");
+        return feature.getPickles().get(0);
     }
 
     @Test
@@ -45,12 +53,4 @@ class NamePredicateTest {
         assertTrue(predicate.test(pickle));
     }
 
-    private Pickle createPickleWithName(String pickleName) {
-        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-            "Feature: Test feature\n" +
-            "  Scenario: " + pickleName + "\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
-        return feature.getPickles().get(0);
-    }
 }

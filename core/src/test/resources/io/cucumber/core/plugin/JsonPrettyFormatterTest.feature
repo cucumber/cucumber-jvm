@@ -16,10 +16,10 @@ Feature: Feature_3
     When so_2 <c> cucumbers
     Then <b> so_3
 
-  Examples:
-    | a  | b | c  |
-    | 12 | 5 | 7  |
-    | 20 | 5 | 15 |
+    Examples:
+      | a  | b | c  |
+      | 12 | 5 | 7  |
+      | 20 | 5 | 15 |
 
   Scenario: Scenario_2
     Given a

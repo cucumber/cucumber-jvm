@@ -22,7 +22,7 @@ Add the `cucumber-spring` dependency to your `pom.xml`:
 ## Configuring the Test Application Context
 
 To make Cucumber aware of your test configuration you can annotate a
-configuration class with `@CucumberContextConfiguration` and with one of the
+configuration class on your glue path with `@CucumberContextConfiguration` and with one of the
 following annotations: `@ContextConfiguration`, `@ContextHierarchy` or
 `@BootstrapWith`. If you are using SpringBoot, you can annotate configuration
 class with `@SpringBootTest`.
@@ -85,19 +85,18 @@ The `cucumber-glue` scope starts prior to a scenario and ends after a scenario.
 All beans in this scope will be created before a scenario execution and
 disposed at the end of it.
 
-By using the `CucumberTestContext.SCOPE_CUCUMBER_GLUE` additional components
-can be added to the glue scope. These components can be used to safely share
-state between scenarios. 
+By using the `@ScenarioScope` annotation additional components can be added to
+the glue scope. These components can be used to safely share state between
+scenarios. 
 
 ```java
 package com.example.app;
 
 import org.springframework.stereotype.Component;
-import org.springframework.context.annotation.Scope;
-import static io.cucumber.spring.CucumberTestContext;
+import io.cucumber.spring.ScenarioScope;
 
 @Component
-@Scope(CucumberTestContext.SCOPE_CUCUMBER_GLUE)
+@ScenarioScope
 public class TestUserInformation {
 
     private User testUser;

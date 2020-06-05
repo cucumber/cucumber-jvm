@@ -1,8 +1,8 @@
 package io.cucumber.core.stepexpression;
 
-import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.core.gherkin.DocStringArgument;
+import io.cucumber.core.gherkin.Step;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -14,14 +14,6 @@ public final class ArgumentMatcher {
 
     public ArgumentMatcher(StepExpression expression) {
         this.expression = expression;
-    }
-
-    private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
-        return cells.stream()
-            .map(row -> row.stream()
-                .map(s -> s.isEmpty() ? null : s)
-                .collect(Collectors.toList()))
-            .collect(Collectors.toList());
     }
 
     public List<Argument> argumentsFrom(Step step, Type... types) {
@@ -44,6 +36,14 @@ public final class ArgumentMatcher {
         }
 
         throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
+    }
+
+    private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
+        return cells.stream()
+                .map(row -> row.stream()
+                        .map(s -> s.isEmpty() ? null : s)
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 
 }

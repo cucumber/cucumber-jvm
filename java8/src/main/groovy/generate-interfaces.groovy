@@ -1,5 +1,5 @@
-import io.cucumber.gherkin.GherkinDialectProvider
 import groovy.text.SimpleTemplateEngine
+import io.cucumber.gherkin.GherkinDialectProvider
 
 SimpleTemplateEngine engine = new SimpleTemplateEngine()
 
@@ -13,7 +13,7 @@ dialectProvider.getLanguages().each { language ->
         def templateSource = new File(project.baseDir, "src/main/groovy/lambda.java.gsp").getText()
         def className = "${normalized_language}".capitalize()
         def name = dialect.name + ((dialect.name == dialect.nativeName) ? '' : ' - ' + dialect.nativeName)
-        def binding = [ "i18n":dialect, "className":className, "language_name": name ]
+        def binding = ["i18n": dialect, "className": className, "language_name": name]
         def template = engine.createTemplate(templateSource).make(binding)
         def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java8/${className}.java")
         file.parentFile.mkdirs()

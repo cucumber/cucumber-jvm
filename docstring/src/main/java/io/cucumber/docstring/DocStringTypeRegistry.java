@@ -18,14 +18,6 @@ public final class DocStringTypeRegistry {
         defineDocStringType(new DocStringType(String.class, "", (String docString) -> docString));
     }
 
-    DocStringType lookupByContentType(String contentType) {
-        return docStringTypesByContentType.get(contentType);
-    }
-
-    DocStringType lookupByType(Type type) {
-        return docStringTypesByType.get(type);
-    }
-
     public void defineDocStringType(DocStringType docStringType) {
         DocStringType byContentType = docStringTypesByContentType.get(docStringType.getContentType());
         if (byContentType != null) {
@@ -40,7 +32,9 @@ public final class DocStringTypeRegistry {
         docStringTypesByType.put(docStringType.getType(), docStringType);
     }
 
-    private static CucumberDocStringException createDuplicateTypeException(DocStringType existing, DocStringType docStringType) {
+    private static CucumberDocStringException createDuplicateTypeException(
+            DocStringType existing, DocStringType docStringType
+    ) {
         String contentType = existing.getContentType();
         return new CucumberDocStringException(format("" +
                 "There is already docstring type registered for '%s' and %s.\n" +
@@ -48,11 +42,19 @@ public final class DocStringTypeRegistry {
             emptyToAnonymous(contentType),
             existing.getType().getTypeName(),
             emptyToAnonymous(docStringType.getContentType()),
-            docStringType.getType().getTypeName()
-        ));
+            docStringType.getType().getTypeName()));
     }
 
     private static String emptyToAnonymous(String contentType) {
         return contentType.isEmpty() ? "[anonymous]" : contentType;
     }
+
+    DocStringType lookupByContentType(String contentType) {
+        return docStringTypesByContentType.get(contentType);
+    }
+
+    DocStringType lookupByType(Type type) {
+        return docStringTypesByType.get(type);
+    }
+
 }

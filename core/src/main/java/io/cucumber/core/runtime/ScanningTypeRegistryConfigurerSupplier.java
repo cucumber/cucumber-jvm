@@ -33,8 +33,7 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
         return reflections.instantiateExactlyOneSubclass(
             TypeRegistryConfigurer.class,
             options.getGlue(),
-            new DefaultTypeRegistryConfiguration()
-        );
+            new DefaultTypeRegistryConfiguration());
     }
 
     private static final class DefaultTypeRegistryConfiguration implements TypeRegistryConfigurer {
@@ -46,21 +45,17 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
 
         @Override
         public void configureTypeRegistry(io.cucumber.core.api.TypeRegistry typeRegistry) {
-            //noop
+            // noop
         }
 
     }
 
     static final class Reflections {
+
         private final ClasspathScanner classFinder;
 
         Reflections(ClasspathScanner classFinder) {
             this.classFinder = classFinder;
-        }
-
-        static boolean isInstantiable(Class<?> clazz) {
-            boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
-            return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers()) && !isNonStaticInnerClass;
         }
 
         <T> T instantiateExactlyOneSubclass(Class<T> parentType, List<URI> packageNames, T fallback) {
@@ -79,14 +74,21 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
 
         private <T> Collection<? extends T> instantiateSubclasses(Class<T> parentType, List<URI> packageNames) {
             return packageNames
-                .stream()
-                .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-                .map(ClasspathSupport::packageName)
-                .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, parentType))
-                .flatMap(Collection::stream)
-                .filter(Reflections::isInstantiable)
-                .map(Reflections::newInstance)
-                .collect(toSet());
+                    .stream()
+                    .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
+                    .map(ClasspathSupport::packageName)
+                    .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, parentType))
+                    .flatMap(Collection::stream)
+                    .filter(Reflections::isInstantiable)
+                    .map(Reflections::newInstance)
+                    .collect(toSet());
+        }
+
+        static boolean isInstantiable(Class<?> clazz) {
+            boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers())
+                    && clazz.getEnclosingClass() != null;
+            return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())
+                    && !isNonStaticInnerClass;
         }
 
         private static <T> T newInstance(Class<? extends T> clazz) {
@@ -102,7 +104,6 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
                 throw new CucumberException(e);
             }
         }
-
 
     }
 
@@ -128,5 +129,7 @@ public final class ScanningTypeRegistryConfigurerSupplier implements TypeRegistr
             Objects.requireNonNull(instances);
             return String.format("Expected only one instance, but found too many: %s", instances);
         }
+
     }
+
 }

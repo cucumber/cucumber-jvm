@@ -37,7 +37,8 @@ public final class CommandlineOptionsParser {
 
     private static final Logger log = LoggerFactory.getLogger(CommandlineOptionsParser.class);
 
-    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version").getString("cucumber-jvm.version");
+    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
+            .getString("cucumber-jvm.version");
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
 
@@ -141,27 +142,16 @@ public final class CommandlineOptionsParser {
         return parsedOptions;
     }
 
+    private void printUsage() {
+        out.println(loadUsageText());
+    }
+
     private String removeArgFor(String arg, List<String> args) {
         if (!args.isEmpty()) {
             return args.remove(0);
         }
         printUsage();
         throw new CucumberException("Missing argument for " + arg);
-    }
-
-    private void printUsage() {
-        out.println(loadUsageText());
-    }
-
-    private String loadUsageText() {
-        try (
-            InputStream usageResourceStream = CommandlineOptionsParser.class.getResourceAsStream(USAGE_RESOURCE);
-            BufferedReader br = new BufferedReader(new InputStreamReader(usageResourceStream, UTF_8))
-        ) {
-            return br.lines().collect(joining(System.lineSeparator()));
-        } catch (Exception e) {
-            return "Could not load usage text: " + e.toString();
-        }
     }
 
     private byte printI18n(String language) {
@@ -194,12 +184,30 @@ public final class CommandlineOptionsParser {
         return 0x1;
     }
 
+    private String loadUsageText() {
+        try (
+                InputStream usageResourceStream = CommandlineOptionsParser.class.getResourceAsStream(USAGE_RESOURCE);
+                BufferedReader br = new BufferedReader(new InputStreamReader(usageResourceStream, UTF_8))) {
+            return br.lines().collect(joining(System.lineSeparator()));
+        } catch (Exception e) {
+            return "Could not load usage text: " + e.toString();
+        }
+    }
+
     private int findWidest(List<GherkinDialect> dialects, Function<GherkinDialect, String> getNativeName) {
         return dialects.stream()
-            .map(getNativeName)
-            .mapToInt(String::length)
-            .max()
-            .orElse(0);
+                .map(getNativeName)
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+    }
+
+    private void printDialect(GherkinDialect dialect, int widestLanguage, int widestName, int widestNativeName) {
+        String langCode = rightPad(dialect.getLanguage(), widestLanguage);
+        String name = rightPad(dialect.getName(), widestName);
+        String nativeName = rightPad(dialect.getNativeName(), widestNativeName);
+
+        out.println(langCode + name + nativeName);
     }
 
     private byte printKeywordsFor(GherkinDialect dialect) {
@@ -225,33 +233,26 @@ public final class CommandlineOptionsParser {
         return 0x0;
     }
 
-    private void addCodeKeywordRow(List<List<String>> table, String key, List<String> keywords) {
-        List<String> codeKeywordList = new ArrayList<>(keywords);
-        codeKeywordList.remove("* ");
-
-        List<String> codeWords = codeKeywordList.stream()
-            .map(keyword -> keyword.replaceAll("[\\s',!]", ""))
-            .collect(Collectors.toList());
-
-        addKeywordRow(table, key + " (code)", codeWords);
-    }
-
-    private void addKeywordRow(List<List<String>> table, String key, List<String> keywords) {
-        table.add(asList(key, keywords.stream().map(o -> '"' + o + '"').collect(joining(", "))));
-    }
-
-    private void printDialect(GherkinDialect dialect, int widestLanguage, int widestName, int widestNativeName) {
-        String langCode = rightPad(dialect.getLanguage(), widestLanguage);
-        String name = rightPad(dialect.getName(), widestName);
-        String nativeName = rightPad(dialect.getNativeName(), widestNativeName);
-
-        out.println(langCode + name + nativeName);
-    }
-
     private String rightPad(String text, int maxWidth) {
         int padding = 7;
         int width = maxWidth + padding;
 
         return String.format("%" + -width + "s", text);
     }
+
+    private void addKeywordRow(List<List<String>> table, String key, List<String> keywords) {
+        table.add(asList(key, keywords.stream().map(o -> '"' + o + '"').collect(joining(", "))));
+    }
+
+    private void addCodeKeywordRow(List<List<String>> table, String key, List<String> keywords) {
+        List<String> codeKeywordList = new ArrayList<>(keywords);
+        codeKeywordList.remove("* ");
+
+        List<String> codeWords = codeKeywordList.stream()
+                .map(keyword -> keyword.replaceAll("[\\s',!]", ""))
+                .collect(Collectors.toList());
+
+        addKeywordRow(table, key + " (code)", codeWords);
+    }
+
 }

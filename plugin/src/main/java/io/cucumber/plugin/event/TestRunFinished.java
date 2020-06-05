@@ -21,4 +21,5 @@ public final class TestRunFinished extends TimeStampedEvent {
     public Result getResult() {
         return result;
     }
+
 }

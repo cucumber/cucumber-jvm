@@ -7,10 +7,10 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface DocStringArgument extends StepArgument {
+
     String getContent();
 
     /**
-     *
      * @deprecated use {@link #getMediaType()} instead.
      */
     @Deprecated
@@ -19,4 +19,5 @@ public interface DocStringArgument extends StepArgument {
     String getMediaType();
 
     int getLine();
+
 }

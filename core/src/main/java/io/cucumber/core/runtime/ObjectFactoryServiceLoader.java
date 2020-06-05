@@ -23,7 +23,8 @@ public final class ObjectFactoryServiceLoader {
     }
 
     /**
-     * Loads an instance of {@link ObjectFactory} using the {@link ServiceLoader} mechanism.
+     * Loads an instance of {@link ObjectFactory} using the
+     * {@link ServiceLoader} mechanism.
      * <p>
      * Will load an instance of the class provided by
      * {@link Options#getObjectFactoryClass()}. If
@@ -48,20 +49,6 @@ public final class ObjectFactoryServiceLoader {
         return loadSelectedObjectFactory(loader, objectFactoryClass);
     }
 
-    private static ObjectFactory loadSelectedObjectFactory(ServiceLoader<ObjectFactory> loader, Class<? extends ObjectFactory> objectFactoryClass) {
-        for (ObjectFactory objectFactory : loader) {
-            if (objectFactoryClass.equals(objectFactory.getClass())) {
-                return objectFactory;
-            }
-        }
-
-        throw new CucumberException("" +
-            "Could not find object factory " + objectFactoryClass.getName() + ".\n" +
-            "Cucumber uses SPI to discover object factory implementations.\n" +
-            "Has the class been registered with SPI and is it available on the classpath?"
-        );
-    }
-
     private static ObjectFactory loadSingleObjectFactoryOrDefault(ServiceLoader<ObjectFactory> loader) {
         final Iterator<ObjectFactory> objectFactories = loader.iterator();
 
@@ -79,20 +66,35 @@ public final class ObjectFactoryServiceLoader {
         return objectFactory;
     }
 
+    private static ObjectFactory loadSelectedObjectFactory(
+            ServiceLoader<ObjectFactory> loader, Class<? extends ObjectFactory> objectFactoryClass
+    ) {
+        for (ObjectFactory objectFactory : loader) {
+            if (objectFactoryClass.equals(objectFactory.getClass())) {
+                return objectFactory;
+            }
+        }
+
+        throw new CucumberException("" +
+                "Could not find object factory " + objectFactoryClass.getName() + ".\n" +
+                "Cucumber uses SPI to discover object factory implementations.\n" +
+                "Has the class been registered with SPI and is it available on the classpath?");
+    }
+
     private static String getMultipleObjectFactoryLogMessage(ObjectFactory... objectFactories) {
         String factoryNames = Stream.of(objectFactories)
-            .map(Object::getClass)
-            .map(Class::getName)
-            .collect(Collectors.joining(", "));
+                .map(Object::getClass)
+                .map(Class::getName)
+                .collect(Collectors.joining(", "));
 
         return "More than one Cucumber ObjectFactory was found in the classpath\n" +
-            "\n" +
-            "Found: " + factoryNames +"\n" +
-            "\n" +
-            "You may have included, for instance, cucumber-spring AND cucumber-guice as part of\n" +
-            "your dependencies. When this happens, Cucumber can't decide which to use.\n" +
-            "In order to enjoy dependency injection features, either remove the unnecessary dependencies" +
-            "from your classpath or use the `cucumber.object-factory` property or `@CucumberOptions(objectFactory=...)` to select one.\n";
+                "\n" +
+                "Found: " + factoryNames + "\n" +
+                "\n" +
+                "You may have included, for instance, cucumber-spring AND cucumber-guice as part of\n" +
+                "your dependencies. When this happens, Cucumber can't decide which to use.\n" +
+                "In order to enjoy dependency injection features, either remove the unnecessary dependencies" +
+                "from your classpath or use the `cucumber.object-factory` property or `@CucumberOptions(objectFactory=...)` to select one.\n";
     }
 
     /**
@@ -101,6 +103,7 @@ public final class ObjectFactoryServiceLoader {
      * All glue classes must have a public no-argument constructor.
      */
     static class DefaultJavaObjectFactory implements ObjectFactory {
+
         private final Map<Class<?>, Object> instances = new HashMap<>();
 
         public void start() {
@@ -130,10 +133,14 @@ public final class ObjectFactoryServiceLoader {
                 instances.put(type, instance);
                 return instance;
             } catch (NoSuchMethodException e) {
-                throw new CucumberException(String.format("%s doesn't have an empty constructor. If you need dependency injection, put cucumber-picocontainer on the classpath", type), e);
+                throw new CucumberException(String.format(
+                    "%s doesn't have an empty constructor. If you need dependency injection, put cucumber-picocontainer on the classpath",
+                    type), e);
             } catch (Exception e) {
                 throw new CucumberException(String.format("Failed to instantiate %s", type), e);
             }
         }
+
     }
+
 }

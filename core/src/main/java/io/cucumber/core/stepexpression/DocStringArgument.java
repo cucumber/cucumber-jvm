@@ -23,4 +23,5 @@ public final class DocStringArgument implements Argument {
     public String toString() {
         return "DocString:\n" + DocString.create(content, contentType);
     }
+
 }

@@ -12,15 +12,18 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CucumberPropertiesParserTest {
@@ -57,18 +60,31 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
-            URI.create("classpath:com/example.feature")
-        ));
+            URI.create("classpath:com/example.feature")));
     }
 
     @Test
     void should_parse_features_list() {
-        properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example/app.feature, classpath:com/example/other.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME,
+            "classpath:com/example/app.feature, classpath:com/example/other.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), contains(
             URI.create("classpath:com/example/app.feature"),
-            URI.create("classpath:com/example/other.feature")
-        ));
+            URI.create("classpath:com/example/other.feature")));
+    }
+
+    @Test
+    void should_parse_features_and_preserve_existing_tag_filters() {
+        RuntimeOptions existing = RuntimeOptions.defaultOptions();
+        existing.setTagExpressions(Collections.singletonList("@example"));
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example.feature");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build(existing);
+
+        assertAll(
+                () -> assertThat(options.getFeaturePaths(), contains(
+                        URI.create("classpath:com/example.feature"))),
+                () -> assertThat(options.getTagExpressions(), contains("@example"))
+        );
     }
 
     @Test
@@ -76,8 +92,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FILTER_NAME_PROPERTY_NAME, "Test.*");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getNameFilters().get(0).pattern(), equalTo(
-            "Test.*"
-        ));
+            "Test.*"));
     }
 
     @Test
@@ -85,8 +100,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FILTER_TAGS_PROPERTY_NAME, "@No and not @Never");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getTagExpressions(), contains(
-            "@No and not @Never"
-        ));
+            "@No and not @Never"));
     }
 
     @Test
@@ -94,8 +108,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getGlue(), contains(
-            URI.create("classpath:/com/example/steps")
-        ));
+            URI.create("classpath:/com/example/steps")));
     }
 
     @Test
@@ -104,8 +117,7 @@ class CucumberPropertiesParserTest {
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getGlue(), contains(
             URI.create("classpath:/com/example/app/steps"),
-            URI.create("classpath:/com/example/other/steps")
-        ));
+            URI.create("classpath:/com/example/other/steps")));
     }
 
     @Test
@@ -142,8 +154,7 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.OBJECT_FACTORY_PROPERTY_NAME, "garbage");
         CucumberException exception = assertThrows(
             CucumberException.class,
-            () -> cucumberPropertiesParser.parse(properties).build()
-        );
+            () -> cucumberPropertiesParser.parse(properties).build());
         assertThat(exception.getMessage(), equalTo("Failed to parse 'cucumber.object-factory' with value 'garbage'"));
     }
 
@@ -155,6 +166,18 @@ class CucumberPropertiesParserTest {
         assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("classpath:path/to.feature")));
     }
 
+    @Test
+    void should_parse_rerun_file_and_remove_existing_tag_filters() throws IOException {
+        RuntimeOptions existing = RuntimeOptions.defaultOptions();
+        existing.setTagExpressions(Collections.singletonList("@example"));
+        Path path = mockFileResource("classpath:path/to.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertAll(
+                () -> assertThat(options.getFeaturePaths(), contains(URI.create("classpath:path/to.feature"))),
+                () -> assertThat(options.getTagExpressions(), not(contains("@example"))));
+    }
+
     private Path mockFileResource(String... contents) throws IOException {
         Path path = Files.createTempFile(temp, "", ".txt");
         Files.write(path, Arrays.asList(contents), UTF_8, WRITE);
@@ -162,6 +185,7 @@ class CucumberPropertiesParserTest {
     }
 
     private static final class CustomObjectFactory implements ObjectFactory {
+
         @Override
         public boolean addClass(Class<?> glueClass) {
             return false;
@@ -181,6 +205,7 @@ class CucumberPropertiesParserTest {
         public void stop() {
 
         }
+
     }
 
 }

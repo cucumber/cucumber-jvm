@@ -5,9 +5,11 @@ import io.cucumber.core.gherkin.Pickle;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 final class LinePredicate implements Predicate<Pickle> {
+
     private final Map<URI, ? extends Collection<Integer>> lineFilters;
 
     LinePredicate(Map<URI, ? extends Collection<Integer>> lineFilters) {
@@ -21,10 +23,12 @@ final class LinePredicate implements Predicate<Pickle> {
             return true;
         }
         for (Integer line : lineFilters.get(picklePath)) {
-            if (line == pickle.getLocation().getLine() || line == pickle.getLocation().getLine()) {
+            if (Objects.equals(line, pickle.getLocation().getLine())
+                    || Objects.equals(line, pickle.getScenarioLocation().getLine())) {
                 return true;
             }
         }
         return false;
     }
+
 }

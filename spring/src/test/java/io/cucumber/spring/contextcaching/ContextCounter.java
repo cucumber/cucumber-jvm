@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Component
 public class ContextCounter implements ApplicationContextAware {
+
     private static final Set<ApplicationContext> applicationContextSet = new HashSet<>();
 
     @Override
@@ -20,4 +21,5 @@ public class ContextCounter implements ApplicationContextAware {
     public int getContextCount() {
         return applicationContextSet.size();
     }
+
 }

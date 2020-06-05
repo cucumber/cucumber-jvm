@@ -1,6 +1,7 @@
 package io.cucumber.core.snippets;
 
 final class FunctionNameGenerator {
+
     private static final Character SUBST = ' ';
     private final Joiner joiner;
 
@@ -32,4 +33,5 @@ final class FunctionNameGenerator {
         }
         return sanitized.toString();
     }
+
 }

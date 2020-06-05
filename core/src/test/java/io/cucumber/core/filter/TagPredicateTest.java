@@ -1,8 +1,8 @@
 package io.cucumber.core.filter;
 
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
@@ -19,6 +19,14 @@ class TagPredicateTest {
         assertTrue(predicate.test(pickle));
     }
 
+    private Pickle createPickleWithTags(String... tags) {
+        Feature feature = TestFeatureParser.parse("" +
+                "Feature: Test feature\n" +
+                "  " + String.join(" ", tags) + "\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given I have 4 cukes in my belly\n");
+        return feature.getPickles().get(0);
+    }
 
     @Test
     void list_of_empty_tag_predicates_matches_pickle_with_any_tags() {
@@ -102,16 +110,6 @@ class TagPredicateTest {
         Pickle pickle = createPickleWithTags();
         TagPredicate predicate = new TagPredicate(singletonList("@FOO or @BAR"));
         assertFalse(predicate.test(pickle));
-    }
-
-    private Pickle createPickleWithTags(String... tags) {
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  " + String.join(" ", tags) + "\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
-        return feature.getPickles().get(0);
     }
 
 }

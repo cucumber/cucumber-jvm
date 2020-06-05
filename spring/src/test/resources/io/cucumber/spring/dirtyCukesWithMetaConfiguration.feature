@@ -9,14 +9,14 @@ Feature: Spring Dirty Cukes Meta
     Then there are <numberOfBeans> dirty meta cukes in my belly
 
     Examples:
-    | numberOfBeans |
-    | 4             |
-    | 2             |
+      | numberOfBeans |
+      | 4             |
+      | 2             |
 
   Scenario Outline: Eat some XML dirty beans
-      Given there are 0 dirty meta beans in my belly
-      When I have <numberOfBeans> dirty meta beans in my belly
-      Then there are <numberOfBeans> dirty meta beans in my belly
+    Given there are 0 dirty meta beans in my belly
+    When I have <numberOfBeans> dirty meta beans in my belly
+    Then there are <numberOfBeans> dirty meta beans in my belly
 
     Examples:
       | numberOfBeans |

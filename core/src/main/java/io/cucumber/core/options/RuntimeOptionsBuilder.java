@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class RuntimeOptionsBuilder {
+
     private final List<String> parsedTagFilters = new ArrayList<>();
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
@@ -123,11 +124,11 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
         }
 
-        if(addDefaultFormatterIfAbsent) {
+        if (addDefaultFormatterIfAbsent) {
             runtimeOptions.addDefaultFormatterIfAbsent();
         }
 
-        if(addDefaultSummaryPrinterIfAbsent) {
+        if (addDefaultSummaryPrinterIfAbsent) {
             runtimeOptions.addDefaultSummaryPrinterIfAbsent();
         }
 
@@ -144,8 +145,8 @@ public final class RuntimeOptionsBuilder {
 
     private boolean hasFeaturesWithLineFilters() {
         return parsedRerunPaths != null || !parsedFeaturePaths.stream()
-            .map(FeatureWithLines::lines)
-            .allMatch(Set::isEmpty);
+                .map(FeatureWithLines::lines)
+                .allMatch(Set::isEmpty);
     }
 
     public RuntimeOptionsBuilder setCount(int count) {
@@ -153,22 +154,22 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
+    public RuntimeOptionsBuilder setDryRun() {
+        return setDryRun(true);
+    }
+
     public RuntimeOptionsBuilder setDryRun(boolean dryRun) {
         this.parsedDryRun = dryRun;
         return this;
     }
 
-    public RuntimeOptionsBuilder setDryRun() {
-        return setDryRun(true);
+    public RuntimeOptionsBuilder setMonochrome() {
+        return setMonochrome(true);
     }
 
     public RuntimeOptionsBuilder setMonochrome(boolean monochrome) {
         this.parsedMonochrome = monochrome;
         return this;
-    }
-
-    public RuntimeOptionsBuilder setMonochrome() {
-        return setMonochrome(true);
     }
 
     public RuntimeOptionsBuilder setPickleOrder(PickleOrder pickleOrder) {
@@ -211,12 +212,12 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-
     public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.parsedObjectFactoryClass = objectFactoryClass;
     }
 
     static final class ParsedPluginData {
+
         private final List<Options.Plugin> formatters = new ArrayList<>();
         private final List<Options.Plugin> summaryPrinters = new ArrayList<>();
 
@@ -232,4 +233,5 @@ public final class RuntimeOptionsBuilder {
         }
 
     }
+
 }

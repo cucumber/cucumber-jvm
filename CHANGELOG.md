@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+* [Spring] Add `@ScenarioScope` annotation ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
+  * Preferable to `@Scope(value = SCOPE_CUCUMBER_GLUE)`
 
 ### Changed
 
@@ -16,6 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Plugin] Restored `Status.isOk(boolean isStrict)` to avoid breaking existing plugins 
+ * [Core] Execute features files without pickles ([#1973](https://github.com/cucumber/cucumber-jvm/issues/1973) M.P. Korstanje) 
+ * [Spring] Require an active scenario before creating beans ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
+ * [Core] Fix NPE in `CucumberExecutionContext.emitMeta` when in a shaded jar (M.P. Korstanje)
+ * [Core] Fix line filter for scenario outlines ([#1981](https://github.com/cucumber/cucumber-jvm/issues/1981) M.P. Korstanje)
+ * [Core] cucumber.feature preserves tags when used with a feature argument  ([#1986](https://github.com/cucumber/cucumber-jvm/issues/1986) M.P. Korstanje)
 
 ## [6.0.0-RC2] (2020-05-03)
 
@@ -26,8 +34,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Core] Default to `--strict` mode ([#1960](https://github.com/cucumber/cucumber-jvm/issues/1960) M.P. Korstanje)
  * [Java] Switch `useRegexpMatchAsStrongTypeHint` default to false ([#1915](https://github.com/cucumber/cucumber-jvm/issues/1915) M.P. Korstanje)
 
-### Deprecated 
-
 ### Removed
  * [Core] Remove multiple tag arguments in `@CucumberOptions` ([#1948](https://github.com/cucumber/cucumber-jvm/issues/1948) M.P. Korstanje)
  * [Core] Remove `cucumber.options` property ([#1958](https://github.com/cucumber/cucumber-jvm/issues/1958) M.P. Korstanje)
@@ -37,6 +43,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
  * [Core] Include all fields in `JsonFormatters` failure feature ([#1954](https://github.com/cucumber/cucumber-jvm/issues/1954) M.P. Korstanje) 
  
+### Security
+ * [Core] Upgrade jQuery to [3.5.1](https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/) ([#1971](https://github.com/cucumber/cucumber-jvm/issues/1971) M.P. Korstanje)
+
 ## [6.0.0-RC1] (2020-04-23)
 
 ### Added

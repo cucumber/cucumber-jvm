@@ -3,10 +3,10 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.RunnerSupplier;
-import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.snippets.TestSnippet;
 
 import java.net.URI;
@@ -46,7 +46,8 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactor
 
     @Override
     public Runner get() {
-        return new Runner(bus, singleton(this), this, typeRegistry -> {}, runtimeOptions);
+        return new Runner(bus, singleton(this), this, typeRegistry -> {
+        }, runtimeOptions);
     }
 
     @Override
@@ -68,4 +69,5 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactor
     public <T> T getInstance(Class<T> glueClass) {
         return null;
     }
+
 }

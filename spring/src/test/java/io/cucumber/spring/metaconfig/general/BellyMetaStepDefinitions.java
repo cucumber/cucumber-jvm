@@ -31,4 +31,5 @@ public class BellyMetaStepDefinitions {
     public void I_have_belly_bean() {
         assertNotNull(bellyBean);
     }
+
 }

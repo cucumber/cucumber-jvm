@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 class EmptyEngineDiscoveryRequest implements EngineDiscoveryRequest {
+
     private final ConfigurationParameters config;
 
     EmptyEngineDiscoveryRequest(ConfigurationParameters config) {
@@ -29,4 +30,5 @@ class EmptyEngineDiscoveryRequest implements EngineDiscoveryRequest {
     public ConfigurationParameters getConfigurationParameters() {
         return config;
     }
+
 }

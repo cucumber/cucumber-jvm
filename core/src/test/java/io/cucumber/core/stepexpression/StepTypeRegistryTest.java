@@ -29,8 +29,7 @@ class StepTypeRegistryTest {
             "example",
             ".*",
             Object.class,
-            (String s) -> null
-        );
+            (String s) -> null);
         registry.defineParameterType(expected);
         Expression expresion = expressionFactory.createExpression("{example}");
         assertThat(expresion.getRegexp().pattern(), is("^(.*)$"));
@@ -65,4 +64,5 @@ class StepTypeRegistryTest {
         TableEntryByTypeTransformer expected = (entry, toValueType, tableCellByTypeTransformer) -> null;
         registry.setDefaultDataTableEntryTransformer(expected);
     }
+
 }

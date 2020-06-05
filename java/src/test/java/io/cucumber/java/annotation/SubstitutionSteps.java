@@ -10,10 +10,13 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubstitutionSteps {
-    private static final Map<String, String> ROLES = new HashMap<String, String>() {{
-        put("Manager", "now able to manage your employee accounts");
-        put("Admin", "able to manage any user account on the system");
-    }};
+
+    private static final Map<String, String> ROLES = new HashMap<String, String>() {
+        {
+            put("Manager", "now able to manage your employee accounts");
+            put("Admin", "able to manage any user account on the system");
+        }
+    };
 
     private String name;
     private String role;
@@ -34,7 +37,9 @@ public class SubstitutionSteps {
     public void I_should_receive_an_email_with_the_body(String body) {
         String expected = String.format("Dear %s,\n" +
                 "You have been granted %s rights.  You are %s. Please be responsible.\n" +
-                "-The Admins", name, role, details);
+                "-The Admins",
+            name, role, details);
         assertEquals(expected, body);
     }
+
 }

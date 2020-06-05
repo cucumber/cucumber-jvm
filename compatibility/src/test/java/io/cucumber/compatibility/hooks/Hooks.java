@@ -7,7 +7,8 @@ import io.cucumber.java.en.When;
 public class Hooks {
 
     @Before
-    public void before() {}
+    public void before() {
+    }
 
     @When("a step passes")
     public void aStepPasses() {

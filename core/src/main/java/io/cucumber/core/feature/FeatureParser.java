@@ -27,20 +27,19 @@ public final class FeatureParser {
         this.idGenerator = idGenerator;
     }
 
-
     public Optional<Feature> parseResource(Resource resource) {
         requireNonNull(resource);
         URI uri = resource.getUri();
         String source = read(resource);
-        ServiceLoader<io.cucumber.core.gherkin.FeatureParser> services =
-            ServiceLoader.load(io.cucumber.core.gherkin.FeatureParser.class);
+        ServiceLoader<io.cucumber.core.gherkin.FeatureParser> services = ServiceLoader
+                .load(io.cucumber.core.gherkin.FeatureParser.class);
         Iterator<io.cucumber.core.gherkin.FeatureParser> iterator = services.iterator();
         List<io.cucumber.core.gherkin.FeatureParser> parser = new ArrayList<>();
         while (iterator.hasNext()) {
             parser.add(iterator.next());
         }
-        Comparator<io.cucumber.core.gherkin.FeatureParser> version =
-            comparing(io.cucumber.core.gherkin.FeatureParser::version);
+        Comparator<io.cucumber.core.gherkin.FeatureParser> version = comparing(
+            io.cucumber.core.gherkin.FeatureParser::version);
         return Collections.max(parser, version).parse(uri, source, idGenerator);
     }
 
@@ -51,6 +50,5 @@ public final class FeatureParser {
             throw new CucumberException("Failed to read resource:" + resource.getUri(), e);
         }
     }
-
 
 }

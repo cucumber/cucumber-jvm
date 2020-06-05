@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestStepStarted;
 
@@ -16,7 +16,7 @@ public class StepDurationTimeService extends Clock implements EventListener {
     private final Duration stepDuration;
 
     private final EventHandler<TestStepStarted> stepStartedHandler = event -> handleTestStepStarted();
-    
+
     public StepDurationTimeService(Duration stepDuration) {
         this.stepDuration = stepDuration;
     }

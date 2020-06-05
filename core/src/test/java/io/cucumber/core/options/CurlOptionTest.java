@@ -20,12 +20,14 @@ class CurlOptionTest {
         CurlOption option = CurlOption.parse("https://example.com");
         assertThat(option.getUri(), is(URI.create("https://example.com")));
     }
+
     @Test
     public void must_contain_a_url() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(""));
         assertThat(exception.getMessage(), is("'' was not a valid curl command"));
 
     }
+
     @Test
     public void can_parse_url_with_method() {
         CurlOption option = CurlOption.parse("https://example.com -X POST");
@@ -37,8 +39,7 @@ class CurlOptionTest {
     public void must_provide_valid_method() {
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            () -> CurlOption.parse("https://example.com -X NO-SUCH-METHOD")
-        );
+            () -> CurlOption.parse("https://example.com -X NO-SUCH-METHOD"));
         assertThat(exception.getMessage(), is("NO-SUCH-METHOD was not a http method"));
     }
 
@@ -51,7 +52,8 @@ class CurlOptionTest {
 
     @Test
     public void must_provide_valid_headers() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse("https://example.com -H 'Content-Type'"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            () -> CurlOption.parse("https://example.com -H 'Content-Type'"));
         assertThat(exception.getMessage(), is("'Content-Type' was not a valid header"));
     }
 
@@ -59,7 +61,8 @@ class CurlOptionTest {
     public void may_only_provide_one_url() {
         String uri = "https://example.com/path https://example.com/other/path";
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(uri));
-        assertThat(exception.getMessage(), is("'https://example.com/path https://example.com/other/path' was not a valid curl command"));
+        assertThat(exception.getMessage(),
+            is("'https://example.com/path https://example.com/other/path' was not a valid curl command"));
     }
 
     @Test

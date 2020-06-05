@@ -27,6 +27,7 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 final class TestCase implements io.cucumber.plugin.event.TestCase {
+
     private final Pickle pickle;
     private final List<PickleStepTestStep> testSteps;
     private final boolean dryRun;
@@ -34,17 +35,49 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private final List<HookTestStep> afterHooks;
     private final UUID id;
 
-    TestCase(UUID id, List<PickleStepTestStep> testSteps,
-             List<HookTestStep> beforeHooks,
-             List<HookTestStep> afterHooks,
-             Pickle pickle,
-             boolean dryRun) {
+    TestCase(
+            UUID id, List<PickleStepTestStep> testSteps,
+            List<HookTestStep> beforeHooks,
+            List<HookTestStep> afterHooks,
+            Pickle pickle,
+            boolean dryRun
+    ) {
         this.id = id;
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
         this.pickle = pickle;
         this.dryRun = dryRun;
+    }
+
+    private static Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group makeMessageGroup(
+            Group group
+    ) {
+        Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group
+                .newBuilder();
+        if (group == null) {
+            return builder.build();
+        }
+
+        if (group.getValue() != null) {
+            builder.setValue(group.getValue());
+        }
+
+        if (group.getStart() != -1) {
+            builder.setStart(group.getStart());
+        }
+
+        return builder
+                .addAllChildren(group.getChildren().stream()
+                        .map(TestCase::makeMessageGroup)
+                        .collect(toList()))
+                .build();
+    }
+
+    private static String toString(Throwable error) {
+        StringWriter stringWriter = new StringWriter();
+        error.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
     }
 
     void run(EventBus bus) {
@@ -77,38 +110,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
-    public List<TestStep> getTestSteps() {
-        List<TestStep> testSteps = new ArrayList<>(beforeHooks);
-        for (PickleStepTestStep step : this.testSteps) {
-            testSteps.addAll(step.getBeforeStepHookSteps());
-            testSteps.add(step);
-            testSteps.addAll(step.getAfterStepHookSteps());
-        }
-        testSteps.addAll(afterHooks);
-        return testSteps;
-    }
-
-    @Override
-    public String getName() {
-        return pickle.getName();
-    }
-
-    @Override
-    public String getScenarioDesignation() {
-        return fileColonLine(getLocation().getLine()) + " # " + getName();
-    }
-
-    @Override
-    public URI getUri() {
-        return pickle.getUri();
-    }
-
-    @Override
-    public UUID getId() {
-        return id;
-    }
-
-    @Override
     public Integer getLine() {
         return pickle.getLocation().getLine();
     }
@@ -123,6 +124,16 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return pickle.getKeyword();
     }
 
+    @Override
+    public String getName() {
+        return pickle.getName();
+    }
+
+    @Override
+    public String getScenarioDesignation() {
+        return fileColonLine(getLocation().getLine()) + " # " + getName();
+    }
+
     private String fileColonLine(Integer line) {
         return pickle.getUri().getSchemeSpecificPart() + ":" + line;
     }
@@ -132,24 +143,44 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         return pickle.getTags();
     }
 
+    @Override
+    public List<TestStep> getTestSteps() {
+        List<TestStep> testSteps = new ArrayList<>(beforeHooks);
+        for (PickleStepTestStep step : this.testSteps) {
+            testSteps.addAll(step.getBeforeStepHookSteps());
+            testSteps.add(step);
+            testSteps.addAll(step.getAfterStepHookSteps());
+        }
+        testSteps.addAll(afterHooks);
+        return testSteps;
+    }
+
+    @Override
+    public URI getUri() {
+        return pickle.getUri();
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
     private void emitTestCaseMessage(EventBus bus) {
         bus.send(Messages.Envelope.newBuilder()
-            .setTestCase(Messages.TestCase.newBuilder()
-                .setId(id.toString())
-                .setPickleId(pickle.getId())
-                .addAllTestSteps(getTestSteps()
-                    .stream()
-                    .map(this::createTestStep)
-                    .collect(toList())
-                )
-            ).build()
-        );
+                .setTestCase(Messages.TestCase.newBuilder()
+                        .setId(id.toString())
+                        .setPickleId(pickle.getId())
+                        .addAllTestSteps(getTestSteps()
+                                .stream()
+                                .map(this::createTestStep)
+                                .collect(toList())))
+                .build());
     }
 
     private Messages.TestCase.TestStep createTestStep(TestStep testStep) {
         Messages.TestCase.TestStep.Builder testStepBuilder = Messages.TestCase.TestStep
-            .newBuilder()
-            .setId(testStep.getId().toString());
+                .newBuilder()
+                .setId(testStep.getId().toString());
 
         if (testStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) testStep;
@@ -157,78 +188,56 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         } else if (testStep instanceof PickleStepTestStep) {
             PickleStepTestStep pickleStep = (PickleStepTestStep) testStep;
             testStepBuilder
-                .addAllStepDefinitionIds(singletonList(pickleStep.getId().toString()))
-                .setPickleStepId(pickleStep.getStep().getId())
-                .addStepMatchArgumentsLists(getStepMatchArguments(pickleStep));
+                    .addAllStepDefinitionIds(singletonList(pickleStep.getId().toString()))
+                    .setPickleStepId(pickleStep.getStep().getId())
+                    .addStepMatchArgumentsLists(getStepMatchArguments(pickleStep));
         }
 
         return testStepBuilder.build();
     }
 
     public Messages.TestCase.TestStep.StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
-        Messages.TestCase.TestStep.StepMatchArgumentsList.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList.newBuilder();
+        Messages.TestCase.TestStep.StepMatchArgumentsList.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList
+                .newBuilder();
 
         pickleStep.getDefinitionArgument().forEach(arg -> builder
-            .addStepMatchArguments(Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.newBuilder()
-                .setParameterTypeName(arg.getParameterTypeName())
-                .setGroup(makeMessageGroup(arg.getGroup()))
-                .build()));
+                .addStepMatchArguments(Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.newBuilder()
+                        .setParameterTypeName(arg.getParameterTypeName())
+                        .setGroup(makeMessageGroup(arg.getGroup()))
+                        .build()));
 
         return builder.build();
-    }
-
-    private static Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group makeMessageGroup(Group group) {
-        Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.Builder builder = Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument.Group.newBuilder();
-        if (group == null) {
-            return builder.build();
-        }
-
-        if (group.getValue() != null) {
-            builder.setValue(group.getValue());
-        }
-
-        if (group.getStart() != -1) {
-            builder.setStart(group.getStart());
-        }
-
-        return builder
-            .addAllChildren(group.getChildren().stream()
-                .map(TestCase::makeMessageGroup)
-                .collect(toList()))
-            .build();
     }
 
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
         bus.send(new TestCaseStarted(start, this));
         bus.send(Messages.Envelope.newBuilder()
-            .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
-                .setId(executionId.toString())
-                .setTestCaseId(id.toString())
-                .setTimestamp(javaInstantToTimestamp(start))
-                .build()
-            ).build());
+                .setTestCaseStarted(Messages.TestCaseStarted.newBuilder()
+                        .setId(executionId.toString())
+                        .setTestCaseId(id.toString())
+                        .setTimestamp(javaInstantToTimestamp(start))
+                        .build())
+                .build());
     }
 
-    private void emitTestCaseFinished(EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result) {
+    private void emitTestCaseFinished(
+            EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result
+    ) {
         bus.send(new TestCaseFinished(stop, this, result));
-        Messages.TestStepFinished.TestStepResult.Builder testResultBuilder = Messages.TestStepFinished.TestStepResult.newBuilder()
-            .setStatus(from(status))
-            .setDuration(javaDurationToDuration(duration));
+        Messages.TestStepFinished.TestStepResult.Builder testResultBuilder = Messages.TestStepFinished.TestStepResult
+                .newBuilder()
+                .setStatus(from(status))
+                .setDuration(javaDurationToDuration(duration));
 
         if (result.getError() != null) {
             testResultBuilder.setMessage(toString(result.getError()));
         }
 
         bus.send(Messages.Envelope.newBuilder()
-            .setTestCaseFinished(Messages.TestCaseFinished.newBuilder()
-                .setTestCaseStartedId(executionId.toString())
-                .setTimestamp(javaInstantToTimestamp(stop)))
-            .build());
+                .setTestCaseFinished(Messages.TestCaseFinished.newBuilder()
+                        .setTestCaseStartedId(executionId.toString())
+                        .setTimestamp(javaInstantToTimestamp(stop)))
+                .build());
     }
 
-    private static String toString(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        error.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
-    }
 }

@@ -7,4 +7,5 @@ class InjectorSourceInstantiationFailed extends CucumberBackendException {
     InjectorSourceInstantiationFailed(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

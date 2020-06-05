@@ -18,8 +18,7 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
         this.docStringType = new DocStringType(
             this.method.getReturnType(),
             contentType.isEmpty() ? method.getName() : contentType,
-            this::invokeMethod
-        );
+            this::invokeMethod);
     }
 
     private static Method requireValidMethod(Method method) {
@@ -44,14 +43,15 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(io.cucumber.java.DocStringType.class)
-            .addSignature("public JsonNode json(String content)")
-            .addNote("Note: JsonNode is an example of the class you want to convert content to")
-            .build();
+                .addAnnotation(io.cucumber.java.DocStringType.class)
+                .addSignature("public JsonNode json(String content)")
+                .addNote("Note: JsonNode is an example of the class you want to convert content to")
+                .build();
     }
 
     @Override
     public DocStringType docStringType() {
         return docStringType;
     }
+
 }

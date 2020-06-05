@@ -1,4 +1,5 @@
 package io.cucumber.core.feature;
+
 import java.net.URI;
 import java.nio.file.Path;
 
@@ -24,7 +25,8 @@ public class FeatureIdentifier {
 
     public static URI parse(URI featureIdentifier) {
         if (!isFeature(featureIdentifier)) {
-            throw new IllegalArgumentException("featureIdentifier does not reference a single feature file: " + featureIdentifier);
+            throw new IllegalArgumentException(
+                "featureIdentifier does not reference a single feature file: " + featureIdentifier);
         }
         return featureIdentifier;
     }
@@ -36,4 +38,5 @@ public class FeatureIdentifier {
     public static boolean isFeature(Path path) {
         return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
     }
+
 }

@@ -7,6 +7,7 @@ import java.net.URI;
 import java.util.List;
 
 public interface Options {
+
     List<URI> getGlue();
 
     boolean isDryRun();
@@ -14,4 +15,5 @@ public interface Options {
     SnippetType getSnippetType();
 
     Class<? extends ObjectFactory> getObjectFactoryClass();
+
 }

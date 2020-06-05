@@ -44,17 +44,16 @@ public class CompatibilityTest {
 
         try {
             Runtime.builder()
-                .withRuntimeOptions(new RuntimeOptionsBuilder()
-                    .addGlue(testCase.getGlue())
-                    .addFeature(testCase.getFeature())
-                    .build())
-                .withAdditionalPlugins(
-                    new MessageFormatter(new FileOutputStream(outputNdjson)),
-                    new HtmlFormatter(new FileOutputStream(outputHtml)),
-                    new JsonFormatter(new FileOutputStream(outputJson))
-                )
-                .build()
-                .run();
+                    .withRuntimeOptions(new RuntimeOptionsBuilder()
+                            .addGlue(testCase.getGlue())
+                            .addFeature(testCase.getFeature())
+                            .build())
+                    .withAdditionalPlugins(
+                        new MessageFormatter(new FileOutputStream(outputNdjson)),
+                        new HtmlFormatter(new FileOutputStream(outputHtml)),
+                        new JsonFormatter(new FileOutputStream(outputJson)))
+                    .build()
+                    .run();
         } catch (Exception ignored) {
 
         }
@@ -65,12 +64,13 @@ public class CompatibilityTest {
         Map<String, List<GeneratedMessageV3>> expectedEnvelopes = openEnvelopes(expected);
         Map<String, List<GeneratedMessageV3>> actualEnvelopes = openEnvelopes(actual);
 
-        // exception: Java step definitions are not in a predictable order because
-        // Class#getMethods() does not return a predictable order.
+        // exception: Java step definitions are not in a predictable order
+        // because Class#getMethods() does not return a predictable order.
         sortStepDefinitions(expectedEnvelopes);
         sortStepDefinitions(actualEnvelopes);
 
-        // exception: Cucumber JVM can't execute when there are unknown-parameter-types
+        // exception: Cucumber JVM can't execute when there are
+        // unknown-parameter-types
         if ("unknown-parameter-type".equals(testCase.getId())) {
             expectedEnvelopes.remove("testCase");
             expectedEnvelopes.remove("testCaseStarted");
@@ -79,12 +79,29 @@ public class CompatibilityTest {
             expectedEnvelopes.remove("testCaseFinished");
         }
 
-        expectedEnvelopes.forEach((messageType, expectedMessages) ->
-            assertThat(
-                actualEnvelopes,
-                hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))
-            )
-        );
+        expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
+            actualEnvelopes,
+            hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))));
+    }
+
+    private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {
+        List<Messages.Envelope> expectedEnvelopes = new ArrayList<>();
+        InputStream input = Files.newInputStream(output);
+        new NdjsonToMessageIterable(input)
+                .forEach(expectedEnvelopes::add);
+        return expectedEnvelopes;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Map<String, List<T>> openEnvelopes(List<? extends GeneratedMessageV3> actual) {
+        Map<String, List<T>> map = new LinkedHashMap<>();
+        actual.forEach(envelope -> envelope.getAllFields()
+                .forEach((fieldDescriptor, value) -> {
+                    String jsonName = fieldDescriptor.getJsonName();
+                    map.putIfAbsent(jsonName, new ArrayList<>());
+                    map.get(jsonName).add((T) value);
+                }));
+        return map;
     }
 
     private void sortStepDefinitions(Map<String, List<GeneratedMessageV3>> envelopes) {
@@ -99,30 +116,10 @@ public class CompatibilityTest {
         }
     }
 
-    private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {
-        List<Messages.Envelope> expectedEnvelopes = new ArrayList<>();
-        InputStream input = Files.newInputStream(output);
-        new NdjsonToMessageIterable(input)
-            .forEach(expectedEnvelopes::add);
-        return expectedEnvelopes;
+    private static List<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> messages) {
+        return messages.stream()
+                .map(AComparableMessage::new)
+                .collect(Collectors.toList());
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> Map<String, List<T>> openEnvelopes(List<? extends GeneratedMessageV3> actual) {
-        Map<String, List<T>> map = new LinkedHashMap<>();
-        actual.forEach(envelope -> envelope.getAllFields()
-            .forEach((fieldDescriptor, value) -> {
-                String jsonName = fieldDescriptor.getJsonName();
-                map.putIfAbsent(jsonName, new ArrayList<>());
-                map.get(jsonName).add((T) value);
-            }));
-        return map;
-    }
-
-
-    private static List<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> expectedMessages) {
-        return expectedMessages.stream()
-            .map(AComparableMessage::new)
-            .collect(Collectors.toList());
-    }
 }

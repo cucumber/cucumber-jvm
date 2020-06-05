@@ -11,8 +11,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class RpnCalculatorStepDefinitions {
+
     private RpnCalculator calc;
 
     @Given("a calculator I just turned on")
@@ -57,6 +57,7 @@ public class RpnCalculatorStepDefinitions {
     }
 
     static final class Entry {
+
         private Integer first;
         private Integer second;
         private String operation;
@@ -84,5 +85,7 @@ public class RpnCalculatorStepDefinitions {
         public void setOperation(String operation) {
             this.operation = operation;
         }
+
     }
+
 }

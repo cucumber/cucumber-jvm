@@ -16,6 +16,7 @@ import static java.util.Collections.min;
 import static java.util.Comparator.comparing;
 
 public final class ExitStatus implements ConcurrentEventListener {
+
     private static final byte DEFAULT = 0x0;
     private static final byte ERRORS = 0x1;
 
@@ -58,4 +59,5 @@ public final class ExitStatus implements ConcurrentEventListener {
         Result mostSevereResult = max(results, comparing(Result::getStatus));
         return mostSevereResult.getStatus();
     }
+
 }

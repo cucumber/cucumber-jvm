@@ -34,26 +34,33 @@ class JavaDataTableTypeDefinitionTest {
 
     private final DataTable dataTable = DataTable.create(asList(
         asList("a", "b"),
-        asList("c", "d")
-    ));
+        asList("c", "d")));
 
     private final DataTable emptyTable = DataTable.create(asList(
         asList("a", "[empty]"),
-        asList("[empty]", "d")
-    ));
+        asList("[empty]", "d")));
+
+    public static String static_convert_data_table_to_string(DataTable table) {
+        return "static_convert_data_table_to_string=" + table.cells();
+    }
 
     @Test
     void can_define_data_table_converter() throws NoSuchMethodException {
-        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("convert_data_table_to_string", DataTable.class);
+        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("convert_data_table_to_string",
+            DataTable.class);
         JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[0]);
-        assertThat(definition.dataTableType().transform(dataTable.asLists()), is("convert_data_table_to_string=[[a, b], [c, d]]"));
+        assertThat(definition.dataTableType().transform(dataTable.asLists()),
+            is("convert_data_table_to_string=[[a, b], [c, d]]"));
     }
 
     @Test
     void can_define_data_table_converter_with_empty_pattern() throws NoSuchMethodException {
-        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("convert_data_table_to_string", DataTable.class);
-        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[]{"[empty]"});
-        assertThat(definition.dataTableType().transform(emptyTable.asLists()), is("convert_data_table_to_string=[[a, ], [, d]]"));
+        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("convert_data_table_to_string",
+            DataTable.class);
+        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup,
+            new String[] { "[empty]" });
+        assertThat(definition.dataTableType().transform(emptyTable.asLists()),
+            is("convert_data_table_to_string=[[a, ], [, d]]"));
     }
 
     public String convert_data_table_to_string(DataTable table) {
@@ -67,10 +74,12 @@ class JavaDataTableTypeDefinitionTest {
         assertThat(definition.dataTableType().transform(dataTable.asLists()),
             is(asList("convert_table_row_to_string=[a, b]", "convert_table_row_to_string=[c, d]")));
     }
+
     @Test
     void can_define_table_row_transformer_with_empty_pattern() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("convert_table_row_to_string", List.class);
-        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[]{"[empty]"});
+        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup,
+            new String[] { "[empty]" });
         assertThat(definition.dataTableType().transform(emptyTable.asLists()),
             is(asList("convert_table_row_to_string=[a, ]", "convert_table_row_to_string=[, d]")));
     }
@@ -86,10 +95,12 @@ class JavaDataTableTypeDefinitionTest {
         assertThat(definition.dataTableType().transform(dataTable.asLists()),
             is(singletonList("converts_table_entry_to_string={a=c, b=d}")));
     }
+
     @Test
     void can_define_table_entry_transformer_with_empty_pattern() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_table_entry_to_string", Map.class);
-        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[]{"[empty]"});
+        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup,
+            new String[] { "[empty]" });
         assertThat(definition.dataTableType().transform(emptyTable.asLists()),
             is(singletonList("converts_table_entry_to_string={a=, =d}")));
     }
@@ -104,8 +115,7 @@ class JavaDataTableTypeDefinitionTest {
         JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[0]);
         assertThat(definition.dataTableType().transform(dataTable.asLists()), is(asList(
             asList("converts_table_cell_to_string=a", "converts_table_cell_to_string=b"),
-            asList("converts_table_cell_to_string=c", "converts_table_cell_to_string=d"))
-        ));
+            asList("converts_table_cell_to_string=c", "converts_table_cell_to_string=d"))));
     }
 
     @Test
@@ -114,8 +124,7 @@ class JavaDataTableTypeDefinitionTest {
         JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[0]);
         assertThat(definition.dataTableType().transform(emptyTable.asLists()), is(asList(
             asList("converts_table_cell_to_string=a", "converts_table_cell_to_string=[empty]"),
-            asList("converts_table_cell_to_string=[empty]", "converts_table_cell_to_string=d"))
-        ));
+            asList("converts_table_cell_to_string=[empty]", "converts_table_cell_to_string=d"))));
     }
 
     public String converts_table_cell_to_string(String cell) {
@@ -124,9 +133,11 @@ class JavaDataTableTypeDefinitionTest {
 
     @Test
     void target_type_must_class_type() throws NoSuchMethodException {
-        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_datatable_to_optional_string", DataTable.class);
+        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_datatable_to_optional_string",
+            DataTable.class);
         JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookup, new String[0]);
-        assertThat(definition.dataTableType().transform(dataTable.asLists()), is(Optional.of("converts_datatable_to_optional_string")));
+        assertThat(definition.dataTableType().transform(dataTable.asLists()),
+            is(Optional.of("converts_datatable_to_optional_string")));
 
     }
 
@@ -137,7 +148,8 @@ class JavaDataTableTypeDefinitionTest {
     @Test
     void target_type_must_not_be_void() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_data_table_to_void", DataTable.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(method, lookup, new String[0]));
+        assertThrows(InvalidMethodSignatureException.class,
+            () -> new JavaDataTableTypeDefinition(method, lookup, new String[0]));
     }
 
     public void converts_data_table_to_void(DataTable table) {
@@ -146,9 +158,12 @@ class JavaDataTableTypeDefinitionTest {
     @Test
     void must_have_exactly_one_argument() throws NoSuchMethodException {
         Method noArgs = JavaDataTableTypeDefinitionTest.class.getMethod("converts_nothing_to_string");
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(noArgs, lookup, new String[0]));
-        Method twoArgs = JavaDataTableTypeDefinitionTest.class.getMethod("converts_two_strings_to_string", String.class, String.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(twoArgs, lookup, new String[0]));
+        assertThrows(InvalidMethodSignatureException.class,
+            () -> new JavaDataTableTypeDefinition(noArgs, lookup, new String[0]));
+        Method twoArgs = JavaDataTableTypeDefinitionTest.class.getMethod("converts_two_strings_to_string", String.class,
+            String.class);
+        assertThrows(InvalidMethodSignatureException.class,
+            () -> new JavaDataTableTypeDefinition(twoArgs, lookup, new String[0]));
     }
 
     public String converts_nothing_to_string() {
@@ -162,7 +177,8 @@ class JavaDataTableTypeDefinitionTest {
     @Test
     void argument_must_match_existing_transformer() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_object_to_string", Object.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(method, lookup, new String[0]));
+        assertThrows(InvalidMethodSignatureException.class,
+            () -> new JavaDataTableTypeDefinition(method, lookup, new String[0]));
     }
 
     public String converts_object_to_string(Object string) {
@@ -172,7 +188,8 @@ class JavaDataTableTypeDefinitionTest {
     @Test
     void table_entry_transformer_must_have_map_of_strings() throws NoSuchMethodException {
         Method method = JavaDataTableTypeDefinitionTest.class.getMethod("converts_map_of_objects_to_string", Map.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDataTableTypeDefinition(method, lookup, new String[0]));
+        assertThrows(InvalidMethodSignatureException.class,
+            () -> new JavaDataTableTypeDefinition(method, lookup, new String[0]));
     }
 
     public String converts_map_of_objects_to_string(Map<Object, Object> entry) {
@@ -181,15 +198,12 @@ class JavaDataTableTypeDefinitionTest {
 
     @Test
     void static_methods_are_invoked_without_a_body() throws NoSuchMethodException {
-        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("static_convert_data_table_to_string", DataTable.class);
-        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookupForStaticMethod, new String[0]);
-        assertThat(definition.dataTableType().transform(dataTable.asLists()), is("static_convert_data_table_to_string=[[a, b], [c, d]]"));
+        Method method = JavaDataTableTypeDefinitionTest.class.getMethod("static_convert_data_table_to_string",
+            DataTable.class);
+        JavaDataTableTypeDefinition definition = new JavaDataTableTypeDefinition(method, lookupForStaticMethod,
+            new String[0]);
+        assertThat(definition.dataTableType().transform(dataTable.asLists()),
+            is("static_convert_data_table_to_string=[[a, b], [c, d]]"));
     }
-
-    public static String static_convert_data_table_to_string(DataTable table) {
-        return "static_convert_data_table_to_string=" + table.cells();
-    }
-
-
 
 }

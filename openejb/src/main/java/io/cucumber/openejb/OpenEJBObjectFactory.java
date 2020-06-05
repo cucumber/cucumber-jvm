@@ -6,6 +6,7 @@ import org.apache.openejb.OpenEjbContainer;
 import org.apiguardian.api.API;
 
 import javax.ejb.embeddable.EJBContainer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.Properties;
 
 @API(status = API.Status.STABLE)
 public final class OpenEJBObjectFactory implements ObjectFactory {
+
     private final List<String> classes = new ArrayList<String>();
     private final Map<Class<?>, Object> instances = new HashMap<Class<?>, Object>();
     private EJBContainer container;
@@ -22,7 +24,7 @@ public final class OpenEJBObjectFactory implements ObjectFactory {
     @Override
     public void start() {
         final StringBuilder callers = new StringBuilder();
-        for (Iterator<String> it = classes.iterator(); it.hasNext(); ) {
+        for (Iterator<String> it = classes.iterator(); it.hasNext();) {
             callers.append(it.next());
             if (it.hasNext()) {
                 callers.append(",");
@@ -62,5 +64,5 @@ public final class OpenEJBObjectFactory implements ObjectFactory {
         instances.put(type, object);
         return object;
     }
-}
 
+}

@@ -35,7 +35,10 @@ public final class Runner {
     private final TypeRegistryConfigurer typeRegistryConfigurer;
     private List<SnippetGenerator> snippetGenerators;
 
-    public Runner(EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, TypeRegistryConfigurer typeRegistryConfigurer, Options runnerOptions) {
+    public Runner(
+            EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory,
+            TypeRegistryConfigurer typeRegistryConfigurer, Options runnerOptions
+    ) {
         this.bus = bus;
         this.runnerOptions = runnerOptions;
         this.backends = backends;
@@ -59,7 +62,8 @@ public final class Runner {
             StepTypeRegistry stepTypeRegistry = createTypeRegistryForPickle(pickle);
             snippetGenerators = createSnippetGeneratorsForPickle(stepTypeRegistry);
 
-            buildBackendWorlds(); // Java8 step definitions will be added to the glue here
+            buildBackendWorlds(); // Java8 step definitions will be added to the
+                                  // glue here
 
             glue.prepareGlue(stepTypeRegistry);
 
@@ -69,14 +73,6 @@ public final class Runner {
             glue.removeScenarioScopedGlue();
             disposeBackendWorlds();
         }
-    }
-
-    private List<SnippetGenerator> createSnippetGeneratorsForPickle(StepTypeRegistry stepTypeRegistry) {
-        return backends.stream()
-            .map(Backend::getSnippet)
-            .filter(Objects::nonNull)
-            .map(s -> new SnippetGenerator(s, stepTypeRegistry.parameterTypeRegistry()))
-            .collect(Collectors.toList());
     }
 
     private StepTypeRegistry createTypeRegistryForPickle(Pickle pickle) {
@@ -89,15 +85,38 @@ public final class Runner {
         return stepTypeRegistry;
     }
 
+    private List<SnippetGenerator> createSnippetGeneratorsForPickle(StepTypeRegistry stepTypeRegistry) {
+        return backends.stream()
+                .map(Backend::getSnippet)
+                .filter(Objects::nonNull)
+                .map(s -> new SnippetGenerator(s, stepTypeRegistry.parameterTypeRegistry()))
+                .collect(Collectors.toList());
+    }
+
+    private void buildBackendWorlds() {
+        objectFactory.start();
+        for (Backend backend : backends) {
+            backend.buildWorld();
+        }
+    }
+
     private TestCase createTestCaseForPickle(Pickle pickle) {
         if (pickle.getSteps().isEmpty()) {
-            return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle, runnerOptions.isDryRun());
+            return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle,
+                runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
         List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickle.getTags());
         List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickle.getTags());
         return new TestCase(bus.generateId(), testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
+    }
+
+    private void disposeBackendWorlds() {
+        for (Backend backend : backends) {
+            backend.disposeWorld();
+        }
+        objectFactory.stop();
     }
 
     private List<PickleStepTestStep> createTestStepsForPickleSteps(Pickle pickle) {
@@ -107,10 +126,19 @@ public final class Runner {
             PickleStepDefinitionMatch match = matchStepToStepDefinition(pickle, step);
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
-            testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps, afterStepHookSteps, match));
+            testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps,
+                afterStepHookSteps, match));
         }
 
         return testSteps;
+    }
+
+    private List<HookTestStep> createTestStepsForBeforeHooks(List<String> tags) {
+        return createTestStepsForHooks(tags, glue.getBeforeHooks(), HookType.BEFORE);
+    }
+
+    private List<HookTestStep> createTestStepsForAfterHooks(List<String> tags) {
+        return createTestStepsForHooks(tags, glue.getAfterHooks(), HookType.AFTER);
     }
 
     private PickleStepDefinitionMatch matchStepToStepDefinition(Pickle pickle, Step step) {
@@ -121,12 +149,30 @@ public final class Runner {
             }
             List<String> snippets = generateSnippetsForStep(step);
             if (!snippets.isEmpty()) {
-                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), pickle.getScenarioLocation(), step.getLocation(), snippets));
+                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), pickle.getScenarioLocation(),
+                    step.getLocation(), snippets));
             }
             return new UndefinedPickleStepDefinitionMatch(pickle.getUri(), step);
         } catch (AmbiguousStepDefinitionsException e) {
             return new AmbiguousPickleStepDefinitionsMatch(pickle.getUri(), step, e);
         }
+    }
+
+    private List<HookTestStep> createAfterStepHooks(List<String> tags) {
+        return createTestStepsForHooks(tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
+    }
+
+    private List<HookTestStep> createBeforeStepHooks(List<String> tags) {
+        return createTestStepsForHooks(tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
+    }
+
+    private List<HookTestStep> createTestStepsForHooks(
+            List<String> tags, Collection<CoreHookDefinition> hooks, HookType hookType
+    ) {
+        return hooks.stream()
+                .filter(hook -> hook.matches(tags))
+                .map(hook -> new HookTestStep(bus.generateId(), hookType, new HookDefinitionMatch(hook)))
+                .collect(Collectors.toList());
     }
 
     private List<String> generateSnippetsForStep(Step step) {
@@ -138,40 +184,4 @@ public final class Runner {
         return snippets;
     }
 
-    private List<HookTestStep> createTestStepsForBeforeHooks(List<String> tags) {
-        return createTestStepsForHooks(tags, glue.getBeforeHooks(), HookType.BEFORE);
-    }
-
-    private List<HookTestStep> createTestStepsForAfterHooks(List<String> tags) {
-        return createTestStepsForHooks(tags, glue.getAfterHooks(), HookType.AFTER);
-    }
-
-    private List<HookTestStep> createTestStepsForHooks(List<String> tags, Collection<CoreHookDefinition> hooks, HookType hookType) {
-        return hooks.stream()
-            .filter(hook -> hook.matches(tags))
-            .map(hook -> new HookTestStep(bus.generateId(), hookType, new HookDefinitionMatch(hook)))
-            .collect(Collectors.toList());
-    }
-
-    private List<HookTestStep> createAfterStepHooks(List<String> tags) {
-        return createTestStepsForHooks(tags, glue.getAfterStepHooks(), HookType.AFTER_STEP);
-    }
-
-    private List<HookTestStep> createBeforeStepHooks(List<String> tags) {
-        return createTestStepsForHooks(tags, glue.getBeforeStepHooks(), HookType.BEFORE_STEP);
-    }
-
-    private void buildBackendWorlds() {
-        objectFactory.start();
-        for (Backend backend : backends) {
-            backend.buildWorld();
-        }
-    }
-
-    private void disposeBackendWorlds() {
-        for (Backend backend : backends) {
-            backend.disposeWorld();
-        }
-        objectFactory.stop();
-    }
 }

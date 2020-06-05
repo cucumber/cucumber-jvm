@@ -25,7 +25,8 @@ class JavaDocStringTypeDefinitionTest {
 
     private final DocString docString = DocString.create("some doc string", "text/plain");
     private final DocStringTypeRegistry registry = new DocStringTypeRegistry();
-    private final DocStringTypeRegistryDocStringConverter converter = new DocStringTypeRegistryDocStringConverter(registry);
+    private final DocStringTypeRegistryDocStringConverter converter = new DocStringTypeRegistryDocStringConverter(
+        registry);
 
     @Test
     void can_define_doc_string_converter() throws NoSuchMethodException {
@@ -43,7 +44,8 @@ class JavaDocStringTypeDefinitionTest {
     void must_have_exactly_one_argument() throws NoSuchMethodException {
         Method noArgs = JavaDocStringTypeDefinitionTest.class.getMethod("converts_nothing_to_string");
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDocStringTypeDefinition("", noArgs, lookup));
-        Method twoArgs = JavaDocStringTypeDefinitionTest.class.getMethod("converts_two_strings_to_string", String.class, String.class);
+        Method twoArgs = JavaDocStringTypeDefinitionTest.class.getMethod("converts_two_strings_to_string", String.class,
+            String.class);
         assertThrows(InvalidMethodSignatureException.class, () -> new JavaDocStringTypeDefinition("", twoArgs, lookup));
     }
 
@@ -60,12 +62,11 @@ class JavaDocStringTypeDefinitionTest {
         Method method = JavaDocStringTypeDefinitionTest.class.getMethod("converts_object_to_string", Object.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaDocStringTypeDefinition("", method, lookup)
-        );
+            () -> new JavaDocStringTypeDefinition("", method, lookup));
         assertThat(exception.getMessage(), startsWith("" +
-            "A @DocStringType annotated method must have one of these signatures:\n" +
-            " * public JsonNode json(String content)\n" +
-            "at io.cucumber.java.JavaDocStringTypeDefinitionTest.converts_object_to_string(java.lang.Object)"));
+                "A @DocStringType annotated method must have one of these signatures:\n" +
+                " * public JsonNode json(String content)\n" +
+                "at io.cucumber.java.JavaDocStringTypeDefinitionTest.converts_object_to_string(java.lang.Object)"));
     }
 
     public Object converts_object_to_string(Object object) {
@@ -82,4 +83,3 @@ class JavaDocStringTypeDefinitionTest {
     }
 
 }
-

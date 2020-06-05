@@ -8,6 +8,7 @@ import java.util.Objects;
 
 @API(status = API.Status.STABLE)
 public final class TestSourceRead extends TimeStampedEvent {
+
     private final URI uri;
     private final String source;
 
@@ -24,4 +25,5 @@ public final class TestSourceRead extends TimeStampedEvent {
     public URI getUri() {
         return uri;
     }
+
 }

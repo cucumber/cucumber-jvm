@@ -5,6 +5,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 public class IsByteString extends TypeSafeDiagnosingMatcher<ByteString> {
+
     private final ByteString expected;
 
     public IsByteString(ByteString expected) {
@@ -25,4 +26,5 @@ public class IsByteString extends TypeSafeDiagnosingMatcher<ByteString> {
         mismatchDescription.appendValue(actual);
         return false;
     }
+
 }

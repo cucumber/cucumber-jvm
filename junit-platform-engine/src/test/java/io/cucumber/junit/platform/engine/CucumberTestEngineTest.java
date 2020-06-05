@@ -31,7 +31,6 @@ class CucumberTestEngineTest {
         assertEquals(Optional.of("DEVELOPMENT"), engine.getVersion());
     }
 
-
     @Test
     void createExecutionContext() {
         EngineExecutionListener listener = new EmptyEngineExecutionListener();
@@ -46,8 +45,8 @@ class CucumberTestEngineTest {
     @Test
     void selectAndExecuteSingleScenario() {
         EngineExecutionResults result = EngineTestKit.engine("cucumber")
-            .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
-            .execute();
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute();
         assertEquals(2, result.testEvents().count()); // test start and finished
         assertEquals(1, result.testEvents().succeeded().count());
     }
@@ -55,15 +54,19 @@ class CucumberTestEngineTest {
     @Test
     void selectAndSkipDisabledScenario() {
         EngineExecutionResults result = EngineTestKit.engine("cucumber")
-            .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
-            .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/disabled.feature"))
-            .execute();
+                .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/disabled.feature"))
+                .execute();
         assertEquals(1, result.testEvents().count());
         assertEquals(1, result.testEvents().skipped().count());
-        assertEquals(Optional.of("'cucumber.filter.tags=( @Integration and not ( @Disabled ) )' did not match this scenario"), result.testEvents()
-            .skipped()
-            .map(event -> event.getPayload().get()) // replace with flatMap when above java 9
-            .findFirst());
+        assertEquals(
+            Optional.of("'cucumber.filter.tags=( @Integration and not ( @Disabled ) )' did not match this scenario"),
+            result.testEvents()
+                    .skipped()
+                    .map(event -> event.getPayload().get()) // replace with
+                                                            // flatMap when
+                                                            // above java 9
+                    .findFirst());
     }
 
 }

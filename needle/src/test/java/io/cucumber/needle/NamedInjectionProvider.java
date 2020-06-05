@@ -1,15 +1,14 @@
 package io.cucumber.needle;
 
-import javax.inject.Named;
-
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
 import de.akquinet.jbosscc.needle.injection.InjectionTargetInformation;
 
+import javax.inject.Named;
+
 /**
  * Needle Injection Provider for Instance with {@link Named} Annotation.
- * 
- * @param <T>
- *            target type.
+ *
+ * @param <T> target type.
  */
 public class NamedInjectionProvider<T> implements InjectionProvider<T> {
 
@@ -23,29 +22,25 @@ public class NamedInjectionProvider<T> implements InjectionProvider<T> {
     private final T value;
 
     /**
-     * Factory method for creating the provider.
-     * 
-     * @param name
-     *            name of interest
-     * @param value
-     *            value to encapsulate.
-     * @return provider encapsulating the value.
-     */
-    public static <T> NamedInjectionProvider<T> forNamedValue(final String name, final T value) {
-        return new NamedInjectionProvider<>(name, value);
-    }
-
-    /**
      * Constructs a provider for given @Named element encapsulating the value.
-     * 
-     * @param name
-     *            name of the interest.
-     * @param value
-     *            value to return.
+     *
+     * @param name  name of the interest.
+     * @param value value to return.
      */
     protected NamedInjectionProvider(final String name, final T value) {
         this.name = name;
         this.value = value;
+    }
+
+    /**
+     * Factory method for creating the provider.
+     *
+     * @param  name  name of interest
+     * @param  value value to encapsulate.
+     * @return       provider encapsulating the value.
+     */
+    public static <T> NamedInjectionProvider<T> forNamedValue(final String name, final T value) {
+        return new NamedInjectionProvider<>(name, value);
     }
 
     @Override
@@ -64,4 +59,5 @@ public class NamedInjectionProvider<T> implements InjectionProvider<T> {
                 && ((Named) injectionTargetInformation.getAnnotation(Named.class)).value().equals(name)
                 && value.getClass().isAssignableFrom(injectionTargetInformation.getType());
     }
+
 }

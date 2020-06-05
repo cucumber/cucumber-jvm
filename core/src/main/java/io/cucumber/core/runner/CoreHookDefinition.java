@@ -13,15 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 class CoreHookDefinition {
 
-    static CoreHookDefinition create(HookDefinition hookDefinition) {
-        // Ideally we would avoid this by keeping the scenario scoped
-        // glue in a different bucket from the globally scoped glue.
-        if (hookDefinition instanceof ScenarioScoped) {
-            return new ScenarioScopedCoreHookDefinition(hookDefinition);
-        }
-        return new CoreHookDefinition(UUID.randomUUID(), hookDefinition);
-    }
-
     private final UUID id;
     private final HookDefinition delegate;
     private final Expression tagExpression;
@@ -30,6 +21,15 @@ class CoreHookDefinition {
         this.id = requireNonNull(id);
         this.delegate = delegate;
         this.tagExpression = new TagExpressionParser().parse(delegate.getTagExpression());
+    }
+
+    static CoreHookDefinition create(HookDefinition hookDefinition) {
+        // Ideally we would avoid this by keeping the scenario scoped
+        // glue in a different bucket from the globally scoped glue.
+        if (hookDefinition instanceof ScenarioScoped) {
+            return new ScenarioScopedCoreHookDefinition(hookDefinition);
+        }
+        return new CoreHookDefinition(UUID.randomUUID(), hookDefinition);
     }
 
     void execute(TestCaseState scenario) {
@@ -61,9 +61,11 @@ class CoreHookDefinition {
     }
 
     static class ScenarioScopedCoreHookDefinition extends CoreHookDefinition implements ScenarioScoped {
+
         private ScenarioScopedCoreHookDefinition(HookDefinition delegate) {
             super(UUID.randomUUID(), delegate);
         }
 
     }
+
 }

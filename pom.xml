@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -12,31 +13,6 @@
     <description>Cucumber for the JVM</description>
     <url>http://cucumber.io/</url>
 
-    <developers>
-        <developer>
-            <id>ahellesoy</id>
-            <name>Aslak Hellesøy</name>
-            <email>aslak.hellesoy@gmail.com</email>
-            <organization>Cucumber</organization>
-            <organizationUrl>https://github.com/cucumber</organizationUrl>
-        </developer>
-        <developer>
-            <id>brasmusson</id>
-            <name>Björn Rasmusson</name>
-            <email>brasmusson@computer.org</email>
-            <organization>Cucumber</organization>
-            <organizationUrl>https://github.com/cucumber</organizationUrl>
-        </developer>
-        <developer>
-            <id>mpkorstanje</id>
-            <name>M.P. Korstanje</name>
-            <email>rien.korstanje@gmail.com</email>
-            <organization>Cucumber</organization>
-            <organizationUrl>https://github.com/cucumber</organizationUrl>
-        </developer>
-    </developers>
-
-
     <properties>
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
@@ -48,7 +24,7 @@
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
 
         <!--Dependencies -->
-        <cucumber-expressions.version>10.1.0</cucumber-expressions.version>
+        <cucumber-expressions.version>10.2.0</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>2.0.4</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
@@ -63,7 +39,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.3.3</mockito.version>
         <!--Maven plugins-->
-        <groovy.version>2.5.11</groovy.version>
+        <groovy.version>2.5.12</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -286,6 +262,33 @@
         </profile>
 
         <profile>
+            <id>spotless-apply</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- Apply code format by default -->
+                        <plugin>
+                            <groupId>com.diffplug.spotless</groupId>
+                            <artifactId>spotless-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>spotless-apply</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>apply</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
             <id>check-semantic-version</id>
             <build>
                 <plugins>
@@ -345,6 +348,54 @@
                     <execution>
                         <id>java11</id>
                         <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>0.3</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>highest-basedir</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <property>main.basedir</property>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Check code format -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Check style -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -567,6 +618,56 @@
                             <version>2.3.1</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>1.31.0</version>
+                    <configuration>
+                        <java>
+                            <eclipse>
+                                <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
+                            </eclipse>
+                            <importOrder>
+                                <file>${main.basedir}/.spotless/intelij-idea.importorder</file>
+                            </importOrder>
+                        </java>
+                    </configuration>
+                </plugin>
+
+                <!-- Check style -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.1.1</version>
+                    <configuration>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <checkstyleRules>
+                            <module name="Checker">
+                                <property name="severity" value="error" />
+                                <module name="TreeWalker">
+                                    <module name="AvoidStarImport"/>
+                                    <module name="JavadocMethod">
+                                        <property name="allowMissingParamTags" value="true" />
+                                        <property name="allowMissingReturnTag" value="true" />
+                                    </module>
+                                    <module name="NonEmptyAtclauseDescription" />
+                                    <module name="SuppressWarningsHolder" />
+                                    <module name="UnusedImports">
+                                        <property name="processJavadoc" value="true" />
+                                    </module>
+                                </module>
+                                <module name="SuppressWarningsFilter" />
+                                <module name="RegexpSingleline">
+                                    <property name="format" value="@author" />
+                                    <property name="message" value="Please do not use @author tags" />
+                                    <property name="fileExtensions" value="java,groovy,kt" />
+                                </module>
+                            </module>
+                        </checkstyleRules>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

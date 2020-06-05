@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep {
+
     private final URI uri;
     private final Step step;
     private final List<HookTestStep> afterStepHookSteps;
@@ -22,11 +23,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
         this(id, uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
-    PickleStepTestStep(UUID id, URI uri,
-                       Step step,
-                       List<HookTestStep> beforeStepHookSteps,
-                       List<HookTestStep> afterStepHookSteps,
-                       PickleStepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(
+            UUID id, URI uri,
+            Step step,
+            List<HookTestStep> beforeStepHookSteps,
+            List<HookTestStep> afterStepHookSteps,
+            PickleStepDefinitionMatch definitionMatch
+    ) {
         super(id, definitionMatch);
         this.uri = uri;
         this.step = step;
@@ -61,23 +64,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
+    public String getPattern() {
+        return definitionMatch.getPattern();
+    }
+
+    @Override
     public Step getStep() {
         return step;
-    }
-
-    @Override
-    public URI getUri() {
-        return uri;
-    }
-
-    @Override
-    public int getStepLine() {
-        return step.getLine();
-    }
-
-    @Override
-    public String getStepText() {
-        return step.getText();
     }
 
     @Override
@@ -91,7 +84,18 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    public String getPattern() {
-        return definitionMatch.getPattern();
+    public int getStepLine() {
+        return step.getLine();
     }
+
+    @Override
+    public URI getUri() {
+        return uri;
+    }
+
+    @Override
+    public String getStepText() {
+        return step.getText();
+    }
+
 }

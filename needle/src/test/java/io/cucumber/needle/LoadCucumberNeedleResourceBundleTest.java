@@ -23,10 +23,9 @@ class LoadCucumberNeedleResourceBundleTest {
     void shouldReturnEmptyResourceBundleWhenResourceDoesNotExist() {
         final ResourceBundle resourceBundle = function.apply("does-not-exist");
 
-        assertAll("Checking LoadResourceBundle",
+        assertAll(
             () -> assertThat(resourceBundle, is(notNullValue())),
-            () -> assertThat(resourceBundle, CoreMatchers.is(LoadResourceBundle.EMPTY_RESOURCE_BUNDLE))
-        );
+            () -> assertThat(resourceBundle, CoreMatchers.is(LoadResourceBundle.EMPTY_RESOURCE_BUNDLE)));
     }
 
     @Test
@@ -40,11 +39,10 @@ class LoadCucumberNeedleResourceBundleTest {
     void shouldAlwaysReturnEmptyForEmptyResourceBundle() {
         final ResourceBundle resourceBundle = LoadResourceBundle.EMPTY_RESOURCE_BUNDLE;
 
-        assertAll("Checking ResourceBundle",
+        assertAll(
             () -> assertThat(resourceBundle.getObject("foo"), is(notNullValue())),
             () -> assertThat(resourceBundle.getString("foo"), is("")),
-            () -> assertFalse(resourceBundle.getKeys().hasMoreElements())
-        );
+            () -> assertFalse(resourceBundle.getKeys().hasMoreElements()));
     }
 
     @Test

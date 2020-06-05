@@ -37,31 +37,33 @@ public class Main {
     /**
      * Launches the Cucumber-JVM command line.
      *
-     * @param argv        runtime options. See details in the {@code cucumber.api.cli.Usage.txt} resource.
-     * @param classLoader classloader used to load the runtime
-     * @return 0 if execution was successful, 1 if it was not (test failures)
+     * @param  argv        runtime options. See details in the
+     *                     {@code cucumber.api.cli.Usage.txt} resource.
+     * @param  classLoader classloader used to load the runtime
+     * @return             0 if execution was successful, 1 if it was not (test
+     *                     failures)
      */
     public static byte run(String[] argv, ClassLoader classLoader) {
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
-            .parse(CucumberProperties.fromPropertiesFile())
-            .build();
+                .parse(CucumberProperties.fromPropertiesFile())
+                .build();
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser()
-            .parse(CucumberProperties.fromEnvironment())
-            .build(propertiesFileOptions);
+                .parse(CucumberProperties.fromEnvironment())
+                .build(propertiesFileOptions);
 
         RuntimeOptions systemOptions = new CucumberPropertiesParser()
-            .parse(CucumberProperties.fromSystemProperties())
-            .build(environmentOptions);
+                .parse(CucumberProperties.fromSystemProperties())
+                .build(environmentOptions);
 
         CommandlineOptionsParser commandlineOptionsParser = new CommandlineOptionsParser(System.out);
         RuntimeOptions runtimeOptions = commandlineOptionsParser
-            .parse(argv)
-            .addDefaultGlueIfAbsent()
-            .addDefaultFeaturePathIfAbsent()
-            .addDefaultFormatterIfAbsent()
-            .addDefaultSummaryPrinterIfAbsent()
-            .build(systemOptions);
+                .parse(argv)
+                .addDefaultGlueIfAbsent()
+                .addDefaultFeaturePathIfAbsent()
+                .addDefaultFormatterIfAbsent()
+                .addDefaultSummaryPrinterIfAbsent()
+                .build(systemOptions);
 
         Optional<Byte> exitStatus = commandlineOptionsParser.exitStatus();
         if (exitStatus.isPresent()) {
@@ -69,11 +71,12 @@ public class Main {
         }
 
         final Runtime runtime = Runtime.builder()
-            .withRuntimeOptions(runtimeOptions)
-            .withClassLoader(() -> classLoader)
-            .build();
+                .withRuntimeOptions(runtimeOptions)
+                .withClassLoader(() -> classLoader)
+                .build();
 
         runtime.run();
         return runtime.exitStatus();
     }
+
 }

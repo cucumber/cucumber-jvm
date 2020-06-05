@@ -59,7 +59,7 @@ class ClasspathSupportTest {
         assertEquals("com.example.app.App", fqn);
     }
 
-  @Test
+    @Test
     void determineFullyQualifiedClassNameFromRootPackage() {
         Path baseDir = Paths.get("path", "to");
         String basePackageName = "";
@@ -68,7 +68,7 @@ class ClasspathSupportTest {
         assertEquals("com.example.app.App", fqn);
     }
 
-  @Test
+    @Test
     void determineFullyQualifiedClassNameFromComPackage() {
         Path baseDir = Paths.get("path", "to", "com");
         String basePackageName = "com";
@@ -103,4 +103,5 @@ class ClasspathSupportTest {
         URI fqn = ClasspathSupport.determineClasspathResourceUri(baseDir, basePackageName, resourceFile);
         assertEquals(URI.create("classpath:com/example/app/app.feature"), fqn);
     }
+
 }

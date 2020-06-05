@@ -44,22 +44,26 @@ final class GlueAdaptor {
             boolean useForSnippets = parameterType.useForSnippets();
             boolean preferForRegexMatch = parameterType.preferForRegexMatch();
             boolean useRegexpMatchAsStrongTypeHint = parameterType.useRegexpMatchAsStrongTypeHint();
-            glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets, preferForRegexMatch, useRegexpMatchAsStrongTypeHint, lookup));
+            glue.addParameterType(new JavaParameterTypeDefinition(name, pattern, method, useForSnippets,
+                preferForRegexMatch, useRegexpMatchAsStrongTypeHint, lookup));
         } else if (annotationType.equals(DataTableType.class)) {
             DataTableType dataTableType = (DataTableType) annotation;
-            glue.addDataTableType(new JavaDataTableTypeDefinition(method, lookup, dataTableType.replaceWithEmptyString()));
+            glue.addDataTableType(
+                new JavaDataTableTypeDefinition(method, lookup, dataTableType.replaceWithEmptyString()));
         } else if (annotationType.equals(DefaultParameterTransformer.class)) {
             glue.addDefaultParameterTransformer(new JavaDefaultParameterTransformerDefinition(method, lookup));
         } else if (annotationType.equals(DefaultDataTableEntryTransformer.class)) {
             DefaultDataTableEntryTransformer transformer = (DefaultDataTableEntryTransformer) annotation;
             boolean headersToProperties = transformer.headersToProperties();
             String[] replaceWithEmptyString = transformer.replaceWithEmptyString();
-            glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup, headersToProperties, replaceWithEmptyString));
+            glue.addDefaultDataTableEntryTransformer(new JavaDefaultDataTableEntryTransformerDefinition(method, lookup,
+                headersToProperties, replaceWithEmptyString));
         } else if (annotationType.equals(DefaultDataTableCellTransformer.class)) {
             DefaultDataTableCellTransformer cellTransformer = (DefaultDataTableCellTransformer) annotation;
             String[] emptyPatterns = cellTransformer.replaceWithEmptyString();
-            glue.addDefaultDataTableCellTransformer(new JavaDefaultDataTableCellTransformerDefinition(method, lookup, emptyPatterns));
-        } else if (annotationType.equals(DocStringType.class)){
+            glue.addDefaultDataTableCellTransformer(
+                new JavaDefaultDataTableCellTransformerDefinition(method, lookup, emptyPatterns));
+        } else if (annotationType.equals(DocStringType.class)) {
             DocStringType docStringType = (DocStringType) annotation;
             String contentType = docStringType.contentType();
             glue.addDocStringType(new JavaDocStringTypeDefinition(contentType, method, lookup));
@@ -75,4 +79,5 @@ final class GlueAdaptor {
             throw new IllegalStateException(e);
         }
     }
+
 }

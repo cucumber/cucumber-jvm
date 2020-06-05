@@ -27,6 +27,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -54,6 +55,7 @@ public final class TestNGFormatter implements EventListener {
     private final Element results;
     private final Element suite;
     private final Element test;
+    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
     private Element clazz;
     private Element root;
     private TestCase testCase;
@@ -61,7 +63,6 @@ public final class TestNGFormatter implements EventListener {
     private String previousTestCaseName;
     private int exampleNumber;
     private Instant started;
-    private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
 
     public TestNGFormatter(OutputStream out) {
         this.writer = new UTF8OutputStreamWriter(out);
@@ -113,17 +114,16 @@ public final class TestNGFormatter implements EventListener {
 
     private String findRootNodeName(io.cucumber.plugin.event.TestCase testCase) {
         Location location = testCase.getLocation();
-        Predicate<Node> withLocation = candidate ->
-            candidate.getLocation().equals(location);
+        Predicate<Node> withLocation = candidate -> candidate.getLocation().equals(location);
         return parsedTestSources.get(testCase.getUri())
-            .stream()
-            .map(node -> node.findPathTo(withLocation))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .findFirst()
-            .map(nodes -> nodes.get(0))
-            .flatMap(Node::getName)
-            .orElse("Unknown");
+                .stream()
+                .map(node -> node.findPathTo(withLocation))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .map(nodes -> nodes.get(0))
+                .flatMap(Node::getName)
+                .orElse("Unknown");
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -241,11 +241,13 @@ public final class TestNGFormatter implements EventListener {
             if (failed != null) {
                 element.setAttribute("status", "FAIL");
                 String stacktrace = printStackTrace(failed.getError());
-                Element exception = createException(doc, failed.getError().getClass().getName(), stringBuilder.toString(), stacktrace);
+                Element exception = createException(doc, failed.getError().getClass().getName(),
+                    stringBuilder.toString(), stacktrace);
                 element.appendChild(exception);
             } else if (skipped != null) {
                 element.setAttribute("status", "FAIL");
-                Element exception = createException(doc, "The scenario has pending or undefined step(s)", stringBuilder.toString(), "The scenario has pending or undefined step(s)");
+                Element exception = createException(doc, "The scenario has pending or undefined step(s)",
+                    stringBuilder.toString(), "The scenario has pending or undefined step(s)");
                 element.appendChild(exception);
             } else {
                 element.setAttribute("status", "PASS");
@@ -296,5 +298,7 @@ public final class TestNGFormatter implements EventListener {
 
             return exceptionElement;
         }
+
     }
+
 }

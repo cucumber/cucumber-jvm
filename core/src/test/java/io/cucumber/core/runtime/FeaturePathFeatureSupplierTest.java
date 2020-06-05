@@ -15,15 +15,17 @@ import java.util.function.Supplier;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FeaturePathFeatureSupplierTest {
 
-    private LogRecordListener logRecordListener;
     private final Supplier<ClassLoader> classLoader = FeaturePathFeatureSupplierTest.class::getClassLoader;
     private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
+    private LogRecordListener logRecordListener;
 
     @BeforeEach
     void setup() {
@@ -43,9 +45,10 @@ class FeaturePathFeatureSupplierTest {
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         supplier.get();
         assertAll(
-            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("No features found at file:")),
-            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("src/test/resources/io/cucumber/core/options"))
-        );
+            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
+                containsString("No features found at file:")),
+            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
+                containsString("src/test/resources/io/cucumber/core/options")));
     }
 
     @Test
@@ -54,7 +57,8 @@ class FeaturePathFeatureSupplierTest {
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         supplier.get();
-        assertThat(logRecordListener.getLogRecords().get(1).getMessage(), containsString("Got no path to feature directory or feature file"));
+        assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
+            containsString("Got no path to feature directory or feature file"));
     }
 
     @Test
@@ -63,9 +67,20 @@ class FeaturePathFeatureSupplierTest {
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            supplier::get
-        );
-        assertThat(exception.getMessage(), containsString("path must exist"));
+            supplier::get);
+        assertThat(exception.getMessage(), startsWith("path must exist: "));
+    }
+
+    @Test
+    void throws_if_feature_is_empty() {
+        Options featureOptions = () -> singletonList(
+            FeaturePath.parse("classpath:io/cucumber/core/runtime/empty.feature"));
+        FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            supplier::get);
+
+        assertThat(exception.getMessage(), is("Feature not found: classpath:io/cucumber/core/runtime/empty.feature"));
     }
 
     @Test
@@ -74,9 +89,9 @@ class FeaturePathFeatureSupplierTest {
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
-            supplier::get
-        );
-        assertThat(exception.getMessage(), containsString("Feature not found"));
+            supplier::get);
+
+        assertThat(exception.getMessage(), is("Feature not found: classpath:no-such.feature"));
     }
 
 }

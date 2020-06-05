@@ -2,6 +2,7 @@ package io.cucumber.deltaspike;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -31,4 +32,5 @@ public class BellyStepDefinitions {
         assertEquals(n, belly.getCukes());
         assertTrue(inTheBelly);
     }
+
 }

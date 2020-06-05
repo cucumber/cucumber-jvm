@@ -14,13 +14,6 @@ class FunctionNameGeneratorTest {
     private final FunctionNameGenerator underscore = new FunctionNameGenerator(SnippetType.UNDERSCORE.joiner());
     private final FunctionNameGenerator camelCase = new FunctionNameGenerator(SnippetType.CAMELCASE.joiner());
 
-    private void assertFunctionNames(String expectedUnderscore, String expectedCamelCase, String sentence) {
-        assertAll("Checking FunctionNameGenerator",
-            () -> assertThat(underscore.generateFunctionName(sentence), is(equalTo(expectedUnderscore))),
-            () -> assertThat(camelCase.generateFunctionName(sentence), is(equalTo(expectedCamelCase)))
-        );
-    }
-
     @Test
     void testSanitizeEmptyFunctionName() {
         Executable testMethod = () -> underscore.generateFunctionName("");
@@ -34,6 +27,12 @@ class FunctionNameGeneratorTest {
             "test_function_123",
             "testFunction123",
             ".test function 123 ");
+    }
+
+    private void assertFunctionNames(String expectedUnderscore, String expectedCamelCase, String sentence) {
+        assertAll(
+            () -> assertThat(underscore.generateFunctionName(sentence), is(equalTo(expectedUnderscore))),
+            () -> assertThat(camelCase.generateFunctionName(sentence), is(equalTo(expectedCamelCase))));
     }
 
     @Test

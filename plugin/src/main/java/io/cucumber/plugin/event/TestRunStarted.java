@@ -10,4 +10,5 @@ public final class TestRunStarted extends TimeStampedEvent {
     public TestRunStarted(Instant timeInstant) {
         super(timeInstant);
     }
+
 }

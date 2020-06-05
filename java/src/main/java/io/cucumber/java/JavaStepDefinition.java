@@ -14,9 +14,11 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
     private final String expression;
     private final List<ParameterInfo> parameterInfos;
 
-    JavaStepDefinition(Method method,
-                       String expression,
-                       Lookup lookup) {
+    JavaStepDefinition(
+            Method method,
+            String expression,
+            Lookup lookup
+    ) {
         super(method, lookup);
         this.parameterInfos = JavaParameterInfo.fromMethod(method);
         this.expression = requireNonNull(expression, "cucumber-expression may not be null");
@@ -28,13 +30,13 @@ final class JavaStepDefinition extends AbstractGlueDefinition implements StepDef
     }
 
     @Override
-    public String getPattern() {
-        return expression;
+    public List<ParameterInfo> parameterInfos() {
+        return parameterInfos;
     }
 
     @Override
-    public List<ParameterInfo> parameterInfos() {
-        return parameterInfos;
+    public String getPattern() {
+        return expression;
     }
 
 }

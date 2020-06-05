@@ -7,14 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 class TestStepResultStatus {
-    private static final Map<Status, Messages.TestStepFinished.TestStepResult.Status> STATUS = new HashMap<Status, Messages.TestStepFinished.TestStepResult.Status>() {{
-        put(Status.FAILED, Messages.TestStepFinished.TestStepResult.Status.FAILED);
-        put(Status.PASSED, Messages.TestStepFinished.TestStepResult.Status.PASSED);
-        put(Status.UNDEFINED, Messages.TestStepFinished.TestStepResult.Status.UNDEFINED);
-        put(Status.PENDING, Messages.TestStepFinished.TestStepResult.Status.PENDING);
-        put(Status.SKIPPED, Messages.TestStepFinished.TestStepResult.Status.SKIPPED);
-        put(Status.AMBIGUOUS, Messages.TestStepFinished.TestStepResult.Status.AMBIGUOUS);
-    }};
+
+    private static final Map<Status, Messages.TestStepFinished.TestStepResult.Status> STATUS = new HashMap<Status, Messages.TestStepFinished.TestStepResult.Status>() {
+        {
+            put(Status.FAILED, Messages.TestStepFinished.TestStepResult.Status.FAILED);
+            put(Status.PASSED, Messages.TestStepFinished.TestStepResult.Status.PASSED);
+            put(Status.UNDEFINED, Messages.TestStepFinished.TestStepResult.Status.UNDEFINED);
+            put(Status.PENDING, Messages.TestStepFinished.TestStepResult.Status.PENDING);
+            put(Status.SKIPPED, Messages.TestStepFinished.TestStepResult.Status.SKIPPED);
+            put(Status.AMBIGUOUS, Messages.TestStepFinished.TestStepResult.Status.AMBIGUOUS);
+        }
+    };
 
     private TestStepResultStatus() {
     }

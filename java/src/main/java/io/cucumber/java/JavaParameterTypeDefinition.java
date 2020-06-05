@@ -14,7 +14,10 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
 
     private final ParameterType<Object> parameterType;
 
-    JavaParameterTypeDefinition(String name, String pattern, Method method, boolean useForSnippets, boolean preferForRegexpMatch, boolean useRegexpMatchAsStrongTypeHint, Lookup lookup) {
+    JavaParameterTypeDefinition(
+            String name, String pattern, Method method, boolean useForSnippets, boolean preferForRegexpMatch,
+            boolean useRegexpMatchAsStrongTypeHint, Lookup lookup
+    ) {
         super(requireValidMethod(method), lookup);
         this.parameterType = new ParameterType<>(
             name.isEmpty() ? method.getName() : name,
@@ -23,8 +26,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
             this::execute,
             useForSnippets,
             preferForRegexpMatch,
-            useRegexpMatchAsStrongTypeHint
-        );
+            useRegexpMatchAsStrongTypeHint);
     }
 
     private static Method requireValidMethod(Method method) {
@@ -54,31 +56,31 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
         return method;
     }
 
-    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
-            .addAnnotation(io.cucumber.java.ParameterType.class)
-            .addSignature("public Author parameterName(String all)")
-            .addSignature("public Author parameterName(String captureGroup1, String captureGroup2, ...ect )")
-            .addSignature("public Author parameterName(String... captureGroups)")
-            .addNote("Note: Author is an example of the class you want to convert captureGroups to")
-            .build();
-    }
-
-    @Override
-    public ParameterType<?> parameterType() {
-        return parameterType;
-    }
-
     private Object execute(String[] captureGroups) {
         Object[] args;
 
         if (String[].class.equals(method.getParameterTypes()[0])) {
-            args = new Object[][]{captureGroups};
+            args = new Object[][] { captureGroups };
         } else {
             args = captureGroups;
         }
 
         return invokeMethod(args);
+    }
+
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
+        return builder(method)
+                .addAnnotation(io.cucumber.java.ParameterType.class)
+                .addSignature("public Author parameterName(String all)")
+                .addSignature("public Author parameterName(String captureGroup1, String captureGroup2, ...ect )")
+                .addSignature("public Author parameterName(String... captureGroups)")
+                .addNote("Note: Author is an example of the class you want to convert captureGroups to")
+                .build();
+    }
+
+    @Override
+    public ParameterType<?> parameterType() {
+        return parameterType;
     }
 
 }

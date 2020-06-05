@@ -13,6 +13,7 @@ public class Available extends WebPage {
     }
 
     public int getAvailableCars() {
-        return ((Application)getApplication()).getNumberOfAvailableCars();
+        return ((Application) getApplication()).getNumberOfAvailableCars();
     }
+
 }

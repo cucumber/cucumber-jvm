@@ -36,15 +36,13 @@ public final class DocStringTypeRegistryDocStringConverter implements DocStringC
         if (docString.getContentType() == null) {
             throw new CucumberDocStringException(format(
                 "It appears you did not register docstring type for %s",
-                targetType.getTypeName()
-            ));
+                targetType.getTypeName()));
         }
 
         throw new CucumberDocStringException(format(
             "It appears you did not register docstring type for '%s' or %s",
             docString.getContentType(),
-            targetType.getTypeName()
-        ));
+            targetType.getTypeName()));
     }
 
 }

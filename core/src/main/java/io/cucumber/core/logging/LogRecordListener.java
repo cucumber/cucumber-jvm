@@ -16,4 +16,5 @@ public final class LogRecordListener {
     public List<LogRecord> getLogRecords() {
         return Arrays.asList(logRecords.toArray(new LogRecord[0]));
     }
+
 }

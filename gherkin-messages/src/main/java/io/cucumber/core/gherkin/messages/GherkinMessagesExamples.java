@@ -20,13 +20,18 @@ final class GherkinMessagesExamples implements Node.Examples {
         this.location = GherkinMessagesLocation.from(examples.getLocation());
         AtomicInteger row = new AtomicInteger(1);
         this.children = examples.getTableBodyList().stream()
-            .map(tableRow -> new GherkinMessagesExample(tableRow, row.getAndIncrement()))
-            .collect(Collectors.toList());
+                .map(tableRow -> new GherkinMessagesExample(tableRow, row.getAndIncrement()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Collection<Example> elements() {
         return children;
+    }
+
+    @Override
+    public Location getLocation() {
+        return location;
     }
 
     @Override
@@ -38,11 +43,6 @@ final class GherkinMessagesExamples implements Node.Examples {
     public Optional<String> getName() {
         String name = examples.getName();
         return name.isEmpty() ? Optional.empty() : Optional.of(name);
-    }
-
-    @Override
-    public Location getLocation() {
-        return location;
     }
 
 }

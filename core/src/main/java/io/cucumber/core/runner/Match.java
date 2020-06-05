@@ -24,4 +24,5 @@ abstract class Match {
     public String getLocation() {
         return location;
     }
+
 }
