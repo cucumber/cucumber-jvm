@@ -12,15 +12,18 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CucumberPropertiesParserTest {
@@ -68,6 +71,20 @@ class CucumberPropertiesParserTest {
         assertThat(options.getFeaturePaths(), contains(
             URI.create("classpath:com/example/app.feature"),
             URI.create("classpath:com/example/other.feature")));
+    }
+
+    @Test
+    void should_parse_features_and_preserve_existing_tag_filters() {
+        RuntimeOptions existing = RuntimeOptions.defaultOptions();
+        existing.setTagExpressions(Collections.singletonList("@example"));
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example.feature");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build(existing);
+
+        assertAll(
+                () -> assertThat(options.getFeaturePaths(), contains(
+                        URI.create("classpath:com/example.feature"))),
+                () -> assertThat(options.getTagExpressions(), contains("@example"))
+        );
     }
 
     @Test
@@ -147,6 +164,18 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("classpath:path/to.feature")));
+    }
+
+    @Test
+    void should_parse_rerun_file_and_remove_existing_tag_filters() throws IOException {
+        RuntimeOptions existing = RuntimeOptions.defaultOptions();
+        existing.setTagExpressions(Collections.singletonList("@example"));
+        Path path = mockFileResource("classpath:path/to.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertAll(
+                () -> assertThat(options.getFeaturePaths(), contains(URI.create("classpath:path/to.feature"))),
+                () -> assertThat(options.getTagExpressions(), not(contains("@example"))));
     }
 
     private Path mockFileResource(String... contents) throws IOException {

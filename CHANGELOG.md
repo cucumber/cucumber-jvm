@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Spring] Require an active scenario before creating beans ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
  * [Core] Fix NPE in `CucumberExecutionContext.emitMeta` when in a shaded jar (M.P. Korstanje)
  * [Core] Fix line filter for scenario outlines ([#1981](https://github.com/cucumber/cucumber-jvm/issues/1981) M.P. Korstanje)
+ * [Core] cucumber.feature preserves tags when used with a feature argument  ([#1986](https://github.com/cucumber/cucumber-jvm/issues/1986) M.P. Korstanje)
+
 ## [6.0.0-RC2] (2020-05-03)
 
 ### Added

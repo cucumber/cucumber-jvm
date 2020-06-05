@@ -67,7 +67,7 @@ public final class CucumberPropertiesParser {
             builder::addFeature);
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
-            splitAndMap(CucumberPropertiesParser::parseRerunFile),
+            splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFile),
             builder::addRerun);
 
         parse(properties,
@@ -159,12 +159,12 @@ public final class CucumberPropertiesParser {
                 .collect(toList());
     }
 
-    private static Collection<FeatureWithLines> parseRerunFile(String property) {
+    private static Stream<Collection<FeatureWithLines>> parseRerunFile(String property) {
         if (property.startsWith("@")) {
             Path rerunFile = Paths.get(property.substring(1));
-            return parseFeatureWithLinesFile(rerunFile);
+            return Stream.of(parseFeatureWithLinesFile(rerunFile));
         }
-        return Collections.emptyList();
+        return Stream.empty();
     }
 
 }
