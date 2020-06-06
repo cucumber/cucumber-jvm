@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-## [6.0.0] (2020-06-07)
+## [6.0.0] (2020-06-07) - [Release Notes](release-notes/v6.0.0.md)
 
 ### Added
 * [Spring] Add `@ScenarioScope` annotation ([#1974](https://github.com/cucumber/cucumber-jvm/issues/1974) M.P. Korstanje)
