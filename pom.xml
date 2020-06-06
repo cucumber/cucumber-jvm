@@ -604,12 +604,12 @@
                                     <justification>Internal API</justification>
                                 </item>
                                 <item>
-                                    <code>java.class.java.class.nonPublicPartOfAPI</code>
+                                    <code>java.class.nonPublicPartOfAPI</code>
                                     <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
                                     <justification>Internal API</justification>
                                 </item>
                                 <item>
-                                    <code>java.class.java.class.nonPublicPartOfAPI</code>
+                                    <code>java.class.nonPublicPartOfAPI</code>
                                     <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
                                     <justification>Internal API</justification>
                                 </item>
