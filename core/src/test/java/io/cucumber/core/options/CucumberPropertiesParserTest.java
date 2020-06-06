@@ -81,10 +81,9 @@ class CucumberPropertiesParserTest {
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build(existing);
 
         assertAll(
-                () -> assertThat(options.getFeaturePaths(), contains(
-                        URI.create("classpath:com/example.feature"))),
-                () -> assertThat(options.getTagExpressions(), contains("@example"))
-        );
+            () -> assertThat(options.getFeaturePaths(), contains(
+                URI.create("classpath:com/example.feature"))),
+            () -> assertThat(options.getTagExpressions(), contains("@example")));
     }
 
     @Test
@@ -174,8 +173,8 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertAll(
-                () -> assertThat(options.getFeaturePaths(), contains(URI.create("classpath:path/to.feature"))),
-                () -> assertThat(options.getTagExpressions(), not(contains("@example"))));
+            () -> assertThat(options.getFeaturePaths(), contains(URI.create("classpath:path/to.feature"))),
+            () -> assertThat(options.getTagExpressions(), not(contains("@example"))));
     }
 
     private Path mockFileResource(String... contents) throws IOException {
