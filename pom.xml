@@ -561,16 +561,15 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.11.3</version>
+                    <version>0.11.5</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.20.0</version>
+                            <version>0.21.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
-                        <oldVersion>5.6.0</oldVersion>
                         <analysisConfiguration>
                             <revapi.semver.ignore>
                                 <enabled>true</enabled>
@@ -597,6 +596,39 @@
                                     <code>java.class.nonPublicPartOfAPI</code>
                                     <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
                                     </newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.missing.oldClass</code>
+                                    <old>missing-class io\.cucumber\.messages\..*</old>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.missing.oldClass</code>
+                                    <old>.*\.internal\..*</old>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <new>.*\.internal\..*</new>
                                     <justification>Internal API</justification>
                                 </item>
                             </revapi.ignore>
