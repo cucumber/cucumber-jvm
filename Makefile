@@ -51,5 +51,6 @@ release: default update-changelog .commit-and-push-changelog
 	git checkout "v$(NEW_VERSION)"
 	mvn deploy -P-examples -P-compatibility -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
 	git checkout $(CURRENT_BRANCH)
+	git fetch
 .PHONY: release
 
