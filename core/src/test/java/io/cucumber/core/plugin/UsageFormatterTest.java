@@ -122,7 +122,7 @@ class UsageFormatterTest {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
-        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L),
+        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(1234567800L),
             "location.feature");
         stepContainer.getDurations().addAll(singletonList(stepDuration));
         usageFormatter.usageMap.put("a (.*)", singletonList(stepContainer));
@@ -137,12 +137,12 @@ class UsageFormatterTest {
                 "      {\n" +
                 "        \"name\": \"a step\",\n" +
                 "        \"aggregatedDurations\": {\n" +
-                "          \"median\": 0.012345678,\n" +
-                "          \"average\": 0.012345678\n" +
+                "          \"median\": 1.2345678,\n" +
+                "          \"average\": 1.2345678\n" +
                 "        },\n" +
                 "        \"durations\": [\n" +
                 "          {\n" +
-                "            \"duration\": 0.012345678,\n" +
+                "            \"duration\": 1.2345678,\n" +
                 "            \"location\": \"location.feature\"\n" +
                 "          }\n" +
                 "        ]\n" +
