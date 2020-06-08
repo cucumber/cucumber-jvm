@@ -65,7 +65,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
+                            <target unless="maven.test.skip">
                                 <echo message="Running CLI test for picocontainer" />
                                 <java classname="io.cucumber.core.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
                                 </java>
