@@ -86,7 +86,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     private Gson gson() {
         JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
-                jsonSerializationContext) -> new JsonPrimitive((double) duration.getNano() / NANOS_PER_SECOND);
+                jsonSerializationContext) -> new JsonPrimitive((double) duration.toNanos() / NANOS_PER_SECOND);
 
         return new GsonBuilder()
                 .registerTypeAdapter(Duration.class, durationJsonSerializer)
