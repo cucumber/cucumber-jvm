@@ -1,7 +1,8 @@
 Cucumber Java
 =============
 
-Provides annotation based step definitions. To use add the `cucumber-java` dependency to your pom.xml:
+Provides annotation based step definitions. To use add the `cucumber-java` 
+dependency to your pom.xml:
 
 ```xml
 <dependencies>
@@ -18,8 +19,12 @@ Provides annotation based step definitions. To use add the `cucumber-java` depen
 
 ## Step Definitions
 
-Declare a step definition by annotating a method. It is possible use the same method for multiple steps by repeating
-the annotation. For localized annotations import the annotations from `io.cucumber.java.<ISO2 Language Code>.*`
+Declare a step definition by annotating a method. It is possible use the same
+method for multiple steps by repeating the annotation. For localized annotations
+import the annotations from `io.cucumber.java.<ISO2 Language Code>.*`
+
+Step definitions can take either a 
+[Cucumber Expression or a regular expression](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions).
 
 ```java
 package com.example.app;
@@ -30,7 +35,7 @@ import io.cucumber.java.en.When;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CalculatorSteps{
+public class CalculatorStepDefinitions {
     private RpnCalculator calc;
 
     @Given("a calculator I just turned on")
@@ -52,10 +57,50 @@ public class CalculatorSteps{
 }
 ```
 
+### Data tables
+
+Data tables from Gherkin can be accessed by using the `DataTable` object as a
+parameter.
+
+```java
+package com.example.app;
+
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Given;
+
+public class StepDefinitions {
+    
+    @Given("a datatable:")
+    public void a_data_table(DataTable dataTable){
+        
+    }
+}
+```
+### Doc strings
+
+Doc strings from Gherkin can be accessed by using the `DocString` object as a
+parameter.
+
+```java
+package com.example.app;
+
+import io.cucumber.docstring.DocString;
+import io.cucumber.java.en.Given;
+
+public class StepDefinitions {
+    
+    @Given("a docstring:")
+    public void a_data_table(DocString docString){
+        
+    }
+}
+```
+
 ## Hooks
 
-Declare hooks that will be executed before/after each scenario/step by annotating a method. The method may declare an
-argument of type `io.cucumber.java.Scenario`.
+Declare hooks that will be executed before/after each scenario/step by
+annotating a method. The method may declare an argument of type 
+`io.cucumber.java.Scenario`.
 
  * `@Before` 
  * `@After`
@@ -64,10 +109,14 @@ argument of type `io.cucumber.java.Scenario`.
  
 ## Transformers 
 
+Cucumber expression parameters, data tables and docs strings can be transformed
+into arbitrary java objects.
+
 ### Parameter Type
 
-Step definition parameter types can be declared by using `@ParameterType`. The name of the annotated method will be used
-as the parameter name.
+Parameter types used by Cucumber expressions can be declared by using
+`@ParameterType`. The name of the annotated method will be used as the parameter
+name.
 
 ```java
 package com.example.app;
@@ -77,7 +126,7 @@ import io.cucumber.java.en.Given;
 
 import java.time.LocalDate;
 
-public class Steps {
+public class StepDefinitions {
 
     @ParameterType("([0-9]{4})-([0-9]{2})-([0-9]{2})")
     public LocalDate iso8601Date(String year, String month, String day) {
@@ -93,15 +142,14 @@ public class Steps {
 
 ### Data Table Type
 
-Data table types can be declared by annotating a method with `@DataTableType`. 
-Depending on the parameter type this will be either a: 
- * `String` -> `io.cucumber.datatable.TableCellTranformer`
- * `Map<String,String>` -> `io.cucumber.datatable.TableEntryTransformer`
- * `List<String` -> `io.cucumber.datatable.TableRowTranformer`
- * `DataTable` -> `io.cucumber.datatable.TableTransformer`
+Using a data table type will allow you to convert   
 
-For a full list of transformations that can be achieved with data table types
-see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+```feature
+    Given a list of authors in a table
+      | firstName   | lastName | birthDate  |
+      | Annie M. G. | Schmidt  | 1911-03-20 |
+      | Roald       | Dahl     | 1916-09-13 |
+```
 
 ```java
 package com.example.app;
@@ -112,7 +160,7 @@ import io.cucumber.java.DataTableType;
 import java.util.List;
 import java.util.Map;
 
-public class Steps {
+public class StepDefinitions {
 
     @DataTableType
     public Author authorEntryTransformer(Map<String, String> entry) {
@@ -121,22 +169,29 @@ public class Steps {
             entry.get("lastName"),
             entry.get("birthDate"));
     }
-    
-    @DataTableType
-    public Author authorEntryTransformer(List<String> row) {
-        return new Author(
-            row.get(0),
-            row.get(0),
-            row.get(0));
+
+    @Given("a list of authors in a table")
+    public void aListOfAuthorsInATable(List<Author> authors) {
+        
     }
 }
-
 ```
+
+Data table types can be declared by annotating a method with `@DataTableType`. 
+Depending on the parameter type this will be either a: 
+ * `String` -> `io.cucumber.datatable.TableCellTranformer`
+ * `Map<String,String>` -> `io.cucumber.datatable.TableEntryTransformer`
+ * `List<String` -> `io.cucumber.datatable.TableRowTranformer`
+ * `DataTable` -> `io.cucumber.datatable.TableTransformer`
+
+For a full list of transformations that can be achieved with data table types
+see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
 
 ### Default Transformers
 
-Default transformers allow you to specific a transformer that will be used when there is no transform defined. This can
-be combined with an object mapper like Jackson to quickly transform well known string representations to Java objects.
+Default transformers allow you to specific a transformer that will be used when
+there is no transform defined. This can be combined with an object mapper like
+Jackson to quickly transform well-known string representations to Java objects.
 
  * `@DefaultParameterTransformer`
  * `@DefaultDataTableEntryTransformer`
@@ -152,7 +207,7 @@ import io.cucumber.java.DefaultParameterTransformer;
 
 import java.lang.reflect.Type;
 
-public class DataTableSteps {
+public class DataTableStepDefinitions {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -191,7 +246,7 @@ import io.cucumber.java.en.Given;
 import java.util.Map;
 import java.util.List;
 
-public class DataTableSteps {
+public class DataTableStepDefinitions {
 
     @DataTableType(replaceWithEmptyString = "[blank]")
     public Author convert(Map<String, String> entry){
@@ -208,11 +263,11 @@ public class DataTableSteps {
 }
 ```
 
-# Transposing Tables
+### Transposing Tables
 
 A data table can be transposed by annotating the data table parameter (or the
 parameter the data table will be converted into) with `@Transpose`. This means
-the keys will be in the first column rather then the first row.
+the keys will be in the first column rather than the first row.
 
 
 ```gherkin
@@ -234,7 +289,7 @@ import io.cucumber.java.Transpose;
 import java.util.Map;
 import java.util.List;
 
-public class DataTableSteps {
+public class DataTableStepDefinitions {
 
     @DataTableType
     public User convert(Map<String, String> entry){
@@ -248,6 +303,45 @@ public class DataTableSteps {
     @Given("the user is")
     public void the_user_is(@Transpose User user){
       // user  = [User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
+    }
+}
+```
+
+## DocString type
+
+Using `@DocStringType` annotation it is possible to define transformations to
+other object types.
+
+```gherkin
+Given some more information
+  """json
+  { 
+     "produce": "Cucumbers",
+     "weight": "5 Kilo", 
+     "price": "1€/Kilo"
+  }
+  """
+```
+
+```java
+package com.example;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.cucumber.java.DocStringType;
+import io.cucumber.java.en.Given;
+
+public class StepDefinitions {
+
+    @DocStringType
+    public JsonNode json(String docString) throws IOException {
+        return objectMapper.readTree(docString);
+    }
+        
+    @Given("some more information")
+    public void some_more_information(JsonNode json){
+    
     }
 }
 ```

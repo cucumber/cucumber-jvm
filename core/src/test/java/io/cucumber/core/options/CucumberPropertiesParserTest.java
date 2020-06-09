@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -12,17 +13,20 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.hamcrest.CoreMatchers.not;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CucumberPropertiesParserTest {
@@ -73,6 +77,23 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
+    void should_parse_features_and_preserve_existing_tag_filters() {
+        RuntimeOptions existing = RuntimeOptions.defaultOptions();
+        existing.setTagExpressions(Collections.singletonList(TagExpressionParser.parse("@example")));
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example.feature");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build(existing);
+
+        List<String> tagExpressions = options.getTagExpressions().stream()
+                .map(Object::toString)
+                .collect(toList());
+
+        assertAll(
+            () -> assertThat(options.getFeaturePaths(), contains(
+                URI.create("classpath:com/example.feature"))),
+            () -> assertThat(tagExpressions, contains("@example")));
+    }
+
+    @Test
     void should_parse_filter_name() {
         properties.put(Constants.FILTER_NAME_PROPERTY_NAME, "Test.*");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
@@ -85,11 +106,11 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FILTER_TAGS_PROPERTY_NAME, "@No and not @Never");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
 
-        List<String> actual = options.getTagExpressions().stream()
-                .map(e -> e.toString())
+        List<String> tagExpressions = options.getTagExpressions().stream()
+                .map(Object::toString)
                 .collect(toList());
 
-        assertThat(actual, contains("( @No and not ( @Never ) )"));
+        assertThat(tagExpressions, contains("( @No and not ( @Never ) )"));
     }
 
     @Test
@@ -153,6 +174,18 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("classpath:path/to.feature")));
+    }
+
+    @Test
+    void should_parse_rerun_file_and_remove_existing_tag_filters() throws IOException {
+        RuntimeOptions existing = RuntimeOptions.defaultOptions();
+        existing.setTagExpressions(Collections.singletonList(TagExpressionParser.parse("@example")));
+        Path path = mockFileResource("classpath:path/to.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertAll(
+            () -> assertThat(options.getFeaturePaths(), contains(URI.create("classpath:path/to.feature"))),
+            () -> assertThat(options.getTagExpressions(), not(contains("@example"))));
     }
 
     private Path mockFileResource(String... contents) throws IOException {

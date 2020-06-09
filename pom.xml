@@ -1,5 +1,4 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -7,7 +6,7 @@
         <version>2.1.0</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.0.0-RC3-SNAPSHOT</version>
+    <version>6.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -24,7 +23,7 @@
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
 
         <!--Dependencies -->
-        <cucumber-expressions.version>10.1.0</cucumber-expressions.version>
+        <cucumber-expressions.version>10.2.0</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>2.0.5-SNAPSHOT</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
@@ -39,7 +38,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.3.3</mockito.version>
         <!--Maven plugins-->
-        <groovy.version>2.5.11</groovy.version>
+        <groovy.version>2.5.12</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -355,7 +354,7 @@
             <plugin>
                 <groupId>org.commonjava.maven.plugins</groupId>
                 <artifactId>directory-maven-plugin</artifactId>
-                <version>0.3</version>
+                <version>0.3.1</version>
                 <executions>
                     <execution>
                         <id>directories</id>
@@ -407,7 +406,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>3.0.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
@@ -537,41 +536,40 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.2.4</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.2.3</version>
+                    <version>3.3.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-toolchains-plugin</artifactId>
-                    <version>1.1</version>
+                    <version>3.0.0</version>
                 </plugin>
 
                 <!-- Semantic version check  -->
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.11.3</version>
+                    <version>0.11.5</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.20.0</version>
+                            <version>0.21.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
-                        <oldVersion>5.6.0</oldVersion>
                         <analysisConfiguration>
                             <revapi.semver.ignore>
                                 <enabled>true</enabled>
@@ -600,6 +598,39 @@
                                     </newArchive>
                                     <justification>Internal API</justification>
                                 </item>
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.missing.oldClass</code>
+                                    <old>missing-class io\.cucumber\.messages\..*</old>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.missing.oldClass</code>
+                                    <old>.*\.internal\..*</old>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <new>.*\.internal\..*</new>
+                                    <justification>Internal API</justification>
+                                </item>
                             </revapi.ignore>
                         </analysisConfiguration>
                     </configuration>
@@ -623,7 +654,7 @@
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
-                    <version>1.31.0</version>
+                    <version>1.31.2</version>
                     <configuration>
                         <java>
                             <eclipse>
@@ -648,7 +679,7 @@
                             <module name="Checker">
                                 <property name="severity" value="error" />
                                 <module name="TreeWalker">
-                                    <module name="AvoidStarImport"/>
+                                    <module name="AvoidStarImport" />
                                     <module name="JavadocMethod">
                                         <property name="allowMissingParamTags" value="true" />
                                         <property name="allowMissingReturnTag" value="true" />

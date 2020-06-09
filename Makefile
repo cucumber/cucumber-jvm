@@ -24,7 +24,7 @@ update-compatibility:
 	rm -rf compatibility/src/test/resources/*
 	cp -r target/cucumber/compatibility-kit/javascript/features compatibility/src/test/resources
 	rm -rf target/cucumber
-.PHONY: update-cck
+.PHONY: update-compatibility
 
 update-dependency-versions:
 	mvn versions:force-releases
@@ -51,5 +51,6 @@ release: default update-changelog .commit-and-push-changelog
 	git checkout "v$(NEW_VERSION)"
 	mvn deploy -P-examples -P-compatibility -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
 	git checkout $(CURRENT_BRANCH)
+	git fetch
 .PHONY: release
 
