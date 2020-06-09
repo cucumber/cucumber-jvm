@@ -94,7 +94,7 @@ public final class CommandlineOptionsParser {
                 try {
                     parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
                 } catch (TagExpressionException tee) {
-                    throw new RuntimeException(tee.toString() + " on Command Line", tee);
+                    throw new IllegalArgumentException(tee);
                 }
             } else if (arg.equals("--plugin") || arg.equals("-p")) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));

@@ -33,24 +33,20 @@ public final class CucumberOptionsAnnotationParser {
 
         for (Class<?> classWithOptions = clazz; hasSuperClass(
             classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
-            try {
-                Optional
-                        .ofNullable(requireNonNull(optionsProvider).getOptions(classWithOptions))
-                        .ifPresent((options) -> {
-                            addDryRun(options, args);
-                            addMonochrome(options, args);
-                            addTags(options, args);
-                            addPlugins(options, args);
-                            addStrict(options, args);
-                            addName(options, args);
-                            addSnippets(options, args);
-                            addGlue(options, args);
-                            addFeatures(options, args);
-                            addObjectFactory(options, args);
-                        });
-            } catch (TagExpressionException tee) {
-                throw new RuntimeException(tee.toString() + String.format(" at '%s'", clazz.getName()), tee);
-            }
+            Optional
+                    .ofNullable(requireNonNull(optionsProvider).getOptions(classWithOptions))
+                    .ifPresent((options) -> {
+                        addDryRun(options, args);
+                        addMonochrome(options, args);
+                        addTags(clazz, options, args);
+                        addPlugins(options, args);
+                        addStrict(options, args);
+                        addName(options, args);
+                        addSnippets(options, args);
+                        addGlue(options, args);
+                        addFeatures(options, args);
+                        addObjectFactory(options, args);
+                    });
         }
 
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
@@ -74,10 +70,14 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private void addTags(CucumberOptions options, RuntimeOptionsBuilder args) {
+    private void addTags(Class<?> clazz, CucumberOptions options, RuntimeOptionsBuilder args) {
         String tagExpression = options.tags();
         if (!tagExpression.isEmpty()) {
-            args.addTagFilter(TagExpressionParser.parse(tagExpression));
+            try {
+                args.addTagFilter(TagExpressionParser.parse(tagExpression));
+            } catch (TagExpressionException tee) {
+                throw new IllegalArgumentException(String.format("%s at '%s'", tee.getMessage(), clazz.getName()), tee);
+            }
         }
     }
 

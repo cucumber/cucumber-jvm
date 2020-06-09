@@ -3,26 +3,22 @@ package io.cucumber.core.filter;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.tagexpressions.Expression;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.function.Predicate;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 final class TagPredicate implements Predicate<Pickle> {
 
     private final List<Expression> expressions;
 
     TagPredicate(Expression tagExpression) {
-        this(Optional.ofNullable(tagExpression)
-                .map(Collections::singletonList)
-                .orElse(emptyList()));
+        this(singletonList(Objects.requireNonNull(tagExpression)));
     }
 
-    TagPredicate(List<Expression> exprs) {
-        expressions = Optional.ofNullable(exprs)
-                .orElse(emptyList());
+    TagPredicate(List<Expression> tagExpressions) {
+        expressions = Objects.requireNonNull(tagExpressions);
 
     }
 

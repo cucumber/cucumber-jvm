@@ -124,7 +124,7 @@ class CucumberOptionsAnnotationParserTest {
         RuntimeOptions runtimeOptions = parser().parse(TagExpression.class).build();
 
         List<String> actual = runtimeOptions.getTagExpressions().stream()
-                .map(e -> e.toString())
+                .map(Object::toString)
                 .collect(toList());
 
         assertThat(actual, contains("( @cucumber or @gherkin )"));
@@ -133,9 +133,7 @@ class CucumberOptionsAnnotationParserTest {
     @Test
     void throws_runtime_exception_on_invalid_tag_with_class_location() {
         RuntimeException actual = assertThrows(RuntimeException.class,
-            () -> {
-                parser().parse(ClassWithInvalidTagExpression.class).build();
-            });
+            () -> parser().parse(ClassWithInvalidTagExpression.class).build());
 
         assertThat(actual.getCause(), isA(TagExpressionException.class));
     }
