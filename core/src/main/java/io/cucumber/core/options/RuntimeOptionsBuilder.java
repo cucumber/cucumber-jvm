@@ -7,7 +7,6 @@ import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
-import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.net.URI;
 import java.util.ArrayList;

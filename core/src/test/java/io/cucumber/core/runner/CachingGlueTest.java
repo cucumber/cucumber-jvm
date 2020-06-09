@@ -22,8 +22,6 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
-import io.cucumber.tagexpressions.Expression;
-import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -492,8 +490,8 @@ class CachingGlueTest {
         }
 
         @Override
-        public Expression getTagExpression() {
-            return TagExpressionParser.parse("");
+        public String getTagExpression() {
+            return "";
         }
 
         @Override
@@ -531,8 +529,8 @@ class CachingGlueTest {
         }
 
         @Override
-        public Expression getTagExpression() {
-            return TagExpressionParser.parse("");
+        public String getTagExpression() {
+            return "";
         }
 
         @Override

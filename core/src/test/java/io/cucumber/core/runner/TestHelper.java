@@ -26,7 +26,6 @@ import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.StepArgument;
-import io.cucumber.tagexpressions.TagExpressionParser;
 import org.mockito.stubbing.Answer;
 import org.opentest4j.TestAbortedException;
 
@@ -398,7 +397,7 @@ public class TestHelper {
             if (hookLocation == null) {
                 throw new RuntimeException("hookLocation cannot be null");
             }
-            when(hook.getTagExpression()).thenReturn(TagExpressionParser.parse(""));
+            when(hook.getTagExpression()).thenReturn("");
             if (hookLocation != null) {
                 when(hook.getLocation()).thenReturn(hookLocation);
             }

@@ -262,7 +262,7 @@ final class CachingGlue implements Glue {
         bus.send(Messages.Envelope.newBuilder()
                 .setHook(Messages.Hook.newBuilder()
                         .setId(hook.getId().toString())
-                        .setTagExpression(hook.getTagExpression().toString()))
+                        .setTagExpression(hook.getTagExpression()))
                 .build());
     }
 

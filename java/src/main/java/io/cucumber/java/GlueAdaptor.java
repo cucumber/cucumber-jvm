@@ -2,8 +2,6 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.tagexpressions.Expression;
-import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -25,19 +23,19 @@ final class GlueAdaptor {
             glue.addStepDefinition(new JavaStepDefinition(method, expression, lookup));
         } else if (annotationType.equals(Before.class)) {
             Before before = (Before) annotation;
-            Expression tagExpression = TagExpressionParser.parse(before.value());
+            String tagExpression = before.value();
             glue.addBeforeHook(new JavaHookDefinition(method, tagExpression, before.order(), lookup));
         } else if (annotationType.equals(After.class)) {
             After after = (After) annotation;
-            Expression tagExpression = TagExpressionParser.parse(after.value());
+            String tagExpression = after.value();
             glue.addAfterHook(new JavaHookDefinition(method, tagExpression, after.order(), lookup));
         } else if (annotationType.equals(BeforeStep.class)) {
             BeforeStep beforeStep = (BeforeStep) annotation;
-            Expression tagExpression = TagExpressionParser.parse(beforeStep.value());
+            String tagExpression = beforeStep.value();
             glue.addBeforeStepHook(new JavaHookDefinition(method, tagExpression, beforeStep.order(), lookup));
         } else if (annotationType.equals(AfterStep.class)) {
             AfterStep afterStep = (AfterStep) annotation;
-            Expression tagExpression = TagExpressionParser.parse(afterStep.value());
+            String tagExpression = afterStep.value();
             glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, afterStep.order(), lookup));
         } else if (annotationType.equals(ParameterType.class)) {
             ParameterType parameterType = (ParameterType) annotation;

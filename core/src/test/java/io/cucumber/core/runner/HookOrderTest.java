@@ -9,7 +9,6 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
@@ -68,7 +67,7 @@ class HookOrderTest {
         for (int order : ordering) {
             HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
             when(hook.getOrder()).thenReturn(order);
-            when(hook.getTagExpression()).thenReturn(TagExpressionParser.parse(""));
+            when(hook.getTagExpression()).thenReturn("");
             when(hook.getLocation()).thenReturn("Mock location");
             hooks.add(hook);
         }

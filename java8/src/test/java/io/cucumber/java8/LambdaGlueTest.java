@@ -9,8 +9,6 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.tagexpressions.Expression;
-import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,7 +19,6 @@ import static io.cucumber.java8.LambdaGlue.DEFAULT_AFTER_ORDER;
 import static io.cucumber.java8.LambdaGlue.DEFAULT_BEFORE_ORDER;
 import static io.cucumber.java8.LambdaGlue.EMPTY_TAG_EXPRESSION;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -129,7 +126,7 @@ class LambdaGlueTest {
     }
 
     private void assertHook(HookDefinition hook, String tagExpression, int beforeOrder) {
-        assertThat(hook.getTagExpression(), isA(Expression.class));
+        assertThat(hook.getTagExpression(), is(tagExpression));
         assertThat(hook.getOrder(), is(beforeOrder));
         hook.execute(state);
         assertTrue(invoked.get());
@@ -142,7 +139,6 @@ class LambdaGlueTest {
 
     @Test
     void testBeforeStepHook() {
-
         lambdaGlue.BeforeStep(this::hookNoArgs);
         assertHook(beforeStepHook, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER);
         lambdaGlue.BeforeStep("taxExpression", this::hookNoArgs);

@@ -13,7 +13,6 @@ import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Result;
-import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
@@ -64,7 +63,7 @@ class JsonFormatterTest {
 
     private String runFeaturesWithFormatter(final List<String> featurePaths) {
         final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn(TagExpressionParser.parse(""));
+        when(hook.getTagExpression()).thenReturn("");
 
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
@@ -104,7 +103,7 @@ class JsonFormatterTest {
 
     private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
         final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn(TagExpressionParser.parse(""));
+        when(hook.getTagExpression()).thenReturn("");
         final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {

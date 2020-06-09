@@ -28,7 +28,6 @@ import io.cucumber.plugin.event.StepDefinition;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -153,7 +152,7 @@ class RuntimeTest {
                     "    Then third step\n");
         final HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.getLocation()).thenReturn("");
-        when(beforeHook.getTagExpression()).thenReturn(TagExpressionParser.parse(""));
+        when(beforeHook.getTagExpression()).thenReturn("");
 
         TestBackendSupplier testBackendSupplier = createTestBackendSupplier(feature, beforeHook);
 
