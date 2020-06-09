@@ -219,14 +219,14 @@
 
     <modules>
         <module>archetype</module>
-        <module>core</module>
         <module>cdi2</module>
-        <module>jakarta-cdi</module>
+        <module>core</module>
         <module>deltaspike</module>
         <module>docstring</module>
         <module>gherkin</module>
         <module>gherkin-messages</module>
         <module>guice</module>
+        <module>jakarta-cdi</module>
         <module>java8</module>
         <module>java</module>
         <module>junit</module>
