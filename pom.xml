@@ -219,8 +219,9 @@
 
     <modules>
         <module>archetype</module>
-        <module>cdi2</module>
         <module>core</module>
+        <module>cdi2</module>
+        <module>jakarta-cdi</module>
         <module>deltaspike</module>
         <module>docstring</module>
         <module>gherkin</module>
