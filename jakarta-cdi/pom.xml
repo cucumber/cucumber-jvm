@@ -4,7 +4,7 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.cdi.jakarta</project.Automatic-Module-Name>
         <openwebbeans.version>2.0.16</openwebbeans.version>
-        <xbean.version>4.16</xbean.version>
+        <xbean.version>4.17</xbean.version>
     </properties>
 
     <parent>
