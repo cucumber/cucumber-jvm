@@ -4,7 +4,6 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.TestRunFinished;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.time.Clock;
 import java.time.ZoneId;
-import java.util.Locale;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -24,23 +22,14 @@ import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingW
 class DefaultSummaryPrinterTest {
 
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    private DefaultSummaryPrinter summaryPrinter;
+    private final DefaultSummaryPrinter summaryPrinter = new DefaultSummaryPrinter(out);
     private final EventBus bus = new TimeServiceEventBus(
         Clock.fixed(ofEpochSecond(0), ZoneId.of("UTC")),
         UUID::randomUUID);
-    private Locale originalLocale;
 
     @BeforeEach
     void setup() {
-        originalLocale = Locale.getDefault();
-        Locale.setDefault(Locale.ENGLISH);
-        summaryPrinter = new DefaultSummaryPrinter(out);
         summaryPrinter.setEventPublisher(bus);
-    }
-
-    @AfterEach
-    void teardown() {
-        Locale.setDefault(originalLocale);
     }
 
     @Test
