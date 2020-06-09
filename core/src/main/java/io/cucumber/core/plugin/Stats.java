@@ -40,10 +40,6 @@ class Stats implements ConcurrentEventListener, ColorAware {
     private Duration totalDuration = Duration.ZERO;
     private Formats formats = new AnsiFormats();
 
-    Stats() {
-        this(Locale.getDefault());
-    }
-
     Stats(Locale locale) {
         this.locale = locale;
     }

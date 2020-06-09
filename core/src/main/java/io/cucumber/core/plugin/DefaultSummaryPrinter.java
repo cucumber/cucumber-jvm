@@ -11,21 +11,22 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, ConcurrentEventListener {
 
     private final Set<String> snippets = new LinkedHashSet<>();
-    private final Stats stats = new Stats();
-
+    private final Stats stats;
     private final PrintStream out;
 
     public DefaultSummaryPrinter() {
-        this(System.out);
+        this(System.out, Locale.getDefault());
     }
 
-    DefaultSummaryPrinter(OutputStream out) {
+    DefaultSummaryPrinter(OutputStream out, Locale locale) {
         this.out = new PrintStream(out);
+        this.stats = new Stats(locale);
     }
 
     @Override

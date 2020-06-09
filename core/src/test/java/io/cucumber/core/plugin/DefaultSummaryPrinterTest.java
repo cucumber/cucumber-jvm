@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.time.Clock;
 import java.time.ZoneId;
+import java.util.Locale;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -22,7 +23,7 @@ import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingW
 class DefaultSummaryPrinterTest {
 
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    private final DefaultSummaryPrinter summaryPrinter = new DefaultSummaryPrinter(out);
+    private final DefaultSummaryPrinter summaryPrinter = new DefaultSummaryPrinter(out, Locale.US);
     private final EventBus bus = new TimeServiceEventBus(
         Clock.fixed(ofEpochSecond(0), ZoneId.of("UTC")),
         UUID::randomUUID);
