@@ -25,7 +25,8 @@ class CoreHookDefinition {
         try {
             this.tagExpression = TagExpressionParser.parse(delegate.getTagExpression());
         } catch (TagExpressionException tee) {
-            throw new IllegalArgumentException(String.format("%s at '%s'", tee.getMessage(), delegate.getLocation()), tee);
+            throw new IllegalArgumentException(String.format("%s at '%s'", tee.getMessage(), delegate.getLocation()),
+                tee);
         }
     }
 

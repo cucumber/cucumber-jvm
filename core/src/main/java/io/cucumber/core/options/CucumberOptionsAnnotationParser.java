@@ -10,7 +10,6 @@ import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
@@ -33,20 +32,20 @@ public final class CucumberOptionsAnnotationParser {
 
         for (Class<?> classWithOptions = clazz; hasSuperClass(
             classWithOptions); classWithOptions = classWithOptions.getSuperclass()) {
-            Optional
-                    .ofNullable(requireNonNull(optionsProvider).getOptions(classWithOptions))
-                    .ifPresent((options) -> {
-                        addDryRun(options, args);
-                        addMonochrome(options, args);
-                        addTags(clazz, options, args);
-                        addPlugins(options, args);
-                        addStrict(options, args);
-                        addName(options, args);
-                        addSnippets(options, args);
-                        addGlue(options, args);
-                        addFeatures(options, args);
-                        addObjectFactory(options, args);
-                    });
+            CucumberOptions options = requireNonNull(optionsProvider).getOptions(classWithOptions);
+
+            if (options != null) {
+                addDryRun(options, args);
+                addMonochrome(options, args);
+                addTags(clazz, options, args);
+                addPlugins(options, args);
+                addStrict(options, args);
+                addName(options, args);
+                addSnippets(options, args);
+                addGlue(options, args);
+                addFeatures(options, args);
+                addObjectFactory(options, args);
+            }
         }
 
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);

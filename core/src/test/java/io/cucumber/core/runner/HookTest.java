@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -88,11 +89,10 @@ class HookTest {
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
         RuntimeException e = assertThrows(RuntimeException.class,
-            () -> {
-                new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer,
-                    runtimeOptions);
-            });
+            () -> new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer,
+                runtimeOptions));
 
-        assertThat(e.toString(), containsString("at 'io.cucumber.core.backend.HookDefinition$MockitoMock$"));
+        assertThat(e.getMessage(),
+            is("Tag expression '(' could not be parsed because of syntax error: unmatched ( at 'hook-location'"));
     }
 }
