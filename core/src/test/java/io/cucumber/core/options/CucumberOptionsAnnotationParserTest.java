@@ -123,11 +123,11 @@ class CucumberOptionsAnnotationParserTest {
     void create_with_tag_expression() {
         RuntimeOptions runtimeOptions = parser().parse(TagExpression.class).build();
 
-        List<String> actual = runtimeOptions.getTagExpressions().stream()
+        List<String> tagExpressions = runtimeOptions.getTagExpressions().stream()
                 .map(Object::toString)
                 .collect(toList());
 
-        assertThat(actual, contains("( @cucumber or @gherkin )"));
+        assertThat(tagExpressions, contains("( @cucumber or @gherkin )"));
     }
 
     @Test

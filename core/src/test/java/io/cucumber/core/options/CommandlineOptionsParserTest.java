@@ -150,11 +150,11 @@ class CommandlineOptionsParserTest {
                 .parse("--tags", "@keep_this")
                 .build();
 
-        List<String> actual = options.getTagExpressions().stream()
-                .map(e -> e.toString())
+        List<String> tagExpressions = options.getTagExpressions().stream()
+                .map(Object::toString)
                 .collect(toList());
 
-        assertThat(actual, contains("@keep_this"));
+        assertThat(tagExpressions, contains("@keep_this"));
     }
 
     @Test
