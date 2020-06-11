@@ -592,8 +592,15 @@
                                 <item>
                                     <regex>true</regex>
                                     <code>java.method.returnTypeTypeParametersChanged</code>
-                                    <old>.*io\.cucumber\.core\.filter\.RuntimeOptions::getTagExpressions.*</old>
-                                    <new>.*io\.cucumber\.core\.filter\.RuntimeOptions::getTagExpressions.*</new>
+                                    <old>.*io\.cucumber\.core\.options\.RuntimeOptions::getTagExpressions.*</old>
+                                    <new>.*io\.cucumber\.core\.options\.RuntimeOptions::getTagExpressions.*</new>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.method.parameterTypeChanged</code>
+                                    <old>.*io\.cucumber\.core\.options\.RuntimeOptionsBuilder::addTagFilter.*</old>
+                                    <new>.*io\.cucumber\.core\.options\.RuntimeOptionsBuilder::addTagFilter.*</new>
                                     <justification>Internal API</justification>
                                 </item>
                                 <item>
@@ -601,135 +608,128 @@
                                     <new>interface io.cucumber.tagexpressions.Expression</new>
                                     <justification>Internal API</justification>
                                 </item>
-                            <item>
-                                <regex>true</regex>
-                                <code>java.method.parameterTypeChanged</code>
-                                <old>.*io\.cucumber\.core\.filter\.RuntimeOptionsBuilder::addTagFilter.*</old>
-                                <new>.*io\.cucumber\.core\.filter\.RuntimeOptionsBuilder::addTagFilter.*</new>
-                                <justification>Internal API</justification>
-                            </item>
 
-                            <!-- Cucumber-JUnit  -->
-                            <item>
-                                <code>java.class.externalClassExposedInAPI</code>
-                                <newArchive>junit:junit:jar:${junit.version}</newArchive>
-                                <justification>Implements JUnit4 API</justification>
-                            </item>
-                            <!-- Gherkin parser related -->
-                            <item>
-                                <code>java.class.externalClassExposedInAPI</code>
-                                <newArchive>io.cucumber:cucumber-gherkin:jar:${project.version}</newArchive>
-                                <justification>Internal API</justification>
-                            </item>
-                            <item>
-                                <code>java.class.nonPublicPartOfAPI</code>
-                                <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
-                                </newArchive>
-                                <justification>Internal API</justification>
-                            </item>
-                            <item>
-                                <code>java.class.externalClassExposedInAPI</code>
-                                <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
-                                <justification>Internal API</justification>
-                            </item>
-                            <item>
-                                <code>java.class.nonPublicPartOfAPI</code>
-                                <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
-                                <justification>Internal API</justification>
-                            </item>
-                            <item>
-                                <code>java.class.nonPublicPartOfAPI</code>
-                                <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
-                                <justification>Internal API</justification>
-                            </item>
-                            <item>
-                                <regex>true</regex>
-                                <code>java.missing.oldClass</code>
-                                <old>missing-class io\.cucumber\.messages\..*</old>
-                                <justification>Internal API</justification>
-                            </item>
-                            <item>
-                                <regex>true</regex>
-                                <code>java.missing.oldClass</code>
-                                <old>.*\.internal\..*</old>
-                                <justification>Internal API</justification>
-                            </item>
-                            <item>
-                                <regex>true</regex>
-                                <code>java.class.nonPublicPartOfAPI</code>
-                                <new>.*\.internal\..*</new>
-                                <justification>Internal API</justification>
-                            </item>
-                        </revapi.ignore>
-                    </analysisConfiguration>
-                </configuration>
-            </plugin>
-            <!--  Code coverage reporting -->
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
-                <!-- Include JAXB API directly to workaround coveralls-maven-plugin bug in Java 9+
-                     https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                        <version>2.3.1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+                                <!-- Cucumber-JUnit  -->
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>junit:junit:jar:${junit.version}</newArchive>
+                                    <justification>Implements JUnit4 API</justification>
+                                </item>
+                                <!-- Gherkin parser related -->
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:cucumber-gherkin:jar:${project.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
+                                    </newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.externalClassExposedInAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.missing.oldClass</code>
+                                    <old>missing-class io\.cucumber\.messages\..*</old>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.missing.oldClass</code>
+                                    <old>.*\.internal\..*</old>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <new>.*\.internal\..*</new>
+                                    <justification>Internal API</justification>
+                                </item>
+                            </revapi.ignore>
+                        </analysisConfiguration>
+                    </configuration>
+                </plugin>
+                <!--  Code coverage reporting -->
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>4.3.0</version>
+                    <!-- Include JAXB API directly to workaround coveralls-maven-plugin bug in Java 9+
+                         https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.3.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
 
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <version>1.31.2</version>
-                <configuration>
-                    <java>
-                        <eclipse>
-                            <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
-                        </eclipse>
-                        <importOrder>
-                            <file>${main.basedir}/.spotless/intelij-idea.importorder</file>
-                        </importOrder>
-                    </java>
-                </configuration>
-            </plugin>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>1.31.2</version>
+                    <configuration>
+                        <java>
+                            <eclipse>
+                                <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
+                            </eclipse>
+                            <importOrder>
+                                <file>${main.basedir}/.spotless/intelij-idea.importorder</file>
+                            </importOrder>
+                        </java>
+                    </configuration>
+                </plugin>
 
-            <!-- Check style -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.1</version>
-                <configuration>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
-                    <checkstyleRules>
-                        <module name="Checker">
-                            <property name="severity" value="error"/>
-                            <module name="TreeWalker">
-                                <module name="AvoidStarImport"/>
-                                <module name="JavadocMethod">
-                                    <property name="allowMissingParamTags" value="true"/>
-                                    <property name="allowMissingReturnTag" value="true"/>
+                <!-- Check style -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.1.1</version>
+                    <configuration>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <checkstyleRules>
+                            <module name="Checker">
+                                <property name="severity" value="error"/>
+                                <module name="TreeWalker">
+                                    <module name="AvoidStarImport"/>
+                                    <module name="JavadocMethod">
+                                        <property name="allowMissingParamTags" value="true"/>
+                                        <property name="allowMissingReturnTag" value="true"/>
+                                    </module>
+                                    <module name="NonEmptyAtclauseDescription"/>
+                                    <module name="SuppressWarningsHolder"/>
+                                    <module name="UnusedImports">
+                                        <property name="processJavadoc" value="true"/>
+                                    </module>
                                 </module>
-                                <module name="NonEmptyAtclauseDescription"/>
-                                <module name="SuppressWarningsHolder"/>
-                                <module name="UnusedImports">
-                                    <property name="processJavadoc" value="true"/>
+                                <module name="SuppressWarningsFilter"/>
+                                <module name="RegexpSingleline">
+                                    <property name="format" value="@author"/>
+                                    <property name="message" value="Please do not use @author tags"/>
+                                    <property name="fileExtensions" value="java,groovy,kt"/>
                                 </module>
                             </module>
-                            <module name="SuppressWarningsFilter"/>
-                            <module name="RegexpSingleline">
-                                <property name="format" value="@author"/>
-                                <property name="message" value="Please do not use @author tags"/>
-                                <property name="fileExtensions" value="java,groovy,kt"/>
-                            </module>
-                        </module>
-                    </checkstyleRules>
-                </configuration>
-            </plugin>
-        </plugins>
-    </pluginManagement>
-</build>
-    </project>
+                        </checkstyleRules>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
