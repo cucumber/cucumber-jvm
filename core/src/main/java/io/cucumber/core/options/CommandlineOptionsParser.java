@@ -91,7 +91,7 @@ public final class CommandlineOptionsParser {
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
             } else if (arg.equals("--tags") || arg.equals("-t")) {
-		parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
+                parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals("--plugin") || arg.equals("-p")) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {

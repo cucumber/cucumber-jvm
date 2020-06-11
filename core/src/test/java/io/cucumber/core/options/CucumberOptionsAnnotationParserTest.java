@@ -135,7 +135,21 @@ class CucumberOptionsAnnotationParserTest {
         RuntimeException actual = assertThrows(RuntimeException.class,
             () -> parser().parse(ClassWithInvalidTagExpression.class).build());
 
-        assertThat(actual.getCause(), isA(TagExpressionException.class));
+        assertAll(
+                () -> assertThat(actual.getMessage(), is("Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
+                () -> assertThat(actual.getCause(), isA(TagExpressionException.class))
+        );
+    }
+
+    @Test
+    void throws_runtime_exception_on_invalid_inherited_tag() {
+        RuntimeException actual = assertThrows(RuntimeException.class,
+            () -> parser().parse(ClassWithInheredInvalidTagExpression.class).build());
+
+        assertAll(
+                () -> assertThat(actual.getMessage(), is("Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
+                () -> assertThat(actual.getCause(), isA(TagExpressionException.class))
+        );
     }
 
     @Test
@@ -251,6 +265,10 @@ class CucumberOptionsAnnotationParserTest {
 
     @CucumberOptions(tags = "(")
     private static class ClassWithInvalidTagExpression {
+        // empty
+    }
+
+    private static class ClassWithInheredInvalidTagExpression extends  ClassWithInvalidTagExpression {
         // empty
     }
 

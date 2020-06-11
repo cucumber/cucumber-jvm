@@ -37,7 +37,7 @@ public final class CucumberOptionsAnnotationParser {
             if (options != null) {
                 addDryRun(options, args);
                 addMonochrome(options, args);
-                addTags(clazz, options, args);
+                addTags(classWithOptions, options, args);
                 addPlugins(options, args);
                 addStrict(options, args);
                 addName(options, args);
@@ -75,7 +75,7 @@ public final class CucumberOptionsAnnotationParser {
             try {
                 args.addTagFilter(TagExpressionParser.parse(tagExpression));
             } catch (TagExpressionException tee) {
-                throw new IllegalArgumentException(String.format("%s at '%s'", tee.getMessage(), clazz.getName()), tee);
+                throw new IllegalArgumentException(String.format("Invalid tag expression at '%s'", clazz.getName()), tee);
             }
         }
     }

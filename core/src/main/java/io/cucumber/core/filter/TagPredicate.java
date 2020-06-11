@@ -7,19 +7,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static java.util.Collections.singletonList;
-
 final class TagPredicate implements Predicate<Pickle> {
 
     private final List<Expression> expressions;
 
-    TagPredicate(Expression tagExpression) {
-        this(singletonList(Objects.requireNonNull(tagExpression)));
-    }
-
     TagPredicate(List<Expression> tagExpressions) {
         expressions = Objects.requireNonNull(tagExpressions);
-
     }
 
     @Override
