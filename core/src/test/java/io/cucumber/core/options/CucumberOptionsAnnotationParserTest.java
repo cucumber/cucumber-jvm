@@ -136,9 +136,9 @@ class CucumberOptionsAnnotationParserTest {
             () -> parser().parse(ClassWithInvalidTagExpression.class).build());
 
         assertAll(
-                () -> assertThat(actual.getMessage(), is("Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
-                () -> assertThat(actual.getCause(), isA(TagExpressionException.class))
-        );
+            () -> assertThat(actual.getMessage(), is(
+                "Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
+            () -> assertThat(actual.getCause(), isA(TagExpressionException.class)));
     }
 
     @Test
@@ -147,9 +147,9 @@ class CucumberOptionsAnnotationParserTest {
             () -> parser().parse(ClassWithInheredInvalidTagExpression.class).build());
 
         assertAll(
-                () -> assertThat(actual.getMessage(), is("Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
-                () -> assertThat(actual.getCause(), isA(TagExpressionException.class))
-        );
+            () -> assertThat(actual.getMessage(), is(
+                "Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
+            () -> assertThat(actual.getCause(), isA(TagExpressionException.class)));
     }
 
     @Test
@@ -268,7 +268,7 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
-    private static class ClassWithInheredInvalidTagExpression extends  ClassWithInvalidTagExpression {
+    private static class ClassWithInheredInvalidTagExpression extends ClassWithInvalidTagExpression {
         // empty
     }
 

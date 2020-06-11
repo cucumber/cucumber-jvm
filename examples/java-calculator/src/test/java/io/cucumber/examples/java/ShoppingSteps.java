@@ -49,6 +49,12 @@ public class ShoppingSteps {
         }
     }
 
+    @Given("^[\\�\\&\\?\\`\\>\\^\\<\\\n" +
+            "\\\"\\\t\\_\\|\\'\\*\\\\\\:\\,\\@\\$\\=\\!\\{\\[\\(\\#\\%\\.\\+\\}\\]\\)\\;\\/]|??|=?|fj|>?|<?$")
+    public void test(){
+
+    }
+
     @When("I pay {amount}")
     public void i_pay(Amount amount) {
         calc.push(amount.price);
