@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [6.1.0] (2020-06-11)
+
+### Added
  * [CDI Jakarta] Implement ObjectFactory using CDI Jakarta ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2009) Romain Manni-Bucau)
  * [Core] Add location to tag expression exception ([#1979](https://github.com/cucumber/cucumber-jvm/issues/1979) Christopher Yocum)
 
@@ -1419,7 +1431,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.0.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.1.0...master
+[6.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.1.0
 [6.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.0.0
 [6.0.0-RC2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC1...v6.0.0-RC2
 [6.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.7.0...v6.0.0-RC1
