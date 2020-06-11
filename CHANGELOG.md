@@ -8,14 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
+ * [CDI Jakarta] Implement ObjectFactory using CDI Jakarta ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2009) Romain Manni-Bucau)
+ * [Core] Add location to tag expression exception ([#1979](https://github.com/cucumber/cucumber-jvm/issues/1979) Christopher Yocum)
 
 ### Fixed
+ * [Core] Correct issue with usage report durations >= 1 second ([#1989](https://github.com/cucumber/cucumber-jvm/issues/1989) Dan Woodward)
+ * [Core] Fix locale in DefaultSummaryPrinter ([#2010](https://github.com/cucumber/cucumber-jvm/issues/2010) Romain Manni-Bucau, M.P. Korstanje)
 
 ## [6.0.0] (2020-06-07) - [Release Notes](release-notes/v6.0.0.md)
 
