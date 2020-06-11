@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * [JUnit] Warn about usage of io.cucumber.testng.CucumberOptions
+ * [TestNG] Warn about usage of io.cucumber.junit.CucumberOptions
 
 ### Changed
 

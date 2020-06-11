@@ -27,8 +27,7 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
             String name = clazzAnnotation.annotationType().getName();
             if ("io.cucumber.junit.CucumberOptions".equals(name)) {
                 log.warn(() -> "Ignoring options provided by " + name + " on " + clazz.getName() + ". " +
-                        "It is recommend to use separate runner classes for JUnit and TestNG."
-                );
+                        "It is recommend to use separate runner classes for JUnit and TestNG.");
             }
         }
     }
