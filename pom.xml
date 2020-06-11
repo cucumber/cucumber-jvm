@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -7,7 +6,7 @@
         <version>2.1.0</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.1.0-SNAPSHOT</version>
+    <version>6.1.0</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -45,7 +44,7 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>HEAD</tag>
+        <tag>v6.1.0</tag>
     </scm>
 
     <dependencyManagement>
@@ -707,24 +706,24 @@
                         <failsOnError>true</failsOnError>
                         <checkstyleRules>
                             <module name="Checker">
-                                <property name="severity" value="error"/>
+                                <property name="severity" value="error" />
                                 <module name="TreeWalker">
-                                    <module name="AvoidStarImport"/>
+                                    <module name="AvoidStarImport" />
                                     <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true"/>
-                                        <property name="allowMissingReturnTag" value="true"/>
+                                        <property name="allowMissingParamTags" value="true" />
+                                        <property name="allowMissingReturnTag" value="true" />
                                     </module>
-                                    <module name="NonEmptyAtclauseDescription"/>
-                                    <module name="SuppressWarningsHolder"/>
+                                    <module name="NonEmptyAtclauseDescription" />
+                                    <module name="SuppressWarningsHolder" />
                                     <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true"/>
+                                        <property name="processJavadoc" value="true" />
                                     </module>
                                 </module>
-                                <module name="SuppressWarningsFilter"/>
+                                <module name="SuppressWarningsFilter" />
                                 <module name="RegexpSingleline">
-                                    <property name="format" value="@author"/>
-                                    <property name="message" value="Please do not use @author tags"/>
-                                    <property name="fileExtensions" value="java,groovy,kt"/>
+                                    <property name="format" value="@author" />
+                                    <property name="message" value="Please do not use @author tags" />
+                                    <property name="fileExtensions" value="java,groovy,kt" />
                                 </module>
                             </module>
                         </checkstyleRules>
