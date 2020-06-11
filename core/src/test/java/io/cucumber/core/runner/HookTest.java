@@ -20,6 +20,10 @@ import java.time.Clock;
 import java.util.Collections;
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
@@ -67,4 +71,28 @@ class HookTest {
         inOrder.verify(backend).disposeWorld();
     }
 
+    @Test
+    void hook_throws_exception_with_name_when_tag_expression_is_invalid() {
+        Backend backend = mock(Backend.class);
+        when(backend.getSnippet()).thenReturn(new TestSnippet());
+        ObjectFactory objectFactory = mock(ObjectFactory.class);
+        final HookDefinition hook = mock(HookDefinition.class);
+        when(hook.getLocation()).thenReturn("hook-location");
+        TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
+
+        when(hook.getTagExpression()).thenReturn("(");
+
+        doAnswer(invocation -> {
+            Glue glue = invocation.getArgument(0);
+            glue.addBeforeHook(hook);
+            return null;
+        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
+
+        RuntimeException e = assertThrows(RuntimeException.class,
+            () -> new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer,
+                runtimeOptions));
+
+        assertThat(e.getMessage(),
+            is("Invalid tag expression at 'hook-location'"));
+    }
 }

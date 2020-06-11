@@ -5,6 +5,7 @@ import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.Expression;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public final class RuntimeOptions implements
         io.cucumber.core.backend.Options {
 
     private final List<URI> glue = new ArrayList<>();
-    private final List<String> tagExpressions = new ArrayList<>();
+    private final List<Expression> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
     private final List<Plugin> formatters = new ArrayList<>();
@@ -173,7 +174,7 @@ public final class RuntimeOptions implements
     }
 
     @Override
-    public List<String> getTagExpressions() {
+    public List<Expression> getTagExpressions() {
         return unmodifiableList(tagExpressions);
     }
 
@@ -215,7 +216,7 @@ public final class RuntimeOptions implements
         this.count = count;
     }
 
-    void setTagExpressions(List<String> tagExpressions) {
+    void setTagExpressions(List<Expression> tagExpressions) {
         this.tagExpressions.clear();
         this.tagExpressions.addAll(tagExpressions);
     }

@@ -5,6 +5,8 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.TagExpressionException;
+import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +37,7 @@ public final class CucumberOptionsAnnotationParser {
             if (options != null) {
                 addDryRun(options, args);
                 addMonochrome(options, args);
-                addTags(options, args);
+                addTags(classWithOptions, options, args);
                 addPlugins(options, args);
                 addStrict(options, args);
                 addName(options, args);
@@ -45,6 +47,7 @@ public final class CucumberOptionsAnnotationParser {
                 addObjectFactory(options, args);
             }
         }
+
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
         addDefaultGlueIfNoOverridingGlueIsSpecified(args, clazz);
         return args;
@@ -66,10 +69,15 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
-    private void addTags(CucumberOptions options, RuntimeOptionsBuilder args) {
+    private void addTags(Class<?> clazz, CucumberOptions options, RuntimeOptionsBuilder args) {
         String tagExpression = options.tags();
         if (!tagExpression.isEmpty()) {
-            args.addTagFilter(tagExpression);
+            try {
+                args.addTagFilter(TagExpressionParser.parse(tagExpression));
+            } catch (TagExpressionException tee) {
+                throw new IllegalArgumentException(String.format("Invalid tag expression at '%s'", clazz.getName()),
+                    tee);
+            }
         }
     }
 

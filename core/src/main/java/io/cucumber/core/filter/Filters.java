@@ -1,6 +1,7 @@
 package io.cucumber.core.filter;
 
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.tagexpressions.Expression;
 
 import java.net.URI;
 import java.util.Collection;
@@ -14,7 +15,7 @@ public final class Filters implements Predicate<Pickle> {
     private Predicate<Pickle> filter = t -> true;
 
     public Filters(Options options) {
-        List<String> tagExpressions = options.getTagExpressions();
+        List<Expression> tagExpressions = options.getTagExpressions();
         if (!tagExpressions.isEmpty()) {
             this.filter = this.filter.and(new TagPredicate(tagExpressions));
         }

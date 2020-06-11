@@ -4,6 +4,7 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.tagexpressions.Expression;
+import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.util.List;
@@ -20,7 +21,14 @@ class CoreHookDefinition {
     private CoreHookDefinition(UUID id, HookDefinition delegate) {
         this.id = requireNonNull(id);
         this.delegate = delegate;
-        this.tagExpression = new TagExpressionParser().parse(delegate.getTagExpression());
+
+        try {
+            this.tagExpression = TagExpressionParser.parse(delegate.getTagExpression());
+        } catch (TagExpressionException tee) {
+            throw new IllegalArgumentException(
+                String.format("Invalid tag expression at '%s'", delegate.getLocation()),
+                tee);
+        }
     }
 
     static CoreHookDefinition create(HookDefinition hookDefinition) {

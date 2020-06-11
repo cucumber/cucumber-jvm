@@ -6,6 +6,7 @@ import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.Expression;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.regex.Pattern;
 
 public final class RuntimeOptionsBuilder {
 
-    private final List<String> parsedTagFilters = new ArrayList<>();
+    private final List<Expression> parsedTagFilters = new ArrayList<>();
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
@@ -63,7 +64,7 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder addTagFilter(String tagExpression) {
+    public RuntimeOptionsBuilder addTagFilter(Expression tagExpression) {
         this.parsedTagFilters.add(tagExpression);
         return this;
     }

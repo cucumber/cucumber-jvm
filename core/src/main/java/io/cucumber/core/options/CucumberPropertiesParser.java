@@ -3,6 +3,7 @@ package io.cucumber.core.options;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,6 +66,7 @@ public final class CucumberPropertiesParser {
             FEATURES_PROPERTY_NAME,
             splitAndThenFlatMap(CucumberPropertiesParser::parseFeatureFile),
             builder::addFeature);
+
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
             splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFile),
@@ -77,7 +79,7 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             FILTER_TAGS_PROPERTY_NAME,
-            Function.identity(),
+            TagExpressionParser::parse,
             builder::addTagFilter);
 
         parseAll(properties,
@@ -99,6 +101,7 @@ public final class CucumberPropertiesParser {
             SNIPPET_TYPE_PROPERTY_NAME,
             SnippetTypeParser::parseSnippetType,
             builder::setSnippetType);
+
         parse(properties,
             WIP_PROPERTY_NAME,
             Boolean::parseBoolean,

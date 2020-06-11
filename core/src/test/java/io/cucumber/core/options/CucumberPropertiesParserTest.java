@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -14,10 +15,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -76,14 +79,18 @@ class CucumberPropertiesParserTest {
     @Test
     void should_parse_features_and_preserve_existing_tag_filters() {
         RuntimeOptions existing = RuntimeOptions.defaultOptions();
-        existing.setTagExpressions(Collections.singletonList("@example"));
+        existing.setTagExpressions(Collections.singletonList(TagExpressionParser.parse("@example")));
         properties.put(Constants.FEATURES_PROPERTY_NAME, "classpath:com/example.feature");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build(existing);
+
+        List<String> tagExpressions = options.getTagExpressions().stream()
+                .map(Object::toString)
+                .collect(toList());
 
         assertAll(
             () -> assertThat(options.getFeaturePaths(), contains(
                 URI.create("classpath:com/example.feature"))),
-            () -> assertThat(options.getTagExpressions(), contains("@example")));
+            () -> assertThat(tagExpressions, contains("@example")));
     }
 
     @Test
@@ -98,8 +105,12 @@ class CucumberPropertiesParserTest {
     void should_parse_filter_tag() {
         properties.put(Constants.FILTER_TAGS_PROPERTY_NAME, "@No and not @Never");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getTagExpressions(), contains(
-            "@No and not @Never"));
+
+        List<String> tagExpressions = options.getTagExpressions().stream()
+                .map(Object::toString)
+                .collect(toList());
+
+        assertThat(tagExpressions, contains("( @No and not ( @Never ) )"));
     }
 
     @Test
@@ -168,7 +179,7 @@ class CucumberPropertiesParserTest {
     @Test
     void should_parse_rerun_file_and_remove_existing_tag_filters() throws IOException {
         RuntimeOptions existing = RuntimeOptions.defaultOptions();
-        existing.setTagExpressions(Collections.singletonList("@example"));
+        existing.setTagExpressions(Collections.singletonList(TagExpressionParser.parse("@example")));
         Path path = mockFileResource("classpath:path/to.feature");
         properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + path.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();

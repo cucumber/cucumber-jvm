@@ -29,6 +29,7 @@ import java.time.Clock;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -43,6 +44,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -147,7 +149,21 @@ class CommandlineOptionsParserTest {
         RuntimeOptions options = parser
                 .parse("--tags", "@keep_this")
                 .build();
-        assertThat(options.getTagExpressions(), contains("@keep_this"));
+
+        List<String> tagExpressions = options.getTagExpressions().stream()
+                .map(Object::toString)
+                .collect(toList());
+
+        assertThat(tagExpressions, contains("@keep_this"));
+    }
+
+    @Test
+    void throws_runtime_exception_on_malformed_tag_expression() {
+        RuntimeException e = assertThrows(RuntimeException.class, () -> {
+            RuntimeOptions options = parser
+                    .parse("--tags", ")")
+                    .build();
+        });
     }
 
     @Test
@@ -285,8 +301,12 @@ class CommandlineOptionsParserTest {
                 .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
                 .build(runtimeOptions);
 
+        List<String> actual = options.getTagExpressions().stream()
+                .map(e -> e.toString())
+                .collect(toList());
+
         assertAll(
-            () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
+            () -> assertThat(actual, contains("@should_not_be_clobbered")),
             () -> assertThat(options.getLineFilters(),
                 hasEntry(new File("this/should/be/rerun.feature").toURI(), singleton(12))));
     }
@@ -301,8 +321,12 @@ class CommandlineOptionsParserTest {
                 .parse(singletonMap(FILTER_TAGS_PROPERTY_NAME, "@should_not_be_clobbered"))
                 .build(runtimeOptions);
 
+        List<String> actual = options.getTagExpressions().stream()
+                .map(e -> e.toString())
+                .collect(toList());
+
         assertAll(
-            () -> assertThat(options.getTagExpressions(), contains("@should_not_be_clobbered")),
+            () -> assertThat(actual, contains("@should_not_be_clobbered")),
             () -> assertThat(options.getLineFilters(), is(emptyMap())),
             () -> assertThat(options.getFeaturePaths(), contains(new File("path/to.feature").toURI())));
     }

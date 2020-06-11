@@ -7,6 +7,7 @@ import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.Plugin;
+import io.cucumber.tagexpressions.TagExpressionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -17,10 +18,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -119,7 +122,34 @@ class CucumberOptionsAnnotationParserTest {
     @Test
     void create_with_tag_expression() {
         RuntimeOptions runtimeOptions = parser().parse(TagExpression.class).build();
-        assertThat(runtimeOptions.getTagExpressions(), contains("@cucumber or @gherkin"));
+
+        List<String> tagExpressions = runtimeOptions.getTagExpressions().stream()
+                .map(Object::toString)
+                .collect(toList());
+
+        assertThat(tagExpressions, contains("( @cucumber or @gherkin )"));
+    }
+
+    @Test
+    void throws_runtime_exception_on_invalid_tag_with_class_location() {
+        RuntimeException actual = assertThrows(RuntimeException.class,
+            () -> parser().parse(ClassWithInvalidTagExpression.class).build());
+
+        assertAll(
+            () -> assertThat(actual.getMessage(), is(
+                "Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
+            () -> assertThat(actual.getCause(), isA(TagExpressionException.class)));
+    }
+
+    @Test
+    void throws_runtime_exception_on_invalid_inherited_tag() {
+        RuntimeException actual = assertThrows(RuntimeException.class,
+            () -> parser().parse(ClassWithInheredInvalidTagExpression.class).build());
+
+        assertAll(
+            () -> assertThat(actual.getMessage(), is(
+                "Invalid tag expression at 'io.cucumber.core.options.CucumberOptionsAnnotationParserTest$ClassWithInvalidTagExpression'")),
+            () -> assertThat(actual.getCause(), isA(TagExpressionException.class)));
     }
 
     @Test
@@ -230,6 +260,15 @@ class CucumberOptionsAnnotationParserTest {
 
     @CucumberOptions(tags = "@cucumber or @gherkin")
     private static class TagExpression {
+        // empty
+    }
+
+    @CucumberOptions(tags = "(")
+    private static class ClassWithInvalidTagExpression {
+        // empty
+    }
+
+    private static class ClassWithInheredInvalidTagExpression extends ClassWithInvalidTagExpression {
         // empty
     }
 
