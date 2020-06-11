@@ -9,7 +9,6 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
 import io.cucumber.gherkin.IGherkinDialectProvider;
-import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.io.BufferedReader;
