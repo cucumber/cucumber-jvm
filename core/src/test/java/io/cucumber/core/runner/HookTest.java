@@ -93,6 +93,6 @@ class HookTest {
                 runtimeOptions));
 
         assertThat(e.getMessage(),
-            is("Tag expression '(' could not be parsed because of syntax error: unmatched ( at 'hook-location'"));
+            is("Invalid tag expression at 'hook-location'"));
     }
 }
