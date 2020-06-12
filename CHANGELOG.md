@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] Always use UTF8 encoding ([#2021](https://github.com/cucumber/cucumber-jvm/issues/2021) M.P. Korstanje)
 
 ## [6.1.0] (2020-06-11)
 

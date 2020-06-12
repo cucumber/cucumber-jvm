@@ -7,9 +7,7 @@ import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 
 public final class MessageFormatter implements ConcurrentEventListener {
 
@@ -18,7 +16,7 @@ public final class MessageFormatter implements ConcurrentEventListener {
             .omittingInsignificantWhitespace();
 
     public MessageFormatter(OutputStream outputStream) {
-        this.writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+        this.writer = new UTF8OutputStreamWriter(outputStream);
     }
 
     @Override

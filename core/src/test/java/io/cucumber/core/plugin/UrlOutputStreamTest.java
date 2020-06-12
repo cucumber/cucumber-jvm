@@ -15,10 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.ServerSocket;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -63,7 +61,7 @@ public class UrlOutputStreamTest {
         vertx.deployVerticle(testServer, testContext.succeeding(id -> {
             try {
                 OutputStream out = new UrlOutputStream(url);
-                Writer w = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                Writer w = new UTF8OutputStreamWriter(out);
                 w.write(requestBody);
                 w.flush();
                 w.close();
