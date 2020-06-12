@@ -29,9 +29,8 @@ import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -55,7 +54,7 @@ public final class JsonFormatter implements EventListener {
     private final List<Map<String, Object>> featureMaps = new ArrayList<>();
     private final Map<String, Object> currentBeforeStepHookList = new HashMap<>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final OutputStreamWriter out;
+    private final Writer writer;
     private final TestSourcesModel testSources = new TestSourcesModel();
     private URI currentFeatureFile;
     private List<Map<String, Object>> currentElementsList;
@@ -66,7 +65,7 @@ public final class JsonFormatter implements EventListener {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public JsonFormatter(OutputStream out) {
-        this.out = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+        this.writer = new UTF8OutputStreamWriter(out);
     }
 
     @Override
@@ -146,9 +145,9 @@ public final class JsonFormatter implements EventListener {
             featureMaps.add(createDummyFeatureForFailure(event));
         }
 
-        gson.toJson(featureMaps, out);
+        gson.toJson(featureMaps, writer);
         try {
-            out.close();
+            writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
