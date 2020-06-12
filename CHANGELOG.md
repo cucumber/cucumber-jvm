@@ -8,14 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [JUnit] Warn about usage of io.cucumber.testng.CucumberOptions
- * [TestNG] Warn about usage of io.cucumber.junit.CucumberOptions
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+## [6.1.1] (2020-06-12)
+
+### Added
+ * [JUnit] Warn about usage of io.cucumber.testng.CucumberOptions
+ * [TestNG] Warn about usage of io.cucumber.junit.CucumberOptions
 
 ### Fixed
  * [Core] Always use UTF8 encoding ([#2021](https://github.com/cucumber/cucumber-jvm/issues/2021) M.P. Korstanje)
@@ -1434,7 +1440,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.1.0...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.1.1...master
+[6.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.0-RC2-RC1...v6.1.1
 [6.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.1.0
 [6.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.0.0
 [6.0.0-RC2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC1...v6.0.0-RC2
