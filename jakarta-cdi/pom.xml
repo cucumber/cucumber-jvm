@@ -3,8 +3,8 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.cdi.jakarta</project.Automatic-Module-Name>
-        <openwebbeans.version>2.0.16</openwebbeans.version>
-        <xbean.version>4.16</xbean.version>
+        <openwebbeans.version>2.0.17</openwebbeans.version>
+        <xbean.version>4.17</xbean.version>
     </properties>
 
     <parent>
@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-asm7-shaded</artifactId>
+            <artifactId>xbean-asm8-shaded</artifactId>
             <version>${xbean.version}</version>
             <scope>test</scope>
         </dependency>
