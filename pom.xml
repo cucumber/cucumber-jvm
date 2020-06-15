@@ -567,7 +567,7 @@
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.21.0</version>
+                            <version>0.21.1</version>
                         </dependency>
                     </dependencies>
                     <configuration>
