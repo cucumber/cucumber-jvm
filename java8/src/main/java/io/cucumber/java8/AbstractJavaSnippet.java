@@ -18,10 +18,8 @@ abstract class AbstractJavaSnippet implements Snippet {
                 "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
                 "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
                 "    //\n" +
-                "    // For other transformations you can register a DataTableType.\n"; // TODO:
-                                                                                        // Add
-                                                                                        // doc
-                                                                                        // URL
+                // TODO: Add doc URL
+                "    // For other transformations you can register a DataTableType.\n";
     }
 
     @Override

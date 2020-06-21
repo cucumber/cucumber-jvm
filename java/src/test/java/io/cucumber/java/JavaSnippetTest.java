@@ -69,6 +69,44 @@ class JavaSnippetTest {
         assertThat(snippetFor("I have 4.2 cukes in my large belly", customParameterType), is(equalTo(expected)));
     }
 
+    @Test
+    void generatesSnippetsWithValidJavaIdentifiers() {
+        ParameterType<Size> customParameterType = new ParameterType<Size>(
+            "small-size",
+            "tiny|small|medium",
+            Size.class,
+            (String... groups) -> null,
+            true,
+            false);
+
+        String expected = "" +
+                "@Given(\"I have {double} cukes in my {small-size} belly\")\n" +
+                "public void i_have_cukes_in_my_belly(Double double1, Size smallSize) {\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
+                "    throw new io.cucumber.java.PendingException();\n" +
+                "}";
+        assertThat(snippetFor("I have 4.2 cukes in my tiny belly", customParameterType), is(equalTo(expected)));
+    }
+
+    @Test
+    void generatesSnippetsWithNonEmptyMethodNames() {
+        ParameterType<Size> customParameterType = new ParameterType<Size>(
+            "small-size",
+            "tiny|small|medium",
+            Size.class,
+            (String... groups) -> null,
+            true,
+            false);
+
+        String expected = "" +
+                "@Given(\"{double} {small-size}\")\n" +
+                "public void double_small_size(Double double1, Size smallSize) {\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
+                "    throw new io.cucumber.java.PendingException();\n" +
+                "}";
+        assertThat(snippetFor("4.2 medium", customParameterType), is(equalTo(expected)));
+    }
+
     private String snippetFor(String stepText, ParameterType<?> parameterType) {
         Step step = createStep(stepText);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
@@ -124,7 +162,7 @@ class JavaSnippetTest {
     void generatesCopyPasteReadySnippetWhenStepHasIntegersInsideStringParameter() {
         String expected = "" +
                 "@Given(\"the DI system receives a message saying {string}\")\n" +
-                "public void the_DI_system_receives_a_message_saying(String string) {\n" +
+                "public void the_di_system_receives_a_message_saying(String string) {\n" +
                 "    // Write code here that turns the phrase above into concrete actions\n" +
                 "    throw new io.cucumber.java.PendingException();\n" +
                 "}";
