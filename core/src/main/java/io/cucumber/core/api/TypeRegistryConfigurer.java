@@ -9,9 +9,9 @@ import java.util.Locale;
  * locale.
  *
  * @deprecated Please use annotation based configuration. See <a href=
- *             "https://github.com/cucumber/cucumber-jvm/blob/master/examples/java-calculator/src/test/java/io/cucumber/examples/java/ShoppingSteps.java">Annotation
+ *             "https://github.com/cucumber/cucumber-jvm/blob/main/examples/java-calculator/src/test/java/io/cucumber/examples/java/ShoppingSteps.java">Annotation
  *             based example</a> See <a href=
- *             "https://github.com/cucumber/cucumber-jvm/blob/master/examples/java8-calculator/src/test/java/io/cucumber/examples/java8/ShoppingSteps.java">Lambda
+ *             "https://github.com/cucumber/cucumber-jvm/blob/main/examples/java8-calculator/src/test/java/io/cucumber/examples/java8/ShoppingSteps.java">Lambda
  *             based example</a>
  */
 @API(status = API.Status.STABLE)

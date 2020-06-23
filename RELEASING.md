@@ -4,7 +4,7 @@ Releasing
 The deployment process of `cucumber-jvm` is based on 
 [Deploying to OSSRH with Apache Maven](http://central.sonatype.org/pages/apache-maven.html#deploying-to-ossrh-with-apache-maven-introduction).
 
-## Check [![Build Status](https://travis-ci.org/cucumber/cucumber-jvm.svg?branch=master)](https://travis-ci.org/cucumber/cucumber-jvm) ##
+## Check [![Build Status](https://travis-ci.org/cucumber/cucumber-jvm.svg?branch=main)](https://travis-ci.org/cucumber/cucumber-jvm) ##
 
 Is the build passing?
 

@@ -98,7 +98,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Deprecated
  * [Java] `Scenario.write(String)` & `Scenario.embed(byte[], String, String)` ([#1893](https://github.com/cucumber/cucumber-jvm/issues/1893) Tim te Beek)
  * [Spring] Deprecated `cucumber.xml` and implicit context configuration ([#1940](https://github.com/cucumber/cucumber-jvm/issues/1940) M.P. Korstanje)
-   - See [spring/README.md](https://github.com/cucumber/cucumber-jvm/tree/master/spring) for more information
+   - See [spring/README.md](https://github.com/cucumber/cucumber-jvm/tree/main/spring) for more information
  * [Core] Deprecate multiple tag arguments in @CucumberOptions ([#1955](https://github.com/cucumber/cucumber-jvm/issues/1955) M.P. Korstanje)
    - use a tag expresion instead `@CucumberOptions(tags="(@cucumber or @pickle) and not @salad")`
 
