@@ -23,7 +23,7 @@
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
 
         <!--Dependencies -->
-        <cucumber-expressions.version>10.2.0</cucumber-expressions.version>
+        <cucumber-expressions.version>10.2.1</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
