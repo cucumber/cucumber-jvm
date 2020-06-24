@@ -9,10 +9,6 @@
     <name>Examples: Wicket application</name>
     <packaging>war</packaging>
 
-    <build>
-        <finalName>rentit</finalName>
-    </build>
-
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.wicket.main</project.Automatic-Module-Name>
         <wicket.version>8.8.0</wicket.version>
@@ -21,13 +17,23 @@
         <logback-classic.version>1.2.3</logback-classic.version>
     </properties>
 
+    <build>
+        <finalName>rentit</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-core</artifactId>
             <version>${wicket.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
