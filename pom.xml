@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
     <version>6.1.2-SNAPSHOT</version>
@@ -314,7 +314,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>
-                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -407,7 +406,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>3.0.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
@@ -532,30 +530,6 @@
                         </groups>
                         <stylesheet>java</stylesheet>
                     </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.4</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.2.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-toolchains-plugin</artifactId>
-                    <version>3.0.0</version>
                 </plugin>
 
                 <!-- Semantic version check  -->
@@ -683,7 +657,6 @@
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
-                    <version>1.31.3</version>
                     <configuration>
                         <java>
                             <eclipse>
@@ -700,7 +673,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.1.1</version>
                     <configuration>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>

@@ -59,7 +59,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-archetype-plugin</artifactId>
-                    <version>3.1.2</version>
                     <configuration>
                         <ignoreEOLStyle>true</ignoreEOLStyle>
                     </configuration>

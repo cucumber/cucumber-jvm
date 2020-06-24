@@ -52,6 +52,14 @@
                                     <include>io.cucumber:gherkin</include>
                                 </includes>
                             </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>io.cucumber:gherkin</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <relocations>
                                 <relocation>
                                     <pattern>io.cucumber.gherkin</pattern>
