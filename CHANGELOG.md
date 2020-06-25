@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [6.1.2] (2020-06-25)
+
+### Fixed
+ - [Core] Update `cucumber-expressions` to v10.2.1 
+  - Retain position of optional groups ([cucumber/#1076](https://github.com/cucumber/cucumber/pull/1076), [cucumber/#511](https://github.com/cucumber/cucumber/pull/511), [cucumber/#952](https://github.com/cucumber/cucumber/pull/952) M.P. Korstanje)
+ - [Core] Generate valid parameter names in snippets ([#2029](https://github.com/cucumber/cucumber-jvm/issues/2029) M.P. Korstanje)
+   
 ## [6.1.1] (2020-06-12)
 
 ### Added
@@ -1440,7 +1447,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.1.1...master
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.1.2...master
+[6.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.1-RC2-RC1...v6.1.2
 [6.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.0-RC2-RC1...v6.1.1
 [6.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.1.0
 [6.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.0.0
