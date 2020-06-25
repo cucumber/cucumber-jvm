@@ -78,6 +78,10 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
         return DefinitionArgument.createArguments(definitionMatch.getArguments());
     }
 
+    public PickleStepDefinitionMatch getDefinitionMatch() {
+        return definitionMatch;
+    }
+
     @Override
     public StepArgument getStepArgument() {
         return step.getArgument();

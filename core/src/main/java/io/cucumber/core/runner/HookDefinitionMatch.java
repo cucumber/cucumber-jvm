@@ -44,4 +44,8 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
         return hookDefinition.getLocation();
     }
 
+    CoreHookDefinition getHookDefinition() {
+        return hookDefinition;
+    }
+
 }

@@ -1,5 +1,7 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.CucumberBackendException;
+import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.gherkin.Step;
@@ -13,7 +15,7 @@ import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
-final class CoreStepDefinition {
+final class CoreStepDefinition implements StepDefinition {
 
     private final UUID id;
     private final StepExpression expression;
@@ -55,6 +57,31 @@ final class CoreStepDefinition {
 
     UUID getId() {
         return id;
+    }
+
+    @Override
+    public void execute(Object[] args) throws CucumberBackendException, CucumberInvocationTargetException {
+        stepDefinition.execute(args);
+    }
+
+    @Override
+    public List<ParameterInfo> parameterInfos() {
+        return stepDefinition.parameterInfos();
+    }
+
+    @Override
+    public String getPattern() {
+        return stepDefinition.getPattern();
+    }
+
+    @Override
+    public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+        return stepDefinition.isDefinedAt(stackTraceElement);
+    }
+
+    @Override
+    public String getLocation() {
+        return stepDefinition.getLocation();
     }
 
 }

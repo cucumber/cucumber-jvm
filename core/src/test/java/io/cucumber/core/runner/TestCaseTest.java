@@ -67,6 +67,11 @@ class TestCaseTest {
     void init() {
         when(bus.getInstant()).thenReturn(Instant.now());
         when(bus.generateId()).thenReturn(UUID.randomUUID());
+
+        when(beforeStep1HookDefinition1.getId()).thenReturn(UUID.randomUUID());
+        when(beforeStep1HookDefinition2.getId()).thenReturn(UUID.randomUUID());
+        when(afterStep1HookDefinition1.getId()).thenReturn(UUID.randomUUID());
+        when(afterStep1HookDefinition2.getId()).thenReturn(UUID.randomUUID());
     }
 
     @Test

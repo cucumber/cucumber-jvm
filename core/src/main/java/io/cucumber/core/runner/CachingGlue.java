@@ -238,7 +238,7 @@ final class CachingGlue implements Glue {
                 expression);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
             if (previous != null) {
-                throw new DuplicateStepDefinitionException(previous.getStepDefinition(), stepDefinition);
+                throw new DuplicateStepDefinitionException(previous, stepDefinition);
             }
             stepDefinitionsByPattern.put(coreStepDefinition.getExpression().getSource(), coreStepDefinition);
             emitStepDefined(coreStepDefinition);
@@ -320,7 +320,7 @@ final class CachingGlue implements Glue {
         // cached and
         // must be recreated each time.
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        return new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), uri, step);
+        return new PickleStepDefinitionMatch(arguments, coreStepDefinition, uri, step);
     }
 
     private PickleStepDefinitionMatch findStepDefinitionMatch(URI uri, Step step)
@@ -345,7 +345,7 @@ final class CachingGlue implements Glue {
         for (CoreStepDefinition coreStepDefinition : stepDefinitionsByPattern.values()) {
             List<Argument> arguments = coreStepDefinition.matchedArguments(step);
             if (arguments != null) {
-                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition.getStepDefinition(), uri, step));
+                result.add(new PickleStepDefinitionMatch(arguments, coreStepDefinition, uri, step));
             }
         }
         return result;

@@ -191,7 +191,8 @@ class CachingGlueTest {
         Step pickleStep1 = getPickleStep(stepText);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
-        assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
+        assertThat(((CoreStepDefinition) pickleStepDefinitionMatch.getStepDefinition()).getStepDefinition(),
+            is(equalTo(stepDefinition1)));
 
         // check cache
         assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
@@ -200,7 +201,8 @@ class CachingGlueTest {
 
         Step pickleStep2 = getPickleStep(stepText);
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep2);
-        assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition1)));
+        assertThat(((CoreStepDefinition) pickleStepDefinitionMatch2.getStepDefinition()).getStepDefinition(),
+            is(equalTo(stepDefinition1)));
     }
 
     @Test
@@ -216,7 +218,7 @@ class CachingGlueTest {
 
         Step pickleStep1 = getPickleStepWithSingleCellTable(stepText, "cell 1");
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
-        assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
+        assertThat(((CoreStepDefinition) match1.getStepDefinition()).getStepDefinition(), is(equalTo(stepDefinition1)));
 
         // check cache
         assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
@@ -258,8 +260,7 @@ class CachingGlueTest {
         Step pickleStep1 = getPickleStepWithDocString(stepText, "doc string 1");
 
         PickleStepDefinitionMatch match1 = glue.stepDefinitionMatch(uri, pickleStep1);
-        assertThat(match1.getStepDefinition(), is(equalTo(stepDefinition1)));
-
+        assertThat(((CoreStepDefinition) match1.getStepDefinition()).getStepDefinition(), is(equalTo(stepDefinition1)));
         // check cache
         assertThat(glue.getStepPatternByStepText().get(stepText), is(equalTo(stepDefinition1.getPattern())));
         CoreStepDefinition coreStepDefinition = glue.getStepDefinitionsByPattern().get(stepDefinition1.getPattern());
@@ -298,7 +299,8 @@ class CachingGlueTest {
         glue.prepareGlue(stepTypeRegistry);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
-        assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
+        assertThat(((CoreStepDefinition) pickleStepDefinitionMatch.getStepDefinition()).getStepDefinition(),
+            is(equalTo(stepDefinition1)));
 
         glue.removeScenarioScopedGlue();
 
@@ -307,7 +309,8 @@ class CachingGlueTest {
         glue.prepareGlue(stepTypeRegistry);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep1);
-        assertThat(pickleStepDefinitionMatch2.getStepDefinition(), is(equalTo(stepDefinition2)));
+        assertThat(((CoreStepDefinition) pickleStepDefinitionMatch2.getStepDefinition()).getStepDefinition(),
+            is(equalTo(stepDefinition2)));
     }
 
     @Test
@@ -321,7 +324,8 @@ class CachingGlueTest {
         glue.prepareGlue(stepTypeRegistry);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
-        assertThat(pickleStepDefinitionMatch.getStepDefinition(), is(equalTo(stepDefinition1)));
+        assertThat(((CoreStepDefinition) pickleStepDefinitionMatch.getStepDefinition()).getStepDefinition(),
+            is(equalTo(stepDefinition1)));
 
         glue.removeScenarioScopedGlue();
 

@@ -92,11 +92,10 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     private CucumberException registerDataTableTypeInConfiguration(Exception e) {
+        // TODO: Add doc URL
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears you did not register a data table type.", // TODO:
-                                                                      // Add doc
-                                                                      // URL
+                "It appears you did not register a data table type.",
             stepDefinition.getPattern(),
             stepDefinition.getLocation()), e);
     }
@@ -117,25 +116,21 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
+        // TODO: Add doc URL
         return new CucumberException(String.format("" +
                 "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears there was a problem with a hook or transformer definition.", // TODO:
-                                                                                         // Add
-                                                                                         // doc
-                                                                                         // URL
+                "It appears there was a problem with a hook or transformer definition.",
             stepDefinition.getPattern(),
             stepDefinition.getLocation()), e);
     }
 
     private Throwable couldNotInvokeStep(CucumberBackendException e, List<Object> result) {
         String argumentTypes = createArgumentTypes(result);
+        // TODO: Add doc URL
         return new CucumberException(String.format("" +
                 "Could not invoke step [%s] defined at '%s'.\n" +
                 "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (" + argumentTypes + ")", // TODO:
-                                                                              // Add
-                                                                              // doc
-                                                                              // URL
+                "The converted arguments types were (" + argumentTypes + ")",
             stepDefinition.getPattern(),
             stepDefinition.getLocation()), e);
     }
