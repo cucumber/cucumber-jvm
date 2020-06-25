@@ -3,5 +3,12 @@
     "config:base"
   ],
   "labels": ["dependencies"],
-  "prHourlyLimit": 0
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "branch"
+    }
+  ]
 }
