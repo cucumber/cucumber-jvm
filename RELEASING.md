@@ -9,7 +9,7 @@ The deployment process of `cucumber-jvm` is based on
 Is the build passing?
 
 ```
-git checkout master
+git checkout main
 ```
 
 Also check if you can upgrade any dependencies:
