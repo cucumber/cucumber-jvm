@@ -21,10 +21,15 @@ Provides lambda based step definitions. To use add the `cucumber-java8` dependen
 Declare a step definition calling a method in the constructor of the glue class.
 For localized methods import the interface from `io.cucumber.java8.<ISO2 Language Code>`
 
+Data tables and Docstrings from Gherkin can be accessed by using a `DataTable`
+or `DocString` object as the last parameter.
+
 ```java
 package com.example.app;
 
 import io.cucumber.java8.En;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,6 +49,15 @@ public class StepDefinitions implements En {
         });
 
         Then("the result is {double}", (Double expected) -> assertEquals(expected, calc.value()));
+
+        Given("the previous entries:", (DataTable dataTable) -> {
+            List<Entry> entries = dataTable.asList(Entry.class);
+            ...
+        });
+
+        Then("the calculation log displays:", (DocString docString) -> {
+            ...
+        });
     }
 }
 ```
@@ -191,12 +205,10 @@ public class StepDefinitions implements En {
 }
 ```
 
-
 # Transposing Tables
 
 A data table can be transposed by calling `.transpose()`. This means the keys
 will be in the first column rather then the first row.
-
 
 ```gherkin
  Given the user is
