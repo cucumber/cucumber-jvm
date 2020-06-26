@@ -59,8 +59,14 @@ public class CalculatorStepDefinitions {
 
 ### Data tables
 
-Data tables from Gherkin can be accessed by using the `DataTable` object as a
-parameter.
+Data tables from Gherkin can be accessed by using the `DataTable` object as the
+last parameter in a step definition. Depending on the table shape as one of the
+following collections. For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+ * `List<List<String>> table`
+ * `List<Map<String, String>> table`
+ * `Map<String, String> table`
+ * `Map<String, List<String>> table`
+ * `Map<String, Map<String, String>> table`
 
 ```java
 package com.example.app;
@@ -71,11 +77,26 @@ import io.cucumber.java.en.Given;
 public class StepDefinitions {
     
     @Given("a datatable:")
-    public void a_data_table(DataTable dataTable){
+    public void a_data_table(DataTable table){
+        
+    }
+    
+    @Given("a datatable as a list of maps:")
+    public void a_data_table(List<Map<String, String>> table){
+        
+    }
+
+    @Given("a datatable as a list of maps:")
+    public void a_data_table(Map<String, Map<String, Double>> table){
         
     }
 }
 ```
+
+Note: In addition to collections of `String`, `Integer`, `Float`, `BigInteger`
+and `BigDecimal`, `Byte`, `Short`, `Long` and `Double` are also support.
+Numbers are parsed using the language of the feature file.
+
 ### Doc strings
 
 Doc strings from Gherkin can be accessed by using the `DocString` object as a
@@ -142,7 +163,7 @@ public class StepDefinitions {
 
 ### Data Table Type
 
-Using a data table type will allow you to convert   
+Using a custom data table type will allow you to convert   
 
 ```feature
     Given a list of authors in a table
