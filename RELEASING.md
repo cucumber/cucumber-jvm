@@ -34,10 +34,6 @@ make release
 
 ## Last bits ##
 
-Wait for the release to show up on maven central. Then update the dependency in example projects:
-
-* https://github.com/cucumber/cucumber-java-skeleton
-
 Update the cucumber-jvm version in the documentation project:
 
 * https://github.com/cucumber/docs.cucumber.io
@@ -45,7 +41,6 @@ Update the cucumber-jvm version in the documentation project:
 The cucumber-jvm version for the docs is specified in the docs [versions.yaml](https://github.com/cucumber/docs.cucumber.io/blob/master/data/versions.yaml)
 
 All done! Hurray!
-
 
 # GPG Keys #
 
