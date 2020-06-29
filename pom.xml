@@ -27,7 +27,7 @@
         <datatable.version>3.3.1</datatable.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
-        <messages.version>12.1.1</messages.version>
+        <messages.version>12.2.0</messages.version>
         <gherkin.version>14.0.1</gherkin.version>
         <html-formatter.version>7.0.0</html-formatter.version>
 
