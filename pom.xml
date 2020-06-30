@@ -555,46 +555,7 @@
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
                             <revapi.ignore>
-                                <!-- Cucumber Core -->
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.returnTypeTypeParametersChanged</code>
-                                    <old>.*io\.cucumber\.core\.filter\.Options::getTagExpressions.*</old>
-                                    <new>.*io\.cucumber\.core\.filter\.Options::getTagExpressions.*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.returnTypeTypeParametersChanged</code>
-                                    <old>.*io\.cucumber\.core\.options\.RuntimeOptions::getTagExpressions.*</old>
-                                    <new>.*io\.cucumber\.core\.options\.RuntimeOptions::getTagExpressions.*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.parameterTypeChanged</code>
-                                    <old>.*io\.cucumber\.core\.options\.RuntimeOptionsBuilder::addTagFilter.*</old>
-                                    <new>.*io\.cucumber\.core\.options\.RuntimeOptionsBuilder::addTagFilter.*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <new>interface io.cucumber.tagexpressions.Expression</new>
-                                    <justification>Internal API</justification>
-                                </item>
-
-                                <!-- Cucumber-JUnit  -->
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>junit:junit:jar:${junit.version}</newArchive>
-                                    <justification>Implements JUnit4 API</justification>
-                                </item>
                                 <!-- Gherkin parser related -->
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>io.cucumber:cucumber-gherkin:jar:${project.version}</newArchive>
-                                    <justification>Internal API</justification>
-                                </item>
                                 <item>
                                     <code>java.class.nonPublicPartOfAPI</code>
                                     <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
@@ -624,14 +585,20 @@
                                 </item>
                                 <item>
                                     <regex>true</regex>
-                                    <code>java.missing.oldClass</code>
-                                    <old>.*\.internal\..*</old>
+                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <new>.*\.internal\..*</new>
                                     <justification>Internal API</justification>
                                 </item>
                                 <item>
                                     <regex>true</regex>
-                                    <code>java.class.nonPublicPartOfAPI</code>
+                                    <code>java.method.addedToInterface</code>
                                     <new>.*\.internal\..*</new>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.method.addedToInterface</code>
+                                    <new>.*io.cucumber.messages.Messages.Meta.*</new>
                                     <justification>Internal API</justification>
                                 </item>
                             </revapi.ignore>
