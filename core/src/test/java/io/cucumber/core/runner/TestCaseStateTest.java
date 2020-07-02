@@ -38,14 +38,14 @@ class TestCaseStateTest {
 
     private TestCaseState createTestCaseState(Feature feature) {
         return new TestCaseState(bus,
+            UUID.randomUUID(),
+            new TestCase(
                 UUID.randomUUID(),
-                new TestCase(
-                        UUID.randomUUID(),
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        feature.getPickles().get(0),
-                        false));
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                feature.getPickles().get(0),
+                false));
     }
 
     @Test
@@ -137,7 +137,8 @@ class TestCaseStateTest {
         TestCaseState state = createTestCaseState(feature);
 
         assertThrows(IllegalStateException.class, () -> state.attach("Hello World", "text/plain", "hello.txt"));
-        assertThrows(IllegalStateException.class, () -> state.attach("Hello World".getBytes(UTF_8), "text/plain", "hello.txt"));
+        assertThrows(IllegalStateException.class,
+            () -> state.attach("Hello World".getBytes(UTF_8), "text/plain", "hello.txt"));
         assertThrows(IllegalStateException.class, () -> state.log("Hello World"));
     }
 

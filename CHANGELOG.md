@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [6.2.0] (2020-07-02)
+
+### Changed
+ - [Core] Upgrade to [Gherkin v14](https://github.com/cucumber/cucumber/blob/master/gherkin/CHANGELOG.md#1400---2020-06-27)
+
+### Fixed
+ - [Core] Render attachments in `html` formatter
+
 ## [6.1.2] (2020-06-25)
 
 ### Fixed
@@ -1447,7 +1455,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.1.2...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.2.0...main
+[6.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.2-RC2-RC1...v6.2.0
 [6.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.1-RC2-RC1...v6.1.2
 [6.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.0-RC2-RC1...v6.1.1
 [6.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.1.0
