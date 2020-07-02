@@ -66,6 +66,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public void attach(byte[] data, String mediaType, String name) {
+        requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
         bus.send(Messages.Envelope.newBuilder()
                 .setAttachment(
@@ -82,6 +83,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public void attach(String data, String mediaType, String name) {
+        requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
         bus.send(Messages.Envelope.newBuilder()
                 .setAttachment(
@@ -98,6 +100,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public void log(String text) {
+        requireActiveTestStep();
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
         bus.send(Messages.Envelope.newBuilder()
                 .setAttachment(
@@ -145,6 +148,12 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     void clearCurrentTestStepId() {
         this.currentTestStepId = null;
+    }
+
+    private void requireActiveTestStep(){
+        if (currentTestStepId == null) {
+            throw new IllegalStateException("You can not use Scenario.log or Scenario.attach when a step is not being executed");
+        }
     }
 
 }
