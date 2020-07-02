@@ -163,7 +163,7 @@
                                 <filter>
                                     <artifact>io.cucumber:gherkin</artifact>
                                     <excludes>
-                                        <exclude>META-INF/**</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
