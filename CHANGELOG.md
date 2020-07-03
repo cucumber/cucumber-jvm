@@ -1456,11 +1456,11 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 <!-- Releases -->
 [Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.2.0...main
-[6.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.2-RC2-RC1...v6.2.0
-[6.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.1-RC2-RC1...v6.1.2
-[6.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.0-RC2-RC1...v6.1.1
-[6.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.1.0
-[6.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2-RC1...v6.0.0
+[6.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.2...v6.2.0
+[6.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.1...v6.1.2
+[6.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.0...v6.1.1
+[6.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0...v6.1.0
+[6.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC2...v6.0.0
 [6.0.0-RC2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.0.0-RC1...v6.0.0-RC2
 [6.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v5.7.0...v6.0.0-RC1
 [5.7.0]:  https://github.com/cucumber/cucumber-jvm/compare/v5.6.0...v5.7.0
