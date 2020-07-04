@@ -20,6 +20,9 @@ make update-dependency-versions
 
 ## Make the release ##
 
+In order to make releases secrets are required. Members of the core team can
+install keybase and join the `cucumberbdd` team to access these secrets.
+
 Remove the empty sections in the changelog. Don't commit these but run: 
 
 ```
