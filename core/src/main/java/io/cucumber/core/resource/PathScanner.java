@@ -6,10 +6,12 @@ import io.cucumber.core.logging.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.EnumSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -43,7 +45,8 @@ class PathScanner {
         }
 
         try {
-            walkFileTree(path, new ResourceFileVisitor(filter, consumer.apply(path)));
+            walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
+                    new ResourceFileVisitor(filter, consumer.apply(path)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
