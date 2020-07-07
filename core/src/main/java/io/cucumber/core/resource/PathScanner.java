@@ -46,7 +46,7 @@ class PathScanner {
 
         try {
             walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
-                    new ResourceFileVisitor(filter, consumer.apply(path)));
+                new ResourceFileVisitor(filter, consumer.apply(path)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

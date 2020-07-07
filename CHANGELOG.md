@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [6.2.1] (2020-07-07)
+
+### Fixed
+ - [Core] Follow symlinks when loading feature files ([#2043](https://github.com/cucumber/cucumber-jvm/issues/2043) Andrey Mukamolov)
+
 ## [6.2.0] (2020-07-02)
 
 ### Changed
@@ -1455,7 +1460,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.2.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.2.1...main
+[6.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.0...v6.2.1
 [6.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.2...v6.2.0
 [6.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.1...v6.1.2
 [6.1.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.0...v6.1.1
