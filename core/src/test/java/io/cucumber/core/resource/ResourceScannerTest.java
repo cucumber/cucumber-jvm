@@ -103,6 +103,13 @@ class ResourceScannerTest {
     }
 
     @Test
+    void scanForResourcesPathSymlink() {
+        File file = new File("src/test/resource-symlink/test/resource.txt");
+        List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
+        assertThat(resources, contains(file.toURI()));
+    }
+
+    @Test
     void scanForResourcesDirectory() {
         File file = new File("src/test/resources/io/cucumber/core/resource");
         List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
@@ -110,6 +117,16 @@ class ResourceScannerTest {
             new File("src/test/resources/io/cucumber/core/resource/test/resource.txt").toURI(),
             new File("src/test/resources/io/cucumber/core/resource/test/other-resource.txt").toURI(),
             new File("src/test/resources/io/cucumber/core/resource/test/spaces in name resource.txt").toURI()));
+    }
+
+    @Test
+    void scanForResourcesDirectorySymlink() {
+        File file = new File("src/test/resource-symlink");
+        List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
+        assertThat(resources, containsInAnyOrder(
+            new File("src/test/resource-symlink/test/resource.txt").toURI(),
+            new File("src/test/resource-symlink/test/other-resource.txt").toURI(),
+            new File("src/test/resource-symlink/test/spaces in name resource.txt").toURI()));
     }
 
     @Test
