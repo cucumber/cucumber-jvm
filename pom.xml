@@ -508,7 +508,8 @@
                             <!-- javadoc plugin can't port docs for modularized code to
                                non-modularized code -->
                             <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
-                            <link>https://javadoc.io/doc/org.testng/testng/7.1.0/</link>
+                            <!-- javadoc.io is down -->
+                            <!-- <link>https://javadoc.io/doc/org.testng/testng/7.1.0/</link> -->
                         </links>
                         <groups>
                             <group>
