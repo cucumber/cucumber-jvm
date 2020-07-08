@@ -35,6 +35,14 @@ public class StubBackendProviderService implements BackendProviderService {
 
         @Override
         public void loadGlue(Glue glue, List<URI> gluePaths) {
+            glue.addStepDefinition(createStepDefinition("a scenario"));
+            glue.addStepDefinition(createStepDefinition("a scenario outline"));
+            glue.addStepDefinition(createStepDefinition("it is executed"));
+            glue.addStepDefinition(createStepDefinition("is only runs once"));
+            glue.addStepDefinition(createStepDefinition("A is used"));
+            glue.addStepDefinition(createStepDefinition("B is used"));
+            glue.addStepDefinition(createStepDefinition("C is used"));
+            glue.addStepDefinition(createStepDefinition("D is used"));
             glue.addStepDefinition(createStepDefinition("step"));
             glue.addStepDefinition(createStepDefinition("another step"));
             glue.addStepDefinition(createStepDefinition("foo"));

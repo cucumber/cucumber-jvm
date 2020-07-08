@@ -34,6 +34,7 @@ class PickleRunnerWithStepDescriptionsTest {
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
             mock(RunnerSupplier.class),
             pickles.get(0),
+            null,
             createJunitOptions());
 
         // fish out the two occurrences of the same step and check whether we
@@ -69,6 +70,7 @@ class PickleRunnerWithStepDescriptionsTest {
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
             mock(RunnerSupplier.class),
             features.getPickles().get(0),
+            null,
             createJunitOptions());
 
         Description runnerDescription = runner.getDescription();
@@ -93,6 +95,7 @@ class PickleRunnerWithStepDescriptionsTest {
         PickleRunner runner = PickleRunners.withStepDescriptions(
             mock(RunnerSupplier.class),
             features.getPickles().get(0),
+            null,
             createJunitOptions());
 
         // fish out the data from runner
@@ -115,6 +118,7 @@ class PickleRunnerWithStepDescriptionsTest {
         PickleRunner runner = PickleRunners.withStepDescriptions(
             mock(RunnerSupplier.class),
             pickles.get(0),
+            null,
             createJunitOptions());
 
         assertEquals("scenario name", runner.getDescription().getDisplayName());
@@ -130,6 +134,7 @@ class PickleRunnerWithStepDescriptionsTest {
         PickleRunner runner = PickleRunners.withStepDescriptions(
             mock(RunnerSupplier.class),
             pickles.get(0),
+            null,
             createJunitOptions());
 
         assertEquals("it works", runner.getDescription().getChildren().get(0).getMethodName());
@@ -145,6 +150,7 @@ class PickleRunnerWithStepDescriptionsTest {
         PickleRunner runner = PickleRunners.withStepDescriptions(
             mock(RunnerSupplier.class),
             pickles.get(0),
+            null,
             createFileNameCompatibleJunitOptions());
 
         assertEquals("scenario_name", runner.getDescription().getDisplayName());

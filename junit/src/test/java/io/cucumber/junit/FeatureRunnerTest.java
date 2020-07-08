@@ -121,7 +121,7 @@ class FeatureRunnerTest {
             classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
             objectFactory, typeRegistrySupplier);
-        return FeatureRunner.create(feature, filters, runnerSupplier, junitOption);
+        return FeatureRunner.create(feature, null, filters, runnerSupplier, junitOption);
     }
 
     @Test
@@ -365,7 +365,7 @@ class FeatureRunnerTest {
             throw illegalStateException;
         };
 
-        FeatureRunner featureRunner = FeatureRunner.create(feature, filters, runnerSupplier, new JUnitOptions());
+        FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, runnerSupplier, new JUnitOptions());
 
         RunNotifier notifier = mock(RunNotifier.class);
         PickleRunners.PickleRunner pickleRunner = featureRunner.getChildren().get(0);
