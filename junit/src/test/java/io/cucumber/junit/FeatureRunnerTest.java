@@ -409,7 +409,8 @@ class FeatureRunnerTest {
 
         FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, runnerSupplier, new JUnitOptions());
         assertThat(featureRunner.getChildren().size(), is(1));
-        assertThat(featureRunner.getChildren().get(0).getDescription().getDisplayName(), is("scenario_2 name(feature name)"));
+        assertThat(featureRunner.getChildren().get(0).getDescription().getDisplayName(),
+            is("scenario_2 name(feature name)"));
     }
 
 }

@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [6.2.2] (2020-07-09)
+
+### Fixed
+ -  [JUnit] Make duplicate pickle names unique ([#2045](https://github.com/cucumber/cucumber-jvm/issues/2045) M.P. Korstanje)
+
 ## [6.2.1] (2020-07-07)
 
 ### Fixed
@@ -1460,7 +1465,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.2.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.2.2...main
+[6.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.1...v6.2.2
 [6.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.0...v6.2.1
 [6.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.2...v6.2.0
 [6.1.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.1...v6.1.2
