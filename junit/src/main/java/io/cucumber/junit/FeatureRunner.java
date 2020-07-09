@@ -43,10 +43,10 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         this.options = options;
 
         Map<String, List<Pickle>> groupedByName = feature.getPickles().stream()
-                .filter(filter)
                 .collect(groupingBy(Pickle::getName));
         this.children = feature.getPickles()
                 .stream()
+                .filter(filter)
                 .map(pickle -> {
                     String featureName = getName();
                     Integer exampleId = uniqueSuffix(groupedByName, pickle, Pickle::getName);
