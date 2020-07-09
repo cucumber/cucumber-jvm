@@ -21,18 +21,21 @@ import static io.cucumber.junit.FileNameCompatibleNames.createName;
 
 final class PickleRunners {
 
-    static PickleRunner withStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions options) {
+    static PickleRunner withStepDescriptions(
+            RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix, JUnitOptions options
+    ) {
         try {
-            return new WithStepDescriptions(runnerSupplier, pickle, options);
+            return new WithStepDescriptions(runnerSupplier, pickle, uniqueSuffix, options);
         } catch (InitializationError e) {
             throw new CucumberException("Failed to create scenario runner", e);
         }
     }
 
     static PickleRunner withNoStepDescriptions(
-            String featureName, RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions
+            String featureName, RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix,
+            JUnitOptions jUnitOptions
     ) {
-        return new NoStepDescriptions(featureName, runnerSupplier, pickle, jUnitOptions);
+        return new NoStepDescriptions(featureName, runnerSupplier, pickle, uniqueSuffix, jUnitOptions);
     }
 
     interface PickleRunner {
@@ -51,14 +54,18 @@ final class PickleRunners {
         private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
         private final Map<Step, Description> stepDescriptions = new HashMap<>();
+        private final Integer uniqueSuffix;
         private Description description;
 
-        WithStepDescriptions(RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions)
+        WithStepDescriptions(
+                RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix, JUnitOptions jUnitOptions
+        )
                 throws InitializationError {
             super((Class<?>) null);
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
+            this.uniqueSuffix = uniqueSuffix;
         }
 
         @Override
@@ -70,7 +77,7 @@ final class PickleRunners {
 
         @Override
         protected String getName() {
-            return createName(pickle.getName(), jUnitOptions.filenameCompatibleNames());
+            return createName(pickle.getName(), uniqueSuffix, jUnitOptions.filenameCompatibleNames());
         }
 
         @Override
@@ -86,8 +93,9 @@ final class PickleRunners {
         public Description describeChild(Step step) {
             Description description = stepDescriptions.get(step);
             if (description == null) {
-                String testName = createName(step.getText(), jUnitOptions.filenameCompatibleNames());
-                description = Description.createTestDescription(getName(), testName, new PickleStepId(pickle, step));
+                String className = getName();
+                String name = createName(step.getText(), jUnitOptions.filenameCompatibleNames());
+                description = Description.createTestDescription(className, name, new PickleStepId(pickle, step));
                 stepDescriptions.put(step, description);
             }
             return description;
@@ -120,15 +128,18 @@ final class PickleRunners {
         private final RunnerSupplier runnerSupplier;
         private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
+        private final Integer uniqueSuffix;
         private Description description;
 
         NoStepDescriptions(
-                String featureName, RunnerSupplier runnerSupplier, Pickle pickle, JUnitOptions jUnitOptions
+                String featureName, RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix,
+                JUnitOptions jUnitOptions
         ) {
             this.featureName = featureName;
             this.runnerSupplier = runnerSupplier;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
+            this.uniqueSuffix = uniqueSuffix;
         }
 
         @Override
@@ -145,7 +156,7 @@ final class PickleRunners {
         public Description getDescription() {
             if (description == null) {
                 String className = createName(featureName, jUnitOptions.filenameCompatibleNames());
-                String name = createName(pickle.getName(), jUnitOptions.filenameCompatibleNames());
+                String name = createName(pickle.getName(), uniqueSuffix, jUnitOptions.filenameCompatibleNames());
                 description = Description.createTestDescription(className, name, new PickleId(pickle));
             }
             return description;

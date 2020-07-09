@@ -14,11 +14,14 @@ import org.junit.runners.model.InitializationError;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static io.cucumber.junit.FileNameCompatibleNames.createName;
+import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
 import static io.cucumber.junit.PickleRunners.withStepDescriptions;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 final class FeatureRunner extends ParentRunner<PickleRunner> {
@@ -26,26 +29,40 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children;
     private final Feature feature;
     private final JUnitOptions options;
+    private final Integer uniqueSuffix;
     private Description description;
 
-    private FeatureRunner(Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options)
+    private FeatureRunner(
+            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, RunnerSupplier runners,
+            JUnitOptions options
+    )
             throws InitializationError {
         super((Class<?>) null);
         this.feature = feature;
+        this.uniqueSuffix = uniqueSuffix;
         this.options = options;
-        String name = feature.getName().orElse("EMPTY_NAME");
-        this.children = feature.getPickles().stream()
-                .filter(filter).map(pickle -> options.stepNotifications()
-                        ? withStepDescriptions(runners, pickle, options)
-                        : withNoStepDescriptions(name, runners, pickle, options))
+
+        Map<String, List<Pickle>> groupedByName = feature.getPickles().stream()
+                .collect(groupingBy(Pickle::getName));
+        this.children = feature.getPickles()
+                .stream()
+                .filter(filter)
+                .map(pickle -> {
+                    String featureName = getName();
+                    Integer exampleId = uniqueSuffix(groupedByName, pickle, Pickle::getName);
+                    return options.stepNotifications()
+                            ? withStepDescriptions(runners, pickle, exampleId, options)
+                            : withNoStepDescriptions(featureName, runners, pickle, exampleId, options);
+                })
                 .collect(toList());
     }
 
     static FeatureRunner create(
-            Feature feature, Predicate<Pickle> filter, RunnerSupplier runners, JUnitOptions options
+            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, RunnerSupplier runners,
+            JUnitOptions options
     ) {
         try {
-            return new FeatureRunner(feature, filter, runners, options);
+            return new FeatureRunner(feature, uniqueSuffix, filter, runners, options);
         } catch (InitializationError e) {
             throw new CucumberException("Failed to create scenario runner", e);
         }
@@ -89,7 +106,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     @Override
     protected String getName() {
         String name = feature.getName().orElse("EMPTY_NAME");
-        return createName(name, options.filenameCompatibleNames());
+        return createName(name, uniqueSuffix, options.filenameCompatibleNames());
     }
 
     @Override

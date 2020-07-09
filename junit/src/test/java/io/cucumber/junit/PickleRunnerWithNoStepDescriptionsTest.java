@@ -25,6 +25,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
             "feature name",
             mock(RunnerSupplier.class),
             pickles.get(0),
+            null,
             createJunitOptions());
 
         assertThat(runner.getDescription().getDisplayName(), is(equalTo("scenario name(feature name)")));
@@ -45,6 +46,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
             "feature name",
             mock(RunnerSupplier.class),
             pickles.get(0),
+            null,
             createFileNameCompatibleJUnitOptions());
 
         assertThat(runner.getDescription().getDisplayName(), is(equalTo("scenario_name(feature_name)")));
@@ -66,6 +68,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
             "имя функции",
             mock(RunnerSupplier.class),
             pickles.get(0),
+            null,
             createFileNameCompatibleJUnitOptions());
 
         assertThat(runner.getDescription().getDisplayName(), is(equalTo("____________(___________)")));

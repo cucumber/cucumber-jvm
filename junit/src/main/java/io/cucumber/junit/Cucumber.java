@@ -5,8 +5,6 @@ import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.options.CucumberProperties;
@@ -40,10 +38,14 @@ import org.junit.runners.model.Statement;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -87,8 +89,6 @@ import static java.util.stream.Collectors.toList;
  */
 @API(status = API.Status.STABLE)
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
-
-    private static final Logger log = LoggerFactory.getLogger(Cucumber.class);
 
     private final List<ParentRunner<?>> children;
     private final EventBus bus;
@@ -171,8 +171,14 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             objectFactorySupplier, typeRegistryConfigurerSupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         Predicate<Pickle> filters = new Filters(runtimeOptions);
+
+        Map<Optional<String>, List<Feature>> groupedByName = features.stream()
+                .collect(groupingBy(Feature::getName));
         this.children = features.stream()
-                .map(feature -> FeatureRunner.create(feature, filters, runnerSupplier, junitOptions))
+                .map(feature -> {
+                    Integer uniqueSuffix = uniqueSuffix(groupedByName, feature, Feature::getName);
+                    return FeatureRunner.create(feature, uniqueSuffix, filters, runnerSupplier, junitOptions);
+                })
                 .filter(runner -> !runner.isEmpty())
                 .collect(toList());
     }
