@@ -4,6 +4,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
@@ -12,6 +13,7 @@ import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.SingletonObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -381,6 +383,33 @@ class FeatureRunnerTest {
         assertThat(failureArgumentCaptor.getValue().getDescription(), is(equalTo(description)));
         order.verify(notifier).pleaseStop();
         order.verify(notifier).fireTestFinished(description);
+    }
+
+    @Test
+    void should_filter_pickles() {
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario_1 name\n" +
+                "    Given step #1\n" +
+                "  @tag\n" +
+                "  Scenario: scenario_2 name\n" +
+                "    Given step #1\n"
+
+        );
+
+        RuntimeOptions options = new RuntimeOptionsBuilder()
+                .addTagFilter(TagExpressionParser.parse("@tag"))
+                .build();
+        Filters filters = new Filters(options);
+
+        IllegalStateException illegalStateException = new IllegalStateException();
+        RunnerSupplier runnerSupplier = () -> {
+            throw illegalStateException;
+        };
+
+        FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, runnerSupplier, new JUnitOptions());
+        assertThat(featureRunner.getChildren().size(), is(1));
+        assertThat(featureRunner.getChildren().get(0).getDescription().getDisplayName(), is("scenario_2 name(feature name)"));
     }
 
 }
