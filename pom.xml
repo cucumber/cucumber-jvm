@@ -36,7 +36,7 @@
         <junit-jupiter.version>5.6.2</junit-jupiter.version>
         <junit-platform.version>1.6.2</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.3.3</mockito.version>
+        <mockito.version>3.4.0</mockito.version>
         <!--Maven plugins-->
         <groovy.version>2.5.12</groovy.version>
     </properties>
