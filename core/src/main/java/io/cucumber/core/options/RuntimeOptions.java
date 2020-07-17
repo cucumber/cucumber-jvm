@@ -77,12 +77,12 @@ public final class RuntimeOptions implements
         }
     }
 
-    List<Plugin> getFormatters() {
-        return formatters;
+    void addFormatters(List<Plugin> formatters) {
+        this.formatters.addAll(formatters);
     }
 
-    List<Plugin> getSummaryPrinter() {
-        return summaryPrinters;
+    void addSummaryPrinters(List<Plugin> summaryPrinters){
+        this.summaryPrinters.addAll(summaryPrinters);
     }
 
     public boolean isMultiThreaded() {

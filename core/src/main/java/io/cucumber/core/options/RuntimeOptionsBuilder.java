@@ -21,7 +21,8 @@ public final class RuntimeOptionsBuilder {
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
-    private final ParsedPluginData parsedPluginData = new ParsedPluginData();
+    private final List<Options.Plugin> formatters = new ArrayList<>();
+    private final List<Options.Plugin> summaryPrinters = new ArrayList<>();
     private List<FeatureWithLines> parsedRerunPaths = null;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;
@@ -59,8 +60,15 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder addPluginName(String name) {
-        this.parsedPluginData.addPluginName(name);
+    public RuntimeOptionsBuilder addPluginName(String pluginSpecification) {
+        PluginOption pluginOption = PluginOption.parse(pluginSpecification);
+        if (pluginOption.isSummaryPrinter()) {
+            summaryPrinters.add(pluginOption);
+        } else if (pluginOption.isFormatter()) {
+            formatters.add(pluginOption);
+        } else {
+            throw new CucumberException("Unrecognized plugin: " + pluginSpecification);
+        }
         return this;
     }
 
@@ -118,8 +126,8 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setGlue(this.parsedGlue);
         }
 
-        runtimeOptions.getFormatters().addAll(this.parsedPluginData.formatters);
-        runtimeOptions.getSummaryPrinter().addAll(this.parsedPluginData.summaryPrinters);
+        runtimeOptions.addFormatters(this.formatters);
+        runtimeOptions.addSummaryPrinters(this.summaryPrinters);
 
         if (parsedObjectFactoryClass != null) {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
@@ -216,23 +224,4 @@ public final class RuntimeOptionsBuilder {
     public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.parsedObjectFactoryClass = objectFactoryClass;
     }
-
-    static final class ParsedPluginData {
-
-        private final List<Options.Plugin> formatters = new ArrayList<>();
-        private final List<Options.Plugin> summaryPrinters = new ArrayList<>();
-
-        void addPluginName(String name) {
-            PluginOption pluginOption = PluginOption.parse(name);
-            if (pluginOption.isSummaryPrinter()) {
-                summaryPrinters.add(pluginOption);
-            } else if (pluginOption.isFormatter()) {
-                formatters.add(pluginOption);
-            } else {
-                throw new CucumberException("Unrecognized plugin: " + name);
-            }
-        }
-
-    }
-
 }
