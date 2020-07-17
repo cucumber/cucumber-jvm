@@ -12,7 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Deprecated
-
+ - [Weld] Deprecate `cucumber-weld` ([#1763](https://github.com/cucumber/cucumber-jvm/issues/1763) M.P. Korstanje)
+    - Consider using cucumber-deltaspike instead
+ 
 ### Removed
 
 ### Fixed

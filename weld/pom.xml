@@ -9,7 +9,7 @@
 
     <artifactId>cucumber-weld</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Weld</name>
+    <name>Cucumber-JVM: Weld (Deprecated)</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.weld</project.Automatic-Module-Name>

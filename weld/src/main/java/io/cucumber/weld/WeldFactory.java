@@ -33,6 +33,7 @@ public final class WeldFactory implements ObjectFactory {
 
     @Override
     public void start() {
+        log.warn(() -> "cucumber-weld has been deprecated. Consider using cucumber-deltaspike instead");
         try {
             containerInstance = new Weld().initialize();
         } catch (IllegalArgumentException e) {
