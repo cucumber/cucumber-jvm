@@ -81,7 +81,7 @@ public final class RuntimeOptions implements
         this.formatters.addAll(formatters);
     }
 
-    void addSummaryPrinters(List<Plugin> summaryPrinters){
+    void addSummaryPrinters(List<Plugin> summaryPrinters) {
         this.summaryPrinters.addAll(summaryPrinters);
     }
 
