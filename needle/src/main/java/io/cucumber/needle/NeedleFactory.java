@@ -33,6 +33,7 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
 
     @Override
     public <T> T getInstance(final Class<T> type) {
+        logger.warn("cucumber-needle has been deprecated. Consider using cucumber-cdi2 or cucumber-jakarta-cdi");
         logger.trace("getInstance: {}", type.getCanonicalName());
         assertTypeHasBeenAdded(type);
         return nullSafeGetInstance(type);
