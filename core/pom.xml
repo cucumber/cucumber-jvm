@@ -17,7 +17,7 @@
         <jsoup.version>1.13.1</jsoup.version>
         <xmlunit.version>2.7.0</xmlunit.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
-        <vertx.version>3.9.1</vertx.version>
+        <vertx.version>3.9.2</vertx.version>
     </properties>
 
     <dependencies>
