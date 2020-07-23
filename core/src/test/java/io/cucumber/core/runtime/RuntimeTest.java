@@ -506,7 +506,7 @@ class RuntimeTest {
                 .run();
 
         Messages.Meta meta = messages.get(0).getMeta();
-        assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+"));
+        assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
         assertThat(meta.getImplementation().getVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getOs().getName(), matchesPattern(".+"));

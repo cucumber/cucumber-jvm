@@ -2,12 +2,15 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.ScenarioScoped;
+import io.cucumber.core.backend.SourceReference;
 import net.jodah.typetools.TypeResolver;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static io.cucumber.core.backend.SourceReference.fromStackTraceElement;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
@@ -16,6 +19,7 @@ abstract class AbstractGlueDefinition implements ScenarioScoped, Located {
     private Object body;
     final Method method;
     final StackTraceElement location;
+    SourceReference sourceReference;
 
     AbstractGlueDefinition(Object body, StackTraceElement location) {
         this.body = requireNonNull(body);
@@ -57,6 +61,14 @@ abstract class AbstractGlueDefinition implements ScenarioScoped, Located {
     @Override
     public final boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
+    }
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        if (sourceReference == null) {
+            sourceReference = fromStackTraceElement(location);
+        }
+        return Optional.of(sourceReference);
     }
 
     Class<?>[] resolveRawArguments(Class<?> bodyClass, Class<?> body) {

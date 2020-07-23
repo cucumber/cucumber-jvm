@@ -2,6 +2,8 @@ package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
 
+import java.util.Optional;
+
 @API(status = API.Status.STABLE)
 public interface Located {
 
@@ -29,4 +31,7 @@ public interface Located {
      */
     String getLocation();
 
+    default Optional<SourceReference> getSourceReference() {
+        return Optional.empty();
+    }
 }
