@@ -15,26 +15,49 @@ Note that options provided by `@CucumberOptions` take precedence over the
 properties file and CLI arguments take precedence over all.
 
 Note that the `cucumber-junit-platform-engine` is provided with properties
-by the Junit Platform rather then Cucumber. See
+by the Junit Platform rather than Cucumber. See
 [junit-platform-engine Configuration Options](../junit-platform-engine#configuration-options)
 for more information.
 
 Supported properties are:
 
 ```
-cucumber.ansi-colors.disabled=  # true or false. default: false                     
-cucumber.execution.dry-run=     # true or false. default: false 
-cucumber.execution.limit=       # number of scenarios to execute (CLI only).  
+cucumber.ansi-colors.disabled=  # true or false. default: false
+                     
+cucumber.execution.dry-run=     # true or false. default: false
+ 
+cucumber.execution.limit=       # number of scenarios to execute (CLI only).
+  
 cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+
 cucumber.execution.strict=      # true or false. default: false.
+
 cucumber.execution.wip=         # true or false. default: false.
-cucumber.features=              # command separated paths to feature files. example: path/to/example.feature, path/to/other.feature  
-cucumber.filter.name=           # regex. example: .*Hello.*
-cucumber.filter.tags=           # tag expression. example: @smoke and not @slow 
-cucumber.glue=                  # comma separated package names. example: com.example.glue  
-cucumber.plugin=                # comma separated plugin strings. example: pretty, json:path/to/report.json
-cucumber.object-factory=        # object factory class name. example: com.example.MyObjectFactory
-cucumber.snippet-type=          # underscore or camelcase. default: underscore
+                                # Fails if there any passing scenarios
+                                # CLI only.   
+
+cucumber.features=              # command separated paths to feature files. 
+                                # example: path/to/example.feature, path/to/other.feature
+  
+cucumber.filter.name=           # a regular expression
+                                # only scenarios with matching names are executed. 
+                                # example: ^Hello (World|Cucumber)$     
+
+cucumber.filter.tags=           # a cucumber tag expression. 
+                                # only scenarios with matching tags are executed. 
+                                # example: @Cucumber and not (@Gherkin or @Zucchini)
+
+cucumber.glue=                  # comma separated package names. 
+                                # example: com.example.glue  
+  
+cucumber.plugin=                # comma separated plugin strings. 
+                                # example: pretty, json:path/to/report.json
+
+cucumber.object-factory=        # object factory class name.
+                                # example: com.example.MyObjectFactory
+
+cucumber.snippet-type=          # underscore or camelcase. 
+                                # default: underscore
 ```
 
 Each property also has an `UPPER_CASE` and `snake_case` variant. For example

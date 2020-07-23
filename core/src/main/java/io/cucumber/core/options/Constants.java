@@ -91,17 +91,20 @@ public final class Constants {
     /**
      * Property name used to set name filter: {@value}
      * <p>
-     * Filters features based on the provided regex pattern.
+     * Filters scenarios by name based on the provided regex pattern e.g:
+     * {@code ^Hello (World|Cucumber)$}. Scenarios that do not match the
+     * expression are not executed.
      * <p>
-     * By default no features are filtered
+     * By default all scenarios are executed
      */
     public static final String FILTER_NAME_PROPERTY_NAME = "cucumber.filter.name";
+
     /**
      * Property name used to set tag filter: {@value}
      * <p>
-     * Filters scenarios based on the provided tag expression e.g:
-     * {@code @Integration and not @Ignored}. Scenarios that do not match the
-     * expression are not executed.
+     * Filters scenarios by tag based on the provided tag expression e.g:
+     * {@code @Cucumber and not (@Gherkin or @Zucchini)}. Scenarios that do not
+     * match the expression are not executed.
      * <p>
      * By default all scenarios are executed
      */

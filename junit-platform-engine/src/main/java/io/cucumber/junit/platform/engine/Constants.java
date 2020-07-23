@@ -28,22 +28,36 @@ public final class Constants {
      * By default, dry-run is disabled
      */
     public static final String EXECUTION_DRY_RUN_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+
     /**
      * Tag replacement pattern for the exclusive resource templates: {@value}
      *
      * @see #EXECUTION_EXCLUSIVE_RESOURCES_READ_WRITE_TEMPLATE
      */
     public static final String EXECUTION_EXCLUSIVE_RESOURCES_TAG_TEMPLATE_VARIABLE = "<tag-name>";
+
+    /**
+     * Property name used to set name filter: {@value}
+     * <p>
+     * Filters features by name based on the provided regex pattern e.g:
+     * {@code ^Hello (World|Cucumber)$}. Scenarios that do not match the
+     * expression are not executed.
+     * <p>
+     * By default all scenarios are executed
+     */
+    public static final String FILTER_NAME_PROPERTY_NAME = io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
+
     /**
      * Property name used to set tag filter: {@value}
      * <p>
-     * Filters scenarios based on the provided tag expression e.g:
-     * {@code @Integration and not @Ignored}. Scenarios that did not match the
-     * expression will be rendered by JUnit as skipped.
+     * Filters scenarios by tag based on the provided tag expression e.g:
+     * {@code @Cucumber and not (@Gherkin or @Zucchini)}. Scenarios that do not
+     * match the expression are not executed.
      * <p>
      * By default all scenarios are executed
      */
     public static final String FILTER_TAGS_PROPERTY_NAME = io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
+
     /**
      * Property name to set the glue path: {@value}
      * <p>
@@ -53,6 +67,7 @@ public final class Constants {
      * @see io.cucumber.core.feature.GluePath
      */
     public static final String GLUE_PROPERTY_NAME = io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
+
     /**
      * Property name to enable plugins: {@value}
      * <p>
@@ -76,6 +91,7 @@ public final class Constants {
      * registration of 3rd party plugins.
      */
     public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
+
     /**
      * Property name to select custom object factory implementation: {@value}
      * <p>
@@ -83,6 +99,7 @@ public final class Constants {
      * that object factory will be used.
      */
     public static final String OBJECT_FACTORY_PROPERTY_NAME = io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
+
     /**
      * Property name to control naming convention for generated snippets:
      * {@value}
@@ -92,6 +109,7 @@ public final class Constants {
      * By defaults are generated using the under score naming convention.
      */
     public static final String SNIPPET_TYPE_PROPERTY_NAME = io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
+
     /**
      * Property name used to enable parallel test execution: {@value}
      * <p>
@@ -102,6 +120,7 @@ public final class Constants {
     static final String EXECUTION_EXCLUSIVE_RESOURCES_PREFIX = "cucumber.execution.exclusive-resources.";
 
     static final String READ_WRITE_SUFFIX = ".read-write";
+
     /**
      * Property template used to describe a mapping of tags to exclusive
      * resources: {@value}
@@ -131,6 +150,7 @@ public final class Constants {
     public static final String EXECUTION_EXCLUSIVE_RESOURCES_READ_WRITE_TEMPLATE = EXECUTION_EXCLUSIVE_RESOURCES_PREFIX
             + EXECUTION_EXCLUSIVE_RESOURCES_TAG_TEMPLATE_VARIABLE + READ_WRITE_SUFFIX;
     static final String READ_SUFFIX = ".read";
+
     /**
      * Property template used to describe a mapping of tags to exclusive
      * resources: {@value}
@@ -143,6 +163,7 @@ public final class Constants {
             + EXECUTION_EXCLUSIVE_RESOURCES_TAG_TEMPLATE_VARIABLE + READ_SUFFIX;
 
     static final String PARALLEL_CONFIG_PREFIX = "cucumber.execution.parallel.config.";
+
     /**
      * Property name used to determine the desired configuration strategy:
      * {@value}

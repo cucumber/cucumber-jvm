@@ -9,9 +9,12 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
+import org.junit.platform.testkit.engine.Event;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,20 +55,37 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    void selectAndSkipDisabledScenario() {
+    void selectAndSkipDisabledScenarioByTags() {
         EngineExecutionResults result = EngineTestKit.engine("cucumber")
                 .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
-                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/disabled.feature"))
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute();
         assertEquals(1, result.testEvents().count());
         assertEquals(1, result.testEvents().skipped().count());
         assertEquals(
-            Optional.of("'cucumber.filter.tags=( @Integration and not ( @Disabled ) )' did not match this scenario"),
+            Optional.of(
+                "'cucumber.filter.tags=( @Integration and not ( @Disabled ) )' did not match this scenario"),
             result.testEvents()
                     .skipped()
-                    .map(event -> event.getPayload().get()) // replace with
-                                                            // flatMap when
-                                                            // above java 9
+                    .map(Event::getPayload)
+                    .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
+                    .findFirst());
+    }
+
+    @Test
+    void selectAndSkipDisabledScenarioByName() {
+        EngineExecutionResults result = EngineTestKit.engine("cucumber")
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^Nothing$")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute();
+        assertEquals(1, result.testEvents().count());
+        assertEquals(1, result.testEvents().skipped().count());
+        assertEquals(
+            Optional.of("'cucumber.filter.name=^Nothing$' did not match this scenario"),
+            result.testEvents()
+                    .skipped()
+                    .map(Event::getPayload)
+                    .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
                     .findFirst());
     }
 
