@@ -170,49 +170,53 @@ Note: The `@` is not included.
 ## Configuration Options ##
 
 Cucumber receives its configuration from the JUnit platform. To see how these
-can be supplied see the JUnit documentation [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). 
+can be supplied; see the JUnit documentation [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). 
 For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
 cucumber.ansi-colors.disabled=                                # true or false. default: false                     
       
+cucumber.filter.name=                                         # a regular expression
+                                                              # only scenarios with matching names are executed. 
+                                                              # example: ^Hello (World|Cucumber)$     
+
 cucumber.filter.tags=                                         # a cucumber tag expression. 
-                                                              # only matching scenarios are executed. 
-                                                              # example: @integration and not @disabled
-      
+                                                              # only scenarios with matching tags are executed. 
+                                                              # example: @Cucumber and not (@Gherkin or @Zucchini)
+
 cucumber.glue=                                                # comma separated package names. 
                                                               # example: com.example.glue  
-      
+
 cucumber.plugin=                                              # comma separated plugin strings. 
                                                               # example: pretty, json:path/to/report.json
-      
+
 cucumber.object-factory=                                      # object factory class name.
                                                               # example: com.example.MyObjectFactory
-      
+
 cucumber.snippet-type=                                        # underscore or camelcase. 
                                                               # default: underscore
-      
+
 cucumber.execution.dry-run=                                   # true or false. 
                                                               # default: false
-       
+
 cucumber.execution.parallel.enabled=                          # true or false. 
                                                               # default: false
-      
+
 cucumber.execution.parallel.config.strategy=                  # dynamic, fixed or custom. 
                                                               # default: dynamic
-      
+
 cucumber.execution.parallel.config.fixed.parallelism=         # positive integer. 
                                                               # example: 4 
-      
+
 cucumber.execution.parallel.config.dynamic.factor=            # positive double.
                                                               # default: 1.0
-      
+
 cucumber.execution.parallel.config.custom.class=              # class name. 
                                                               # example: com.example.MyCustomParallelStrategy
 
 cucumber.execution.exclusive-resources.<tag-name>.read-write= # a comma seperated list of strings
                                                               # example: resource-a, resource-b 
-     
+
 cucumber.execution.exclusive-resources.<tag-name>.read=       # a comma seperated list of strings
                                                               # example: resource-a, resource-b
 
