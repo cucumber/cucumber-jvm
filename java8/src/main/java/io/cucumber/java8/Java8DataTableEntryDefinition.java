@@ -15,11 +15,7 @@ final class Java8DataTableEntryDefinition extends AbstractDatatableElementTransf
         Class<?> returnType = resolveRawArguments(DataTableEntryDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
-            (Map<String, String> entry) -> execute(replaceEmptyPatternsWithEmptyString(entry)));
-    }
-
-    private Object execute(Map<String, String> entry) {
-        return Invoker.invoke(this, body, method, entry);
+            (Map<String, String> entry) -> invokeMethod(replaceEmptyPatternsWithEmptyString(entry)));
     }
 
     @Override

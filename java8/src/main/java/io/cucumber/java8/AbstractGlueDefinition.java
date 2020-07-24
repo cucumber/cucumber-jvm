@@ -1,5 +1,6 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.ScenarioScoped;
 import net.jodah.typetools.TypeResolver;
 
@@ -10,9 +11,9 @@ import java.util.List;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
-abstract class AbstractGlueDefinition implements ScenarioScoped {
+abstract class AbstractGlueDefinition implements ScenarioScoped, Located {
 
-    final Object body;
+    private Object body;
     final Method method;
     final StackTraceElement location;
 
@@ -36,10 +37,24 @@ abstract class AbstractGlueDefinition implements ScenarioScoped {
         return acceptMethods.get(0);
     }
 
+    protected Object invokeMethod(Object... args) {
+        if (body == null) {
+            throw new IllegalStateException("Can not execute scenario scoped glue when scenario has been disposed of");
+        }
+        return Invoker.invoke(this, body, method, args);
+    }
+
+    @Override
+    public void dispose() {
+        this.body = null;
+    }
+
+    @Override
     public final String getLocation() {
         return location.toString();
     }
 
+    @Override
     public final boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return location.getFileName() != null && location.getFileName().equals(stackTraceElement.getFileName());
     }

@@ -15,7 +15,7 @@ import static java.util.Objects.requireNonNull;
 class CoreHookDefinition {
 
     private final UUID id;
-    private final HookDefinition delegate;
+    protected final HookDefinition delegate;
     private final Expression tagExpression;
 
     private CoreHookDefinition(UUID id, HookDefinition delegate) {
@@ -72,6 +72,14 @@ class CoreHookDefinition {
 
         private ScenarioScopedCoreHookDefinition(HookDefinition delegate) {
             super(UUID.randomUUID(), delegate);
+        }
+
+        @Override
+        public void dispose() {
+            if (delegate instanceof ScenarioScoped) {
+                ScenarioScoped scenarioScoped = (ScenarioScoped) delegate;
+                scenarioScoped.dispose();
+            }
         }
 
     }

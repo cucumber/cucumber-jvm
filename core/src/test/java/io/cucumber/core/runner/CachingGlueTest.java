@@ -314,6 +314,48 @@ class CachingGlueTest {
     }
 
     @Test
+    void disposes_of_scenario_scoped_beans() {
+        MockedScenarioScopedStepDefinition stepDefinition = new MockedScenarioScopedStepDefinition("^pattern1");
+        glue.addStepDefinition(stepDefinition);
+        MockedScenarioScopedHookDefinition hookDefinition1 = new MockedScenarioScopedHookDefinition();
+        glue.addBeforeHook(hookDefinition1);
+        MockedScenarioScopedHookDefinition hookDefinition2 = new MockedScenarioScopedHookDefinition();
+        glue.addAfterHook(hookDefinition2);
+        MockedScenarioScopedHookDefinition hookDefinition3 = new MockedScenarioScopedHookDefinition();
+        glue.addBeforeStepHook(hookDefinition3);
+        MockedScenarioScopedHookDefinition hookDefinition4 = new MockedScenarioScopedHookDefinition();
+        glue.addAfterStepHook(hookDefinition4);
+
+        MockedDocStringTypeDefinition docStringType = new MockedDocStringTypeDefinition();
+        glue.addDocStringType(docStringType);
+        MockedDefaultDataTableEntryTransformer defaultDataTableEntryTransformer = new MockedDefaultDataTableEntryTransformer();
+        glue.addDefaultDataTableEntryTransformer(defaultDataTableEntryTransformer);
+        MockedDefaultDataTableCellTransformer defaultDataTableCellTransformer = new MockedDefaultDataTableCellTransformer();
+        glue.addDefaultDataTableCellTransformer(defaultDataTableCellTransformer);
+        MockedParameterTypeDefinition parameterType = new MockedParameterTypeDefinition();
+        glue.addParameterType(parameterType);
+        MockedDataTableTypeDefinition dataTableType = new MockedDataTableTypeDefinition();
+        glue.addDataTableType(dataTableType);
+        MockedDefaultParameterTransformer defaultParameterTransformer = new MockedDefaultParameterTransformer();
+        glue.addDefaultParameterTransformer(defaultParameterTransformer);
+
+        glue.prepareGlue(stepTypeRegistry);
+        glue.removeScenarioScopedGlue();
+
+        assertThat(stepDefinition.isDisposed(), is(true));
+        assertThat(hookDefinition1.isDisposed(), is(true));
+        assertThat(hookDefinition2.isDisposed(), is(true));
+        assertThat(hookDefinition3.isDisposed(), is(true));
+        assertThat(hookDefinition4.isDisposed(), is(true));
+        assertThat(docStringType.isDisposed(), is(true));
+        assertThat(defaultDataTableEntryTransformer.isDisposed(), is(true));
+        assertThat(defaultDataTableCellTransformer.isDisposed(), is(true));
+        assertThat(defaultParameterTransformer.isDisposed(), is(true));
+        assertThat(parameterType.isDisposed(), is(true));
+        assertThat(dataTableType.isDisposed(), is(true));
+    }
+
+    @Test
     void returns_no_match_after_evicting_scenario_scoped() throws AmbiguousStepDefinitionsException {
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
@@ -424,6 +466,16 @@ class CachingGlueTest {
         MockedScenarioScopedStepDefinition(String pattern, boolean transposed, Type... types) {
             super(pattern, transposed, types);
         }
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
+        }
 
     }
 
@@ -442,6 +494,17 @@ class CachingGlueTest {
         @Override
         public String getLocation() {
             return "mocked data table type definition";
+        }
+
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
         }
 
     }
@@ -463,12 +526,22 @@ class CachingGlueTest {
             return "mocked parameter type location";
         }
 
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
+        }
+
     }
 
     private static class MockedHookDefinition implements HookDefinition {
 
         private final int order;
-        boolean disposed;
 
         MockedHookDefinition() {
             this(0);
@@ -542,6 +615,17 @@ class CachingGlueTest {
             return order;
         }
 
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
+        }
+
     }
 
     private static class MockedStepDefinition extends StubStepDefinition {
@@ -570,6 +654,17 @@ class CachingGlueTest {
             return "mocked default parameter transformer";
         }
 
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
+        }
+
     }
 
     private static class MockedDefaultDataTableCellTransformer
@@ -588,6 +683,17 @@ class CachingGlueTest {
         @Override
         public String getLocation() {
             return "mocked default data table cell transformer";
+        }
+
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
         }
 
     }
@@ -615,6 +721,17 @@ class CachingGlueTest {
             return "mocked default data table entry transformer";
         }
 
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
+        }
+
     }
 
     private static class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {
@@ -632,6 +749,17 @@ class CachingGlueTest {
         @Override
         public String getLocation() {
             return "mocked default data table entry transformer";
+        }
+
+        private boolean disposed;
+
+        @Override
+        public void dispose() {
+            disposed = true;
+        }
+
+        public boolean isDisposed() {
+            return disposed;
         }
 
     }
