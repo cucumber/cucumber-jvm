@@ -22,7 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
- *  [Core] Improve error message when an unknown plugin is used ([#2053](https://github.com/cucumber/cucumber-jvm/issues/2053) M.P. Korstanje)
+ * [Core] Improve error message when an unknown plugin is used ([#2053](https://github.com/cucumber/cucumber-jvm/issues/2053) M.P. Korstanje)
+ * [Java8] Allow test execution context to be garbage collected ([#2067](https://github.com/cucumber/cucumber-jvm/issues/2067) M.P. Korstanje)
 
 ## [6.2.2] (2020-07-09)
 

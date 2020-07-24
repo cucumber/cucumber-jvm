@@ -15,11 +15,7 @@ final class Java8DataTableRowDefinition extends AbstractDatatableElementTransfor
         Class<?> returnType = resolveRawArguments(DataTableRowDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
-            (List<String> row) -> execute(replaceEmptyPatternsWithEmptyString(row)));
-    }
-
-    private Object execute(List<String> row) {
-        return Invoker.invoke(this, body, method, row);
+            (List<String> row) -> invokeMethod(replaceEmptyPatternsWithEmptyString(row)));
     }
 
     @Override
