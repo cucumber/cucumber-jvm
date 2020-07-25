@@ -7,6 +7,11 @@ import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
+import static io.cucumber.core.options.CucumberMessageStoreUrl.getPluginString;
+import static java.util.Arrays.asList;
 
 final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
 
@@ -72,7 +77,11 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
 
         @Override
         public String[] plugin() {
-            return annotation.plugin();
+            List<String> plugins = new ArrayList<>(asList(annotation.plugin()));
+            if (annotation.publish()) {
+                plugins.add(getPluginString());
+            }
+            return plugins.toArray(new String[0]);
         }
 
         @Override

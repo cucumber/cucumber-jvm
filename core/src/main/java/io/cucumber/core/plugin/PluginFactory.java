@@ -3,6 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.options.CucumberMessageStoreUrl;
 import io.cucumber.core.options.CurlOption;
 import io.cucumber.plugin.Plugin;
 
@@ -11,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 
 /**
@@ -190,7 +193,10 @@ public final class PluginFactory {
     private static OutputStream openStream(String arg) throws IOException, URISyntaxException {
         if (arg.matches("^(http|https):.*")) {
             CurlOption option = CurlOption.parse(arg);
-            return new UrlOutputStream(option);
+            UrlReporter urlReporter = arg.startsWith(CucumberMessageStoreUrl.getUrl())
+                    ? new UrlReporter(new OutputStreamWriter(System.out, UTF_8))
+                    : null;
+            return new UrlOutputStream(option, urlReporter);
         } else if (arg.matches("^file:.*")) {
             return createFileOutputStream(new File(new URL(arg).getFile()));
         } else {

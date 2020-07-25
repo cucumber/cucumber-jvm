@@ -21,12 +21,15 @@ import static java.nio.file.Files.newOutputStream;
 
 class UrlOutputStream extends OutputStream {
 
+    private final UrlReporter urlReporter;
+
     private final CurlOption option;
     private final Path temp;
     private final OutputStream tempOutputStream;
 
-    UrlOutputStream(CurlOption option) throws IOException {
+    UrlOutputStream(CurlOption option, UrlReporter urlReporter) throws IOException {
         this.option = option;
+        this.urlReporter = urlReporter;
         this.temp = Files.createTempFile("cucumber", null);
         this.tempOutputStream = newOutputStream(temp);
     }
@@ -67,6 +70,9 @@ class UrlOutputStream extends OutputStream {
         try (OutputStream outputStream = urlConnection.getOutputStream()) {
             Files.copy(temp, outputStream);
             handleResponse(urlConnection, requestHeaders);
+        }
+        if (urlReporter != null) {
+            urlReporter.report(urlConnection.getURL());
         }
     }
 

@@ -17,6 +17,15 @@ import java.lang.annotation.Target;
 public @interface CucumberOptions {
 
     /**
+     * Publish report to https://reports.cucumber.io Override the URL for
+     * publishing results with the CUCUMBER_MESSAGE_STORE_URL environment
+     * variable.
+     *
+     * @return true if reports should be published on the web.
+     */
+    boolean publish() default false;
+
+    /**
      * @return true if glue code execution should be skipped.
      */
     boolean dryRun() default false;

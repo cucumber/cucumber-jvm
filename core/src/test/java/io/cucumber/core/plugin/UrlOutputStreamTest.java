@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.is;
 @ExtendWith({ VertxExtension.class })
 public class UrlOutputStreamTest {
 
+    private static final int TIMEOUT_SECONDS = 15;
     private int port;
     private Exception exception;
 
@@ -47,7 +48,7 @@ public class UrlOutputStreamTest {
         CurlOption option = CurlOption.parse(format("http://localhost:%d", port));
 
         verifyRequest(option, testServer, vertx, testContext, requestBody);
-        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
         assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
                 "> PUT http://localhost:" + port + "\n" +
                 "< HTTP/1.1 500 Internal Server Error\n" +
@@ -60,7 +61,7 @@ public class UrlOutputStreamTest {
     ) {
         vertx.deployVerticle(testServer, testContext.succeeding(id -> {
             try {
-                OutputStream out = new UrlOutputStream(url);
+                OutputStream out = new UrlOutputStream(url, null);
                 Writer w = new UTF8OutputStreamWriter(out);
                 w.write(requestBody);
                 w.flush();
@@ -80,7 +81,7 @@ public class UrlOutputStreamTest {
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
-        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class UrlOutputStreamTest {
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location -X POST", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
-        assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS), is(true));
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
         assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
                 "> POST http://localhost:" + port + "/redirect-no-location\n" +
                 "< HTTP/1.1 307 Temporary Redirect\n" +
