@@ -20,13 +20,19 @@ jobs:
     - stage: test
       jdk: openjdk11
       script: mvn verify -P-spotless-apply --toolchains .travis-toolchains.xml
-      env: VERIFY=true
+      env:
+      - VERIFY=true
+      # Remove this when the messages.cucumber.io domain is available
+      - CUCUMBER_MESSAGE_STORE_URL=https://b1f2yk58d8.execute-api.eu-west-3.amazonaws.com
 
       # 1.3 Coverage
     - stage: test
       jdk: openjdk11
       script: mvn jacoco:prepare-agent verify jacoco:report coveralls:report --toolchains .travis-toolchains.xml
-      env: COVERAGE=true
+      env:
+      - COVERAGE=true
+        # Remove this when the messages.cucumber.io domain is available
+      - CUCUMBER_MESSAGE_STORE_URL=https://b1f2yk58d8.execute-api.eu-west-3.amazonaws.com
 
     # 1.4 Javadoc
     - jdk: openjdk11
