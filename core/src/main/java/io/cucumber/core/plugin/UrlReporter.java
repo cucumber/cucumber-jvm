@@ -7,8 +7,8 @@ import java.io.Writer;
 import java.net.URL;
 
 class UrlReporter {
-    private static final String BLUE = "\\e[34m";
-    private static final String RESET = "\\e[0m";
+    private static final String CYAN = "\u001B[36m";
+    private static final String RESET = "\u001B[0m";
     private final Writer out;
 
     public UrlReporter(Writer out) {
@@ -19,13 +19,13 @@ class UrlReporter {
         String path = url.getPath();
         int pathLength = path.length();
         try {
-            out.append(BLUE).append("┌─────────────────────────────").append(times('─', pathLength)).append("┐")
+            out.append(CYAN).append("┌─────────────────────────────").append(times('─', pathLength)).append("┐")
                     .append(RESET).append("\n");
-            out.append(BLUE).append("│").append(RESET).append(" View your report at:        ")
-                    .append(times(' ', pathLength)).append(BLUE).append("│").append(RESET).append("\n");
-            out.append(BLUE).append("│").append(RESET).append(" https://reports.cucumber.io").append(path).append(" ")
-                    .append(BLUE).append("│").append(RESET).append("\n");
-            out.append(BLUE).append("└─────────────────────────────").append(times('─', pathLength)).append("┘")
+            out.append(CYAN).append("│").append(RESET).append(" View your Cucumber Report at:")
+                    .append(times(' ', pathLength - 1)).append(CYAN).append("│").append(RESET).append("\n");
+            out.append(CYAN).append("│").append(RESET).append(" https://reports.cucumber.io").append(path).append(" ")
+                    .append(CYAN).append("│").append(RESET).append("\n");
+            out.append(CYAN).append("└─────────────────────────────").append(times('─', pathLength)).append("┘")
                     .append(RESET).append("\n");
             out.flush();
         } catch (IOException e) {

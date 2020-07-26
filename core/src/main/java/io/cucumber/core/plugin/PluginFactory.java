@@ -194,7 +194,7 @@ public final class PluginFactory {
         if (arg.matches("^(http|https):.*")) {
             CurlOption option = CurlOption.parse(arg);
             UrlReporter urlReporter = arg.startsWith(CucumberMessageStoreUrl.getUrl())
-                    ? new UrlReporter(new OutputStreamWriter(System.out, UTF_8))
+                    ? new UrlReporter(new OutputStreamWriter(System.err, UTF_8))
                     : null;
             return new UrlOutputStream(option, urlReporter);
         } else if (arg.matches("^file:.*")) {
