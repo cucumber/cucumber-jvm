@@ -22,8 +22,9 @@ jobs:
       script: mvn verify -P-spotless-apply --toolchains .travis-toolchains.xml
       env:
       - VERIFY=true
-      # Remove this when the messages.cucumber.io domain is available
-      - CUCUMBER_MESSAGE_STORE_URL=https://b1f2yk58d8.execute-api.eu-west-3.amazonaws.com
+        # Override https://messages.cucumber.io/api/reports because the subdomain is not yet set up
+        # Remove this when it is.
+      - CUCUMBER_MESSAGE_STORE_URL=https://b1f2yk58d8.execute-api.eu-west-3.amazonaws.com/api/reports
 
       # 1.3 Coverage
     - stage: test
@@ -31,8 +32,9 @@ jobs:
       script: mvn jacoco:prepare-agent verify jacoco:report coveralls:report --toolchains .travis-toolchains.xml
       env:
       - COVERAGE=true
-        # Remove this when the messages.cucumber.io domain is available
-      - CUCUMBER_MESSAGE_STORE_URL=https://b1f2yk58d8.execute-api.eu-west-3.amazonaws.com
+        # Override https://messages.cucumber.io/api/reports because the subdomain is not yet set up
+        # Remove this when it is.
+      - CUCUMBER_MESSAGE_STORE_URL=https://b1f2yk58d8.execute-api.eu-west-3.amazonaws.com/api/reports
 
     # 1.4 Javadoc
     - jdk: openjdk11

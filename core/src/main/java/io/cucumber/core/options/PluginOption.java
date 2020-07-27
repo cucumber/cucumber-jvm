@@ -11,6 +11,7 @@ import io.cucumber.core.plugin.NullSummaryPrinter;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.plugin.PrettyFormatter;
 import io.cucumber.core.plugin.ProgressFormatter;
+import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.plugin.RerunFormatter;
 import io.cucumber.core.plugin.TeamCityPlugin;
 import io.cucumber.core.plugin.TestNGFormatter;
@@ -42,6 +43,7 @@ public class PluginOption implements Options.Plugin {
 
     static {
         Map<String, Class<? extends Plugin>> plugins = new HashMap<>();
+        plugins.put("publish", PublishFormatter.class);
         plugins.put("default_summary", DefaultSummaryPrinter.class);
         plugins.put("html", HtmlFormatter.class);
         plugins.put("json", JsonFormatter.class);

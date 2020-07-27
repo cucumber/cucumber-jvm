@@ -53,7 +53,7 @@ class PluginOptionTest {
                     "\n" +
                     "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
                     "\n" +
-                    "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage\n"
+                    "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, publish, rerun, summary, teamcity, testng, timeline, unused, usage\n"
                     +
                     "\n" +
                     "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
@@ -70,7 +70,7 @@ class PluginOptionTest {
                 "\n" +
                 "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
                 "\n" +
-                "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage\n"
+                "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, publish, rerun, summary, teamcity, testng, timeline, unused, usage\n"
                 +
                 "\n" +
                 "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
@@ -87,7 +87,7 @@ class PluginOptionTest {
                 "\n" +
                 "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
                 "\n" +
-                "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage\n"
+                "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, publish, rerun, summary, teamcity, testng, timeline, unused, usage\n"
                 +
                 "\n" +
                 "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));

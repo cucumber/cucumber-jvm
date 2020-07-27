@@ -13,7 +13,7 @@ public final class CurlOption {
     private final HttpMethod method;
     private final List<Entry<String, String>> headers;
 
-    CurlOption(URI uri, HttpMethod method, List<Entry<String, String>> headers) {
+    public CurlOption(URI uri, HttpMethod method, List<Entry<String, String>> headers) {
         this.uri = uri;
         this.method = method;
         this.headers = headers;
