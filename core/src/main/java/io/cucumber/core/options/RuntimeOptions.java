@@ -112,10 +112,10 @@ public final class RuntimeOptions implements
 
     private List<Plugin> getPublishPlugin() {
         if (publishToken != null) {
-            return singletonList(new PluginOption("publish", PublishFormatter.class, publishToken));
+            return singletonList(PluginOption.forClass(PublishFormatter.class, publishToken));
         }
         if (publish) {
-            return singletonList(new PluginOption("publish", PublishFormatter.class, null));
+            return singletonList(PluginOption.forClass(PublishFormatter.class));
         }
         return emptyList();
     }

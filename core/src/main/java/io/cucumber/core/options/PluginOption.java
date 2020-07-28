@@ -88,7 +88,7 @@ public class PluginOption implements Options.Plugin {
     private final Class<? extends Plugin> pluginClass;
     private final String argument;
 
-    PluginOption(String pluginString, Class<? extends Plugin> pluginClass, String argument) {
+    private PluginOption(String pluginString, Class<? extends Plugin> pluginClass, String argument) {
         this.pluginString = requireNonNull(pluginString);
         this.pluginClass = requireNonNull(pluginClass);
         this.argument = argument;
@@ -103,6 +103,19 @@ public class PluginOption implements Options.Plugin {
 
         Class<? extends Plugin> pluginClass = parsePluginName(pluginSpecification, pluginWithFile.group(1));
         return new PluginOption(pluginSpecification, pluginClass, pluginWithFile.group(2));
+    }
+
+    public static PluginOption forClass(Class<? extends Plugin> pluginClass, String argument){
+        requireNonNull(pluginClass);
+        requireNonNull(argument);
+        String name = pluginClass.getName();
+        return new PluginOption(name + ":" + argument, pluginClass, argument);
+    }
+
+    public static PluginOption forClass(Class<? extends Plugin> pluginClass){
+        requireNonNull(pluginClass);
+        String name = pluginClass.getName();
+        return new PluginOption(name , pluginClass, null);
     }
 
     @SuppressWarnings("unchecked")

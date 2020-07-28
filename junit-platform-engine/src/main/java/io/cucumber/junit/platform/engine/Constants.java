@@ -76,6 +76,10 @@ public final class Constants {
      * registration of 3rd party plugins.
      */
     public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
+
+    // TODO: Document
+    public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
+
     /**
      * Property name to select custom object factory implementation: {@value}
      * <p>

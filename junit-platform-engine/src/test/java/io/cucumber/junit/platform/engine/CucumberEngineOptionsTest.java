@@ -38,6 +38,18 @@ class CucumberEngineOptionsTest {
     }
 
     @Test
+    void getPluginNamesWithPublish() {
+        MapConfigurationParameters html = new MapConfigurationParameters(
+            Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some-token");
+
+        assertEquals(
+            singletonList("io.cucumber.core.plugin.PublishFormatter:some-token"),
+            new CucumberEngineOptions(html).plugins().stream()
+                    .map(Options.Plugin::pluginString)
+                    .collect(toList()));
+    }
+
+    @Test
     void isMonochrome() {
         MapConfigurationParameters ansiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,
