@@ -45,7 +45,7 @@ public final class RuntimeOptions implements
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
     private Class<? extends ObjectFactory> objectFactoryClass;
-    private boolean publish;
+    private String publishToken;
 
     private RuntimeOptions() {
 
@@ -109,8 +109,8 @@ public final class RuntimeOptions implements
     }
 
     private List<Plugin> getPublishPlugin() {
-        if (publish) {
-            return singletonList(PluginOption.parse("publish"));
+        if (publishToken != null) {
+            return singletonList(PluginOption.parse("publish:" + publishToken));
         }
         return emptyList();
     }
@@ -239,7 +239,7 @@ public final class RuntimeOptions implements
         this.pickleOrder = pickleOrder;
     }
 
-    void setPublish(boolean publish) {
-        this.publish = publish;
+    void setPublishToken(String token) {
+        this.publishToken = token;
     }
 }

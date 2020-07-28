@@ -18,11 +18,6 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class PublishFormatter implements ConcurrentEventListener {
-    /**
-     * When this environment variable is defined, the publish formatter is
-     * automatically enabled, even if --publish is not specified
-     */
-    public static final String CUCUMBER_REPORTS_TOKEN = "CUCUMBER_REPORTS_TOKEN";
 
     /**
      * Overrides the URL where messages are published
@@ -68,9 +63,4 @@ public final class PublishFormatter implements ConcurrentEventListener {
                 .collect(Collectors.toList());
     }
 
-    public static boolean isEnabledWithEnvironmentVariable() {
-        // Can't use containsKey(key) here because only get(key) has been
-        // overridden to match upper/lower and ./_ separators
-        return CucumberProperties.create().get(CUCUMBER_REPORTS_TOKEN) != null;
-    }
 }

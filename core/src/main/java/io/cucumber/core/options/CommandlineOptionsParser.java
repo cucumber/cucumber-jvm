@@ -5,7 +5,6 @@ import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
@@ -93,7 +92,7 @@ public final class CommandlineOptionsParser {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals("--publish")) {
-                parsedOptions.setPublish(true);
+                parsedOptions.setPublishToken(removeArgFor(arg, args));
             } else if (arg.equals("--plugin") || arg.equals("-p")) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {

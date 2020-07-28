@@ -26,7 +26,7 @@ import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
@@ -99,9 +99,9 @@ public final class CucumberPropertiesParser {
             builder::addPluginName);
 
         parse(properties,
-                PLUGIN_PUBLISH_PROPERTY_NAME,
-                Boolean::parseBoolean,
-                builder::setPublish);
+                PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
+                Function.identity(),
+                builder::setPublishToken);
 
         parse(properties,
             SNIPPET_TYPE_PROPERTY_NAME,

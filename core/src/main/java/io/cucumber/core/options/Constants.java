@@ -150,7 +150,7 @@ public final class Constants {
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";
 
     //TODO: Document
-    public static final String PLUGIN_PUBLISH_PROPERTY_NAME = "cucumber.plugin.publish";
+    public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = "cucumber.plugin.publish.token";
 
     /**
      * Property name to control naming convention for generated snippets:

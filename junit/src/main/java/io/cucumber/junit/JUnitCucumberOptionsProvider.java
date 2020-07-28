@@ -77,11 +77,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
 
         @Override
         public String[] plugin() {
-            List<String> plugins = new ArrayList<>(asList(annotation.plugin()));
-            if (annotation.publish() || PublishFormatter.isEnabledWithEnvironmentVariable()) {
-                plugins.add("publish");
-            }
-            return plugins.toArray(new String[0]);
+            return annotation.plugin();
         }
 
         @Override
