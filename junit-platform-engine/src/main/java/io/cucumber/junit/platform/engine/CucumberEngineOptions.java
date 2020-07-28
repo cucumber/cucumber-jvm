@@ -17,12 +17,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
@@ -83,11 +85,12 @@ class CucumberEngineOptions implements
         return false;
     }
 
-    public Expression tagFilter() {
-        return TagExpressionParser
-                .parse(configurationParameters
-                        .get(FILTER_TAGS_PROPERTY_NAME)
-                        .orElse(""));
+    Optional<Expression> tagFilter() {
+        return configurationParameters.get(FILTER_TAGS_PROPERTY_NAME, TagExpressionParser::parse);
+    }
+
+    Optional<Pattern> nameFilter() {
+        return configurationParameters.get(FILTER_NAME_PROPERTY_NAME, Pattern::compile);
     }
 
     @Override

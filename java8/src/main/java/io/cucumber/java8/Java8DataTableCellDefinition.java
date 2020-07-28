@@ -13,11 +13,7 @@ final class Java8DataTableCellDefinition extends AbstractDatatableElementTransfo
         Class<?> returnType = resolveRawArguments(DataTableCellDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
-            (String cell) -> execute(replaceEmptyPatternsWithEmptyString(cell)));
-    }
-
-    private Object execute(Object cell) {
-        return Invoker.invoke(this, body, method, cell);
+            (String cell) -> invokeMethod(replaceEmptyPatternsWithEmptyString(cell)));
     }
 
     @Override

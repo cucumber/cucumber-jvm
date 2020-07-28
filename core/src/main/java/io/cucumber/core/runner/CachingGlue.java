@@ -371,6 +371,8 @@ final class CachingGlue implements Glue {
         while (glueIterator.hasNext()) {
             Object glue = glueIterator.next();
             if (glue instanceof ScenarioScoped) {
+                ScenarioScoped scenarioScoped = (ScenarioScoped) glue;
+                scenarioScoped.dispose();
                 glueIterator.remove();
             }
         }

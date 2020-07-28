@@ -41,8 +41,8 @@ final class Java8StepDefinition extends AbstractGlueDefinition implements StepDe
     }
 
     @Override
-    public void execute(final Object[] args) {
-        Invoker.invoke(this, body, method, args);
+    public void execute(Object[] args) {
+        invokeMethod(args);
     }
 
     @Override

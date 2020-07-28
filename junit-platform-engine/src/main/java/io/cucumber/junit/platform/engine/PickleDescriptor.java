@@ -2,7 +2,6 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.resource.ClasspathSupport;
-import io.cucumber.tagexpressions.Expression;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
@@ -16,7 +15,6 @@ import org.junit.platform.engine.support.hierarchical.Node;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -67,13 +65,32 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
 
     @Override
     public SkipResult shouldBeSkipped(CucumberEngineExecutionContext context) {
-        List<String> tags = pickleEvent.getTags();
-        Expression expression = context.getOptions().tagFilter();
-        if (expression.evaluate(tags)) {
-            return SkipResult.doNotSkip();
-        }
-        return SkipResult
-                .skip("'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression + "' did not match this scenario");
+        return Stream.of(shouldBeSkippedByTagFilter(context), shouldBeSkippedByNameFilter(context))
+                .flatMap(skipResult -> skipResult.map(Stream::of).orElseGet(Stream::empty))
+                .filter(SkipResult::isSkipped)
+                .findFirst()
+                .orElseGet(SkipResult::doNotSkip);
+    }
+
+    private Optional<SkipResult> shouldBeSkippedByTagFilter(CucumberEngineExecutionContext context) {
+        return context.getOptions().tagFilter().map(expression -> {
+            if (expression.evaluate(pickleEvent.getTags())) {
+                return SkipResult.doNotSkip();
+            }
+            return SkipResult
+                    .skip(
+                        "'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression + "' did not match this scenario");
+        });
+    }
+
+    private Optional<SkipResult> shouldBeSkippedByNameFilter(CucumberEngineExecutionContext context) {
+        return context.getOptions().nameFilter().map(pattern -> {
+            if (pattern.matcher(pickleEvent.getName()).matches()) {
+                return SkipResult.doNotSkip();
+            }
+            return SkipResult
+                    .skip("'" + Constants.FILTER_NAME_PROPERTY_NAME + "=" + pattern + "' did not match this scenario");
+        });
     }
 
     @Override

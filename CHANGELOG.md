@@ -10,42 +10,57 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
- - [OpenEJB] Compiled at source level 8.
- 
+
 ### Deprecated
- - [Weld] Deprecate `cucumber-weld` ([#1763](https://github.com/cucumber/cucumber-jvm/issues/1763) M.P. Korstanje)
-    - Consider using cucumber-deltaspike instead
-- [Needle] Deprecate `cucumber-needle` ([#1763](https://github.com/cucumber/cucumber-jvm/issues/1763) M.P. Korstanje)
-    - Consider using cucumber-deltaspike instead
+
 ### Removed
 
 ### Fixed
- -  [Core] Improve error message when an unknown plugin is used ([#2053](https://github.com/cucumber/cucumber-jvm/issues/2053) M.P. Korstanje)
+
+## [6.3.0] (2020-07-24)
+
+### Added
+ * [Junit Platform] Support cucumber.filter.name ([#2065](https://github.com/cucumber/cucumber-jvm/issues/2065) M.P. Korstanje)
+ 
+### Changed
+ * [OpenEJB] Compiled at source level 8.
+ 
+### Deprecated
+ * [Weld] Deprecate `cucumber-weld` ([#1763](https://github.com/cucumber/cucumber-jvm/issues/1763) M.P. Korstanje)
+    * Consider using cucumber-deltaspike instead
+ * [Needle] Deprecate `cucumber-needle` ([#1763](https://github.com/cucumber/cucumber-jvm/issues/1763) M.P. Korstanje)
+    * Consider using cucumber-deltaspike instead
+
+### Removed
+
+### Fixed
+ * [Core] Improve error message when an unknown plugin is used ([#2053](https://github.com/cucumber/cucumber-jvm/issues/2053) M.P. Korstanje)
+ * [Java8] Allow test execution context to be garbage collected ([#2067](https://github.com/cucumber/cucumber-jvm/issues/2067) M.P. Korstanje)
 
 ## [6.2.2] (2020-07-09)
 
 ### Fixed
- -  [JUnit] Make duplicate pickle names unique ([#2045](https://github.com/cucumber/cucumber-jvm/issues/2045) M.P. Korstanje)
+ *  [JUnit] Make duplicate pickle names unique ([#2045](https://github.com/cucumber/cucumber-jvm/issues/2045) M.P. Korstanje)
 
 ## [6.2.1] (2020-07-07)
 
 ### Fixed
- - [Core] Follow symlinks when loading feature files ([#2043](https://github.com/cucumber/cucumber-jvm/issues/2043) Andrey Mukamolov)
+ * [Core] Follow symlinks when loading feature files ([#2043](https://github.com/cucumber/cucumber-jvm/issues/2043) Andrey Mukamolov)
 
 ## [6.2.0] (2020-07-02)
 
 ### Changed
- - [Core] Upgrade to [Gherkin v14](https://github.com/cucumber/cucumber/blob/master/gherkin/CHANGELOG.md#1400---2020-06-27)
+ * [Core] Upgrade to [Gherkin v14](https://github.com/cucumber/cucumber/blob/master/gherkin/CHANGELOG.md#1400---2020-06-27)
 
 ### Fixed
- - [Core] Render attachments in `html` formatter
+ * [Core] Render attachments in `html` formatter
 
 ## [6.1.2] (2020-06-25)
 
 ### Fixed
- - [Core] Update `cucumber-expressions` to v10.2.1 
-  - Retain position of optional groups ([cucumber/#1076](https://github.com/cucumber/cucumber/pull/1076), [cucumber/#511](https://github.com/cucumber/cucumber/pull/511), [cucumber/#952](https://github.com/cucumber/cucumber/pull/952) M.P. Korstanje)
- - [Core] Generate valid parameter names in snippets ([#2029](https://github.com/cucumber/cucumber-jvm/issues/2029) M.P. Korstanje)
+ * [Core] Update `cucumber-expressions` to v10.2.1 
+  * Retain position of optional groups ([cucumber/#1076](https://github.com/cucumber/cucumber/pull/1076), [cucumber/#511](https://github.com/cucumber/cucumber/pull/511), [cucumber/#952](https://github.com/cucumber/cucumber/pull/952) M.P. Korstanje)
+ * [Core] Generate valid parameter names in snippets ([#2029](https://github.com/cucumber/cucumber-jvm/issues/2029) M.P. Korstanje)
    
 ## [6.1.1] (2020-06-12)
 
@@ -1470,7 +1485,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.2.2...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.3.0...main
+[6.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.2...v6.3.0
 [6.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.1...v6.2.2
 [6.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.0...v6.2.1
 [6.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.1.2...v6.2.0

@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.cucumberexpressions.CaptureGroupTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.util.Collections;
@@ -15,11 +16,8 @@ class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements Par
     ) {
         super(body, new Exception().getStackTrace()[3]);
         Class<?> returnType = resolveRawArguments(bodyClass, body.getClass())[0];
-        this.parameterType = new ParameterType(name, Collections.singletonList(regex), returnType, this::execute);
-    }
-
-    private Object execute(String[] parameterContent) {
-        return Invoker.invoke(this, body, method, parameterContent);
+        this.parameterType = new ParameterType(name, Collections.singletonList(regex), returnType,
+            (CaptureGroupTransformer) this::invokeMethod);
     }
 
     @Override

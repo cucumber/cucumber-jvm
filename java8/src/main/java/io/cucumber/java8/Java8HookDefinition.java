@@ -32,7 +32,7 @@ final class Java8HookDefinition extends AbstractGlueDefinition implements HookDe
         } else {
             args = new Object[] { new io.cucumber.java8.Scenario(state) };
         }
-        Invoker.invoke(this, body, method, args);
+        invokeMethod(args);
     }
 
     @Override

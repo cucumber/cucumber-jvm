@@ -10,7 +10,7 @@ import java.util.Map;
 
 class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTableEntryTransformerDefinition {
 
-    private final DefaultDataTableEntryTransformerDefinition delegate;
+    protected final DefaultDataTableEntryTransformerDefinition delegate;
     private final TableEntryByTypeTransformer transformer;
 
     private CoreDefaultDataTableEntryTransformerDefinition(DefaultDataTableEntryTransformerDefinition delegate) {
@@ -58,6 +58,13 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
             super(delegate);
         }
 
+        @Override
+        public void dispose() {
+            if (delegate instanceof ScenarioScoped) {
+                ScenarioScoped scenarioScoped = (ScenarioScoped) delegate;
+                scenarioScoped.dispose();
+            }
+        }
     }
 
     private static class ConvertingTransformer implements TableEntryByTypeTransformer {

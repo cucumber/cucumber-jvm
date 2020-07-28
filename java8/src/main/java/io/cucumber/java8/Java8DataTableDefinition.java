@@ -14,11 +14,7 @@ final class Java8DataTableDefinition extends AbstractDatatableElementTransformer
         Class<?> returnType = resolveRawArguments(DataTableDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
-            (DataTable table) -> execute(replaceEmptyPatternsWithEmptyString(table)));
-    }
-
-    private Object execute(DataTable table) {
-        return Invoker.invoke(this, body, method, table);
+            (DataTable table) -> invokeMethod(replaceEmptyPatternsWithEmptyString(table)));
     }
 
     @Override
