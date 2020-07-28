@@ -8,7 +8,6 @@ import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class PublishFormatter implements ConcurrentEventListener, ColorAware {
 
@@ -25,7 +23,7 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
      */
     public static final String DEFAULT_CUCUMBER_MESSAGE_STORE_URL = "https://messages.cucumber.io/api/reports";
 
-    private final UrlReporter urlReporter = new UrlReporter(new OutputStreamWriter(System.err, UTF_8));
+    private final UrlReporter urlReporter = new UrlReporter(System.err);
     private final MessageFormatter delegate;
 
     public PublishFormatter() throws IOException {
