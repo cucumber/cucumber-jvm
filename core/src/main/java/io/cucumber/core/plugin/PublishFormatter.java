@@ -43,10 +43,7 @@ public final class PublishFormatter implements ConcurrentEventListener {
     private static OutputStream makeUrlOutputStream() throws IOException {
         Map<String, String> properties = CucumberProperties.create();
 
-        String url = properties.get(CUCUMBER_MESSAGE_STORE_URL);
-        if (url == null) {
-            url = DEFAULT_CUCUMBER_MESSAGE_STORE_URL;
-        }
+        String url = properties.getOrDefault(CUCUMBER_MESSAGE_STORE_URL, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
         UrlReporter urlReporter = new UrlReporter(new OutputStreamWriter(System.err, UTF_8));
 
         List<Map.Entry<String, String>> headers = buildHeadersFromCucumberEnvVars(properties);
