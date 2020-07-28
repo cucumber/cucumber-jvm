@@ -101,7 +101,7 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
-            Function.identity(),
+            PublishTokenParser::parse,
             builder::setPublishToken);
 
         parse(properties,

@@ -154,9 +154,9 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_plugin_publish_token() {
-        properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some-value");
+        properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/value");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.PublishFormatter:some-value"));
+        assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.PublishFormatter:some/value"));
     }
 
     @Test

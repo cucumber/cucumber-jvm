@@ -40,10 +40,10 @@ class CucumberEngineOptionsTest {
     @Test
     void getPluginNamesWithPublishToken() {
         MapConfigurationParameters html = new MapConfigurationParameters(
-            Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some-token");
+            Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/token");
 
         assertEquals(
-            singletonList("io.cucumber.core.plugin.PublishFormatter:some-token"),
+            singletonList("io.cucumber.core.plugin.PublishFormatter:some/token"),
             new CucumberEngineOptions(html).plugins().stream()
                     .map(Options.Plugin::pluginString)
                     .collect(toList()));

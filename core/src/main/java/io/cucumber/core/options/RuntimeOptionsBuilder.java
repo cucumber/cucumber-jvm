@@ -236,7 +236,6 @@ public final class RuntimeOptionsBuilder {
     }
 
     public void setPublishToken(String token) {
-        // TODO: Validate token in callers
         this.parsedPublishToken = token;
     }
 
