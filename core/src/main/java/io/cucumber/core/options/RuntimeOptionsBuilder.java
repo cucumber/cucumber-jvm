@@ -37,6 +37,7 @@ public final class RuntimeOptionsBuilder {
     private boolean addDefaultFormatterIfAbsent;
     private boolean addDefaultGlueIfAbsent;
     private boolean addDefaultFeaturePathIfAbsent;
+    private Boolean parsedPublish;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -149,9 +150,13 @@ public final class RuntimeOptionsBuilder {
         if (addDefaultFeaturePathIfAbsent) {
             runtimeOptions.addDefaultFeaturePathIfAbsent();
         }
-        
-        if(parsedPublishToken != null){
+
+        if (parsedPublishToken != null) {
             runtimeOptions.setPublishToken(parsedPublishToken);
+        }
+
+        if (parsedPublish != null) {
+            runtimeOptions.setPublish(parsedPublish);
         }
 
         return runtimeOptions;
@@ -234,4 +239,9 @@ public final class RuntimeOptionsBuilder {
         // TODO: Validate token in callers
         this.parsedPublishToken = token;
     }
+
+    public void setPublish(boolean publish) {
+        this.parsedPublish = publish;
+    }
+
 }

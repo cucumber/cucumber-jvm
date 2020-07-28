@@ -46,6 +46,7 @@ public final class RuntimeOptions implements
     private int count = 0;
     private Class<? extends ObjectFactory> objectFactoryClass;
     private String publishToken;
+    private boolean publish;
 
     private RuntimeOptions() {
 
@@ -111,6 +112,9 @@ public final class RuntimeOptions implements
     private List<Plugin> getPublishPlugin() {
         if (publishToken != null) {
             return singletonList(PluginOption.parse("publish:" + publishToken));
+        }
+        if (publish) {
+            return singletonList(PluginOption.parse("publish"));
         }
         return emptyList();
     }
@@ -242,4 +246,9 @@ public final class RuntimeOptions implements
     void setPublishToken(String token) {
         this.publishToken = token;
     }
+
+    public void setPublish(boolean publish) {
+        this.publish = publish;
+    }
+
 }

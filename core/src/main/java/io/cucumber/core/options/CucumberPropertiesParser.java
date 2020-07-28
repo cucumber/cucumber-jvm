@@ -99,9 +99,9 @@ public final class CucumberPropertiesParser {
             builder::addPluginName);
 
         parse(properties,
-                PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
-                Function.identity(),
-                builder::setPublishToken);
+            PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
+            Function.identity(),
+            builder::setPublishToken);
 
         parse(properties,
             SNIPPET_TYPE_PROPERTY_NAME,

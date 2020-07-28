@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-public class MessageFormatter implements ConcurrentEventListener {
+public final class MessageFormatter implements ConcurrentEventListener {
 
     private final Writer writer;
     private final JsonFormat.Printer jsonPrinter = JsonFormat.printer()

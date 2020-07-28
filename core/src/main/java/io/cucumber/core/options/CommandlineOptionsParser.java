@@ -92,7 +92,7 @@ public final class CommandlineOptionsParser {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals("--publish")) {
-                parsedOptions.setPublishToken(removeArgFor(arg, args));
+                parsedOptions.setPublish(true);
             } else if (arg.equals("--plugin") || arg.equals("-p")) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
