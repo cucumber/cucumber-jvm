@@ -152,6 +152,8 @@ public final class Constants {
     //TODO: Document
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = "cucumber.plugin.publish.token";
 
+    public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = "cucumber.plugin.publish.url";
+
     /**
      * Property name to control naming convention for generated snippets:
      * {@value}

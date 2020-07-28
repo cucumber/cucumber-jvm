@@ -1,5 +1,6 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberProperties;
 import io.cucumber.core.options.CurlOption;
 import io.cucumber.plugin.ConcurrentEventListener;
@@ -15,14 +16,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class PublishFormatter implements ConcurrentEventListener {
-
-    /**
-     * Overrides the URL where messages are published
-     */
-    public static final String CUCUMBER_MESSAGE_STORE_URL = "CUCUMBER_MESSAGE_STORE_URL";
 
     /**
      * Where to publishes messages by default
@@ -43,7 +40,7 @@ public final class PublishFormatter implements ConcurrentEventListener {
     private static OutputStream makeUrlOutputStream() throws IOException {
         Map<String, String> properties = CucumberProperties.create();
 
-        String url = properties.getOrDefault(CUCUMBER_MESSAGE_STORE_URL, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
+        String url = properties.getOrDefault(PLUGIN_PUBLISH_URL_PROPERTY_NAME, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
         UrlReporter urlReporter = new UrlReporter(new OutputStreamWriter(System.err, UTF_8));
 
         List<Map.Entry<String, String>> headers = buildHeadersFromCucumberEnvVars(properties);
@@ -52,6 +49,7 @@ public final class PublishFormatter implements ConcurrentEventListener {
     }
 
     private static List<Map.Entry<String, String>> buildHeadersFromCucumberEnvVars(Map<String, String> properties) {
+        // TODO Use cucumber.plugin.publish as a prefix
         Pattern prefixRegex = Pattern.compile("^CUCUMBER[_.].*", Pattern.CASE_INSENSITIVE);
         return properties.entrySet()
                 .stream()
