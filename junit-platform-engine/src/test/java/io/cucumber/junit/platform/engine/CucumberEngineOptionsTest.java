@@ -52,7 +52,7 @@ class CucumberEngineOptionsTest {
     @Test
     void getPluginNamesWithPublishEnabled() {
         MapConfigurationParameters html = new MapConfigurationParameters(
-            Constants.PLUGIN_PUBLISH_PROPERTY_NAME, "true");
+            Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
 
         assertEquals(
             singletonList("io.cucumber.core.plugin.PublishFormatter"),

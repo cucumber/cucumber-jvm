@@ -150,8 +150,8 @@ public final class Constants {
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";
 
     // TODO: Document
+    public static final String PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME = "cucumber.plugin.publish.enabled";
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = "cucumber.plugin.publish.token";
-
     public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = "cucumber.plugin.publish.url";
 
     /**

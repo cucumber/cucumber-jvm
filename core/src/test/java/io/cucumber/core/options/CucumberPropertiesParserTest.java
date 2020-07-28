@@ -146,6 +146,20 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
+    void should_parse_plugin_publish_enabled() {
+        properties.put(Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.PublishFormatter"));
+    }
+
+    @Test
+    void should_parse_plugin_publish_token() {
+        properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some-value");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.PublishFormatter:some-value"));
+    }
+
+    @Test
     void should_parse_snippet_type() {
         properties.put(Constants.SNIPPET_TYPE_PROPERTY_NAME, "camelcase");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();

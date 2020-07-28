@@ -28,7 +28,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
@@ -63,7 +63,7 @@ class CucumberEngineOptions implements
                 .get(PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME)
                 .map(token -> PluginOption.forClass(PublishFormatter.class, token));
         Optional<PluginOption> fromEnabled = configurationParameters
-                .getBoolean(PLUGIN_PUBLISH_PROPERTY_NAME)
+                .getBoolean(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME)
                 .flatMap(enabled -> enabled ? Optional.of(PluginOption.forClass(PublishFormatter.class)) : Optional.empty());
 
         return Stream.of(fromToken, fromEnabled)

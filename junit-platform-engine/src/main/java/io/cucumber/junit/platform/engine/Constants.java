@@ -77,9 +77,10 @@ public final class Constants {
      */
     public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 
-    // TODO: Document
-    public static final String PLUGIN_PUBLISH_PROPERTY_NAME = "cucumber.plugin.publish";
+    //TODO: Document
+    public static final String PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
+    public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
 
     /**
      * Property name to select custom object factory implementation: {@value}
