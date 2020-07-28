@@ -38,12 +38,24 @@ class CucumberEngineOptionsTest {
     }
 
     @Test
-    void getPluginNamesWithPublish() {
+    void getPluginNamesWithPublishToken() {
         MapConfigurationParameters html = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some-token");
 
         assertEquals(
             singletonList("io.cucumber.core.plugin.PublishFormatter:some-token"),
+            new CucumberEngineOptions(html).plugins().stream()
+                    .map(Options.Plugin::pluginString)
+                    .collect(toList()));
+    }
+
+    @Test
+    void getPluginNamesWithPublishEnabled() {
+        MapConfigurationParameters html = new MapConfigurationParameters(
+            Constants.PLUGIN_PUBLISH_PROPERTY_NAME, "true");
+
+        assertEquals(
+            singletonList("io.cucumber.core.plugin.PublishFormatter"),
             new CucumberEngineOptions(html).plugins().stream()
                     .map(Options.Plugin::pluginString)
                     .collect(toList()));

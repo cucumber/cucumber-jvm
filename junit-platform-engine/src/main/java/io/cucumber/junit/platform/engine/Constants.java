@@ -78,6 +78,7 @@ public final class Constants {
     public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 
     // TODO: Document
+    public static final String PLUGIN_PUBLISH_PROPERTY_NAME = "cucumber.plugin.publish";
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 
     /**

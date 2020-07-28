@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
@@ -26,6 +28,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
@@ -48,11 +51,24 @@ class CucumberEngineOptions implements
                 .map(pluginOption -> (Plugin) pluginOption)
                 .collect(Collectors.toList()))
                 .orElseGet(ArrayList::new);
-        configurationParameters.get(PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
-                // TODO: Validate token
-                token -> PluginOption.forClass(PublishFormatter.class, token))
+
+        getPublishPlugin()
                 .ifPresent(plugins::add);
+
         return plugins;
+    }
+
+    private Optional<PluginOption> getPublishPlugin() {
+        Optional<PluginOption> fromToken = configurationParameters
+                .get(PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME)
+                .map(token -> PluginOption.forClass(PublishFormatter.class, token));
+        Optional<PluginOption> fromEnabled = configurationParameters
+                .getBoolean(PLUGIN_PUBLISH_PROPERTY_NAME)
+                .flatMap(enabled -> enabled ? Optional.of(PluginOption.forClass(PublishFormatter.class)) : Optional.empty());
+
+        return Stream.of(fromToken, fromEnabled)
+                .flatMap(pluginOption -> pluginOption.map(Stream::of).orElseGet(Stream::empty))
+                .findFirst();
     }
 
     @Override
