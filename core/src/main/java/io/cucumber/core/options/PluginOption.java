@@ -26,12 +26,14 @@ import io.cucumber.plugin.SummaryPrinter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
 public class PluginOption implements Options.Plugin {
@@ -43,7 +45,6 @@ public class PluginOption implements Options.Plugin {
 
     static {
         Map<String, Class<? extends Plugin>> plugins = new HashMap<>();
-        plugins.put("publish", PublishFormatter.class);
         plugins.put("default_summary", DefaultSummaryPrinter.class);
         plugins.put("html", HtmlFormatter.class);
         plugins.put("json", JsonFormatter.class);
@@ -89,9 +90,9 @@ public class PluginOption implements Options.Plugin {
     private final Class<? extends Plugin> pluginClass;
     private final String argument;
 
-    private PluginOption(String pluginString, Class<? extends Plugin> pluginClass, String argument) {
-        this.pluginString = pluginString;
-        this.pluginClass = pluginClass;
+    PluginOption(String pluginString, Class<? extends Plugin> pluginClass, String argument) {
+        this.pluginString = requireNonNull(pluginString);
+        this.pluginClass = requireNonNull(pluginClass);
         this.argument = argument;
     }
 

@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
+import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
 
@@ -111,10 +112,10 @@ public final class RuntimeOptions implements
 
     private List<Plugin> getPublishPlugin() {
         if (publishToken != null) {
-            return singletonList(PluginOption.parse("publish:" + publishToken));
+            return singletonList(new PluginOption("publish", PublishFormatter.class, publishToken));
         }
         if (publish) {
-            return singletonList(PluginOption.parse("publish"));
+            return singletonList(new PluginOption("publish", PublishFormatter.class, null));
         }
         return emptyList();
     }
