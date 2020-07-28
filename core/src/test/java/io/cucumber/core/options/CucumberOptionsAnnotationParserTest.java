@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.Plugin;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
@@ -156,6 +158,18 @@ class CucumberOptionsAnnotationParserTest {
     void testObjectFactory() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithCustomObjectFactory.class).build();
         assertThat(runtimeOptions.getObjectFactoryClass(), is(equalTo(TestObjectFactory.class)));
+    }
+
+    @Test
+    void should_set_publish_when_true() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithPublish.class).build();
+        assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(PublishFormatter.class));
+    }
+
+    @Test
+    void should_not_set_publish_when_false() {
+        RuntimeOptions runtimeOptions = parser().parse(WithoutOptions.class).build();
+        assertThat(runtimeOptions.plugins(), empty());
     }
 
     @Test
@@ -310,6 +324,11 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
+    @CucumberOptions(publish = true)
+    private static class ClassWithPublish {
+        // empty
+    }
+
     @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
     private static class ClassWithNoFormatterPlugin {
         // empty
@@ -395,6 +414,11 @@ class CucumberOptionsAnnotationParserTest {
         @Override
         public String[] plugin() {
             return annotation.plugin();
+        }
+
+        @Override
+        public boolean publish() {
+            return annotation.publish();
         }
 
         @Override

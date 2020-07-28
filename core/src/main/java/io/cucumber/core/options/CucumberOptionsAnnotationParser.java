@@ -39,6 +39,7 @@ public final class CucumberOptionsAnnotationParser {
                 addMonochrome(options, args);
                 addTags(classWithOptions, options, args);
                 addPlugins(options, args);
+                addPublish(options, args);
                 addStrict(options, args);
                 addName(options, args);
                 addSnippets(options, args);
@@ -84,6 +85,12 @@ public final class CucumberOptionsAnnotationParser {
     private void addPlugins(CucumberOptions options, RuntimeOptionsBuilder args) {
         for (String plugin : options.plugin()) {
             args.addPluginName(plugin);
+        }
+    }
+
+    private void addPublish(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options.publish()) {
+            args.setPublish(true);
         }
     }
 
@@ -198,6 +205,8 @@ public final class CucumberOptionsAnnotationParser {
         String tags();
 
         String[] plugin();
+
+        boolean publish();
 
         boolean monochrome();
 

@@ -17,18 +17,6 @@ import java.lang.annotation.Target;
 public @interface CucumberOptions {
 
     /**
-     * Publish report to https://reports.cucumber.io. If you set this option to
-     * true, do not check this into source control as it would require every
-     * build to have an Internet connection. Instead, define the
-     * CUCUMBER_REPORTS_TOKEN environment variable in your CI environment to
-     * trigger publishing. You'll find the value of this token by claiming a
-     * report.
-     *
-     * @return true if reports should be published on the web.
-     */
-    boolean publish() default false;
-
-    /**
      * @return true if glue code execution should be skipped.
      */
     boolean dryRun() default false;
@@ -104,6 +92,13 @@ public @interface CucumberOptions {
      * @see    Plugin
      */
     String[] plugin() default {};
+
+    /**
+     * Publish report to https://reports.cucumber.io.
+     * <p>
+     * @return true if reports should be published on the web.
+     */
+    boolean publish() default false;
 
     /**
      * @return true if terminal output should be without colours.
