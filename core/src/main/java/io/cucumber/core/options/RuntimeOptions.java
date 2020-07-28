@@ -104,9 +104,9 @@ public final class RuntimeOptions implements
     @Override
     public List<Plugin> plugins() {
         List<Plugin> plugins = new ArrayList<>();
-        plugins.addAll(getPublishPlugin());
         plugins.addAll(formatters);
         plugins.addAll(summaryPrinters);
+        plugins.addAll(getPublishPlugin());
         return plugins;
     }
 
