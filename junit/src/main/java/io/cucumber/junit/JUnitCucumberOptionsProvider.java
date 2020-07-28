@@ -4,14 +4,9 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
-import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
 
 final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
 

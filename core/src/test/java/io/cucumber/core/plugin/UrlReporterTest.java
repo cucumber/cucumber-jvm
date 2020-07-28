@@ -17,14 +17,15 @@ class UrlReporterTest {
         UrlReporter urlReporter = new UrlReporter(new PrintStream(bytes));
 
         urlReporter.report(new URL(
-                "https://messages.example.com/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3?q=example"));
+            "https://messages.example.com/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3?q=example"));
 
         assertThat(bytes.toString("UTF-8"), is("" +
                 "\u001B[36m┌──────────────────────────────────────────────────────────────────────────┐\u001B[0m\n" +
-                "\u001B[36m│\u001B[0m View your Cucumber Report at:                                            \u001B[36m│\u001B[0m\n" +
-                "\u001B[36m│\u001B[0m https://reports.cucumber.io/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3 \u001B[36m│\u001B[0m\n" +
-                "\u001B[36m└──────────────────────────────────────────────────────────────────────────┘\u001B[0m\n"
-        ));
+                "\u001B[36m│\u001B[0m View your Cucumber Report at:                                            \u001B[36m│\u001B[0m\n"
+                +
+                "\u001B[36m│\u001B[0m https://reports.cucumber.io/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3 \u001B[36m│\u001B[0m\n"
+                +
+                "\u001B[36m└──────────────────────────────────────────────────────────────────────────┘\u001B[0m\n"));
     }
 
     @Test
@@ -34,14 +35,13 @@ class UrlReporterTest {
         urlReporter.setMonochrome(true);
 
         urlReporter.report(new URL(
-                "https://messages.example.com/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3?q=example"));
+            "https://messages.example.com/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3?q=example"));
 
         assertThat(bytes.toString("UTF-8"), is("" +
                 "┌──────────────────────────────────────────────────────────────────────────┐\n" +
                 "│ View your Cucumber Report at:                                            │\n" +
                 "│ https://reports.cucumber.io/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3 │\n" +
-                "└──────────────────────────────────────────────────────────────────────────┘\n"
-        ));
+                "└──────────────────────────────────────────────────────────────────────────┘\n"));
     }
 
 }

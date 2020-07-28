@@ -44,6 +44,7 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
     public void setMonochrome(boolean monochrome) {
         urlReporter.setMonochrome(monochrome);
     }
+
     private OutputStream makeUrlOutputStream(String token) throws IOException {
         Map<String, String> properties = CucumberProperties.create();
         // TODO: Move to properties parsing
@@ -60,6 +61,5 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
         }
         return singletonList(new SimpleEntry<>("Authorization", "Bearer " + token));
     }
-
 
 }
