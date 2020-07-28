@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
@@ -44,6 +45,7 @@ public final class RuntimeOptions implements
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
     private Class<? extends ObjectFactory> objectFactoryClass;
+    private boolean publish;
 
     private RuntimeOptions() {
 
@@ -100,9 +102,17 @@ public final class RuntimeOptions implements
     @Override
     public List<Plugin> plugins() {
         List<Plugin> plugins = new ArrayList<>();
+        plugins.addAll(getPublishPlugin());
         plugins.addAll(formatters);
         plugins.addAll(summaryPrinters);
         return plugins;
+    }
+
+    private List<Plugin> getPublishPlugin() {
+        if (publish) {
+            return singletonList(PluginOption.parse("publish"));
+        }
+        return emptyList();
     }
 
     @Override
@@ -229,4 +239,7 @@ public final class RuntimeOptions implements
         this.pickleOrder = pickleOrder;
     }
 
+    void setPublish(boolean publish) {
+        this.publish = publish;
+    }
 }

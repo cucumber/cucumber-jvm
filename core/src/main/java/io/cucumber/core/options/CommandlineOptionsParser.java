@@ -62,7 +62,6 @@ public final class CommandlineOptionsParser {
     private RuntimeOptionsBuilder parse(List<String> args) {
         args = new ArrayList<>(args);
         RuntimeOptionsBuilder parsedOptions = new RuntimeOptionsBuilder();
-        boolean publish = PublishFormatter.isEnabledWithEnvironmentVariable();
 
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
@@ -94,7 +93,7 @@ public final class CommandlineOptionsParser {
             } else if (arg.equals("--tags") || arg.equals("-t")) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals("--publish")) {
-                publish = true;
+                parsedOptions.setPublish(true);
             } else if (arg.equals("--plugin") || arg.equals("-p")) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
             } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
@@ -143,10 +142,6 @@ public final class CommandlineOptionsParser {
                     parsedOptions.addFeature(featureWithLines);
                 }
             }
-        }
-
-        if (publish) {
-            parsedOptions.addPluginName("publish");
         }
 
         return parsedOptions;

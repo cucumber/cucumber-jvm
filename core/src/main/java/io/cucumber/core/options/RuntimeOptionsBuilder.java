@@ -31,6 +31,7 @@ public final class RuntimeOptionsBuilder {
     private Boolean parsedWip = null;
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
+    private Boolean parsedPublish = null;
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
     private boolean addDefaultSummaryPrinterIfAbsent;
     private boolean addDefaultFormatterIfAbsent;
@@ -148,6 +149,10 @@ public final class RuntimeOptionsBuilder {
         if (addDefaultFeaturePathIfAbsent) {
             runtimeOptions.addDefaultFeaturePathIfAbsent();
         }
+        
+        if(parsedPublish != null){
+            runtimeOptions.setPublish(parsedPublish);
+        }
 
         return runtimeOptions;
     }
@@ -223,5 +228,9 @@ public final class RuntimeOptionsBuilder {
 
     public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.parsedObjectFactoryClass = objectFactoryClass;
+    }
+
+    public void setPublish(boolean publish) {
+        this.parsedPublish = publish;
     }
 }

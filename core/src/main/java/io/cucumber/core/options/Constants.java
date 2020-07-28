@@ -149,6 +149,9 @@ public final class Constants {
      */
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";
 
+    //TODO: Document
+    public static final String PLUGIN_PUBLISH_PROPERTY_NAME = "cucumber.plugin.publish";
+
     /**
      * Property name to control naming convention for generated snippets:
      * {@value}
