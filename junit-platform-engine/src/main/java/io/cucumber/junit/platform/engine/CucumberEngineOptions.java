@@ -68,7 +68,8 @@ class CucumberEngineOptions implements
                 .map(token -> PluginOption.forClass(PublishFormatter.class, token));
         Optional<PluginOption> fromEnabled = configurationParameters
                 .getBoolean(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME)
-                .flatMap(enabled -> enabled ? Optional.of(PluginOption.forClass(PublishFormatter.class)) : Optional.empty());
+                .flatMap(
+                    enabled -> enabled ? Optional.of(PluginOption.forClass(PublishFormatter.class)) : Optional.empty());
 
         return Stream.of(fromToken, fromEnabled)
                 .flatMap(pluginOption -> pluginOption.map(Stream::of).orElseGet(Stream::empty))

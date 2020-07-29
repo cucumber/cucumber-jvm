@@ -105,17 +105,17 @@ public class PluginOption implements Options.Plugin {
         return new PluginOption(pluginSpecification, pluginClass, pluginWithFile.group(2));
     }
 
-    public static PluginOption forClass(Class<? extends Plugin> pluginClass, String argument){
+    public static PluginOption forClass(Class<? extends Plugin> pluginClass, String argument) {
         requireNonNull(pluginClass);
         requireNonNull(argument);
         String name = pluginClass.getName();
         return new PluginOption(name + ":" + argument, pluginClass, argument);
     }
 
-    public static PluginOption forClass(Class<? extends Plugin> pluginClass){
+    public static PluginOption forClass(Class<? extends Plugin> pluginClass) {
         requireNonNull(pluginClass);
         String name = pluginClass.getName();
-        return new PluginOption(name , pluginClass, null);
+        return new PluginOption(name, pluginClass, null);
     }
 
     @SuppressWarnings("unchecked")

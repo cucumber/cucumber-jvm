@@ -12,20 +12,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PublishTokenParserTest {
 
-
     @Test
-    public void parses_base64(){
+    public void parses_base64() {
         String token = Base64.getEncoder().encodeToString("token".getBytes(UTF_8));
         assertDoesNotThrow(() -> PublishTokenParser.parse(token));
     }
 
     @Test
-    public void throws_for_non_base65(){
+    public void throws_for_non_base65() {
         IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> PublishTokenParser.parse("!@#$%^&*()_"));
+            IllegalArgumentException.class,
+            () -> PublishTokenParser.parse("!@#$%^&*()_"));
 
-        assertThat(exception.getMessage(), CoreMatchers.is("Invalid token. A token must consist of a RFC4648 Base64 encoded string"));
+        assertThat(exception.getMessage(),
+            CoreMatchers.is("Invalid token. A token must consist of a RFC4648 Base64 encoded string"));
     }
 
 }

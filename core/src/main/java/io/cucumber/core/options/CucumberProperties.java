@@ -78,6 +78,7 @@ public final class CucumberProperties {
             this.delegate = requireNonNull(delegate);
             this.parent = parent;
         }
+
         CucumberPropertiesMap(Map<String, String> delegate) {
             this(null, delegate);
         }
@@ -131,7 +132,6 @@ public final class CucumberProperties {
             }
             return parent.get(key);
         }
-
 
     }
 

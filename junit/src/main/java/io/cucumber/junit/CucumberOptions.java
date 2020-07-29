@@ -96,6 +96,7 @@ public @interface CucumberOptions {
     /**
      * Publish report to https://reports.cucumber.io.
      * <p>
+     * 
      * @return true if reports should be published on the web.
      */
     boolean publish() default false;
