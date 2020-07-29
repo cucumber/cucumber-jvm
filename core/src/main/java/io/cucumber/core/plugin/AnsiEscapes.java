@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 final class AnsiEscapes {
-
     static final AnsiEscapes RESET = color(0);
     static final AnsiEscapes BLACK = color(30);
     static final AnsiEscapes RED = color(31);

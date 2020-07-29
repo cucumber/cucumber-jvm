@@ -29,6 +29,8 @@ final class AnsiFormats implements Formats {
             put("comment", new ColorFormat(AnsiEscapes.GREY));
             put("tag", new ColorFormat(AnsiEscapes.CYAN));
             put("output", new ColorFormat(AnsiEscapes.BLUE));
+
+            // colors (used in banners)
         }
     };
 
@@ -43,7 +45,7 @@ final class AnsiFormats implements Formats {
         return AnsiEscapes.up(n).toString();
     }
 
-    private static final class ColorFormat implements Format {
+    static final class ColorFormat implements Format {
 
         private final AnsiEscapes[] escapes;
 
@@ -57,7 +59,9 @@ final class AnsiFormats implements Formats {
                 escape.appendTo(sb);
             }
             sb.append(text);
-            AnsiEscapes.RESET.appendTo(sb);
+            if (escapes.length > 0) {
+                AnsiEscapes.RESET.appendTo(sb);
+            }
             return sb.toString();
         }
 
