@@ -538,7 +538,7 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.11.5</version>
+                    <version>0.12.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
