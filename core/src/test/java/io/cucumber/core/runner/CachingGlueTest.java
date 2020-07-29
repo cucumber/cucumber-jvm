@@ -8,6 +8,7 @@ import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
+import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -28,6 +29,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Clock;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -626,6 +628,14 @@ class CachingGlueTest {
             return disposed;
         }
 
+        @Override
+        public Optional<SourceReference> getSourceReference() {
+            return Optional.of(SourceReference.fromStackTraceElement(new StackTraceElement(
+                "MockedScenarioScopedHookDefinition",
+                "getSourceReference",
+                "CachingGlueTest.java",
+                582)));
+        }
     }
 
     private static class MockedStepDefinition extends StubStepDefinition {

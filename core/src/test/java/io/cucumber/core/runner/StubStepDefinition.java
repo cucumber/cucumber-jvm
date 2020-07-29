@@ -1,12 +1,15 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TypeResolver;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,6 +86,16 @@ class StubStepDefinition implements StepDefinition {
             return () -> type;
         }
 
+    }
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        try {
+            Method method = getClass().getMethod("getSourceReference");
+            return Optional.of(SourceReference.fromMethod(method));
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
 }
