@@ -5,6 +5,6 @@ import org.junit.jupiter.api.Test;
 class NoPublishFormatterTest {
     @Test
     public void eyeBallTest() {
-        new NoPublishFormatter().printBanner();
+        new NoPublishFormatter("true").printBanner();
     }
 }

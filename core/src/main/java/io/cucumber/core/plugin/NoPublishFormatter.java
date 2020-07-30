@@ -6,11 +6,17 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 import static java.util.Arrays.asList;
 
 public final class NoPublishFormatter implements ConcurrentEventListener, ColorAware {
 
+    private final boolean quiet;
     private boolean monochrome = false;
+
+    public NoPublishFormatter(String quiet) {
+        this.quiet = Boolean.parseBoolean(quiet);
+    }
 
     @Override
     public void setMonochrome(boolean monochrome) {
@@ -23,7 +29,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
     }
 
     private void writeMessage(Messages.Envelope envelope) {
-        if (envelope.hasTestRunFinished()) {
+        if (envelope.hasTestRunFinished() && !quiet) {
             printBanner();
         }
     }
@@ -32,8 +38,9 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
         Banner banner = new Banner(System.err, monochrome);
         banner.print(
             asList(
-                new Banner.Line("Share your Cucumber Report with your team at"),
-                new Banner.Line("https://reports.cucumber.io", AnsiEscapes.CYAN, AnsiEscapes.INTENSITY_BOLD),
+                new Banner.Line(
+                    new Banner.Span("Share your Cucumber Report with your team at "),
+                    new Banner.Span("https://reports.cucumber.io", AnsiEscapes.CYAN, AnsiEscapes.INTENSITY_BOLD)),
                 new Banner.Line(""),
                 new Banner.Line(
                     new Banner.Span("Code:                   "),
@@ -51,7 +58,24 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
                     new Banner.Span("System property:        "),
                     new Banner.Span("-D" + PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, AnsiEscapes.CYAN),
                     new Banner.Span("="),
-                    new Banner.Span("true", AnsiEscapes.CYAN))),
+                    new Banner.Span("true", AnsiEscapes.CYAN)),
+                new Banner.Line(""),
+                new Banner.Line(
+                    new Banner.Span("More information at "),
+                    new Banner.Span("https://reports.cucumber.io/docs/cucumber-jvm", AnsiEscapes.CYAN)),
+                new Banner.Line(""),
+                new Banner.Line(
+                    new Banner.Span("To disable this message, add "),
+                    new Banner.Span(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, AnsiEscapes.GREY),
+                    new Banner.Span("="),
+                    new Banner.Span("true", AnsiEscapes.GREY),
+                    new Banner.Span(" to")),
+                new Banner.Line(
+                    new Banner.Span("src/test/resources/cucumber.properties", AnsiEscapes.GREY),
+                    new Banner.Span(" or")),
+                new Banner.Line(
+                    new Banner.Span("src/test/resources/junit-platform.properties", AnsiEscapes.GREY),
+                    new Banner.Span(" (JUnit 5)"))),
             AnsiEscapes.GREEN, AnsiEscapes.INTENSITY_BOLD);
     }
 }

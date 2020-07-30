@@ -31,13 +31,14 @@ public final class RuntimeOptionsBuilder {
     private Boolean parsedWip = null;
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
-    private String parsedPublishToken = null;
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
     private boolean addDefaultSummaryPrinterIfAbsent;
     private boolean addDefaultFormatterIfAbsent;
     private boolean addDefaultGlueIfAbsent;
     private boolean addDefaultFeaturePathIfAbsent;
+    private String parsedPublishToken = null;
     private Boolean parsedPublish;
+    private Boolean parsedPublishQuiet;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -159,6 +160,10 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setPublish(parsedPublish);
         }
 
+        if (parsedPublishQuiet != null) {
+            runtimeOptions.setPublishQuiet(parsedPublishQuiet);
+        }
+
         return runtimeOptions;
     }
 
@@ -243,4 +248,7 @@ public final class RuntimeOptionsBuilder {
         this.parsedPublish = publish;
     }
 
+    public void setPublishQuiet(boolean publishQuiet) {
+        this.parsedPublishQuiet = publishQuiet;
+    }
 }
