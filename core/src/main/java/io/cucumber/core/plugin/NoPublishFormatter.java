@@ -5,15 +5,22 @@ import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
+import java.io.PrintStream;
+
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 import static java.util.Arrays.asList;
 
 public final class NoPublishFormatter implements ConcurrentEventListener, ColorAware {
 
+    private final PrintStream out;
     private boolean monochrome = false;
 
     public NoPublishFormatter() {
+        this(System.err);
+    }
+    NoPublishFormatter(PrintStream out) {
+        this.out = out;
     }
 
     @Override
@@ -33,7 +40,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
     }
 
     void printBanner() {
-        Banner banner = new Banner(System.err, monochrome);
+        Banner banner = new Banner(out, monochrome);
         banner.print(
             asList(
                 new Banner.Line(
