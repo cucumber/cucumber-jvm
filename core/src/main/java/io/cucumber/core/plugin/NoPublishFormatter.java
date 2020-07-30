@@ -19,6 +19,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
     public NoPublishFormatter() {
         this(System.err);
     }
+
     NoPublishFormatter(PrintStream out) {
         this.out = out;
     }
