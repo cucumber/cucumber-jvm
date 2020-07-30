@@ -107,7 +107,6 @@ public final class Constants {
      * activate publishing).
      */
     public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
-    public static final String PLUGIN_PUBLISH_QUIET_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 
     /**
      * Setting this to true will prevent the publish advertising banner from
