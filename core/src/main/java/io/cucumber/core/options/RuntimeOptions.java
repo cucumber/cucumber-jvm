@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 

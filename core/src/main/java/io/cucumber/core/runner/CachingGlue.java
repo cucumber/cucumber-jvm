@@ -7,8 +7,10 @@ import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.JavaMethodReference;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
+import io.cucumber.core.backend.StackTraceElementReference;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Step;
@@ -24,6 +26,12 @@ import io.cucumber.cucumberexpressions.RegularExpression;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.messages.Messages.Hook;
+import io.cucumber.messages.Messages.JavaStackTraceElement;
+import io.cucumber.messages.Messages.Location;
+import io.cucumber.messages.Messages.SourceReference;
+import io.cucumber.messages.Messages.StepDefinition.Builder;
 import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern;
 import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern.StepDefinitionPatternType;
 import io.cucumber.plugin.event.StepDefinedEvent;
@@ -259,10 +267,13 @@ final class CachingGlue implements Glue {
     }
 
     private void emitHook(CoreHookDefinition hook) {
+        Hook.Builder hookDefinitionBuilder = Hook.newBuilder()
+                .setId(hook.getId().toString())
+                .setTagExpression(hook.getTagExpression());
+        hook.getDefinitionLocation()
+                .ifPresent(reference -> hookDefinitionBuilder.setSourceReference(createSourceReference(reference)));
         bus.send(Messages.Envelope.newBuilder()
-                .setHook(Messages.Hook.newBuilder()
-                        .setId(hook.getId().toString())
-                        .setTagExpression(hook.getTagExpression()))
+                .setHook(hookDefinitionBuilder)
                 .build());
     }
 
@@ -272,14 +283,41 @@ final class CachingGlue implements Glue {
             new io.cucumber.plugin.event.StepDefinition(
                 stepDefinition.getStepDefinition().getLocation(),
                 stepDefinition.getExpression().getSource())));
-        bus.send(Messages.Envelope.newBuilder()
-                .setStepDefinition(
-                    Messages.StepDefinition.newBuilder()
-                            .setId(stepDefinition.getId().toString())
-                            .setPattern(StepDefinitionPattern.newBuilder()
-                                    .setSource(stepDefinition.getExpression().getSource())
-                                    .setType(getExpressionType(stepDefinition))))
+
+        Builder stepDefinitionBuilder = Messages.StepDefinition.newBuilder()
+                .setId(stepDefinition.getId().toString())
+                .setPattern(StepDefinitionPattern.newBuilder()
+                        .setSource(stepDefinition.getExpression().getSource())
+                        .setType(getExpressionType(stepDefinition)));
+        stepDefinition.getDefinitionLocation()
+                .ifPresent(reference -> stepDefinitionBuilder.setSourceReference(createSourceReference(reference)));
+        bus.send(Envelope.newBuilder()
+                .setStepDefinition(stepDefinitionBuilder)
                 .build());
+    }
+
+    private SourceReference.Builder createSourceReference(io.cucumber.core.backend.SourceReference reference) {
+        SourceReference.Builder sourceReferenceBuilder = SourceReference.newBuilder();
+        if (reference instanceof JavaMethodReference) {
+            JavaMethodReference methodReference = (JavaMethodReference) reference;
+            sourceReferenceBuilder.setJavaMethod(Messages.JavaMethod.newBuilder()
+                    .setClassName(methodReference.className())
+                    .setMethodName(methodReference.methodName())
+                    .addAllMethodParameterTypes(methodReference.methodParameterTypes()));
+        }
+
+        if (reference instanceof StackTraceElementReference) {
+            StackTraceElementReference stackReference = (StackTraceElementReference) reference;
+            JavaStackTraceElement.Builder stackTraceElementBuilder = JavaStackTraceElement.newBuilder()
+                    .setClassName(stackReference.className())
+                    .setMethodName(stackReference.methodName());
+            stackReference.fileName().ifPresent(stackTraceElementBuilder::setFileName);
+            sourceReferenceBuilder
+                    .setJavaStackTraceElement(stackTraceElementBuilder)
+                    .setLocation(Location.newBuilder()
+                            .setLine(stackReference.lineNumber()));
+        }
+        return sourceReferenceBuilder;
     }
 
     private StepDefinitionPatternType getExpressionType(CoreStepDefinition stepDefinition) {

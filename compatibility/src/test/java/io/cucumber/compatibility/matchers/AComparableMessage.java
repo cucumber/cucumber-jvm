@@ -50,10 +50,10 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
-                // exception: the CCK expects source references but java can not
-                // provide them
+                // exception: the CCK expects source references with URIs but
+                // Java can only provide method and stack trace references.
                 case "sourceReference":
-                    expected.add(not(hasKey(is(fieldName))));
+                    expected.add(hasKey(is(fieldName)));
                     break;
 
                 // exception: ids are not predictable
