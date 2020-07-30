@@ -16,14 +16,14 @@ class BannerTest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         Banner banner = new Banner(new PrintStream(bytes), false);
 
-        banner.print(AnsiEscapes.CYAN, asList(
+        banner.print(asList(
             new Banner.Line("Bla"),
             new Banner.Line(
                 new Banner.Span("Bla "),
                 new Banner.Span("Bla", AnsiEscapes.BLUE),
                 new Banner.Span(" "),
                 new Banner.Span("Bla", AnsiEscapes.RED)),
-            new Banner.Line("Bla Bla")));
+            new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
         assertThat(bytes.toString("UTF-8"), is("" +
                 "\u001B[36m┌─────────────┐\u001B[0m\n" +
@@ -38,14 +38,14 @@ class BannerTest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         Banner banner = new Banner(new PrintStream(bytes), true);
 
-        banner.print(AnsiEscapes.CYAN, asList(
+        banner.print(asList(
             new Banner.Line("Bla"),
             new Banner.Line(
                 new Banner.Span("Bla "),
                 new Banner.Span("Bla", AnsiEscapes.BLUE),
                 new Banner.Span(" "),
                 new Banner.Span("Bla", AnsiEscapes.RED)),
-            new Banner.Line("Bla Bla")));
+            new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
         assertThat(bytes.toString("UTF-8"), is("" +
                 "┌─────────────┐\n" +

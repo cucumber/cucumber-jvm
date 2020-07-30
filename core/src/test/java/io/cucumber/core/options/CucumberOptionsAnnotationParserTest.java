@@ -2,8 +2,13 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.plugin.DefaultSummaryPrinter;
+import io.cucumber.core.plugin.HtmlFormatter;
+import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.plugin.PrettyFormatter;
+import io.cucumber.core.plugin.ProgressFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
@@ -22,7 +27,6 @@ import java.util.regex.Pattern;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
@@ -51,9 +55,10 @@ class CucumberOptionsAnnotationParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
-            () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter"),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter"));
+            () -> assertThat(plugins.getPlugins(), hasSize(3)),
+            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
+            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()),
+            () -> assertPluginExists(plugins.getPlugins(), NoPublishFormatter.class.getName()));
     }
 
     private CucumberOptionsAnnotationParser parser() {
@@ -70,6 +75,7 @@ class CucumberOptionsAnnotationParserTest {
         for (Plugin plugin : plugins) {
             if (plugin.getClass().getName().equals(pluginName)) {
                 found = true;
+                break;
             }
         }
         assertThat(pluginName + " not found among the plugins", found, is(equalTo(true)));
@@ -89,9 +95,10 @@ class CucumberOptionsAnnotationParserTest {
         assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter"),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter"));
+            () -> assertThat(plugins.getPlugins(), hasSize(3)),
+            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
+            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()),
+            () -> assertPluginExists(plugins.getPlugins(), NoPublishFormatter.class.getName()));
     }
 
     @Test
@@ -163,13 +170,15 @@ class CucumberOptionsAnnotationParserTest {
     @Test
     void should_set_publish_when_true() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithPublish.class).build();
+        assertThat(runtimeOptions.plugins(), hasSize(1));
         assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(PublishFormatter.class));
     }
 
     @Test
-    void should_not_set_publish_when_false() {
+    void should_set_no_publish_formatter_when_plugin_option_false() {
         RuntimeOptions runtimeOptions = parser().parse(WithoutOptions.class).build();
-        assertThat(runtimeOptions.plugins(), empty());
+        assertThat(runtimeOptions.plugins(), hasSize(1));
+        assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(NoPublishFormatter.class));
     }
 
     @Test
@@ -186,7 +195,7 @@ class CucumberOptionsAnnotationParserTest {
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
-        assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName());
     }
 
     @Test
@@ -197,8 +206,8 @@ class CucumberOptionsAnnotationParserTest {
         List<Plugin> pluginList = plugins.getPlugins();
 
         assertAll(
-            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.HtmlFormatter"),
-            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.PrettyFormatter"));
+            () -> assertPluginExists(pluginList, HtmlFormatter.class.getName()),
+            () -> assertPluginExists(pluginList, PrettyFormatter.class.getName()));
     }
 
     @Test

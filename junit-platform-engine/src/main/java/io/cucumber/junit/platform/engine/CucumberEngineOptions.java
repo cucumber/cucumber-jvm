@@ -6,6 +6,7 @@ import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.PublishTokenParser;
 import io.cucumber.core.options.SnippetTypeParser;
+import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
@@ -69,7 +70,8 @@ class CucumberEngineOptions implements
         Optional<PluginOption> fromEnabled = configurationParameters
                 .getBoolean(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME)
                 .flatMap(
-                    enabled -> enabled ? Optional.of(PluginOption.forClass(PublishFormatter.class)) : Optional.empty());
+                    enabled -> enabled ? Optional.of(PluginOption.forClass(PublishFormatter.class))
+                            : Optional.of(PluginOption.forClass(NoPublishFormatter.class)));
 
         return Stream.of(fromToken, fromEnabled)
                 .flatMap(pluginOption -> pluginOption.map(Stream::of).orElseGet(Stream::empty))

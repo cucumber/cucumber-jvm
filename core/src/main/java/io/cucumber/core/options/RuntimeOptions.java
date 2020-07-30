@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
+import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
@@ -116,8 +117,9 @@ public final class RuntimeOptions implements
         }
         if (publish) {
             return singletonList(PluginOption.forClass(PublishFormatter.class));
+        } else {
+            return singletonList(PluginOption.forClass(NoPublishFormatter.class));
         }
-        return emptyList();
     }
 
     @Override
