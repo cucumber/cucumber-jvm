@@ -16,22 +16,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CucumberEngineOptionsTest {
 
     @Test
-    void getPluginNames() {
+    void appendsNoisyNoPublishFormatter() {
         MapConfigurationParameters html = new MapConfigurationParameters(
             Constants.PLUGIN_PROPERTY_NAME,
             "html:path/to/report.html");
 
         assertEquals(
-            singletonList("html:path/to/report.html"),
+            asList("html:path/to/report.html", "io.cucumber.core.plugin.NoPublishFormatter:false"),
             new CucumberEngineOptions(html).plugins().stream()
                     .map(Options.Plugin::pluginString)
                     .collect(toList()));
+    }
 
+    @Test
+    void getPluginNames2() {
         CucumberEngineOptions htmlAndJson = new CucumberEngineOptions(
             new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME,
                 "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson"));
         assertEquals(
-            asList("html:path/with spaces/to/report.html", "message:path/with spaces/to/report.ndjson"),
+            asList("html:path/with spaces/to/report.html", "message:path/with spaces/to/report.ndjson",
+                "io.cucumber.core.plugin.NoPublishFormatter:false"),
             htmlAndJson.plugins().stream()
                     .map(Options.Plugin::pluginString)
                     .collect(toList()));
@@ -44,6 +48,18 @@ class CucumberEngineOptionsTest {
 
         assertEquals(
             singletonList("io.cucumber.core.plugin.PublishFormatter:some/token"),
+            new CucumberEngineOptions(html).plugins().stream()
+                    .map(Options.Plugin::pluginString)
+                    .collect(toList()));
+    }
+
+    @Test
+    void appendsQuietNoPublishFormatter() {
+        MapConfigurationParameters html = new MapConfigurationParameters(
+            Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true");
+
+        assertEquals(
+            singletonList("io.cucumber.core.plugin.NoPublishFormatter:true"),
             new CucumberEngineOptions(html).plugins().stream()
                     .map(Options.Plugin::pluginString)
                     .collect(toList()));

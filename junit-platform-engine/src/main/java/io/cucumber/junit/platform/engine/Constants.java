@@ -92,10 +92,27 @@ public final class Constants {
      */
     public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 
-    // TODO: Document
+    /**
+     * Setting this to true will enable publishing.
+     */
     public static final String PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
+
+    /**
+     * Setting this to true will enable publishing with a Bearer token.
+     */
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
+
+    /**
+     * Defining this will override the publishing URL (it is not sufficient to
+     * activate publishing).
+     */
     public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
+
+    /**
+     * Setting this to true will prevent the publish advertising banner from
+     * being printed.
+     */
+    public static final String PLUGIN_PUBLISH_QUIET_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 
     /**
      * Property name to select custom object factory implementation: {@value}

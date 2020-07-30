@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
@@ -33,6 +32,7 @@ import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERT
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
@@ -56,26 +56,31 @@ class CucumberEngineOptions implements
                 .collect(Collectors.toList()))
                 .orElseGet(ArrayList::new);
 
-        getPublishPlugin()
-                .ifPresent(plugins::add);
+        plugins.add(getPublishPlugin());
 
         return plugins;
     }
 
-    private Optional<PluginOption> getPublishPlugin() {
-        Optional<PluginOption> fromToken = configurationParameters
+    private PluginOption getPublishPlugin() {
+        String publishToken = configurationParameters
                 .get(PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME)
                 .map(PublishTokenParser::parse)
-                .map(token -> PluginOption.forClass(PublishFormatter.class, token));
-        Optional<PluginOption> fromEnabled = configurationParameters
-                .getBoolean(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME)
-                .flatMap(
-                    enabled -> enabled ? Optional.of(PluginOption.forClass(PublishFormatter.class))
-                            : Optional.of(PluginOption.forClass(NoPublishFormatter.class)));
+                .orElse(null);
 
-        return Stream.of(fromToken, fromEnabled)
-                .flatMap(pluginOption -> pluginOption.map(Stream::of).orElseGet(Stream::empty))
-                .findFirst();
+        boolean publish = configurationParameters
+                .getBoolean(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME)
+                .orElse(Boolean.FALSE);
+
+        Boolean publishQuiet = configurationParameters
+                .getBoolean(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME)
+                .orElse(Boolean.FALSE);
+
+        if (publishToken != null) {
+            return PluginOption.forClass(PublishFormatter.class, publishToken);
+        }
+        return publish ? PluginOption.forClass(PublishFormatter.class)
+                : PluginOption.forClass(NoPublishFormatter.class, publishQuiet.toString());
+
     }
 
     @Override

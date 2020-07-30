@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
@@ -108,19 +107,16 @@ public final class RuntimeOptions implements
         List<Plugin> plugins = new ArrayList<>();
         plugins.addAll(formatters);
         plugins.addAll(summaryPrinters);
-        plugins.addAll(getPublishPlugin());
+        plugins.add(getPublishPlugin());
         return plugins;
     }
 
-    private List<Plugin> getPublishPlugin() {
+    private Plugin getPublishPlugin() {
         if (publishToken != null) {
-            return singletonList(PluginOption.forClass(PublishFormatter.class, publishToken));
+            return PluginOption.forClass(PublishFormatter.class, publishToken);
         }
-        if (publish) {
-            return singletonList(PluginOption.forClass(PublishFormatter.class));
-        } else {
-            return singletonList(PluginOption.forClass(NoPublishFormatter.class, publishQuiet.toString()));
-        }
+        return publish ? PluginOption.forClass(PublishFormatter.class)
+                : PluginOption.forClass(NoPublishFormatter.class, publishQuiet.toString());
     }
 
     @Override
