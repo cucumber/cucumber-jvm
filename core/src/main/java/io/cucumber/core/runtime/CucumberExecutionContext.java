@@ -33,9 +33,6 @@ public final class CucumberExecutionContext {
 
     private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
             .getString("cucumber-jvm.version");
-    private static final String MESSAGE_PROTOCOL_VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
-            .getString("messages.version");
-
     private static final Logger log = LoggerFactory.getLogger(CucumberExecutionContext.class);
 
     private final EventBus bus;
