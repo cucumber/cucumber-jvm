@@ -89,7 +89,9 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 case "cpu":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
-
+                case "ci":
+                    expected.add(not(hasKey(is(fieldName))));
+                    break;
                 default:
                     expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue, depth)));
             }
