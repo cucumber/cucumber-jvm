@@ -19,7 +19,7 @@ class PublishTokenParserTest {
     }
 
     @Test
-    public void throws_for_non_base65() {
+    public void throws_for_non_base64() {
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> PublishTokenParser.parse("!@#$%^&*()_"));
