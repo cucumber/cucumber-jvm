@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * Include SourceReferences in message output ([#2064](https://github.com/cucumber/cucumber-jvm/issues/2064) M.P. Korstanje)
+ * Enable searching and filtering in html report ([cucumber/#1111](https://github.com/cucumber/cucumber/pull/1111) Vincent Psarga)
 
 ### Changed
 
@@ -16,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * Use Unicode symbols as a parameter boundary in snippets ([cucumber/#1108](https://github.com/cucumber/cucumber/pull/1108) M.P. Korstnaje)
 
 ## [6.3.0] (2020-07-24)
 
@@ -30,8 +33,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     * Consider using cucumber-deltaspike instead
  * [Needle] Deprecate `cucumber-needle` ([#1763](https://github.com/cucumber/cucumber-jvm/issues/1763) M.P. Korstanje)
     * Consider using cucumber-deltaspike instead
-
-### Removed
 
 ### Fixed
  * [Core] Improve error message when an unknown plugin is used ([#2053](https://github.com/cucumber/cucumber-jvm/issues/2053) M.P. Korstanje)
