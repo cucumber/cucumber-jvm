@@ -12,7 +12,7 @@ import static java.util.Comparator.comparingInt;
 final class Banner {
     private final boolean monochrome;
 
-    static class Line {
+    static final class Line {
         private final List<Span> spans;
 
         Line(Span... spans) {
@@ -28,7 +28,7 @@ final class Banner {
         }
     }
 
-    static class Span {
+    static final class Span {
         private final String text;
         private final AnsiEscapes[] escapes;
 
@@ -45,12 +45,12 @@ final class Banner {
 
     private final PrintStream out;
 
-    public Banner(PrintStream out, boolean monochrome) {
+    Banner(PrintStream out, boolean monochrome) {
         this.out = out;
         this.monochrome = monochrome;
     }
 
-    public void print(List<Line> lines, AnsiEscapes... border) {
+    void print(List<Line> lines, AnsiEscapes... border) {
         int maxLength = lines.stream().map(Line::length).max(comparingInt(a -> a))
                 .orElseThrow(NoSuchElementException::new);
 
