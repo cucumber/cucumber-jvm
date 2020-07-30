@@ -4,11 +4,12 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static io.cucumber.core.plugin.Format.color;
+import static io.cucumber.core.plugin.Format.monochrome;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparingInt;
 
 final class Banner {
-    private final Format MONO_FORMAT = text -> text;
     private final boolean monochrome;
 
     static class Line {
@@ -55,7 +56,7 @@ final class Banner {
 
         StringBuilder out = new StringBuilder();
 
-        Format borderFormat = monochrome ? MONO_FORMAT : new AnsiFormats.ColorFormat(border);
+        Format borderFormat = monochrome ? monochrome() : color(border);
 
         out.append(borderFormat.text("┌" + times('─', maxLength + 2) + "┐")).append("\n");
         for (Line line : lines) {
@@ -64,7 +65,7 @@ final class Banner {
                     .append(' ');
 
             for (Span span : line.spans) {
-                Format format = monochrome ? MONO_FORMAT : new AnsiFormats.ColorFormat(span.escapes);
+                Format format = monochrome ? monochrome() : color(span.escapes);
                 out.append(format.text(span.text));
             }
 

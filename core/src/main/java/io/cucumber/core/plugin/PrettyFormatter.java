@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
+import static io.cucumber.core.plugin.Formats.ansi;
+import static io.cucumber.core.plugin.Formats.monochrome;
 import static java.lang.Math.max;
 import static java.util.Locale.ROOT;
 
@@ -40,7 +42,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private final Map<UUID, Integer> commentStartIndex = new HashMap<>();
 
     private final NiceAppendable out;
-    private Formats formats = new AnsiFormats();
+    private Formats formats = ansi();
 
     public PrettyFormatter(OutputStream out) {
         this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
@@ -235,11 +237,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     @Override
     public void setMonochrome(boolean monochrome) {
-        if (monochrome) {
-            formats = new MonochromeFormats();
-        } else {
-            formats = new AnsiFormats();
-        }
+        formats = monochrome ? monochrome() : ansi();
     }
 
 }

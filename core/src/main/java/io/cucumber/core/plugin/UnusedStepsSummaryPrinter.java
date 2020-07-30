@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import static io.cucumber.core.plugin.Formats.ansi;
+import static io.cucumber.core.plugin.Formats.monochrome;
 import static java.util.Locale.ROOT;
 
 public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener, SummaryPrinter {
@@ -23,7 +25,7 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
     private final Map<String, String> registeredSteps = new TreeMap<>();
     private final Set<String> usedSteps = new TreeSet<>();
     private final NiceAppendable out;
-    private Formats formats = new MonochromeFormats();
+    private Formats formats = ansi();
 
     public UnusedStepsSummaryPrinter(OutputStream out) {
         this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
@@ -71,11 +73,7 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
 
     @Override
     public void setMonochrome(boolean monochrome) {
-        if (monochrome) {
-            formats = new MonochromeFormats();
-        } else {
-            formats = new AnsiFormats();
-        }
+        formats = monochrome ? monochrome() : ansi();
     }
 
 }
