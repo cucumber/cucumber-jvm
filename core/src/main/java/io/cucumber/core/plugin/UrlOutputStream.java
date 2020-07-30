@@ -14,10 +14,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.newOutputStream;
+import static java.util.Objects.requireNonNull;
 
 class UrlOutputStream extends OutputStream {
 
@@ -28,7 +30,7 @@ class UrlOutputStream extends OutputStream {
     private final OutputStream tempOutputStream;
 
     UrlOutputStream(CurlOption option, UrlReporter urlReporter) throws IOException {
-        this.option = option;
+        this.option = requireNonNull(option);
         this.urlReporter = urlReporter;
         this.temp = Files.createTempFile("cucumber", null);
         this.tempOutputStream = newOutputStream(temp);
