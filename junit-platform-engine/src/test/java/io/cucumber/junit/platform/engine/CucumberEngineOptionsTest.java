@@ -3,13 +3,17 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.ConfigurationParameters;
 
 import java.net.URI;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.hamcrest.core.IsIterableContaining.hasItem;
+import static org.hamcrest.core.IsIterableContaining.hasItems;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,48 +21,66 @@ class CucumberEngineOptionsTest {
 
     @Test
     void getPluginNames() {
-        MapConfigurationParameters html = new MapConfigurationParameters(
+        ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PROPERTY_NAME,
             "html:path/to/report.html");
 
-        assertEquals(
-            singletonList("html:path/to/report.html"),
-            new CucumberEngineOptions(html).plugins().stream()
-                    .map(Options.Plugin::pluginString)
-                    .collect(toList()));
+        assertThat(new CucumberEngineOptions(config).plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList()),
+            hasItem("html:path/to/report.html"));
 
         CucumberEngineOptions htmlAndJson = new CucumberEngineOptions(
             new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME,
                 "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson"));
-        assertEquals(
-            asList("html:path/with spaces/to/report.html", "message:path/with spaces/to/report.ndjson"),
-            htmlAndJson.plugins().stream()
-                    .map(Options.Plugin::pluginString)
-                    .collect(toList()));
+
+        assertThat(htmlAndJson.plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList()),
+            hasItems("html:path/with spaces/to/report.html", "message:path/with spaces/to/report.ndjson"));
     }
 
     @Test
     void getPluginNamesWithPublishToken() {
-        MapConfigurationParameters html = new MapConfigurationParameters(
+        ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/token");
 
-        assertEquals(
-            singletonList("io.cucumber.core.plugin.PublishFormatter:some/token"),
-            new CucumberEngineOptions(html).plugins().stream()
-                    .map(Options.Plugin::pluginString)
-                    .collect(toList()));
+        assertThat(new CucumberEngineOptions(config).plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList()),
+            hasItem("io.cucumber.core.plugin.PublishFormatter:some/token"));
+    }
+
+    @Test
+    void getPluginNamesWithNothingEnabled() {
+        ConfigurationParameters config = new EmptyConfigurationParameters();
+
+        assertThat(new CucumberEngineOptions(config).plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList()),
+            hasItem("io.cucumber.core.plugin.NoPublishFormatter"));
+    }
+
+    @Test
+    void getPluginNamesWithPublishQuiteEnabled() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true");
+
+        assertThat(new CucumberEngineOptions(config).plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList()),
+            empty());
     }
 
     @Test
     void getPluginNamesWithPublishEnabled() {
-        MapConfigurationParameters html = new MapConfigurationParameters(
+        ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
 
-        assertEquals(
-            singletonList("io.cucumber.core.plugin.PublishFormatter"),
-            new CucumberEngineOptions(html).plugins().stream()
-                    .map(Options.Plugin::pluginString)
-                    .collect(toList()));
+        assertThat(new CucumberEngineOptions(config).plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList()),
+            hasItem("io.cucumber.core.plugin.PublishFormatter"));
     }
 
     @Test
@@ -76,22 +98,24 @@ class CucumberEngineOptionsTest {
 
     @Test
     void getGlue() {
-        MapConfigurationParameters glue = new MapConfigurationParameters(
+        ConfigurationParameters config = new MapConfigurationParameters(
             Constants.GLUE_PROPERTY_NAME,
             "com.example.app, com.example.glue");
-        assertEquals(
-            asList(URI.create("classpath:/com/example/app"), URI.create("classpath:/com/example/glue")),
-            new CucumberEngineOptions(glue).getGlue());
+
+        assertThat(new CucumberEngineOptions(config).getGlue(),
+            contains(
+                URI.create("classpath:/com/example/app"),
+                URI.create("classpath:/com/example/glue")));
     }
 
     @Test
     void isDryRun() {
-        MapConfigurationParameters dryRun = new MapConfigurationParameters(
+        ConfigurationParameters dryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
             "true");
         assertTrue(new CucumberEngineOptions(dryRun).isDryRun());
 
-        MapConfigurationParameters noDryRun = new MapConfigurationParameters(
+        ConfigurationParameters noDryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
             "false");
         assertFalse(new CucumberEngineOptions(noDryRun).isDryRun());
@@ -99,29 +123,30 @@ class CucumberEngineOptionsTest {
 
     @Test
     void getSnippetType() {
-        MapConfigurationParameters underscore = new MapConfigurationParameters(
+        ConfigurationParameters underscore = new MapConfigurationParameters(
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
             "underscore");
-        assertEquals(SnippetType.UNDERSCORE, new CucumberEngineOptions(underscore).getSnippetType());
 
-        MapConfigurationParameters camelcase = new MapConfigurationParameters(
+        assertThat(new CucumberEngineOptions(underscore).getSnippetType(), is(SnippetType.UNDERSCORE));
+
+        ConfigurationParameters camelcase = new MapConfigurationParameters(
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
             "camelcase");
-        assertEquals(SnippetType.CAMELCASE, new CucumberEngineOptions(camelcase).getSnippetType());
+        assertThat(new CucumberEngineOptions(camelcase).getSnippetType(), is(SnippetType.CAMELCASE));
     }
 
     @Test
     void isParallelExecutionEnabled() {
-        MapConfigurationParameters enabled = new MapConfigurationParameters(
+        ConfigurationParameters enabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
             "true");
         assertTrue(new CucumberEngineOptions(enabled).isParallelExecutionEnabled());
 
-        MapConfigurationParameters disabled = new MapConfigurationParameters(
+        ConfigurationParameters disabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
             "false");
         assertFalse(new CucumberEngineOptions(disabled).isParallelExecutionEnabled());
-        MapConfigurationParameters absent = new MapConfigurationParameters(
+        ConfigurationParameters absent = new MapConfigurationParameters(
             "some key", "some value");
         assertFalse(new CucumberEngineOptions(absent).isParallelExecutionEnabled());
 

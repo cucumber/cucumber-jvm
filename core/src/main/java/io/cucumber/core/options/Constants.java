@@ -157,6 +157,7 @@ public final class Constants {
      */
     public static final String PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME = "cucumber.plugin.publish.enabled";
 
+    // TODO: Document consistently with other parameters.
     /**
      * Setting this to true will enable publishing with a Bearer token.
      */

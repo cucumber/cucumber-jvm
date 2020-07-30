@@ -49,7 +49,7 @@ public final class RuntimeOptions implements
     private Class<? extends ObjectFactory> objectFactoryClass;
     private String publishToken;
     private boolean publish;
-    private Boolean publishQuiet = false;
+    private boolean publishQuiet;
 
     private RuntimeOptions() {
 
@@ -118,9 +118,11 @@ public final class RuntimeOptions implements
         }
         if (publish) {
             return singletonList(PluginOption.forClass(PublishFormatter.class));
-        } else {
-            return singletonList(PluginOption.forClass(NoPublishFormatter.class, publishQuiet.toString()));
         }
+        if (publishQuiet) {
+            return emptyList();
+        }
+        return singletonList(PluginOption.forClass(NoPublishFormatter.class));
     }
 
     @Override

@@ -11,11 +11,9 @@ import static java.util.Arrays.asList;
 
 public final class NoPublishFormatter implements ConcurrentEventListener, ColorAware {
 
-    private final boolean quiet;
     private boolean monochrome = false;
 
-    public NoPublishFormatter(String quiet) {
-        this.quiet = Boolean.parseBoolean(quiet);
+    public NoPublishFormatter() {
     }
 
     @Override
@@ -29,7 +27,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
     }
 
     private void writeMessage(Messages.Envelope envelope) {
-        if (envelope.hasTestRunFinished() && !quiet) {
+        if (envelope.hasTestRunFinished()) {
             printBanner();
         }
     }
@@ -67,7 +65,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
                 new Banner.Line(
                     new Banner.Span("To disable this message, add "),
                     new Banner.Span(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, AnsiEscapes.GREY),
-                    new Banner.Span("="),
+                    new Banner.Span("=", AnsiEscapes.GREY),
                     new Banner.Span("true", AnsiEscapes.GREY),
                     new Banner.Span(" to")),
                 new Banner.Line(
@@ -75,7 +73,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
                     new Banner.Span(" or")),
                 new Banner.Line(
                     new Banner.Span("src/test/resources/junit-platform.properties", AnsiEscapes.GREY),
-                    new Banner.Span(" (JUnit 5)"))),
+                    new Banner.Span(" (cucumber-junit-platform-engine)"))),
             AnsiEscapes.GREEN, AnsiEscapes.INTENSITY_BOLD);
     }
 }
