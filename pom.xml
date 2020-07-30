@@ -557,6 +557,11 @@
                                 </versionIncreaseAllows>
                             </revapi.semver.ignore>
                             <revapi.ignore>
+                                <item>
+                                    <code>java.method.addedToInterface</code>
+                                    <new>method boolean io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::publish()</new>
+                                    <justification>Internal API</justification>
+                                </item>
                                 <!-- Gherkin parser related -->
                                 <item>
                                     <code>java.class.nonPublicPartOfAPI</code>
