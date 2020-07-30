@@ -20,13 +20,11 @@ final class UrlReporter implements ColorAware {
 
         Banner banner = new Banner(out, monochrome);
         banner.print(asList(
-                new Banner.Line("View your Cucumber Report at:"),
-                new Banner.Line(reportUrl, AnsiEscapes.CYAN, AnsiEscapes.INTENSITY_BOLD),
-                new Banner.Line(""),
-                new Banner.Line("This report will self-destruct in 12h unless it is claimed or deleted.")
-                ),
-                AnsiEscapes.GREEN, AnsiEscapes.INTENSITY_BOLD
-        );
+            new Banner.Line("View your Cucumber Report at:"),
+            new Banner.Line(reportUrl, AnsiEscapes.CYAN, AnsiEscapes.INTENSITY_BOLD),
+            new Banner.Line(""),
+            new Banner.Line("This report will self-destruct in 12h unless it is claimed or deleted.")),
+            AnsiEscapes.GREEN, AnsiEscapes.INTENSITY_BOLD);
     }
 
     @Override
