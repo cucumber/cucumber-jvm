@@ -55,10 +55,9 @@ class CucumberOptionsAnnotationParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
-            () -> assertThat(plugins.getPlugins(), hasSize(3)),
+            () -> assertThat(plugins.getPlugins(), hasSize(2)),
             () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
-            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()),
-            () -> assertPluginExists(plugins.getPlugins(), NoPublishFormatter.class.getName()));
+            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
     }
 
     private CucumberOptionsAnnotationParser parser() {
@@ -95,10 +94,9 @@ class CucumberOptionsAnnotationParserTest {
         assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(plugins.getPlugins(), hasSize(3)),
+            () -> assertThat(plugins.getPlugins(), hasSize(2)),
             () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
-            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()),
-            () -> assertPluginExists(plugins.getPlugins(), NoPublishFormatter.class.getName()));
+            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
     }
 
     @Test
@@ -169,14 +167,20 @@ class CucumberOptionsAnnotationParserTest {
 
     @Test
     void should_set_publish_when_true() {
-        RuntimeOptions runtimeOptions = parser().parse(ClassWithPublish.class).build();
+        RuntimeOptions runtimeOptions = parser()
+                .parse(ClassWithPublish.class)
+                .enablePublishPlugin()
+                .build();
         assertThat(runtimeOptions.plugins(), hasSize(1));
         assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(PublishFormatter.class));
     }
 
     @Test
     void should_set_no_publish_formatter_when_plugin_option_false() {
-        RuntimeOptions runtimeOptions = parser().parse(WithoutOptions.class).build();
+        RuntimeOptions runtimeOptions = parser()
+                .parse(WithoutOptions.class)
+                .enablePublishPlugin()
+                .build();
         assertThat(runtimeOptions.plugins(), hasSize(1));
         assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(NoPublishFormatter.class));
     }

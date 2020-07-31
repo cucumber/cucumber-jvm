@@ -148,7 +148,10 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_have_no_publish_plugin_enabled_by_default() {
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        RuntimeOptions options = cucumberPropertiesParser
+                .parse(properties)
+                .enablePublishPlugin()
+                .build();
         assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.NoPublishFormatter"));
     }
 
@@ -162,14 +165,20 @@ class CucumberPropertiesParserTest {
     @Test
     void should_parse_plugin_publish_enabled() {
         properties.put(Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        RuntimeOptions options = cucumberPropertiesParser
+                .parse(properties)
+                .enablePublishPlugin()
+                .build();
         assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.PublishFormatter"));
     }
 
     @Test
     void should_parse_plugin_publish_token() {
         properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/value");
-        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        RuntimeOptions options = cucumberPropertiesParser
+                .parse(properties)
+                .enablePublishPlugin()
+                .build();
         assertThat(options.plugins().get(0).pluginString(),
             equalTo("io.cucumber.core.plugin.PublishFormatter:some/value"));
     }

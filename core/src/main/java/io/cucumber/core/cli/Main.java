@@ -63,6 +63,7 @@ public class Main {
                 .addDefaultFeaturePathIfAbsent()
                 .addDefaultFormatterIfAbsent()
                 .addDefaultSummaryPrinterIfAbsent()
+                .enablePublishPlugin()
                 .build(systemOptions);
 
         Optional<Byte> exitStatus = commandlineOptionsParser.exitStatus();

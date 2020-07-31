@@ -50,6 +50,7 @@ public final class RuntimeOptions implements
     private String publishToken;
     private boolean publish;
     private boolean publishQuiet;
+    private boolean enablePublishPlugin;
 
     private RuntimeOptions() {
 
@@ -113,6 +114,9 @@ public final class RuntimeOptions implements
     }
 
     private List<Plugin> getPublishPlugin() {
+        if (!enablePublishPlugin) {
+            return emptyList();
+        }
         if (publishToken != null) {
             return singletonList(PluginOption.forClass(PublishFormatter.class, publishToken));
         }
@@ -253,11 +257,16 @@ public final class RuntimeOptions implements
         this.publishToken = token;
     }
 
-    public void setPublish(boolean publish) {
+    void setPublish(boolean publish) {
         this.publish = publish;
     }
 
-    public void setPublishQuiet(boolean publishQuiet) {
+    void setPublishQuiet(boolean publishQuiet) {
         this.publishQuiet = publishQuiet;
     }
+
+    void setEnablePublishPlugin(boolean enablePublishPlugin) {
+        this.enablePublishPlugin = enablePublishPlugin;
+    }
+
 }
