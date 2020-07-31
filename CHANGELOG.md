@@ -8,15 +8,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [Core] Include SourceReferences in message output ([#2064](https://github.com/cucumber/cucumber-jvm/issues/2064) M.P. Korstanje)
- * [Core] Enable searching and filtering in html report ([cucumber/#1111](https://github.com/cucumber/cucumber/pull/1111) Vincent Psarga)
- * [Core] Include `file_name` in `attachment` message  ([cucumber/#2072](https://github.com/cucumber/cucumber/pull/2072) M.P. Korstanje)
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+## [6.4.0] (2020-07-31)
+
+### Added
+ * [Core] Include SourceReferences in message output ([#2064](https://github.com/cucumber/cucumber-jvm/issues/2064) M.P. Korstanje)
+ * [Core] Enable searching and filtering in html report ([cucumber/#1111](https://github.com/cucumber/cucumber/pull/1111) Vincent Psarga)
+ * [Core] Include `file_name` in `attachment` message  ([cucumber/#2072](https://github.com/cucumber/cucumber/pull/2072) M.P. Korstanje)
 
 ### Fixed
  * [Core] Use Unicode symbols as a parameter boundary in snippets ([cucumber/#1108](https://github.com/cucumber/cucumber/pull/1108) M.P. Korstnaje)
@@ -1487,7 +1493,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.3.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.4.0...main
+[6.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.3.0...v6.4.0
 [6.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.2...v6.3.0
 [6.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.1...v6.2.2
 [6.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.0...v6.2.1
