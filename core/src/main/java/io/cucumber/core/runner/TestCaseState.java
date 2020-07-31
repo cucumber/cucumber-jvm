@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Attachment;
 import io.cucumber.messages.Messages.Attachment.ContentEncoding;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
@@ -66,35 +67,39 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public void attach(byte[] data, String mediaType, String name) {
+        requireNonNull(data);
+        requireNonNull(mediaType);
+
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
+        Attachment.Builder attachment = createAttachment()
+                .setBody(Base64.getEncoder().encodeToString(data))
+                .setContentEncoding(ContentEncoding.BASE64)
+                .setMediaType(mediaType);
+        if (name != null) {
+            attachment.setFileName(name);
+        }
         bus.send(Messages.Envelope.newBuilder()
-                .setAttachment(
-                    Messages.Attachment.newBuilder()
-                            .setTestCaseStartedId(testExecutionId.toString())
-                            .setTestStepId(currentTestStepId.toString())
-                            .setBody(Base64.getEncoder().encodeToString(data))
-                            .setContentEncoding(ContentEncoding.BASE64)
-                            // Add file name to message protocol
-                            // https://github.com/cucumber/cucumber/issues/945
-                            .setMediaType(mediaType))
+                .setAttachment(attachment)
                 .build());
     }
 
     @Override
     public void attach(String data, String mediaType, String name) {
+        requireNonNull(data);
+        requireNonNull(mediaType);
+
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
+        Attachment.Builder attachment = createAttachment()
+                .setBody(data)
+                .setContentEncoding(ContentEncoding.IDENTITY)
+                .setMediaType(mediaType);
+        if (name != null) {
+            attachment.setFileName(name);
+        }
         bus.send(Messages.Envelope.newBuilder()
-                .setAttachment(
-                    Messages.Attachment.newBuilder()
-                            .setTestCaseStartedId(testExecutionId.toString())
-                            .setTestStepId(currentTestStepId.toString())
-                            .setBody(data)
-                            .setContentEncoding(ContentEncoding.IDENTITY)
-                            // Add file name to message protocol
-                            // https://github.com/cucumber/cucumber/issues/945
-                            .setMediaType(mediaType))
+                .setAttachment(attachment)
                 .build());
     }
 
@@ -102,16 +107,19 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     public void log(String text) {
         requireActiveTestStep();
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
+        Attachment.Builder attachment = createAttachment()
+                .setBody(text)
+                .setContentEncoding(ContentEncoding.IDENTITY)
+                .setMediaType("text/x.cucumber.log+plain");
         bus.send(Messages.Envelope.newBuilder()
-                .setAttachment(
-                    Messages.Attachment.newBuilder()
-                            .setTestCaseStartedId(testExecutionId.toString())
-                            .setTestStepId(currentTestStepId.toString())
-                            .setBody(text)
-                            .setContentEncoding(ContentEncoding.IDENTITY)
-                            .setMediaType("text/x.cucumber.log+plain")
-                            .build())
+                .setAttachment(attachment)
                 .build());
+    }
+
+    private Attachment.Builder createAttachment() {
+        return Attachment.newBuilder()
+                .setTestCaseStartedId(testExecutionId.toString())
+                .setTestStepId(currentTestStepId.toString());
     }
 
     @Override
