@@ -12,10 +12,10 @@ import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
+import static io.cucumber.core.options.CurlOption.HttpMethod.PUT;
 
 public final class PublishFormatter implements ConcurrentEventListener, ColorAware {
 
@@ -47,19 +47,12 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
 
     private OutputStream makeUrlOutputStream(String token) throws IOException {
         Map<String, String> properties = CucumberProperties.create();
-        // TODO: Move to properties parsing
         String url = properties.getOrDefault(PLUGIN_PUBLISH_URL_PROPERTY_NAME, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
-        List<Map.Entry<String, String>> headers = createAuthorizationHeader(token);
-        // TODO: Nice constructor
-        CurlOption curlOption = new CurlOption(URI.create(url), CurlOption.HttpMethod.PUT, headers);
+        if (token == null) {
+            return new UrlOutputStream(CurlOption.create(PUT, URI.create(url)), urlReporter);
+        }
+        Entry<String, String> header = new SimpleEntry<>("Authorization", "Bearer " + token);
+        CurlOption curlOption = CurlOption.create(PUT, URI.create(url), header);
         return new UrlOutputStream(curlOption, urlReporter);
     }
-
-    private static List<Map.Entry<String, String>> createAuthorizationHeader(String token) {
-        if (token == null) {
-            return emptyList();
-        }
-        return singletonList(new SimpleEntry<>("Authorization", "Bearer " + token));
-    }
-
 }
