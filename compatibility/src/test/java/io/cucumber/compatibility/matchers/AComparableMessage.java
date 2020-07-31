@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.not;
@@ -89,7 +90,11 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 case "cpu":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
-
+                case "ci":
+                    // exception: Absent when running locally, present in ci
+                    expected.add(
+                        anyOf(not(hasKey(is(fieldName))), hasEntry(is(fieldName), isA(expectedValue.getClass()))));
+                    break;
                 default:
                     expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue, depth)));
             }

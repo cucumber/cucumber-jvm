@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -7,7 +6,7 @@
         <version>2.1.1</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.4.0-SNAPSHOT</version>
+    <version>6.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -26,11 +25,12 @@
         <!--Dependencies -->
         <cucumber-expressions.version>10.2.2</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
+        <create-meta.version>1.1.0</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
-        <messages.version>12.3.2</messages.version>
-        <gherkin.version>14.1.0</gherkin.version>
-        <html-formatter.version>7.1.0</html-formatter.version>
+        <messages.version>12.4.0</messages.version>
+        <gherkin.version>14.2.0</gherkin.version>
+        <html-formatter.version>7.2.0</html-formatter.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
@@ -79,6 +79,11 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>datatable-matchers</artifactId>
                 <version>${datatable.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>create-meta</artifactId>
+                <version>${create-meta.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -652,24 +657,24 @@
                         <failsOnError>true</failsOnError>
                         <checkstyleRules>
                             <module name="Checker">
-                                <property name="severity" value="error"/>
+                                <property name="severity" value="error" />
                                 <module name="TreeWalker">
-                                    <module name="AvoidStarImport"/>
+                                    <module name="AvoidStarImport" />
                                     <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true"/>
-                                        <property name="allowMissingReturnTag" value="true"/>
+                                        <property name="allowMissingParamTags" value="true" />
+                                        <property name="allowMissingReturnTag" value="true" />
                                     </module>
-                                    <module name="NonEmptyAtclauseDescription"/>
-                                    <module name="SuppressWarningsHolder"/>
+                                    <module name="NonEmptyAtclauseDescription" />
+                                    <module name="SuppressWarningsHolder" />
                                     <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true"/>
+                                        <property name="processJavadoc" value="true" />
                                     </module>
                                 </module>
-                                <module name="SuppressWarningsFilter"/>
+                                <module name="SuppressWarningsFilter" />
                                 <module name="RegexpSingleline">
-                                    <property name="format" value="@author"/>
-                                    <property name="message" value="Please do not use @author tags"/>
-                                    <property name="fileExtensions" value="java,groovy,kt"/>
+                                    <property name="format" value="@author" />
+                                    <property name="message" value="Please do not use @author tags" />
+                                    <property name="fileExtensions" value="java,groovy,kt" />
                                 </module>
                             </module>
                         </checkstyleRules>

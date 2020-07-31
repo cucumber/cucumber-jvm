@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
+import static io.cucumber.createmeta.CreateMeta.createMeta;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.synchronizedList;
@@ -32,9 +33,6 @@ public final class CucumberExecutionContext {
 
     private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
             .getString("cucumber-jvm.version");
-    private static final String MESSAGE_PROTOCOL_VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
-            .getString("messages.version");
-
     private static final Logger log = LoggerFactory.getLogger(CucumberExecutionContext.class);
 
     private final EventBus bus;
@@ -56,19 +54,7 @@ public final class CucumberExecutionContext {
 
     private void emitMeta() {
         bus.send(Envelope.newBuilder()
-                .setMeta(Messages.Meta.newBuilder()
-                        .setProtocolVersion(MESSAGE_PROTOCOL_VERSION)
-                        .setRuntime(Messages.Meta.Product.newBuilder()
-                                .setName(System.getProperty("java.vendor"))
-                                .setVersion(System.getProperty("java.version")))
-                        .setImplementation(Messages.Meta.Product.newBuilder()
-                                .setName("cucumber-jvm")
-                                .setVersion(VERSION))
-                        .setOs(Messages.Meta.Product.newBuilder()
-                                .setName(System.getProperty("os.name")))
-                        .setCpu(Messages.Meta.Product.newBuilder()
-                                .setName(System.getProperty("os.arch")))
-                        .build())
+                .setMeta(createMeta("cucumber-jvm", VERSION, System.getenv()))
                 .build());
     }
 
