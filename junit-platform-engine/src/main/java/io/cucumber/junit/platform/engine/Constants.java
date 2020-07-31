@@ -103,12 +103,6 @@ public final class Constants {
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 
     /**
-     * Defining this will override the publishing URL (it is not sufficient to
-     * activate publishing).
-     */
-    public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
-
-    /**
      * Setting this to true will prevent the publish advertising banner from
      * being printed.
      */
