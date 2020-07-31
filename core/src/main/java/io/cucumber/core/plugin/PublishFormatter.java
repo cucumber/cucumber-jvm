@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -55,4 +54,5 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
         CurlOption curlOption = CurlOption.create(PUT, URI.create(url), header);
         return new UrlOutputStream(curlOption, urlReporter);
     }
+
 }
