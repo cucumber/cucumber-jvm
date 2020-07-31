@@ -7,11 +7,9 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
 import static io.cucumber.core.options.CurlOption.HttpMethod.PUT;
@@ -27,11 +25,16 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
     private final MessageFormatter delegate;
 
     public PublishFormatter() throws IOException {
-        this.delegate = new MessageFormatter(makeUrlOutputStream(null));
+        this(createCurlOption(null));
     }
 
     public PublishFormatter(String token) throws IOException {
-        this.delegate = new MessageFormatter(makeUrlOutputStream(token));
+        this(createCurlOption(token));
+    }
+
+    private PublishFormatter(CurlOption curlOption) throws IOException {
+        UrlOutputStream outputStream = new UrlOutputStream(curlOption, urlReporter);
+        this.delegate = new MessageFormatter(outputStream);
     }
 
     @Override
@@ -44,15 +47,13 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
         urlReporter.setMonochrome(monochrome);
     }
 
-    private OutputStream makeUrlOutputStream(String token) throws IOException {
+    private static CurlOption createCurlOption(String token) {
         Map<String, String> properties = CucumberProperties.create();
         String url = properties.getOrDefault(PLUGIN_PUBLISH_URL_PROPERTY_NAME, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
         if (token == null) {
-            return new UrlOutputStream(CurlOption.create(PUT, URI.create(url)), urlReporter);
+            return CurlOption.create(PUT, URI.create(url));
         }
-        Entry<String, String> header = new SimpleEntry<>("Authorization", "Bearer " + token);
-        CurlOption curlOption = CurlOption.create(PUT, URI.create(url), header);
-        return new UrlOutputStream(curlOption, urlReporter);
+        return CurlOption.create(PUT, URI.create(url), new SimpleEntry<>("Authorization", "Bearer " + token));
     }
 
 }
