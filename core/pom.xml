@@ -18,6 +18,7 @@
         <xmlunit.version>2.7.0</xmlunit.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
         <vertx.version>3.9.2</vertx.version>
+        <reactive-streams.version>1.0.3</reactive-streams.version>
     </properties>
 
     <dependencies>
@@ -99,11 +100,44 @@
             <artifactId>vertx-web</artifactId>
             <version>${vertx.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Fix dependency convergence -->
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-junit5</artifactId>
             <version>${vertx.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <!-- Fix dependency convergence -->
+                <exclusion>
+                    <groupId>org.reactivestreams</groupId>
+                    <artifactId>reactive-streams</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Fix dependency convergence -->
+        <dependency>
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams</artifactId>
+            <version>${reactive-streams.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -130,6 +164,28 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- the cucumber-* dependencies of cucumber-core are
+                             non-trivial. This ensures that we not forget to
+                             update all intermediate dependencies. For instance
+                             when updating messages -->
+                        <id>enforce-dependency-convergence</id>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
