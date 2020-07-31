@@ -563,6 +563,13 @@
                             </revapi.semver.ignore>
                             <revapi.ignore>
                                 <item>
+                                    <regex>true</regex>
+                                    <code>java.method.returnTypeChanged</code>
+                                    <old>method void io.cucumber.core.options.RuntimeOptionsBuilder::setObjectFactoryClass.*</old>
+                                    <new>method io.cucumber.core.options.RuntimeOptionsBuilder io.cucumber.core.options.RuntimeOptionsBuilder::setObjectFactoryClass.*</new>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
                                     <code>java.method.addedToInterface</code>
                                     <new>method boolean io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::publish()</new>
                                     <justification>Internal API</justification>
