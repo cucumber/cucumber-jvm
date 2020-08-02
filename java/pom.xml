@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.java</project.Automatic-Module-Name>
-        <jackson-databind.version>2.11.1</jackson-databind.version>
+        <jackson-databind.version>2.11.2</jackson-databind.version>
     </properties>
 
     <dependencies>
