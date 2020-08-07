@@ -25,7 +25,7 @@
         <!--Dependencies -->
         <cucumber-expressions.version>10.2.2</cucumber-expressions.version>
         <datatable.version>3.3.1</datatable.version>
-        <create-meta.version>1.1.0</create-meta.version>
+        <create-meta.version>1.2.0</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
         <messages.version>12.4.0</messages.version>
@@ -543,7 +543,7 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.11.5</version>
+                    <version>0.12.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
