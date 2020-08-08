@@ -19,7 +19,10 @@ version:
 .PHONY: version
 
 update-compatibility:
-	MSG_VERSION=$$(mvn help:evaluate -Dexpression=messages.version -q -DforceStdout 2> /dev/null) && \
+ifndef MSG_VERSION
+	@echo -e "\033[0;31mMSG_VERSION is not defined. Can't update compatibility :-(\033[0m"
+	exit 1
+endif
 	git clone --branch messages/v$$MSG_VERSION git@github.com:cucumber/cucumber.git target/cucumber
 	rm -rf compatibility/src/test/resources/*
 	cp -r target/cucumber/compatibility-kit/javascript/features compatibility/src/test/resources
