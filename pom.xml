@@ -23,13 +23,13 @@
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
 
         <!--Dependencies -->
-        <cucumber-expressions.version>10.2.2</cucumber-expressions.version>
-        <datatable.version>3.3.1</datatable.version>
+        <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
+        <datatable.version>3.4.0</datatable.version>
         <create-meta.version>1.2.0</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- When ever messages is updated run `make update-compatibility` -->
         <messages.version>12.4.0</messages.version>
-        <gherkin.version>14.2.0</gherkin.version>
+        <gherkin.version>15.0.0</gherkin.version>
         <html-formatter.version>7.2.0</html-formatter.version>
 
         <!--Test Dependencies-->
