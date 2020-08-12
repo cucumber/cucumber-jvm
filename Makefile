@@ -18,13 +18,16 @@ version:
 	@echo ""
 .PHONY: version
 
-update-compatibility:
-	MSG_VERSION=$$(mvn help:evaluate -Dexpression=messages.version -q -DforceStdout 2> /dev/null) && \
-	git clone --branch messages/v$$MSG_VERSION git@github.com:cucumber/cucumber.git target/cucumber
+update-cck:
+ifndef CCK_VERSION
+	@echo -e "\033[0;31mCCK_VERSION is not defined. Can't update CCK :-(\033[0m"
+	exit 1
+endif
+	git clone --branch compatibility-kit/v$$CCK_VERSION git@github.com:cucumber/cucumber.git target/cucumber
 	rm -rf compatibility/src/test/resources/*
 	cp -r target/cucumber/compatibility-kit/javascript/features compatibility/src/test/resources
 	rm -rf target/cucumber
-.PHONY: update-compatibility
+.PHONY: update-cck
 
 update-dependency-versions:
 	mvn versions:force-releases
