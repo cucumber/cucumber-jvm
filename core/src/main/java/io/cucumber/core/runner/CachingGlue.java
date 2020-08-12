@@ -28,7 +28,6 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Envelope;
 import io.cucumber.messages.Messages.Hook;
-import io.cucumber.messages.Messages.JavaStackTraceElement;
 import io.cucumber.messages.Messages.Location;
 import io.cucumber.messages.Messages.SourceReference;
 import io.cucumber.messages.Messages.StepDefinition.Builder;
@@ -300,7 +299,7 @@ final class CachingGlue implements Glue {
         SourceReference.Builder sourceReferenceBuilder = SourceReference.newBuilder();
         if (reference instanceof JavaMethodReference) {
             JavaMethodReference methodReference = (JavaMethodReference) reference;
-            sourceReferenceBuilder.setJavaMethod(Messages.JavaMethod.newBuilder()
+            sourceReferenceBuilder.setJavaMethod(SourceReference.JavaMethod.newBuilder()
                     .setClassName(methodReference.className())
                     .setMethodName(methodReference.methodName())
                     .addAllMethodParameterTypes(methodReference.methodParameterTypes()));
@@ -308,7 +307,8 @@ final class CachingGlue implements Glue {
 
         if (reference instanceof StackTraceElementReference) {
             StackTraceElementReference stackReference = (StackTraceElementReference) reference;
-            JavaStackTraceElement.Builder stackTraceElementBuilder = JavaStackTraceElement.newBuilder()
+            SourceReference.JavaStackTraceElement.Builder stackTraceElementBuilder = SourceReference.JavaStackTraceElement
+                    .newBuilder()
                     .setClassName(stackReference.className())
                     .setMethodName(stackReference.methodName());
             stackReference.fileName().ifPresent(stackTraceElementBuilder::setFileName);

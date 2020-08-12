@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -22,15 +23,15 @@
         <!--Semantic version -->
         <apiguardian-api.version>1.1.0</apiguardian-api.version>
 
-        <!--Dependencies -->
+        <!-- io.cucumber dependencies -->
         <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
         <datatable.version>3.4.0</datatable.version>
-        <create-meta.version>1.2.0</create-meta.version>
+        <create-meta.version>2.0.0</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
-        <!-- When ever messages is updated run `make update-compatibility` -->
-        <messages.version>12.4.0</messages.version>
-        <gherkin.version>15.0.0</gherkin.version>
-        <html-formatter.version>7.2.0</html-formatter.version>
+        <!-- Whenever messages is updated run `make update-cck` -->
+        <messages.version>13.0.1</messages.version>
+        <gherkin.version>15.0.1</gherkin.version>
+        <html-formatter.version>9.0.0</html-formatter.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
@@ -565,8 +566,7 @@
                                 <!-- Gherkin parser related -->
                                 <item>
                                     <code>java.class.nonPublicPartOfAPI</code>
-                                    <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}
-                                    </newArchive>
+                                    <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}</newArchive>
                                     <justification>Internal API</justification>
                                 </item>
                                 <item>
@@ -607,6 +607,30 @@
                                     <code>java.method.addedToInterface</code>
                                     <new>.*io.cucumber.messages.Messages..*</new>
                                     <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.method.returnTypeChanged</code>
+                                    <new>.*io.cucumber.messages.Messages..*</new>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.method.parameterTypeChanged</code>
+                                    <new>.*io.cucumber.messages.Messages..*</new>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.class.removed</code>
+                                    <old>.*Sipozeke.*</old>
+                                    <justification>https://github.com/cucumber/cucumber/pull/1145</justification>
+                                </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.method.removed</code>
+                                    <old>.*Sipozeke.*</old>
+                                    <justification>https://github.com/cucumber/cucumber/pull/1145</justification>
                                 </item>
                             </revapi.ignore>
                         </analysisConfiguration>
@@ -652,24 +676,24 @@
                         <failsOnError>true</failsOnError>
                         <checkstyleRules>
                             <module name="Checker">
-                                <property name="severity" value="error" />
+                                <property name="severity" value="error"/>
                                 <module name="TreeWalker">
-                                    <module name="AvoidStarImport" />
+                                    <module name="AvoidStarImport"/>
                                     <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true" />
-                                        <property name="allowMissingReturnTag" value="true" />
+                                        <property name="allowMissingParamTags" value="true"/>
+                                        <property name="allowMissingReturnTag" value="true"/>
                                     </module>
-                                    <module name="NonEmptyAtclauseDescription" />
-                                    <module name="SuppressWarningsHolder" />
+                                    <module name="NonEmptyAtclauseDescription"/>
+                                    <module name="SuppressWarningsHolder"/>
                                     <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true" />
+                                        <property name="processJavadoc" value="true"/>
                                     </module>
                                 </module>
-                                <module name="SuppressWarningsFilter" />
+                                <module name="SuppressWarningsFilter"/>
                                 <module name="RegexpSingleline">
-                                    <property name="format" value="@author" />
-                                    <property name="message" value="Please do not use @author tags" />
-                                    <property name="fileExtensions" value="java,groovy,kt" />
+                                    <property name="format" value="@author"/>
+                                    <property name="message" value="Please do not use @author tags"/>
+                                    <property name="fileExtensions" value="java,groovy,kt"/>
                                 </module>
                             </module>
                         </checkstyleRules>
