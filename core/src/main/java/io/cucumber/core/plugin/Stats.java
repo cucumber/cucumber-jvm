@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static io.cucumber.core.plugin.Formats.ansi;
+import static io.cucumber.core.plugin.Formats.monochrome;
 import static java.util.Locale.ROOT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -38,7 +40,7 @@ class Stats implements ConcurrentEventListener, ColorAware {
     private final List<Throwable> errors = new ArrayList<>();
     private Instant startTime = Instant.EPOCH;
     private Duration totalDuration = Duration.ZERO;
-    private Formats formats = new AnsiFormats();
+    private Formats formats = ansi();
 
     Stats(Locale locale) {
         this.locale = locale;
@@ -46,11 +48,7 @@ class Stats implements ConcurrentEventListener, ColorAware {
 
     @Override
     public void setMonochrome(boolean monochrome) {
-        if (monochrome) {
-            formats = new MonochromeFormats();
-        } else {
-            formats = new AnsiFormats();
-        }
+        formats = monochrome ? monochrome() : ansi();
     }
 
     @Override

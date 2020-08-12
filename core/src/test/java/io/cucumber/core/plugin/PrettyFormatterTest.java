@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import static io.cucumber.core.plugin.BytesContainsString.bytesContainsString;
 import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
+import static io.cucumber.core.plugin.Formats.ansi;
 import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.result;
@@ -328,7 +329,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_mark_subsequent_arguments_in_steps() {
-        Formats formats = new AnsiFormats();
+        Formats formats = ansi();
 
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
@@ -349,7 +350,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_mark_nested_argument_as_part_of_full_argument() {
-        Formats formats = new AnsiFormats();
+        Formats formats = ansi();
 
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
@@ -370,7 +371,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_mark_nested_arguments_as_part_of_enclosing_argument() {
-        Formats formats = new AnsiFormats();
+        Formats formats = ansi();
         PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
         StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);

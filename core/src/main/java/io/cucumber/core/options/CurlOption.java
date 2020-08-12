@@ -7,16 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
+
 public final class CurlOption {
 
     private final URI uri;
     private final HttpMethod method;
     private final List<Entry<String, String>> headers;
 
-    CurlOption(URI uri, HttpMethod method, List<Entry<String, String>> headers) {
-        this.uri = uri;
-        this.method = method;
-        this.headers = headers;
+    private CurlOption(HttpMethod method, URI uri, List<Entry<String, String>> headers) {
+        this.uri = requireNonNull(uri);
+        this.method = requireNonNull(method);
+        this.headers = requireNonNull(headers);
+    }
+
+    @SafeVarargs
+    public static CurlOption create(HttpMethod method, URI uri, Entry<String, String>... headers) {
+        return new CurlOption(method, uri, asList(headers));
     }
 
     public static CurlOption parse(String cmdLine) {
@@ -47,7 +55,7 @@ public final class CurlOption {
             throw new IllegalArgumentException("'" + cmdLine + "' was not a valid curl command");
         }
         try {
-            return new CurlOption(new URI(url), method, headers);
+            return new CurlOption(method, new URI(url), headers);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }

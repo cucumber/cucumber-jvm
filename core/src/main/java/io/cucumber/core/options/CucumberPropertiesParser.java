@@ -26,6 +26,9 @@ import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
@@ -96,6 +99,21 @@ public final class CucumberPropertiesParser {
             PLUGIN_PROPERTY_NAME,
             splitAndMap(Function.identity()),
             builder::addPluginName);
+
+        parse(properties,
+            PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
+            PublishTokenParser::parse,
+            builder::setPublishToken);
+
+        parse(properties,
+            PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME,
+            Boolean::parseBoolean,
+            builder::setPublish);
+
+        parse(properties,
+            PLUGIN_PUBLISH_QUIET_PROPERTY_NAME,
+            Boolean::parseBoolean,
+            builder::setPublishQuiet);
 
         parse(properties,
             SNIPPET_TYPE_PROPERTY_NAME,

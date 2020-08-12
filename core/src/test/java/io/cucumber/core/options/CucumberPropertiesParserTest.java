@@ -23,6 +23,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -143,6 +144,43 @@ class CucumberPropertiesParserTest {
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.plugins().get(0).pluginString(), equalTo("message:target/cucumber.ndjson"));
         assertThat(options.plugins().get(1).pluginString(), equalTo("html:target/cucumber.html"));
+    }
+
+    @Test
+    void should_have_no_publish_plugin_enabled_by_default() {
+        RuntimeOptions options = cucumberPropertiesParser
+                .parse(properties)
+                .enablePublishPlugin()
+                .build();
+        assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.NoPublishFormatter"));
+    }
+
+    @Test
+    void should_silence_no_publish_quite_plugin() {
+        properties.put(Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.plugins(), empty());
+    }
+
+    @Test
+    void should_parse_plugin_publish_enabled() {
+        properties.put(Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
+        RuntimeOptions options = cucumberPropertiesParser
+                .parse(properties)
+                .enablePublishPlugin()
+                .build();
+        assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.PublishFormatter"));
+    }
+
+    @Test
+    void should_parse_plugin_publish_token() {
+        properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/value");
+        RuntimeOptions options = cucumberPropertiesParser
+                .parse(properties)
+                .enablePublishPlugin()
+                .build();
+        assertThat(options.plugins().get(0).pluginString(),
+            equalTo("io.cucumber.core.plugin.PublishFormatter:some/value"));
     }
 
     @Test

@@ -25,6 +25,8 @@ public @interface CucumberOptions {
 
     String[] plugin() default {};
 
+    boolean publish() default false;
+
     boolean monochrome() default false;
 
     String[] name() default {};

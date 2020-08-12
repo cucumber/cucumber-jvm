@@ -36,6 +36,10 @@ public final class RuntimeOptionsBuilder {
     private boolean addDefaultFormatterIfAbsent;
     private boolean addDefaultGlueIfAbsent;
     private boolean addDefaultFeaturePathIfAbsent;
+    private String parsedPublishToken = null;
+    private Boolean parsedPublish;
+    private Boolean parsedPublishQuiet;
+    private Boolean parsedEnablePublishPlugin;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -149,6 +153,22 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.addDefaultFeaturePathIfAbsent();
         }
 
+        if (parsedPublishToken != null) {
+            runtimeOptions.setPublishToken(parsedPublishToken);
+        }
+
+        if (parsedPublish != null) {
+            runtimeOptions.setPublish(parsedPublish);
+        }
+
+        if (parsedPublishQuiet != null) {
+            runtimeOptions.setPublishQuiet(parsedPublishQuiet);
+        }
+
+        if (parsedEnablePublishPlugin != null) {
+            runtimeOptions.setEnablePublishPlugin(parsedEnablePublishPlugin);
+        }
+
         return runtimeOptions;
     }
 
@@ -221,7 +241,29 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
+    public RuntimeOptionsBuilder setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.parsedObjectFactoryClass = objectFactoryClass;
+        return this;
     }
+
+    public RuntimeOptionsBuilder setPublishToken(String token) {
+        this.parsedPublishToken = token;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setPublish(boolean publish) {
+        this.parsedPublish = publish;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setPublishQuiet(boolean publishQuiet) {
+        this.parsedPublishQuiet = publishQuiet;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder enablePublishPlugin() {
+        this.parsedEnablePublishPlugin = true;
+        return this;
+    }
+
 }

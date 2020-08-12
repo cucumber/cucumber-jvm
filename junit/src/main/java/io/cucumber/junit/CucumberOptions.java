@@ -94,6 +94,14 @@ public @interface CucumberOptions {
     String[] plugin() default {};
 
     /**
+     * Publish report to https://reports.cucumber.io.
+     * <p>
+     * 
+     * @return true if reports should be published on the web.
+     */
+    boolean publish() default false;
+
+    /**
      * @return true if terminal output should be without colours.
      */
     boolean monochrome() default false;

@@ -153,6 +153,29 @@ public final class Constants {
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";
 
     /**
+     * Setting this to true will enable publishing.
+     */
+    public static final String PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME = "cucumber.plugin.publish.enabled";
+
+    // TODO: Document consistently with other parameters.
+    /**
+     * Setting this to true will enable publishing with a Bearer token.
+     */
+    public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = "cucumber.plugin.publish.token";
+
+    /**
+     * Defining this will override the publishing URL (it is not sufficient to
+     * activate publishing).
+     */
+    public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = "cucumber.plugin.publish.url";
+
+    /**
+     * Setting this to true will prevent the publish advertising banner from
+     * being printed.
+     */
+    public static final String PLUGIN_PUBLISH_QUIET_PROPERTY_NAME = "cucumber.plugin.publish.quiet";
+
+    /**
      * Property name to control naming convention for generated snippets:
      * {@value}
      * <p>

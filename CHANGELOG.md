@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+ * [Core] Reports can now be published directly to https://reports.cucumber.io/ 
+   ([#2070](https://github.com/cucumber/cucumber-jvm/pull/2070)
+    Aslak Hellesøy, M.P. Korstanje).
+   There are several ways to enable this:
+   * `@CucumberOptions(publish = true)`
+   * `CUCUMBER_PLUGIN_PUBLISH_ENABLED=true` (Environment variable)
+   * `-Dcucumber.plugin.publish.enabled=true` (System property)
+
 ### Changed
 
 ### Deprecated

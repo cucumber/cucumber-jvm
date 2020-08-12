@@ -153,3 +153,6 @@ cucumber.snippet-type=          # underscore or camelcase.
 Each property also has an `UPPER_CASE` and `snake_case` variant. For example
 `cucumber.ansi-colors.disabled` would also be understood as
 `CUCUMBER_ANSI_COLORS_DISABLED` and `cucumber_ansi_colors_disabled`.
+
+
+TODO: Document --publish and new properties here

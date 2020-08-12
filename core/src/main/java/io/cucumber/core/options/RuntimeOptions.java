@@ -4,6 +4,8 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
+import io.cucumber.core.plugin.NoPublishFormatter;
+import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
 
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
@@ -44,6 +47,10 @@ public final class RuntimeOptions implements
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
     private Class<? extends ObjectFactory> objectFactoryClass;
+    private String publishToken;
+    private boolean publish;
+    private boolean publishQuiet;
+    private boolean enablePublishPlugin;
 
     private RuntimeOptions() {
 
@@ -102,7 +109,24 @@ public final class RuntimeOptions implements
         List<Plugin> plugins = new ArrayList<>();
         plugins.addAll(formatters);
         plugins.addAll(summaryPrinters);
+        plugins.addAll(getPublishPlugin());
         return plugins;
+    }
+
+    private List<Plugin> getPublishPlugin() {
+        if (!enablePublishPlugin) {
+            return emptyList();
+        }
+        if (publishToken != null) {
+            return singletonList(PluginOption.forClass(PublishFormatter.class, publishToken));
+        }
+        if (publish) {
+            return singletonList(PluginOption.forClass(PublishFormatter.class));
+        }
+        if (publishQuiet) {
+            return emptyList();
+        }
+        return singletonList(PluginOption.forClass(NoPublishFormatter.class));
     }
 
     @Override
@@ -227,6 +251,22 @@ public final class RuntimeOptions implements
 
     void setPickleOrder(PickleOrder pickleOrder) {
         this.pickleOrder = pickleOrder;
+    }
+
+    void setPublishToken(String token) {
+        this.publishToken = token;
+    }
+
+    void setPublish(boolean publish) {
+        this.publish = publish;
+    }
+
+    void setPublishQuiet(boolean publishQuiet) {
+        this.publishQuiet = publishQuiet;
+    }
+
+    void setEnablePublishPlugin(boolean enablePublishPlugin) {
+        this.enablePublishPlugin = enablePublishPlugin;
     }
 
 }

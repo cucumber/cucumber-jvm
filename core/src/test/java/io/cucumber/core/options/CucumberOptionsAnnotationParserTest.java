@@ -2,8 +2,14 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.plugin.DefaultSummaryPrinter;
+import io.cucumber.core.plugin.HtmlFormatter;
+import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
+import io.cucumber.core.plugin.PrettyFormatter;
+import io.cucumber.core.plugin.ProgressFormatter;
+import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.Plugin;
@@ -50,8 +56,8 @@ class CucumberOptionsAnnotationParserTest {
 
         assertAll(
             () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter"),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter"));
+            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
+            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
     }
 
     private CucumberOptionsAnnotationParser parser() {
@@ -68,6 +74,7 @@ class CucumberOptionsAnnotationParserTest {
         for (Plugin plugin : plugins) {
             if (plugin.getClass().getName().equals(pluginName)) {
                 found = true;
+                break;
             }
         }
         assertThat(pluginName + " not found among the plugins", found, is(equalTo(true)));
@@ -88,8 +95,8 @@ class CucumberOptionsAnnotationParserTest {
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.ProgressFormatter"),
-            () -> assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter"));
+            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
+            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
     }
 
     @Test
@@ -159,6 +166,26 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
+    void should_set_publish_when_true() {
+        RuntimeOptions runtimeOptions = parser()
+                .parse(ClassWithPublish.class)
+                .enablePublishPlugin()
+                .build();
+        assertThat(runtimeOptions.plugins(), hasSize(1));
+        assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(PublishFormatter.class));
+    }
+
+    @Test
+    void should_set_no_publish_formatter_when_plugin_option_false() {
+        RuntimeOptions runtimeOptions = parser()
+                .parse(WithoutOptions.class)
+                .enablePublishPlugin()
+                .build();
+        assertThat(runtimeOptions.plugins(), hasSize(1));
+        assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(NoPublishFormatter.class));
+    }
+
+    @Test
     void create_with_snippets() {
         RuntimeOptions runtimeOptions = parser().parse(Snippets.class).build();
         assertThat(runtimeOptions.getSnippetType(), is(equalTo(SnippetType.CAMELCASE)));
@@ -172,7 +199,7 @@ class CucumberOptionsAnnotationParserTest {
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
-        assertPluginExists(plugins.getPlugins(), "io.cucumber.core.plugin.DefaultSummaryPrinter");
+        assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName());
     }
 
     @Test
@@ -183,8 +210,8 @@ class CucumberOptionsAnnotationParserTest {
         List<Plugin> pluginList = plugins.getPlugins();
 
         assertAll(
-            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.HtmlFormatter"),
-            () -> assertPluginExists(pluginList, "io.cucumber.core.plugin.PrettyFormatter"));
+            () -> assertPluginExists(pluginList, HtmlFormatter.class.getName()),
+            () -> assertPluginExists(pluginList, PrettyFormatter.class.getName()));
     }
 
     @Test
@@ -310,6 +337,11 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
+    @CucumberOptions(publish = true)
+    private static class ClassWithPublish {
+        // empty
+    }
+
     @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
     private static class ClassWithNoFormatterPlugin {
         // empty
@@ -395,6 +427,11 @@ class CucumberOptionsAnnotationParserTest {
         @Override
         public String[] plugin() {
             return annotation.plugin();
+        }
+
+        @Override
+        public boolean publish() {
+            return annotation.publish();
         }
 
         @Override

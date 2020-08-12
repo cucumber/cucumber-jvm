@@ -76,6 +76,11 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         }
 
         @Override
+        public boolean publish() {
+            return annotation.publish();
+        }
+
+        @Override
         public boolean monochrome() {
             return annotation.monochrome();
         }

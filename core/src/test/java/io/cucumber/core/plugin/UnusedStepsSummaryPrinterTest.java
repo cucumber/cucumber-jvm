@@ -27,6 +27,7 @@ class UnusedStepsSummaryPrinterTest {
     void verifyUnusedStepsPrinted() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         UnusedStepsSummaryPrinter summaryPrinter = new UnusedStepsSummaryPrinter(out);
+        summaryPrinter.setMonochrome(true);
         TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         summaryPrinter.setEventPublisher(bus);
 

@@ -187,10 +187,10 @@ public final class PluginFactory {
         }
     }
 
-    private static OutputStream openStream(String arg) throws IOException, URISyntaxException {
+    private static OutputStream openStream(String arg) throws IOException {
         if (arg.matches("^(http|https):.*")) {
             CurlOption option = CurlOption.parse(arg);
-            return new UrlOutputStream(option);
+            return new UrlOutputStream(option, null);
         } else if (arg.matches("^file:.*")) {
             return createFileOutputStream(new File(new URL(arg).getFile()));
         } else {
