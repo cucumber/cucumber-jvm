@@ -22,9 +22,6 @@ jobs:
       script: mvn verify -P-spotless-apply --toolchains .travis-toolchains.xml
       env:
       - VERIFY=true
-        # Override https://messages.cucumber.io/api/reports because the subdomain is not yet set up
-        # Remove this when it is.
-      - CUCUMBER_PLUGIN_PUBLISH_URL=https://b1f2yk58d8.execute-api.eu-west-3.amazonaws.com/api/reports
       - CUCUMBER_PLUGIN_PUBLISH_TOKEN=trigger/build/with/publish/plugin
 
       # 1.3 Coverage
