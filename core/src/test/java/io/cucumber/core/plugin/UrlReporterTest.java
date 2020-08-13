@@ -28,7 +28,7 @@ class UrlReporterTest {
                 +
                 "\u001B[32m\u001B[1m│\u001B[0m                                                                          \u001B[32m\u001B[1m│\u001B[0m\n"
                 +
-                "\u001B[32m\u001B[1m│\u001B[0m This report will self-destruct in 12h unless it is claimed or deleted.   \u001B[32m\u001B[1m│\u001B[0m\n"
+                "\u001B[32m\u001B[1m│\u001B[0m This report will self-destruct in 24h unless it is claimed or deleted.   \u001B[32m\u001B[1m│\u001B[0m\n"
                 +
                 "\u001B[32m\u001B[1m└──────────────────────────────────────────────────────────────────────────┘\u001B[0m\n"));
     }
@@ -47,7 +47,7 @@ class UrlReporterTest {
                 "│ View your Cucumber Report at:                                            │\n" +
                 "│ https://reports.cucumber.io/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3 │\n" +
                 "│                                                                          │\n" +
-                "│ This report will self-destruct in 12h unless it is claimed or deleted.   │\n" +
+                "│ This report will self-destruct in 24h unless it is claimed or deleted.   │\n" +
                 "└──────────────────────────────────────────────────────────────────────────┘\n"));
     }
 
