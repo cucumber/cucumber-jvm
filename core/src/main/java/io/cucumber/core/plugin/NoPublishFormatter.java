@@ -46,7 +46,8 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
             asList(
                 new Banner.Line(
                     new Banner.Span("Share your Cucumber Report with your team at "),
-                    new Banner.Span("https://reports.cucumber.io", AnsiEscapes.CYAN, AnsiEscapes.INTENSITY_BOLD)),
+                    new Banner.Span("https://reports.cucumber.io", AnsiEscapes.CYAN, AnsiEscapes.INTENSITY_BOLD,
+                        AnsiEscapes.UNDERLINE)),
                 new Banner.Line(""),
                 new Banner.Line(
                     new Banner.Span("Code:                   "),

@@ -24,7 +24,7 @@ class UrlReporterTest {
                 +
                 "\u001B[32m\u001B[1m│\u001B[0m View your Cucumber Report at:                                            \u001B[32m\u001B[1m│\u001B[0m\n"
                 +
-                "\u001B[32m\u001B[1m│\u001B[0m \u001B[36m\u001B[1mhttps://reports.cucumber.io/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3\u001B[0m \u001B[32m\u001B[1m│\u001B[0m\n"
+                "\u001B[32m\u001B[1m│\u001B[0m \u001B[36m\u001B[1m\u001B[4mhttps://reports.cucumber.io/reports/f318d9ec-5a3d-4727-adec-bd7b69e2edd3\u001B[0m \u001B[32m\u001B[1m│\u001B[0m\n"
                 +
                 "\u001B[32m\u001B[1m│\u001B[0m                                                                          \u001B[32m\u001B[1m│\u001B[0m\n"
                 +
