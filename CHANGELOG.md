@@ -9,14 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
- * [Core] Reports can now be published directly to https://reports.cucumber.io/ 
-   ([#2070](https://github.com/cucumber/cucumber-jvm/pull/2070)
-    Aslak Hellesøy, M.P. Korstanje).
-   There are several ways to enable this:
-   * `@CucumberOptions(publish = true)`
-   * `CUCUMBER_PUBLISH_ENABLED=true` (Environment variable)
-   * `-Dcucumber.publish.enabled=true` (System property)
-
 ### Changed
 
 ### Deprecated
@@ -24,6 +16,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.5.0] (2020-08-17)
+
+### Added
+
+ * [Core] Reports can now be published directly to https://reports.cucumber.io/ 
+   ([#2070](https://github.com/cucumber/cucumber-jvm/pull/2070)
+    Aslak Hellesøy, M.P. Korstanje).
+   There are several ways to enable this:
+   * `@CucumberOptions(publish = true)`
+   * `CUCUMBER_PUBLISH_ENABLED=true` (Environment variable)
+   * `-Dcucumber.publish.enabled=true` (System property)
 
 ## [6.4.0] (2020-07-31)
 
@@ -1501,7 +1505,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.4.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.5.0...main
+[6.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.4.0...v6.5.0
 [6.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.3.0...v6.4.0
 [6.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.2...v6.3.0
 [6.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.1...v6.2.2
