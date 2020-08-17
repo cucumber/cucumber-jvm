@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     Aslak Hellesøy, M.P. Korstanje).
    There are several ways to enable this:
    * `@CucumberOptions(publish = true)`
-   * `CUCUMBER_PLUGIN_PUBLISH_ENABLED=true` (Environment variable)
-   * `-Dcucumber.plugin.publish.enabled=true` (System property)
+   * `CUCUMBER_PUBLISH_ENABLED=true` (Environment variable)
+   * `-Dcucumber.publish.enabled=true` (System property)
 
 ### Changed
 
