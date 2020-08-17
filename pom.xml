@@ -643,6 +643,12 @@
                                     <old>.*Sipozeke.*</old>
                                     <justification>https://github.com/cucumber/cucumber/pull/1145</justification>
                                 </item>
+                                <item>
+                                    <regex>true</regex>
+                                    <code>java.class.added</code>
+                                    <old>.*SipozeKe.*</old>
+                                    <justification>Restore uppercase Creole keyword in Gherkin 15.0.2</justification>
+                                </item>
                             </revapi.ignore>
                         </analysisConfiguration>
                     </configuration>
