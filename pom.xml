@@ -30,7 +30,7 @@
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>13.0.1</messages.version>
-        <gherkin.version>15.0.1</gherkin.version>
+        <gherkin.version>15.0.2</gherkin.version>
         <html-formatter.version>9.0.0</html-formatter.version>
 
         <!--Test Dependencies-->
@@ -38,7 +38,7 @@
         <junit-jupiter.version>5.6.2</junit-jupiter.version>
         <junit-platform.version>1.6.2</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.4.6</mockito.version>
+        <mockito.version>3.5.0</mockito.version>
         <!--Maven plugins-->
         <groovy.version>2.5.13</groovy.version>
     </properties>
