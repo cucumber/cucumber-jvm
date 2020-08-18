@@ -11,7 +11,7 @@ import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.core.eventbus.AbstractEventBus;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
@@ -26,12 +26,11 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
 import io.cucumber.messages.Messages;
-import io.cucumber.messages.internal.com.google.common.base.Supplier;
+import io.cucumber.plugin.event.EventHandler;
 
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Clock;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -466,8 +465,13 @@ class CachingGlueTest {
     
 	@Test
 	public void emits_hook_messages_to_bus() {
-		SpyMessageEnvelopBus spyBus = new SpyMessageEnvelopBus();
-		CachingGlue glue = new CachingGlue(spyBus);
+		
+		List<Messages.Envelope> events = new ArrayList<>();		
+		EventHandler<Messages.Envelope> messageEventHandler = e -> events.add(e);
+		
+		EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+		bus.registerHandlerFor(Messages.Envelope.class, messageEventHandler);
+		CachingGlue glue = new CachingGlue(bus);
 		
 		glue.addBeforeHook(new MockedScenarioScopedHookDefinition());
 		glue.addAfterHook(new MockedScenarioScopedHookDefinition());
@@ -475,7 +479,7 @@ class CachingGlueTest {
 		glue.addAfterStepHook(new MockedScenarioScopedHookDefinition());
 
 		glue.prepareGlue(stepTypeRegistry);
-		assertThat(spyBus.events.size(), is(4));
+		assertThat(events.size(), is(4));
     }
 
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
@@ -791,28 +795,5 @@ class CachingGlueTest {
             return disposed;
         }
 
-    }
-
-    private static class SpyMessageEnvelopBus extends AbstractEventBus {
-
-		private List<Messages.Envelope> events = new ArrayList<>();
-    	private final Clock clock = Clock.systemUTC();
-	    private final Supplier<UUID> idGenerator = UUID::randomUUID;
-
-		@Override
-        public <T> void send(T event) {
-    		if(event instanceof Messages.Envelope)
-    			events.add((Messages.Envelope)event);
-    	}
-
-	    @Override
-	    public Instant getInstant() {
-	        return clock.instant();
-	    }
-
-	    @Override
-	    public UUID generateId() {
-	        return idGenerator.get();
-	    }
     }
 }
