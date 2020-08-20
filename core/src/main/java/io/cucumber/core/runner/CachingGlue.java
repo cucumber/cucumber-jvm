@@ -238,6 +238,7 @@ final class CachingGlue implements Glue {
         // TODO: Redefine hooks for each scenario, similar to how we're doing
         // for CoreStepDefinition
         beforeHooks.forEach(this::emitHook);
+        beforeStepHooks.forEach(this::emitHook);
 
         stepDefinitions.forEach(stepDefinition -> {
             StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
@@ -251,6 +252,7 @@ final class CachingGlue implements Glue {
             emitStepDefined(coreStepDefinition);
         });
 
+        afterStepHooks.forEach(this::emitHook);
         afterHooks.forEach(this::emitHook);
     }
 

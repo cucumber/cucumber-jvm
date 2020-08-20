@@ -11,6 +11,7 @@ import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
@@ -24,10 +25,13 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
 import org.junit.jupiter.api.Test;
+import io.cucumber.messages.Messages;
+import io.cucumber.plugin.event.EventHandler;
 
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -458,6 +462,25 @@ class CachingGlueTest {
 
         assertThat(hooks, contains(hookDefinition2, hookDefinition1, hookDefinition3));
     }
+    
+	@Test
+	public void emits_hook_messages_to_bus() {
+		
+		List<Messages.Envelope> events = new ArrayList<>();		
+		EventHandler<Messages.Envelope> messageEventHandler = e -> events.add(e);
+		
+		EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+		bus.registerHandlerFor(Messages.Envelope.class, messageEventHandler);
+		CachingGlue glue = new CachingGlue(bus);
+		
+		glue.addBeforeHook(new MockedScenarioScopedHookDefinition());
+		glue.addAfterHook(new MockedScenarioScopedHookDefinition());
+		glue.addBeforeStepHook(new MockedScenarioScopedHookDefinition());
+		glue.addAfterStepHook(new MockedScenarioScopedHookDefinition());
+
+		glue.prepareGlue(stepTypeRegistry);
+		assertThat(events.size(), is(4));
+    }
 
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
 
@@ -773,5 +796,4 @@ class CachingGlueTest {
         }
 
     }
-
 }
