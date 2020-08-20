@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+* `cucumber.*` JVM system properties and `CUCUMBER_*` environment variables that represent booleans
+  will now resolve to `true` except for the following values, which will resolve to `false`:
+  * `[empty string]`
+  * `0`
+  * `false`
+  * `no`
+
 ## [6.5.0] (2020-08-17)
 
 ### Added

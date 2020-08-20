@@ -42,12 +42,12 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             ANSI_COLORS_DISABLED_PROPERTY_NAME,
-            Boolean::parseBoolean,
+            BooleanString::parseBoolean,
             builder::setMonochrome);
 
         parse(properties,
             EXECUTION_DRY_RUN_PROPERTY_NAME,
-            Boolean::parseBoolean,
+            BooleanString::parseBoolean,
             builder::setDryRun);
 
         parse(properties,
@@ -62,7 +62,7 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             EXECUTION_STRICT_PROPERTY_NAME,
-            Boolean::parseBoolean,
+            BooleanString::parseBoolean,
             CucumberPropertiesParser::errorOnNonStrict);
 
         parseAll(properties,
@@ -107,12 +107,12 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME,
-            Boolean::parseBoolean,
+            BooleanString::parseBoolean,
             builder::setPublish);
 
         parse(properties,
             PLUGIN_PUBLISH_QUIET_PROPERTY_NAME,
-            Boolean::parseBoolean,
+            BooleanString::parseBoolean,
             builder::setPublishQuiet);
 
         parse(properties,
@@ -122,7 +122,7 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             WIP_PROPERTY_NAME,
-            Boolean::parseBoolean,
+            BooleanString::parseBoolean,
             builder::setWip);
 
         return builder;

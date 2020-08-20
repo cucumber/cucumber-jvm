@@ -2,6 +2,7 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.options.BooleanString;
 import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.PublishTokenParser;
@@ -156,7 +157,7 @@ class CucumberEngineOptions implements
 
     boolean isParallelExecutionEnabled() {
         return configurationParameters
-                .get(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, Boolean::parseBoolean)
+                .get(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, BooleanString::parseBoolean)
                 .orElse(false);
     }
 
