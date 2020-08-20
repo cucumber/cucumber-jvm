@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * `0`
   * `false`
   * `no`
+  
+  ([#2095](https://github.com/cucumber/cucumber-jvm/pull/2097)
+   [#2097](https://github.com/cucumber/cucumber-jvm/pull/2097)
+   Aslak Hellesøy)
 
 ## [6.5.0] (2020-08-17)
 
