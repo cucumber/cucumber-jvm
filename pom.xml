@@ -574,6 +574,11 @@
                                     <new>method boolean io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::publish()</new>
                                     <justification>Internal API</justification>
                                 </item>
+                                <item>
+                                    <code>java.class.added</code>
+                                    <new>class io.cucumber.core.options.BooleanString</new>
+                                    <justification>Internal API</justification>
+                                </item>
                                 <!-- Gherkin parser related -->
                                 <item>
                                     <code>java.class.nonPublicPartOfAPI</code>
