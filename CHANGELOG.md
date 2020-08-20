@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
 
 ## [6.1.1] (2020-06-12)
 
