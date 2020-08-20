@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+* Publish instructions now recommend using `src/test/resources/cucumber.properties`.
+ ([#2096](https://github.com/cucumber/cucumber-jvm/pull/2096)
+  Aslak Hellesøy)
 * `cucumber.*` JVM system properties and `CUCUMBER_*` environment variables that represent booleans
   will now resolve to `true` except for the following values, which will resolve to `false`:
   * `[empty string]`
