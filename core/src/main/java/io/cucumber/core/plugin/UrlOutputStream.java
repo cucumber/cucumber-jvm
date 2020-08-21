@@ -66,22 +66,20 @@ class UrlOutputStream extends OutputStream {
         for (Entry<String, String> header : option.getHeaders()) {
             urlConnection.setRequestProperty(header.getKey(), header.getValue());
         }
+        Map<String, List<String>> requestHeaders = urlConnection.getRequestProperties();
         urlConnection.setInstanceFollowRedirects(true);
         urlConnection.setRequestMethod(method.name());
-        if (method != CurlOption.HttpMethod.GET) {
-            urlConnection.setDoOutput(true);
-        }
-        Map<String, List<String>> requestHeaders = urlConnection.getRequestProperties();
-        if (urlConnection.getDoOutput()) {
-            try (OutputStream outputStream = urlConnection.getOutputStream()) {
-                Files.copy(temp, outputStream);
-                throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
-            }
-        } else {
+        if (method == CurlOption.HttpMethod.GET) {
             throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
             String location = urlConnection.getHeaderField("Location");
             if(urlConnection.getResponseCode() == 202 && location != null) {
                 sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
+            }
+        } else {
+            urlConnection.setDoOutput(true);
+            try (OutputStream outputStream = urlConnection.getOutputStream()) {
+                Files.copy(temp, outputStream);
+                throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
             }
         }
         if (urlReporter != null) {
