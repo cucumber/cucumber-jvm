@@ -78,7 +78,8 @@ public class UrlOutputStreamTest {
     @Test
     void it_sends_the_body_twice_for_307_redirect_with_put(Vertx vertx, VertxTestContext testContext) throws Exception {
         String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody + requestBody, HttpMethod.PUT, null, null, 200, "");
+        TestServer testServer = new TestServer(port, testContext, requestBody + requestBody, HttpMethod.PUT, null, null,
+            200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
@@ -86,14 +87,15 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void it_sends_the_body_once_for_202_and_location_with_get(Vertx vertx, VertxTestContext testContext) throws Exception {
+    void it_sends_the_body_once_for_202_and_location_with_get(Vertx vertx, VertxTestContext testContext)
+            throws Exception {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d/accept -X GET", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
-        if(exception != null) {
+        if (exception != null) {
             throw exception;
         }
         assertThat(testServer.receivedBody.toString("utf-8"), is(equalTo(requestBody)));

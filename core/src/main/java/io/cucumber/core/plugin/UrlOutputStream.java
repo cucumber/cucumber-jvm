@@ -72,7 +72,7 @@ class UrlOutputStream extends OutputStream {
         if (method == CurlOption.HttpMethod.GET) {
             throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
             String location = urlConnection.getHeaderField("Location");
-            if(urlConnection.getResponseCode() == 202 && location != null) {
+            if (urlConnection.getResponseCode() == 202 && location != null) {
                 sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
             }
         } else {
@@ -87,7 +87,9 @@ class UrlOutputStream extends OutputStream {
         }
     }
 
-    private static void throwExceptionIfUnsuccessful(HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders)
+    private static void throwExceptionIfUnsuccessful(
+            HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders
+    )
             throws IOException {
         Map<String, List<String>> responseHeaders = urlConnection.getHeaderFields();
         int responseCode = urlConnection.getResponseCode();
@@ -113,13 +115,13 @@ class UrlOutputStream extends OutputStream {
             String responseBody
     ) {
         return new IOException(String.format(
-                "%s:\n> %s %s%s%s%s",
-                "HTTP request failed",
-                method,
-                url,
-                headersToString("> ", requestHeaders),
-                headersToString("< ", responseHeaders),
-                responseBody));
+            "%s:\n> %s %s%s%s%s",
+            "HTTP request failed",
+            method,
+            url,
+            headersToString("> ", requestHeaders),
+            headersToString("< ", responseHeaders),
+            responseBody));
     }
 
     private static String headersToString(String prefix, Map<String, List<String>> headers) {
