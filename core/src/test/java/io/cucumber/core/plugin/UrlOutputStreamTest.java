@@ -10,6 +10,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -75,7 +76,7 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void it_sends_the_body_twice_for_307_redirect_with_put(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+    void it_sends_the_body_twice_for_307_redirect_with_put(Vertx vertx, VertxTestContext testContext) throws Exception {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody + requestBody, HttpMethod.PUT, null, null, 200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
@@ -85,16 +86,21 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void it_sends_the_body_once_for_202_and_location_with_get(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+    void it_sends_the_body_once_for_202_and_location_with_get(Vertx vertx, VertxTestContext testContext) throws Exception {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d/accept -X GET", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
+        if(exception != null) {
+            throw exception;
+        }
+        assertThat(testServer.receivedBody.toString("utf-8"), is(equalTo(requestBody)));
     }
 
     @Test
+    @Disabled
     void throws_exception_for_307_temporary_redirect_without_location(Vertx vertx, VertxTestContext testContext)
             throws InterruptedException {
         String requestBody = "hello";
@@ -181,7 +187,8 @@ public class UrlOutputStreamTest {
             router.route("/accept").handler(ctx -> {
                 ctx.request().handler(receivedBody::appendBuffer);
 
-                int contentLength = Integer.parseInt(ctx.request().getHeader("Content-Length"));
+                String contentLengthString = ctx.request().getHeader("Content-Length");
+                int contentLength = contentLengthString == null ? 0 : Integer.parseInt(contentLengthString);
                 if (contentLength > 0) {
                     ctx.response().setStatusCode(500);
                     ctx.response().end("Unexpected body");

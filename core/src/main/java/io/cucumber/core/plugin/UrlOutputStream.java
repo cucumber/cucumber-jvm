@@ -58,36 +58,48 @@ class UrlOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOutputStream.close();
+        sendRequest(option.getUri().toURL(), option.getMethod());
+    }
 
-        URL url = option.getUri().toURL();
+    private void sendRequest(URL url, CurlOption.HttpMethod method) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         for (Entry<String, String> header : option.getHeaders()) {
             urlConnection.setRequestProperty(header.getKey(), header.getValue());
         }
         urlConnection.setInstanceFollowRedirects(true);
-        urlConnection.setRequestMethod(option.getMethod().name());
-        urlConnection.setDoOutput(true);
+        urlConnection.setRequestMethod(method.name());
+        if (method != CurlOption.HttpMethod.GET) {
+            urlConnection.setDoOutput(true);
+        }
         Map<String, List<String>> requestHeaders = urlConnection.getRequestProperties();
-        try (OutputStream outputStream = urlConnection.getOutputStream()) {
-            Files.copy(temp, outputStream);
-            handleResponse(urlConnection, requestHeaders);
+        if (urlConnection.getDoOutput()) {
+            try (OutputStream outputStream = urlConnection.getOutputStream()) {
+                Files.copy(temp, outputStream);
+                throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
+            }
+        } else {
+            throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
+            String location = urlConnection.getHeaderField("Location");
+            if(urlConnection.getResponseCode() == 202 && location != null) {
+                sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
+            }
         }
         if (urlReporter != null) {
             urlReporter.report(urlConnection.getURL());
         }
     }
 
-    private static void handleResponse(HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders)
+    private static void throwExceptionIfUnsuccessful(HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders)
             throws IOException {
         Map<String, List<String>> responseHeaders = urlConnection.getHeaderFields();
         int responseCode = urlConnection.getResponseCode();
-        boolean success = 200 <= responseCode && responseCode < 300;
+        boolean unsuccessful = responseCode >= 400;
 
         InputStream inputStream = urlConnection.getErrorStream() != null ? urlConnection.getErrorStream()
                 : urlConnection.getInputStream();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, UTF_8))) {
             String responseBody = br.lines().collect(Collectors.joining(System.lineSeparator()));
-            if (!success) {
+            if (unsuccessful) {
                 String method = urlConnection.getRequestMethod();
                 URL url = urlConnection.getURL();
                 throw createCurlLikeException(method, url, requestHeaders, responseHeaders, responseBody);
@@ -103,13 +115,13 @@ class UrlOutputStream extends OutputStream {
             String responseBody
     ) {
         return new IOException(String.format(
-            "%s:\n> %s %s%s%s%s",
-            "HTTP request failed",
-            method,
-            url,
-            headersToString("> ", requestHeaders),
-            headersToString("< ", responseHeaders),
-            responseBody));
+                "%s:\n> %s %s%s%s%s",
+                "HTTP request failed",
+                method,
+                url,
+                headersToString("> ", requestHeaders),
+                headersToString("< ", responseHeaders),
+                responseBody));
     }
 
     private static String headersToString(String prefix, Map<String, List<String>> headers) {
