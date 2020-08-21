@@ -58,10 +58,13 @@ class UrlOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOutputStream.close();
-        sendRequest(option.getUri().toURL(), option.getMethod());
+        URL url = sendRequest(option.getUri().toURL(), option.getMethod());
+        if (urlReporter != null) {
+            urlReporter.report(url);
+        }
     }
 
-    private void sendRequest(URL url, CurlOption.HttpMethod method) throws IOException {
+    private URL sendRequest(URL url, CurlOption.HttpMethod method) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         for (Entry<String, String> header : option.getHeaders()) {
             urlConnection.setRequestProperty(header.getKey(), header.getValue());
@@ -73,7 +76,7 @@ class UrlOutputStream extends OutputStream {
             throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
             String location = urlConnection.getHeaderField("Location");
             if (urlConnection.getResponseCode() == 202 && location != null) {
-                sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
+                return sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
             }
         } else {
             urlConnection.setDoOutput(true);
@@ -82,9 +85,7 @@ class UrlOutputStream extends OutputStream {
                 throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
             }
         }
-        if (urlReporter != null) {
-            urlReporter.report(urlConnection.getURL());
-        }
+        return urlConnection.getURL();
     }
 
     private static void throwExceptionIfUnsuccessful(
