@@ -85,6 +85,16 @@ public class UrlOutputStreamTest {
     }
 
     @Test
+    void it_sends_the_body_once_for_202_and_location_with_get(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/accept -X GET", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
+    }
+
+    @Test
     void throws_exception_for_307_temporary_redirect_without_location(Vertx vertx, VertxTestContext testContext)
             throws InterruptedException {
         String requestBody = "hello";
@@ -168,6 +178,19 @@ public class UrlOutputStreamTest {
         @Override
         public void start(Promise<Void> startPromise) {
             Router router = Router.router(vertx);
+            router.route("/accept").handler(ctx -> {
+                ctx.request().handler(receivedBody::appendBuffer);
+
+                int contentLength = Integer.parseInt(ctx.request().getHeader("Content-Length"));
+                if (contentLength > 0) {
+                    ctx.response().setStatusCode(500);
+                    ctx.response().end("Unexpected body");
+                } else {
+                    ctx.response().setStatusCode(202);
+                    ctx.response().headers().add("Location", "http://localhost:" + port + "/s3");
+                    ctx.response().end();
+                }
+            });
             router.route("/redirect").handler(ctx -> {
                 ctx.request().handler(receivedBody::appendBuffer);
                 ctx.response().setStatusCode(307);
