@@ -649,6 +649,12 @@
                                     <new>.*SipozeKe.*</new>
                                     <justification>Restore uppercase Creole keyword in Gherkin 15.0.2</justification>
                                 </item>
+                                <item>
+                                    <code>java.field.constantValueChanged</code>
+                                    <old>field io.cucumber.core.plugin.PublishFormatter.DEFAULT_CUCUMBER_MESSAGE_STORE_URL</old>
+                                    <justification>https://github.com/cucumber/cucumber-jvm/pull/2099</justification>
+                                    <newValue>https://messages.cucumber.io/api/reports -X GET</newValue>
+                                </item>
                             </revapi.ignore>
                         </analysisConfiguration>
                     </configuration>
