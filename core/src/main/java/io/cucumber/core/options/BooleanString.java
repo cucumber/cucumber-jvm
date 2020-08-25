@@ -7,20 +7,22 @@ final class BooleanString {
             return false;
         }
 
-        if ("false".equalsIgnoreCase(s)) {
+        if ("true".equalsIgnoreCase(s)) {
+            return true;
+        } else if ("false".equalsIgnoreCase(s)) {
             return false;
-        } else if ("no".equalsIgnoreCase(s)) {
-            return false;
+        }
+
+        if ("1".equalsIgnoreCase(s)) {
+            return true;
         } else if ("0".equalsIgnoreCase(s)) {
             return false;
         }
 
-        if ("true".equalsIgnoreCase(s)) {
+        if ("yes".equalsIgnoreCase(s)) {
             return true;
-        } else if ("yes".equalsIgnoreCase(s)) {
-            return true;
-        } else if ("1".equalsIgnoreCase(s)) {
-            return true;
+        } else if ("no".equalsIgnoreCase(s)) {
+            return false;
         }
 
         throw new IllegalArgumentException(
