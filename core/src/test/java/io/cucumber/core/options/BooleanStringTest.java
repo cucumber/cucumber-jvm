@@ -16,7 +16,7 @@ class BooleanStringTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "false", "no", "0"})
+    @ValueSource(strings = { "false", "no", "0" })
     public void falsy_values_are_false(String value) {
         assertThat(BooleanString.parseBoolean(value), is(false));
     }

@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [6.6.0] (2020-08-26)
+
+### Added
+
 * Boolean system properties and environment variables (`cucumber.*` and `CUCUMBER_*`)
   are strictly parsed. The values `0`, `false`, `no` are interpreted as `false`.
   The values `1`, `true`, `yes` are interpreted as `true`. All other values will
@@ -16,13 +29,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    [#2097](https://github.com/cucumber/cucumber-jvm/pull/2097)
    Aslak Hellesøy)
    
-### Changed
-
-### Deprecated
-
-### Removed
-
 ### Fixed
+
+* Issue a PUT request after a GET request responding with 202 and a Location header ([#2099](https://github.com/cucumber/cucumber-jvm/pull/2099) Aslak Hellesøy)
 
 ## [6.5.1] (2020-08-20)
 
@@ -1520,7 +1529,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.5.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.6.0...main
+[6.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.1...v6.6.0
 [6.5.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.0...v6.5.1
 [6.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.4.0...v6.5.0
 [6.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.3.0...v6.4.0
