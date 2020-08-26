@@ -67,6 +67,8 @@ ${new_release_link}
 
 # Insert a new [Unreleased] header
 
-changelog=$(echo "${changelog}" | sed "s/----/----\n${header_escaped}\n/g")
+changelog=$(echo "${changelog}" | sed "s/----/----\\
+${header_escaped}\\
+/g")
 
 echo "${changelog}"
