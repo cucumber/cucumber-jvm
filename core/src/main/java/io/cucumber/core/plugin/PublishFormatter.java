@@ -7,19 +7,16 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
-import static io.cucumber.core.options.CurlOption.HttpMethod.PUT;
 
 public final class PublishFormatter implements ConcurrentEventListener, ColorAware {
 
     /**
      * Where to publishes messages by default
      */
-    public static final String DEFAULT_CUCUMBER_MESSAGE_STORE_URL = "https://messages.cucumber.io/api/reports";
+    public static final String DEFAULT_CUCUMBER_MESSAGE_STORE_URL = "https://messages.cucumber.io/api/reports -X GET";
 
     private final UrlReporter urlReporter = new UrlReporter(System.err);
     private final MessageFormatter delegate;
@@ -50,10 +47,10 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
     private static CurlOption createCurlOption(String token) {
         Map<String, String> properties = CucumberProperties.create();
         String url = properties.getOrDefault(PLUGIN_PUBLISH_URL_PROPERTY_NAME, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
-        if (token == null) {
-            return CurlOption.create(PUT, URI.create(url));
+        if (token != null) {
+            url = url + String.format(" -H 'Authorization: Bearer %s'", token);
         }
-        return CurlOption.create(PUT, URI.create(url), new SimpleEntry<>("Authorization", "Bearer " + token));
+        return CurlOption.parse(url);
     }
 
 }

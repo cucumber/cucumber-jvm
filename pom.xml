@@ -6,7 +6,7 @@
         <version>2.1.1</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.5.1-SNAPSHOT</version>
+    <version>6.5.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -37,7 +37,7 @@
         <junit-jupiter.version>5.6.2</junit-jupiter.version>
         <junit-platform.version>1.6.2</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.5.0</mockito.version>
+        <mockito.version>3.5.5</mockito.version>
         <!--Maven plugins-->
         <groovy.version>2.5.13</groovy.version>
     </properties>
@@ -648,6 +648,12 @@
                                     <code>java.class.added</code>
                                     <new>.*SipozeKe.*</new>
                                     <justification>Restore uppercase Creole keyword in Gherkin 15.0.2</justification>
+                                </item>
+                                <item>
+                                    <code>java.field.constantValueChanged</code>
+                                    <old>field io.cucumber.core.plugin.PublishFormatter.DEFAULT_CUCUMBER_MESSAGE_STORE_URL</old>
+                                    <justification>https://github.com/cucumber/cucumber-jvm/pull/2099</justification>
+                                    <newValue>https://messages.cucumber.io/api/reports -X GET</newValue>
                                 </item>
                             </revapi.ignore>
                         </analysisConfiguration>

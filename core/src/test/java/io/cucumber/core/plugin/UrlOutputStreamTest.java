@@ -10,6 +10,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -45,12 +46,12 @@ public class UrlOutputStreamTest {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 500,
             "Oh noes");
-        CurlOption option = CurlOption.parse(format("http://localhost:%d", port));
+        CurlOption option = CurlOption.parse(format("http://localhost:%d/s3", port));
 
         verifyRequest(option, testServer, vertx, testContext, requestBody);
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
         assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
-                "> PUT http://localhost:" + port + "\n" +
+                "> PUT http://localhost:" + port + "/s3\n" +
                 "< HTTP/1.1 500 Internal Server Error\n" +
                 "< transfer-encoding: chunked\n" +
                 "Oh noes"));
@@ -75,9 +76,10 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void follows_307_temporary_redirects(Vertx vertx, VertxTestContext testContext) throws InterruptedException {
+    void it_sends_the_body_twice_for_307_redirect_with_put(Vertx vertx, VertxTestContext testContext) throws Exception {
         String requestBody = "hello";
-        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
+        TestServer testServer = new TestServer(port, testContext, requestBody + requestBody, HttpMethod.PUT, null, null,
+            200, "");
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
@@ -85,6 +87,22 @@ public class UrlOutputStreamTest {
     }
 
     @Test
+    void it_sends_the_body_once_for_202_and_location_with_get(Vertx vertx, VertxTestContext testContext)
+            throws Exception {
+        String requestBody = "hello";
+        TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/accept -X GET", port));
+        verifyRequest(url, testServer, vertx, testContext, requestBody);
+
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
+        if (exception != null) {
+            throw exception;
+        }
+        assertThat(testServer.receivedBody.toString("utf-8"), is(equalTo(requestBody)));
+    }
+
+    @Test
+    @Disabled
     void throws_exception_for_307_temporary_redirect_without_location(Vertx vertx, VertxTestContext testContext)
             throws InterruptedException {
         String requestBody = "hello";
@@ -144,6 +162,7 @@ public class UrlOutputStreamTest {
         private final String expectedContentType;
         private final int statusCode;
         private final String responseBody;
+        private final Buffer receivedBody = Buffer.buffer(0);
 
         public TestServer(
                 int port,
@@ -167,31 +186,46 @@ public class UrlOutputStreamTest {
         @Override
         public void start(Promise<Void> startPromise) {
             Router router = Router.router(vertx);
+            router.route("/accept").handler(ctx -> {
+                ctx.request().handler(receivedBody::appendBuffer);
+
+                String contentLengthString = ctx.request().getHeader("Content-Length");
+                int contentLength = contentLengthString == null ? 0 : Integer.parseInt(contentLengthString);
+                if (contentLength > 0) {
+                    ctx.response().setStatusCode(500);
+                    ctx.response().end("Unexpected body");
+                } else {
+                    ctx.response().setStatusCode(202);
+                    ctx.response().headers().add("Location", "http://localhost:" + port + "/s3");
+                    ctx.response().end();
+                }
+            });
             router.route("/redirect").handler(ctx -> {
+                ctx.request().handler(receivedBody::appendBuffer);
                 ctx.response().setStatusCode(307);
-                ctx.response().headers().add("Location", "http://localhost:" + port);
+                ctx.response().headers().add("Location", "http://localhost:" + port + "/s3");
                 ctx.response().end();
             });
             router.route("/redirect-no-location").handler(ctx -> {
+                ctx.request().handler(receivedBody::appendBuffer);
                 ctx.response().setStatusCode(307);
                 ctx.response().end();
             });
 
-            router.route().handler(ctx -> {
+            router.route("/s3").handler(ctx -> {
                 ctx.response().setStatusCode(statusCode);
                 testContext.verify(() -> {
                     assertThat(ctx.request().method(), is(equalTo(expectedMethod)));
                     assertThat(ctx.request().query(), is(equalTo(expectedQuery)));
                     assertThat(ctx.request().getHeader("Content-Type"), is(equalTo(expectedContentType)));
 
-                    Buffer body = Buffer.buffer(0);
-                    ctx.request().handler(body::appendBuffer);
+                    ctx.request().handler(receivedBody::appendBuffer);
                     ctx.request().endHandler(e -> {
-                        String receivedBody = body.toString("utf-8");
+                        String receivedBodyString = receivedBody.toString("utf-8");
                         ctx.response().setChunked(true);
                         ctx.response().write(responseBody);
                         ctx.response().end();
-                        testContext.verify(() -> assertThat(receivedBody, is(equalTo(expectedBody))));
+                        testContext.verify(() -> assertThat(receivedBodyString, is(equalTo(expectedBody))));
                     });
                 });
             });

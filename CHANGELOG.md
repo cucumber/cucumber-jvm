@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.5.1] (2020-08-20)
+
+### Fixed
+
 * Publish instructions now recommend using `src/test/resources/cucumber.properties`.
  ([#2096](https://github.com/cucumber/cucumber-jvm/pull/2096)
   Aslak Hellesøy)
@@ -1515,7 +1520,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.5.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.5.1...main
+[6.5.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.0...v6.5.1
 [6.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.4.0...v6.5.0
 [6.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.3.0...v6.4.0
 [6.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.2.2...v6.3.0
