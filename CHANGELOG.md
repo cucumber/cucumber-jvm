@@ -8,7 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
-
+* Boolean system properties and environment variables (`cucumber.*` and `CUCUMBER_*`)
+  are strictly parsed. The values `0`, `false`, `no` are interpreted as `false`.
+  The values `1`, `true`, `yes` are interpreted as `true`. All other values will
+  throw an exception.
+  ([#2095](https://github.com/cucumber/cucumber-jvm/pull/2097)
+   [#2097](https://github.com/cucumber/cucumber-jvm/pull/2097)
+   Aslak Hellesøy)
+   
 ### Changed
 
 ### Deprecated
@@ -24,7 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Publish instructions now recommend using `src/test/resources/cucumber.properties`.
  ([#2096](https://github.com/cucumber/cucumber-jvm/pull/2096)
   Aslak Hellesøy)
-
+  
 ## [6.5.0] (2020-08-17)
 
 ### Added

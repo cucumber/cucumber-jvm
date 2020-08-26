@@ -156,7 +156,7 @@ class CucumberEngineOptions implements
 
     boolean isParallelExecutionEnabled() {
         return configurationParameters
-                .get(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, Boolean::parseBoolean)
+                .getBoolean(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME)
                 .orElse(false);
     }
 
