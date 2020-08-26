@@ -6,6 +6,7 @@ set -uf -o pipefail
 # * The [Unreleased] diff link is updated
 # * A new diff link for the new release is added
 # * The ## [Unreleased] header is changed to a version header with date
+# * The empty sections are removed
 # * A new, empty [Unreleased] paragraph is added at the top
 #
 
@@ -64,6 +65,11 @@ new_release_link=$(echo "${release_link}" | \
 changelog=$(echo "${changelog}" | sed "${insertion_line_number} i \\
 ${new_release_link}
 ")
+
+# Remove empty sections
+
+scripts_path="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+changelog=$(echo "${changelog}" | awk -f "${scripts_path}/remove-empty-sections-changelog.awk")
 
 # Insert a new [Unreleased] header
 

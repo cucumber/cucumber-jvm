@@ -52,8 +52,6 @@ and upload the maven artifacts.
 
 ## Make the release ##
 
-Remove the empty sections in the changelog. Don't commit anything yet.
-
 Check if branch name and version are as expected:
 
 ```
