@@ -61,7 +61,9 @@ new_release_link=$(echo "${release_link}" | \
   sed "s/${last_version}/${new_version}/g" | \
   sed "s/v[0-9]\+.[0-9]\+.[0-9]\+/v${last_version}/")
 
-changelog=$(echo "${changelog}" | sed "${insertion_line_number} i ${new_release_link}")
+changelog=$(echo "${changelog}" | sed "${insertion_line_number} i \\
+${new_release_link}
+")
 
 # Insert a new [Unreleased] header
 
