@@ -43,7 +43,7 @@ changelog=$(echo "${changelog}" | sed "s/## \[Unreleased\] (In Git)/## \[${new_v
 # Update [Unreleased] diff link
 line_number_colon_unreleased_link=$(echo "${changelog}" | grep -n "\[Unreleased\]")
 line_number=$(echo "${line_number_colon_unreleased_link}" | cut -d: -f1)
-unreleased_link=$(echo "${line_number_colon_unreleased_link}" | cut -d' ' -f2)
+unreleased_link=$(echo "${line_number_colon_unreleased_link}" | awk '{print $2}')
 
 if [[ "${unreleased_link}" =~ \/v([0-9]+\.[0-9]+\.[0-9]+(-RC[0-9]+)?) ]]; then
   last_version="${BASH_REMATCH[1]}"
