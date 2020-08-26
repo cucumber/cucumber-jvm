@@ -59,7 +59,7 @@ insertion_line_number=$((line_number + 1))
 release_link=$(echo "${changelog}" | head -n ${insertion_line_number} | tail -1)
 new_release_link=$(echo "${release_link}" | \
   sed "s/${last_version}/${new_version}/g" | \
-  sed "s/v[0-9]\+.[0-9]\+.[0-9]\+/v${last_version}/")
+  sed -E "s/v[0-9]\+.[0-9]\+.[0-9]\+/v${last_version}/")
 
 changelog=$(echo "${changelog}" | sed "${insertion_line_number} i \\
 ${new_release_link}
