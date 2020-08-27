@@ -20,15 +20,16 @@ make update-dependency-versions
 
 ## Decide what the next version should be ##
 
-This depends on what's changed (see `CHANGELOG.md`):
+Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). To sum it up, it depends on what's changed (see `CHANGELOG.md`). Given a version number MAJOR.MINOR.PATCH:
 
-* Bump `MAJOR` if:
-  * There are `Changed` or `Removed` entries
+* Bump `MAJOR` when you make incompatible API changes:
+  * There are `Removed` entries, or `Changed` entries breaking compatibility
   * A cucumber library dependency upgrade was major
-* Bump `MINOR` if:
-  * There are `Added` entries
-* Bump `PATCH` if:
-  * There are `Fixed` or `Deprecated` entries
+* Bump `MINOR` when you add functionality in a backwards compatible manner:
+  * There are `Added` entries, `Changed` entries preserving compatibility, or
+  `Deprecated` entries
+* Bump `PATCH` when you make backwards compatible bug fixes:
+  * There are `Fixed` entries
 
 Display future version by running:
 
