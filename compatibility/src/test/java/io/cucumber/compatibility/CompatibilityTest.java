@@ -13,12 +13,11 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.nio.file.Files.newOutputStream;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.containsInRelativeOrder;
@@ -36,11 +36,10 @@ public class CompatibilityTest {
     @ParameterizedTest
     @MethodSource("io.cucumber.compatibility.TestCase#testCases")
     void produces_expected_output_for(TestCase testCase) throws IOException {
-        File parentDir = new File("target/messages/" + testCase.getId());
-        parentDir.mkdirs();
-        File outputNdjson = new File(parentDir, "out.ndjson");
-        File outputHtml = new File(parentDir, "out.html");
-        File outputJson = new File(parentDir, "out.json");
+        Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
+        Path outputNdjson = parentDir.resolve("out.ndjson");
+        Path outputHtml = parentDir.resolve("out.html");
+        Path outputJson = parentDir.resolve("out.json");
 
         try {
             Runtime.builder()
@@ -49,9 +48,9 @@ public class CompatibilityTest {
                             .addFeature(testCase.getFeature())
                             .build())
                     .withAdditionalPlugins(
-                        new MessageFormatter(new FileOutputStream(outputNdjson)),
-                        new HtmlFormatter(new FileOutputStream(outputHtml)),
-                        new JsonFormatter(new FileOutputStream(outputJson)))
+                        new MessageFormatter(newOutputStream(outputNdjson)),
+                        new HtmlFormatter(newOutputStream(outputHtml)),
+                        new JsonFormatter(newOutputStream(outputJson)))
                     .build()
                     .run();
         } catch (Exception ignored) {
@@ -59,7 +58,7 @@ public class CompatibilityTest {
         }
 
         List<Messages.Envelope> expected = readAllMessages(testCase.getExpectedFile());
-        List<Messages.Envelope> actual = readAllMessages(outputNdjson.toPath());
+        List<Messages.Envelope> actual = readAllMessages(outputNdjson);
 
         Map<String, List<GeneratedMessageV3>> expectedEnvelopes = openEnvelopes(expected);
         Map<String, List<GeneratedMessageV3>> actualEnvelopes = openEnvelopes(actual);

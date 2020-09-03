@@ -1,6 +1,7 @@
 import groovy.text.SimpleTemplateEngine
 import io.cucumber.gherkin.GherkinDialectProvider
 
+import java.nio.file.Files
 import java.text.Normalizer
 
 SimpleTemplateEngine engine = new SimpleTemplateEngine()
@@ -26,7 +27,7 @@ dialectProvider.getLanguages().each { language ->
             if (!file.exists()) {
                 // Haitian has two translations that only differ by case - Sipozeke and SipozeKe
                 // Some file systems are unable to distiguish between them and overwrite the other one :-(
-                file.parentFile.mkdirs()
+                Files.createDirectories(file.parentFile.toPath())
                 file.write(template.toString(), "UTF-8")
             }
         }

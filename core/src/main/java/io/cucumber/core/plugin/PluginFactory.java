@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -199,11 +200,32 @@ public final class PluginFactory {
     }
 
     private static FileOutputStream createFileOutputStream(File file) {
+        File canonicalFile;
         try {
-            File parentFile = file.getParentFile();
+            canonicalFile = file.getCanonicalFile();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(String.format("" +
+                    "Couldn't get the canonical file of %s.\n" +
+                    "The details are in the stack trace below:",
+                file),
+                e);
+        }
+
+        try {
+            File parentFile = canonicalFile.getParentFile();
             if (parentFile != null) {
-                parentFile.mkdirs();
+                Files.createDirectories(parentFile.toPath());
             }
+        } catch (IOException e) {
+            throw new IllegalArgumentException(String.format("" +
+                    "Couldn't create parent directories of %s.\n" +
+                    "Make sure the the directory isn't a file.\n" +
+                    "The details are in the stack trace below:",
+                file),
+                e);
+        }
+
+        try {
             return new FileOutputStream(file);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException(String.format("" +

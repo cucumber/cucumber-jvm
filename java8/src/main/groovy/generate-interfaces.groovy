@@ -1,6 +1,8 @@
 import groovy.text.SimpleTemplateEngine
 import io.cucumber.gherkin.GherkinDialectProvider
 
+import java.nio.file.Files
+
 SimpleTemplateEngine engine = new SimpleTemplateEngine()
 
 def unsupported = ["em"] // The generated files for Emoij do not compile.
@@ -16,7 +18,7 @@ dialectProvider.getLanguages().each { language ->
         def binding = ["i18n": dialect, "className": className, "language_name": name]
         def template = engine.createTemplate(templateSource).make(binding)
         def file = new File(project.baseDir, "target/generated-sources/i18n/java/io/cucumber/java8/${className}.java")
-        file.parentFile.mkdirs()
+        Files.createDirectories(file.parentFile.toPath())
         file.write(template.toString(), "UTF-8")
     }
 }
