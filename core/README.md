@@ -9,10 +9,8 @@ sub modules together e.g. `cucumber-junit` and `cucumber-java`.
 ## Properties, Environment variables, System Options ##
 
 Cucumber will in order of precedence parse properties from system properties,
-environment variables and the `cucumber.properties` file.
-
-Note that options provided by `@CucumberOptions` take precedence over the
-properties file and CLI arguments take precedence over all.
+environment variables, `@CucumberOptions` and the `cucumber.properties` file.
+Note that the CLI arguments take precedence over all.
 
 Note that the `cucumber-junit-platform-engine` is provided with properties
 by the Junit Platform rather than Cucumber. See
