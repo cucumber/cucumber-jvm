@@ -109,7 +109,9 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addSnippets(CucumberOptions options, RuntimeOptionsBuilder args) {
-        args.setSnippetType(options.snippets());
+        if (options.snippets() != SnippetType.UNDERSCORE) {
+            args.setSnippetType(options.snippets());
+        }
     }
 
     private void addGlue(CucumberOptions options, RuntimeOptionsBuilder args) {

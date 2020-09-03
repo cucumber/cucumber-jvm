@@ -192,6 +192,13 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
+    void default_snippet_type_should_not_override_existing_snippet_type() {
+        RuntimeOptions options = new RuntimeOptionsBuilder().setSnippetType(SnippetType.CAMELCASE).build();
+        RuntimeOptions runtimeOptions = parser().parse(WithDefaultOptions.class).build(options);
+        assertThat(runtimeOptions.getSnippetType(), is(equalTo(SnippetType.CAMELCASE)));
+    }
+
+    @Test
     void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(ClassWithNoSummaryPrinterPlugin.class)
@@ -305,6 +312,11 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     private static class WithoutOptions {
+        // empty
+    }
+
+    @CucumberOptions
+    private static class WithDefaultOptions {
         // empty
     }
 
