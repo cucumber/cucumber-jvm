@@ -11,15 +11,16 @@ import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,6 +33,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
@@ -39,23 +42,36 @@ class PluginFactoryTest {
 
     private PluginFactory fc = new PluginFactory();
 
+    @TempDir
+    Path tmp;
+
     @Test
-    void instantiates_junit_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create(parse("junit:" + File.createTempFile("cucumber", "xml")));
+    void instantiates_junit_plugin_with_file_arg() {
+        Object plugin = fc.create(parse("junit:" + tmp.resolve("cucumber.xml")));
         assertThat(plugin.getClass(), is(equalTo(JUnitFormatter.class)));
     }
 
     @Test
-    void instantiates_rerun_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create(parse("rerun:" + File.createTempFile("rerun", "txt")));
+    void instantiates_rerun_plugin_with_file_arg() {
+        Object plugin = fc.create(parse("rerun:" + tmp.resolve("rerun.txt")));
         assertThat(plugin.getClass(), is(equalTo(RerunFormatter.class)));
+    }
+
+    @Test
+    void creates_parent_directories() {
+        Path file = tmp.resolve("target/cucumber/reports/rerun.txt");
+
+        assertAll(
+            () -> assertThat(Files.exists(file), is(false)),
+            () -> assertDoesNotThrow(() -> fc.create(parse("rerun:" + file))),
+            () -> assertThat(Files.exists(file), is(true)));
     }
 
     @Test
     void fails_to_instantiates_html_plugin_with_dir_arg() {
         assertThrows(
             IllegalArgumentException.class,
-            () -> fc.create(parse("html:" + TempDir.createTempDirectory().getAbsolutePath())));
+            () -> fc.create(parse("html:" + tmp.toAbsolutePath())));
     }
 
     @Test
@@ -69,7 +85,7 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_pretty_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create(parse("pretty:" + TempDir.createTempFile().toURI().toURL()));
+        Object plugin = fc.create(parse("pretty:" + tmp.resolve("out.txt").toUri().toURL()));
         assertThat(plugin.getClass(), is(equalTo(PrettyFormatter.class)));
     }
 
@@ -86,8 +102,8 @@ class PluginFactoryTest {
     }
 
     @Test
-    void instantiates_usage_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create(parse("usage:" + TempDir.createTempFile().getAbsolutePath()));
+    void instantiates_usage_plugin_with_file_arg() {
+        Object plugin = fc.create(parse("usage:" + tmp.resolve("out.txt").toAbsolutePath()));
         assertThat(plugin.getClass(), is(equalTo(UsageFormatter.class)));
     }
 
@@ -143,9 +159,9 @@ class PluginFactoryTest {
     }
 
     @Test
-    void instantiates_file_or_empty_arg_plugin_with_arg() throws IOException {
+    void instantiates_file_or_empty_arg_plugin_with_arg() {
         WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc
-                .create(parse(WantsFileOrEmpty.class.getName() + ":" + File.createTempFile("blah", "txt")));
+                .create(parse(WantsFileOrEmpty.class.getName() + ":" + tmp.resolve("out.txt")));
         assertThat(plugin.out, is(notNullValue()));
     }
 
@@ -157,17 +173,17 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_custom_deprecated_appendable_arg_plugin() throws IOException {
-        String tempDirPath = TempDir.createTempFile().getAbsolutePath();
+        Path tempDirPath = tmp.resolve("out.txt").toAbsolutePath();
         WantsAppendable plugin = (WantsAppendable) fc
                 .create(parse(WantsAppendable.class.getName() + ":" + tempDirPath));
         plugin.writeAndClose("hello");
-        String written = new BufferedReader(new FileReader(tempDirPath)).lines().collect(Collectors.joining());
+        String written = Files.readAllLines(tempDirPath).stream().collect(Collectors.joining());
         assertThat(written, is(equalTo("hello")));
     }
 
     @Test
-    void instantiates_timeline_plugin_with_dir_arg() throws IOException {
-        Object plugin = fc.create(parse("timeline:" + TempDir.createTempDirectory().getAbsolutePath()));
+    void instantiates_timeline_plugin_with_dir_arg() {
+        Object plugin = fc.create(parse("timeline:" + tmp.toAbsolutePath()));
         assertThat(plugin.getClass(), is(equalTo(TimelineFormatter.class)));
     }
 

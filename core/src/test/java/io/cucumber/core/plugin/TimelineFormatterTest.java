@@ -10,6 +10,7 @@ import io.cucumber.messages.internal.com.google.gson.JsonDeserializer;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,12 +91,12 @@ class TimelineFormatterTest {
             "    When step_20\n" +
             "    Then step_50");
 
-    private File reportDir;
+    @TempDir
+    File reportDir;
     private File reportJsFile;
 
     @BeforeEach
-    void setUp() throws IOException {
-        reportDir = TempDir.createTempDirectory();
+    void setUp() {
         reportJsFile = new File(reportDir, REPORT_JS);
 
         stepsToResult.put("step_03", result("failed"));
@@ -161,16 +162,16 @@ class TimelineFormatterTest {
                 .run();
 
         final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(0L); // Have
-                                                                                    // to
-                                                                                    // ignore
-                                                                                    // actual
-                                                                                    // thread
-                                                                                    // id
-                                                                                    // and
-                                                                                    // just
-                                                                                    // check
-                                                                                    // not
-                                                                                    // null
+        // to
+        // ignore
+        // actual
+        // thread
+        // id
+        // and
+        // just
+        // check
+        // not
+        // null
 
         final ActualReportOutput actualOutput = readReport();
 
