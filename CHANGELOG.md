@@ -16,17 +16,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-* [Core] CucumberOptions default snippet type should not override properties ([2107](https://github.com/cucumber/cucumber-jvm/pull/2107) M.P. Korstanje)
+ * [Core] CucumberOptions default snippet type should not override properties ([2107](https://github.com/cucumber/cucumber-jvm/pull/2107) M.P. Korstanje)
+ * [Core] Replace parentFile.makeDirs with Files.createDirectories(parentFile) ([2104](https://github.com/cucumber/cucumber-jvm/pull/2104) M.P. Korstanje)
 
-### Security fixes
-
-* Update `create-meta` to 2.0.2 to avoid sharing credentials ([2110](https://github.com/cucumber/cucumber-jvm/pull/2110) vincent-psarga)
+### Security
+ * [Core] Update `create-meta` to 2.0.2 to avoid sharing credentials ([2110](https://github.com/cucumber/cucumber-jvm/pull/2110) vincent-psarga)
 
 ## [6.6.0] (2020-08-26)
 
 ### Added
-
-* Boolean system properties and environment variables (`cucumber.*` and `CUCUMBER_*`)
+ * [Core] Boolean system properties and environment variables (`cucumber.*` and `CUCUMBER_*`)
   are strictly parsed. The values `0`, `false`, `no` are interpreted as `false`.
   The values `1`, `true`, `yes` are interpreted as `true`. All other values will
   throw an exception.
@@ -35,21 +34,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    Aslak Hellesøy)
 
 ### Fixed
-
-* Issue a PUT request after a GET request responding with 202 and a Location header ([#2099](https://github.com/cucumber/cucumber-jvm/pull/2099) Aslak Hellesøy)
+ * [Core] Issue a PUT request after a GET request responding with 202 and a Location header ([#2099](https://github.com/cucumber/cucumber-jvm/pull/2099) Aslak Hellesøy)
 
 ## [6.5.1] (2020-08-20)
 
 ### Fixed
-
-* Publish instructions now recommend using `src/test/resources/cucumber.properties`.
+ * [Core] Publish instructions now recommend using `src/test/resources/cucumber.properties`.
  ([#2096](https://github.com/cucumber/cucumber-jvm/pull/2096)
   Aslak Hellesøy)
 
 ## [6.5.0] (2020-08-17)
 
 ### Added
-
  * [Core] Reports can now be published directly to https://reports.cucumber.io/
    ([#2070](https://github.com/cucumber/cucumber-jvm/pull/2070)
     Aslak Hellesøy, M.P. Korstanje).
