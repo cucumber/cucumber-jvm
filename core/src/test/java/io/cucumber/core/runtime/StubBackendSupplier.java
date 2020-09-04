@@ -17,7 +17,9 @@ import java.util.List;
 public class StubBackendSupplier implements BackendSupplier {
 
     private final List<HookDefinition> before;
+    private final List<HookDefinition> beforeStep;
     private final List<StepDefinition> steps;
+    private final List<HookDefinition> afterStep;
     private final List<HookDefinition> after;
 
     public StubBackendSupplier(StepDefinition... steps) {
@@ -25,12 +27,25 @@ public class StubBackendSupplier implements BackendSupplier {
     }
 
     public StubBackendSupplier(
-            List<HookDefinition> before, List<StepDefinition> steps,
+            List<HookDefinition> before,
+            List<HookDefinition> beforeStep,
+            List<StepDefinition> steps,
+            List<HookDefinition> afterStep,
             List<HookDefinition> after
     ) {
         this.before = before;
+        this.beforeStep = beforeStep;
         this.steps = steps;
+        this.afterStep = afterStep;
         this.after = after;
+    }
+
+    public StubBackendSupplier(
+            List<HookDefinition> before,
+            List<StepDefinition> steps,
+            List<HookDefinition> after
+    ) {
+        this(before, Collections.emptyList(), steps, Collections.emptyList(), after);
     }
 
     @Override
@@ -39,7 +54,9 @@ public class StubBackendSupplier implements BackendSupplier {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 before.forEach(glue::addBeforeHook);
+                beforeStep.forEach(glue::addBeforeStepHook);
                 steps.forEach(glue::addStepDefinition);
+                afterStep.forEach(glue::addAfterStepHook);
                 after.forEach(glue::addAfterHook);
             }
 

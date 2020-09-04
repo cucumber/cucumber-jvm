@@ -4,24 +4,31 @@ import java.util.function.Consumer;
 
 public class StubHookDefinition implements HookDefinition {
 
+    private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
+    private final String location;
     private final RuntimeException exception;
     private final Consumer<TestCaseState> action;
 
-    public StubHookDefinition(RuntimeException exception, Consumer<TestCaseState> action) {
+    public StubHookDefinition(String location, RuntimeException exception, Consumer<TestCaseState> action) {
+        this.location = location;
         this.exception = exception;
         this.action = action;
     }
 
     public StubHookDefinition() {
-        this(null, null);
+        this(STUBBED_LOCATION_WITH_DETAILS, null, null);
     }
 
     public StubHookDefinition(Consumer<TestCaseState> action) {
-        this(null, action);
+        this(STUBBED_LOCATION_WITH_DETAILS, null, action);
     }
 
     public StubHookDefinition(RuntimeException exception) {
-        this(exception, null);
+        this(STUBBED_LOCATION_WITH_DETAILS, exception, null);
+    }
+
+    public StubHookDefinition(String location) {
+        this(location, null, null);
     }
 
     @Override
@@ -51,7 +58,7 @@ public class StubHookDefinition implements HookDefinition {
 
     @Override
     public String getLocation() {
-        return "{stubbed location with details}";
+        return location;
     }
 
 }

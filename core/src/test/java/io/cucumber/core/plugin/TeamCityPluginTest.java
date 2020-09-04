@@ -252,13 +252,7 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition() {
-
-                        @Override
-                        public String getLocation() {
-                            return "com.example.HookDefinition.beforeHook()";
-                        }
-                    }),
+                    singletonList(new StubHookDefinition("com.example.HookDefinition.beforeHook()")),
                     singletonList(new StubStepDefinition("first step")),
                     emptyList()))
                 .build()

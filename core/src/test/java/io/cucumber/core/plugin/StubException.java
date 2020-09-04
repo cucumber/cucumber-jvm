@@ -13,7 +13,7 @@ class StubException extends RuntimeException {
     }
 
     public StubException() {
-        this("message", "exception");
+        this("message", "the stack trace");
     }
 
     @Override
