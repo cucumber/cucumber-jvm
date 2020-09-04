@@ -3,7 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.StepDurationTimeService;
-import io.cucumber.core.runner.TestPendingException;
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.backend.StubHookDefinition;
@@ -257,7 +257,7 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", new TestPendingException()),
+                        new StubStepDefinition("first step", new StubPendingException()),
                         new StubStepDefinition("second step"),
                         new StubStepDefinition("third step")
                 ))
@@ -268,7 +268,7 @@ class JUnitFormatterTest {
                 "<testsuite errors=\"0\" failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.runner.TestPendingException\">\n"
+                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.TestPendingException\">\n"
                 +
                 "            <![CDATA[Given first step............................................................pending\n"
                 +
@@ -379,7 +379,7 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(new TestPendingException())),
+                        singletonList(new StubHookDefinition(new StubPendingException())),
                         Arrays.asList(
                                 new StubStepDefinition("first step"),
                                 new StubStepDefinition("second step"),
@@ -394,7 +394,7 @@ class JUnitFormatterTest {
                 "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.runner.TestPendingException\">\n"
+                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.TestPendingException\">\n"
                 +
                 "            <![CDATA[Given first step............................................................skipped\n"
                 +

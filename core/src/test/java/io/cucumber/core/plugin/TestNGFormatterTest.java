@@ -3,7 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.StepDurationTimeService;
-import io.cucumber.core.runner.TestPendingException;
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.backend.StubHookDefinition;
@@ -84,7 +84,7 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("step1", new TestPendingException()),
+                    new StubStepDefinition("step1", new StubPendingException()),
                     new StubStepDefinition("step2")))
                 .build()
                 .run();

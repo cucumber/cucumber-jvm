@@ -11,6 +11,10 @@ class StubException extends RuntimeException {
         this.stacktrace = stacktrace;
     }
 
+    public StubException() {
+        this("message", "exception");
+    }
+
     @Override
     public void printStackTrace(PrintWriter printWriter) {
         printWriter.print(stacktrace);

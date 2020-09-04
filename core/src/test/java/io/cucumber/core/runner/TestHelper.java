@@ -5,6 +5,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
@@ -93,7 +94,7 @@ public class TestHelper {
             case AMBIGUOUS:
                 return result(status, mockAmbiguousStepDefinitionException());
             case PENDING:
-                return result(status, new TestPendingException());
+                return result(status, new StubPendingException());
             default:
                 return result(status, null);
         }
@@ -306,7 +307,7 @@ public class TestHelper {
                     public void execute(Object[] args) {
                         super.execute(args);
                         if (stepResult.getStatus().is(PENDING)) {
-                            throw new TestPendingException();
+                            throw new StubPendingException();
                         } else if (stepResult.getStatus().is(FAILED)) {
                             throw new CucumberInvocationTargetException(located,
                                 new InvocationTargetException(stepResult.getError()));
@@ -422,9 +423,9 @@ public class TestHelper {
                     new InvocationTargetException(error));
                 doThrow(exception).when(hook).execute(any());
             } else if (hookEntry.getValue().getStatus().is(PENDING)) {
-                TestPendingException testPendingException = new TestPendingException();
+                StubPendingException stubPendingException = new StubPendingException();
                 CucumberInvocationTargetException exception = new CucumberInvocationTargetException(located,
-                    new InvocationTargetException(testPendingException));
+                    new InvocationTargetException(stubPendingException));
                 doThrow(exception).when(hook).execute(any());
             }
             if ("before".equals(hookEntry.getKey())) {

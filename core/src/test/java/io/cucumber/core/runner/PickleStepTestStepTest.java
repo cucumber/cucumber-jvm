@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
@@ -235,7 +236,7 @@ class PickleStepTestStepTest {
 
     @Test
     void result_is_pending_when_step_definition_throws_pending_exception() throws Throwable {
-        doThrow(TestPendingException.class).when(definitionMatch).runStep(any(TestCaseState.class));
+        doThrow(StubPendingException.class).when(definitionMatch).runStep(any(TestCaseState.class));
 
         boolean skipNextStep = step.run(testCase, bus, state, false);
         assertTrue(skipNextStep);

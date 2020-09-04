@@ -1,29 +1,25 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubPendingException;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.plugin.event.Result;
+import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.runtime.StubFeatureSupplier;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.TestAbortedException;
 
 import java.io.ByteArrayOutputStream;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
-import static io.cucumber.core.runner.TestHelper.result;
-import static java.time.Duration.ZERO;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class RerunFormatterTest {
-
-    private final List<Feature> features = new ArrayList<>();
-    private final Map<String, Result> stepsToResult = new HashMap<>();
-    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
-    private final List<String> hookLocations = new ArrayList<>();
 
     @Test
     void should_leave_report_empty_when_exit_code_is_zero() {
@@ -33,28 +29,19 @@ class RerunFormatterTest {
                 "    Given passed step\n" +
                 "  Scenario: skipped scenario\n" +
                 "    Given skipped step\n");
-        features.add(feature);
-        stepsToResult.put("passed step", result("passed"));
-        stepsToResult.put("skipped step", result("skipped"));
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo(""));
-    }
-
-    private ByteArrayOutputStream runFeaturesWithFormatter() {
-        final ByteArrayOutputStream report = new ByteArrayOutputStream();
-        final RerunFormatter formatter = new RerunFormatter(report);
-
-        TestHelper.builder()
-                .withFormatterUnderTest(formatter)
-                .withFeatures(features)
-                .withStepsToResult(stepsToResult)
-                .withHooks(hooks)
-                .withHookLocations(hookLocations)
-                .withTimeServiceIncrement(ZERO)
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("passed step"),
+                        new StubStepDefinition("skipped step", new TestAbortedException())
+                ))
                 .build()
                 .run();
 
-        return report;
+        assertThat(out, isBytesEqualTo(""));
     }
 
     @Test
@@ -67,12 +54,19 @@ class RerunFormatterTest {
                 "    Given pending step\n" +
                 "  Scenario: undefined scenario\n" +
                 "    Given undefined step\n");
-        features.add(feature);
-        stepsToResult.put("failed step", result("failed"));
-        stepsToResult.put("pending step", result("pending"));
-        stepsToResult.put("undefined step", result("undefined"));
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2:4:6\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("failed step", new StubException()),
+                        new StubStepDefinition("pending step", new StubPendingException())
+                ))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("classpath:path/test.feature:2:4:6\n"));
     }
 
     @Test
@@ -83,12 +77,20 @@ class RerunFormatterTest {
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        features.add(feature);
-        stepsToResult.put("first step", result("passed"));
-        stepsToResult.put("second step", result("passed"));
-        stepsToResult.put("third step", result("failed"));
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("file:path/test.feature:2\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step", new StubException())
+                ))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("file:path/test.feature:2\n"));
     }
 
     @Test
@@ -100,12 +102,20 @@ class RerunFormatterTest {
                 "  Scenario: scenario name\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        features.add(feature);
-        stepsToResult.put("background step", result("failed"));
-        stepsToResult.put("second step", result("passed"));
-        stepsToResult.put("third step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("file:path/test.feature:4\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("background step", new StubException()),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")
+                ))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("file:path/test.feature:4\n"));
     }
 
     @Test
@@ -119,12 +129,20 @@ class RerunFormatterTest {
                 "    |  row   |\n" +
                 "    | first  |\n" +
                 "    | second |");
-        features.add(feature);
-        stepsToResult.put("executing first row", result("passed"));
-        stepsToResult.put("executing second row", result("failed"));
-        stepsToResult.put("everything is ok", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:8\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("executing first row"),
+                        new StubStepDefinition("executing second row", new StubException()),
+                        new StubStepDefinition("everything is ok")
+                ))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("classpath:path/test.feature:8\n"));
     }
 
     @Test
@@ -135,14 +153,24 @@ class RerunFormatterTest {
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        features.add(feature);
-        stepsToResult.put("first step", result("passed"));
-        stepsToResult.put("second step", result("passed"));
-        stepsToResult.put("third step", result("passed"));
-        hooks.add(TestHelper.hookEntry("before", result("failed")));
-        hookLocations.add("hook-location");
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        singletonList(new StubHookDefinition(new StubException())),
+                        asList(
+                                new StubStepDefinition("first step"),
+                                new StubStepDefinition("second step"),
+                                new StubStepDefinition("third step")
+                        ),
+                        emptyList()
+                ))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("classpath:path/test.feature:2\n"));
     }
 
     @Test
@@ -153,14 +181,24 @@ class RerunFormatterTest {
                 "    Given first step\n" +
                 "    When second step\n" +
                 "    Then third step\n");
-        features.add(feature);
-        stepsToResult.put("first step", result("passed"));
-        stepsToResult.put("second step", result("passed"));
-        stepsToResult.put("third step", result("passed"));
-        hooks.add(TestHelper.hookEntry("after", result("failed")));
-        hookLocations.add("hook-location");
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        emptyList(),
+                        asList(
+                                new StubStepDefinition("first step"),
+                                new StubStepDefinition("second step"),
+                                new StubStepDefinition("third step")
+                        ),
+                        singletonList(new StubHookDefinition(new StubException()))
+                ))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("classpath:path/test.feature:2\n"));
     }
 
     @Test
@@ -173,13 +211,21 @@ class RerunFormatterTest {
                 "  Scenario: scenario 2 name\n" +
                 "    When third step\n" +
                 "    Then forth step\n");
-        features.add(feature);
-        stepsToResult.put("first step", result("passed"));
-        stepsToResult.put("second step", result("failed"));
-        stepsToResult.put("third step", result("failed"));
-        stepsToResult.put("forth step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(), isBytesEqualTo("classpath:path/test.feature:2:5\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step", new StubException()),
+                        new StubStepDefinition("third step", new StubException()),
+                        new StubStepDefinition("forth step")
+                ))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("classpath:path/test.feature:2:5\n"));
     }
 
     @Test
@@ -194,15 +240,22 @@ class RerunFormatterTest {
                 "  Scenario: scenario 2 name\n" +
                 "    When third step\n" +
                 "    Then forth step\n");
-        features.add(feature1);
-        features.add(feature2);
-        stepsToResult.put("first step", result("passed"));
-        stepsToResult.put("second step", result("failed"));
-        stepsToResult.put("third step", result("failed"));
-        stepsToResult.put("forth step", result("passed"));
 
-        assertThat(runFeaturesWithFormatter(),
-            isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
+                .withAdditionalPlugins(new RerunFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step", new StubException()),
+                        new StubStepDefinition("third step", new StubException()),
+                        new StubStepDefinition("forth step")
+                ))
+                .build()
+                .run();
+
+        assertThat(out,
+                isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
     }
 
 }
