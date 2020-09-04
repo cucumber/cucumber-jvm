@@ -77,6 +77,7 @@ public class TestHelper {
     private TestHelper() {
     }
 
+    @Deprecated
     public static Builder builder() {
         return new Builder();
     }
