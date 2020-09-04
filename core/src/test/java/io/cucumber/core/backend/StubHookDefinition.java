@@ -1,26 +1,37 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.backend.TestCaseState;
+import java.util.function.Consumer;
 
 public class StubHookDefinition implements HookDefinition {
 
     private final RuntimeException exception;
+    private final Consumer<TestCaseState> action;
+
+    public StubHookDefinition(RuntimeException exception, Consumer<TestCaseState> action) {
+        this.exception = exception;
+        this.action = action;
+    }
 
     public StubHookDefinition() {
-        this(null);
+        this(null, null);
+    }
+
+    public StubHookDefinition(Consumer<TestCaseState> action) {
+        this(null, action);
     }
 
     public StubHookDefinition(RuntimeException exception) {
-        this.exception = exception;
+        this(exception, null);
     }
 
     @Override
     public void execute(TestCaseState state) {
-        if (exception == null) {
-            return;
+        if(action != null){
+            action.accept(state);
         }
-        throw exception;
+        if (exception != null) {
+            throw exception;
+        }
     }
 
     @Override

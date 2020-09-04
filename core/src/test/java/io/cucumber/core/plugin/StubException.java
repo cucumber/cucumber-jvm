@@ -1,5 +1,6 @@
 package io.cucumber.core.plugin;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 
 class StubException extends RuntimeException {
@@ -18,6 +19,11 @@ class StubException extends RuntimeException {
     @Override
     public void printStackTrace(PrintWriter printWriter) {
         printWriter.print(stacktrace);
+    }
+
+    @Override
+    public void printStackTrace(PrintStream printStream) {
+        printStream.print(stacktrace);
     }
 
 }
