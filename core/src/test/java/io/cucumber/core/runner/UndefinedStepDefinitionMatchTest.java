@@ -3,14 +3,11 @@ package io.cucumber.core.runner;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
@@ -27,15 +24,16 @@ class UndefinedStepDefinitionMatchTest {
 
     @Test
     void throws_undefined_step_definitions_exception_when_run() {
-        Executable testMethod = () -> match.runStep(mock(TestCaseState.class));
         UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class,
-            testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("No step definitions found")));
+            () -> match.runStep(mock(TestCaseState.class)));
+        assertThat(expectedThrown.getMessage(), equalTo("No step definitions found"));
     }
 
     @Test
-    void does_not_throws_undefined_step_definitions_exception_when_dry_run() {
-        assertDoesNotThrow(() -> match.dryRunStep(mock(TestCaseState.class)));
+    void throws_undefined_step_definitions_exception_when_dry_run() {
+        UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class,
+            () -> match.dryRunStep(mock(TestCaseState.class)));
+        assertThat(expectedThrown.getMessage(), equalTo("No step definitions found"));
     }
 
 }
