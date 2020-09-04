@@ -63,6 +63,7 @@ abstract class TestContextAdaptor {
             Object testContextInstance = applicationContext.getBean(testClass);
             Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
             delegate.beforeTestMethod(testContextInstance, dummyMethod);
+            delegate.beforeTestExecution(testContextInstance, dummyMethod);
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }
@@ -120,6 +121,12 @@ abstract class TestContextAdaptor {
             Class<?> testClass = delegate.getTestContext().getTestClass();
             Object testContextInstance = applicationContext.getBean(testClass);
             Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
+            /* TODO: We need access to the scenario result here
+               This means we have to redesign the backend module with call backs in mind.
+               See JUnit 5 BeforeEachCallback, AfterEachCallback,
+               BeforeTestExecutionCallback, AfterTestExecutionCallback,
+             */
+            delegate.afterTestExecution(testContextInstance, dummyMethod, null);
             delegate.afterTestMethod(testContextInstance, dummyMethod, null);
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
