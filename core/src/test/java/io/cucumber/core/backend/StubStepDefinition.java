@@ -1,8 +1,4 @@
-package io.cucumber.core.runtime;
-
-import io.cucumber.core.backend.ParameterInfo;
-import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.backend.TypeResolver;
+package io.cucumber.core.backend;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -13,17 +9,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StubStepDefinition implements StepDefinition {
 
+    private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final List<ParameterInfo> parameterInfos;
     private final String expression;
     private final RuntimeException exception;
+    private final String location;
+
+    public StubStepDefinition(String pattern, String location, Type... types) {
+        this(pattern, location, null, types);
+    }
 
     public StubStepDefinition(String pattern, Type... types) {
-        this(pattern, null, types);
+        this(pattern, STUBBED_LOCATION_WITH_DETAILS, null, types);
     }
 
     public StubStepDefinition(String pattern, RuntimeException exception, Type... types) {
+        this(pattern, STUBBED_LOCATION_WITH_DETAILS, exception, types);
+    }
+
+    public StubStepDefinition(String pattern, String location, RuntimeException exception, Type... types) {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
+        this.location = location;
         this.exception = exception;
     }
 
@@ -34,7 +41,7 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public String getLocation() {
-        return "{stubbed location with details}";
+        return location;
     }
 
     @Override

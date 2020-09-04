@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static io.cucumber.core.runner.ExecutionMode.DRY_RUN;
+import static io.cucumber.core.runner.ExecutionMode.RUN;
 import static io.cucumber.core.runner.TestStepResultStatus.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
@@ -32,7 +34,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     private final Pickle pickle;
     private final List<PickleStepTestStep> testSteps;
-    private final boolean dryRun;
+    private final ExecutionMode executionMode;
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
     private final UUID id;
@@ -49,7 +51,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
         this.pickle = pickle;
-        this.dryRun = dryRun;
+        this.executionMode = dryRun ? DRY_RUN : RUN;
     }
 
     private static StepMatchArgument.Group makeMessageGroup(
@@ -82,7 +84,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     void run(EventBus bus) {
-        boolean skipNextStep = this.dryRun;
+        ExecutionMode nextExecutionMode = this.executionMode;
         emitTestCaseMessage(bus);
 
         Instant start = bus.getInstant();
@@ -92,15 +94,21 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         TestCaseState state = new TestCaseState(bus, executionId, this);
 
         for (HookTestStep before : beforeHooks) {
-            skipNextStep |= before.run(this, bus, state, dryRun);
+            nextExecutionMode = before
+                    .run(this, bus, state, executionMode)
+                    .next(nextExecutionMode);
         }
 
         for (PickleStepTestStep step : testSteps) {
-            skipNextStep |= step.run(this, bus, state, skipNextStep);
+            nextExecutionMode = step
+                    .run(this, bus, state, nextExecutionMode)
+                    .next(nextExecutionMode);
         }
 
         for (HookTestStep after : afterHooks) {
-            after.run(this, bus, state, dryRun);
+            nextExecutionMode = after
+                    .run(this, bus, state, executionMode)
+                    .next(nextExecutionMode);
         }
 
         Instant stop = bus.getInstant();

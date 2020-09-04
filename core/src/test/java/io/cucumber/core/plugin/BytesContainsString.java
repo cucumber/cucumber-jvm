@@ -13,7 +13,7 @@ final class BytesContainsString {
         return new DiagnosingMatcher<ByteArrayOutputStream>() {
             @Override
             protected boolean matches(Object actual, Description description) {
-                description.appendText("but was ");
+                description.appendText("was ");
                 if (!(actual instanceof ByteArrayOutputStream)) {
                     description.appendValue(actual.getClass());
                     return false;
@@ -25,7 +25,7 @@ final class BytesContainsString {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("expected=");
+                description.appendText("bytes containing ");
                 description.appendValue(expected);
             }
         };

@@ -22,7 +22,7 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
 
     @Override
     public void dryRunStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
-        runStep(state);
+        throw exception;
     }
 
 }

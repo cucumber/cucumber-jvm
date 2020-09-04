@@ -1,130 +1,94 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.runner.ClockStub;
-import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.Runtime.Builder;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.plugin.event.Result;
+import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Test;
-import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.time.Duration;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
-import static io.cucumber.core.runner.TestHelper.createAttachHookAction;
-import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
-import static io.cucumber.core.runner.TestHelper.result;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.Clock.fixed;
 import static java.time.Duration.ofMillis;
+import static java.time.Instant.EPOCH;
+import static java.time.ZoneId.of;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 class JsonFormatterTest {
 
-    private final List<Feature> features = new ArrayList<>();
-    private final Map<String, Result> stepsToResult = new HashMap<>();
-    private final Map<String, String> stepsToLocation = new HashMap<>();
-    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
-    private final List<String> hookLocations = new ArrayList<>();
-    private final List<Answer<Object>> hookActions = new ArrayList<>();
-    private Duration stepDuration = Duration.ZERO;
-
     @Test
     void featureWithOutlineTest() {
-        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature");
-        String actual = runFeaturesWithFormatter(featurePaths);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        createRuntime(out)
+                .build()
+                .run();
+
         InputStream resourceAsStream = getClass().getResourceAsStream("JsonPrettyFormatterTest.json");
         String expected = new Scanner(resourceAsStream, "UTF-8")
                 .useDelimiter("\\A")
                 .next();
-        assertThat(actual, sameJSONAs(expected));
+
+        assertJsonEquals(expected, out);
     }
 
-    private String runFeaturesWithFormatter(final List<String> featurePaths) {
-        final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
+    private Builder createRuntime(ByteArrayOutputStream out) {
+        Feature feature = TestFeatureParser.parse(
+            "classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
+            getClass().getResourceAsStream("JsonPrettyFormatterTest.feature"));
 
-        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addBeforeHook(hook);
-
-            }
-        };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
-        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
-        Runtime.builder()
-                .withRuntimeOptions(options.build())
-                .withEventBus(bus)
-                .withBackendSupplier(backendSupplier)
-                .withAdditionalPlugins(new JsonFormatter(out))
-                .build()
-                .run();
-
-        return new String(out.toByteArray(), UTF_8);
+        return Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition()),
+                    asList(
+                        new StubStepDefinition("bg_1"),
+                        new StubStepDefinition("bg_2"),
+                        new StubStepDefinition("bg_3"),
+                        new StubStepDefinition("step_1"),
+                        new StubStepDefinition("step_2"),
+                        new StubStepDefinition("step_3"),
+                        new StubStepDefinition("cliché"),
+                        new StubStepDefinition("so_1 {int}", Integer.class),
+                        new StubStepDefinition("so_2 {int} cucumbers", Integer.class),
+                        new StubStepDefinition("{int} so_3", Integer.class),
+                        new StubStepDefinition("a"),
+                        new StubStepDefinition("b"),
+                        new StubStepDefinition("c")),
+                    emptyList()))
+                .withAdditionalPlugins(new JsonFormatter(out));
     }
 
     @Test
-    void featureWithOutlineTestParallel() throws Exception {
-        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature");
-        String actual = runFeaturesWithFormatterInParallel(featurePaths);
+    void featureWithOutlineTestParallel() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        createRuntime(out)
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
+                .build()
+                .run();
+
         InputStream resourceAsStream = getClass().getResourceAsStream("JsonPrettyFormatterTest.json");
         String expected = new Scanner(resourceAsStream, "UTF-8")
                 .useDelimiter("\\A")
                 .next();
 
-        assertThat(actual, sameJSONAs(expected));
-    }
-
-    private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
-        final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
-        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addBeforeHook(hook);
-
-            }
-        };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
-        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
-        Runtime.builder()
-                .withRuntimeOptions(options.build())
-                .withEventBus(bus)
-                .withBackendSupplier(backendSupplier)
-                .withAdditionalPlugins(new JsonFormatter(out))
-                .build()
-                .run();
-
-        return new String(out.toByteArray(), UTF_8);
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -134,10 +98,15 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("undefined"));
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier())
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -173,25 +142,16 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
-    private String runFeaturesWithFormatter() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private void assertJsonEquals(String expected, ByteArrayOutputStream actual) {
+        assertJsonEquals(expected, new String(actual.toByteArray(), UTF_8));
 
-        TestHelper.builder()
-                .withFormatterUnderTest(new JsonFormatter(out))
-                .withFeatures(features)
-                .withStepsToResult(stepsToResult)
-                .withStepsToLocation(stepsToLocation)
-                .withHooks(hooks)
-                .withHookLocations(hookLocations)
-                .withHookActions(hookActions)
-                .withTimeServiceIncrement(stepDuration)
-                .build()
-                .run();
+    }
 
-        return new String(out.toByteArray(), UTF_8);
+    private void assertJsonEquals(String expected, String actual) {
+        assertThat(actual, sameJSONAs(expected));
     }
 
     @Test
@@ -201,12 +161,17 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -245,7 +210,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -255,12 +220,18 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("failed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()",
+                        new StubException())))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -300,7 +271,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -311,12 +282,17 @@ class JsonFormatterTest {
                 "  Rule: This is all monkey business\n" +
                 "    Scenario: Monkey eats bananas\n" +
                 "      Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -355,7 +331,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -373,12 +349,17 @@ class JsonFormatterTest {
                 "\n" +
                 "    Scenario: Monkey eats bananas\n" +
                 "      Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -450,7 +431,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -463,12 +444,17 @@ class JsonFormatterTest {
                 "      Examples: Fruit table\n" +
                 "      | fruits  |\n" +
                 "      | bananas |\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -507,7 +493,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -523,16 +509,19 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats more bananas\n" +
                 "    Then the monkey eats more bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToResult.put("the monkey eats bananas", result("passed"));
-        stepsToResult.put("the monkey eats more bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepsToLocation.put("the monkey eats bananas", "StepDefs.monkey_eats_bananas()");
-        stepsToLocation.put("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
+                    new StubStepDefinition("the monkey eats bananas", "StepDefs.monkey_eats_bananas()"),
+                    new StubStepDefinition("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()")))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -636,7 +625,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -647,12 +636,17 @@ class JsonFormatterTest {
                 "  @Monkey\n" +
                 "  Scenario: Monkey eats more bananas\n" +
                 "    Then the monkey eats more bananas\n");
-        features.add(feature);
-        stepsToResult.put("the monkey eats more bananas", result("passed"));
-        stepsToLocation.put("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()")))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -719,7 +713,7 @@ class JsonFormatterTest {
                 "    ]\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -729,16 +723,19 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        hooks.add(TestHelper.hookEntry("before", result("passed")));
-        hooks.add(TestHelper.hookEntry("after", result("passed")));
-        hookLocations.add("Hooks.before_hook_1()");
-        hookLocations.add("Hooks.after_hook_1()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()")),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    singletonList(new StubHookDefinition("Hooks.after_hook_1()"))))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -799,7 +796,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -810,20 +807,25 @@ class JsonFormatterTest {
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n" +
                 "    When monkey arrives\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToResult.put("monkey arrives", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepsToLocation.put("monkey arrives", "StepDefs.monkey_arrives()");
-        hooks.add(TestHelper.hookEntry("beforestep", result("passed")));
-        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
-        hooks.add(TestHelper.hookEntry("afterstep", result("passed")));
-        hookLocations.add("Hooks.beforestep_hooks_1()");
-        hookLocations.add("Hooks.afterstep_hooks_1()");
-        hookLocations.add("Hooks.afterstep_hooks_2()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    singletonList(new StubHookDefinition("Hooks.beforestep_hooks_1()")),
+                    asList(
+                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
+                        new StubStepDefinition("monkey arrives", "StepDefs.monkey_arrives()")),
+                    asList(
+                        new StubHookDefinition("Hooks.afterstep_hooks_1()"),
+                        new StubHookDefinition("Hooks.afterstep_hooks_2()")),
+                    emptyList()))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -936,7 +938,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -946,15 +948,20 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        hooks.add(TestHelper.hookEntry("before", result("passed")));
-        hookLocations.add("Hooks.before_hook_1()");
-        hookActions.add(createWriteHookAction("printed from hook"));
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                        testCaseState -> testCaseState.log("printed from hook"))),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    emptyList()))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -1007,7 +1014,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -1017,15 +1024,21 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        hooks.add(TestHelper.hookEntry("before", result("passed")));
-        hookLocations.add("Hooks.before_hook_1()");
-        hookActions.add(createAttachHookAction(new byte[] { 1, 2, 3 }, "mime-type;base64"));
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                        testCaseState -> testCaseState
+                                .attach(new byte[] { 1, 2, 3 }, "mime-type;base64", null))),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    emptyList()))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -1081,7 +1094,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -1091,15 +1104,21 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        hooks.add(TestHelper.hookEntry("before", result("passed")));
-        hookLocations.add("Hooks.before_hook_1()");
-        hookActions.add(createAttachHookAction(new byte[] { 1, 2, 3 }, "mime-type;base64", "someEmbedding"));
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                        testCaseState -> testCaseState.attach(new byte[] { 1, 2, 3 }, "mime-type;base64",
+                            "someEmbedding"))),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    emptyList()))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -1156,7 +1175,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -1169,12 +1188,17 @@ class JsonFormatterTest {
                 "    \"\"\"\n" +
                 "    doc string content\n" +
                 "    \"\"\"\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", String.class)))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -1217,7 +1241,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -1230,12 +1254,17 @@ class JsonFormatterTest {
                 "    \"\"\"doc\n" +
                 "    doc string content\n" +
                 "    \"\"\"\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", String.class)))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -1279,7 +1308,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -1291,12 +1320,17 @@ class JsonFormatterTest {
                 "    Given there are bananas\n" +
                 "      | aa | 11 |\n" +
                 "      | bb | 22 |\n");
-        features.add(feature);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", DataTable.class)))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -1349,7 +1383,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -1364,15 +1398,18 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats oranges\n" +
                 "    Given there are oranges\n");
-        features.add(feature1);
-        features.add(feature2);
-        stepsToResult.put("there are bananas", result("passed"));
-        stepsToResult.put("there are oranges", result("passed"));
-        stepsToLocation.put("there are bananas", "StepDefs.there_are_bananas()");
-        stepsToLocation.put("there are oranges", "StepDefs.there_are_oranges()");
-        stepDuration = ofMillis(1L);
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
+                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
+                    new StubStepDefinition("there are oranges", "StepDefs.there_are_oranges()")))
+                .build()
+                .run();
 
         String expected = "" +
                 "[\n" +
@@ -1445,7 +1482,7 @@ class JsonFormatterTest {
                 "    \"tags\": []\n" +
                 "  }\n" +
                 "]";
-        assertThat(formatterOutput, sameJSONAs(expected));
+        assertJsonEquals(expected, out);
     }
 
 }

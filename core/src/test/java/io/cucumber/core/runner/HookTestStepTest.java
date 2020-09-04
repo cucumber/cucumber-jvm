@@ -54,7 +54,7 @@ class HookTestStepTest {
 
     @Test
     void run_does_run() {
-        step.run(testCase, bus, state, false);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -64,7 +64,7 @@ class HookTestStepTest {
 
     @Test
     void run_does_dry_run() {
-        step.run(testCase, bus, state, true);
+        step.run(testCase, bus, state, ExecutionMode.DRY_RUN);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -73,17 +73,24 @@ class HookTestStepTest {
     }
 
     @Test
-    void result_is_passed_when_step_definition_does_not_throw_exception() {
-        boolean skipNextStep = step.run(testCase, bus, state, false);
-        assertFalse(skipNextStep);
+    void next_execution_mode_is_run_when_step_passes() {
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.RUN));
         assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
-    void result_is_skipped_when_skip_step_is_skip_all_skipable() {
-        boolean skipNextStep = step.run(testCase, bus, state, true);
-        assertTrue(skipNextStep);
+    void next_execution_mode_is_skip_when_step_is_skipped() {
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.SKIP);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
+    }
+
+    @Test
+    void next_execution_mode_is_dry_run_when_step_passes_dry_run() {
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.DRY_RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.DRY_RUN));
+        assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
 
 }

@@ -6,8 +6,9 @@ import io.cucumber.core.resource.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class TestFeatureParser {
 
@@ -20,6 +21,14 @@ public class TestFeatureParser {
     }
 
     public static Feature parse(final URI uri, final String source) {
+        return parse(uri, new ByteArrayInputStream(source.getBytes(UTF_8)));
+    }
+
+    public static Feature parse(final String uri, final InputStream source) {
+        return parse(FeatureIdentifier.parse(uri), source);
+    }
+
+    public static Feature parse(final URI uri, final InputStream source) {
         return new FeatureParser(UUID::randomUUID).parseResource(new Resource() {
             @Override
             public URI getUri() {
@@ -28,7 +37,7 @@ public class TestFeatureParser {
 
             @Override
             public InputStream getInputStream() {
-                return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
+                return source;
             }
 
         }).orElse(null);

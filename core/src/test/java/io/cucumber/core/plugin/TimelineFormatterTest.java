@@ -1,13 +1,17 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.runner.TestHelper;
+import io.cucumber.core.runner.StepDurationTimeService;
+import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.runtime.StubFeatureSupplier;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.messages.internal.com.google.gson.JsonDeserializer;
-import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -19,12 +23,10 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
-import static io.cucumber.core.runner.TestHelper.result;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -39,8 +41,6 @@ class TimelineFormatterTest {
             .comparing(o -> o.scenario);
 
     private static final String REPORT_TEMPLATE_RESOURCE_DIR = "src/main/resources/io/cucumber/core/plugin/timeline";
-    private static final String REPORT_JS = "report.js";
-    private static final Duration STEP_DURATION = Duration.ofMillis(1000);
 
     private final Gson gson = new GsonBuilder().registerTypeAdapter(
         Instant.class,
@@ -48,9 +48,6 @@ class TimelineFormatterTest {
                 ? Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong())
                 : Instant.ofEpochMilli(json.getAsLong()))
             .create();
-
-    private final Map<String, Result> stepsToResult = new HashMap<>();
-    private final Map<String, String> stepsToLocation = new HashMap<>();
 
     private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
             "Feature: Failing Feature\n" +
@@ -93,31 +90,21 @@ class TimelineFormatterTest {
 
     @TempDir
     File reportDir;
-    private File reportJsFile;
+    File reportJsFile;
+    RuntimeOptionsBuilder runtimeOptionsBuilder;
 
     @BeforeEach
     void setUp() {
-        reportJsFile = new File(reportDir, REPORT_JS);
-
-        stepsToResult.put("step_03", result("failed"));
-        stepsToResult.put("step_50", result("undefined"));
-
-        stepsToLocation.put("bg_1", "path/step_definitions.java:3");
-        stepsToLocation.put("bg_2", "path/step_definitions.java:4");
-        stepsToLocation.put("bg_3", "path/step_definitions.java:5");
-        stepsToLocation.put("step_01", "path/step_definitions.java:7");
-        stepsToLocation.put("step_02", "path/step_definitions.java:8");
-        stepsToLocation.put("step_03", "path/step_definitions.java:9");
-        stepsToLocation.put("step_10", "path/step_definitions.java:7");
-        stepsToLocation.put("step_20", "path/step_definitions.java:8");
-        stepsToLocation.put("step_30", "path/step_definitions.java:9");
+        reportJsFile = new File(reportDir, "report.js");
+        runtimeOptionsBuilder = new RuntimeOptionsBuilder()
+                .addPluginName("timeline:" + reportDir.getAbsolutePath());
     }
 
     @Test
     void shouldWriteAllRequiredFilesToOutputDirectory() throws IOException {
         runFormatterWithPlugin();
 
-        assertThat(REPORT_JS + ": did not exist in output dir", reportJsFile.exists(), is(equalTo(true)));
+        assertThat(reportJsFile.exists(), is(equalTo(true)));
 
         final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.5.1.min.js", "vis.min.css",
             "vis.min.js", "vis.override.css");
@@ -131,13 +118,23 @@ class TimelineFormatterTest {
     }
 
     private void runFormatterWithPlugin() {
-        TestHelper.builder()
-                .withFeatures(failingFeature, successfulFeature, pendingFeature)
-                .withRuntimeArgs(
-                    new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath()).build())
-                .withStepsToResult(stepsToResult)
-                .withStepsToLocation(stepsToLocation)
-                .withTimeServiceIncrement(STEP_DURATION)
+        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofMillis(1000));
+
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(failingFeature, successfulFeature, pendingFeature))
+                .withAdditionalPlugins(timeService)
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("bg_1"),
+                    new StubStepDefinition("bg_2"),
+                    new StubStepDefinition("bg_3"),
+                    new StubStepDefinition("step_01"),
+                    new StubStepDefinition("step_02"),
+                    new StubStepDefinition("step_03", new StubException()),
+                    new StubStepDefinition("step_10"),
+                    new StubStepDefinition("step_20"),
+                    new StubStepDefinition("step_30")))
+                .withRuntimeOptions(runtimeOptionsBuilder.build())
                 .build()
                 .run();
     }
@@ -151,27 +148,11 @@ class TimelineFormatterTest {
 
     @Test
     void shouldWriteItemsCorrectlyToReportJsWhenRunInParallel() throws Throwable {
-        TestHelper.builder()
-                .withFeatures(failingFeature, successfulFeature, pendingFeature)
-                .withRuntimeArgs(new RuntimeOptionsBuilder().addPluginName("timeline:" + reportDir.getAbsolutePath())
-                        .setThreads(2).build())
-                .withStepsToResult(stepsToResult)
-                .withStepsToLocation(stepsToLocation)
-                .withTimeServiceIncrement(STEP_DURATION)
-                .build()
-                .run();
+        runtimeOptionsBuilder.setThreads(2);
+        runFormatterWithPlugin();
 
-        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(0L); // Have
-        // to
-        // ignore
-        // actual
-        // thread
-        // id
-        // and
-        // just
-        // check
-        // not
-        // null
+        // Have to ignore actual thread id and just checknot null
+        final TimelineFormatter.TestData[] expectedTests = getExpectedTestData(0L);
 
         final ActualReportOutput actualOutput = readReport();
 
@@ -319,7 +300,7 @@ class TimelineFormatterTest {
     void shouldWriteItemsAndGroupsCorrectlyToReportJs() throws Throwable {
         runFormatterWithPlugin();
 
-        assertThat(REPORT_JS + " was not found", reportJsFile.exists(), is(equalTo(true)));
+        assertThat(reportJsFile.exists(), is(equalTo(true)));
 
         final Long groupId = Thread.currentThread().getId();
         final String groupName = Thread.currentThread().toString();

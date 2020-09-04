@@ -1,41 +1,33 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.runner.TestHelper;
-import io.cucumber.plugin.event.Result;
+import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.runtime.StubFeatureSupplier;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
-import static io.cucumber.core.runner.TestHelper.createAttachHookAction;
-import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
-import static io.cucumber.core.runner.TestHelper.hookEntry;
-import static io.cucumber.core.runner.TestHelper.result;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.containsString;
+import static io.cucumber.core.plugin.BytesContainsString.bytesContainsString;
+import static java.time.Clock.fixed;
+import static java.time.Instant.EPOCH;
+import static java.time.ZoneId.of;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @DisabledOnOs(OS.WINDOWS)
 class TeamCityPluginTest {
-
-    private final List<Feature> features = new ArrayList<>();
-    private final Map<String, Result> stepsToResult = new HashMap<>();
-    private final Map<String, String> stepsToLocation = new HashMap<>();
-    private final List<SimpleEntry<String, Result>> hooks = new ArrayList<>();
-    private final List<String> hookLocations = new ArrayList<>();
-    private final List<Answer<Object>> hookActions = new ArrayList<>();
-    private final String location = new File("").toURI().toString();
 
     @Test
     void should_handle_scenario_outline() {
@@ -48,14 +40,22 @@ class TeamCityPluginTest {
                 "      |  name  |  arg   |\n" +
                 "      | name 1 | second |\n" +
                 "      | name 2 | third  |\n");
-        features.add(feature);
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
-        stepsToLocation.put("second step", "com.example.StepDefinition.secondStep()");
-        stepsToLocation.put("third step", "com.example.StepDefinition.thirdStep()");
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
+                .build()
+                .run();
 
-        assertThat(formatterOutput, containsString("" +
+        String location = new File("").toURI().toString();
+
+        String expected = "" +
                 "##teamcity[enteredTheMatrix timestamp = '1970-01-01T12:00:00.000+0000']\n" +
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Cucumber']\n" +
                 "##teamcity[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '1970-01-01T12:00:00.000+0000']\n"
@@ -97,26 +97,9 @@ class TeamCityPluginTest {
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'examples name']\n" +
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = '<name>']\n" +
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'feature name']\n" +
-                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Cucumber']\n"));
-    }
+                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Cucumber']\n";
 
-    private String runFeaturesWithFormatter() {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        final TeamCityPlugin formatter = new TeamCityPlugin(printStream);
-
-        TestHelper.builder()
-                .withFormatterUnderTest(formatter)
-                .withFeatures(features)
-                .withStepsToResult(stepsToResult)
-                .withStepsToLocation(stepsToLocation)
-                .withHooks(hooks)
-                .withHookLocations(hookLocations)
-                .withHookActions(hookActions)
-                .build()
-                .run();
-
-        return new String(byteArrayOutputStream.toByteArray(), UTF_8);
+        assertThat(out, bytesContainsString(expected));
     }
 
     @Test
@@ -125,18 +108,21 @@ class TeamCityPluginTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        features.add(feature);
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
-        stepsToResult.put("first step", result("passed"));
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
 
-        hooks.add(hookEntry("before", result("passed")));
-        hookLocations.add("Hooks.before_hook_3()");
-        hookActions.add(createAttachHookAction("A message".getBytes(), "text/plain"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition(
+                        (TestCaseState state) -> state.attach("A message", "text/plain", null))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
+                .build()
+                .run();
 
-        String formatterOutput = runFeaturesWithFormatter();
-
-        assertThat(formatterOutput, containsString("" +
+        assertThat(out, bytesContainsString("" +
                 "##teamcity[message text='Embed event: |[text/plain 9 bytes|]|n' status='NORMAL']\n"));
     }
 
@@ -146,18 +132,20 @@ class TeamCityPluginTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        features.add(feature);
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
-        stepsToResult.put("first step", result("passed"));
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
 
-        hooks.add(hookEntry("before", result("passed")));
-        hookLocations.add("Hooks.before_hook_1()");
-        hookActions.add(createWriteHookAction("A message"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition((TestCaseState state) -> state.log("A message"))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
+                .build()
+                .run();
 
-        String formatterOutput = runFeaturesWithFormatter();
-
-        assertThat(formatterOutput, containsString("" +
+        assertThat(out, bytesContainsString("" +
                 "##teamcity[message text='Write event:|nA message|n' status='NORMAL']\n"));
     }
 
@@ -167,18 +155,21 @@ class TeamCityPluginTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        features.add(feature);
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
-        stepsToResult.put("first step", result("passed"));
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
 
-        hooks.add(hookEntry("before", result("passed")));
-        hookLocations.add("Hooks.before_hook_3()");
-        hookActions.add(createAttachHookAction("A message".getBytes(), "text/plain", "message.txt"));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition(
+                        (TestCaseState state) -> state.attach("A message", "text/plain", "message.txt"))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
+                .build()
+                .run();
 
-        String formatterOutput = runFeaturesWithFormatter();
-
-        assertThat(formatterOutput, containsString("" +
+        assertThat(out, bytesContainsString("" +
                 "##teamcity[message text='Embed event: message.txt |[text/plain 9 bytes|]|n' status='NORMAL']\n"));
     }
 
@@ -188,13 +179,18 @@ class TeamCityPluginTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        features.add(feature);
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
-        stepsToResult.put("first step", result("failed"));
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", new StubException("Step failed", "the stack trace"))))
+                .build()
+                .run();
 
-        assertThat(formatterOutput, containsString("" +
+        assertThat(out, bytesContainsString("" +
                 "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'first step']\n"));
     }
 
@@ -204,13 +200,17 @@ class TeamCityPluginTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        features.add(feature);
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
-        stepsToResult.put("first step", result("undefined"));
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier())
+                .build()
+                .run();
 
-        assertThat(formatterOutput, containsString("" +
+        assertThat(out, bytesContainsString("" +
                 "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement missing steps with the snippets below:|n|n' name = 'first step']\n"));
     }
 
@@ -220,18 +220,46 @@ class TeamCityPluginTest {
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Given first step\n");
-        features.add(feature);
-        stepsToLocation.put("first step", "com.example.StepDefinition.firstStep()");
-        stepsToResult.put("first step", result("passed"));
-        hooks.add(hookEntry("before", result("failed")));
-        hookLocations.add("com.example.HookDefinition.beforeHook()");
 
-        String formatterOutput = runFeaturesWithFormatter();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition(new StubException("Step failed", "the stack trace"))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
+                .build()
+                .run();
 
-        assertThat(formatterOutput, containsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n"
+        assertThat(out, bytesContainsString("" +
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '{stubbed location with details}' captureStandardOutput = 'true' name = 'Before']\n"
                 +
                 "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'Before']"));
+    }
+
+    @Test
+    void should_print_location_hint_for_hooks() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition("com.example.HookDefinition.beforeHook()")),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
+                .build()
+                .run();
+
+        assertThat(out, bytesContainsString("" +
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n"));
     }
 
 }

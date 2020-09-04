@@ -4,20 +4,19 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 
-import static org.hamcrest.CoreMatchers.is;
+import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class NoPublishFormatterTest {
     @Test
-    public void should_print_banner() throws UnsupportedEncodingException {
+    public void should_print_banner() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(bytes);
         NoPublishFormatter noPublishFormatter = new NoPublishFormatter(out);
         noPublishFormatter.setMonochrome(true);
         noPublishFormatter.printBanner();
-        assertThat(bytes.toString("UTF-8"), is("" +
+        assertThat(bytes, isBytesEqualTo("" +
                 "┌─────────────────────────────────────────────────────────────────────────────┐\n" +
                 "│ Share your Cucumber Report with your team at https://reports.cucumber.io    │\n" +
                 "│ Activate publishing with one of the following:                              │\n" +
