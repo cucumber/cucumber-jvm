@@ -49,29 +49,29 @@ class JsonFormatterTest {
 
     private Builder createRuntime(ByteArrayOutputStream out) {
         Feature feature = TestFeatureParser.parse(
-                "classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
-                getClass().getResourceAsStream("JsonPrettyFormatterTest.feature"));
+            "classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
+            getClass().getResourceAsStream("JsonPrettyFormatterTest.feature"));
 
         return Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition()),
-                        asList(
-                                new StubStepDefinition("bg_1"),
-                                new StubStepDefinition("bg_2"),
-                                new StubStepDefinition("bg_3"),
-                                new StubStepDefinition("step_1"),
-                                new StubStepDefinition("step_2"),
-                                new StubStepDefinition("step_3"),
-                                new StubStepDefinition("cliché"),
-                                new StubStepDefinition("so_1 {int}", Integer.class),
-                                new StubStepDefinition("so_2 {int} cucumbers", Integer.class),
-                                new StubStepDefinition("{int} so_3", Integer.class),
-                                new StubStepDefinition("a"),
-                                new StubStepDefinition("b"),
-                                new StubStepDefinition("c")),
-                        emptyList()))
+                    singletonList(new StubHookDefinition()),
+                    asList(
+                        new StubStepDefinition("bg_1"),
+                        new StubStepDefinition("bg_2"),
+                        new StubStepDefinition("bg_3"),
+                        new StubStepDefinition("step_1"),
+                        new StubStepDefinition("step_2"),
+                        new StubStepDefinition("step_3"),
+                        new StubStepDefinition("cliché"),
+                        new StubStepDefinition("so_1 {int}", Integer.class),
+                        new StubStepDefinition("so_2 {int} cucumbers", Integer.class),
+                        new StubStepDefinition("{int} so_3", Integer.class),
+                        new StubStepDefinition("a"),
+                        new StubStepDefinition("b"),
+                        new StubStepDefinition("c")),
+                    emptyList()))
                 .withAdditionalPlugins(new JsonFormatter(out));
     }
 
@@ -169,7 +169,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
                 .build()
                 .run();
 
@@ -228,8 +228,8 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()",
-                                new StubException())))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()",
+                        new StubException())))
                 .build()
                 .run();
 
@@ -290,7 +290,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
                 .build()
                 .run();
 
@@ -357,7 +357,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
                 .build()
                 .run();
 
@@ -452,7 +452,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
                 .build()
                 .run();
 
@@ -517,9 +517,9 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
-                        new StubStepDefinition("the monkey eats bananas", "StepDefs.monkey_eats_bananas()"),
-                        new StubStepDefinition("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()")))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
+                    new StubStepDefinition("the monkey eats bananas", "StepDefs.monkey_eats_bananas()"),
+                    new StubStepDefinition("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()")))
                 .build()
                 .run();
 
@@ -644,7 +644,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()")))
+                    new StubStepDefinition("the monkey eats more bananas", "StepDefs.monkey_eats_more_bananas()")))
                 .build()
                 .run();
 
@@ -731,9 +731,9 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition("Hooks.before_hook_1()")),
-                        singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
-                        singletonList(new StubHookDefinition("Hooks.after_hook_1()"))))
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()")),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    singletonList(new StubHookDefinition("Hooks.after_hook_1()"))))
                 .build()
                 .run();
 
@@ -815,15 +815,15 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        emptyList(),
-                        singletonList(new StubHookDefinition("Hooks.beforestep_hooks_1()")),
-                        asList(
-                                new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
-                                new StubStepDefinition("monkey arrives", "StepDefs.monkey_arrives()")),
-                        asList(
-                                new StubHookDefinition("Hooks.afterstep_hooks_1()"),
-                                new StubHookDefinition("Hooks.afterstep_hooks_2()")),
-                        emptyList()))
+                    emptyList(),
+                    singletonList(new StubHookDefinition("Hooks.beforestep_hooks_1()")),
+                    asList(
+                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
+                        new StubStepDefinition("monkey arrives", "StepDefs.monkey_arrives()")),
+                    asList(
+                        new StubHookDefinition("Hooks.afterstep_hooks_1()"),
+                        new StubHookDefinition("Hooks.afterstep_hooks_2()")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -956,10 +956,10 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition("Hooks.before_hook_1()",
-                                testCaseState -> testCaseState.log("printed from hook"))),
-                        singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
-                        emptyList()))
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                        testCaseState -> testCaseState.log("printed from hook"))),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -1032,11 +1032,11 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition("Hooks.before_hook_1()",
-                                testCaseState -> testCaseState
-                                        .attach(new byte[] { 1, 2, 3 }, "mime-type;base64", null))),
-                        singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
-                        emptyList()))
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                        testCaseState -> testCaseState
+                                .attach(new byte[] { 1, 2, 3 }, "mime-type;base64", null))),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -1112,11 +1112,11 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition("Hooks.before_hook_1()",
-                                testCaseState -> testCaseState.attach(new byte[] { 1, 2, 3 }, "mime-type;base64",
-                                        "someEmbedding"))),
-                        singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
-                        emptyList()))
+                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                        testCaseState -> testCaseState.attach(new byte[] { 1, 2, 3 }, "mime-type;base64",
+                            "someEmbedding"))),
+                    singletonList(new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -1196,7 +1196,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", String.class)))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", String.class)))
                 .build()
                 .run();
 
@@ -1262,7 +1262,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", String.class)))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", String.class)))
                 .build()
                 .run();
 
@@ -1328,7 +1328,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", DataTable.class)))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", DataTable.class)))
                 .build()
                 .run();
 
@@ -1406,8 +1406,8 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
-                        new StubStepDefinition("there are oranges", "StepDefs.there_are_oranges()")))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()"),
+                    new StubStepDefinition("there are oranges", "StepDefs.there_are_oranges()")))
                 .build()
                 .run();
 

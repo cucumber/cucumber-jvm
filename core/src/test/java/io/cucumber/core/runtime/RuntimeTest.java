@@ -13,7 +13,6 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.core.runner.TestHelper;
 import io.cucumber.messages.Messages;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
