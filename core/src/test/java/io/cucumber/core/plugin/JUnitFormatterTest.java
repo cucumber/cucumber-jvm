@@ -1,13 +1,13 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubPendingException;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.StepDurationTimeService;
-import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
-import io.cucumber.core.backend.StubHookDefinition;
-import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Clock.fixed;
 import static java.time.Duration.ofMillis;
 import static java.time.Instant.EPOCH;
@@ -31,14 +32,17 @@ import static org.xmlunit.matchers.ValidationMatcher.valid;
 
 class JUnitFormatterTest {
 
-    private static void assertXmlEqual(Object expected, Object actual) {
-        InputStream xsd = JUnitFormatterTest.class.getResourceAsStream("/io/cucumber/core/plugin/surefire-test-report-3.0.xsd");
-        assertThat(actual, isIdenticalTo(expected).ignoreWhitespace());
-        assertThat(actual, valid(xsd));
+    @SuppressWarnings("unchecked")
+    private static void assertXmlEqual(String expected, ByteArrayOutputStream actual) {
+        String actualString = new String(actual.toByteArray(), UTF_8);
+        String xsd = "/io/cucumber/core/plugin/surefire-test-report-3.0.xsd";
+        InputStream schema = JUnitFormatterTest.class.getResourceAsStream(xsd);
+        assertThat(actualString, isIdenticalTo(expected).ignoreWhitespace());
+        assertThat(actualString, valid(schema));
     }
 
     @Test
-    void should_format_passed_scenario() throws Throwable {
+    void should_format_passed_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -70,11 +74,11 @@ class JUnitFormatterTest {
                 "    </testcase>\n" +
                 "</testsuite>\n";
 
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_background() throws Throwable {
+    void should_format_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Background:\n" +
@@ -116,11 +120,11 @@ class JUnitFormatterTest {
                 "    </testcase>\n" +
                 "</testsuite>\n";
 
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_multiple_scenarios() throws Throwable {
+    void should_format_multiple_scenarios() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: First scenario\n" +
@@ -165,11 +169,11 @@ class JUnitFormatterTest {
                 "    </testcase>\n" +
                 "</testsuite>\n";
 
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_empty_scenario() throws Throwable {
+    void should_format_empty_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n");
@@ -190,11 +194,11 @@ class JUnitFormatterTest {
                 "        <failure message=\"The scenario has no steps\" type=\"java.lang.Exception\"/>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_skipped_scenario() throws Throwable {
+    void should_format_skipped_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -233,7 +237,7 @@ class JUnitFormatterTest {
                 "]]></skipped>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     private String getStackTrace(Throwable exception) {
@@ -243,7 +247,7 @@ class JUnitFormatterTest {
     }
 
     @Test
-    void should_format_pending_scenario() throws Throwable {
+    void should_format_pending_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -268,7 +272,7 @@ class JUnitFormatterTest {
                 "<testsuite errors=\"0\" failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.TestPendingException\">\n"
+                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.StubPendingException\">\n"
                 +
                 "            <![CDATA[Given first step............................................................pending\n"
                 +
@@ -278,11 +282,11 @@ class JUnitFormatterTest {
                 "        </failure>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_failed_scenario() throws Exception {
+    void should_format_failed_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -317,11 +321,11 @@ class JUnitFormatterTest {
                 "the stack trace]]></failure>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_handle_failure_in_before_hook() throws Exception {
+    void should_handle_failure_in_before_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -361,11 +365,11 @@ class JUnitFormatterTest {
                 "]]></failure>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_handle_pending_in_before_hook() throws Exception {
+    void should_handle_pending_in_before_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -394,7 +398,7 @@ class JUnitFormatterTest {
                 "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.TestPendingException\">\n"
+                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.StubPendingException\">\n"
                 +
                 "            <![CDATA[Given first step............................................................skipped\n"
                 +
@@ -404,11 +408,11 @@ class JUnitFormatterTest {
                 "        </failure>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_handle_failure_in_before_hook_with_background() throws Exception {
+    void should_handle_failure_in_before_hook_with_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Background: background name\n" +
@@ -449,11 +453,11 @@ class JUnitFormatterTest {
                 "]]></failure>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_handle_failure_in_after_hook() throws Exception {
+    void should_handle_failure_in_after_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -493,11 +497,11 @@ class JUnitFormatterTest {
                 "]]></failure>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_accumulate_time_from_steps_and_hooks() throws Exception {
+    void should_accumulate_time_from_steps_and_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n" +
@@ -532,11 +536,11 @@ class JUnitFormatterTest {
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_scenario_outlines() throws Exception {
+    void should_format_scenario_outlines() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario Outline: outline_name\n" +
@@ -579,11 +583,11 @@ class JUnitFormatterTest {
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_scenario_outlines_with_multiple_examples() throws Exception {
+    void should_format_scenario_outlines_with_multiple_examples() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario Outline: outline name\n" +
@@ -644,11 +648,11 @@ class JUnitFormatterTest {
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
     @Test
-    void should_format_scenario_outlines_with_arguments_in_name() throws Exception {
+    void should_format_scenario_outlines_with_arguments_in_name() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario Outline: outline name <arg>\n" +
@@ -691,7 +695,7 @@ class JUnitFormatterTest {
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
-        assertXmlEqual(expected, out.toString("UTF-8"));
+        assertXmlEqual(expected, out);
     }
 
 }

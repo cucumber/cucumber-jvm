@@ -1,13 +1,13 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubPendingException;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.StepDurationTimeService;
-import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
-import io.cucumber.core.backend.StubHookDefinition;
-import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Clock.fixed;
 import static java.time.Duration.ofMillis;
 import static java.time.Instant.EPOCH;
@@ -27,8 +28,13 @@ import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
 
 final class TestNGFormatterTest {
 
+    private static void assertXmlEquals(String expected, ByteArrayOutputStream actual) {
+        String actualString = new String(actual.toByteArray(), UTF_8);
+        assertThat(actualString, isIdenticalTo(expected).ignoreWhitespace());
+    }
+
     @Test
-    void testScenarioWithUndefinedSteps() throws Exception {
+    void testScenarioWithUndefinedSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Scenario: scenario\n" +
@@ -44,18 +50,16 @@ final class TestNGFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testng-results failed=\"1\" passed=\"0\" skipped=\"0\" total=\"1\">\n" +
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
-                +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step...................................................................undefined\n"
-                +
+                "                            <![CDATA[When step...................................................................undefined\n"   +
                 "Then step...................................................................undefined\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -67,11 +71,13 @@ final class TestNGFormatterTest {
                 "            </class>\n" +
                 "        </test>\n" +
                 "    </suite>\n" +
-                "</testng-results>\n").ignoreWhitespace());
+                "</testng-results>\n";
+
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testScenarioWithPendingSteps() throws Exception {
+    void testScenarioWithPendingSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Scenario: scenario\n" +
@@ -84,23 +90,21 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("step1", new StubPendingException()),
-                    new StubStepDefinition("step2")))
+                        new StubStepDefinition("step1", new StubPendingException()),
+                        new StubStepDefinition("step2")))
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testng-results failed=\"1\" passed=\"0\" skipped=\"0\" total=\"1\">\n" +
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
-                +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step1..................................................................pending\n"
-                +
+                "                            <![CDATA[When step1..................................................................pending\n" +
                 "Then step2..................................................................skipped\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -112,11 +116,12 @@ final class TestNGFormatterTest {
                 "            </class>\n" +
                 "        </test>\n" +
                 "    </suite>\n" +
-                "</testng-results>\n").ignoreWhitespace());
+                "</testng-results>\n";
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testScenarioWithFailedSteps() throws Exception {
+    void testScenarioWithFailedSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Scenario: scenario\n" +
@@ -129,23 +134,20 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("step1", new StubException("message", "stacktrace")),
-                    new StubStepDefinition("step2")))
+                        new StubStepDefinition("step1", new StubException("message", "stacktrace")),
+                        new StubStepDefinition("step2")))
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"
-                +
-                "                    <exception class=\"io.cucumber.core.plugin.StubException\">"
-                +
-                "                        <message><![CDATA[When step1..................................................................failed\n"
-                +
+                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
+                "                    <exception class=\"io.cucumber.core.plugin.StubException\">" +
+                "                        <message><![CDATA[When step1..................................................................failed\n" +
                 "Then step2..................................................................skipped\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
@@ -154,11 +156,12 @@ final class TestNGFormatterTest {
                 "            </class>" +
                 "        </test>" +
                 "    </suite>" +
-                "</testng-results>").ignoreWhitespace());
+                "</testng-results>";
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testScenarioWithPassedSteps() throws Exception {
+    void testScenarioWithPassedSteps() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Scenario: scenario\n" +
@@ -171,25 +174,26 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("step")))
+                        new StubStepDefinition("step")))
                 .build()
                 .run();
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"1\" failed=\"0\" skipped=\"0\">" +
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"PASS\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>"
-                +
+                "                <test-method name=\"scenario\" status=\"PASS\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>"  +
                 "            </class>" +
                 "        </test>" +
                 "    </suite>" +
-                "</testng-results>").ignoreWhitespace());
+                "</testng-results>";
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testScenarioWithBackground() throws Exception {
+    void testScenarioWithBackground() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Background:\n" +
@@ -207,18 +211,17 @@ final class TestNGFormatterTest {
                 .withBackendSupplier(new StubBackendSupplier())
                 .build()
                 .run();
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testng-results failed=\"1\" passed=\"0\" skipped=\"0\" total=\"1\">\n" +
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
-                +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"  +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When background.............................................................undefined\n"
-                +
+                "                            <![CDATA[When background.............................................................undefined\n" +
                 "Then background.............................................................undefined\n" +
                 "When step...................................................................undefined\n" +
                 "Then step...................................................................undefined\n" +
@@ -232,11 +235,13 @@ final class TestNGFormatterTest {
                 "            </class>\n" +
                 "        </test>\n" +
                 "    </suite>\n" +
-                "</testng-results>\n").ignoreWhitespace());
+                "</testng-results>\n";
+
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testScenarioOutlineWithExamples() throws Exception {
+    void testScenarioOutlineWithExamples() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Scenario Outline: scenario\n" +
@@ -255,18 +260,16 @@ final class TestNGFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testng-results failed=\"2\" passed=\"0\" skipped=\"0\" total=\"2\">\n" +
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
-                +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step...................................................................undefined\n"
-                +
+                "                            <![CDATA[When step...................................................................undefined\n" +
                 "Then step...................................................................undefined\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -275,12 +278,10 @@ final class TestNGFormatterTest {
                 "                        </full-stacktrace>\n" +
                 "                    </exception>\n" +
                 "                </test-method>\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario_2\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
-                +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario_2\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step...................................................................undefined\n"
-                +
+                "                            <![CDATA[When step...................................................................undefined\n" +
                 "Then step...................................................................undefined\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -292,11 +293,12 @@ final class TestNGFormatterTest {
                 "            </class>\n" +
                 "        </test>\n" +
                 "    </suite>\n" +
-                "</testng-results>\n").ignoreWhitespace());
+                "</testng-results>\n";
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testDurationCalculationOfStepsAndHooks() throws Exception {
+    void testDurationCalculationOfStepsAndHooks() {
         Feature feature1 = TestFeatureParser.parse("path/feature1.feature", "" +
                 "Feature: feature_1\n" +
                 "  Scenario: scenario_1\n" +
@@ -318,33 +320,31 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(timeService, new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition()),
-                    singletonList(new StubStepDefinition("step")),
-                    singletonList(new StubHookDefinition())))
+                        singletonList(new StubHookDefinition()),
+                        singletonList(new StubStepDefinition("step")),
+                        singletonList(new StubHookDefinition())))
                 .build()
                 .run();
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"3\" passed=\"3\" failed=\"0\" skipped=\"0\">" +
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"12\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"12\">" +
                 "            <class name=\"feature_1\">" +
-                "                <test-method name=\"scenario_1\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00.004Z\"/>"
-                +
-                "                <test-method name=\"scenario_2\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.004Z\" finished-at=\"1970-01-01T00:00:00.008Z\"/>"
-                +
+                "                <test-method name=\"scenario_1\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00.004Z\"/>" +
+                "                <test-method name=\"scenario_2\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.004Z\" finished-at=\"1970-01-01T00:00:00.008Z\"/>" +
                 "            </class>" +
                 "            <class name=\"feature_2\">" +
-                "                <test-method name=\"scenario_3\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.008Z\" finished-at=\"1970-01-01T00:00:00.012Z\"/>"
-                +
+                "                <test-method name=\"scenario_3\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.008Z\" finished-at=\"1970-01-01T00:00:00.012Z\"/>" +
                 "            </class>" +
                 "        </test>" +
                 "    </suite>" +
-                "</testng-results>").ignoreWhitespace());
+                "</testng-results>";
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testScenarioWithFailedBeforeHook() throws Exception {
+    void testScenarioWithFailedBeforeHook() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Scenario: scenario\n" +
@@ -357,24 +357,21 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(new StubException("message", "stacktrace"))),
-                    singletonList(new StubStepDefinition("step")),
-                    emptyList()))
+                        singletonList(new StubHookDefinition(new StubException("message", "stacktrace"))),
+                        singletonList(new StubStepDefinition("step")),
+                        emptyList()))
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"
-                +
-                "                    <exception class=\"io.cucumber.core.plugin.StubException\">"
-                +
-                "                        <message><![CDATA[When step...................................................................skipped\n"
-                +
+                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
+                "                    <exception class=\"io.cucumber.core.plugin.StubException\">" +
+                "                        <message><![CDATA[When step...................................................................skipped\n" +
                 "Then step...................................................................skipped\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
@@ -383,11 +380,12 @@ final class TestNGFormatterTest {
                 "            </class>" +
                 "        </test>" +
                 "    </suite>" +
-                "</testng-results>").ignoreWhitespace());
+                "</testng-results>";
+        assertXmlEquals(expected, out);
     }
 
     @Test
-    void testScenarioWithFailedAfterHook() throws Exception {
+    void testScenarioWithFailedAfterHook() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature\n" +
                 "  Scenario: scenario\n" +
@@ -400,23 +398,20 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    emptyList(),
-                    singletonList(new StubStepDefinition("step")),
-                    singletonList(new StubHookDefinition(new StubException("message", "stacktrace")))))
+                        emptyList(),
+                        singletonList(new StubStepDefinition("step")),
+                        singletonList(new StubHookDefinition(new StubException("message", "stacktrace")))))
                 .build()
                 .run();
-        assertThat(out.toString("UTF-8"), isIdenticalTo("" +
+        String expected = "" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +
                 "<testng-results total=\"1\" passed=\"0\" failed=\"1\" skipped=\"0\">" +
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"
-                +
-                "                    <exception class=\"io.cucumber.core.plugin.StubException\">"
-                +
-                "                        <message><![CDATA[When step...................................................................passed\n"
-                +
+                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"  +
+                "                    <exception class=\"io.cucumber.core.plugin.StubException\">" +
+                "                        <message><![CDATA[When step...................................................................passed\n" +
                 "Then step...................................................................passed\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
@@ -425,7 +420,8 @@ final class TestNGFormatterTest {
                 "            </class>" +
                 "        </test>" +
                 "    </suite>" +
-                "</testng-results>").ignoreWhitespace());
+                "</testng-results>";
+        assertXmlEquals(expected, out);
     }
 
 }

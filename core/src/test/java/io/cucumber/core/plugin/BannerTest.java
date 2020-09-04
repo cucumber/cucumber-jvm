@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class BannerTest {
 
     @Test
-    void printsAnsiBanner() throws Exception {
+    void printsAnsiBanner() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         Banner banner = new Banner(new PrintStream(bytes), false);
 
@@ -25,7 +26,7 @@ class BannerTest {
                 new Banner.Span("Bla", AnsiEscapes.RED)),
             new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
-        assertThat(bytes.toString("UTF-8"), is("" +
+        assertThat(bytes, isBytesEqualTo("" +
                 "\u001B[36m┌─────────────┐\u001B[0m\n" +
                 "\u001B[36m│\u001B[0m Bla         \u001B[36m│\u001B[0m\n" +
                 "\u001B[36m│\u001B[0m Bla \u001B[34mBla\u001B[0m \u001B[31mBla\u001B[0m \u001B[36m│\u001B[0m\n" +
@@ -47,7 +48,7 @@ class BannerTest {
                 new Banner.Span("Bla", AnsiEscapes.RED)),
             new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
-        assertThat(bytes.toString("UTF-8"), is("" +
+        assertThat(bytes, isBytesEqualTo("" +
                 "┌─────────────┐\n" +
                 "│ Bla         │\n" +
                 "│ Bla Bla Bla │\n" +
