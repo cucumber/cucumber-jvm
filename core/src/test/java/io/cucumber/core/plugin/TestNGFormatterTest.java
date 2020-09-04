@@ -56,10 +56,12 @@ final class TestNGFormatterTest {
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
+                +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step...................................................................undefined\n"   +
+                "                            <![CDATA[When step...................................................................undefined\n"
+                +
                 "Then step...................................................................undefined\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -90,8 +92,8 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("step1", new StubPendingException()),
-                        new StubStepDefinition("step2")))
+                    new StubStepDefinition("step1", new StubPendingException()),
+                    new StubStepDefinition("step2")))
                 .build()
                 .run();
 
@@ -101,10 +103,12 @@ final class TestNGFormatterTest {
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
+                +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step1..................................................................pending\n" +
+                "                            <![CDATA[When step1..................................................................pending\n"
+                +
                 "Then step2..................................................................skipped\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -134,8 +138,8 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("step1", new StubException("message", "stacktrace")),
-                        new StubStepDefinition("step2")))
+                    new StubStepDefinition("step1", new StubException("message", "stacktrace")),
+                    new StubStepDefinition("step2")))
                 .build()
                 .run();
 
@@ -145,9 +149,11 @@ final class TestNGFormatterTest {
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
+                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"
+                +
                 "                    <exception class=\"io.cucumber.core.plugin.StubException\">" +
-                "                        <message><![CDATA[When step1..................................................................failed\n" +
+                "                        <message><![CDATA[When step1..................................................................failed\n"
+                +
                 "Then step2..................................................................skipped\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
@@ -174,7 +180,7 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("step")))
+                    new StubStepDefinition("step")))
                 .build()
                 .run();
 
@@ -184,7 +190,8 @@ final class TestNGFormatterTest {
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"PASS\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>"  +
+                "                <test-method name=\"scenario\" status=\"PASS\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\"/>"
+                +
                 "            </class>" +
                 "        </test>" +
                 "    </suite>" +
@@ -218,10 +225,12 @@ final class TestNGFormatterTest {
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"  +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
+                +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When background.............................................................undefined\n" +
+                "                            <![CDATA[When background.............................................................undefined\n"
+                +
                 "Then background.............................................................undefined\n" +
                 "When step...................................................................undefined\n" +
                 "Then step...................................................................undefined\n" +
@@ -266,10 +275,12 @@ final class TestNGFormatterTest {
                 "    <suite duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "        <test duration-ms=\"0\" name=\"io.cucumber.core.plugin.TestNGFormatter\">\n" +
                 "            <class name=\"feature\">\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
+                +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step...................................................................undefined\n" +
+                "                            <![CDATA[When step...................................................................undefined\n"
+                +
                 "Then step...................................................................undefined\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -278,10 +289,12 @@ final class TestNGFormatterTest {
                 "                        </full-stacktrace>\n" +
                 "                    </exception>\n" +
                 "                </test-method>\n" +
-                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario_2\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n" +
+                "                <test-method duration-ms=\"0\" finished-at=\"1970-01-01T00:00:00Z\" name=\"scenario_2\" started-at=\"1970-01-01T00:00:00Z\" status=\"FAIL\">\n"
+                +
                 "                    <exception class=\"The scenario has pending or undefined step(s)\">\n" +
                 "                        <message>\n" +
-                "                            <![CDATA[When step...................................................................undefined\n" +
+                "                            <![CDATA[When step...................................................................undefined\n"
+                +
                 "Then step...................................................................undefined\n" +
                 "]]>\n" +
                 "                        </message>\n" +
@@ -320,9 +333,9 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(timeService, new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition()),
-                        singletonList(new StubStepDefinition("step")),
-                        singletonList(new StubHookDefinition())))
+                    singletonList(new StubHookDefinition()),
+                    singletonList(new StubStepDefinition("step")),
+                    singletonList(new StubHookDefinition())))
                 .build()
                 .run();
         String expected = "" +
@@ -331,11 +344,14 @@ final class TestNGFormatterTest {
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"12\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"12\">" +
                 "            <class name=\"feature_1\">" +
-                "                <test-method name=\"scenario_1\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00.004Z\"/>" +
-                "                <test-method name=\"scenario_2\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.004Z\" finished-at=\"1970-01-01T00:00:00.008Z\"/>" +
+                "                <test-method name=\"scenario_1\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00.004Z\"/>"
+                +
+                "                <test-method name=\"scenario_2\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.004Z\" finished-at=\"1970-01-01T00:00:00.008Z\"/>"
+                +
                 "            </class>" +
                 "            <class name=\"feature_2\">" +
-                "                <test-method name=\"scenario_3\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.008Z\" finished-at=\"1970-01-01T00:00:00.012Z\"/>" +
+                "                <test-method name=\"scenario_3\" status=\"PASS\" duration-ms=\"4\" started-at=\"1970-01-01T00:00:00.008Z\" finished-at=\"1970-01-01T00:00:00.012Z\"/>"
+                +
                 "            </class>" +
                 "        </test>" +
                 "    </suite>" +
@@ -357,9 +373,9 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(new StubException("message", "stacktrace"))),
-                        singletonList(new StubStepDefinition("step")),
-                        emptyList()))
+                    singletonList(new StubHookDefinition(new StubException("message", "stacktrace"))),
+                    singletonList(new StubStepDefinition("step")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -369,9 +385,11 @@ final class TestNGFormatterTest {
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">" +
+                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"
+                +
                 "                    <exception class=\"io.cucumber.core.plugin.StubException\">" +
-                "                        <message><![CDATA[When step...................................................................skipped\n" +
+                "                        <message><![CDATA[When step...................................................................skipped\n"
+                +
                 "Then step...................................................................skipped\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +
@@ -398,9 +416,9 @@ final class TestNGFormatterTest {
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        emptyList(),
-                        singletonList(new StubStepDefinition("step")),
-                        singletonList(new StubHookDefinition(new StubException("message", "stacktrace")))))
+                    emptyList(),
+                    singletonList(new StubStepDefinition("step")),
+                    singletonList(new StubHookDefinition(new StubException("message", "stacktrace")))))
                 .build()
                 .run();
         String expected = "" +
@@ -409,9 +427,11 @@ final class TestNGFormatterTest {
                 "    <suite name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "        <test name=\"io.cucumber.core.plugin.TestNGFormatter\" duration-ms=\"0\">" +
                 "            <class name=\"feature\">" +
-                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"  +
+                "                <test-method name=\"scenario\" status=\"FAIL\" duration-ms=\"0\" started-at=\"1970-01-01T00:00:00Z\" finished-at=\"1970-01-01T00:00:00Z\">"
+                +
                 "                    <exception class=\"io.cucumber.core.plugin.StubException\">" +
-                "                        <message><![CDATA[When step...................................................................passed\n" +
+                "                        <message><![CDATA[When step...................................................................passed\n"
+                +
                 "Then step...................................................................passed\n" +
                 "]]></message>" +
                 "                        <full-stacktrace><![CDATA[stacktrace]]></full-stacktrace>" +

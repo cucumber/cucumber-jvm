@@ -2,12 +2,12 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;

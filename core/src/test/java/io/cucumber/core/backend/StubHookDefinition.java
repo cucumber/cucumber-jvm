@@ -26,7 +26,7 @@ public class StubHookDefinition implements HookDefinition {
 
     @Override
     public void execute(TestCaseState state) {
-        if(action != null){
+        if (action != null) {
             action.accept(state);
         }
         if (exception != null) {

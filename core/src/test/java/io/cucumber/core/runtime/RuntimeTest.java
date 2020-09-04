@@ -77,8 +77,8 @@ class RuntimeTest {
     private Runtime createStrictRuntime() {
         return Runtime.builder()
                 .withRuntimeOptions(
-                        new RuntimeOptionsBuilder()
-                                .build())
+                    new RuntimeOptionsBuilder()
+                            .build())
                 .withEventBus(bus)
                 .build();
     }
@@ -145,11 +145,11 @@ class RuntimeTest {
     @Test
     void should_make_scenario_name_available_to_hooks() {
         final Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
         final HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.getLocation()).thenReturn("");
         when(beforeHook.getTagExpression()).thenReturn("");
@@ -159,13 +159,12 @@ class RuntimeTest {
         Runtime runtime = Runtime.builder()
                 .withFeatureSupplier(featureSupplier)
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(beforeHook),
-                        asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")
-                        ),
-                        emptyList()))
+                    singletonList(beforeHook),
+                    asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    emptyList()))
                 .build();
         runtime.run();
 
@@ -191,31 +190,30 @@ class RuntimeTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(formatterSpy)
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")
-                ))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
         assertThat(formatterSpy.toString(),
-                is(equalTo("" +
-                        "TestRun started\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "TestRun finished\n")));
+            is(equalTo("" +
+                    "TestRun started\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "TestRun finished\n")));
     }
 
     @Test
@@ -241,41 +239,40 @@ class RuntimeTest {
                 .withAdditionalPlugins(formatterSpy)
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")
-                ))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
         assertThat(formatterSpy.toString(),
-                is(equalTo("" +
-                        "TestRun started\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "TestRun finished\n")));
+            is(equalTo("" +
+                    "TestRun started\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "TestRun finished\n")));
     }
 
     @Test
@@ -302,8 +299,7 @@ class RuntimeTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2, feature3))
                 .withAdditionalPlugins(formatterSpy)
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step")
-                ))
+                    new StubStepDefinition("first step")))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(3).build())
                 .build()
                 .run();
@@ -311,25 +307,25 @@ class RuntimeTest {
         String formatterOutput = formatterSpy.toString();
 
         assertThat(formatterOutput,
-                is(equalTo("" +
-                        "TestRun started\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "  TestCase started\n" +
-                        "    TestStep started\n" +
-                        "    TestStep finished\n" +
-                        "  TestCase finished\n" +
-                        "TestRun finished\n")));
+            is(equalTo("" +
+                    "TestRun started\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "  TestCase started\n" +
+                    "    TestStep started\n" +
+                    "    TestStep finished\n" +
+                    "  TestCase finished\n" +
+                    "TestRun finished\n")));
     }
 
     @Test
@@ -347,9 +343,9 @@ class RuntimeTest {
                 "    Given first step\n");
 
         ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class,
-                (TestStepFinished event) -> {
-                    throw new RuntimeException("This exception is expected");
-                });
+            (TestStepFinished event) -> {
+                throw new RuntimeException("This exception is expected");
+            });
 
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
@@ -359,10 +355,10 @@ class RuntimeTest {
                 .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-                "There were 3 exceptions:\n" +
-                        "  java.lang.RuntimeException(This exception is expected)\n" +
-                        "  java.lang.RuntimeException(This exception is expected)\n" +
-                        "  java.lang.RuntimeException(This exception is expected)")));
+            "There were 3 exceptions:\n" +
+                    "  java.lang.RuntimeException(This exception is expected)\n" +
+                    "  java.lang.RuntimeException(This exception is expected)\n" +
+                    "  java.lang.RuntimeException(This exception is expected)")));
     }
 
     @Test
@@ -421,9 +417,9 @@ class RuntimeTest {
         final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
 
         Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class,
-                (StepDefinedEvent event) -> {
-                    stepDefinedEvents.add(event.getStepDefinition());
-                });
+            (StepDefinedEvent event) -> {
+                stepDefinedEvents.add(event.getStepDefinition());
+            });
 
         final MockedStepDefinition mockedStepDefinition = new MockedStepDefinition();
         final MockedScenarioScopedStepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();

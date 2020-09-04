@@ -35,9 +35,8 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("passed step"),
-                        new StubStepDefinition("skipped step", new TestAbortedException())
-                ))
+                    new StubStepDefinition("passed step"),
+                    new StubStepDefinition("skipped step", new TestAbortedException())))
                 .build()
                 .run();
 
@@ -60,9 +59,8 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("failed step", new StubException()),
-                        new StubStepDefinition("pending step", new StubPendingException())
-                ))
+                    new StubStepDefinition("failed step", new StubException()),
+                    new StubStepDefinition("pending step", new StubPendingException())))
                 .build()
                 .run();
 
@@ -83,10 +81,9 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step", new StubException())
-                ))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step", new StubException())))
                 .build()
                 .run();
 
@@ -108,10 +105,9 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("background step", new StubException()),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")
-                ))
+                    new StubStepDefinition("background step", new StubException()),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
@@ -135,10 +131,9 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("executing first row"),
-                        new StubStepDefinition("executing second row", new StubException()),
-                        new StubStepDefinition("everything is ok")
-                ))
+                    new StubStepDefinition("executing first row"),
+                    new StubStepDefinition("executing second row", new StubException()),
+                    new StubStepDefinition("everything is ok")))
                 .build()
                 .run();
 
@@ -159,14 +154,12 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(new StubException())),
-                        asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")
-                        ),
-                        emptyList()
-                ))
+                    singletonList(new StubHookDefinition(new StubException())),
+                    asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -187,14 +180,12 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        emptyList(),
-                        asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")
-                        ),
-                        singletonList(new StubHookDefinition(new StubException()))
-                ))
+                    emptyList(),
+                    asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    singletonList(new StubHookDefinition(new StubException()))))
                 .build()
                 .run();
 
@@ -217,11 +208,10 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step", new StubException()),
-                        new StubStepDefinition("third step", new StubException()),
-                        new StubStepDefinition("forth step")
-                ))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step", new StubException()),
+                    new StubStepDefinition("third step", new StubException()),
+                    new StubStepDefinition("forth step")))
                 .build()
                 .run();
 
@@ -246,16 +236,15 @@ class RerunFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
                 .withAdditionalPlugins(new RerunFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step", new StubException()),
-                        new StubStepDefinition("third step", new StubException()),
-                        new StubStepDefinition("forth step")
-                ))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step", new StubException()),
+                    new StubStepDefinition("third step", new StubException()),
+                    new StubStepDefinition("forth step")))
                 .build()
                 .run();
 
         assertThat(out,
-                isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
+            isBytesEqualTo("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n"));
     }
 
 }

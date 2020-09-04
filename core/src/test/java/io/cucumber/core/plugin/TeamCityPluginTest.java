@@ -47,10 +47,9 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")
-                ))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
@@ -116,11 +115,10 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(
-                                (TestCaseState state) -> state.attach("A message", "text/plain", null))),
-                        singletonList(new StubStepDefinition("first step")),
-                        emptyList()
-                ))
+                    singletonList(new StubHookDefinition(
+                        (TestCaseState state) -> state.attach("A message", "text/plain", null))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -141,10 +139,9 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition((TestCaseState state) -> state.log("A message"))),
-                        singletonList(new StubStepDefinition("first step")),
-                        emptyList()
-                ))
+                    singletonList(new StubHookDefinition((TestCaseState state) -> state.log("A message"))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -165,11 +162,10 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(
-                                (TestCaseState state) -> state.attach("A message", "text/plain", "message.txt"))),
-                        singletonList(new StubStepDefinition("first step")),
-                        emptyList()
-                ))
+                    singletonList(new StubHookDefinition(
+                        (TestCaseState state) -> state.attach("A message", "text/plain", "message.txt"))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -190,8 +186,7 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", new StubException("Step failed", "the stack trace")))
-                )
+                    new StubStepDefinition("first step", new StubException("Step failed", "the stack trace"))))
                 .build()
                 .run();
 
@@ -232,10 +227,9 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(new StubException("Step failed", "the stack trace"))),
-                        singletonList(new StubStepDefinition("first step")),
-                        emptyList()
-                ))
+                    singletonList(new StubHookDefinition(new StubException("Step failed", "the stack trace"))),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
                 .build()
                 .run();
 
@@ -258,16 +252,15 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition() {
+                    singletonList(new StubHookDefinition() {
 
-                            @Override
-                            public String getLocation() {
-                                return "com.example.HookDefinition.beforeHook()";
-                            }
-                        }),
-                        singletonList(new StubStepDefinition("first step")),
-                        emptyList()
-                ))
+                        @Override
+                        public String getLocation() {
+                            return "com.example.HookDefinition.beforeHook()";
+                        }
+                    }),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
                 .build()
                 .run();
 
