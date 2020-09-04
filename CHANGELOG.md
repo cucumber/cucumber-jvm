@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
  * [Core] CucumberOptions default snippet type should not override properties ([2107](https://github.com/cucumber/cucumber-jvm/pull/2107) M.P. Korstanje)
  * [Core] Replace parentFile.makeDirs with Files.createDirectories(parentFile) ([2104](https://github.com/cucumber/cucumber-jvm/pull/2104) M.P. Korstanje)
+ * [Core] Separate run, dry-run and skip execution modes ([2102](https://github.com/cucumber/cucumber-jvm/pull/2109), [2102](https://github.com/cucumber/cucumber-jvm/pull/2109) M.P. Korstanje)
+   * Fixes `--dry-run` not failing on undefined steps
 
 ### Security
  * [Core] Update `create-meta` to 2.0.2 to avoid sharing credentials ([2110](https://github.com/cucumber/cucumber-jvm/pull/2110) vincent-psarga)
