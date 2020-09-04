@@ -33,7 +33,7 @@ import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 class JsonFormatterTest {
 
     @Test
-    void featureWithOutlineTest() throws Exception {
+    void featureWithOutlineTest() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         createRuntime(out)
                 .build()
@@ -44,7 +44,7 @@ class JsonFormatterTest {
                 .useDelimiter("\\A")
                 .next();
 
-        assertJsonEquals(expected, out.toString("UTF-8"));
+        assertJsonEquals(expected, out);
     }
 
     private Builder createRuntime(ByteArrayOutputStream out) {
@@ -76,7 +76,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void featureWithOutlineTestParallel() throws Exception {
+    void featureWithOutlineTestParallel() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         createRuntime(out)
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
@@ -88,7 +88,7 @@ class JsonFormatterTest {
                 .useDelimiter("\\A")
                 .next();
 
-        assertJsonEquals(expected, out.toString("UTF-8"));
+        assertJsonEquals(expected, out);
     }
 
     @Test
