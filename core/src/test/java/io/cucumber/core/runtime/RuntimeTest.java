@@ -4,13 +4,17 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.plugin.JUnitFormatter;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.messages.Messages;
@@ -32,17 +36,21 @@ import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
+import org.opentest4j.TestAbortedException;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import static java.time.Clock.fixed;
 import static java.time.Duration.ZERO;
+import static java.time.Duration.ofMillis;
 import static java.time.Instant.EPOCH;
 import static java.time.ZoneId.of;
 import static java.util.Arrays.asList;
@@ -532,7 +540,7 @@ class RuntimeTest {
 
     }
 
-    public static class FormatterSpy implements EventListener {
+    private static class FormatterSpy implements EventListener {
 
         private final StringBuilder calls = new StringBuilder();
 
