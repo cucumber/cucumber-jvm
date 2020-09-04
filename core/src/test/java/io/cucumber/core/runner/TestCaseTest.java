@@ -131,7 +131,8 @@ class TestCaseTest {
 
         InOrder order = inOrder(beforeStep1HookDefinition2, definitionMatch2, afterStep1HookDefinition2);
         order.verify(beforeStep1HookDefinition2, never()).execute(isA(TestCaseState.class));
-        order.verify(definitionMatch2).dryRunStep(isA(TestCaseState.class));
+        order.verify(definitionMatch2, never()).runStep(isA(TestCaseState.class));
+        order.verify(definitionMatch2, never()).dryRunStep(isA(TestCaseState.class));
         order.verify(afterStep1HookDefinition2, never()).execute(isA(TestCaseState.class));
     }
 
@@ -144,7 +145,8 @@ class TestCaseTest {
 
         InOrder order = inOrder(definitionMatch1, definitionMatch2);
         order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
-        order.verify(definitionMatch2).dryRunStep(isA(TestCaseState.class));
+        order.verify(definitionMatch2, never()).dryRunStep(isA(TestCaseState.class));
+        order.verify(definitionMatch2, never()).runStep(isA(TestCaseState.class));
     }
 
 }

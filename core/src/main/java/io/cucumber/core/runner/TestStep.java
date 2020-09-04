@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static io.cucumber.core.runner.ExecutionMode.SKIP;
 import static io.cucumber.core.runner.TestStepResultStatus.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
@@ -53,14 +54,14 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return id;
     }
 
-    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps) {
+    ExecutionMode run(TestCase testCase, EventBus bus, TestCaseState state, ExecutionMode executionMode) {
         Instant startTime = bus.getInstant();
         emitTestStepStarted(testCase, bus, state.getTestExecutionId(), startTime);
 
         Status status;
         Throwable error = null;
         try {
-            status = executeStep(state, skipSteps);
+            status = executeStep(state, executionMode);
         } catch (Throwable t) {
             error = t;
             status = mapThrowableToStatus(t);
@@ -72,7 +73,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
         emitTestStepFinished(testCase, bus, state.getTestExecutionId(), stopTime, duration, result);
 
-        return !result.getStatus().is(Status.PASSED);
+        return result.getStatus().is(Status.PASSED) ? executionMode : SKIP;
     }
 
     private void emitTestStepStarted(TestCase testCase, EventBus bus, UUID textExecutionId, Instant startTime) {
@@ -85,16 +86,10 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
                 .build());
     }
 
-    private Status executeStep(TestCaseState state, boolean skipSteps) throws Throwable {
+    private Status executeStep(TestCaseState state, ExecutionMode executionMode) throws Throwable {
         state.setCurrentTestStepId(id);
         try {
-            if (!skipSteps) {
-                stepDefinitionMatch.runStep(state);
-                return Status.PASSED;
-            } else {
-                stepDefinitionMatch.dryRunStep(state);
-                return Status.SKIPPED;
-            }
+            return executionMode.execute(stepDefinitionMatch, state);
         } finally {
             state.clearCurrentTestStepId();
         }
