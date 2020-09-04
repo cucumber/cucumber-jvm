@@ -1,8 +1,4 @@
-package io.cucumber.core.runtime;
-
-import io.cucumber.core.backend.ParameterInfo;
-import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.core.backend.TypeResolver;
+package io.cucumber.core.backend;
 
 import java.lang.reflect.Type;
 import java.util.List;

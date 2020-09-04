@@ -4,15 +4,13 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.FormatterSpy;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.core.runner.TestHelper;
@@ -20,14 +18,18 @@ import io.cucumber.messages.Messages;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.plugin.event.StepDefinition;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -36,15 +38,15 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-import static io.cucumber.core.runner.TestHelper.result;
+import static java.time.Clock.fixed;
 import static java.time.Duration.ZERO;
+import static java.time.Instant.EPOCH;
+import static java.time.ZoneId.of;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
@@ -75,8 +77,8 @@ class RuntimeTest {
     private Runtime createStrictRuntime() {
         return Runtime.builder()
                 .withRuntimeOptions(
-                    new RuntimeOptionsBuilder()
-                            .build())
+                        new RuntimeOptionsBuilder()
+                                .build())
                 .withEventBus(bus)
                 .build();
     }
@@ -133,8 +135,6 @@ class RuntimeTest {
     @Test
     void should_pass_if_no_features_are_found() {
         Runtime runtime = Runtime.builder()
-                .withRuntimeOptions(new RuntimeOptionsBuilder()
-                        .build())
                 .build();
 
         runtime.run();
@@ -145,67 +145,33 @@ class RuntimeTest {
     @Test
     void should_make_scenario_name_available_to_hooks() {
         final Feature feature = TestFeatureParser.parse("path/test.feature",
-            "Feature: feature name\n" +
-                    "  Scenario: scenario name\n" +
-                    "    Given first step\n" +
-                    "    When second step\n" +
-                    "    Then third step\n");
+                "Feature: feature name\n" +
+                        "  Scenario: scenario name\n" +
+                        "    Given first step\n" +
+                        "    When second step\n" +
+                        "    Then third step\n");
         final HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.getLocation()).thenReturn("");
         when(beforeHook.getTagExpression()).thenReturn("");
 
-        TestBackendSupplier testBackendSupplier = createTestBackendSupplier(feature, beforeHook);
-
-        FeatureSupplier featureSupplier = new TestFeatureSupplier(feature);
+        FeatureSupplier featureSupplier = new StubFeatureSupplier(feature);
 
         Runtime runtime = Runtime.builder()
-                .withBackendSupplier(testBackendSupplier)
                 .withFeatureSupplier(featureSupplier)
-                .withEventBus(bus)
+                .withBackendSupplier(new StubBackendSupplier(
+                        singletonList(beforeHook),
+                        asList(
+                                new StubStepDefinition("first step"),
+                                new StubStepDefinition("second step"),
+                                new StubStepDefinition("third step")
+                        ),
+                        emptyList()))
                 .build();
         runtime.run();
 
         ArgumentCaptor<TestCaseState> capturedScenario = ArgumentCaptor.forClass(TestCaseState.class);
         verify(beforeHook).execute(capturedScenario.capture());
         assertThat(capturedScenario.getValue().getName(), is(equalTo("scenario name")));
-    }
-
-    private TestBackendSupplier createTestBackendSupplier(final Feature feature, final HookDefinition beforeHook) {
-        return new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                for (Pickle child : feature.getPickles()) {
-                    for (Step step : child.getSteps()) {
-                        mockMatch(glue, step.getText());
-                    }
-                }
-                mockHook(glue, beforeHook, HookType.BEFORE);
-            }
-        };
-    }
-
-    private void mockMatch(Glue glue, String text) {
-        io.cucumber.core.backend.StepDefinition stepDefinition = new StubStepDefinition(text);
-        glue.addStepDefinition(stepDefinition);
-    }
-
-    private void mockHook(Glue glue, HookDefinition hook, HookType hookType) {
-        switch (hookType) {
-            case BEFORE:
-                glue.addBeforeHook(hook);
-                return;
-            case AFTER:
-                glue.addAfterHook(hook);
-                return;
-            case AFTER_STEP:
-                glue.addAfterStepHook(hook);
-                return;
-            case BEFORE_STEP:
-                glue.addBeforeStepHook(hook);
-                return;
-            default:
-                throw new IllegalArgumentException(hookType.name());
-        }
     }
 
     @Test
@@ -219,44 +185,37 @@ class RuntimeTest {
                 "    Then third step\n" +
                 "  Scenario: scenario_2 name\n" +
                 "    Then second step\n");
-        Map<String, Result> stepsToResult = new HashMap<>();
-        stepsToResult.put("first step", result("passed"));
-        stepsToResult.put("second step", result("passed"));
-        stepsToResult.put("third step", result("passed"));
 
-        String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
-
-        assertThat(formatterOutput,
-            is(equalTo("" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestRun finished\n")));
-    }
-
-    private String runFeatureWithFormatterSpy(Feature feature, Map<String, Result> stepsToResult) {
         FormatterSpy formatterSpy = new FormatterSpy();
-
-        TestHelper.builder()
-                .withFeatures(feature)
-                .withStepsToResult(stepsToResult)
-                .withFormatterUnderTest(formatterSpy)
-                .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(formatterSpy)
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")
+                ))
                 .build()
                 .run();
 
-        return formatterSpy.toString();
+        assertThat(formatterSpy.toString(),
+                is(equalTo("" +
+                        "TestRun started\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "TestRun finished\n")));
     }
 
     @Test
@@ -275,40 +234,48 @@ class RuntimeTest {
                 "    Examples: examples 2 name\n" +
                 "      |   x    |   y   |\n" +
                 "      | second | third |\n");
-        Map<String, Result> stepsToResult = new HashMap<>();
-        stepsToResult.put("first step", result("passed"));
-        stepsToResult.put("second step", result("passed"));
-        stepsToResult.put("third step", result("passed"));
 
-        String formatterOutput = runFeatureWithFormatterSpy(feature, stepsToResult);
+        FormatterSpy formatterSpy = new FormatterSpy();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(formatterSpy)
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")
+                ))
+                .build()
+                .run();
 
-        assertThat(formatterOutput,
-            is(equalTo("" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestRun finished\n")));
+        assertThat(formatterSpy.toString(),
+                is(equalTo("" +
+                        "TestRun started\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "TestRun finished\n")));
     }
 
     @Test
@@ -331,38 +298,38 @@ class RuntimeTest {
                 "    Given first step\n");
 
         FormatterSpy formatterSpy = new FormatterSpy();
-        final List<Feature> features = Arrays.asList(feature1, feature2, feature3);
-
         Runtime.builder()
-                .withFeatureSupplier(new TestFeatureSupplier(features))
-                .withEventBus(bus)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(features.size()).build())
+                .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2, feature3))
                 .withAdditionalPlugins(formatterSpy)
-                .withBackendSupplier(new TestHelper.TestHelperBackendSupplier(features))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("first step")
+                ))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(3).build())
                 .build()
                 .run();
 
         String formatterOutput = formatterSpy.toString();
 
         assertThat(formatterOutput,
-            is(equalTo("" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestCase started\n" +
-                    "  TestStep started\n" +
-                    "  TestStep finished\n" +
-                    "TestCase finished\n" +
-                    "TestRun finished\n")));
+                is(equalTo("" +
+                        "TestRun started\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "  TestCase started\n" +
+                        "    TestStep started\n" +
+                        "    TestStep finished\n" +
+                        "  TestCase finished\n" +
+                        "TestRun finished\n")));
     }
 
     @Test
@@ -380,23 +347,22 @@ class RuntimeTest {
                 "    Given first step\n");
 
         ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class,
-            (TestStepFinished event) -> {
-                throw new RuntimeException("This exception is expected");
-            });
+                (TestStepFinished event) -> {
+                    throw new RuntimeException("This exception is expected");
+                });
 
-        Executable testMethod = () -> TestHelper.builder()
-                .withFeatures(Arrays.asList(feature1, feature2))
-                .withFormatterUnderTest(brokenEventListener)
-                .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-                .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
+        Executable testMethod = () -> Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
+                .withAdditionalPlugins(brokenEventListener)
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
                 .build()
                 .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "There were 3 exceptions:\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)")));
+                "There were 3 exceptions:\n" +
+                        "  java.lang.RuntimeException(This exception is expected)\n" +
+                        "  java.lang.RuntimeException(This exception is expected)\n" +
+                        "  java.lang.RuntimeException(This exception is expected)")));
     }
 
     @Test
@@ -426,11 +392,10 @@ class RuntimeTest {
                     }
                 });
 
-        Thread thread = new Thread(() -> TestHelper.builder()
-                .withFeatures(Arrays.asList(feature1, feature2))
-                .withFormatterUnderTest(brokenEventListener)
-                .withTimeServiceType(TestHelper.TimeServiceType.REAL_TIME)
-                .withRuntimeArgs(new RuntimeOptionsBuilder().setThreads(2).build())
+        Thread thread = new Thread(() -> Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
+                .withAdditionalPlugins(brokenEventListener)
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
                 .build()
                 .run());
 
@@ -456,9 +421,9 @@ class RuntimeTest {
         final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
 
         Plugin eventListener = (EventListener) publisher -> publisher.registerHandlerFor(StepDefinedEvent.class,
-            (StepDefinedEvent event) -> {
-                stepDefinedEvents.add(event.getStepDefinition());
-            });
+                (StepDefinedEvent event) -> {
+                    stepDefinedEvents.add(event.getStepDefinition());
+                });
 
         final MockedStepDefinition mockedStepDefinition = new MockedStepDefinition();
         final MockedScenarioScopedStepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
@@ -479,7 +444,7 @@ class RuntimeTest {
             }
         };
 
-        FeatureSupplier featureSupplier = () -> singletonList(feature);
+        FeatureSupplier featureSupplier = new StubFeatureSupplier(feature);
         Runtime.builder()
                 .withBackendSupplier(backendSupplier)
                 .withAdditionalPlugins(eventListener)
@@ -568,6 +533,27 @@ class RuntimeTest {
         @Override
         public String getLocation() {
             return "mocked scenario scoped step definition";
+        }
+
+    }
+
+    public static class FormatterSpy implements EventListener {
+
+        private final StringBuilder calls = new StringBuilder();
+
+        @Override
+        public void setEventPublisher(EventPublisher publisher) {
+            publisher.registerHandlerFor(TestRunStarted.class, event -> calls.append("TestRun started\n"));
+            publisher.registerHandlerFor(TestCaseStarted.class, event -> calls.append("  TestCase started\n"));
+            publisher.registerHandlerFor(TestCaseFinished.class, event -> calls.append("  TestCase finished\n"));
+            publisher.registerHandlerFor(TestStepStarted.class, event -> calls.append("    TestStep started\n"));
+            publisher.registerHandlerFor(TestStepFinished.class, event -> calls.append("    TestStep finished\n"));
+            publisher.registerHandlerFor(TestRunFinished.class, event -> calls.append("TestRun finished\n"));
+        }
+
+        @Override
+        public String toString() {
+            return calls.toString();
         }
 
     }

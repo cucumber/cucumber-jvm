@@ -5,7 +5,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.TestHelper;
-import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;

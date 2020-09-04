@@ -9,7 +9,7 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
-import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.StepExpression;

@@ -5,15 +5,15 @@ import io.cucumber.core.gherkin.Feature;
 import java.util.Arrays;
 import java.util.List;
 
-public class TestFeatureSupplier implements FeatureSupplier {
+public class StubFeatureSupplier implements FeatureSupplier {
 
     private final List<Feature> features;
 
-    public TestFeatureSupplier(Feature... features) {
+    public StubFeatureSupplier(Feature... features) {
         this(Arrays.asList(features));
     }
 
-    public TestFeatureSupplier(List<Feature> features) {
+    public StubFeatureSupplier(List<Feature> features) {
         this.features = features;
     }
 

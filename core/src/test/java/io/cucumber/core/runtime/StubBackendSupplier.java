@@ -1,4 +1,4 @@
-package io.cucumber.core.plugin;
+package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-class StubBackendSupplier implements BackendSupplier {
+public class StubBackendSupplier implements BackendSupplier {
 
     private final List<HookDefinition> before;
     private final List<StepDefinition> steps;

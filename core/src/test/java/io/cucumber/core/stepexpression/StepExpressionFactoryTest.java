@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.cucumberexpressions.CucumberExpression;
 import io.cucumber.datatable.DataTable;

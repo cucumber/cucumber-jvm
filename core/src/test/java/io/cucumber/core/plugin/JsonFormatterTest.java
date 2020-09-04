@@ -7,8 +7,10 @@ import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.Runtime.Builder;
-import io.cucumber.core.runtime.StubHookDefinition;
-import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
@@ -71,7 +73,7 @@ class JsonFormatterTest {
 
         StepDurationTimeService clock = new StepDurationTimeService(ofMillis(1234L));
         return Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition()),

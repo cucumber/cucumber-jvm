@@ -5,8 +5,10 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestPendingException;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.core.runtime.StubHookDefinition;
-import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.TestAbortedException;
@@ -46,7 +48,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -86,7 +88,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -133,7 +135,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -174,7 +176,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier())
@@ -204,7 +206,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -251,7 +253,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -290,7 +292,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -329,7 +331,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -373,7 +375,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -417,7 +419,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -461,7 +463,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -505,7 +507,7 @@ class JUnitFormatterTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(timeService, new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -548,7 +550,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -599,7 +601,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -660,7 +662,7 @@ class JUnitFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(

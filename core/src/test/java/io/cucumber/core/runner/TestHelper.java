@@ -14,7 +14,7 @@ import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.BackendSupplier;
 import io.cucumber.core.runtime.FeatureSupplier;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.core.runtime.TestFeatureSupplier;
+import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.plugin.ConcurrentEventListener;
@@ -189,7 +189,7 @@ public class TestHelper {
 
         final FeatureSupplier featureSupplier = features.isEmpty()
                 ? null // assume feature paths passed in as args instead
-                : new TestFeatureSupplier(features);
+                : new StubFeatureSupplier(features);
 
         Runtime.Builder runtimeBuilder = Runtime.builder()
                 .withRuntimeOptions(runtimeArgs)

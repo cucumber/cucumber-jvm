@@ -5,8 +5,10 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestPendingException;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.core.runtime.StubHookDefinition;
-import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +37,7 @@ final class TestNGFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier())
@@ -78,7 +80,7 @@ final class TestNGFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -123,7 +125,7 @@ final class TestNGFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -165,7 +167,7 @@ final class TestNGFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -199,7 +201,7 @@ final class TestNGFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier())
@@ -246,7 +248,7 @@ final class TestNGFormatterTest {
                 "    |  2  |\n");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier())
@@ -351,7 +353,7 @@ final class TestNGFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
@@ -394,7 +396,7 @@ final class TestNGFormatterTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
-                .withFeatureSupplier(() -> singletonList(feature))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new TestNGFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(

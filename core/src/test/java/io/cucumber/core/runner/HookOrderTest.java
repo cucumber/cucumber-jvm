@@ -7,7 +7,7 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.RuntimeOptions;
-import io.cucumber.core.runtime.StubStepDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
