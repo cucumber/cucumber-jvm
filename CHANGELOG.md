@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Security fixes
 
-* Update `create-meta` to 2.0.2 to avoid sharing credentials.
+* Update `create-meta` to 2.0.2 to avoid sharing credentials ([2110](https://github.com/cucumber/cucumber-jvm/pull/2110) vincent-psarga)
 
 ## [6.6.0] (2020-08-26)
 
