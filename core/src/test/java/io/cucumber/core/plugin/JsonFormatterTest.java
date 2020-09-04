@@ -1,28 +1,25 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.HookDefinition;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.runner.ClockStub;
-import io.cucumber.core.runner.TestBackendSupplier;
+import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestHelper;
 import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.Runtime.Builder;
+import io.cucumber.core.runtime.StubHookDefinition;
+import io.cucumber.core.runtime.StubStepDefinition;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Result;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.time.Duration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,11 +30,13 @@ import static io.cucumber.core.runner.TestHelper.createAttachHookAction;
 import static io.cucumber.core.runner.TestHelper.createWriteHookAction;
 import static io.cucumber.core.runner.TestHelper.result;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.Clock.fixed;
 import static java.time.Duration.ofMillis;
+import static java.time.Instant.EPOCH;
+import static java.time.ZoneId.of;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 class JsonFormatterTest {
@@ -51,80 +50,63 @@ class JsonFormatterTest {
     private Duration stepDuration = Duration.ZERO;
 
     @Test
-    void featureWithOutlineTest() {
-        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature");
-        String actual = runFeaturesWithFormatter(featurePaths);
+    void featureWithOutlineTest() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        createRuntime(out)
+                .build()
+                .run();
+
         InputStream resourceAsStream = getClass().getResourceAsStream("JsonPrettyFormatterTest.json");
         String expected = new Scanner(resourceAsStream, "UTF-8")
                 .useDelimiter("\\A")
                 .next();
-        assertThat(actual, sameJSONAs(expected));
+
+        assertThat(out.toString("UTF-8"), sameJSONAs(expected));
     }
 
-    private String runFeaturesWithFormatter(final List<String> featurePaths) {
-        final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
+    private Builder createRuntime(ByteArrayOutputStream out) {
+        Feature feature = TestFeatureParser.parse(
+            "classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
+            getClass().getResourceAsStream("JsonPrettyFormatterTest.feature"));
 
-        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addBeforeHook(hook);
-
-            }
-        };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
-        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
-        Runtime.builder()
-                .withRuntimeOptions(options.build())
-                .withEventBus(bus)
-                .withBackendSupplier(backendSupplier)
-                .withAdditionalPlugins(new JsonFormatter(out))
-                .build()
-                .run();
-
-        return new String(out.toByteArray(), UTF_8);
+        StepDurationTimeService clock = new StepDurationTimeService(ofMillis(1234L));
+        return Runtime.builder()
+                .withFeatureSupplier(() -> singletonList(feature))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition()),
+                    Arrays.asList(
+                        new StubStepDefinition("bg_1"),
+                        new StubStepDefinition("bg_2"),
+                        new StubStepDefinition("bg_3"),
+                        new StubStepDefinition("step_1"),
+                        new StubStepDefinition("step_2"),
+                        new StubStepDefinition("step_3"),
+                        new StubStepDefinition("cliché"),
+                        new StubStepDefinition("so_1 {int}", Integer.class),
+                        new StubStepDefinition("so_2 {int} cucumbers", Integer.class),
+                        new StubStepDefinition("{int} so_3", Integer.class),
+                        new StubStepDefinition("a"),
+                        new StubStepDefinition("b"),
+                        new StubStepDefinition("c")),
+                    emptyList()))
+                .withAdditionalPlugins(clock, new JsonFormatter(out));
     }
 
     @Test
     void featureWithOutlineTestParallel() throws Exception {
-        List<String> featurePaths = singletonList("classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature");
-        String actual = runFeaturesWithFormatterInParallel(featurePaths);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        createRuntime(out)
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
+                .build()
+                .run();
+
         InputStream resourceAsStream = getClass().getResourceAsStream("JsonPrettyFormatterTest.json");
         String expected = new Scanner(resourceAsStream, "UTF-8")
                 .useDelimiter("\\A")
                 .next();
 
-        assertThat(actual, sameJSONAs(expected));
-    }
-
-    private String runFeaturesWithFormatterInParallel(final List<String> featurePaths) throws IOException {
-        final HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
-        final TestBackendSupplier backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addBeforeHook(hook);
-
-            }
-        };
-        final EventBus bus = new TimeServiceEventBus(new ClockStub(ofMillis(1234L)), UUID::randomUUID);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        RuntimeOptionsBuilder options = new RuntimeOptionsBuilder();
-        featurePaths.forEach(s -> options.addFeature(FeatureWithLines.parse(s)));
-        Runtime.builder()
-                .withRuntimeOptions(options.build())
-                .withEventBus(bus)
-                .withBackendSupplier(backendSupplier)
-                .withAdditionalPlugins(new JsonFormatter(out))
-                .build()
-                .run();
-
-        return new String(out.toByteArray(), UTF_8);
+        assertThat(out.toString("UTF-8"), sameJSONAs(expected));
     }
 
     @Test

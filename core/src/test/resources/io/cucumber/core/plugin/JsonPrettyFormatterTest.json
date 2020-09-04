@@ -11,44 +11,49 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "status": "passed"
             },
             "line": 4,
             "name": "bg_1",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 5,
             "name": "bg_2",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 6,
             "name": "bg_3",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           }
         ]
       },
       {
-        "start_timestamp": "1970-01-01T00:00:12.340Z",
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
         "before": [
           {
             "result": {
-              "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "{stubbed location with details}"
+            }
           }
         ],
         "line": 8,
@@ -60,42 +65,46 @@
         "steps": [
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 9,
             "name": "step_1",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 10,
             "name": "step_2",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 11,
             "name": "step_3",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 12,
             "name": "cliché",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           }
         ]
@@ -109,44 +118,49 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "status": "passed"
             },
             "line": 4,
             "name": "bg_1",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 5,
             "name": "bg_2",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 6,
             "name": "bg_3",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           }
         ]
       },
       {
-        "start_timestamp": "1970-01-01T00:00:41.956Z",
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
         "before": [
           {
             "result": {
-              "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "{stubbed location with details}"
+            }
           }
         ],
         "line": 21,
@@ -158,32 +172,53 @@
         "steps": [
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 15,
             "name": "so_1 12",
-            "match": {},
+            "match": {
+              "arguments": [
+                {
+                  "val": "12",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 16,
             "name": "so_2 7 cucumbers",
-            "match": {},
+            "match": {
+              "arguments": [
+                {
+                  "val": "7",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 17,
             "name": "5 so_3",
-            "match": {},
+            "match": {
+              "arguments": [
+                {
+                  "val": "5",
+                  "offset": 0
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           }
         ]
@@ -197,44 +232,49 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "status": "passed"
             },
             "line": 4,
             "name": "bg_1",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 5,
             "name": "bg_2",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 6,
             "name": "bg_3",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           }
         ]
       },
       {
-        "start_timestamp": "1970-01-01T00:01:09.104Z",
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
         "before": [
           {
             "result": {
-              "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "{stubbed location with details}"
+            }
           }
         ],
         "line": 22,
@@ -246,32 +286,53 @@
         "steps": [
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 15,
             "name": "so_1 20",
-            "match": {},
+            "match": {
+              "arguments": [
+                {
+                  "val": "20",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 16,
             "name": "so_2 15 cucumbers",
-            "match": {},
+            "match": {
+              "arguments": [
+                {
+                  "val": "15",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 17,
             "name": "5 so_3",
-            "match": {},
+            "match": {
+              "arguments": [
+                {
+                  "val": "5",
+                  "offset": 0
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           }
         ]
@@ -285,44 +346,49 @@
         "steps": [
           {
             "result": {
-              "status": "undefined"
+              "status": "passed"
             },
             "line": 4,
             "name": "bg_1",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 5,
             "name": "bg_2",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 6,
             "name": "bg_3",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           }
         ]
       },
       {
-        "start_timestamp": "1970-01-01T00:01:36.252Z",
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
         "before": [
           {
             "result": {
-              "duration": 1234000000,
               "status": "passed"
             },
-            "match": {}
+            "match": {
+              "location": "{stubbed location with details}"
+            }
           }
         ],
         "line": 24,
@@ -334,32 +400,35 @@
         "steps": [
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 25,
             "name": "a",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Given "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 26,
             "name": "b",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "Then "
           },
           {
             "result": {
-              "duration": 1234000000,
-              "status": "skipped"
+              "status": "passed"
             },
             "line": 27,
             "name": "c",
-            "match": {},
+            "match": {
+              "location": "{stubbed location with details}"
+            },
             "keyword": "When "
           }
         ]
