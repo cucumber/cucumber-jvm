@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.6.1] (2020-09-08)
+
+### Fixed
  * [Core] CucumberOptions default snippet type should not override properties ([2107](https://github.com/cucumber/cucumber-jvm/pull/2107) M.P. Korstanje)
  * [Core] Replace parentFile.makeDirs with Files.createDirectories(parentFile) ([2104](https://github.com/cucumber/cucumber-jvm/pull/2104) M.P. Korstanje)
  * [Core] Separate run, dry-run and skip execution modes ([2102](https://github.com/cucumber/cucumber-jvm/pull/2109), [2102](https://github.com/cucumber/cucumber-jvm/pull/2109) M.P. Korstanje)
@@ -312,13 +316,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [JUnit] Use JUnit 4.13 in `cucumber-junit` ([#1851](https://github.com/cucumber/cucumber-jvm/issues/1851) John Patrick)
  * [TestNG] Use TestNG 7.1.0 (M.P. Korstanje)
 
-### Removed
-
 ### Fixed
  * [Core] Fixed Illegal character error on Windows ([#1849](https://github.com/cucumber/cucumber-jvm/issues/1849) M.P. Korstanje)
  * [JUnit Platform] Annotate `@Cucumber` with `@Testable` to facilitate discovery by IDEs (M.P. Korstanje)
-
-### Deprecated
 
 ## [5.0.0-RC4] (2019-12-21)
 
@@ -714,10 +714,6 @@ version, refer to [Follow the latest snapshot](https://github.com/cucumber/cucum
 
 ### Changed
  *  [Core] Parse rerun file in RuntimeOptions ([#1529](https://github.com/cucumber/cucumber-jvm/pull/1529) M.P. Korstanje)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
  * [Core] Cache all matched step definitions ([#1528](https://github.com/cucumber/cucumber-jvm/pull/1528) Łukasz Suski)
@@ -1532,7 +1528,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.6.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.6.1...main
+[6.6.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.1...v6.6.1
 [6.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.1...v6.6.0
 [6.5.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.0...v6.5.1
 [6.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.4.0...v6.5.0
