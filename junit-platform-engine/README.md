@@ -237,12 +237,20 @@ Supported `DiscoverySelector`s are:
 The only supported `DiscoveryFilter` is the `PackageNameFilter` and only when
 features are selected from the classpath.
 
+### Selecting individual scenarios, rules and examples 
+
+The `FileSelector` and `ClasspathResourceSelector` support a `FilePosition`.
+
+ * `DiscoverySelectors.selectClasspathResource("rule.feature", FilePosition.from(5))`
+ * `DiscoverySelectors.selectFile("rule.feature", FilePosition.from(5))`
+
 The `UriSelector` supports URI's with a `line` query parameter:
   - `classpath:/com/example/example.feature?line=20`
   - `file:/path/to/com/example/example.feature?line=20`
- 
+
 Any `TestDescriptor` that matches the line *and* its descendants will be
-included in the discovery result.
+included in the discovery result. So for example selecting a `Rule` will 
+execute all scenarios contained within.
 
 ## Tags ##
 

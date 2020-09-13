@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * [JUnit Platform] Support discovery selectors with FilePosition ([2121](https://github.com/cucumber/cucumber-jvm/pull/2121) M.P. Korstanje) 
 
 ### Changed
+ * [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.0
 
 ### Deprecated
 
