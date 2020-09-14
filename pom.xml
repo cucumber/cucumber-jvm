@@ -34,8 +34,8 @@
 
         <!--Test Dependencies-->
         <junit.version>4.13</junit.version>
-        <junit-jupiter.version>5.6.2</junit-jupiter.version>
-        <junit-platform.version>1.6.2</junit-platform.version>
+        <junit-jupiter.version>5.7.0</junit-jupiter.version>
+        <junit-platform.version>1.7.0</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.5.10</mockito.version>
         <!--Maven plugins-->

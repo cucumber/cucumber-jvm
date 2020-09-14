@@ -18,20 +18,14 @@ import org.junit.platform.engine.discovery.FileSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
-import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
-import org.junit.platform.engine.support.descriptor.FilePosition;
-import org.junit.platform.engine.support.descriptor.FileSource;
 
 import java.net.URI;
-import java.nio.file.Path;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static org.junit.platform.engine.support.descriptor.FilePosition.fromQuery;
 
 final class FeatureResolver {
 
@@ -62,16 +56,15 @@ final class FeatureResolver {
     }
 
     void resolveFile(FileSelector selector) {
-        resolvePath(selector.getPath());
-    }
-
-    private void resolvePath(Path path) {
         featureScanner
-                .scanForResourcesPath(path)
+                .scanForResourcesPath(selector.getPath())
                 .stream()
                 .sorted(comparing(Feature::getUri))
                 .map(this::createFeatureDescriptor)
-                .forEach(engineDescriptor::mergeFeature);
+                .forEach(featureDescriptor -> {
+                    featureDescriptor.prune(TestDescriptorOnLine.from(selector));
+                    engineDescriptor.mergeFeature(featureDescriptor);
+                });
     }
 
     private FeatureDescriptor createFeatureDescriptor(Feature feature) {
@@ -137,7 +130,12 @@ final class FeatureResolver {
     }
 
     void resolveDirectory(DirectorySelector selector) {
-        resolvePath(selector.getPath());
+        featureScanner
+                .scanForResourcesPath(selector.getPath())
+                .stream()
+                .sorted(comparing(Feature::getUri))
+                .map(this::createFeatureDescriptor)
+                .forEach(engineDescriptor::mergeFeature);
     }
 
     void resolvePackageResource(PackageSelector selector) {
@@ -163,12 +161,16 @@ final class FeatureResolver {
 
     void resolveClasspathResource(ClasspathResourceSelector selector) {
         String classpathResourceName = selector.getClasspathResourceName();
+
         featureScanner
                 .scanForClasspathResource(classpathResourceName, packageFilter)
                 .stream()
                 .sorted(comparing(Feature::getUri))
                 .map(this::createFeatureDescriptor)
-                .forEach(engineDescriptor::mergeFeature);
+                .forEach(featureDescriptor -> {
+                    featureDescriptor.prune(TestDescriptorOnLine.from(selector));
+                    engineDescriptor.mergeFeature(featureDescriptor);
+                });
     }
 
     void resolveClasspathRoot(ClasspathRootSelector selector) {
@@ -211,36 +213,11 @@ final class FeatureResolver {
     }
 
     void resolveUri(UriSelector selector) {
-        URI uri = selector.getUri();
-
-        Predicate<TestDescriptor> keepTestOnSelectedLine = fromQuery(uri.getQuery())
-                .map(FilePosition::getLine)
-                .map(FeatureResolver::testDescriptorOnLine)
-                .orElse(testDescriptor -> true);
-
-        resolveUri(stripQuery(uri))
+        resolveUri(stripQuery(selector.getUri()))
                 .forEach(featureDescriptor -> {
-                    featureDescriptor.prune(keepTestOnSelectedLine);
+                    featureDescriptor.prune(TestDescriptorOnLine.from(selector));
                     engineDescriptor.mergeFeature(featureDescriptor);
                 });
-    }
-
-    private static Predicate<TestDescriptor> testDescriptorOnLine(Integer line) {
-        return descriptor -> descriptor.getSource()
-                .flatMap(testSource -> {
-                    if (testSource instanceof FileSource) {
-                        FileSource fileSystemSource = (FileSource) testSource;
-                        return fileSystemSource.getPosition();
-                    }
-                    if (testSource instanceof ClasspathResourceSource) {
-                        ClasspathResourceSource classpathResourceSource = (ClasspathResourceSource) testSource;
-                        return classpathResourceSource.getPosition();
-                    }
-                    return Optional.empty();
-                })
-                .map(FilePosition::getLine)
-                .map(line::equals)
-                .orElse(false);
     }
 
     private static URI stripQuery(URI uri) {
