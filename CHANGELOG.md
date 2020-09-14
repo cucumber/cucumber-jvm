@@ -8,16 +8,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [JUnit Platform] Support discovery selectors with FilePosition ([2121](https://github.com/cucumber/cucumber-jvm/pull/2121) M.P. Korstanje) 
 
 ### Changed
- * [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.0
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+## [6.7.0] (2020-09-14)
+
+### Added
+ * [JUnit Platform] Support discovery selectors with FilePosition ([2121](https://github.com/cucumber/cucumber-jvm/pull/2121) M.P. Korstanje) 
+
+### Changed
+ * [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.0
 
 ## [6.6.1] (2020-09-08)
 
@@ -1530,7 +1536,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.6.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.7.0...main
+[6.7.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.6.1...v6.7.0
 [6.6.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.6.0...v6.6.1
 [6.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.1...v6.6.0
 [6.5.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.0...v6.5.1
