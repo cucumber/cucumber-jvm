@@ -102,7 +102,7 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
-            PublishTokenParser::parse,
+            s -> s, // No validation - validated on server
             builder::setPublishToken);
 
         parse(properties,

@@ -4,7 +4,6 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
-import io.cucumber.core.options.PublishTokenParser;
 import io.cucumber.core.options.SnippetTypeParser;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
@@ -90,7 +89,6 @@ class CucumberEngineOptions implements
     private Optional<PluginOption> getPublishTokenPlugin() {
         return configurationParameters
                 .get(PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME)
-                .map(PublishTokenParser::parse)
                 .map(token -> PluginOption.forClass(PublishFormatter.class, token));
     }
 
