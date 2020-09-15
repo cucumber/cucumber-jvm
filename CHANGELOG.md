@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+ * [Core] Validation of `CUCUMBER_PUBLISH_TOKEN` no longer happens inside Cucumber-JVM - only on the server.
+   ([2123](https://github.com/cucumber/cucumber-jvm/pull/2123)
+    [2122](https://github.com/cucumber/cucumber-jvm/issues/2122)
+    Aslak Hellesøy)
+
 ## [6.7.0] (2020-09-14)
 
 ### Added
