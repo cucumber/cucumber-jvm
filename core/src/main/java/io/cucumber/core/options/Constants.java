@@ -27,7 +27,7 @@ public final class Constants {
     public static final String EXECUTION_DRY_RUN_PROPERTY_NAME = "cucumber.execution.dry-run";
 
     /**
-     * Property name used to enable dry-run: {@value}
+     * Property name used to limit the number of executed scenarios : {@value}
      * <p>
      * Limits the number of scenarios to be executed to a specific amount.
      * <p>
