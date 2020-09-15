@@ -655,6 +655,11 @@
                                     <justification>https://github.com/cucumber/cucumber-jvm/pull/2099</justification>
                                     <newValue>https://messages.cucumber.io/api/reports -X GET</newValue>
                                 </item>
+                                <item>
+                                    <code>java.class.removed</code>
+                                    <old>class io.cucumber.core.options.PublishTokenParser</old>
+                                    <justification>Internal API</justification>
+                                </item>
                             </revapi.ignore>
                         </analysisConfiguration>
                     </configuration>
