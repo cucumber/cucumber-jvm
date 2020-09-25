@@ -2,6 +2,18 @@ package io.cucumber.core.cli;
 
 import org.apiguardian.api.API;
 
+/**
+ * Contains all available command line options for {@link io.cucumber.core.cli.Main}
+ * <p>
+ * After being passed to {@link io.cucumber.core.cli.Main#main} function, these options will be
+ * parsed by {@link io.cucumber.core.options.CommandlineOptionsParser} to provide running options
+ * to CLI.
+ * <p>
+ * All the options are defined as static string variables to allow other programs to call
+ * {@link io.cucumber.core.cli.Main#main} function in a more consistent way.
+ * E.g. {@code io.cucumber.core.cli.Main.main(NAME, "TestName", THREADS, 2)}
+ */
+
 @API(status = API.Status.STABLE)
 public final class CommandlineOptions {
     public static final String HELP = "--help";
