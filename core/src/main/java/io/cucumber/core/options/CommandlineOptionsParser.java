@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import io.cucumber.core.cli.CLIOptions;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
@@ -65,19 +66,19 @@ public final class CommandlineOptionsParser {
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
 
-            if (arg.equals(CommandlineOptions.HELP) || arg.equals(CommandlineOptions.HELP_SHORT)) {
+            if (arg.equals(CLIOptions.HELP) || arg.equals(CLIOptions.HELP_SHORT)) {
                 printUsage();
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals(CommandlineOptions.VERSION) || arg.equals(CommandlineOptions.VERSION_SHORT)) {
+            } else if (arg.equals(CLIOptions.VERSION) || arg.equals(CLIOptions.VERSION_SHORT)) {
                 out.println(VERSION);
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals(CommandlineOptions.I18N)) {
+            } else if (arg.equals(CLIOptions.I18N)) {
                 String nextArg = removeArgFor(arg, args);
                 exitCode = printI18n(nextArg);
                 return parsedOptions;
-            } else if (arg.equals(CommandlineOptions.THREADS)) {
+            } else if (arg.equals(CLIOptions.THREADS)) {
                 int threads = Integer.parseInt(removeArgFor(arg, args));
                 if (threads < 1) {
                     out.println("--threads must be > 0");
@@ -85,42 +86,42 @@ public final class CommandlineOptionsParser {
                     return parsedOptions;
                 }
                 parsedOptions.setThreads(threads);
-            } else if (arg.equals(CommandlineOptions.GLUE) || arg.equals(CommandlineOptions.GLUE_SHORT)) {
+            } else if (arg.equals(CLIOptions.GLUE) || arg.equals(CLIOptions.GLUE_SHORT)) {
                 String gluePath = removeArgFor(arg, args);
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
-            } else if (arg.equals(CommandlineOptions.TAGS) || arg.equals(CommandlineOptions.TAGS_SHORT)) {
+            } else if (arg.equals(CLIOptions.TAGS) || arg.equals(CLIOptions.TAGS_SHORT)) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
-            } else if (arg.equals(CommandlineOptions.PUBLISH)) {
+            } else if (arg.equals(CLIOptions.PUBLISH)) {
                 parsedOptions.setPublish(true);
-            } else if (arg.equals(CommandlineOptions.PLUGIN) || arg.equals(CommandlineOptions.PLUGIN_SHORT)) {
+            } else if (arg.equals(CLIOptions.PLUGIN) || arg.equals(CLIOptions.PLUGIN_SHORT)) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
-            } else if (arg.equals(CommandlineOptions.DRY_RUN) || arg.equals(CommandlineOptions.DRY_RUN_SHORT)) {
+            } else if (arg.equals(CLIOptions.DRY_RUN) || arg.equals(CLIOptions.DRY_RUN_SHORT)) {
                 parsedOptions.setDryRun(true);
-            } else if (arg.equals(CommandlineOptions.NO_DRY_RUN)) {
+            } else if (arg.equals(CLIOptions.NO_DRY_RUN)) {
                 parsedOptions.setDryRun(false);
-            } else if (arg.equals(CommandlineOptions.NO_STRICT)) {
+            } else if (arg.equals(CLIOptions.NO_STRICT)) {
                 out.println("--no-strict is no longer effective");
                 exitCode = 1;
                 return parsedOptions;
-            } else if (arg.equals(CommandlineOptions.STRICT) || arg.equals(CommandlineOptions.STRICT_SHORT)) {
+            } else if (arg.equals(CLIOptions.STRICT) || arg.equals(CLIOptions.STRICT_SHORT)) {
                 log.warn(() -> "--strict is enabled by default. This option will be removed in a future release.");
-            } else if (arg.equals(CommandlineOptions.MONOCHROME) || arg.equals(CommandlineOptions.MONOCHROME_SHORT)) {
+            } else if (arg.equals(CLIOptions.MONOCHROME) || arg.equals(CLIOptions.MONOCHROME_SHORT)) {
                 parsedOptions.setMonochrome(true);
-            } else if (arg.equals(CommandlineOptions.NO_MONOCHROME)) {
+            } else if (arg.equals(CLIOptions.NO_MONOCHROME)) {
                 parsedOptions.setMonochrome(false);
-            } else if (arg.equals(CommandlineOptions.SNIPPETS)) {
+            } else if (arg.equals(CLIOptions.SNIPPETS)) {
                 String nextArg = removeArgFor(arg, args);
                 parsedOptions.setSnippetType(SnippetTypeParser.parseSnippetType(nextArg));
-            } else if (arg.equals(CommandlineOptions.NAME) || arg.equals(CommandlineOptions.NAME_SHORT)) {
+            } else if (arg.equals(CLIOptions.NAME) || arg.equals(CLIOptions.NAME_SHORT)) {
                 String nextArg = removeArgFor(arg, args);
                 Pattern pattern = Pattern.compile(nextArg);
                 parsedOptions.addNameFilter(pattern);
-            } else if (arg.equals(CommandlineOptions.WIP) || arg.equals(CommandlineOptions.WIP_SHORT)) {
+            } else if (arg.equals(CLIOptions.WIP) || arg.equals(CLIOptions.WIP_SHORT)) {
                 parsedOptions.setWip(true);
-            } else if (arg.equals(CommandlineOptions.ORDER)) {
+            } else if (arg.equals(CLIOptions.ORDER)) {
                 parsedOptions.setPickleOrder(PickleOrderParser.parse(removeArgFor(arg, args)));
-            } else if (arg.equals(CommandlineOptions.COUNT)) {
+            } else if (arg.equals(CLIOptions.COUNT)) {
                 int count = Integer.parseInt(removeArgFor(arg, args));
                 if (count < 1) {
                     out.println("--count must be > 0");
@@ -128,7 +129,7 @@ public final class CommandlineOptionsParser {
                     return parsedOptions;
                 }
                 parsedOptions.setCount(count);
-            } else if (arg.equals(CommandlineOptions.OBJECT_FACTORY)) {
+            } else if (arg.equals(CLIOptions.OBJECT_FACTORY)) {
                 String objectFactoryClassName = removeArgFor(arg, args);
                 parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
             } else if (arg.startsWith("-")) {
