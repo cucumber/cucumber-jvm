@@ -17,7 +17,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import io.cucumber.core.cli.CLIOptions;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
@@ -29,6 +28,36 @@ import io.cucumber.gherkin.GherkinDialectProvider;
 import io.cucumber.gherkin.IGherkinDialectProvider;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
+import static io.cucumber.core.cli.CLIOptions.COUNT;
+import static io.cucumber.core.cli.CLIOptions.DRY_RUN;
+import static io.cucumber.core.cli.CLIOptions.DRY_RUN_SHORT;
+import static io.cucumber.core.cli.CLIOptions.GLUE;
+import static io.cucumber.core.cli.CLIOptions.GLUE_SHORT;
+import static io.cucumber.core.cli.CLIOptions.HELP;
+import static io.cucumber.core.cli.CLIOptions.HELP_SHORT;
+import static io.cucumber.core.cli.CLIOptions.I18N;
+import static io.cucumber.core.cli.CLIOptions.MONOCHROME;
+import static io.cucumber.core.cli.CLIOptions.MONOCHROME_SHORT;
+import static io.cucumber.core.cli.CLIOptions.NAME;
+import static io.cucumber.core.cli.CLIOptions.NAME_SHORT;
+import static io.cucumber.core.cli.CLIOptions.NO_DRY_RUN;
+import static io.cucumber.core.cli.CLIOptions.NO_MONOCHROME;
+import static io.cucumber.core.cli.CLIOptions.NO_STRICT;
+import static io.cucumber.core.cli.CLIOptions.OBJECT_FACTORY;
+import static io.cucumber.core.cli.CLIOptions.ORDER;
+import static io.cucumber.core.cli.CLIOptions.PLUGIN;
+import static io.cucumber.core.cli.CLIOptions.PLUGIN_SHORT;
+import static io.cucumber.core.cli.CLIOptions.PUBLISH;
+import static io.cucumber.core.cli.CLIOptions.SNIPPETS;
+import static io.cucumber.core.cli.CLIOptions.STRICT;
+import static io.cucumber.core.cli.CLIOptions.STRICT_SHORT;
+import static io.cucumber.core.cli.CLIOptions.TAGS;
+import static io.cucumber.core.cli.CLIOptions.TAGS_SHORT;
+import static io.cucumber.core.cli.CLIOptions.THREADS;
+import static io.cucumber.core.cli.CLIOptions.VERSION;
+import static io.cucumber.core.cli.CLIOptions.VERSION_SHORT;
+import static io.cucumber.core.cli.CLIOptions.WIP;
+import static io.cucumber.core.cli.CLIOptions.WIP_SHORT;
 import static io.cucumber.core.options.ObjectFactoryParser.parseObjectFactory;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -39,7 +68,7 @@ public final class CommandlineOptionsParser {
 
     private static final Logger log = LoggerFactory.getLogger(CommandlineOptionsParser.class);
 
-    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
+    private static final String CORE_VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
             .getString("cucumber-jvm.version");
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
@@ -66,19 +95,19 @@ public final class CommandlineOptionsParser {
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
 
-            if (arg.equals(CLIOptions.HELP) || arg.equals(CLIOptions.HELP_SHORT)) {
+            if (arg.equals(HELP) || arg.equals(HELP_SHORT)) {
                 printUsage();
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals(CLIOptions.VERSION) || arg.equals(CLIOptions.VERSION_SHORT)) {
-                out.println(VERSION);
+            } else if (arg.equals(VERSION) || arg.equals(VERSION_SHORT)) {
+                out.println(CORE_VERSION);
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals(CLIOptions.I18N)) {
+            } else if (arg.equals(I18N)) {
                 String nextArg = removeArgFor(arg, args);
                 exitCode = printI18n(nextArg);
                 return parsedOptions;
-            } else if (arg.equals(CLIOptions.THREADS)) {
+            } else if (arg.equals(THREADS)) {
                 int threads = Integer.parseInt(removeArgFor(arg, args));
                 if (threads < 1) {
                     out.println("--threads must be > 0");
@@ -86,42 +115,42 @@ public final class CommandlineOptionsParser {
                     return parsedOptions;
                 }
                 parsedOptions.setThreads(threads);
-            } else if (arg.equals(CLIOptions.GLUE) || arg.equals(CLIOptions.GLUE_SHORT)) {
+            } else if (arg.equals(GLUE) || arg.equals(GLUE_SHORT)) {
                 String gluePath = removeArgFor(arg, args);
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
-            } else if (arg.equals(CLIOptions.TAGS) || arg.equals(CLIOptions.TAGS_SHORT)) {
+            } else if (arg.equals(TAGS) || arg.equals(TAGS_SHORT)) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
-            } else if (arg.equals(CLIOptions.PUBLISH)) {
+            } else if (arg.equals(PUBLISH)) {
                 parsedOptions.setPublish(true);
-            } else if (arg.equals(CLIOptions.PLUGIN) || arg.equals(CLIOptions.PLUGIN_SHORT)) {
+            } else if (arg.equals(PLUGIN) || arg.equals(PLUGIN_SHORT)) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
-            } else if (arg.equals(CLIOptions.DRY_RUN) || arg.equals(CLIOptions.DRY_RUN_SHORT)) {
+            } else if (arg.equals(DRY_RUN) || arg.equals(DRY_RUN_SHORT)) {
                 parsedOptions.setDryRun(true);
-            } else if (arg.equals(CLIOptions.NO_DRY_RUN)) {
+            } else if (arg.equals(NO_DRY_RUN)) {
                 parsedOptions.setDryRun(false);
-            } else if (arg.equals(CLIOptions.NO_STRICT)) {
+            } else if (arg.equals(NO_STRICT)) {
                 out.println("--no-strict is no longer effective");
                 exitCode = 1;
                 return parsedOptions;
-            } else if (arg.equals(CLIOptions.STRICT) || arg.equals(CLIOptions.STRICT_SHORT)) {
+            } else if (arg.equals(STRICT) || arg.equals(STRICT_SHORT)) {
                 log.warn(() -> "--strict is enabled by default. This option will be removed in a future release.");
-            } else if (arg.equals(CLIOptions.MONOCHROME) || arg.equals(CLIOptions.MONOCHROME_SHORT)) {
+            } else if (arg.equals(MONOCHROME) || arg.equals(MONOCHROME_SHORT)) {
                 parsedOptions.setMonochrome(true);
-            } else if (arg.equals(CLIOptions.NO_MONOCHROME)) {
+            } else if (arg.equals(NO_MONOCHROME)) {
                 parsedOptions.setMonochrome(false);
-            } else if (arg.equals(CLIOptions.SNIPPETS)) {
+            } else if (arg.equals(SNIPPETS)) {
                 String nextArg = removeArgFor(arg, args);
                 parsedOptions.setSnippetType(SnippetTypeParser.parseSnippetType(nextArg));
-            } else if (arg.equals(CLIOptions.NAME) || arg.equals(CLIOptions.NAME_SHORT)) {
+            } else if (arg.equals(NAME) || arg.equals(NAME_SHORT)) {
                 String nextArg = removeArgFor(arg, args);
                 Pattern pattern = Pattern.compile(nextArg);
                 parsedOptions.addNameFilter(pattern);
-            } else if (arg.equals(CLIOptions.WIP) || arg.equals(CLIOptions.WIP_SHORT)) {
+            } else if (arg.equals(WIP) || arg.equals(WIP_SHORT)) {
                 parsedOptions.setWip(true);
-            } else if (arg.equals(CLIOptions.ORDER)) {
+            } else if (arg.equals(ORDER)) {
                 parsedOptions.setPickleOrder(PickleOrderParser.parse(removeArgFor(arg, args)));
-            } else if (arg.equals(CLIOptions.COUNT)) {
+            } else if (arg.equals(COUNT)) {
                 int count = Integer.parseInt(removeArgFor(arg, args));
                 if (count < 1) {
                     out.println("--count must be > 0");
@@ -129,7 +158,7 @@ public final class CommandlineOptionsParser {
                     return parsedOptions;
                 }
                 parsedOptions.setCount(count);
-            } else if (arg.equals(CLIOptions.OBJECT_FACTORY)) {
+            } else if (arg.equals(OBJECT_FACTORY)) {
                 String objectFactoryClassName = removeArgFor(arg, args);
                 parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
             } else if (arg.startsWith("-")) {
