@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+ * [Core] Refactor CommandLine arguments ([2130](https://github.com/cucumber/cucumber-jvm/pull/2130) Quang Lê)
+
 ### Deprecated
 
 ### Removed
