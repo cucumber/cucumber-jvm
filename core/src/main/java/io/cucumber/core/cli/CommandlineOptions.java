@@ -3,7 +3,7 @@ package io.cucumber.core.cli;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
-public final class CLIOptions {
+public final class CommandlineOptions {
     public static final String HELP = "--help";
     public static final String HELP_SHORT = "-h";
 
@@ -54,5 +54,5 @@ public final class CLIOptions {
 
     public static final String OBJECT_FACTORY = "--object-factory";
 
-    private CLIOptions() { }
+    private CommandlineOptions() { }
 }
