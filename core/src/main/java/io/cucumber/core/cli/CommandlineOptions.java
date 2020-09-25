@@ -11,7 +11,7 @@ import org.apiguardian.api.API;
  * <p>
  * All the options are defined as static string variables to allow other programs to call
  * {@link io.cucumber.core.cli.Main#main} function in a more consistent way.
- * E.g. {@code io.cucumber.core.cli.Main.main(NAME, "TestName", THREADS, 2)}
+ * E.g. {@code io.cucumber.core.cli.Main.run(NAME, "TestName", THREADS, "2")}
  */
 
 @API(status = API.Status.STABLE)

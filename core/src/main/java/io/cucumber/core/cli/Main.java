@@ -23,6 +23,7 @@ import java.util.Optional;
  * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
  * For available properties see {@link Constants}.
+ * For Command line options {@link CommandlineOptions}.
  */
 @API(status = API.Status.STABLE)
 public class Main {
@@ -32,6 +33,18 @@ public class Main {
     public static void main(String... argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
         System.exit(exitStatus);
+    }
+
+    /**
+     * Launches the Cucumber-JVM command line.
+     *
+     * @param  argv        runtime options. See details in the
+     *                     {@code cucumber.api.cli.Usage.txt} resource.
+     * @return             0 if execution was successful, 1 if it was not (test
+     *                     failures)
+     */
+    public static byte run(String... argv){
+        return run(argv, Thread.currentThread().getContextClassLoader());
     }
 
     /**
