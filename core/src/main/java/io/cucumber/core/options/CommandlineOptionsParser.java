@@ -28,6 +28,36 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static io.cucumber.core.cli.CommandlineOptions.COUNT;
+import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN;
+import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.GLUE;
+import static io.cucumber.core.cli.CommandlineOptions.GLUE_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.HELP;
+import static io.cucumber.core.cli.CommandlineOptions.HELP_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.I18N;
+import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME;
+import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.NAME;
+import static io.cucumber.core.cli.CommandlineOptions.NAME_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.NO_DRY_RUN;
+import static io.cucumber.core.cli.CommandlineOptions.NO_MONOCHROME;
+import static io.cucumber.core.cli.CommandlineOptions.NO_STRICT;
+import static io.cucumber.core.cli.CommandlineOptions.OBJECT_FACTORY;
+import static io.cucumber.core.cli.CommandlineOptions.ORDER;
+import static io.cucumber.core.cli.CommandlineOptions.PLUGIN;
+import static io.cucumber.core.cli.CommandlineOptions.PLUGIN_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.PUBLISH;
+import static io.cucumber.core.cli.CommandlineOptions.SNIPPETS;
+import static io.cucumber.core.cli.CommandlineOptions.STRICT;
+import static io.cucumber.core.cli.CommandlineOptions.STRICT_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.TAGS;
+import static io.cucumber.core.cli.CommandlineOptions.TAGS_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.THREADS;
+import static io.cucumber.core.cli.CommandlineOptions.VERSION;
+import static io.cucumber.core.cli.CommandlineOptions.VERSION_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.WIP;
+import static io.cucumber.core.cli.CommandlineOptions.WIP_SHORT;
 import static io.cucumber.core.options.ObjectFactoryParser.parseObjectFactory;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -38,7 +68,7 @@ public final class CommandlineOptionsParser {
 
     private static final Logger log = LoggerFactory.getLogger(CommandlineOptionsParser.class);
 
-    private static final String VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
+    private static final String CORE_VERSION = ResourceBundle.getBundle("io.cucumber.core.version")
             .getString("cucumber-jvm.version");
     // IMPORTANT! Make sure USAGE.txt is always uptodate if this class changes.
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
@@ -65,19 +95,19 @@ public final class CommandlineOptionsParser {
         while (!args.isEmpty()) {
             String arg = args.remove(0).trim();
 
-            if (arg.equals("--help") || arg.equals("-h")) {
+            if (arg.equals(HELP) || arg.equals(HELP_SHORT)) {
                 printUsage();
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals("--version") || arg.equals("-v")) {
-                out.println(VERSION);
+            } else if (arg.equals(VERSION) || arg.equals(VERSION_SHORT)) {
+                out.println(CORE_VERSION);
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals("--i18n")) {
+            } else if (arg.equals(I18N)) {
                 String nextArg = removeArgFor(arg, args);
                 exitCode = printI18n(nextArg);
                 return parsedOptions;
-            } else if (arg.equals("--threads")) {
+            } else if (arg.equals(THREADS)) {
                 int threads = Integer.parseInt(removeArgFor(arg, args));
                 if (threads < 1) {
                     out.println("--threads must be > 0");
@@ -85,38 +115,42 @@ public final class CommandlineOptionsParser {
                     return parsedOptions;
                 }
                 parsedOptions.setThreads(threads);
-            } else if (arg.equals("--glue") || arg.equals("-g")) {
+            } else if (arg.equals(GLUE) || arg.equals(GLUE_SHORT)) {
                 String gluePath = removeArgFor(arg, args);
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
-            } else if (arg.equals("--tags") || arg.equals("-t")) {
+            } else if (arg.equals(TAGS) || arg.equals(TAGS_SHORT)) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
-            } else if (arg.equals("--publish")) {
+            } else if (arg.equals(PUBLISH)) {
                 parsedOptions.setPublish(true);
-            } else if (arg.equals("--plugin") || arg.equals("-p")) {
+            } else if (arg.equals(PLUGIN) || arg.equals(PLUGIN_SHORT)) {
                 parsedOptions.addPluginName(removeArgFor(arg, args));
-            } else if (arg.equals("--no-dry-run") || arg.equals("--dry-run") || arg.equals("-d")) {
-                parsedOptions.setDryRun(!arg.startsWith("--no-"));
-            } else if (arg.equals("--no-strict")) {
+            } else if (arg.equals(DRY_RUN) || arg.equals(DRY_RUN_SHORT)) {
+                parsedOptions.setDryRun(true);
+            } else if (arg.equals(NO_DRY_RUN)) {
+                parsedOptions.setDryRun(false);
+            } else if (arg.equals(NO_STRICT)) {
                 out.println("--no-strict is no longer effective");
                 exitCode = 1;
                 return parsedOptions;
-            } else if (arg.equals("--strict") || arg.equals("-s")) {
+            } else if (arg.equals(STRICT) || arg.equals(STRICT_SHORT)) {
                 log.warn(() -> "--strict is enabled by default. This option will be removed in a future release.");
-            } else if (arg.equals("--no-monochrome") || arg.equals("--monochrome") || arg.equals("-m")) {
-                parsedOptions.setMonochrome(!arg.startsWith("--no-"));
-            } else if (arg.equals("--snippets")) {
+            } else if (arg.equals(MONOCHROME) || arg.equals(MONOCHROME_SHORT)) {
+                parsedOptions.setMonochrome(true);
+            } else if (arg.equals(NO_MONOCHROME)) {
+                parsedOptions.setMonochrome(false);
+            } else if (arg.equals(SNIPPETS)) {
                 String nextArg = removeArgFor(arg, args);
                 parsedOptions.setSnippetType(SnippetTypeParser.parseSnippetType(nextArg));
-            } else if (arg.equals("--name") || arg.equals("-n")) {
+            } else if (arg.equals(NAME) || arg.equals(NAME_SHORT)) {
                 String nextArg = removeArgFor(arg, args);
                 Pattern pattern = Pattern.compile(nextArg);
                 parsedOptions.addNameFilter(pattern);
-            } else if (arg.equals("--wip") || arg.equals("-w")) {
+            } else if (arg.equals(WIP) || arg.equals(WIP_SHORT)) {
                 parsedOptions.setWip(true);
-            } else if (arg.equals("--order")) {
+            } else if (arg.equals(ORDER)) {
                 parsedOptions.setPickleOrder(PickleOrderParser.parse(removeArgFor(arg, args)));
-            } else if (arg.equals("--count")) {
+            } else if (arg.equals(COUNT)) {
                 int count = Integer.parseInt(removeArgFor(arg, args));
                 if (count < 1) {
                     out.println("--count must be > 0");
@@ -124,7 +158,7 @@ public final class CommandlineOptionsParser {
                     return parsedOptions;
                 }
                 parsedOptions.setCount(count);
-            } else if (arg.equals("--object-factory")) {
+            } else if (arg.equals(OBJECT_FACTORY)) {
                 String objectFactoryClassName = removeArgFor(arg, args);
                 parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
             } else if (arg.startsWith("-")) {

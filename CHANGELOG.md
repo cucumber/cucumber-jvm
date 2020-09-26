@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * [Core] Define CLI arguments as static variables instead of hardcoded strings ([2130](https://github.com/cucumber/cucumber-jvm/pull/2130) Quang Lê)
 
 ### Changed
 
