@@ -16,6 +16,8 @@ public final class Constants {
      * Property name used to disable ansi colors in the output (not supported by
      * all terminals): {@value}
      * <p>
+     * Valid values are {@code true}, {@code false}.
+     * <p>
      * Ansi colors are enabled by default.
      */
     public static final String ANSI_COLORS_DISABLED_PROPERTY_NAME = io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
@@ -24,6 +26,8 @@ public final class Constants {
      * Property name used to enable dry-run: {@value}
      * <p>
      * When using dry run Cucumber will skip execution of glue code.
+     * <p>
+     * Valid values are {@code true}, {@code false}.
      * <p>
      * By default, dry-run is disabled
      */
@@ -92,19 +96,21 @@ public final class Constants {
      */
     public static final String PLUGIN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 
-    /**
-     * Setting this to true will enable publishing.
-     */
+
     public static final String PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
 
     /**
-     * Setting this to true will enable publishing with a Bearer token.
+     * Property name to publish with bearer token: {@value}
+     * <p>
+     * Enabling this will publish authenticated test results online.
+     * <p>
      */
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 
     /**
-     * Setting this to true will prevent the publish advertising banner from
-     * being printed.
+     * Property name to suppress publishing advertising banner: {@value}
+     * <p>
+     * Valid values are {@code true}, {@code false}.
      */
     public static final String PLUGIN_PUBLISH_QUIET_PROPERTY_NAME = io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 

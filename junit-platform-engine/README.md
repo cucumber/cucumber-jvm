@@ -193,6 +193,15 @@ cucumber.plugin=                                              # comma separated 
 cucumber.object-factory=                                      # object factory class name.
                                                               # example: com.example.MyObjectFactory
 
+cucumber.publish.enabled                                      # true or false. default: false
+                                                              # enable publishing of test results 
+
+cucumber.publish.quiet                                        # true or false. default: false
+                                                              # supress publish banner after test exeuction  
+
+cucumber.publish.token                                        # any string value.
+                                                              # publish authenticated test results    
+
 cucumber.snippet-type=                                        # underscore or camelcase. 
                                                               # default: underscore
 
