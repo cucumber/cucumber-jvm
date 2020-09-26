@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.options.CurlOption;
+import io.cucumber.core.options.CurlOption.HttpMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -58,13 +60,15 @@ class UrlOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOutputStream.close();
-        URL url = sendRequest(option.getUri().toURL(), option.getMethod());
-        if (urlReporter != null) {
-            urlReporter.report(url);
-        }
+        sendRequest(option.getUri().toURL(), option.getMethod())
+                .ifPresent(redirectResponse -> {
+                    if (urlReporter != null) {
+                        urlReporter.report(redirectResponse);
+                    }
+                });
     }
 
-    private URL sendRequest(URL url, CurlOption.HttpMethod method) throws IOException {
+    private Optional<String> sendRequest(URL url, HttpMethod method) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         for (Entry<String, String> header : option.getHeaders()) {
             urlConnection.setRequestProperty(header.getKey(), header.getValue());
@@ -72,11 +76,12 @@ class UrlOutputStream extends OutputStream {
         Map<String, List<String>> requestHeaders = urlConnection.getRequestProperties();
         urlConnection.setInstanceFollowRedirects(true);
         urlConnection.setRequestMethod(method.name());
+        String redirectMessage = null;
         if (method == CurlOption.HttpMethod.GET) {
-            throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
+            redirectMessage = throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
             String location = urlConnection.getHeaderField("Location");
             if (urlConnection.getResponseCode() == 202 && location != null) {
-                return sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
+                sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
             }
         } else {
             urlConnection.setDoOutput(true);
@@ -85,10 +90,10 @@ class UrlOutputStream extends OutputStream {
                 throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
             }
         }
-        return urlConnection.getURL();
+        return Optional.ofNullable(redirectMessage);
     }
 
-    private static void throwExceptionIfUnsuccessful(
+    private static String throwExceptionIfUnsuccessful(
             HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders
     )
             throws IOException {
@@ -104,6 +109,8 @@ class UrlOutputStream extends OutputStream {
                 String method = urlConnection.getRequestMethod();
                 URL url = urlConnection.getURL();
                 throw createCurlLikeException(method, url, requestHeaders, responseHeaders, responseBody);
+            } else {
+                return responseBody;
             }
         }
     }
