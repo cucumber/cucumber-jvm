@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [Core] Define CLI arguments as static variables instead of hardcoded strings ([2130](https://github.com/cucumber/cucumber-jvm/pull/2130) Quang Lê)
+ * [Core] Define CLI arguments as static variables instead of hardcoded strings ([#2130](https://github.com/cucumber/cucumber-jvm/pull/2130) Quang Lê)
+ * [Core] Support for `Optional<T>` in data tables ([cucumber/#1182](https://github.com/cucumber/cucumber/pull/1182) Anton Derabin)
 
 ### Changed
 
@@ -17,16 +18,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
-
  * [Core] Validation of `CUCUMBER_PUBLISH_TOKEN` no longer happens inside Cucumber-JVM - only on the server.
-   ([2123](https://github.com/cucumber/cucumber-jvm/pull/2123)
-    [2122](https://github.com/cucumber/cucumber-jvm/issues/2122)
+   ([#2123](https://github.com/cucumber/cucumber-jvm/pull/2123)
+    [#2122](https://github.com/cucumber/cucumber-jvm/issues/2122)
     Aslak Hellesøy)
 
 ## [6.7.0] (2020-09-14)
 
 ### Added
- * [JUnit Platform] Support discovery selectors with FilePosition ([2121](https://github.com/cucumber/cucumber-jvm/pull/2121) M.P. Korstanje) 
+ * [JUnit Platform] Support discovery selectors with FilePosition ([#2121](https://github.com/cucumber/cucumber-jvm/pull/2121) M.P. Korstanje) 
 
 ### Changed
  * [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.0
@@ -34,13 +34,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [6.6.1] (2020-09-08)
 
 ### Fixed
- * [Core] CucumberOptions default snippet type should not override properties ([2107](https://github.com/cucumber/cucumber-jvm/pull/2107) M.P. Korstanje)
- * [Core] Replace parentFile.makeDirs with Files.createDirectories(parentFile) ([2104](https://github.com/cucumber/cucumber-jvm/pull/2104) M.P. Korstanje)
- * [Core] Separate run, dry-run and skip execution modes ([2102](https://github.com/cucumber/cucumber-jvm/pull/2109), [2102](https://github.com/cucumber/cucumber-jvm/pull/2109) M.P. Korstanje)
+ * [Core] CucumberOptions default snippet type should not override properties ([#2107](https://github.com/cucumber/cucumber-jvm/pull/2107) M.P. Korstanje)
+ * [Core] Replace parentFile.makeDirs with Files.createDirectories(parentFile) ([#2104](https://github.com/cucumber/cucumber-jvm/pull/2104) M.P. Korstanje)
+ * [Core] Separate run, dry-run and skip execution modes ([#2102](https://github.com/cucumber/cucumber-jvm/pull/2109), [#2102](https://github.com/cucumber/cucumber-jvm/pull/2109) M.P. Korstanje)
    * Fixes `--dry-run` not failing on undefined steps
 
 ### Security
- * [Core] Update `create-meta` to 2.0.2 to avoid sharing credentials ([2110](https://github.com/cucumber/cucumber-jvm/pull/2110) vincent-psarga)
+ * [Core] Update `create-meta` to 2.0.2 to avoid sharing credentials ([#2110](https://github.com/cucumber/cucumber-jvm/pull/2110) vincent-psarga)
 
 ## [6.6.0] (2020-08-26)
 

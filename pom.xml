@@ -24,7 +24,7 @@
 
         <!-- io.cucumber dependencies -->
         <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
-        <datatable.version>3.4.0</datatable.version>
+        <datatable.version>3.5.0</datatable.version>
         <create-meta.version>2.0.2</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
@@ -572,6 +572,12 @@
                                 <item>
                                     <code>java.method.addedToInterface</code>
                                     <new>method boolean io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::publish()</new>
+                                    <justification>Internal API</justification>
+                                </item>
+                                <item>
+                                    <code>java.method.visibilityReduced</code>
+                                    <old>method boolean io.cucumber.datatable.DataTableType::isReplaceable()</old>
+                                    <old>method boolean io.cucumber.datatable.DataTableType::isReplaceable()</old>
                                     <justification>Internal API</justification>
                                 </item>
                                 <!-- Gherkin parser related -->
