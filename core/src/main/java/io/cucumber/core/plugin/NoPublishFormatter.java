@@ -51,18 +51,23 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
                 new Banner.Line("Activate publishing with one of the following:"),
                 new Banner.Line(""),
                 new Banner.Line(
-                    new Banner.Span("src/test/resources/cucumber.properties:    "),
-                    new Banner.Span("cucumber.publish.enabled", AnsiEscapes.CYAN),
+                    new Banner.Span("src/test/resources/cucumber.properties:          "),
+                    new Banner.Span(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, AnsiEscapes.CYAN),
                     new Banner.Span("="),
                     new Banner.Span("true", AnsiEscapes.CYAN)),
                 new Banner.Line(
-                    new Banner.Span("Environment variable:                      "),
+                    new Banner.Span("src/test/resources/junit-platform.properties:    "),
+                    new Banner.Span(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, AnsiEscapes.CYAN),
+                    new Banner.Span("="),
+                    new Banner.Span("true", AnsiEscapes.CYAN)),
+                new Banner.Line(
+                    new Banner.Span("Environment variable:                            "),
                     new Banner.Span(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME.toUpperCase().replace('.', '_'),
                         AnsiEscapes.CYAN),
                     new Banner.Span("="),
                     new Banner.Span("true", AnsiEscapes.CYAN)),
                 new Banner.Line(
-                    new Banner.Span("JUnit:                                     "),
+                    new Banner.Span("JUnit:                                           "),
                     new Banner.Span("@CucumberOptions", AnsiEscapes.CYAN),
                     new Banner.Span("(publish = "),
                     new Banner.Span("true", AnsiEscapes.CYAN),
@@ -73,13 +78,18 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
                     new Banner.Span("https://reports.cucumber.io/docs/cucumber-jvm", AnsiEscapes.CYAN)),
                 new Banner.Line(""),
                 new Banner.Line(
-                    new Banner.Span("To disable this message, add "),
-                    new Banner.Span(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, AnsiEscapes.INTENSITY_BOLD),
-                    new Banner.Span("=", AnsiEscapes.INTENSITY_BOLD),
-                    new Banner.Span("true", AnsiEscapes.INTENSITY_BOLD),
-                    new Banner.Span(" to")),
+                    new Banner.Span("Disable this message with one of the following:")),
+                new Banner.Line(""),
                 new Banner.Line(
-                    new Banner.Span("src/test/resources/cucumber.properties", AnsiEscapes.INTENSITY_BOLD))),
+                    new Banner.Span("src/test/resources/cucumber.properties:          "),
+                    new Banner.Span(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, AnsiEscapes.CYAN),
+                    new Banner.Span("="),
+                    new Banner.Span("true", AnsiEscapes.CYAN)),
+                new Banner.Line(
+                    new Banner.Span("src/test/resources/junit-platform.properties:    "),
+                    new Banner.Span(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, AnsiEscapes.CYAN),
+                    new Banner.Span("="),
+                    new Banner.Span("true", AnsiEscapes.CYAN))),
             AnsiEscapes.GREEN, AnsiEscapes.INTENSITY_BOLD);
     }
 }
