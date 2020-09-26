@@ -8,14 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [Core] Define CLI arguments as static variables instead of hardcoded strings ([#2130](https://github.com/cucumber/cucumber-jvm/pull/2130) Quang Lê)
- * [Core] Support for `Optional<T>` in data tables ([cucumber/#1182](https://github.com/cucumber/cucumber/pull/1182) Anton Derabin)
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+## [6.8.0] (2020-09-26)
+
+### Added
+ * [Core] Define CLI arguments as static variables instead of hardcoded strings ([#2130](https://github.com/cucumber/cucumber-jvm/pull/2130) Quang Lê)
+ * [Core] Support for `Optional<T>` in data tables ([cucumber/#1182](https://github.com/cucumber/cucumber/pull/1182) Anton Derabin)
 
 ### Fixed
  * [Core] Validation of `CUCUMBER_PUBLISH_TOKEN` no longer happens inside Cucumber-JVM - only on the server.
@@ -1542,7 +1548,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.7.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.8.0...main
+[6.8.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.7.0...v6.8.0
 [6.7.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.6.1...v6.7.0
 [6.6.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.6.0...v6.6.1
 [6.6.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.5.1...v6.6.0
