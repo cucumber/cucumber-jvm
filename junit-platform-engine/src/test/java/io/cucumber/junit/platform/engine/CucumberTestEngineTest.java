@@ -7,18 +7,20 @@ import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
-import org.junit.platform.testkit.engine.EngineExecutionResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
-import org.junit.platform.testkit.engine.Event;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.CucumberEngineDescriptor.ENGINE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
+import static org.junit.platform.testkit.engine.EventConditions.event;
+import static org.junit.platform.testkit.engine.EventConditions.finishedSuccessfully;
+import static org.junit.platform.testkit.engine.EventConditions.skippedWithReason;
+import static org.junit.platform.testkit.engine.EventConditions.test;
 
 class CucumberTestEngineTest {
 
@@ -26,7 +28,7 @@ class CucumberTestEngineTest {
 
     @Test
     void id() {
-        assertEquals("cucumber", engine.getId());
+        assertEquals(ENGINE_ID, engine.getId());
     }
 
     @Test
@@ -47,46 +49,39 @@ class CucumberTestEngineTest {
 
     @Test
     void selectAndExecuteSingleScenario() {
-        EngineExecutionResults result = EngineTestKit.engine("cucumber")
+        EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
-                .execute();
-        assertEquals(2, result.testEvents().count()); // test start and finished
-        assertEquals(1, result.testEvents().succeeded().count());
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(2, event(test()))
+                .haveExactly(1, event(finishedSuccessfully()));
     }
 
     @Test
     void selectAndSkipDisabledScenarioByTags() {
-        EngineExecutionResults result = EngineTestKit.engine("cucumber")
+        EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
-                .execute();
-        assertEquals(1, result.testEvents().count());
-        assertEquals(1, result.testEvents().skipped().count());
-        assertEquals(
-            Optional.of(
-                "'cucumber.filter.tags=( @Integration and not ( @Disabled ) )' did not match this scenario"),
-            result.testEvents()
-                    .skipped()
-                    .map(Event::getPayload)
-                    .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
-                    .findFirst());
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test()))
+                .haveExactly(1, event(skippedWithReason(
+                    "'cucumber.filter.tags=( @Integration and not ( @Disabled ) )' did not match this scenario")));
     }
 
     @Test
     void selectAndSkipDisabledScenarioByName() {
-        EngineExecutionResults result = EngineTestKit.engine("cucumber")
+        EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^Nothing$")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
-                .execute();
-        assertEquals(1, result.testEvents().count());
-        assertEquals(1, result.testEvents().skipped().count());
-        assertEquals(
-            Optional.of("'cucumber.filter.name=^Nothing$' did not match this scenario"),
-            result.testEvents()
-                    .skipped()
-                    .map(Event::getPayload)
-                    .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
-                    .findFirst());
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test()))
+                .haveExactly(1,
+                    event(skippedWithReason("'cucumber.filter.name=^Nothing$' did not match this scenario")));
     }
 
 }
