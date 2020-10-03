@@ -1,6 +1,9 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestSource;
@@ -22,22 +25,26 @@ import java.util.stream.Stream;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
+import static io.cucumber.junit.platform.engine.ReportingEntryPublisher.report;
+import static io.cucumber.junit.platform.engine.TestCaseResultObserver.observe;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import static org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
 
 class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    private final Pickle pickleEvent;
+    private static final Logger log = LoggerFactory.getLogger(PickleDescriptor.class);
+
+    private final Pickle pickle;
     private final Set<TestTag> tags;
     private final Set<ExclusiveResource> exclusiveResources = new LinkedHashSet<>(0);
 
     PickleDescriptor(
-            ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, Pickle pickleEvent
+            ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, Pickle pickle
     ) {
         super(uniqueId, name, source);
-        this.pickleEvent = pickleEvent;
-        this.tags = getTags(pickleEvent);
+        this.pickle = pickle;
+        this.tags = getTags(pickle);
         this.tags.forEach(tag -> {
             ExclusiveResourceOptions exclusiveResourceOptions = new ExclusiveResourceOptions(parameters, tag);
             exclusiveResourceOptions.exclusiveReadWriteResource()
@@ -74,7 +81,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
 
     private Optional<SkipResult> shouldBeSkippedByTagFilter(CucumberEngineExecutionContext context) {
         return context.getOptions().tagFilter().map(expression -> {
-            if (expression.evaluate(pickleEvent.getTags())) {
+            if (expression.evaluate(pickle.getTags())) {
                 return SkipResult.doNotSkip();
             }
             return SkipResult
@@ -85,7 +92,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
 
     private Optional<SkipResult> shouldBeSkippedByNameFilter(CucumberEngineExecutionContext context) {
         return context.getOptions().nameFilter().map(pattern -> {
-            if (pattern.matcher(pickleEvent.getName()).matches()) {
+            if (pattern.matcher(pickle.getName()).matches()) {
                 return SkipResult.doNotSkip();
             }
             return SkipResult
@@ -94,10 +101,18 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
     }
 
     @Override
-    public CucumberEngineExecutionContext execute(
-            CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor
-    ) {
-        context.runTestCase(pickleEvent);
+    public CucumberEngineExecutionContext execute(CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor) {
+        context.runTestCase(runner -> {
+            EventBus bus = runner.getBus();
+            try (TestCaseResultObserver result = observe(bus)) {
+                try(ReportingEntryPublisher ignored = report(this, bus, context.getListener())) {
+                    log.debug(() -> "Executing test case " + pickle.getName());
+                    runner.runPickle(pickle);
+                    log.debug(() -> "Finished test case " + pickle.getName());
+                }
+                result.assertTestCasePassed();
+            }
+        });
         return context;
     }
 

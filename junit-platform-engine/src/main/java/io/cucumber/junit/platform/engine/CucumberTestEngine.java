@@ -34,7 +34,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
     @Override
     public String getId() {
-        return "cucumber";
+        return CucumberEngineDescriptor.ENGINE_ID;
     }
 
     @Override
@@ -56,7 +56,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
     @Override
     protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
+        return new CucumberEngineExecutionContext(request.getConfigurationParameters(), request.getEngineExecutionListener());
     }
 
 }

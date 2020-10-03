@@ -9,6 +9,8 @@ import java.util.Optional;
 
 class CucumberEngineDescriptor extends EngineDescriptor implements Node<CucumberEngineExecutionContext> {
 
+    static final String ENGINE_ID = "cucumber";
+
     CucumberEngineDescriptor(UniqueId uniqueId) {
         super(uniqueId, "Cucumber");
     }
