@@ -13,7 +13,7 @@ import java.nio.file.Path;
  */
 public class FeatureIdentifier {
 
-    private static final String FEATURE_FILE_SUFFIX = ".feature";
+    private static final String FEATURE_FILE_PATTERN = ".*\\.(feature|md)$";
 
     private FeatureIdentifier() {
 
@@ -26,17 +26,17 @@ public class FeatureIdentifier {
     public static URI parse(URI featureIdentifier) {
         if (!isFeature(featureIdentifier)) {
             throw new IllegalArgumentException(
-                "featureIdentifier does not reference a single feature file: " + featureIdentifier);
+                    "featureIdentifier does not reference a single feature file: " + featureIdentifier);
         }
         return featureIdentifier;
     }
 
     public static boolean isFeature(URI featureIdentifier) {
-        return featureIdentifier.getSchemeSpecificPart().endsWith(FEATURE_FILE_SUFFIX);
+        return featureIdentifier.getSchemeSpecificPart().matches(FEATURE_FILE_PATTERN);
     }
 
     public static boolean isFeature(Path path) {
-        return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
+        return path.getFileName().toString().matches(FEATURE_FILE_PATTERN);
     }
 
 }

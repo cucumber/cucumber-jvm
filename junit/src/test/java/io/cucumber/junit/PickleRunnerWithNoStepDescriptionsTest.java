@@ -16,7 +16,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
     void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("example.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");
@@ -37,7 +37,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("example.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");
@@ -58,7 +58,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileWithRussianLanguage() {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("example.feature", "" +
                 "#language:ru\n" +
                 "Функция: имя функции\n" +
                 "  Сценарий: имя сценария\n" +

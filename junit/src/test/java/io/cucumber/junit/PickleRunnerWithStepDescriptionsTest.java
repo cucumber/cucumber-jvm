@@ -110,7 +110,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseScenarioNameForDisplayName() {
-        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = picklesFromFeature("example.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");
@@ -126,7 +126,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseStepKeyworkAndNameForChildName() {
-        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = picklesFromFeature("example.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");
@@ -142,7 +142,7 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
+        List<Pickle> pickles = picklesFromFeature("example.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
                 "    Then it works\n");

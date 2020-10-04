@@ -43,7 +43,7 @@ final class GherkinMessagesPickle implements Pickle {
                 .stream()
                 .filter(s -> !StepType.isAstrix(s))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
+                .orElse(dialect.getGivenKeywords().get(0)); // Default to "* " if that's all there is
 
         for (PickleStep pickleStep : pickle.getStepsList()) {
             String gherkinStepId = pickleStep.getAstNodeIds(0);
