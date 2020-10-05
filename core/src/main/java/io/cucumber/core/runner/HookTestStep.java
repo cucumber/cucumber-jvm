@@ -8,6 +8,7 @@ final class HookTestStep extends TestStep implements io.cucumber.plugin.event.Ho
 
     private final HookType hookType;
     private final HookDefinitionMatch definitionMatch;
+    private io.cucumber.plugin.event.TestStep relatedTestStep;
 
     HookTestStep(UUID id, HookType hookType, HookDefinitionMatch definitionMatch) {
         super(id, definitionMatch);
@@ -18,6 +19,16 @@ final class HookTestStep extends TestStep implements io.cucumber.plugin.event.Ho
     @Override
     public HookType getHookType() {
         return hookType;
+    }
+
+    @Override
+    public void setRelatedTestStep(io.cucumber.plugin.event.TestStep step) {
+        this.relatedTestStep = step;
+    }
+
+    @Override
+    public io.cucumber.plugin.event.TestStep getRelatedTestStep() {
+        return relatedTestStep;
     }
 
     HookDefinitionMatch getDefinitionMatch() {

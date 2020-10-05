@@ -3,8 +3,13 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.plugin.event.HookTestStep;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.Step;
+import io.cucumber.plugin.event.TestStep;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Objects.requireNonNull;
@@ -22,35 +27,74 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     private static Method requireValidMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length > 1) {
-            throw createInvalidSignatureException(method);
+        Class<?>[] acceptedTypes = new Class<?>[] { io.cucumber.java.Scenario.class };
+
+        if (method.isAnnotationPresent(BeforeStep.class) || method.isAnnotationPresent(AfterStep.class)) {
+            acceptedTypes = new Class<?>[] { io.cucumber.java.Scenario.class, io.cucumber.core.gherkin.Step.class };
         }
 
-        if (parameterTypes.length == 1) {
-            Class<?> parameterType = parameterTypes[0];
-            if (!(Object.class.equals(parameterType) || io.cucumber.java.Scenario.class.equals(parameterType))) {
+        if (parameterTypes.length > 0) {
+            if (parameterTypes.length > acceptedTypes.length) {
                 throw createInvalidSignatureException(method);
+            }
+            for (int parameterIndex = 0; parameterIndex < parameterTypes.length; parameterIndex++) {
+                checkParameter(method, parameterIndex, parameterTypes, acceptedTypes);
             }
         }
 
         return method;
     }
 
+    private static void checkParameter(Method method, int index, Class<?>[] parameterTypes, Class<?>[] acceptedTypes) {
+        Class<?> parameterType = parameterTypes[index];
+        Class<?> acceptedType = acceptedTypes[index];
+        if (!(Object.class.equals(parameterType) || acceptedType.equals(parameterType))) {
+            throw createInvalidSignatureException(method);
+        }
+    }
+
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
-                .addAnnotation(Before.class)
-                .addAnnotation(After.class)
-                .addAnnotation(BeforeStep.class)
-                .addAnnotation(AfterStep.class)
-                .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
-                .addSignature("public void before_or_after()")
-                .build();
+        boolean annotated = false;
+        InvalidMethodSignatureException.InvalidMethodSignatureExceptionBuilder builder = builder(method);
+        if (method.isAnnotationPresent(Before.class) || method.isAnnotationPresent(After.class)) {
+            builder
+                    .addAnnotation(Before.class)
+                    .addAnnotation(After.class)
+                    .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
+                    .addSignature("public void before_or_after()");
+            annotated = true;
+        }
+        if (method.isAnnotationPresent(BeforeStep.class) || method.isAnnotationPresent(AfterStep.class)) {
+            builder
+                    .addAnnotation(BeforeStep.class)
+                    .addAnnotation(AfterStep.class)
+                    .addSignature(
+                        "public void before_or_after_step(io.cucumber.java.Scenario scenario, io.cucumber.core.gherkin.Step step)")
+                    .addSignature("public void before_or_after_step(io.cucumber.java.Scenario scenario)")
+                    .addSignature("public void before_or_after_step()");
+            annotated = true;
+        }
+        if (!annotated) {
+            throw new IllegalArgumentException(
+                "Method should be annotated with one of: @Before, @After, @BeforeStep, @AfterStep");
+        }
+        return builder.build();
     }
 
     @Override
     public void execute(TestCaseState state) {
         Object[] args;
-        if (method.getParameterTypes().length == 1) {
+        if (method.getParameterTypes().length == 2) {
+            Step relatedStep = null;
+            Optional<TestStep> currentTestStep = state.getCurrentTestStep();
+            if (currentTestStep.isPresent() && currentTestStep.get() instanceof HookTestStep) {
+                TestStep relatedTestStep = (((HookTestStep) currentTestStep.get())).getRelatedTestStep();
+                if (null != relatedTestStep) {
+                    relatedStep = ((PickleStepTestStep) relatedTestStep).getStep();
+                }
+            }
+            args = new Object[] { new io.cucumber.java.Scenario(state), relatedStep };
+        } else if (method.getParameterTypes().length == 1) {
             args = new Object[] { new io.cucumber.java.Scenario(state) };
         } else {
             args = new Object[0];

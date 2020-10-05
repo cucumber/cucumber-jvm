@@ -19,4 +19,8 @@ public interface HookTestStep extends TestStep {
      */
     HookType getHookType();
 
+    void setRelatedTestStep(TestStep step);
+
+    TestStep getRelatedTestStep();
+
 }

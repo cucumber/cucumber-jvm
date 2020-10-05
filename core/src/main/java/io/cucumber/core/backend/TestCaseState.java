@@ -1,9 +1,11 @@
 package io.cucumber.core.backend;
 
+import io.cucumber.plugin.event.TestStep;
 import org.apiguardian.api.API;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 
 @API(status = API.Status.STABLE)
 public interface TestCaseState {
@@ -91,4 +93,5 @@ public interface TestCaseState {
      */
     Integer getLine();
 
+    Optional<TestStep> getCurrentTestStep();
 }
