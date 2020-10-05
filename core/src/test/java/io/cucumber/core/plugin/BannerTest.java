@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static java.util.Arrays.asList;
@@ -13,9 +15,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class BannerTest {
 
     @Test
-    void printsAnsiBanner() {
+    void printsAnsiBanner() throws UnsupportedEncodingException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        Banner banner = new Banner(new PrintStream(bytes), false);
+        Banner banner = new Banner(new PrintStream(bytes, false, StandardCharsets.UTF_8.name()), false);
 
         banner.print(asList(
             new Banner.Line("Bla"),
@@ -37,7 +39,7 @@ class BannerTest {
     @Test
     void printsMonochromeBanner() throws Exception {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        Banner banner = new Banner(new PrintStream(bytes), true);
+        Banner banner = new Banner(new PrintStream(bytes, false, StandardCharsets.UTF_8.name()), true);
 
         banner.print(asList(
             new Banner.Line("Bla"),

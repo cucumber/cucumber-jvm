@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,17 +24,17 @@ class UrlReporterTest {
             "\u001B[32m\u001B[1m└──────────────────────────────────────────────────────────────────────────┘\u001B[0m\n";
 
     @Test
-    void printsTheCorrespondingReportsCucumberIoUrl() {
+    void printsTheCorrespondingReportsCucumberIoUrl() throws UnsupportedEncodingException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        UrlReporter urlReporter = new UrlReporter(new PrintStream(bytes));
+        UrlReporter urlReporter = new UrlReporter(new PrintStream(bytes, false, StandardCharsets.UTF_8.name()));
         urlReporter.report(message);
         assertThat(bytes, isBytesEqualTo(message));
     }
 
     @Test
-    void printsTheCorrespondingReportsCucumberIoUrlInMonoChrome() {
+    void printsTheCorrespondingReportsCucumberIoUrlInMonoChrome() throws UnsupportedEncodingException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        UrlReporter urlReporter = new UrlReporter(new PrintStream(bytes));
+        UrlReporter urlReporter = new UrlReporter(new PrintStream(bytes, false, StandardCharsets.UTF_8.name()));
         urlReporter.setMonochrome(true);
 
         urlReporter.report(message);
