@@ -4,11 +4,10 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.event.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
@@ -21,6 +20,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -49,12 +49,16 @@ class PluginFactoryTest {
     void instantiates_junit_plugin_with_file_arg() {
         Object plugin = fc.create(parse("junit:" + tmp.resolve("cucumber.xml")));
         assertThat(plugin.getClass(), is(equalTo(JUnitFormatter.class)));
+
+        release_resources(plugin);
     }
 
     @Test
     void instantiates_rerun_plugin_with_file_arg() {
         Object plugin = fc.create(parse("rerun:" + tmp.resolve("rerun.txt")));
         assertThat(plugin.getClass(), is(equalTo(RerunFormatter.class)));
+
+        release_resources(plugin);
     }
 
     @Test
@@ -63,7 +67,10 @@ class PluginFactoryTest {
 
         assertAll(
             () -> assertThat(Files.exists(file), is(false)),
-            () -> assertDoesNotThrow(() -> fc.create(parse("rerun:" + file))),
+            () -> assertDoesNotThrow(() -> {
+                Object plugin = fc.create(parse("rerun:" + file));
+                release_resources(plugin);
+            }),
             () -> assertThat(Files.exists(file), is(true)));
     }
 
@@ -87,6 +94,8 @@ class PluginFactoryTest {
     void instantiates_pretty_plugin_with_file_arg() throws IOException {
         Object plugin = fc.create(parse("pretty:" + tmp.resolve("out.txt").toUri().toURL()));
         assertThat(plugin.getClass(), is(equalTo(PrettyFormatter.class)));
+
+        release_resources(plugin);
     }
 
     @Test
@@ -105,6 +114,8 @@ class PluginFactoryTest {
     void instantiates_usage_plugin_with_file_arg() {
         Object plugin = fc.create(parse("usage:" + tmp.resolve("out.txt").toAbsolutePath()));
         assertThat(plugin.getClass(), is(equalTo(UsageFormatter.class)));
+
+        release_resources(plugin);
     }
 
     @Test
@@ -185,6 +196,8 @@ class PluginFactoryTest {
     void instantiates_timeline_plugin_with_dir_arg() {
         Object plugin = fc.create(parse("timeline:" + tmp.toAbsolutePath()));
         assertThat(plugin.getClass(), is(equalTo(TimelineFormatter.class)));
+
+        release_resources(plugin);
     }
 
     @Test
@@ -299,6 +312,45 @@ class PluginFactoryTest {
         public WantsTooMuch(String too, String much) {
         }
 
+    }
+
+    private static class FakeTestRunEventsPublisher implements EventPublisher {
+        private EventHandler<TestRunStarted> startHandler;
+        private EventHandler<TestRunFinished> finishedHandler;
+
+        @Override
+        public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+            if (eventType == TestRunStarted.class) {
+                startHandler = ((EventHandler<TestRunStarted>) handler);
+            }
+            if (eventType == TestRunFinished.class) {
+                finishedHandler = ((EventHandler<TestRunFinished>) handler);
+            }
+        }
+
+        @Override
+        public <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+        }
+
+        public void fakeTestRunEvents() {
+            if (startHandler != null) {
+                startHandler.receive(new TestRunStarted(Instant.now()));
+            }
+            if (finishedHandler != null) {
+                finishedHandler.receive(new TestRunFinished(Instant.now()));
+            }
+        }
+    }
+
+    void release_resources(Object plugin) {
+        FakeTestRunEventsPublisher fakeTestRun = new FakeTestRunEventsPublisher();
+        if (plugin instanceof EventListener) {
+            ((EventListener) plugin).setEventPublisher(fakeTestRun);
+            fakeTestRun.fakeTestRunEvents();
+        } else if (plugin instanceof ConcurrentEventListener) {
+            ((ConcurrentEventListener) plugin).setEventPublisher(fakeTestRun);
+            fakeTestRun.fakeTestRunEvents();
+        }
     }
 
 }
