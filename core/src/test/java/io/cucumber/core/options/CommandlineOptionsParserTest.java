@@ -15,6 +15,7 @@ import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -360,7 +362,7 @@ class CommandlineOptionsParserTest {
         parser
                 .parse("--threads", "0")
                 .build();
-        assertThat(output(), startsWith("--threads must be > 0"));
+        assertThat(output(), equalToCompressingWhiteSpace("--threads must be > 0"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
 
@@ -467,7 +469,7 @@ class CommandlineOptionsParserTest {
         parser
                 .parse("--count", "0")
                 .build();
-        assertThat(output(), startsWith("--count must be > 0"));
+        assertThat(output(), equalToCompressingWhiteSpace("--count must be > 0"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
 
