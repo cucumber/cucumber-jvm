@@ -156,9 +156,15 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     public List<TestStep> getTestSteps() {
         List<TestStep> testSteps = new ArrayList<>(beforeHooks);
         for (PickleStepTestStep step : this.testSteps) {
-            testSteps.addAll(step.getBeforeStepHookSteps());
+            step.getBeforeStepHookSteps().forEach(hookTestStep -> {
+                hookTestStep.setRelatedTestStep(step);
+                testSteps.add(hookTestStep);
+            });
             testSteps.add(step);
-            testSteps.addAll(step.getAfterStepHookSteps());
+            step.getAfterStepHookSteps().forEach(hookTestStep -> {
+                hookTestStep.setRelatedTestStep(step);
+                testSteps.add(hookTestStep);
+            });
         }
         testSteps.addAll(afterHooks);
         return testSteps;

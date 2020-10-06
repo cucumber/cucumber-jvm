@@ -8,6 +8,7 @@ import io.cucumber.messages.Messages.Attachment.ContentEncoding;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.WriteEvent;
 
 import java.net.URI;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -140,6 +142,11 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     @Override
     public Integer getLine() {
         return testCase.getLocation().getLine();
+    }
+
+    @Override
+    public Optional<TestStep> getCurrentTestStep() {
+        return testCase.getTestSteps().stream().filter(t -> t.getId().equals(currentTestStepId)).findFirst();
     }
 
     Throwable getError() {
