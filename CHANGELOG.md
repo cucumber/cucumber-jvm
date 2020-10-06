@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
  * [Core] Do not send headers after following redirection.
    ([#1475-cucumber-ruby](https://github.com/cucumber/cucumber-ruby/pull/1475)
-    [#???](???))
+    [#2144](https://github.com/cucumber/cucumber-jvm/pull/2144))
  * [Core] Mention `junit-platform.properties` in `--publish` banner. ([#2117](https://github.com/cucumber/cucumber-jvm/pull/2117) M.P. Korstanje)
  * [Core] `--publish` uses banner provided by server. ([#2117](https://github.com/cucumber/cucumber-jvm/pull/2117) M.P. Korstanje)
 
