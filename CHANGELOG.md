@@ -16,9 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+ * [Core] Do not send headers after following redirection.
+   ([#1475-cucumber-ruby](https://github.com/cucumber/cucumber-ruby/pull/1475)
+    [#???](???))
  * [Core] Mention `junit-platform.properties` in `--publish` banner. ([#2117](https://github.com/cucumber/cucumber-jvm/pull/2117) M.P. Korstanje)
  * [Core] `--publish` uses banner provided by server. ([#2117](https://github.com/cucumber/cucumber-jvm/pull/2117) M.P. Korstanje)
- 
+
 ## [6.8.0] (2020-09-26)
 
 ### Added
@@ -34,7 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [6.7.0] (2020-09-14)
 
 ### Added
- * [JUnit Platform] Support discovery selectors with FilePosition ([#2121](https://github.com/cucumber/cucumber-jvm/pull/2121) M.P. Korstanje) 
+ * [JUnit Platform] Support discovery selectors with FilePosition ([#2121](https://github.com/cucumber/cucumber-jvm/pull/2121) M.P. Korstanje)
 
 ### Changed
  * [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.0

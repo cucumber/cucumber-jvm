@@ -26,6 +26,7 @@ import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith({ VertxExtension.class })
 public class UrlOutputStreamTest {
@@ -87,11 +88,11 @@ public class UrlOutputStreamTest {
     }
 
     @Test
-    void it_sends_the_body_once_for_202_and_location_with_get(Vertx vertx, VertxTestContext testContext)
+    void it_sends_the_body_once_for_202_and_location_with_get_without_token(Vertx vertx, VertxTestContext testContext)
             throws Exception {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d/accept -X GET", port));
+        CurlOption url = CurlOption.parse(format("http://localhost:%d/accept -X GET -H 'Authorization: Bearer s3cr3t'", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
@@ -218,6 +219,8 @@ public class UrlOutputStreamTest {
                     assertThat(ctx.request().method(), is(equalTo(expectedMethod)));
                     assertThat(ctx.request().query(), is(equalTo(expectedQuery)));
                     assertThat(ctx.request().getHeader("Content-Type"), is(equalTo(expectedContentType)));
+                    // We should never send the Authorization header.
+                    assertThat(ctx.request().getHeader("Authorization"), is(nullValue()));
 
                     ctx.request().handler(receivedBody::appendBuffer);
                     ctx.request().endHandler(e -> {

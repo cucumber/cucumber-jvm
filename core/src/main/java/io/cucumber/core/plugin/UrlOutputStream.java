@@ -60,7 +60,7 @@ class UrlOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOutputStream.close();
-        sendRequest(option.getUri().toURL(), option.getMethod())
+        sendRequest(option.getUri().toURL(), option.getMethod(), true)
                 .ifPresent(redirectResponse -> {
                     if (urlReporter != null) {
                         urlReporter.report(redirectResponse);
@@ -68,32 +68,42 @@ class UrlOutputStream extends OutputStream {
                 });
     }
 
-    private Optional<String> sendRequest(URL url, HttpMethod method) throws IOException {
+    private Optional<String> sendRequest(URL url, HttpMethod method, boolean setHeaders) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        for (Entry<String, String> header : option.getHeaders()) {
-            urlConnection.setRequestProperty(header.getKey(), header.getValue());
+        if(setHeaders) {
+            for (Entry<String, String> header : option.getHeaders()) {
+                urlConnection.setRequestProperty(header.getKey(), header.getValue());
+            }
         }
         Map<String, List<String>> requestHeaders = urlConnection.getRequestProperties();
         urlConnection.setInstanceFollowRedirects(true);
         urlConnection.setRequestMethod(method.name());
         String redirectMessage = null;
         if (method == CurlOption.HttpMethod.GET) {
-            redirectMessage = throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
+            redirectMessage = getResponseBody(urlConnection, requestHeaders);
             String location = urlConnection.getHeaderField("Location");
             if (urlConnection.getResponseCode() == 202 && location != null) {
-                sendRequest(new URL(location), CurlOption.HttpMethod.PUT);
+                sendRequest(new URL(location), CurlOption.HttpMethod.PUT, false);
             }
         } else {
             urlConnection.setDoOutput(true);
             try (OutputStream outputStream = urlConnection.getOutputStream()) {
                 Files.copy(temp, outputStream);
-                throwExceptionIfUnsuccessful(urlConnection, requestHeaders);
+                getResponseBody(urlConnection, requestHeaders);
             }
         }
         return Optional.ofNullable(redirectMessage);
     }
 
-    private static String throwExceptionIfUnsuccessful(
+    /**
+     * return the request body
+     *
+     * @param urlConnection the http connection
+     * @param requestHeaders the headers sent
+     * @return the response body
+     * @throws IOException if an exception occurs
+     */
+    private static String getResponseBody(
             HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders
     )
             throws IOException {
