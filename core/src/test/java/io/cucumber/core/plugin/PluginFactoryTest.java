@@ -6,7 +6,15 @@ import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.event.*;
+import io.cucumber.plugin.event.EventHandler;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.PickleStepTestStep;
+import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.plugin.event.TestRunStarted;
+import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -42,23 +50,28 @@ class PluginFactoryTest {
 
     private PluginFactory fc = new PluginFactory();
 
+    private Object plugin;
+
     @TempDir
     Path tmp;
 
+    @AfterEach
+    void cleanUp() {
+        if (plugin != null) {
+            releaseResources(plugin);
+        }
+    }
+
     @Test
     void instantiates_junit_plugin_with_file_arg() {
-        Object plugin = fc.create(parse("junit:" + tmp.resolve("cucumber.xml")));
+        plugin = fc.create(parse("junit:" + tmp.resolve("cucumber.xml")));
         assertThat(plugin.getClass(), is(equalTo(JUnitFormatter.class)));
-
-        release_resources(plugin);
     }
 
     @Test
     void instantiates_rerun_plugin_with_file_arg() {
-        Object plugin = fc.create(parse("rerun:" + tmp.resolve("rerun.txt")));
+        plugin = fc.create(parse("rerun:" + tmp.resolve("rerun.txt")));
         assertThat(plugin.getClass(), is(equalTo(RerunFormatter.class)));
-
-        release_resources(plugin);
     }
 
     @Test
@@ -69,7 +82,7 @@ class PluginFactoryTest {
             () -> assertThat(Files.exists(file), is(false)),
             () -> assertDoesNotThrow(() -> {
                 Object plugin = fc.create(parse("rerun:" + file));
-                release_resources(plugin);
+                releaseResources(plugin);
             }),
             () -> assertThat(Files.exists(file), is(true)));
     }
@@ -92,30 +105,26 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_pretty_plugin_with_file_arg() throws IOException {
-        Object plugin = fc.create(parse("pretty:" + tmp.resolve("out.txt").toUri().toURL()));
+        plugin = fc.create(parse("pretty:" + tmp.resolve("out.txt").toUri().toURL()));
         assertThat(plugin.getClass(), is(equalTo(PrettyFormatter.class)));
-
-        release_resources(plugin);
     }
 
     @Test
     void instantiates_pretty_plugin_without_file_arg() {
-        Object plugin = fc.create(parse("pretty"));
+        plugin = fc.create(parse("pretty"));
         assertThat(plugin.getClass(), is(equalTo(PrettyFormatter.class)));
     }
 
     @Test
     void instantiates_usage_plugin_without_file_arg() {
-        Object plugin = fc.create(parse("usage"));
+        plugin = fc.create(parse("usage"));
         assertThat(plugin.getClass(), is(equalTo(UsageFormatter.class)));
     }
 
     @Test
     void instantiates_usage_plugin_with_file_arg() {
-        Object plugin = fc.create(parse("usage:" + tmp.resolve("out.txt").toAbsolutePath()));
+        plugin = fc.create(parse("usage:" + tmp.resolve("out.txt").toAbsolutePath()));
         assertThat(plugin.getClass(), is(equalTo(UsageFormatter.class)));
-
-        release_resources(plugin);
     }
 
     @Test
@@ -194,10 +203,8 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_timeline_plugin_with_dir_arg() {
-        Object plugin = fc.create(parse("timeline:" + tmp.toAbsolutePath()));
+        plugin = fc.create(parse("timeline:" + tmp.toAbsolutePath()));
         assertThat(plugin.getClass(), is(equalTo(TimelineFormatter.class)));
-
-        release_resources(plugin);
     }
 
     @Test
@@ -342,7 +349,7 @@ class PluginFactoryTest {
         }
     }
 
-    void release_resources(Object plugin) {
+    private void releaseResources(Object plugin) {
         FakeTestRunEventsPublisher fakeTestRun = new FakeTestRunEventsPublisher();
         if (plugin instanceof EventListener) {
             ((EventListener) plugin).setEventPublisher(fakeTestRun);
