@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [6.8.1] (2020-10-07)
+
+### Fixed
+
  * [Core] Do not send headers after following redirection.
    ([#1475-cucumber-ruby](https://github.com/cucumber/cucumber-ruby/pull/1475)
     [#2144](https://github.com/cucumber/cucumber-jvm/pull/2144))
@@ -1554,7 +1558,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.8.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.8.1...main
+[6.8.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.0...v6.8.1
 [6.8.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.7.0...v6.8.0
 [6.7.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.6.1...v6.7.0
 [6.6.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.6.0...v6.6.1
