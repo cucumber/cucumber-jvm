@@ -70,7 +70,7 @@ class UrlOutputStream extends OutputStream {
 
     private Optional<String> sendRequest(URL url, HttpMethod method, boolean setHeaders) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        if(setHeaders) {
+        if (setHeaders) {
             for (Entry<String, String> header : option.getHeaders()) {
                 urlConnection.setRequestProperty(header.getKey(), header.getValue());
             }
@@ -98,10 +98,10 @@ class UrlOutputStream extends OutputStream {
     /**
      * return the request body
      *
-     * @param urlConnection the http connection
-     * @param requestHeaders the headers sent
-     * @return the response body
-     * @throws IOException if an exception occurs
+     * @param  urlConnection  the http connection
+     * @param  requestHeaders the headers sent
+     * @return                the response body
+     * @throws IOException    if an exception occurs
      */
     private static String getResponseBody(
             HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders

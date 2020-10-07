@@ -92,7 +92,8 @@ public class UrlOutputStreamTest {
             throws Exception {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d/accept -X GET -H 'Authorization: Bearer s3cr3t'", port));
+        CurlOption url = CurlOption
+                .parse(format("http://localhost:%d/accept -X GET -H 'Authorization: Bearer s3cr3t'", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
