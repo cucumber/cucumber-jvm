@@ -2,6 +2,8 @@ package io.cucumber.core.resource;
 
 import io.cucumber.core.exception.CucumberException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.File;
 import java.net.URI;
@@ -103,6 +105,9 @@ class ResourceScannerTest {
     }
 
     @Test
+    @DisabledOnOs(value = OS.WINDOWS,
+            disabledReason = "Only works if repository is explictly cloned activated symlinks and " +
+                    "developer mode in windows is activated")
     void scanForResourcesPathSymlink() {
         File file = new File("src/test/resource-symlink/test/resource.txt");
         List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
