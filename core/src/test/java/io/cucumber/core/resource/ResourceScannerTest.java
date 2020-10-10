@@ -106,7 +106,7 @@ class ResourceScannerTest {
 
     @Test
     @DisabledOnOs(value = OS.WINDOWS,
-            disabledReason = "Only works if repository is explictly cloned activated symlinks and " +
+            disabledReason = "Only works if repository is explicitly cloned activated symlinks and " +
                     "developer mode in windows is activated")
     void scanForResourcesPathSymlink() {
         File file = new File("src/test/resource-symlink/test/resource.txt");
@@ -125,6 +125,9 @@ class ResourceScannerTest {
     }
 
     @Test
+    @DisabledOnOs(value = OS.WINDOWS,
+            disabledReason = "Only works if repository is explicitly cloned activated symlinks and " +
+                    "developer mode in windows is activated")
     void scanForResourcesDirectorySymlink() {
         File file = new File("src/test/resource-symlink");
         List<URI> resources = resourceScanner.scanForResourcesPath(file.toPath());
