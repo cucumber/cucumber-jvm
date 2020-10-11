@@ -33,7 +33,7 @@
         <html-formatter.version>9.0.0</html-formatter.version>
 
         <!--Test Dependencies-->
-        <junit.version>4.13</junit.version>
+        <junit.version>4.13.1</junit.version>
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <junit-platform.version>1.7.0</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
