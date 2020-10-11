@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+### Security
+ * [JUnit] Update dependency junit:junit to v4.13.1. 
+   * See the [published security advisory](https://github.com/junit-team/junit4/security/advisories/GHSA-269g-pwp5-87pp) for details. 
+
 ## [6.8.1] (2020-10-07)
 
 ### Fixed
