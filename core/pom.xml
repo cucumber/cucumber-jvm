@@ -17,7 +17,7 @@
         <jsoup.version>1.13.1</jsoup.version>
         <xmlunit.version>2.7.0</xmlunit.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
-        <vertx.version>3.9.3</vertx.version>
+        <vertx.version>3.9.4</vertx.version>
         <reactive-streams.version>1.0.3</reactive-streams.version>
     </properties>
 
