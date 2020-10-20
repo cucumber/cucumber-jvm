@@ -14,8 +14,7 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 </dependency>
 ```
 
-This will allow the IntelliJ IDEA, Eclipse, Maven, Gradle, ect, to discover,
-select and execute Cucumber scenarios. 
+This will allow IntelliJ IDEA, Eclipse, Maven, Gradle, etc, to discover, select and execute Cucumber scenarios.
 
 ## Surefire and Gradle workarounds
 
@@ -29,6 +28,9 @@ Console Launcher.
 
 Cucumber will scan the package of a class annotated with `@Cucumber` for feature
 files.  
+
+To use this feature, add the `@Cucumber` annotation to the test runner. Doing so will make Cucumber run the feature
+files in the package containing the test runner.
 
 ```java
 package com.example.app;
@@ -44,6 +46,12 @@ public class RunCucumberTest {
 
 You can integrate the JUnit Platform Console Launcher in your build by using
 either the Maven Antrun plugin or the Gradle JavaExec task.
+
+#### Use the Maven Antrun plugin  ####
+
+Use the Maven Antrun plugin.
+
+Add the following to your `pom.xml`:
 
 ```xml
 <dependencies>
@@ -91,6 +99,11 @@ either the Maven Antrun plugin or the Gradle JavaExec task.
     </plugins>
 </build>
 ```
+#### Use the Gradle JavaExec task  ####
+
+Use the Gradle JavaExec task.
+
+Add the following to your `build.gradle`:
 
 ```groovy
 tasks {
@@ -125,17 +138,15 @@ configuration options below.
 
 ### Exclusive Resources ###
 
-The JUnit Platform supports parallel execution. To avoid flakey tests when
-multiple scenarios manipulate the same resource tests can be 
-[synchronized][junit5-user-guide-synchronization] on that resource.
+The JUnit Platform supports parallel execution. To avoid flaky tests when multiple scenarios manipulate the same
+resource, tests can be [synchronized][junit5-user-guide-synchronization] on that resource.
 
 [junit5-user-guide-synchronization]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization
 
-To synchronize a scenario on a specific resource the scenario must be tagged
-and this tag mapped to a lock for a specific resource. A resource is identified
-by a string and can be either locked with a read-write-lock, or a read-lock.
+To synchronize a scenario on a specific resource, the scenario must be tagged and this tag mapped to a lock for the
+specific resource. A resource is identified by a String and can be either locked with a read-write-lock, or a read-lock.
   
-For example:
+For example, the following tags:
 
 ```gherkin
 Feature: Exclusive resources
@@ -165,13 +176,14 @@ The first scenario tagged with `@reads-and-writes-system-properties` will lock
 the `SYSTEM_PROPERTIES` with a read-write lock and will not be concurrently
 executed with the second scenario that uses a read lock.
 
-Note: The `@` is not included.
+Note: The `@` from the tag is not included in the property name.
 
 ## Configuration Options ##
 
-Cucumber receives its configuration from the JUnit platform. To see how these
-can be supplied; see the JUnit documentation [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). 
-For documentation see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
+Cucumber receives its configuration from the JUnit Platform. To see how these can be supplied; see the JUnit
+documentation
+[4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). For 
+documentation on Cucumber properties see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
 cucumber.ansi-colors.disabled=                                # true or false. default: false                     
@@ -197,7 +209,7 @@ cucumber.publish.enabled                                      # true or false. d
                                                               # enable publishing of test results 
 
 cucumber.publish.quiet                                        # true or false. default: false
-                                                              # supress publish banner after test exeuction  
+                                                              # suppress publish banner after test execution  
 
 cucumber.publish.token                                        # any string value.
                                                               # publish authenticated test results    
@@ -223,10 +235,10 @@ cucumber.execution.parallel.config.dynamic.factor=            # positive double.
 cucumber.execution.parallel.config.custom.class=              # class name. 
                                                               # example: com.example.MyCustomParallelStrategy
 
-cucumber.execution.exclusive-resources.<tag-name>.read-write= # a comma seperated list of strings
+cucumber.execution.exclusive-resources.<tag-name>.read-write= # a comma separated list of strings
                                                               # example: resource-a, resource-b 
 
-cucumber.execution.exclusive-resources.<tag-name>.read=       # a comma seperated list of strings
+cucumber.execution.exclusive-resources.<tag-name>.read=       # a comma separated list of strings
                                                               # example: resource-a, resource-b
 
 ```
@@ -246,7 +258,7 @@ Supported `DiscoverySelector`s are:
 The only supported `DiscoveryFilter` is the `PackageNameFilter` and only when
 features are selected from the classpath.
 
-### Selecting individual scenarios, rules and examples 
+### Selecting individual scenarios, rules and examples ###
 
 The `FileSelector` and `ClasspathResourceSelector` support a `FilePosition`.
 
@@ -257,9 +269,8 @@ The `UriSelector` supports URI's with a `line` query parameter:
   - `classpath:/com/example/example.feature?line=20`
   - `file:/path/to/com/example/example.feature?line=20`
 
-Any `TestDescriptor` that matches the line *and* its descendants will be
-included in the discovery result. So for example selecting a `Rule` will 
-execute all scenarios contained within.
+Any `TestDescriptor` that matches the line *and* its descendants will be included in the discovery result. For example,
+selecting a `Rule` will execute all scenarios contained within the Rule.
 
 ## Tags ##
 
@@ -282,15 +293,15 @@ Scenario: Another tagged scenario
 
 ```
 
-When using Maven tags can be provided from the CLI using the `groups` and
-`excludedGroups` parameters. These take a [JUnit5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions). 
-The example below will execute `Another tagged scenario`.
+When using Maven, tags can be provided from the CLI using the `groups` and `excludedGroups` parameters. These take a
+[JUnit5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions). The example
+below will execute `Another tagged scenario`.
 
 ```
 mvn verify -DexcludedGroups="Ignore" -Dgroups="Smoke | Sanity"
 ```
 
-For further information on how to select tags see the relevant documentation:
+For further information on how to select tags, see the relevant documentation:
 * [Maven: Filtering by Tags](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html)
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
 * [JUnit 5 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)
@@ -303,5 +314,5 @@ setting the `cucumber.filter.tags=not @Disabled` property<sup>1</sup>. Any scena
 tagged with `@Disabled` will be skipped. See [Configuration Options](#configuration-options)
 for more information. 
 
-1. Do note that this is a [Cucumber Tag Expression](https://cucumber.io/docs/cucumber/api/#tags)
-rather then a JUnit5 tag expression.
+1. Do note that this is a [Cucumber Tag Expression](https://cucumber.io/docs/cucumber/api/#tags) rather than a JUnit5
+   tag expression.
