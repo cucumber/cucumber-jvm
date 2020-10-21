@@ -7,7 +7,7 @@
             <vendor>openjdk</vendor>
         </provides>
         <configuration>
-            <jdkHome>/usr/local/lib/jvm/openjdk11</jdkHome>
+            <jdkHome>${JAVA_HOME}</jdkHome>
         </configuration>
     </toolchain>
 </toolchains>
