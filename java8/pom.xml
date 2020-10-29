@@ -109,15 +109,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <configuration>
-                    <sourceDirectories>
-                        <sourceDirectory>${project.build.outputDirectory}/generated-sources/i18n/java</sourceDirectory>
-                    </sourceDirectories>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
