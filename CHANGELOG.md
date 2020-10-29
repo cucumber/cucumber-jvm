@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] handle null values in ci-dict [cucumber/#1228](https://github.com/cucumber/cucumber/issues/1228)
 
 ### Security
  * [JUnit] Update dependency junit:junit to v4.13.1. 
