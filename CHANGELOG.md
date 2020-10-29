@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.8.2] (2020-10-29)
+
+### Fixed
  * [Core] handle null values in ci-dict [cucumber/#1228](https://github.com/cucumber/cucumber/issues/1228)
 
 ### Security
@@ -1563,7 +1567,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.8.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.8.2...main
+[6.8.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.1...v6.8.2
 [6.8.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.0...v6.8.1
 [6.8.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.7.0...v6.8.0
 [6.7.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.6.1...v6.7.0
