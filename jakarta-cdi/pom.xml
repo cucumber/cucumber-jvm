@@ -3,10 +3,10 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.cdi.jakarta</project.Automatic-Module-Name>
-        <openwebbeans.version>2.0.18</openwebbeans.version>
+        <openwebbeans.version>2.0.19</openwebbeans.version>
         <jakarta.enterprise.cdi-api.version>3.0.0-M3</jakarta.enterprise.cdi-api.version>
         <jakarta.activation-api.version>2.0.0</jakarta.activation-api.version>
-        <xbean.version>4.17</xbean.version>
+        <xbean.version>4.18</xbean.version>
     </properties>
 
     <parent>
@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-asm8-shaded</artifactId>
+            <artifactId>xbean-asm9-shaded</artifactId>
             <version>${xbean.version}</version>
             <scope>test</scope>
         </dependency>
