@@ -245,7 +245,10 @@ cucumber.execution.exclusive-resources.<tag-name>.read=       # a comma separate
 
 ## Supported Discovery Selectors and Filters ## 
 
-Supported `DiscoverySelector`s are:
+JUnit 5 [introduced a test discovery mechanism](https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery)
+as a dedicated feature of the platform itself. This allows IDEs and build tools
+to identify tests. Supported `DiscoverySelector`s are:
+
 * `ClasspathRootSelector`
 * `ClasspathResourceSelector`
 * `ClassSelector`
