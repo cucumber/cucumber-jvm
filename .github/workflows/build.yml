@@ -44,12 +44,10 @@ jobs:
         run: mvn jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
         env:
           COVERAGE: true
-
       - uses: codecov/codecov-action@v1
         with:
           file: ./**/target/site/jacoco/jacoco.xml
           name: codecov
-
       - name: javadoc
         run: mvn javadoc:jar --toolchains .github/workflows/.toolchains.xml
         env:
