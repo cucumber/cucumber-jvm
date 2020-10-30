@@ -1,8 +1,7 @@
 Cucumber Java
 =============
 
-Provides annotation based step definitions. To use add the `cucumber-java` 
-dependency to your pom.xml:
+Provides annotation based step definitions. To use, add the `cucumber-java` dependency to your pom.xml:
 
 ```xml
 <dependencies>
@@ -23,8 +22,9 @@ Declare a step definition by annotating a method. It is possible use the same
 method for multiple steps by repeating the annotation. For localized annotations
 import the annotations from `io.cucumber.java.<ISO2 Language Code>.*`
 
-Step definitions can take either a 
-[Cucumber Expression or a regular expression](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions).
+Step definitions can take either a
+[Cucumber Expression](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) or a regular
+expression.
 
 ```java
 package com.example.app;
@@ -59,14 +59,15 @@ public class CalculatorStepDefinitions {
 
 ### Data tables
 
-Data tables from Gherkin can be accessed by using the `DataTable` object as the
-last parameter in a step definition. Depending on the table shape as one of the
-following collections. For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+Data tables from Gherkin can be accessed by using the `DataTable` object as the last parameter in a step definition.
+Depending on the table shape, it can also be accessed as one of the following collections:
  * `List<List<String>> table`
  * `List<Map<String, String>> table`
  * `Map<String, String> table`
  * `Map<String, List<String>> table`
  * `Map<String, Map<String, String>> table`
+ 
+For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
 
 ```java
 package com.example.app;
@@ -93,9 +94,8 @@ public class StepDefinitions {
 }
 ```
 
-Note: In addition to collections of `String`, `Integer`, `Float`, `BigInteger`
-and `BigDecimal`, `Byte`, `Short`, `Long` and `Double` are also support.
-Numbers are parsed using the language of the feature file.
+Note: In addition to collections of `String`, `Integer`, `Float`, `BigInteger` and `BigDecimal`, `Byte`, `Short`, `Long`
+and `Double` are also supported. Numbers are parsed using the language of the feature file.
 
 ### Doc strings
 
@@ -163,7 +163,10 @@ public class StepDefinitions {
 
 ### Data Table Type
 
-Using a custom data table type will allow you to convert   
+Using a custom data table type will allow you to convert a table declaring values for fields in an object to a List of
+that object.
+
+For example, a list of authors:
 
 ```feature
     Given a list of authors in a table
@@ -210,9 +213,8 @@ see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datata
 
 ### Default Transformers
 
-Default transformers allow you to specific a transformer that will be used when
-there is no transform defined. This can be combined with an object mapper like
-Jackson to quickly transform well-known string representations to Java objects.
+Default transformers allow you to specify a transformer that will be used when there is no transformer defined. This can
+be combined with an object mapper like Jackson to quickly transform well-known string representations to Java objects.
 
  * `@DefaultParameterTransformer`
  * `@DefaultDataTableEntryTransformer`
@@ -243,8 +245,8 @@ public class DataTableStepDefinitions {
 
 ### Empty Cells
 
-Data tables in Gherkin cannot represent null or the empty string unambiguously.
-Cucumber will interpret empty cells as `null`.
+Data tables in Gherkin cannot represent null or an empty string unambiguously. Cucumber will interpret empty cells as
+`null`.
 
 The empty string can be represented using a replacement. For example `[empty]`.
 The replacement can be configured by setting the `replaceWithEmptyString`
@@ -284,8 +286,8 @@ public class DataTableStepDefinitions {
 }
 ```
 
-To make use of replacements when converting a data table directly to a list or
-map of strings the data table type for string has to be overridden. 
+To make use of replacements when converting a data table directly to a list or map of strings, the data table type for
+String has to be overridden.
 
 ```gherkin
 Feature: Whitespace
@@ -324,6 +326,7 @@ A data table can be transposed by annotating the data table parameter (or the
 parameter the data table will be converted into) with `@Transpose`. This means
 the keys will be in the first column rather than the first row.
 
+For example, a table with the fields for a User and a data table type to create a User:
 
 ```gherkin
  Given the user is
@@ -331,8 +334,6 @@ the keys will be in the first column rather than the first row.
     | lastname	    | Lo Giacco |
     | nationality	| Italian	|
  ```
-
-And a data table type to create a User
 
 ```java 
 package com.example.app;
@@ -364,8 +365,7 @@ public class DataTableStepDefinitions {
 
 ## DocString type
 
-Using `@DocStringType` annotation it is possible to define transformations to
-other object types.
+Using `@DocStringType` annotation, it is possible to define transformations to other object types.
 
 ```gherkin
 Given some more information
