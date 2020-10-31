@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.ConcurrentEventListener;
@@ -31,9 +32,9 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
+import static java.nio.file.Files.readAllLines;
 import static java.time.Duration.ZERO;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -64,66 +65,113 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_junit_plugin_with_file_arg() {
-        plugin = fc.create(parse("junit:" + tmp.resolve("cucumber.xml")));
+        PluginOption option = parse("junit:" + tmp.resolve("cucumber.xml"));
+        plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(JUnitFormatter.class)));
     }
 
     @Test
     void instantiates_rerun_plugin_with_file_arg() {
-        plugin = fc.create(parse("rerun:" + tmp.resolve("rerun.txt")));
+        PluginOption option = parse("rerun:" + tmp.resolve("rerun.txt"));
+        plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(RerunFormatter.class)));
     }
 
     @Test
     void creates_parent_directories() {
         Path file = tmp.resolve("target/cucumber/reports/rerun.txt");
-
+        PluginOption option = parse("rerun:" + file);
         assertAll(
             () -> assertThat(Files.exists(file), is(false)),
             () -> assertDoesNotThrow(() -> {
-                Object plugin = fc.create(parse("rerun:" + file));
+                Object plugin = fc.create(option);
                 releaseResources(plugin);
             }),
             () -> assertThat(Files.exists(file), is(true)));
     }
 
     @Test
+    void cant_create_plugin_when_parent_directory_is_a_file() {
+        Path htmlReport = tmp.resolve("target/cucumber/reports");
+        PluginOption htmlOption = parse("html:" + htmlReport);
+        plugin = fc.create(htmlOption);
+
+        Path jsonReport = tmp.resolve("target/cucumber/reports/cucumber.json");
+        PluginOption jsonOption = parse("json:" + jsonReport);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(jsonOption));
+        assertThat(exception.getMessage(), is(equalTo(
+            "Couldn't create parent directories of '" + jsonReport + "'.\n" +
+                    "Make sure the the parent directory '" + jsonReport.getParent() + "' isn't a file.\n" +
+                    "\n" +
+                    "Note: This usually happens when plugins write to colliding paths.\n" +
+                    "For example: 'html:target/cucumber, json:target/cucumber/report.json'\n" +
+                    "You can fix this by making the paths do no collide.\n" +
+                    "For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'\n" +
+                    "The details are in the stack trace below:")));
+    }
+
+    @Test
+    void cant_create_plugin_when_file_is_a_directory() {
+        Path jsonReport = tmp.resolve("target/cucumber/reports/cucumber.json");
+        PluginOption jsonOption = parse("json:" + jsonReport);
+        plugin = fc.create(jsonOption);
+
+        Path htmlReport = tmp.resolve("target/cucumber/reports");
+        PluginOption htmlOption = parse("html:" + htmlReport);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(htmlOption));
+        assertThat(exception.getMessage(), is(equalTo(
+            "Couldn't create a file output stream for '" + htmlReport + "'.\n" +
+                    "Make sure the the file isn't a directory.\n" +
+                    "\n" +
+                    "Note: This usually happens when plugins write to colliding paths.\n" +
+                    "For example: 'json:target/cucumber/report.json, html:target/cucumber'\n" +
+                    "You can fix this by making the paths do no collide.\n" +
+                    "For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'\n" +
+                    "The details are in the stack trace below:")));
+    }
+
+    @Test
     void fails_to_instantiates_html_plugin_with_dir_arg() {
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> fc.create(parse("html:" + tmp.toAbsolutePath())));
+        PluginOption option = parse("html:" + tmp.toAbsolutePath());
+        assertThrows(IllegalArgumentException.class, () -> fc.create(option));
     }
 
     @Test
     void fails_to_instantiate_plugin_that_wants_a_file_without_file_arg() {
-        Executable testMethod = () -> fc.create(parse(WantsFile.class.getName()));
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        actualThrown.printStackTrace();
-        assertThat(actualThrown.getMessage(), is(equalTo(
+        PluginOption option = parse(WantsFile.class.getName());
+        Executable testMethod = () -> fc.create(option);
+        CucumberException exception = assertThrows(CucumberException.class, testMethod);
+        assertThat(exception.getMessage(), is(equalTo(
             "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFile. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFile:DIR|FILE|URL")));
     }
 
     @Test
     void instantiates_pretty_plugin_with_file_arg() throws IOException {
-        plugin = fc.create(parse("pretty:" + tmp.resolve("out.txt").toUri().toURL()));
+        PluginOption option = parse("pretty:" + tmp.resolve("out.txt").toUri().toURL());
+        plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(PrettyFormatter.class)));
     }
 
     @Test
     void instantiates_pretty_plugin_without_file_arg() {
-        plugin = fc.create(parse("pretty"));
+        PluginOption option = parse("pretty");
+        plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(PrettyFormatter.class)));
     }
 
     @Test
     void instantiates_usage_plugin_without_file_arg() {
-        plugin = fc.create(parse("usage"));
+        PluginOption option = parse("usage");
+        plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(UsageFormatter.class)));
     }
 
     @Test
     void instantiates_usage_plugin_with_file_arg() {
-        plugin = fc.create(parse("usage:" + tmp.resolve("out.txt").toAbsolutePath()));
+        PluginOption option = parse("usage:" + tmp.resolve("out.txt").toAbsolutePath());
+        plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(UsageFormatter.class)));
     }
 
@@ -139,7 +187,8 @@ class PluginFactoryTest {
             // up the new value of System.out
             fc = new PluginFactory();
 
-            ProgressFormatter plugin = (ProgressFormatter) fc.create(parse("progress"));
+            PluginOption option = parse("progress");
+            ProgressFormatter plugin = (ProgressFormatter) fc.create(option);
             EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID);
             plugin.setEventPublisher(bus);
             Result result = new Result(Status.PASSED, ZERO, null);
@@ -155,12 +204,12 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_single_custom_appendable_plugin_with_stdout() {
-        WantsOutputStream plugin1 = (WantsOutputStream) fc.create(parse(WantsOutputStream.class.getName()));
-        assertThat(plugin1.printStream, is(not(nullValue())));
+        PluginOption option = parse(WantsOutputStream.class.getName());
+        WantsOutputStream plugin = (WantsOutputStream) fc.create(option);
+        assertThat(plugin.printStream, is(not(nullValue())));
 
-        Executable testMethod = () -> fc.create(parse(WantsOutputStream.class.getName()));
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
+        CucumberException exception = assertThrows(CucumberException.class, () -> fc.create(option));
+        assertThat(exception.getMessage(), is(equalTo(
             "Only one plugin can use STDOUT, now both io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream " +
                     "and io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream use it. " +
                     "If you use more than one plugin you must specify output path with io.cucumber.core.plugin.PluginFactoryTest$WantsOutputStream:DIR|FILE|URL")));
@@ -168,75 +217,80 @@ class PluginFactoryTest {
 
     @Test
     void instantiates_custom_file_plugin() {
-        WantsFile plugin = (WantsFile) fc.create(parse(WantsFile.class.getName() + ":halp.txt"));
+        PluginOption option = parse(WantsFile.class.getName() + ":halp.txt");
+        WantsFile plugin = (WantsFile) fc.create(option);
         assertThat(plugin.out, is(equalTo(new File("halp.txt"))));
     }
 
     @Test
     void instantiates_custom_string_arg_plugin() {
-        WantsString plugin = (WantsString) fc.create(parse(WantsString.class.getName() + ":hello"));
+        PluginOption option = parse(WantsString.class.getName() + ":hello");
+        WantsString plugin = (WantsString) fc.create(option);
         assertThat(plugin.arg, is(equalTo("hello")));
     }
 
     @Test
     void instantiates_file_or_empty_arg_plugin_with_arg() {
-        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc
-                .create(parse(WantsFileOrEmpty.class.getName() + ":" + tmp.resolve("out.txt")));
+        PluginOption option = parse(WantsFileOrEmpty.class.getName() + ":" + tmp.resolve("out.txt"));
+        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc.create(option);
         assertThat(plugin.out, is(notNullValue()));
     }
 
     @Test
     void instantiates_file_or_empty_arg_plugin_without_arg() {
-        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc.create(parse(WantsFileOrEmpty.class.getName()));
+        PluginOption option = parse(WantsFileOrEmpty.class.getName());
+        WantsFileOrEmpty plugin = (WantsFileOrEmpty) fc.create(option);
         assertThat(plugin.out, is(nullValue()));
     }
 
     @Test
     void instantiates_custom_deprecated_appendable_arg_plugin() throws IOException {
         Path tempDirPath = tmp.resolve("out.txt").toAbsolutePath();
-        WantsAppendable plugin = (WantsAppendable) fc
-                .create(parse(WantsAppendable.class.getName() + ":" + tempDirPath));
+        PluginOption option = parse(WantsAppendable.class.getName() + ":" + tempDirPath);
+        WantsAppendable plugin = (WantsAppendable) fc.create(option);
         plugin.writeAndClose("hello");
-        String written = Files.readAllLines(tempDirPath).stream().collect(Collectors.joining());
+        String written = String.join("", readAllLines(tempDirPath));
         assertThat(written, is(equalTo("hello")));
     }
 
     @Test
     void instantiates_timeline_plugin_with_dir_arg() {
-        plugin = fc.create(parse("timeline:" + tmp.toAbsolutePath()));
+        PluginOption option = parse("timeline:" + tmp.toAbsolutePath());
+        plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(TimelineFormatter.class)));
     }
 
     @Test
     void instantiates_wants_nothing_plugin() {
-        WantsNothing plugin = (WantsNothing) fc.create(parse(WantsNothing.class.getName()));
+        PluginOption option = parse(WantsNothing.class.getName());
+        WantsNothing plugin = (WantsNothing) fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(WantsNothing.class)));
     }
 
     @Test
     void fails_to_instantiate_plugin_that_wants_too_much() {
-        Executable testMethod = () -> fc.create(parse(WantsTooMuch.class.getName()));
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        actualThrown.printStackTrace();
-        assertThat(actualThrown.getMessage(), is(equalTo(
+        PluginOption option = parse(WantsTooMuch.class.getName());
+        Executable testMethod = () -> fc.create(option);
+        CucumberException exception = assertThrows(CucumberException.class, testMethod);
+        assertThat(exception.getMessage(), is(equalTo(
             "class io.cucumber.core.plugin.PluginFactoryTest$WantsTooMuch must have at least one empty constructor or a constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]")));
     }
 
     @Test
     void fails_to_instantiate_plugin_that_declares_two_single_arg_constructors_when_argument_specified() {
-        Executable testMethod = () -> fc.create(parse(WantsFileOrURL.class.getName() + ":some_arg"));
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        actualThrown.printStackTrace();
-        assertThat(actualThrown.getMessage(), is(equalTo(
+        PluginOption option = parse(WantsFileOrURL.class.getName() + ":some_arg");
+        Executable testMethod = () -> fc.create(option);
+        CucumberException exception = assertThrows(CucumberException.class, testMethod);
+        assertThat(exception.getMessage(), is(equalTo(
             "class io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL must have exactly one constructor that declares a single parameter of one of: [class java.lang.String, class java.io.File, class java.net.URI, class java.net.URL, class java.io.OutputStream, interface java.lang.Appendable]")));
     }
 
     @Test
     void fails_to_instantiate_plugin_that_declares_two_single_arg_constructors_when_no_argument_specified() {
-        Executable testMethod = () -> fc.create(parse(WantsFileOrURL.class.getName()));
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        actualThrown.printStackTrace();
-        assertThat(actualThrown.getMessage(), is(equalTo(
+        PluginOption option = parse(WantsFileOrURL.class.getName());
+        Executable testMethod = () -> fc.create(option);
+        CucumberException exception = assertThrows(CucumberException.class, testMethod);
+        assertThat(exception.getMessage(), is(equalTo(
             "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL:DIR|FILE|URL")));
     }
 
@@ -344,9 +398,10 @@ class PluginFactoryTest {
                 startHandler.receive(new TestRunStarted(Instant.now()));
             }
             if (finishedHandler != null) {
-                finishedHandler.receive(new TestRunFinished(Instant.now()));
+                finishedHandler.receive(new TestRunFinished(Instant.now(), new Result(Status.PASSED, ZERO, null)));
             }
         }
+
     }
 
     private void releaseResources(Object plugin) {

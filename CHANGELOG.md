@@ -16,11 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ *  [Core] Improve error message when plugin paths collide ([#2168](https://github.com/cucumber/cucumber-jvm/pull/2168) M.P. Korstanje)
 
 ## [6.8.2] (2020-10-29)
 
 ### Fixed
- * [Core] handle null values in ci-dict [cucumber/#1228](https://github.com/cucumber/cucumber/issues/1228)
+ * [Core] Handle null values in ci-dict [cucumber/#1228](https://github.com/cucumber/cucumber/issues/1228)
 
 ### Security
  * [JUnit] Update dependency junit:junit to v4.13.1. 
