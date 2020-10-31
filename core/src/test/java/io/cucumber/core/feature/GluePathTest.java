@@ -1,9 +1,10 @@
 package io.cucumber.core.feature;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.function.Executable;
 
-import java.io.File;
 import java.net.URI;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,7 +12,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class GluePathTest {
 
@@ -96,9 +96,8 @@ class GluePathTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     void can_parse_windows_path_form() {
-        assumeTrue(File.separatorChar == '\\'); // Requires windows
-
         URI uri = GluePath.parse("com\\example\\app");
 
         assertAll(
@@ -107,9 +106,8 @@ class GluePathTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     void absolute_windows_path_form_is_not_valid() {
-        assumeTrue(File.separatorChar == '\\'); // Requires windows
-
         Executable testMethod = () -> GluePath.parse("C:\\com\\example\\app");
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
