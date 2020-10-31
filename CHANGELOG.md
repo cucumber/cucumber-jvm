@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Deprecated
+ * [Plugin] Deprecate `TestRunFinished(Instant)` ([#2169](https://github.com/cucumber/cucumber-jvm/pull/2169) M.P. Korstanje)
 
 ### Removed
 

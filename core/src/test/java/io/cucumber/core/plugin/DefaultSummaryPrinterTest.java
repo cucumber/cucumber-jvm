@@ -2,7 +2,10 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.UUID;
@@ -38,19 +42,18 @@ class DefaultSummaryPrinterTest {
         bus.send(new SnippetsSuggestedEvent(
             bus.getInstant(),
             URI.create("classpath:com/example.feature"),
-            12,
-            13,
+            new Location(12, -1),
+            new Location(13, -1),
             singletonList("snippet")));
 
         bus.send(new SnippetsSuggestedEvent(
             bus.getInstant(),
             URI.create("classpath:com/example.feature"),
-            12,
-            14,
+            new Location(12, -1),
+            new Location(14, -1),
             singletonList("snippet")));
 
-        bus.send(new TestRunFinished(
-            bus.getInstant()));
+        bus.send(new TestRunFinished(bus.getInstant(), new Result(Status.PASSED, Duration.ZERO, null)));
 
         assertThat(new String(out.toByteArray(), UTF_8), equalToCompressingWhiteSpace("" +
                 "\n" +
