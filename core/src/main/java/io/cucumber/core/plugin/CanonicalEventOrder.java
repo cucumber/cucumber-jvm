@@ -9,6 +9,7 @@ import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
 
+import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,16 +22,18 @@ import static java.util.Arrays.asList;
  * The canonical order is the order in which these events would have been
  * generated had cucumber executed these pickles in a serial fashion.
  * <p>
- * In canonical order events are first ordered by type:
+ * In canonical order events are ordered by type and time stamp:
  * <ol>
  * <li>TestRunStarted
  * <li>TestSourceRead
+ * <li>TestSourceParsed
  * <li>SnippetsSuggestedEvent
+ * <li>StepDefinedEvent
  * <li>TestCaseEvent
  * <li>TestRunFinished
  * </ol>
  * <p>
- * Then TestCaseEvents are ordered by
+ * As part of ordering events by type, TestCaseEvents are ordered by
  * <ol>
  * <li>uri
  * <li>line
@@ -39,77 +42,60 @@ import static java.util.Arrays.asList;
  */
 final class CanonicalEventOrder implements Comparator<Event> {
 
-    private static final FixedEventOrderComparator fixedOrder = new FixedEventOrderComparator();
-    private static final TestCaseEventComparator testCaseOrder = new TestCaseEventComparator();
-
     @Override
     public int compare(Event a, Event b) {
-        int fixedOrder = CanonicalEventOrder.fixedOrder.compare(a, b);
-        if (fixedOrder != 0) {
-            return fixedOrder;
-        }
-
-        if (!(a instanceof TestCaseEvent && b instanceof TestCaseEvent)) {
-            return fixedOrder;
-        }
-
-        return testCaseOrder.compare((TestCaseEvent) a, (TestCaseEvent) b);
+        return eventOrder.compare(a, b);
     }
 
-    private static final class FixedEventOrderComparator implements Comparator<Event> {
+    private static final Comparator<Event> eventOrder = Comparator
+            .comparingInt(CanonicalEventOrder::eventOrder)
+            .thenComparing(CanonicalEventOrder::testCaseEvents)
+            .thenComparing(Event::getInstant);
 
-        private final List<Class<? extends Event>> fixedOrder = asList(
-            TestRunStarted.class,
-            TestSourceRead.class,
-            TestSourceParsed.class,
-            SnippetsSuggestedEvent.class,
-            StepDefinedEvent.class,
-            TestCaseEvent.class,
-            TestRunFinished.class);
-
-        @Override
-        public int compare(final Event a, final Event b) {
-            return Integer.compare(requireInFixOrder(a.getClass()), requireInFixOrder(b.getClass()));
+    private static int testCaseEvents(Event a, Event b) {
+        if (a instanceof TestCaseEvent && b instanceof TestCaseEvent) {
+            return testCaseOrder.compare((TestCaseEvent) a, (TestCaseEvent) b);
         }
-
-        private int requireInFixOrder(Class<? extends Event> o) {
-            int index = findInFixedOrder(o);
-            if (index < 0) {
-                throw new IllegalStateException(o + " was not in " + fixedOrder);
-            }
-            return index;
-        }
-
-        private int findInFixedOrder(Class<? extends Event> o) {
-            for (int i = 0; i < fixedOrder.size(); i++) {
-                if (fixedOrder.get(i).isAssignableFrom(o)) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
+        return 0;
     }
 
-    private static final class TestCaseEventComparator implements Comparator<TestCaseEvent> {
+    private static final Comparator<TestCaseEvent> testCaseOrder = Comparator
+            .comparing(CanonicalEventOrder::testCaseUri)
+            .thenComparingInt(CanonicalEventOrder::testCaseLine)
+            .thenComparing(TestCaseEvent::getInstant);
 
-        @Override
-        public int compare(TestCaseEvent a, TestCaseEvent b) {
-            int uri = a.getTestCase().getUri().compareTo(b.getTestCase().getUri());
-            if (uri != 0) {
-                return uri;
-            }
-
-            int line = Integer.compare(
-                a.getTestCase().getLocation().getLine(),
-                b.getTestCase().getLocation().getLine());
-            if (line != 0) {
-                return line;
-            }
-
-            return a.getInstant().compareTo(b.getInstant());
-        }
-
+    private static int testCaseLine(TestCaseEvent o) {
+        return o.getTestCase().getLocation().getLine();
     }
 
+    private static URI testCaseUri(TestCaseEvent o) {
+        return o.getTestCase().getUri();
+    }
+
+    private static int eventOrder(Event o) {
+        Class<? extends Event> eventClass = o.getClass();
+        int index = findInFixedOrder(eventClass);
+        if (index < 0) {
+            throw new IllegalStateException(eventClass + " was not in " + fixedOrder);
+        }
+        return index;
+    }
+
+    private static final List<Class<? extends Event>> fixedOrder = asList(
+        TestRunStarted.class,
+        TestSourceRead.class,
+        TestSourceParsed.class,
+        SnippetsSuggestedEvent.class,
+        StepDefinedEvent.class,
+        TestCaseEvent.class,
+        TestRunFinished.class);
+
+    private static int findInFixedOrder(Class<? extends Event> o) {
+        for (int i = 0; i < fixedOrder.size(); i++) {
+            if (fixedOrder.get(i).isAssignableFrom(o)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

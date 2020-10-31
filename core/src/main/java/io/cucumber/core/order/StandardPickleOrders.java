@@ -8,20 +8,23 @@ import java.util.Random;
 
 public final class StandardPickleOrders {
 
+    private static final Comparator<Pickle> pickleUriComparator = Comparator.comparing(Pickle::getUri)
+            .thenComparing(pickle -> pickle.getLocation().getLine());
+
     private StandardPickleOrders() {
 
     }
 
     public static PickleOrder lexicalUriOrder() {
         return pickles -> {
-            pickles.sort(new PickleUriComparator());
+            pickles.sort(pickleUriComparator);
             return pickles;
         };
     }
 
     public static PickleOrder reverseLexicalUriOrder() {
         return pickles -> {
-            pickles.sort(new PickleUriComparator().reversed());
+            pickles.sort(pickleUriComparator.reversed());
             return pickles;
         };
     }
@@ -31,15 +34,6 @@ public final class StandardPickleOrders {
             Collections.shuffle(pickles, new Random(seed));
             return pickles;
         };
-    }
-
-    private static class PickleUriComparator implements Comparator<Pickle> {
-
-        @Override
-        public int compare(Pickle a, Pickle b) {
-            return a.getUri().compareTo(b.getUri());
-        }
-
     }
 
 }
