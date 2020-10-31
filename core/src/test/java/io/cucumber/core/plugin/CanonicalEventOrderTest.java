@@ -2,7 +2,9 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.Location;
+import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -12,6 +14,7 @@ import io.cucumber.plugin.event.TestSourceRead;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,13 +38,16 @@ class CanonicalEventOrderTest {
     private final Event testRead = new TestSourceRead(getInstant(), URI.create("file:path/to.feature"), "source");
     private final Event testParsed = new TestSourceParsed(getInstant(), URI.create("file:path/to.feature"),
         Collections.emptyList());
-    private final Event suggested = new SnippetsSuggestedEvent(getInstant(), URI.create("file:path/to/1.feature"), 0, 0,
+    private final Event suggested = new SnippetsSuggestedEvent(getInstant(),
+        URI.create("file:path/to/1.feature"),
+        new Location(0, -1),
+        new Location(0, -1),
         Collections.emptyList());
     private final Event feature1Case1Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 1);
     private final Event feature1Case2Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 9);
     private final Event feature1Case3Started = createTestCaseEvent(URI.create("file:path/to/1.feature"), 11);
     private final Event feature2Case1Started = createTestCaseEvent(URI.create("file:path/to/2.feature"), 1);
-    private final Event runFinished = new TestRunFinished(getInstant());
+    private final Event runFinished = new TestRunFinished(getInstant(), new Result(Status.PASSED, Duration.ZERO, null));
 
     private static Event createTestCaseEvent(final URI uri, final int line) {
         final TestCase testCase = mock(TestCase.class);

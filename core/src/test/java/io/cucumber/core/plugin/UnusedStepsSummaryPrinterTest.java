@@ -42,7 +42,7 @@ class UnusedStepsSummaryPrinterTest {
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/gut.feature:7", "even more cukes")));
         bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/gut.feature:7"),
             new Result(Status.UNUSED, Duration.ZERO, null)));
-        bus.send(new TestRunFinished(bus.getInstant()));
+        bus.send(new TestRunFinished(bus.getInstant(), new Result(Status.PASSED, Duration.ZERO, null)));
 
         // Verify produced output
         assertThat(out, isBytesEqualTo("1 Unused steps:\n" + "my/tummy.feature:5 # some more cukes\n"));
