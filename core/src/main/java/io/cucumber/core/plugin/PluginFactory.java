@@ -80,7 +80,8 @@ public final class PluginFactory {
             }
             if (!singleArgConstructors.isEmpty()) {
                 throw new CucumberException(String.format(
-                    "You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString, pluginString));
+                    "You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString,
+                    pluginString));
             }
             throw new CucumberException(String.format(
                 "%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s",
@@ -205,7 +206,7 @@ public final class PluginFactory {
             canonicalFile = file.getCanonicalFile();
         } catch (IOException e) {
             throw new IllegalArgumentException(String.format("" +
-                    "Couldn't get the canonical file of %s.\n" +
+                    "Couldn't get the canonical file of '%s'.\n" +
                     "The details are in the stack trace below:",
                 file),
                 e);
@@ -217,20 +218,34 @@ public final class PluginFactory {
                 Files.createDirectories(parentFile.toPath());
             }
         } catch (IOException e) {
+            // See: https://github.com/cucumber/cucumber-jvm/issues/2108
             throw new IllegalArgumentException(String.format("" +
-                    "Couldn't create parent directories of %s.\n" +
-                    "Make sure the the directory isn't a file.\n" +
+                    "Couldn't create parent directories of '%s'.\n" +
+                    "Make sure the the parent directory '%s' isn't a file.\n" +
+                    "\n" +
+                    "Note: This usually happens when plugins write to colliding paths.\n" +
+                    "For example: 'html:target/cucumber, json:target/cucumber/report.json'\n" +
+                    "You can fix this by making the paths do no collide.\n" +
+                    "For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'" +
+                    "\n" +
                     "The details are in the stack trace below:",
-                file),
+                canonicalFile, canonicalFile.getParentFile()),
                 e);
         }
 
         try {
             return new FileOutputStream(file);
         } catch (FileNotFoundException e) {
+            // See: https://github.com/cucumber/cucumber-jvm/issues/2108
             throw new IllegalArgumentException(String.format("" +
-                    "Couldn't create a file output stream for %s.\n" +
+                    "Couldn't create a file output stream for '%s'.\n" +
                     "Make sure the the file isn't a directory.\n" +
+                    "\n" +
+                    "Note: This usually happens when plugins write to colliding paths.\n" +
+                    "For example: 'json:target/cucumber/report.json, html:target/cucumber'\n" +
+                    "You can fix this by making the paths do no collide.\n" +
+                    "For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'" +
+                    "\n" +
                     "The details are in the stack trace below:",
                 file),
                 e);
