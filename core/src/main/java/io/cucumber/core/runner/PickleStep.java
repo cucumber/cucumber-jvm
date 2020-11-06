@@ -9,7 +9,7 @@ class PickleStep implements io.cucumber.core.backend.PickleStep {
     private final Object[] arguments;
 
     public PickleStep(PickleStepTestStep pickleStepTestStep) {
-        this.keyword = Keyword.valueOf(pickleStepTestStep.getStep().getType().name());
+        this.keyword = Keyword.valueOf(pickleStepTestStep.getStep().getGwtType().name());
         this.arguments = pickleStepTestStep.getDefinitionArgument().stream().map(Argument::getValue).toArray();
     }
 

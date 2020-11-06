@@ -4,6 +4,7 @@ import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.FeatureParserException;
+import io.cucumber.core.gherkin.GwtStepType;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.plugin.event.Node;
@@ -21,6 +22,7 @@ import static java.nio.file.Files.readAllBytes;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -128,6 +130,27 @@ class FeatureParserTest {
                 "(5:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'When GA'\n" +
                 "(6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'",
             exception.getMessage());
+    }
+
+    @Test
+    void gherkin_messages_step_gwt_type_should_be_determined_correclty() throws IOException {
+        URI uri = URI.create("classpath:com/example.feature");
+        String source = new String(
+                readAllBytes(Paths.get("src/test/resources/io/cucumber/core/gherkin/messages/given-when-then.feature")));
+        Feature feature = parser.parse(uri, source, UUID::randomUUID).get();
+        assertNotNull(feature.getPickles());
+        assertEquals(1, feature.getPickles().size());
+        List<Step> steps = feature.getPickles().get(0).getSteps();
+        assertEquals(9, steps.size());
+        assertEquals(GwtStepType.GIVEN, steps.get(0).getGwtType());
+        assertEquals(GwtStepType.GIVEN, steps.get(1).getGwtType());
+        assertEquals(GwtStepType.GIVEN, steps.get(2).getGwtType());
+        assertEquals(GwtStepType.WHEN, steps.get(3).getGwtType());
+        assertEquals(GwtStepType.WHEN, steps.get(4).getGwtType());
+        assertEquals(GwtStepType.WHEN, steps.get(5).getGwtType());
+        assertEquals(GwtStepType.THEN, steps.get(6).getGwtType());
+        assertEquals(GwtStepType.THEN, steps.get(7).getGwtType());
+        assertEquals(GwtStepType.THEN, steps.get(8).getGwtType());
     }
 
 }

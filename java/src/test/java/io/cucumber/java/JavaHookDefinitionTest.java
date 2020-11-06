@@ -209,7 +209,7 @@ public class JavaHookDefinitionTest {
 
     @Test
     void fails_if_step_hook_argument_and_both_beforestep_and_before_annotations() throws NoSuchMethodException {
-        Method method = JavaHookDefinitionTest.class.getMethod("double_annotated_with_invalid_step_parameter", Step.class);
+        Method method = JavaHookDefinitionTest.class.getMethod("double_annotated_invalid_step_parameter", Step.class);
         assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(method, "", 0, lookup));
@@ -217,7 +217,7 @@ public class JavaHookDefinitionTest {
 
     @Before
     @BeforeStep
-    public void double_annotated_with_invalid_step_parameter(Step step) {
+    public void double_annotated_invalid_step_parameter(Step step) {
         // Invalid because @Before cannot set Step
     }
 
@@ -232,8 +232,8 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("scenario_step_arguments", Scenario.class, Step.class);
         JavaHookDefinition javaHookDefinition = new JavaHookDefinition(method, "", 0, lookup);
         IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
-                () -> javaHookDefinition.execute(state));
+            IllegalStateException.class,
+            () -> javaHookDefinition.execute(state));
         assertThat(exception.getMessage(), startsWith("No current TestStep was found in TestCaseState"));
     }
 
@@ -243,10 +243,10 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("scenario_step_arguments", Scenario.class, Step.class);
         JavaHookDefinition javaHookDefinition = new JavaHookDefinition(method, "", 0, lookup);
         IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    javaHookDefinition.execute(state);
-                });
+            IllegalArgumentException.class,
+            () -> {
+                javaHookDefinition.execute(state);
+            });
         assertThat(exception.getMessage(), startsWith("Current TestStep should be a HookStep instead of"));
     }
 
@@ -256,8 +256,8 @@ public class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("scenario_step_arguments", Scenario.class, Step.class);
         JavaHookDefinition javaHookDefinition = new JavaHookDefinition(method, "", 0, lookup);
         IllegalStateException exception = assertThrows(
-                IllegalStateException.class,
-                () -> javaHookDefinition.execute(state));
+            IllegalStateException.class,
+            () -> javaHookDefinition.execute(state));
         assertThat(exception.getMessage(), startsWith("Current HookStep has no related PickleStep"));
     }
 

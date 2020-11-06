@@ -9,7 +9,6 @@ import io.cucumber.messages.Messages.Attachment.ContentEncoding;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.WriteEvent;
 
 import java.net.URI;
@@ -151,11 +150,11 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
                 .filter(t -> t.getId().equals(currentTestStepId))
                 .findFirst()
                 .map(step -> {
-                    if (testStep instanceof HookTestStep) {
-                        return new HookStep((HookTestStep) testStep);
+                    if (step instanceof HookTestStep) {
+                        return new HookStep((HookTestStep) step);
                     }
-                    if (testStep instanceof PickleStepTestStep) {
-                        return new PickleStep((PickleStepTestStep) testStep);
+                    if (step instanceof PickleStepTestStep) {
+                        return new PickleStep((PickleStepTestStep) step);
                     }
                     return null;
                 });
