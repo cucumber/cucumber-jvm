@@ -1,7 +1,9 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.HookStep;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.PickleStep;
 import io.cucumber.core.backend.TestCaseState;
 
 import java.lang.annotation.Annotation;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
@@ -46,10 +49,10 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> annotationType = annotation.annotationType();
             if (Before.class.equals(annotationType) || After.class.equals(annotationType)) {
-                return new Class<?>[] {Before.class, After.class};
+                return new Class<?>[] { Before.class, After.class };
             }
             if (BeforeStep.class.equals(annotationType) || AfterStep.class.equals(annotationType)) {
-                relevant = new Class<?>[] {BeforeStep.class, AfterStep.class};
+                relevant = new Class<?>[] { BeforeStep.class, AfterStep.class };
             }
         }
         return relevant;
@@ -78,13 +81,15 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         }
     }
 
-    private static InvalidMethodSignatureException createInvalidSignatureException(Method method,
-                                                                                   Class<?>[] methodAnnotations,
-                                                                                   Set<Class<?>> acceptedTypes) {
+    private static InvalidMethodSignatureException createInvalidSignatureException(
+            Method method,
+            Class<?>[] methodAnnotations,
+            Set<Class<?>> acceptedTypes
+    ) {
         InvalidMethodSignatureException.InvalidMethodSignatureExceptionBuilder builder = builder(method);
         if (methodAnnotations.length == 0) {
             throw new IllegalArgumentException(
-                    "Method should be annotated with one of: @Before, @After, @BeforeStep, @AfterStep");
+                "Method should be annotated with one of: @Before, @After, @BeforeStep, @AfterStep");
         }
         builder.addAnnotations(methodAnnotations);
         String methodName = "public void before_or_after";
@@ -107,10 +112,26 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
                 parameters.add(new Scenario(state));
             }
             if (parameterType.equals(Step.class)) {
-                parameters.add(new Step(state));
-        }
+                PickleStep pickleStep = getCurrentPickleStep(state);
+                parameters.add(new Step(pickleStep));
+            }
         }
         invokeMethod(parameters.toArray());
+    }
+
+    private PickleStep getCurrentPickleStep(TestCaseState state) {
+        io.cucumber.core.backend.Step step = state.getCurrentTestStep()
+                .orElseThrow(() -> new IllegalStateException("No current TestStep was found in TestCaseState"));
+
+        HookStep hookStep = Optional.of(step)
+                .filter(HookStep.class::isInstance)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Current TestStep should be a %s instead of a %s",
+                        HookStep.class.getSimpleName(), currentTestStep.get().getClass().getSimpleName())));
+                                
+        return Optional.of(hookStep)
+                .map(HookStep::getRelatedStep)
+                .orElseThrow(() -> new IllegalStateException("Current HookStep has no related PickleStep"));
+
     }
 
     @Override

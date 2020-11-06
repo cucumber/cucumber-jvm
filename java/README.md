@@ -128,6 +128,11 @@ annotating a method. The method may declare an argument of type
  * `@BeforeStep`
  * `@AfterStep`
  
+Optionally, the following hooks can also declare an argument of type
+`io.cucumber.java.Step`.
+ * `@BeforeStep`
+ * `@AfterStep`
+ 
 ## Transformers 
 
 Cucumber expression parameters, data tables and docs strings can be transformed

@@ -1,6 +1,5 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.plugin.event.TestStep;
 import org.apiguardian.api.API;
 
 import java.net.URI;
@@ -96,5 +95,5 @@ public interface TestCaseState {
     /**
      * @return the current TestStep being executed in the Scenario.
      */
-    Optional<TestStep> getCurrentTestStep();
+    Optional<Step> getCurrentTestStep();
 }

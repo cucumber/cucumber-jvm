@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
+import io.cucumber.core.backend.Step;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Attachment;
@@ -145,8 +146,19 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public Optional<TestStep> getCurrentTestStep() {
-        return testCase.getTestSteps().stream().filter(t -> t.getId().equals(currentTestStepId)).findFirst();
+    public Optional<Step> getCurrentTestStep() {
+        return testCase.getTestSteps().stream()
+                .filter(t -> t.getId().equals(currentTestStepId))
+                .findFirst()
+                .map(step -> {
+                    if (testStep instanceof HookTestStep) {
+                        return new HookStep((HookTestStep) testStep);
+                    }
+                    if (testStep instanceof PickleStepTestStep) {
+                        return new PickleStep((PickleStepTestStep) testStep);
+                    }
+                    return null;
+                });
     }
 
     Throwable getError() {

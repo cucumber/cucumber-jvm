@@ -1,9 +1,9 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.HookStep;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.PickleStep;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.plugin.event.HookTestStep;
-import io.cucumber.plugin.event.PickleStepTestStep;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings({ "WeakerAccess" })
@@ -39,10 +40,10 @@ public class JavaHookDefinitionTest {
     private TestCaseState state;
 
     @Mock
-    private PickleStepTestStep pickleStepTestStep;
+    private PickleStep pickleStepTestStep;
 
     @Mock
-    private HookTestStep hookTestStep;
+    private HookStep hookTestStep;
 
     private boolean invoked = false;
 
@@ -149,8 +150,8 @@ public class JavaHookDefinitionTest {
     void fails_if_hook_argument_is_not_scenario_step_result() throws NoSuchMethodException {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_parameter_step", String.class);
         InvalidMethodSignatureException exception = assertThrows(
-                InvalidMethodSignatureException.class,
-                () -> new JavaHookDefinition(method, "", 0, lookup));
+            InvalidMethodSignatureException.class,
+            () -> new JavaHookDefinition(method, "", 0, lookup));
         assertThat(exception.getMessage(), startsWith("" +
                 "A method annotated with BeforeStep or AfterStep must have one of these signatures:\n" +
                 " * public void before_or_after_step(io.cucumber.java.Scenario scenario, io.cucumber.java.Step step)\n" +
@@ -197,8 +198,8 @@ public class JavaHookDefinitionTest {
     void fails_if_step_hook_argument_for_non_step_hook() throws NoSuchMethodException {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_step_parameter", Step.class);
         assertThrows(
-                InvalidMethodSignatureException.class,
-                () -> new JavaHookDefinition(method, "", 0, lookup));
+            InvalidMethodSignatureException.class,
+            () -> new JavaHookDefinition(method, "", 0, lookup));
     }
 
     @Before
@@ -210,8 +211,8 @@ public class JavaHookDefinitionTest {
     void fails_if_step_hook_argument_and_both_beforestep_and_before_annotations() throws NoSuchMethodException {
         Method method = JavaHookDefinitionTest.class.getMethod("double_annotated_with_invalid_step_parameter", Step.class);
         assertThrows(
-                InvalidMethodSignatureException.class,
-                () -> new JavaHookDefinition(method, "", 0, lookup));
+            InvalidMethodSignatureException.class,
+            () -> new JavaHookDefinition(method, "", 0, lookup));
     }
 
     @Before
@@ -222,7 +223,42 @@ public class JavaHookDefinitionTest {
 
     private void mockValidStep() {
         when(state.getCurrentTestStep()).thenReturn(Optional.of(hookTestStep));
-        when(hookTestStep.getRelatedTestStep()).thenReturn(pickleStepTestStep);
+        when(hookTestStep.getRelatedStep()).thenReturn(pickleStepTestStep);
+    }
+
+    @Test
+    void fails_if_testcasestate_has_no_current_teststep() throws NoSuchMethodException {
+        when(state.getCurrentTestStep()).thenReturn(Optional.empty());
+        Method method = JavaHookDefinitionTest.class.getMethod("scenario_step_arguments", Scenario.class, Step.class);
+        JavaHookDefinition javaHookDefinition = new JavaHookDefinition(method, "", 0, lookup);
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> javaHookDefinition.execute(state));
+        assertThat(exception.getMessage(), startsWith("No current TestStep was found in TestCaseState"));
+    }
+
+    @Test
+    void fails_if_testcase_has_no_hookstep_as_current_teststep() throws NoSuchMethodException {
+        when(state.getCurrentTestStep()).thenReturn(Optional.of(mock(PickleStep.class)));
+        Method method = JavaHookDefinitionTest.class.getMethod("scenario_step_arguments", Scenario.class, Step.class);
+        JavaHookDefinition javaHookDefinition = new JavaHookDefinition(method, "", 0, lookup);
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    javaHookDefinition.execute(state);
+                });
+        assertThat(exception.getMessage(), startsWith("Current TestStep should be a HookStep instead of"));
+    }
+
+    @Test
+    void fails_if_testcase_current_hookstep_has_no_related_step() throws NoSuchMethodException {
+        when(state.getCurrentTestStep()).thenReturn(Optional.of(mock(HookStep.class)));
+        Method method = JavaHookDefinitionTest.class.getMethod("scenario_step_arguments", Scenario.class, Step.class);
+        JavaHookDefinition javaHookDefinition = new JavaHookDefinition(method, "", 0, lookup);
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> javaHookDefinition.execute(state));
+        assertThat(exception.getMessage(), startsWith("Current HookStep has no related PickleStep"));
     }
 
 }
