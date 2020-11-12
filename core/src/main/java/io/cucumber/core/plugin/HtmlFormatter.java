@@ -23,6 +23,12 @@ public final class HtmlFormatter implements ConcurrentEventListener {
     }
 
     private void write(Envelope event) {
+        // Workaround to reduce the size of the report
+        // See: https://github.com/cucumber/cucumber/issues/1232
+        if (event.hasStepDefinition() || event.hasHook() || event.hasParameterType()) {
+            return;
+        }
+
         try {
             writer.write(event);
         } catch (IOException e) {

@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
- *  [Core] Improve error message when plugin paths collide ([#2168](https://github.com/cucumber/cucumber-jvm/pull/2168) M.P. Korstanje)
+ * [Core] Significantly reduce the size of the html report ([cucumber/#1232](https://github.com/cucumber/cucumber/issues/1232) M.P. Korstanje)
+ * [Core] Improve error message when plugin paths collide ([#2168](https://github.com/cucumber/cucumber-jvm/pull/2168) M.P. Korstanje)
 
 ## [6.8.2] (2020-10-29)
 

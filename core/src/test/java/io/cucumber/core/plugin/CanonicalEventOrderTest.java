@@ -164,8 +164,7 @@ class CanonicalEventOrderTest {
                 () -> assertThat(comparator.compare(e, feature1Case1Started), greaterThan(EQUAL_TO)),
                 () -> assertThat(comparator.compare(e, feature1Case2Started), greaterThan(EQUAL_TO)),
                 () -> assertThat(comparator.compare(e, feature1Case3Started), greaterThan(EQUAL_TO)),
-                () -> assertThat(comparator.compare(e, feature2Case1Started), greaterThan(EQUAL_TO))
-            );
+                () -> assertThat(comparator.compare(e, feature2Case1Started), greaterThan(EQUAL_TO)));
         }
 
         assertAll(
