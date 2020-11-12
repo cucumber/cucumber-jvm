@@ -47,4 +47,51 @@ class HtmlFormatterTest {
                 "];"));
     }
 
+    @Test
+    void ignores_step_definitions() throws Throwable {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        HtmlFormatter formatter = new HtmlFormatter(bytes);
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        formatter.setEventPublisher(bus);
+
+        bus.send(Messages.Envelope.newBuilder()
+                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
+                        .setTimestamp(Messages.Timestamp.newBuilder()
+                                .setSeconds(10)
+                                .build())
+                        .build())
+                .build());
+        
+        bus.send(Messages.Envelope.newBuilder()
+                .setStepDefinition(Messages.StepDefinition.newBuilder()
+                        .build())
+                .build());
+
+        bus.send(Messages.Envelope.newBuilder()
+                .setHook(Messages.Hook.newBuilder()
+                        .build())
+                .build());
+
+        bus.send(Messages.Envelope.newBuilder()
+                .setParameterType(Messages.ParameterType.newBuilder()
+                        .build())
+                .build());
+
+        bus.send(
+            Messages.Envelope.newBuilder()
+                    .setTestRunFinished(Messages.TestRunFinished.newBuilder()
+                            .setTimestamp(Messages.Timestamp.newBuilder()
+                                    .setSeconds(15)
+                                    .build())
+                            .build())
+                    .build());
+
+        String html = new String(bytes.toByteArray(), UTF_8);
+        assertThat(html, containsString("" +
+                "window.CUCUMBER_MESSAGES = [" +
+                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}," +
+                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}" +
+                "];"));
+    }
+
 }
