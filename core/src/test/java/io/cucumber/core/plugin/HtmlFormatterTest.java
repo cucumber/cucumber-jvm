@@ -61,7 +61,7 @@ class HtmlFormatterTest {
                                 .build())
                         .build())
                 .build());
-        
+
         bus.send(Messages.Envelope.newBuilder()
                 .setStepDefinition(Messages.StepDefinition.newBuilder()
                         .build())

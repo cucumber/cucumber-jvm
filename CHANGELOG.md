@@ -12,9 +12,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Deprecated
- * [Plugin] Deprecate `TestRunFinished(Instant)` ([#2169](https://github.com/cucumber/cucumber-jvm/pull/2169) M.P. Korstanje)
 
 ### Removed
+
+### Fixed
+
+## [6.9.0] (2020-11-12)
+
+### Deprecated
+ * [Plugin] Deprecate `TestRunFinished(Instant)` ([#2169](https://github.com/cucumber/cucumber-jvm/pull/2169) M.P. Korstanje)
 
 ### Fixed
  * [Core] Significantly reduce the size of the html report ([cucumber/#1232](https://github.com/cucumber/cucumber/issues/1232) M.P. Korstanje)
@@ -1570,7 +1576,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.8.2...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.9.0...main
+[6.9.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.2...v6.9.0
 [6.8.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.1...v6.8.2
 [6.8.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.0...v6.8.1
 [6.8.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.7.0...v6.8.0
