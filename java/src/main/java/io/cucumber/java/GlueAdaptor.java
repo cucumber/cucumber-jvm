@@ -32,11 +32,11 @@ final class GlueAdaptor {
         } else if (annotationType.equals(BeforeStep.class)) {
             BeforeStep beforeStep = (BeforeStep) annotation;
             String tagExpression = beforeStep.value();
-            glue.addBeforeStepHook(new JavaHookDefinition(method, tagExpression, beforeStep.order(), lookup));
+            glue.addBeforeStepHook(new JavaStepHookDefinition(method, tagExpression, beforeStep.order(), lookup));
         } else if (annotationType.equals(AfterStep.class)) {
             AfterStep afterStep = (AfterStep) annotation;
             String tagExpression = afterStep.value();
-            glue.addAfterStepHook(new JavaHookDefinition(method, tagExpression, afterStep.order(), lookup));
+            glue.addAfterStepHook(new JavaStepHookDefinition(method, tagExpression, afterStep.order(), lookup));
         } else if (annotationType.equals(ParameterType.class)) {
             ParameterType parameterType = (ParameterType) annotation;
             String pattern = parameterType.value();
