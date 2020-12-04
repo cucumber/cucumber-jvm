@@ -29,7 +29,7 @@ class with `@SpringBootTest`.
 
 For example:
 ```java
-import com.example.app;
+package com.example.app;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
