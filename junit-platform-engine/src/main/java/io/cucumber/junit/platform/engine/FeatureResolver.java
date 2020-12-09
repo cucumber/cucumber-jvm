@@ -4,6 +4,8 @@ import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.plugin.event.Node;
@@ -20,6 +22,7 @@ import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -28,6 +31,8 @@ import java.util.stream.Stream;
 import static java.util.Comparator.comparing;
 
 final class FeatureResolver {
+
+    private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
 
     private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
     private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
@@ -142,20 +147,33 @@ final class FeatureResolver {
         resolvePackageResource(selector.getPackageName());
     }
 
-    private void resolvePackageResource(String packageName) {
-        featureScanner
-                .scanForResourcesInPackage(packageName, packageFilter)
+    private List<Feature> resolvePackageResource(String packageName) {
+        List<Feature> features = featureScanner
+                .scanForResourcesInPackage(packageName, packageFilter);
+
+        features
                 .stream()
                 .sorted(comparing(Feature::getUri))
                 .map(this::createFeatureDescriptor)
                 .forEach(engineDescriptor::mergeFeature);
+
+        return features;
     }
 
     void resolveClass(ClassSelector classSelector) {
         Class<?> javaClass = classSelector.getJavaClass();
         Cucumber annotation = javaClass.getAnnotation(Cucumber.class);
         if (annotation != null) {
-            resolvePackageResource(javaClass.getPackage().getName());
+            // We know now the intention is to run feature files in the
+            // package of the annotated class.
+            resolvePackageResourceWarnIfNone(javaClass.getPackage().getName());
+        }
+    }
+
+    private void resolvePackageResourceWarnIfNone(String packageName) {
+        List<Feature> features = resolvePackageResource(packageName);
+        if (features.isEmpty()) {
+            log.warn(() -> "No features found in package '" + packageName + "'");
         }
     }
 

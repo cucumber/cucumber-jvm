@@ -1,7 +1,11 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.junit.platform.engine.nofeatures.NoFeatures;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
@@ -27,8 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
@@ -46,13 +53,20 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 class DiscoverySelectorResolverTest {
 
     private final DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
+    private final LogRecordListener logRecordListener = new LogRecordListener();
     private CucumberEngineDescriptor testDescriptor;
 
     @BeforeEach
     void before() {
+        LoggerFactory.addListener(logRecordListener);
         UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
         testDescriptor = new CucumberEngineDescriptor(id);
         assertEquals(0, testDescriptor.getChildren().size());
+    }
+
+    @AfterEach
+    void after() {
+        LoggerFactory.removeListener(logRecordListener);
     }
 
     @Test
@@ -347,6 +361,19 @@ class DiscoverySelectorResolverTest {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(5, testDescriptor.getChildren().size());
+    }
+
+    @Test
+    void resolveRequestWithClassSelectorShouldLogWarnIfNoFeaturesFound() {
+        DiscoverySelector resource = selectClass(NoFeatures.class);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(0, testDescriptor.getChildren().size());
+        assertEquals(1, logRecordListener.getLogRecords().size());
+        LogRecord logRecord = logRecordListener.getLogRecords().get(0);
+        assertEquals(Level.WARNING, logRecord.getLevel());
+        assertEquals("No features found in package 'io.cucumber.junit.platform.engine.nofeatures'",
+            logRecord.getMessage());
     }
 
     private static class SelectorRequest implements EngineDiscoveryRequest {
