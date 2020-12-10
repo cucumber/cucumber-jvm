@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [Core] SummaryPrinter outputs clickable links ([#2184](https://github.com/cucumber/cucumber-jvm/issues/2184) M.P. Korstanje)
 
 ## [6.9.0] (2020-11-12)
 

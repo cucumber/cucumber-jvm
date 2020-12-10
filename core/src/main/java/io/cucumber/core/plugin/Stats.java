@@ -33,10 +33,10 @@ class Stats implements ConcurrentEventListener, ColorAware {
     private final SubCounts scenarioSubCounts = new SubCounts();
     private final SubCounts stepSubCounts = new SubCounts();
     private final Locale locale;
-    private final List<String> failedScenarios = new ArrayList<>();
-    private final List<String> ambiguousScenarios = new ArrayList<>();
-    private final List<String> pendingScenarios = new ArrayList<>();
-    private final List<String> undefinedScenarios = new ArrayList<>();
+    private final List<TestCase> failedScenarios = new ArrayList<>();
+    private final List<TestCase> ambiguousScenarios = new ArrayList<>();
+    private final List<TestCase> pendingScenarios = new ArrayList<>();
+    private final List<TestCase> undefinedScenarios = new ArrayList<>();
     private final List<Throwable> errors = new ArrayList<>();
     private Instant startTime = Instant.EPOCH;
     private Duration totalDuration = Duration.ZERO;
@@ -75,9 +75,7 @@ class Stats implements ConcurrentEventListener, ColorAware {
 
     private void addScenario(TestCaseFinished event) {
         TestCase testCase = event.getTestCase();
-        String location = testCase.getUri() + ":" + testCase.getLocation().getLine();
-        String scenarioDesignation = location + "# " + testCase.getName();
-        addScenario(event.getResult().getStatus(), scenarioDesignation);
+        addScenario(event.getResult().getStatus(), testCase);
     }
 
     private void setFinishTime(TestRunFinished event) {
@@ -96,20 +94,20 @@ class Stats implements ConcurrentEventListener, ColorAware {
         addResultToSubCount(stepSubCounts, resultStatus);
     }
 
-    void addScenario(Status resultStatus, String scenarioDesignation) {
+    void addScenario(Status resultStatus, TestCase testCase) {
         addResultToSubCount(scenarioSubCounts, resultStatus);
         switch (resultStatus) {
             case FAILED:
-                failedScenarios.add(scenarioDesignation);
+                failedScenarios.add(testCase);
                 break;
             case AMBIGUOUS:
-                ambiguousScenarios.add(scenarioDesignation);
+                ambiguousScenarios.add(testCase);
                 break;
             case PENDING:
-                pendingScenarios.add(scenarioDesignation);
+                pendingScenarios.add(testCase);
                 break;
             case UNDEFINED:
-                undefinedScenarios.add(scenarioDesignation);
+                undefinedScenarios.add(testCase);
                 break;
             default:
                 // intentionally left blank
@@ -207,17 +205,14 @@ class Stats implements ConcurrentEventListener, ColorAware {
         printScenarios(out, undefinedScenarios, Status.UNDEFINED);
     }
 
-    private void printScenarios(PrintStream out, List<String> scenarios, Status type) {
+    private void printScenarios(PrintStream out, List<TestCase> scenarios, Status type) {
         Format format = formats.get(type.name().toLowerCase(ROOT));
         if (!scenarios.isEmpty()) {
             out.println(format.text(firstLetterCapitalizedName(type) + " scenarios:"));
         }
-        for (String scenario : scenarios) {
-            String[] parts = scenario.split("#");
-            out.print(format.text(parts[0]));
-            for (int i = 1; i < parts.length; ++i) {
-                out.println("#" + parts[i]);
-            }
+        for (TestCase scenario : scenarios) {
+            String location = scenario.getUri() + ":" + scenario.getLocation().getLine();
+            out.println(location + " # " + scenario.getName());
         }
         if (!scenarios.isEmpty()) {
             out.println();
