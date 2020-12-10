@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -553,121 +554,18 @@
                     </dependencies>
                     <configuration>
                         <analysisConfiguration>
-                            <revapi.semver.ignore>
-                                <enabled>true</enabled>
-                                <versionIncreaseAllows>
-                                    <major>breaking</major>
-                                    <minor>nonBreaking</minor>
-                                    <patch>equivalent</patch>
-                                </versionIncreaseAllows>
-                            </revapi.semver.ignore>
-                            <revapi.ignore>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <old>method void io.cucumber.core.options.RuntimeOptionsBuilder::setObjectFactoryClass.*</old>
-                                    <new>method io.cucumber.core.options.RuntimeOptionsBuilder io.cucumber.core.options.RuntimeOptionsBuilder::setObjectFactoryClass.*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.method.addedToInterface</code>
-                                    <new>method boolean io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::publish()</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.method.visibilityReduced</code>
-                                    <old>method boolean io.cucumber.datatable.DataTableType::isReplaceable()</old>
-                                    <old>method boolean io.cucumber.datatable.DataTableType::isReplaceable()</old>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <!-- Gherkin parser related -->
-                                <item>
-                                    <code>java.class.nonPublicPartOfAPI</code>
-                                    <newArchive>io.cucumber:cucumber-gherkin-messages:jar:${project.version}</newArchive>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.externalClassExposedInAPI</code>
-                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.nonPublicPartOfAPI</code>
-                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <code>java.class.nonPublicPartOfAPI</code>
-                                    <newArchive>io.cucumber:messages:jar:${messages.version}</newArchive>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.missing.oldClass</code>
-                                    <old>missing-class io\.cucumber\.messages\..*</old>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.class.nonPublicPartOfAPI</code>
-                                    <new>.*\.internal\..*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.addedToInterface</code>
-                                    <new>.*\.internal\..*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.addedToInterface</code>
-                                    <new>.*io.cucumber.messages.Messages..*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.returnTypeChanged</code>
-                                    <new>.*io.cucumber.messages.Messages..*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.parameterTypeChanged</code>
-                                    <new>.*io.cucumber.messages.Messages..*</new>
-                                    <justification>Internal API</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.class.removed</code>
-                                    <old>.*Sipozeke.*</old>
-                                    <justification>https://github.com/cucumber/cucumber/pull/1145</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.method.removed</code>
-                                    <old>.*Sipozeke.*</old>
-                                    <justification>https://github.com/cucumber/cucumber/pull/1145</justification>
-                                </item>
-                                <item>
-                                    <regex>true</regex>
-                                    <code>java.class.added</code>
-                                    <new>.*SipozeKe.*</new>
-                                    <justification>Restore uppercase Creole keyword in Gherkin 15.0.2</justification>
-                                </item>
-                                <item>
-                                    <code>java.field.constantValueChanged</code>
-                                    <old>field io.cucumber.core.plugin.PublishFormatter.DEFAULT_CUCUMBER_MESSAGE_STORE_URL</old>
-                                    <justification>https://github.com/cucumber/cucumber-jvm/pull/2099</justification>
-                                    <newValue>https://messages.cucumber.io/api/reports -X GET</newValue>
-                                </item>
-                                <item>
-                                    <code>java.class.removed</code>
-                                    <old>class io.cucumber.core.options.PublishTokenParser</old>
-                                    <justification>Internal API</justification>
-                                </item>
-                            </revapi.ignore>
+                            <revapi.differences id="intentional-api-changes">
+                                <ignore>true</ignore>
+                            </revapi.differences>
                         </analysisConfiguration>
+                        <analysisConfigurationFiles>
+                            <configurationFile>
+                                <path>${main.basedir}/.revapi/api-changes.json</path>
+                                <roots>
+                                    <root>6.9.1</root>
+                                </roots>
+                            </configurationFile>
+                        </analysisConfigurationFiles>
                     </configuration>
                 </plugin>
 
@@ -695,24 +593,24 @@
                         <failsOnError>true</failsOnError>
                         <checkstyleRules>
                             <module name="Checker">
-                                <property name="severity" value="error" />
+                                <property name="severity" value="error"/>
                                 <module name="TreeWalker">
-                                    <module name="AvoidStarImport" />
+                                    <module name="AvoidStarImport"/>
                                     <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true" />
-                                        <property name="allowMissingReturnTag" value="true" />
+                                        <property name="allowMissingParamTags" value="true"/>
+                                        <property name="allowMissingReturnTag" value="true"/>
                                     </module>
-                                    <module name="NonEmptyAtclauseDescription" />
-                                    <module name="SuppressWarningsHolder" />
+                                    <module name="NonEmptyAtclauseDescription"/>
+                                    <module name="SuppressWarningsHolder"/>
                                     <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true" />
+                                        <property name="processJavadoc" value="true"/>
                                     </module>
                                 </module>
-                                <module name="SuppressWarningsFilter" />
+                                <module name="SuppressWarningsFilter"/>
                                 <module name="RegexpSingleline">
-                                    <property name="format" value="@author" />
-                                    <property name="message" value="Please do not use @author tags" />
-                                    <property name="fileExtensions" value="java,groovy,kt" />
+                                    <property name="format" value="@author"/>
+                                    <property name="message" value="Please do not use @author tags"/>
+                                    <property name="fileExtensions" value="java,groovy,kt"/>
                                 </module>
                             </module>
                         </checkstyleRules>
