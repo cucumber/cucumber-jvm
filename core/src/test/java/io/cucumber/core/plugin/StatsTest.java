@@ -53,7 +53,7 @@ class StatsTest {
         counter.addStep(Status.PASSED);
         counter.addStep(Status.PASSED);
         counter.addStep(Status.PASSED);
-        counter.addScenario(Status.PASSED, createTestCase("classpath:com/example", 42,  "scenario designation"));
+        counter.addScenario(Status.PASSED, createTestCase("classpath:com/example", 42, "scenario designation"));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
@@ -187,7 +187,7 @@ class StatsTest {
         counter.addStep(Status.UNDEFINED);
         counter.addScenario(Status.UNDEFINED, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.addStep(Status.PENDING);
-        counter.addScenario(Status.PENDING, createTestCase("path/file.feature", 3,  "Scenario: scenario_name"));
+        counter.addScenario(Status.PENDING, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
