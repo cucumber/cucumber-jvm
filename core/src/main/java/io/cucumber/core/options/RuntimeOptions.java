@@ -12,6 +12,7 @@ import io.cucumber.tagexpressions.Expression;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,8 +38,8 @@ public final class RuntimeOptions implements
     private final List<Expression> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
-    private final List<Plugin> formatters = new ArrayList<>();
-    private final List<Plugin> summaryPrinters = new ArrayList<>();
+    private final Set<Plugin> formatters = new LinkedHashSet<>();
+    private final Set<Plugin> summaryPrinters = new LinkedHashSet<>();
     private boolean dryRun;
     private boolean monochrome = false;
     private boolean wip = false;
@@ -106,11 +107,11 @@ public final class RuntimeOptions implements
 
     @Override
     public List<Plugin> plugins() {
-        List<Plugin> plugins = new ArrayList<>();
+        Set<Plugin> plugins = new LinkedHashSet<>();
         plugins.addAll(formatters);
         plugins.addAll(summaryPrinters);
         plugins.addAll(getPublishPlugin());
-        return plugins;
+        return new ArrayList<>(plugins);
     }
 
     private List<Plugin> getPublishPlugin() {
