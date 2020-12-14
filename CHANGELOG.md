@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.9.1] (2020-12-14)
+
+### Fixed
  * [JUnit Platform] Warn if feature files could not be found ([#2179](https://github.com/cucumber/cucumber-jvm/issues/2179) M.P. Korstanje)
  * [Core] SummaryPrinter outputs clickable links ([#2184](https://github.com/cucumber/cucumber-jvm/issues/2184) M.P. Korstanje)
  * [Core] Merge duplicate plugin options ([#2190](https://github.com/cucumber/cucumber-jvm/issues/2190) M.P. Korstanje)
@@ -1579,7 +1583,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.9.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...main
+[6.9.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.0...v6.9.1
 [6.9.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.2...v6.9.0
 [6.8.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.1...v6.8.2
 [6.8.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.0...v6.8.1
