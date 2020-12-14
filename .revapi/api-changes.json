@@ -1,5 +1,5 @@
 {
-  "6.9.1": [
+  "6.0.0": [
     {
       "extension": "revapi.differences",
       "id": "intentional-api-changes",
