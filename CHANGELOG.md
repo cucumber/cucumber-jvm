@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- * [JUnit Platform] Warn if feature files could not be found ([#2179](https://github.com/cucumber/cucumber-jvm/issues/2179) M.P. Korstanje)
 
 ### Changed
 
@@ -17,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [JUnit Platform] Warn if feature files could not be found ([#2179](https://github.com/cucumber/cucumber-jvm/issues/2179) M.P. Korstanje)
  * [Core] SummaryPrinter outputs clickable links ([#2184](https://github.com/cucumber/cucumber-jvm/issues/2184) M.P. Korstanje)
  * [Core] Merge duplicate plugin options ([#2190](https://github.com/cucumber/cucumber-jvm/issues/2190) M.P. Korstanje)
 

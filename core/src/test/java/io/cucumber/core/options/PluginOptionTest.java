@@ -96,9 +96,8 @@ class PluginOptionTest {
                 "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
     }
 
-
     @Test
-    void should_implement_equals_and_hashcode(){
+    void should_implement_equals_and_hashcode() {
         PluginOption prettyPluginA = PluginOption.forClass(PrettyFormatter.class);
         PluginOption prettyPluginB = PluginOption.forClass(PrettyFormatter.class);
         PluginOption htmlPluginA = PluginOption.forClass(HtmlFormatter.class, "out.html");
