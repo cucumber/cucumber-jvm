@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.PrettyFormatter;
 import io.cucumber.core.plugin.TeamCityPlugin;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PluginOptionTest {
@@ -77,7 +80,7 @@ class PluginOptionTest {
     }
 
     @Test
-    void throws_for_uknown_plugins() {
+    void throws_for_unknown_plugins() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> PluginOption.parse("no-such-plugin"));
 
@@ -93,4 +96,19 @@ class PluginOptionTest {
                 "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
     }
 
+
+    @Test
+    void should_implement_equals_and_hashcode(){
+        PluginOption prettyPluginA = PluginOption.forClass(PrettyFormatter.class);
+        PluginOption prettyPluginB = PluginOption.forClass(PrettyFormatter.class);
+        PluginOption htmlPluginA = PluginOption.forClass(HtmlFormatter.class, "out.html");
+        PluginOption htmlPluginB = PluginOption.forClass(HtmlFormatter.class, "out.html");
+
+        assertEquals(prettyPluginA, prettyPluginB);
+        assertEquals(prettyPluginA.hashCode(), prettyPluginB.hashCode());
+        assertEquals(htmlPluginA, htmlPluginB);
+        assertEquals(htmlPluginA.hashCode(), htmlPluginB.hashCode());
+        assertNotEquals(prettyPluginA, htmlPluginA);
+        assertNotEquals(prettyPluginA.hashCode(), htmlPluginA.hashCode());
+    }
 }

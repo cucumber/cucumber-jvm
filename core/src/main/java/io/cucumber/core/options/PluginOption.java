@@ -25,6 +25,7 @@ import io.cucumber.plugin.SummaryPrinter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -206,4 +207,16 @@ public class PluginOption implements Options.Plugin {
         return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PluginOption that = (PluginOption) o;
+        return pluginClass.equals(that.pluginClass) && Objects.equals(argument, that.argument);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pluginClass, argument);
+    }
 }
