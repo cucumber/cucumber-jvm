@@ -14,7 +14,8 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 </dependency>
 ```
 
-This will allow IntelliJ IDEA, Eclipse, Maven, Gradle, etc, to discover, select and execute Cucumber scenarios.
+This will allow IntelliJ IDEA, Eclipse, Maven, Gradle, etc, to discover, select
+and execute Cucumber scenarios.
 
 ## Surefire and Gradle workarounds
 
@@ -29,8 +30,9 @@ Console Launcher.
 Cucumber will scan the package of a class annotated with `@Cucumber` for feature
 files.  
 
-To use this feature, add the `@Cucumber` annotation to the test runner. Doing so will make Cucumber run the feature
-files in the package containing the test runner.
+To use this feature, add the `@Cucumber` annotation to the test runner. Doing so
+will make Cucumber run the feature files in the package containing the test
+runner.
 
 ```java
 package com.example.app;
@@ -44,7 +46,7 @@ public class RunCucumberTest {
 
 ### Use the JUnit Console Launcher ###
 
-You can integrate the JUnit Platform Console Launcher in your build by using
+You can integrate the JUnit Platform Console Launcher in your build by using 
 either the Maven Antrun plugin or the Gradle JavaExec task.
 
 #### Use the Maven Antrun plugin  ####
@@ -128,55 +130,95 @@ tasks {
 
 ## Parallel execution ## 
 
-By default, Cucumber runs tests sequentially in a single thread. Running
-tests in parallel is available as an opt-in feature. To enable parallel
-execution, set the `cucumber.execution.parallel.enabled` configuration
-parameter to `true`, e.g. in `junit-platform.properties`.
+By default, Cucumber runs tests sequentially in a single thread. Running  tests
+in parallel is available as an opt-in feature. To enable parallel execution, set
+the `cucumber.execution.parallel.enabled` configuration parameter to `true`,
+e.g. in `junit-platform.properties`.
 
-Cucumber supports JUnit's `ParallelExecutionConfigurationStrategy`; see the
+Cucumber supports JUnit's `ParallelExecutionConfigurationStrategy`; see the 
 configuration options below.
 
 ### Exclusive Resources ###
 
-The JUnit Platform supports parallel execution. To avoid flaky tests when multiple scenarios manipulate the same
-resource, tests can be [synchronized][junit5-user-guide-synchronization] on that resource.
+The JUnit Platform supports parallel execution. To avoid flaky tests when
+multiple scenarios manipulate the same resource, tests can be
+[synchronized][junit5-user-guide-synchronization] on that resource.
 
 [junit5-user-guide-synchronization]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization
 
-To synchronize a scenario on a specific resource, the scenario must be tagged and this tag mapped to a lock for the
-specific resource. A resource is identified by a String and can be either locked with a read-write-lock, or a read-lock.
+To synchronize a scenario on a specific resource, the scenario must be tagged
+and this tag mapped to a lock for the specific resource. A resource is
+identified by an arbitrary string and can be either locked with a
+read-write-lock, or a read-lock.
   
 For example, the following tags:
 
 ```gherkin
 Feature: Exclusive resources
 
- @reads-and-writes-system-properties
- Scenario: first example
-   Given this reads and writes system properties
-   When it is executed 
-   Then it will not be executed concurrently with the second example
+   @reads-and-writes-system-properties
+   Scenario: first example
+      Given this reads and writes system properties
+      When it is executed
+      Then it will not be executed concurrently with the second example
 
- @reads-system-properties
- Scenario: second example
-   Given this reads system properties
-   When it is executed
-   Then it will not be executed concurrently with the first example
-
+   @reads-system-properties
+   Scenario: second example
+      Given this reads system properties
+      When it is executed
+      Then it will not be executed concurrently with the first example
 ```
 
-With this configuration:
+with this configuration:
 
-```
-cucumber.execution.exclusive-resources.reads-and-writes-system-properties.read-write=SYSTEM_PROPERTIES
-cucumber.execution.exclusive-resources.reads-system-properties.read=SYSTEM_PROPERTIES
+```properties
+cucumber.execution.exclusive-resources.reads-and-writes-system-properties.read-write=java.lang.System.properties
+cucumber.execution.exclusive-resources.reads-system-properties.read=java.lang.System.properties
 ```
 
-The first scenario tagged with `@reads-and-writes-system-properties` will lock 
-the `SYSTEM_PROPERTIES` with a read-write lock and will not be concurrently
-executed with the second scenario that uses a read lock.
+when executing the first scenario tagged with
+`@reads-and-writes-system-properties` will lock the `java.lang.System.properties`
+resource with a read-write lock and will not be concurrently executed with the
+second scenario that locks the same resource with a read lock.
 
 Note: The `@` from the tag is not included in the property name.
+Note: For canonical resource names see [junit5/Resources.java][resources-java]
+
+[resources-java]: https://github.com/junit-team/junit5/blob/main/junit-jupiter-api/src/main/java/org/junit/jupiter/api/parallel/Resources.java
+
+### Running tests in isolation
+
+To ensure that a scenario runs while no other scenarios are running the global
+resource [`org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY`][global-key]
+can be used.
+
+[global-key]: https://github.com/junit-team/junit5/blob/main/junit-platform-engine/src/main/java/org/junit/platform/engine/support/hierarchical/ExclusiveResource.java#L47
+
+```gherkin
+Feature: Isolated scenarios
+
+   @isolated
+   Scenario: isolated example
+      Given this scenario runs isolated
+      When it is executed
+      Then it will not be executed concurrently with the second or third example
+
+   Scenario: second example
+      When it is executed
+      Then it will not be executed concurrently with the isolated example
+      And it will be executed concurrently with the third example
+
+   Scenario: third example
+      When it is executed
+      Then it will not be executed concurrently with the isolated example
+      And it will be executed concurrently with the second example
+```
+
+with this configuration:
+
+```properties
+cucumber.execution.exclusive-resources.isolated.read-write=org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY
+```
 
 ## Configuration Options ##
 
@@ -293,7 +335,6 @@ Scenario: Another tagged scenario
   Given I tag a scenario 
   When I select tests with that tag for execution 
   Then my tagged scenario is executed
-
 ```
 
 When using Maven, tags can be provided from the CLI using the `groups` and `excludedGroups` parameters. These take a
