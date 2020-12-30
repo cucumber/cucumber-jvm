@@ -2,12 +2,10 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JUnitFormatter;
 import io.cucumber.core.plugin.JsonFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
-import io.cucumber.core.plugin.NullSummaryPrinter;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.plugin.PrettyFormatter;
 import io.cucumber.core.plugin.ProgressFormatter;
@@ -44,16 +42,13 @@ public class PluginOption implements Options.Plugin {
 
     static {
         Map<String, Class<? extends Plugin>> plugins = new HashMap<>();
-        plugins.put("default_summary", DefaultSummaryPrinter.class);
         plugins.put("html", HtmlFormatter.class);
         plugins.put("json", JsonFormatter.class);
         plugins.put("junit", JUnitFormatter.class);
-        plugins.put("null_summary", NullSummaryPrinter.class);
         plugins.put("pretty", PrettyFormatter.class);
         plugins.put("progress", ProgressFormatter.class);
         plugins.put("message", MessageFormatter.class);
         plugins.put("rerun", RerunFormatter.class);
-        plugins.put("summary", DefaultSummaryPrinter.class);
         plugins.put("testng", TestNGFormatter.class);
         plugins.put("timeline", TimelineFormatter.class);
         plugins.put("unused", UnusedStepsSummaryPrinter.class);
@@ -198,7 +193,7 @@ public class PluginOption implements Options.Plugin {
         return pluginString;
     }
 
-    boolean isFormatter() {
+    boolean isEventListener() {
         return EventListener.class.isAssignableFrom(pluginClass)
                 || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
     }

@@ -4,6 +4,8 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -15,9 +17,10 @@ import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.core.Is;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -49,6 +52,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -65,6 +69,18 @@ class CommandlineOptionsParserTest {
     private final Map<String, String> properties = new HashMap<>();
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final CommandlineOptionsParser parser = new CommandlineOptionsParser(out);
+    private LogRecordListener logRecordListener;
+
+    @BeforeEach
+    void setup() {
+        logRecordListener = new LogRecordListener();
+        LoggerFactory.addListener(logRecordListener);
+    }
+
+    @AfterEach
+    void tearDown() {
+        LoggerFactory.removeListener(logRecordListener);
+    }
 
     @Test
     void testParseWithObjectFactoryArgument() {
@@ -187,22 +203,21 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void creates_progress_formatter_as_default() {
+    void creates_no_formatter_by_default() {
         RuntimeOptions options = parser
                 .parse()
-                .addDefaultFormatterIfAbsent()
+                .setNoSummary()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
-        assertThat(plugins.getPlugins().get(0).getClass().getName(), is("io.cucumber.core.plugin.ProgressFormatter"));
+        assertThat(plugins.getPlugins(), is(empty()));
     }
 
     @Test
-    void creates_default_summary_printer_when_no_summary_printer_plugin_is_specified() {
+    void creates_default_summary_printer_by_default() {
         RuntimeOptions options = parser
-                .parse("--plugin", "pretty")
-                .addDefaultSummaryPrinterIfAbsent()
+                .parse()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -226,7 +241,7 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void creates_null_summary_printer() {
+    void handles_null_summary_printer_backward_compatible() {
         RuntimeOptions options = parser
                 .parse("--plugin", "null_summary", "--glue", "somewhere")
                 .build();
@@ -234,7 +249,21 @@ class CommandlineOptionsParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
-            () -> assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.NullSummaryPrinter"))),
+            () -> assertThat(logRecordListener.getLogRecords().get(0).getMessage(),
+                is("Use '--no-summary' instead of '-p/--plugin null_summary'. '-p/--plugin null_summary' will be removed in a future release.")),
+            () -> assertThat(plugins.getPlugins(),
+                not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")))));
+    }
+
+    @Test
+    void disable_default_summary_printer() {
+        RuntimeOptions options = parser
+                .parse("--no-summary", "--glue", "somewhere")
+                .build();
+        Plugins plugins = new Plugins(new PluginFactory(), options);
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
+
+        assertAll(
             () -> assertThat(plugins.getPlugins(),
                 not(hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")))));
     }

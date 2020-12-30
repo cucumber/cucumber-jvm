@@ -22,8 +22,7 @@ class PluginOptionTest {
         assertAll(
             () -> assertThat(option.pluginClass(), is(PrettyFormatter.class)),
             () -> assertThat(option.argument(), nullValue()),
-            () -> assertThat(option.isFormatter(), is(true)),
-            () -> assertThat(option.isSummaryPrinter(), is(false)));
+            () -> assertThat(option.isEventListener(), is(true)));
     }
 
     @Test
@@ -56,7 +55,7 @@ class PluginOptionTest {
                     "\n" +
                     "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
                     "\n" +
-                    "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage\n"
+                    "Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, teamcity, testng, timeline, unused, usage\n"
                     +
                     "\n" +
                     "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
@@ -73,7 +72,7 @@ class PluginOptionTest {
                 "\n" +
                 "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
                 "\n" +
-                "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage\n"
+                "Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, teamcity, testng, timeline, unused, usage\n"
                 +
                 "\n" +
                 "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
@@ -90,7 +89,7 @@ class PluginOptionTest {
                 "\n" +
                 "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
                 "\n" +
-                "Valid values for PLUGIN are: default_summary, html, json, junit, message, null_summary, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage\n"
+                "Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, teamcity, testng, timeline, unused, usage\n"
                 +
                 "\n" +
                 "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));

@@ -43,6 +43,7 @@ import static io.cucumber.core.cli.CommandlineOptions.NAME_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.NO_DRY_RUN;
 import static io.cucumber.core.cli.CommandlineOptions.NO_MONOCHROME;
 import static io.cucumber.core.cli.CommandlineOptions.NO_STRICT;
+import static io.cucumber.core.cli.CommandlineOptions.NO_SUMMARY;
 import static io.cucumber.core.cli.CommandlineOptions.OBJECT_FACTORY;
 import static io.cucumber.core.cli.CommandlineOptions.ORDER;
 import static io.cucumber.core.cli.CommandlineOptions.PLUGIN;
@@ -124,7 +125,17 @@ public final class CommandlineOptionsParser {
             } else if (arg.equals(PUBLISH)) {
                 parsedOptions.setPublish(true);
             } else if (arg.equals(PLUGIN) || arg.equals(PLUGIN_SHORT)) {
-                parsedOptions.addPluginName(removeArgFor(arg, args));
+                String pluginName = removeArgFor(arg, args);
+                if (pluginName.equals("null_summary")) {
+                    log.warn(
+                        () -> "Use '--no-summary' instead of '-p/--plugin null_summary'. '-p/--plugin null_summary' will be removed in a future release.");
+                    parsedOptions.setNoSummary();
+                } else if (pluginName.equals("default_summary") || pluginName.equals("summary")) {
+                    log.warn(
+                        () -> "The DefaultSummaryPrinter is added by default. '-p/--plugin summary' and '-p/--plugin default_summary' will be removed in a future release.");
+                } else {
+                    parsedOptions.addPluginName(pluginName);
+                }
             } else if (arg.equals(DRY_RUN) || arg.equals(DRY_RUN_SHORT)) {
                 parsedOptions.setDryRun(true);
             } else if (arg.equals(NO_DRY_RUN)) {
@@ -133,6 +144,8 @@ public final class CommandlineOptionsParser {
                 out.println("--no-strict is no longer effective");
                 exitCode = 1;
                 return parsedOptions;
+            } else if (arg.equals(NO_SUMMARY)) {
+                parsedOptions.setNoSummary();
             } else if (arg.equals(STRICT) || arg.equals(STRICT_SHORT)) {
                 log.warn(() -> "--strict is enabled by default. This option will be removed in a future release.");
             } else if (arg.equals(MONOCHROME) || arg.equals(MONOCHROME_SHORT)) {

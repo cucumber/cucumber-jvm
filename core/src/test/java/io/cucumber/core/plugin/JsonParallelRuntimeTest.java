@@ -26,6 +26,7 @@ class JsonParallelRuntimeTest {
                             .setThreads(3)
                             .addFeature(FeatureWithLines.parse(
                                 "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                            .setNoSummary()
                             .build())
                 .withAdditionalPlugins(new JsonFormatter(parallel))
                 .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
@@ -40,6 +41,7 @@ class JsonParallelRuntimeTest {
                             .setThreads(1)
                             .addFeature(FeatureWithLines.parse(
                                 "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
+                            .setNoSummary()
                             .build())
                 .withAdditionalPlugins(new JsonFormatter(serial))
                 .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
@@ -61,6 +63,7 @@ class JsonParallelRuntimeTest {
                                 "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
                             .addFeature(FeatureWithLines
                                     .parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
+                            .setNoSummary()
                             .build())
                 .withAdditionalPlugins(new JsonFormatter(parallel))
                 .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))
@@ -77,6 +80,7 @@ class JsonParallelRuntimeTest {
                                 "src/test/resources/io/cucumber/core/plugin/JsonPrettyFormatterTest.feature"))
                             .addFeature(FeatureWithLines
                                     .parse("src/test/resources/io/cucumber/core/plugin/FormatterInParallel.feature"))
+                            .setNoSummary()
                             .build())
                 .withAdditionalPlugins(new JsonFormatter(serial))
                 .withEventBus(new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID))

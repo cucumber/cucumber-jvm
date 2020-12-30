@@ -79,7 +79,7 @@ class JsonFormatterTest {
     void featureWithOutlineTestParallel() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         createRuntime(out)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).setNoSummary().build())
                 .build()
                 .run();
 

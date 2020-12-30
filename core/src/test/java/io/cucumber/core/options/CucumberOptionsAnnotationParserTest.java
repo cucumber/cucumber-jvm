@@ -8,7 +8,6 @@ import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.plugin.PrettyFormatter;
-import io.cucumber.core.plugin.ProgressFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
@@ -42,8 +41,6 @@ class CucumberOptionsAnnotationParserTest {
     void create_without_options() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(WithoutOptions.class)
-                .addDefaultSummaryPrinterIfAbsent()
-                .addDefaultFormatterIfAbsent()
                 .build();
 
         assertAll(
@@ -55,8 +52,7 @@ class CucumberOptionsAnnotationParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
-            () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
+            () -> assertThat(plugins.getPlugins(), hasSize(1)),
             () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
     }
 
@@ -85,8 +81,6 @@ class CucumberOptionsAnnotationParserTest {
         Class<?> subClassWithMonoChromeTrueClass = WithoutOptionsWithBaseClassWithoutOptions.class;
         RuntimeOptions runtimeOptions = parser()
                 .parse(subClassWithMonoChromeTrueClass)
-                .addDefaultFormatterIfAbsent()
-                .addDefaultSummaryPrinterIfAbsent()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -94,8 +88,7 @@ class CucumberOptionsAnnotationParserTest {
         assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
+            () -> assertThat(plugins.getPlugins(), hasSize(1)),
             () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
     }
 
@@ -169,6 +162,7 @@ class CucumberOptionsAnnotationParserTest {
     void should_set_publish_when_true() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(ClassWithPublish.class)
+                .setNoSummary()
                 .enablePublishPlugin()
                 .build();
         assertThat(runtimeOptions.plugins(), hasSize(1));
@@ -179,6 +173,7 @@ class CucumberOptionsAnnotationParserTest {
     void should_set_no_publish_formatter_when_plugin_option_false() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(WithoutOptions.class)
+                .setNoSummary()
                 .enablePublishPlugin()
                 .build();
         assertThat(runtimeOptions.plugins(), hasSize(1));
@@ -199,10 +194,9 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
+    void create_default_summary_printer_by_default() {
         RuntimeOptions runtimeOptions = parser()
-                .parse(ClassWithNoSummaryPrinterPlugin.class)
-                .addDefaultSummaryPrinterIfAbsent()
+                .parse(WithDefaultOptions.class)
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -356,11 +350,6 @@ class CucumberOptionsAnnotationParserTest {
 
     @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
     private static class ClassWithNoFormatterPlugin {
-        // empty
-    }
-
-    @CucumberOptions(plugin = "pretty")
-    private static class ClassWithNoSummaryPrinterPlugin {
         // empty
     }
 

@@ -21,6 +21,7 @@ class RunParallelCucumberTest {
         Callable<Byte> runCucumber = () -> {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             String[] args = {
+                    "--no-summary",
                     "--glue", "io.cucumber.spring.threading",
                     "classpath:io/cucumber/spring/threadingCukes.feature"
             };

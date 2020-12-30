@@ -97,7 +97,7 @@ class TimelineFormatterTest {
     void setUp() {
         reportJsFile = new File(reportDir, "report.js");
         runtimeOptionsBuilder = new RuntimeOptionsBuilder()
-                .addPluginName("timeline:" + reportDir.getAbsolutePath());
+                .addPluginName("timeline:" + reportDir.getAbsolutePath()).setNoSummary();
     }
 
     @Test
