@@ -130,9 +130,10 @@ public final class CommandlineOptionsParser {
                     log.warn(
                         () -> "Use '--no-summary' instead of '-p/--plugin null_summary'. '-p/--plugin null_summary' will be removed in a future release.");
                     parsedOptions.setNoSummary();
-                } else if (pluginName.equals("default_summary") || pluginName.equals("summary")) {
+                } else if (pluginName.equals("default_summary")) {
                     log.warn(
-                        () -> "The DefaultSummaryPrinter is added by default. '-p/--plugin summary' and '-p/--plugin default_summary' will be removed in a future release.");
+                        () -> "Use '-p/--plugin summary' instead of '-p/--plugin default_summary'. '-p/--plugin default_summary' will be removed in a future release.");
+                    parsedOptions.addPluginName("summary");
                 } else {
                     parsedOptions.addPluginName(pluginName);
                 }

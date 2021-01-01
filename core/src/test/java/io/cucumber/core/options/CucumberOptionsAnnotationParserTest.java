@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
@@ -52,8 +53,7 @@ class CucumberOptionsAnnotationParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
-            () -> assertThat(plugins.getPlugins(), hasSize(1)),
-            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
+            () -> assertThat(plugins.getPlugins(), is(empty())));
     }
 
     private CucumberOptionsAnnotationParser parser() {
@@ -88,8 +88,7 @@ class CucumberOptionsAnnotationParserTest {
         assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(plugins.getPlugins(), hasSize(1)),
-            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
+            () -> assertThat(plugins.getPlugins(), is(empty())));
     }
 
     @Test
@@ -162,7 +161,6 @@ class CucumberOptionsAnnotationParserTest {
     void should_set_publish_when_true() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(ClassWithPublish.class)
-                .setNoSummary()
                 .enablePublishPlugin()
                 .build();
         assertThat(runtimeOptions.plugins(), hasSize(1));
@@ -173,7 +171,6 @@ class CucumberOptionsAnnotationParserTest {
     void should_set_no_publish_formatter_when_plugin_option_false() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(WithoutOptions.class)
-                .setNoSummary()
                 .enablePublishPlugin()
                 .build();
         assertThat(runtimeOptions.plugins(), hasSize(1));
@@ -191,16 +188,6 @@ class CucumberOptionsAnnotationParserTest {
         RuntimeOptions options = new RuntimeOptionsBuilder().setSnippetType(SnippetType.CAMELCASE).build();
         RuntimeOptions runtimeOptions = parser().parse(WithDefaultOptions.class).build(options);
         assertThat(runtimeOptions.getSnippetType(), is(equalTo(SnippetType.CAMELCASE)));
-    }
-
-    @Test
-    void create_default_summary_printer_by_default() {
-        RuntimeOptions runtimeOptions = parser()
-                .parse(WithDefaultOptions.class)
-                .build();
-        Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
-        assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName());
     }
 
     @Test

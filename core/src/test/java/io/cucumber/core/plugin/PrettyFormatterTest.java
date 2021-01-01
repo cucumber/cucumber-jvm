@@ -48,7 +48,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step", "path/step_definitions.java:3"),
                     new StubStepDefinition("second step", "path/step_definitions.java:7"),
@@ -79,7 +79,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step", "path/step_definitions.java:3"),
                     new StubStepDefinition("second step", "path/step_definitions.java:7"),
@@ -114,7 +114,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step", "path/step_definitions.java:3"),
                     new StubStepDefinition("second step", "path/step_definitions.java:7"),
@@ -153,7 +153,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step", "path/step_definitions.java:7"),
                     new StubStepDefinition("second step", "path/step_definitions.java:11")))
@@ -183,7 +183,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step", "path/step_definitions.java:3", new StubException())))
                 .build()
@@ -205,7 +205,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(new StubException())),
                     singletonList(new StubStepDefinition("first step", "path/step_definitions.java:3")),
@@ -230,7 +230,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
                     singletonList(new StubStepDefinition("first step", "path/step_definitions.java:3")),
@@ -254,7 +254,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(testCaseState -> testCaseState.log("printed from hook"))),
                     singletonList(new StubStepDefinition("first step", "path/step_definitions.java:3")),
@@ -281,7 +281,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
                     singletonList(new StubStepDefinition("first step", "path/step_definitions.java:3")),
@@ -307,7 +307,7 @@ class PrettyFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
                     emptyList(),

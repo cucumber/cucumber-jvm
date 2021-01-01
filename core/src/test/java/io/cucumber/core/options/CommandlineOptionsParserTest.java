@@ -52,8 +52,8 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -206,7 +206,6 @@ class CommandlineOptionsParserTest {
     void creates_no_formatter_by_default() {
         RuntimeOptions options = parser
                 .parse()
-                .setNoSummary()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -215,9 +214,10 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void creates_default_summary_printer_by_default() {
+    void creates_default_summary_printer_if_not_disabled() {
         RuntimeOptions options = parser
                 .parse()
+                .addDefaultSummaryPrinterIfNotDisabled()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -256,9 +256,10 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void disable_default_summary_printer() {
+    void disables_default_summary_printer() {
         RuntimeOptions options = parser
                 .parse("--no-summary", "--glue", "somewhere")
+                .addDefaultSummaryPrinterIfNotDisabled()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));

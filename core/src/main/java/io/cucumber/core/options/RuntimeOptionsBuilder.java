@@ -31,7 +31,7 @@ public final class RuntimeOptionsBuilder {
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
-    private boolean addSummary = true;
+    private Boolean addDefaultSummaryPrinter = null;
     private boolean addDefaultGlueIfAbsent;
     private boolean addDefaultFeaturePathIfAbsent;
     private String parsedPublishToken = null;
@@ -132,7 +132,7 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
         }
 
-        if (addSummary) {
+        if (addDefaultSummaryPrinter != null && addDefaultSummaryPrinter) {
             runtimeOptions.addDefaultSummaryPrinter();
         }
 
@@ -213,7 +213,14 @@ public final class RuntimeOptionsBuilder {
     }
 
     public RuntimeOptionsBuilder setNoSummary() {
-        this.addSummary = false;
+        this.addDefaultSummaryPrinter = false;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder addDefaultSummaryPrinterIfNotDisabled() {
+        if (this.addDefaultSummaryPrinter == null) {
+            this.addDefaultSummaryPrinter = true;
+        }
         return this;
     }
 

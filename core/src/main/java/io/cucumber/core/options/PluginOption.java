@@ -2,6 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JUnitFormatter;
 import io.cucumber.core.plugin.JsonFormatter;
@@ -49,6 +50,7 @@ public class PluginOption implements Options.Plugin {
         plugins.put("progress", ProgressFormatter.class);
         plugins.put("message", MessageFormatter.class);
         plugins.put("rerun", RerunFormatter.class);
+        plugins.put("summary", DefaultSummaryPrinter.class);
         plugins.put("testng", TestNGFormatter.class);
         plugins.put("timeline", TimelineFormatter.class);
         plugins.put("unused", UnusedStepsSummaryPrinter.class);

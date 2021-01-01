@@ -307,7 +307,7 @@ class RuntimeTest {
                 .withAdditionalPlugins(formatterSpy)
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step")))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(3).setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(3).build())
                 .build()
                 .run();
 
@@ -357,7 +357,7 @@ class RuntimeTest {
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
                 .withAdditionalPlugins(brokenEventListener)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
                 .build()
                 .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);

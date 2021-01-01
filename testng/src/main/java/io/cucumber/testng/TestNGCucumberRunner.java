@@ -66,24 +66,20 @@ public final class TestNGCucumberRunner {
         // options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromPropertiesFile())
-                .setNoSummary()
                 .build();
 
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser()
                 .withOptionsProvider(new TestNGCucumberOptionsProvider())
                 .parse(clazz)
-                .setNoSummary()
                 .build(propertiesFileOptions);
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromEnvironment())
-                .setNoSummary()
                 .build(annotationOptions);
 
         RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromSystemProperties())
                 .enablePublishPlugin()
-                .setNoSummary()
                 .build(environmentOptions);
 
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);

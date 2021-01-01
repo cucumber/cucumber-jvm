@@ -15,8 +15,8 @@ Options:
                                            Register a plugin.
                                            Built-in PLUGIN types:
                                            html, json, junit, message, pretty,
-                                           progress, rerun, teamcity, testng,
-                                           timeline, usage, unused
+                                           progress, rerun, summary, teamcity,
+                                           testng, timeline, usage, unused
 
                                            PLUGIN can also be a fully
                                            qualified class name, allowing

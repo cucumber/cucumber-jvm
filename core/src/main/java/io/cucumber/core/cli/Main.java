@@ -74,6 +74,7 @@ public class Main {
                 .parse(argv)
                 .addDefaultGlueIfAbsent()
                 .addDefaultFeaturePathIfAbsent()
+                .addDefaultSummaryPrinterIfNotDisabled()
                 .enablePublishPlugin()
                 .build(systemOptions);
 

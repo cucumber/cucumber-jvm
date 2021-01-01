@@ -142,7 +142,7 @@ class DryRunTest {
                 .withFeatureSupplier(new StubFeatureSupplier(skipped))
                 .withAdditionalPlugins(out)
                 .withBackendSupplier(backend)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().build())
                 .build()
                 .run();
 
@@ -163,7 +163,7 @@ class DryRunTest {
                 .withFeatureSupplier(new StubFeatureSupplier(pending))
                 .withAdditionalPlugins(out)
                 .withBackendSupplier(backend)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().build())
                 .build()
                 .run();
 
@@ -179,7 +179,7 @@ class DryRunTest {
                 .withFeatureSupplier(new StubFeatureSupplier(undefined))
                 .withAdditionalPlugins(out)
                 .withBackendSupplier(backend)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().build())
                 .build()
                 .run();
 
@@ -201,7 +201,7 @@ class DryRunTest {
                 .withFeatureSupplier(new StubFeatureSupplier(ambiguous))
                 .withAdditionalPlugins(out)
                 .withBackendSupplier(backend)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().build())
                 .build()
                 .run();
 
@@ -228,7 +228,7 @@ class DryRunTest {
                 .withFeatureSupplier(new StubFeatureSupplier(failed))
                 .withAdditionalPlugins(out)
                 .withBackendSupplier(backend)
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().setNoSummary().build())
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setDryRun().build())
                 .build()
                 .run();
 

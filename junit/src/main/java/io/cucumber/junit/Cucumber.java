@@ -54,14 +54,14 @@ import static java.util.stream.Collectors.toList;
  * A class annotated with {@code @RunWith(Cucumber.class)} will run feature
  * files as junit tests. In general, the runner class should be empty without
  * any fields or methods. For example: <blockquote>
- *
+ * 
  * <pre>
  * &#64;RunWith(Cucumber.class)
  * &#64;CucumberOptions(plugin = "pretty")
  * public class RunCucumberTest {
  * }
  * </pre>
- *
+ * 
  * </blockquote>
  * <p>
  * By default Cucumber will look for {@code .feature} and glue files on the
@@ -115,24 +115,20 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         // options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromPropertiesFile())
-                .setNoSummary()
                 .build();
 
         RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser()
                 .withOptionsProvider(new JUnitCucumberOptionsProvider())
                 .parse(clazz)
-                .setNoSummary()
                 .build(propertiesFileOptions);
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromEnvironment())
-                .setNoSummary()
                 .build(annotationOptions);
 
         RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromSystemProperties())
                 .enablePublishPlugin()
-                .setNoSummary()
                 .build(environmentOptions);
 
         // Next parse the junit options

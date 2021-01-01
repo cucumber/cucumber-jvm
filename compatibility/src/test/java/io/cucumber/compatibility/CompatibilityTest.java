@@ -46,7 +46,6 @@ public class CompatibilityTest {
                     .withRuntimeOptions(new RuntimeOptionsBuilder()
                             .addGlue(testCase.getGlue())
                             .addFeature(testCase.getFeature())
-                            .setNoSummary()
                             .build())
                     .withAdditionalPlugins(
                         new MessageFormatter(newOutputStream(outputNdjson)),

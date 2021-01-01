@@ -150,7 +150,6 @@ class CucumberPropertiesParserTest {
     void should_have_no_publish_plugin_enabled_by_default() {
         RuntimeOptions options = cucumberPropertiesParser
                 .parse(properties)
-                .setNoSummary()
                 .enablePublishPlugin()
                 .build();
         assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.NoPublishFormatter"));
@@ -159,10 +158,7 @@ class CucumberPropertiesParserTest {
     @Test
     void should_silence_no_publish_quite_plugin() {
         properties.put(Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true");
-        RuntimeOptions options = cucumberPropertiesParser
-                .parse(properties)
-                .setNoSummary()
-                .build();
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.plugins(), empty());
     }
 
@@ -171,7 +167,6 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
         RuntimeOptions options = cucumberPropertiesParser
                 .parse(properties)
-                .setNoSummary()
                 .enablePublishPlugin()
                 .build();
         assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.PublishFormatter"));
@@ -182,7 +177,6 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/value");
         RuntimeOptions options = cucumberPropertiesParser
                 .parse(properties)
-                .setNoSummary()
                 .enablePublishPlugin()
                 .build();
         assertThat(options.plugins().get(0).pluginString(),
