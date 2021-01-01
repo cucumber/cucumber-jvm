@@ -6,7 +6,17 @@
       "ignore": true,
       "configuration": {
         "differences": [
-
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": "@interface io\\.cucumber\\.java\\.tl\\..*",
+            "justification": "Fixes ISO 639-1 code for Telugu. Use io.cucumber.java.te.* instead"
+          },
+          {
+            "code": "java.class.removed",
+            "old": "interface io.cucumber.java8.Tl",
+            "justification": "Fixes ISO 639-1 code for Telugu. Use io.cucumber.java8.Te instead"
+          }
         ]
       }
     }

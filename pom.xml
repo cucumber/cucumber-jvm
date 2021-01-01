@@ -556,6 +556,9 @@
                             <revapi.differences id="intentional-api-changes">
                                 <ignore>true</ignore>
                             </revapi.differences>
+                            <revapi.differences id="internal-api-issues">
+                                <ignore>true</ignore>
+                            </revapi.differences>
                         </analysisConfiguration>
                         <analysisConfigurationFiles>
                             <configurationFile>
