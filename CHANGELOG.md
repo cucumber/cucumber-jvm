@@ -8,10 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
- - [Core] Updated Cucumber Expressions to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje) 
-  - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions.
-  - May break Cucumber expressions that depend on these ambiguities.
+
 ### Changed
+ * [Core] Updated Cucumber Expressions to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)
+  - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions
+  - May break Cucumber expressions that depend on these ambiguities
+* [Core] Updated Gherkin to v16 ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
+  - Fixes ISO 639-1 code for Telugu language
+  - Change imports of `io.cucumber.java.tl.*` to `io.cucumber.java.te.*`
+  - Change imports of `io.cucumber.java8.Tl` to `io.cucumber.java.Te`
 
 ### Deprecated
 
