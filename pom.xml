@@ -562,6 +562,7 @@
                                 <path>${main.basedir}/.revapi/api-changes.json</path>
                                 <roots>
                                     <root>7.0.0</root>
+                                    <root>internal</root>
                                 </roots>
                             </configurationFile>
                         </analysisConfigurationFiles>
