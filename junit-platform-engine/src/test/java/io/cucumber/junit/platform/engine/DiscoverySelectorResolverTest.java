@@ -35,12 +35,12 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
@@ -236,6 +236,14 @@ class DiscoverySelectorResolverTest {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(5, testDescriptor.getChildren().size());
+    }
+
+    @Test
+    void ignoreRequestWithUniqueIdSelectorFromDifferentEngine() {
+        DiscoverySelector selector = selectUniqueId(UniqueId.forEngine("not-cucumber"));
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(selector);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertTrue(testDescriptor.getDescendants().isEmpty());
     }
 
     @Test
