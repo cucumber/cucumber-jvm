@@ -553,6 +553,14 @@
                     </dependencies>
                     <configuration>
                         <analysisConfiguration>
+                            <revapi.semver.ignore>
+                                <enabled>true</enabled>
+                                <versionIncreaseAllows>
+                                    <major>breaking</major>
+                                    <minor>nonBreaking</minor>
+                                    <patch>equivalent</patch>
+                                </versionIncreaseAllows>
+                            </revapi.semver.ignore>
                             <revapi.differences id="intentional-api-changes">
                                 <ignore>true</ignore>
                             </revapi.differences>

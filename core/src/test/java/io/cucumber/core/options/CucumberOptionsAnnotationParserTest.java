@@ -8,7 +8,6 @@ import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.plugin.PrettyFormatter;
-import io.cucumber.core.plugin.ProgressFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
@@ -27,6 +26,7 @@ import java.util.regex.Pattern;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
@@ -42,8 +42,6 @@ class CucumberOptionsAnnotationParserTest {
     void create_without_options() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(WithoutOptions.class)
-                .addDefaultSummaryPrinterIfAbsent()
-                .addDefaultFormatterIfAbsent()
                 .build();
 
         assertAll(
@@ -55,9 +53,7 @@ class CucumberOptionsAnnotationParserTest {
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         assertAll(
-            () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
-            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
+            () -> assertThat(plugins.getPlugins(), is(empty())));
     }
 
     private CucumberOptionsAnnotationParser parser() {
@@ -85,8 +81,6 @@ class CucumberOptionsAnnotationParserTest {
         Class<?> subClassWithMonoChromeTrueClass = WithoutOptionsWithBaseClassWithoutOptions.class;
         RuntimeOptions runtimeOptions = parser()
                 .parse(subClassWithMonoChromeTrueClass)
-                .addDefaultFormatterIfAbsent()
-                .addDefaultSummaryPrinterIfAbsent()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -94,9 +88,7 @@ class CucumberOptionsAnnotationParserTest {
         assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(plugins.getPlugins(), hasSize(2)),
-            () -> assertPluginExists(plugins.getPlugins(), ProgressFormatter.class.getName()),
-            () -> assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName()));
+            () -> assertThat(plugins.getPlugins(), is(empty())));
     }
 
     @Test
@@ -196,17 +188,6 @@ class CucumberOptionsAnnotationParserTest {
         RuntimeOptions options = new RuntimeOptionsBuilder().setSnippetType(SnippetType.CAMELCASE).build();
         RuntimeOptions runtimeOptions = parser().parse(WithDefaultOptions.class).build(options);
         assertThat(runtimeOptions.getSnippetType(), is(equalTo(SnippetType.CAMELCASE)));
-    }
-
-    @Test
-    void create_default_summary_printer_when_no_summary_printer_plugin_is_defined() {
-        RuntimeOptions runtimeOptions = parser()
-                .parse(ClassWithNoSummaryPrinterPlugin.class)
-                .addDefaultSummaryPrinterIfAbsent()
-                .build();
-        Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
-        assertPluginExists(plugins.getPlugins(), DefaultSummaryPrinter.class.getName());
     }
 
     @Test
@@ -356,11 +337,6 @@ class CucumberOptionsAnnotationParserTest {
 
     @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
     private static class ClassWithNoFormatterPlugin {
-        // empty
-    }
-
-    @CucumberOptions(plugin = "pretty")
-    private static class ClassWithNoSummaryPrinterPlugin {
         // empty
     }
 

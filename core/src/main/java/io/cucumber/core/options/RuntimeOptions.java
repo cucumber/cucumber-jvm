@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
+import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
@@ -38,8 +39,7 @@ public final class RuntimeOptions implements
     private final List<Expression> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
-    private final Set<Plugin> formatters = new LinkedHashSet<>();
-    private final Set<Plugin> summaryPrinters = new LinkedHashSet<>();
+    private final Set<Plugin> plugins = new LinkedHashSet<>();
     private boolean dryRun;
     private boolean monochrome = false;
     private boolean wip = false;
@@ -61,16 +61,8 @@ public final class RuntimeOptions implements
         return new RuntimeOptions();
     }
 
-    void addDefaultFormatterIfAbsent() {
-        if (formatters.isEmpty()) {
-            formatters.add(PluginOption.parse("progress"));
-        }
-    }
-
-    void addDefaultSummaryPrinterIfAbsent() {
-        if (summaryPrinters.isEmpty()) {
-            summaryPrinters.add(PluginOption.parse("default_summary"));
-        }
+    void addDefaultSummaryPrinter() {
+        plugins.add(PluginOption.forClass(DefaultSummaryPrinter.class));
     }
 
     void addDefaultGlueIfAbsent() {
@@ -85,12 +77,8 @@ public final class RuntimeOptions implements
         }
     }
 
-    void addFormatters(List<Plugin> formatters) {
-        this.formatters.addAll(formatters);
-    }
-
-    void addSummaryPrinters(List<Plugin> summaryPrinters) {
-        this.summaryPrinters.addAll(summaryPrinters);
+    void addPlugins(List<Plugin> plugins) {
+        this.plugins.addAll(plugins);
     }
 
     public boolean isMultiThreaded() {
@@ -108,8 +96,7 @@ public final class RuntimeOptions implements
     @Override
     public List<Plugin> plugins() {
         Set<Plugin> plugins = new LinkedHashSet<>();
-        plugins.addAll(formatters);
-        plugins.addAll(summaryPrinters);
+        plugins.addAll(this.plugins);
         plugins.addAll(getPublishPlugin());
         return new ArrayList<>(plugins);
     }

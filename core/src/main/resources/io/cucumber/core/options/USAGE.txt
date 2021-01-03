@@ -13,13 +13,10 @@ Options:
 
   -p, --[add-]plugin PLUGIN[:[PATH|[URI [OPTIONS]]]
                                            Register a plugin.
-                                           Built-in formatter PLUGIN types:
+                                           Built-in PLUGIN types:
                                            html, json, junit, message, pretty,
-                                           progress, rerun, teamcity, testng,
-                                           timeline, usage
-
-                                           Built-in summary PLUGIN types:
-                                           summary, null_summary, unused.
+                                           progress, rerun, summary, teamcity,
+                                           testng, timeline, usage, unused
 
                                            PLUGIN can also be a fully
                                            qualified class name, allowing

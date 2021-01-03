@@ -2,7 +2,6 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.SummaryPrinter;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, ConcurrentEventListener {
+public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventListener {
 
     private final Set<String> snippets = new LinkedHashSet<>();
     private final Stats stats;
