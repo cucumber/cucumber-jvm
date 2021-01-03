@@ -22,13 +22,12 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,7 +62,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class CommandlineOptionsParserTest {
 
     private final Map<String, String> properties = new HashMap<>();
@@ -99,7 +97,7 @@ class CommandlineOptionsParserTest {
     }
 
     private String output() {
-        return new String(out.toByteArray());
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
     @Test
@@ -217,6 +215,18 @@ class CommandlineOptionsParserTest {
     void creates_default_summary_printer_if_not_disabled() {
         RuntimeOptions options = parser
                 .parse()
+                .addDefaultSummaryPrinterIfNotDisabled()
+                .build();
+        Plugins plugins = new Plugins(new PluginFactory(), options);
+        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
+
+        assertThat(plugins.getPlugins(), hasItem(plugin("io.cucumber.core.plugin.DefaultSummaryPrinter")));
+    }
+
+    @Test
+    void creates_default_summary_printer_for_deprecated_default_summary_argument() {
+        RuntimeOptions options = parser
+                .parse("--plugin default_summary")
                 .addDefaultSummaryPrinterIfNotDisabled()
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
