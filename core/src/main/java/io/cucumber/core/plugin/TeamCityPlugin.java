@@ -11,6 +11,7 @@ import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -42,8 +43,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
 
 public class TeamCityPlugin implements EventListener {
 
@@ -86,9 +89,10 @@ public class TeamCityPlugin implements EventListener {
     private static final Pattern LAMBDA_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\(.*:.*\\)");
 
     private final PrintStream out;
-    private final List<SnippetsSuggestedEvent> snippets = new ArrayList<>();
+    private final List<SnippetsSuggestedEvent> suggestions = new ArrayList<>();
     private final Map<URI, Collection<Node>> parsedTestSources = new HashMap<>();
     private List<Node> currentStack = new ArrayList<>();
+    private TestCase currentTestCase;
 
     @SuppressWarnings("unused") // Used by PluginFactory
     public TeamCityPlugin() {
@@ -150,6 +154,7 @@ public class TeamCityPlugin implements EventListener {
         poppedNodes(path).forEach(node -> finishNode(timestamp, node));
         pushedNodes(path).forEach(node -> startNode(uri, timestamp, node));
         this.currentStack = path;
+        this.currentTestCase = testCase;
 
         print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
     }
@@ -254,8 +259,7 @@ public class TeamCityPlugin implements EventListener {
                     name);
                 break;
             case UNDEFINED:
-                PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step undefined", getSnippet(testStep), name);
+                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step undefined", getSnippets(currentTestCase), name);
                 break;
             case AMBIGUOUS:
             case FAILED:
@@ -299,31 +303,41 @@ public class TeamCityPlugin implements EventListener {
         return "Unknown step";
     }
 
-    private String getSnippet(PickleStepTestStep testStep) {
-        StringBuilder builder = new StringBuilder();
+    private String getSnippets(TestCase testCase) {
+        URI uri = testCase.getUri();
+        Location location = testCase.getLocation();
+        List<Suggestion> suggestionForTestCase = suggestions.stream()
+                .filter(suggestions -> suggestions.getUri().equals(uri) &&
+                        suggestions.getTestCaseLocation().equals(location))
+                .map(SnippetsSuggestedEvent::getSuggestion)
+                .collect(Collectors.toList());
+        return createMessage(suggestionForTestCase);
+    }
 
-        if (snippets.isEmpty()) {
-            return builder.toString();
+    private static String createMessage(Collection<Suggestion> suggestions) {
+        if (suggestions.isEmpty()) {
+            return "";
         }
-
-        snippets.stream()
-                .filter(snippet -> snippet.getStepLocation().equals(testStep.getStep().getLocation()) &&
-                        snippet.getUri().equals(testStep.getUri()))
-                .findFirst()
-                .ifPresent(event -> {
-                    builder.append("You can implement missing steps with the snippets below:\n");
-                    event.getSnippets().forEach(snippet -> {
-                        builder.append(snippet);
-                        builder.append("\n");
-                    });
-                });
-        return builder.toString();
+        StringBuilder sb = new StringBuilder("You can implement this step");
+        if (suggestions.size() > 1) {
+            sb.append(" and ").append(suggestions.size() - 1).append(" other step(s)");
+        }
+        sb.append("using the snippet(s) below:\n\n");
+        String snippets = suggestions
+                .stream()
+                .map(Suggestion::getSnippets)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(joining("\n", "", "\n"));
+        sb.append(snippets);
+        return sb.toString();
     }
 
     private void printTestCaseFinished(TestCaseFinished event) {
         String timestamp = extractTimeStamp(event);
         print(TEMPLATE_PROGRESS_TEST_FINISHED, timestamp);
         finishNode(timestamp, currentStack.remove(currentStack.size() - 1));
+        this.currentTestCase = null;
     }
 
     private long extractDuration(Result result) {
@@ -342,7 +356,7 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private void handleSnippetSuggested(SnippetsSuggestedEvent event) {
-        snippets.add(event);
+        suggestions.add(event);
     }
 
     private void handleEmbedEvent(EmbedEvent event) {

@@ -199,7 +199,8 @@ class TeamCityPluginTest {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
-                "    Given first step\n");
+                "    Given first step\n" +
+                "    Given second step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -211,7 +212,7 @@ class TeamCityPluginTest {
                 .run();
 
         assertThat(out, bytesContainsString("" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement missing steps with the snippets below:|n|n' name = 'first step']\n"));
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement this step and 1 other step(s)using the snippet(s) below:|n|ntest snippet 0|ntest snippet 1|n' name = 'first step']"));
     }
 
     @Test
