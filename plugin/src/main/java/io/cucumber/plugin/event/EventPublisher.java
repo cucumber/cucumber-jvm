@@ -22,9 +22,9 @@ public interface EventPublisher {
      * Test Case(/Pickle/Scenario), contains the Test Case
      * <li>{@link TestStepStarted} - sent before starting the execution of a
      * Test Step, contains the Test Step
-     * <li>{@link EmbedEvent} - calling scenario.embed in a hook triggers this
+     * <li>{@link EmbedEvent} - calling scenario.attach in a hook triggers this
      * event.
-     * <li>{@link WriteEvent} - calling scenario.write in a hook triggers this
+     * <li>{@link WriteEvent} - calling scenario.log in a hook triggers this
      * event.
      * <li>{@link TestStepFinished} - sent after the execution of a Test Step,
      * contains the Test Step and its Result.
