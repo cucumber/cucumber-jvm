@@ -29,7 +29,8 @@ public final class BackendServiceLoader implements BackendSupplier {
 
     @Override
     public Collection<? extends Backend> get() {
-        return get(ServiceLoader.load(BackendProviderService.class));
+        ClassLoader classLoader = classLoaderSupplier.get();
+        return get(ServiceLoader.load(BackendProviderService.class, classLoader));
     }
 
     Collection<? extends Backend> get(Iterable<BackendProviderService> serviceLoader) {

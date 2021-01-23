@@ -5,6 +5,8 @@ import io.cucumber.core.options.RuntimeOptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import java.util.function.Supplier;
+
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,21 +16,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BackendServiceLoaderTest {
 
+    final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+    final Supplier<ClassLoader> classLoaderSupplier = this.getClass()::getClassLoader;
+    final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoaderSupplier,
+        runtimeOptions);
+    final ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+
     @Test
     void should_create_a_backend() {
-        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendSupplier backendSupplier = new BackendServiceLoader(getClass()::getClassLoader, objectFactory);
+        BackendSupplier backendSupplier = new BackendServiceLoader(classLoaderSupplier, objectFactory);
         assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
     }
 
     @Test
     void should_throw_an_exception_when_no_backend_could_be_found() {
-        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
-        ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(getClass()::getClassLoader, objectFactory);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(classLoaderSupplier, objectFactory);
 
         Executable testMethod = () -> backendSupplier.get(emptyList()).iterator().next();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);

@@ -9,16 +9,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 
 public final class ObjectFactoryServiceLoader {
 
+    private final Supplier<ClassLoader> classLoaderSupplier;
     private final Options options;
 
+    @Deprecated
     public ObjectFactoryServiceLoader(Options options) {
+        this(currentThread()::getContextClassLoader, options);
+    }
+
+    public ObjectFactoryServiceLoader(Supplier<ClassLoader> classLoaderSupplier, Options options) {
+        this.classLoaderSupplier = requireNonNull(classLoaderSupplier);
         this.options = requireNonNull(options);
     }
 
@@ -38,9 +47,9 @@ public final class ObjectFactoryServiceLoader {
      * @return an instance of {@link ObjectFactory}
      */
     ObjectFactory loadObjectFactory() {
-        Class<? extends ObjectFactory> objectFactoryClass = this.options.getObjectFactoryClass();
-
-        final ServiceLoader<ObjectFactory> loader = ServiceLoader.load(ObjectFactory.class);
+        Class<? extends ObjectFactory> objectFactoryClass = options.getObjectFactoryClass();
+        ClassLoader classLoader = classLoaderSupplier.get();
+        ServiceLoader<ObjectFactory> loader = ServiceLoader.load(ObjectFactory.class, classLoader);
         if (objectFactoryClass == null) {
             return loadSingleObjectFactoryOrDefault(loader);
 
@@ -50,7 +59,7 @@ public final class ObjectFactoryServiceLoader {
     }
 
     private static ObjectFactory loadSingleObjectFactoryOrDefault(ServiceLoader<ObjectFactory> loader) {
-        final Iterator<ObjectFactory> objectFactories = loader.iterator();
+        Iterator<ObjectFactory> objectFactories = loader.iterator();
 
         ObjectFactory objectFactory;
         if (objectFactories.hasNext()) {

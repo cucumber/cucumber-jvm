@@ -31,7 +31,8 @@ class ThreadLocalRunnerSupplierTest {
     void before() {
         Supplier<ClassLoader> classLoader = ThreadLocalRunnerSupplierTest.class::getClassLoader;
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+            runtimeOptions);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(classLoader, objectFactory);
         eventBus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
