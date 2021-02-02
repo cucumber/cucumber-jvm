@@ -2,7 +2,7 @@
   "extends": [
     "config:base"
   ],
-  "labels": ["dependencies"],
+  "labels": [":robot: dependencies"],
   "prHourlyLimit": 0,
   "packageRules": [
     {
