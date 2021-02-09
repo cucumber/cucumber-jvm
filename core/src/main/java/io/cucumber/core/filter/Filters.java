@@ -3,6 +3,7 @@ package io.cucumber.core.filter;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.tagexpressions.Expression;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +27,18 @@ public final class Filters implements Predicate<Pickle> {
         Map<URI, ? extends Collection<Integer>> lineFilters = options.getLineFilters();
         if (!lineFilters.isEmpty()) {
             this.filter = this.filter.and(new LinePredicate(lineFilters));
+        }
+        Class<? extends Predicate<Pickle>> customPicklePredicateClass = options.getCustomPredicateClass();
+        if (customPicklePredicateClass != null) {
+            Predicate<Pickle> customPicklePredicate;
+            try {
+                customPicklePredicate = customPicklePredicateClass.getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+                    | NoSuchMethodException e) {
+                throw new IllegalArgumentException(
+                    "The customPredicateClass does not have a public default constructor", e);
+            }
+            this.filter = this.filter.and(customPicklePredicate);
         }
     }
 

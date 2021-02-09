@@ -2,6 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.NoPublishFormatter;
@@ -22,6 +23,7 @@ import java.time.Clock;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
@@ -135,6 +137,12 @@ class CucumberOptionsAnnotationParserTest {
                 .collect(toList());
 
         assertThat(tagExpressions, contains("( @cucumber or @gherkin )"));
+    }
+
+    @Test
+    void create_with_custom_predicate() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithCustomPredicate.class).build();
+        assertThat(runtimeOptions.getCustomPredicateClass(), is(equalTo(TestPicklePredicate.class)));
     }
 
     @Test
@@ -344,6 +352,11 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
+    @CucumberOptions(customPredicateClass = TestPicklePredicate.class)
+    private static class ClassWithCustomPredicate {
+        // empty
+    }
+
     @CucumberOptions(objectFactory = TestObjectFactory.class)
     private static class ClassWithCustomObjectFactory {
         // empty
@@ -437,6 +450,11 @@ class CucumberOptionsAnnotationParserTest {
         }
 
         @Override
+        public Class<? extends Predicate<Pickle>> customPredicateClass() {
+            return annotation.customPredicateClass();
+        }
+
+        @Override
         public String[] plugin() {
             return annotation.plugin();
         }
@@ -479,6 +497,14 @@ class CucumberOptionsAnnotationParserTest {
             return new CoreCucumberOptions(annotation);
         }
 
+    }
+
+    private static final class TestPicklePredicate implements Predicate<Pickle> {
+
+        @Override
+        public boolean test(Pickle pickle) {
+            return pickle != null;
+        }
     }
 
     private static final class TestObjectFactory implements ObjectFactory {

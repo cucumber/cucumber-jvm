@@ -1,12 +1,14 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Predicate;
 
 final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
 
@@ -73,6 +75,14 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         @Override
         public String[] plugin() {
             return annotation.plugin();
+        }
+
+        @Override
+        public Class<? extends Predicate<Pickle>> customPredicateClass() {
+            Class<? extends Predicate<Pickle>> customPredicateClass = annotation.customPredicateClass();
+            return customPredicateClass == AnyPicklePredicate.class
+                    ? null
+                    : customPredicateClass;
         }
 
         @Override

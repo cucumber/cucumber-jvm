@@ -7,6 +7,7 @@ import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Predicate;
 
 final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
 
@@ -68,6 +69,15 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
         @Override
         public String tags() {
             return annotation.tags();
+        }
+
+        @Override
+        public Class<? extends Predicate<io.cucumber.core.gherkin.Pickle>> customPredicateClass() {
+            Class<? extends Predicate<io.cucumber.core.gherkin.Pickle>> customPredicateClass = annotation
+                    .customPredicateClass();
+            return customPredicateClass == AnyCucumberPicklePredicate.class
+                    ? null
+                    : customPredicateClass;
         }
 
         @Override

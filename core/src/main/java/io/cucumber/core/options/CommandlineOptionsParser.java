@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.cli.CommandlineOptions.COUNT;
+import static io.cucumber.core.cli.CommandlineOptions.CUSTOM_PREDICATE_CLASS;
+import static io.cucumber.core.cli.CommandlineOptions.CUSTOM_PREDICATE_CLASS_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE;
@@ -60,6 +62,7 @@ import static io.cucumber.core.cli.CommandlineOptions.WIP;
 import static io.cucumber.core.cli.CommandlineOptions.WIP_SHORT;
 import static io.cucumber.core.options.ObjectFactoryParser.parseObjectFactory;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
+import static io.cucumber.core.options.PicklePredicateParser.parsePicklePredicateClass;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
@@ -121,6 +124,8 @@ public final class CommandlineOptionsParser {
                 parsedOptions.addGlue(parse);
             } else if (arg.equals(TAGS) || arg.equals(TAGS_SHORT)) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
+            } else if (arg.equals(CUSTOM_PREDICATE_CLASS) || arg.equals(CUSTOM_PREDICATE_CLASS_SHORT)) {
+                parsedOptions.setCustomPredicateClass(parsePicklePredicateClass(removeArgFor(arg, args)));
             } else if (arg.equals(PUBLISH)) {
                 parsedOptions.setPublish(true);
             } else if (arg.equals(PLUGIN) || arg.equals(PLUGIN_SHORT)) {

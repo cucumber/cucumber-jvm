@@ -4,17 +4,33 @@ import io.cucumber.core.backend.ObjectFactory;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.util.function.Predicate;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
-final class TestNGCucumberOptionsProviderTest {
+public final class TestNGCucumberOptionsProviderTest {
 
     private TestNGCucumberOptionsProvider optionsProvider;
 
     @BeforeTest
     void setUp() {
         this.optionsProvider = new TestNGCucumberOptionsProvider();
+    }
+
+    @Test
+    void testCustomPredicateClassWhenNotSpecified() {
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithDefault.class);
+        assertNull(options.customPredicateClass());
+    }
+
+    @Test
+    void testCustomPredicateClass() {
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithCustomPredicateClass.class);
+        assertEquals(TestCustomPredicateClass.class, options.customPredicateClass());
     }
 
     @Test
@@ -37,9 +53,23 @@ final class TestNGCucumberOptionsProviderTest {
 
     }
 
+    @CucumberOptions(customPredicateClass = TestCustomPredicateClass.class)
+    private static final class ClassWithCustomPredicateClass {
+
+    }
+
     @CucumberOptions(objectFactory = TestObjectFactory.class)
     private static final class ClassWithCustomObjectFactory {
 
+    }
+
+    private static final class TestCustomPredicateClass
+            implements Predicate<io.cucumber.core.gherkin.Pickle> {
+
+        @Override
+        public boolean test(io.cucumber.core.gherkin.Pickle pickle) {
+            return false;
+        }
     }
 
     private static final class TestObjectFactory implements ObjectFactory {

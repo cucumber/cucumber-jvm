@@ -2,6 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.plugin.NoPublishFormatter;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,7 @@ public final class RuntimeOptions implements
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
     private final Set<Plugin> formatters = new LinkedHashSet<>();
     private final Set<Plugin> summaryPrinters = new LinkedHashSet<>();
+    private Class<? extends Predicate<Pickle>> customPredicateClass = null;
     private boolean dryRun;
     private boolean monochrome = false;
     private boolean wip = false;
@@ -198,6 +201,10 @@ public final class RuntimeOptions implements
         this.featurePaths.addAll(featurePaths);
     }
 
+    void setCustomPredicateClass(Class<? extends Predicate<Pickle>> customPredicateClass) {
+        this.customPredicateClass = customPredicateClass;
+    }
+
     @Override
     public List<Expression> getTagExpressions() {
         return unmodifiableList(tagExpressions);
@@ -226,6 +233,11 @@ public final class RuntimeOptions implements
             lineFilters.get(uri).addAll(lines);
         });
         return unmodifiableMap(lineFilters);
+    }
+
+    @Override
+    public Class<? extends Predicate<Pickle>> getCustomPredicateClass() {
+        return customPredicateClass;
     }
 
     @Override

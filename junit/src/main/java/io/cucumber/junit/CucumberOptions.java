@@ -1,5 +1,6 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.plugin.Plugin;
 import org.apiguardian.api.API;
 
@@ -7,6 +8,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Predicate;
 
 /**
  * Configure Cucumbers options.
@@ -76,6 +78,16 @@ public @interface CucumberOptions {
      * @return a tag expression
      */
     String tags() default "";
+
+    /**
+     * Only run scenarios that comply the custom predicate
+     * {@code CUSTOM_PREDICATE}.
+     * <p>
+     * Fully qualified class name of the Predicate.
+     *
+     * @return custom predicate class name
+     */
+    Class<? extends Predicate<Pickle>> customPredicateClass() default AnyPicklePredicate.class;
 
     /**
      * Register plugins. Built-in plugin types: {@code junit}, {@code html},

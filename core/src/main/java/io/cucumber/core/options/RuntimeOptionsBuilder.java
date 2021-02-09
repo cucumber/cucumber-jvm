@@ -3,6 +3,7 @@ package io.cucumber.core.options;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public final class RuntimeOptionsBuilder {
@@ -23,6 +25,7 @@ public final class RuntimeOptionsBuilder {
     private final List<URI> parsedGlue = new ArrayList<>();
     private final List<Options.Plugin> formatters = new ArrayList<>();
     private final List<Options.Plugin> summaryPrinters = new ArrayList<>();
+    private Class<? extends Predicate<Pickle>> parsedCustomPredicateClass = null;
     private List<FeatureWithLines> parsedRerunPaths = null;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;
@@ -51,6 +54,11 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder addFeature(FeatureWithLines featureWithLines) {
         parsedFeaturePaths.add(featureWithLines);
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setCustomPredicateClass(Class<? extends Predicate<Pickle>> customPredicateClass) {
+        this.parsedCustomPredicateClass = customPredicateClass;
         return this;
     }
 
@@ -118,12 +126,17 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setTagExpressions(this.parsedTagFilters);
             runtimeOptions.setNameFilters(this.parsedNameFilters);
         }
+
         if (!this.parsedFeaturePaths.isEmpty() || this.parsedRerunPaths != null) {
             List<FeatureWithLines> features = new ArrayList<>(this.parsedFeaturePaths);
             if (parsedRerunPaths != null) {
                 features.addAll(this.parsedRerunPaths);
             }
             runtimeOptions.setFeaturePaths(features);
+        }
+
+        if (this.parsedCustomPredicateClass != null) {
+            runtimeOptions.setCustomPredicateClass(parsedCustomPredicateClass);
         }
 
         if (!this.parsedGlue.isEmpty()) {

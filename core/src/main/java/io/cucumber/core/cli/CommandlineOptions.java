@@ -35,6 +35,9 @@ public final class CommandlineOptions {
     public static final String TAGS = "--tags";
     public static final String TAGS_SHORT = "-t";
 
+    public static final String CUSTOM_PREDICATE_CLASS = "--custompredicateclass";
+    public static final String CUSTOM_PREDICATE_CLASS_SHORT = "-cpc";
+
     public static final String PUBLISH = "--publish";
 
     public static final String PLUGIN = "--plugin";

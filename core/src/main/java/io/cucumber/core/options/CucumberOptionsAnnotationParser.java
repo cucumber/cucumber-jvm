@@ -4,12 +4,14 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
@@ -38,6 +40,7 @@ public final class CucumberOptionsAnnotationParser {
                 addDryRun(options, args);
                 addMonochrome(options, args);
                 addTags(classWithOptions, options, args);
+                addCustomPredicate(options, args);
                 addPlugins(options, args);
                 addPublish(options, args);
                 addStrict(options, args);
@@ -79,6 +82,12 @@ public final class CucumberOptionsAnnotationParser {
                 throw new IllegalArgumentException(String.format("Invalid tag expression at '%s'", clazz.getName()),
                     tee);
             }
+        }
+    }
+
+    private void addCustomPredicate(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options.customPredicateClass() != null) {
+            args.setCustomPredicateClass(options.customPredicateClass());
         }
     }
 
@@ -205,6 +214,8 @@ public final class CucumberOptionsAnnotationParser {
         String[] extraGlue();
 
         String tags();
+
+        Class<? extends Predicate<Pickle>> customPredicateClass();
 
         String[] plugin();
 

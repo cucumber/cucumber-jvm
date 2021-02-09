@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -65,6 +66,25 @@ class CommandlineOptionsParserTest {
     private final Map<String, String> properties = new HashMap<>();
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final CommandlineOptionsParser parser = new CommandlineOptionsParser(out);
+
+    @Test
+    void parses_custom_predicate() {
+        RuntimeOptionsBuilder optionsBuilder = parser.parse("--custompredicateclass",
+            TestCustomPredicate.class.getName());
+        assertNotNull(optionsBuilder);
+        RuntimeOptions options = optionsBuilder.build();
+        assertNotNull(options);
+        assertThat(options.getCustomPredicateClass(), Is.is(equalTo(TestCustomPredicate.class)));
+    }
+
+    @Test
+    void parses_custom_predicate_short() {
+        RuntimeOptionsBuilder optionsBuilder = parser.parse("-cpc", TestCustomPredicate.class.getName());
+        assertNotNull(optionsBuilder);
+        RuntimeOptions options = optionsBuilder.build();
+        assertNotNull(options);
+        assertThat(options.getCustomPredicateClass(), Is.is(equalTo(TestCustomPredicate.class)));
+    }
 
     @Test
     void testParseWithObjectFactoryArgument() {
@@ -490,6 +510,14 @@ class CommandlineOptionsParserTest {
                 .build();
         assertThat(options.getFeaturePaths(), is(singletonList(rootPackageUri())));
         assertThat(options.getLineFilters(), is(emptyMap()));
+    }
+
+    private static final class TestCustomPredicate implements Predicate<Pickle> {
+
+        @Override
+        public boolean test(Pickle pickle) {
+            return false;
+        }
     }
 
     private static final class TestObjectFactory implements ObjectFactory {

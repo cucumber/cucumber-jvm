@@ -1,11 +1,13 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.snippets.SnippetType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Predicate;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
@@ -22,6 +24,8 @@ public @interface CucumberOptions {
     String[] extraGlue() default {};
 
     String tags() default "";
+
+    Class<? extends Predicate<Pickle>> customPredicateClass() default AnyPicklePredicate.class;
 
     String[] plugin() default {};
 

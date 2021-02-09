@@ -2,6 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.TagExpressionParser;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -112,6 +114,13 @@ class CucumberPropertiesParserTest {
                 .collect(toList());
 
         assertThat(tagExpressions, contains("( @No and not ( @Never ) )"));
+    }
+
+    @Test
+    void should_parse_custom_predicate_class() {
+        properties.put(Constants.CUSTOM_PREDICATE_CLASS_PROPERTY_NAME, CustomPredicate.class.getName());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getCustomPredicateClass(), equalTo(CustomPredicate.class));
     }
 
     @Test
@@ -230,6 +239,14 @@ class CucumberPropertiesParserTest {
         Path path = Files.createTempFile(temp, "", ".txt");
         Files.write(path, Arrays.asList(contents), UTF_8, WRITE);
         return path;
+    }
+
+    private static final class CustomPredicate implements Predicate<Pickle> {
+
+        @Override
+        public boolean test(Pickle pickle) {
+            return false;
+        }
     }
 
     private static final class CustomObjectFactory implements ObjectFactory {

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.CUSTOM_PREDICATE_CLASS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_LIMIT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
@@ -69,6 +70,11 @@ public final class CucumberPropertiesParser {
             FEATURES_PROPERTY_NAME,
             splitAndThenFlatMap(CucumberPropertiesParser::parseFeatureFile),
             builder::addFeature);
+
+        parse(properties,
+            CUSTOM_PREDICATE_CLASS_PROPERTY_NAME,
+            PicklePredicateParser::parsePicklePredicateClass,
+            builder::setCustomPredicateClass);
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,

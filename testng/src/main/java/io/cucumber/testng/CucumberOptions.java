@@ -7,6 +7,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Predicate;
 
 /**
  * Configure Cucumbers options.
@@ -76,6 +77,15 @@ public @interface CucumberOptions {
      * @return a tag expression
      */
     String tags() default "";
+
+    /**
+     * Only run scenarios tagged with tags matching {@code TAG_EXPRESSION}.
+     * <p>
+     * For example {@code "@smoke and not @fast"}.
+     *
+     * @return a tag expression
+     */
+    Class<? extends Predicate<io.cucumber.core.gherkin.Pickle>> customPredicateClass() default AnyCucumberPicklePredicate.class;
 
     /**
      * Register plugins. Built-in plugin types: {@code junit}, {@code html},

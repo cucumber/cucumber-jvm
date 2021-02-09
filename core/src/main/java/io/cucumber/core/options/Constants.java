@@ -89,6 +89,13 @@ public final class Constants {
     public static final String FEATURES_PROPERTY_NAME = "cucumber.features";
 
     /**
+     * Property name used to set custom predicate class: {@value}
+     * <p>
+     * The fully qualified class name of the custom predicate
+     */
+    public static final String CUSTOM_PREDICATE_CLASS_PROPERTY_NAME = "cucumber.custompredicateclass";
+
+    /**
      * Property name used to set name filter: {@value}
      * <p>
      * Filters scenarios by name based on the provided regex pattern e.g:
