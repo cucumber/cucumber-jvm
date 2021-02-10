@@ -134,7 +134,9 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setFeaturePaths(features);
         }
 
-        runtimeOptions.setCustomPredicateClass(parsedCustomPredicateClass);
+        if (this.parsedCustomPredicateClass != null) {
+            runtimeOptions.setCustomPredicateClass(parsedCustomPredicateClass);
+        }
 
         if (!this.parsedGlue.isEmpty()) {
             runtimeOptions.setGlue(this.parsedGlue);
