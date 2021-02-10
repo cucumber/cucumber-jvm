@@ -79,11 +79,11 @@ public @interface CucumberOptions {
     String tags() default "";
 
     /**
-     * Only run scenarios tagged with tags matching {@code TAG_EXPRESSION}.
+     * Only run scenarios that comply with the custom predicate.
      * <p>
-     * For example {@code "@smoke and not @fast"}.
+     * Fully qualified class name of the Custom Predicate.
      *
-     * @return a tag expression
+     * @return custom predicate class name
      */
     Class<? extends Predicate<io.cucumber.core.gherkin.Pickle>> customPredicateClass() default AnyCucumberPicklePredicate.class;
 

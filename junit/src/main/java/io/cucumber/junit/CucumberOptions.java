@@ -80,10 +80,9 @@ public @interface CucumberOptions {
     String tags() default "";
 
     /**
-     * Only run scenarios that comply the custom predicate
-     * {@code CUSTOM_PREDICATE}.
+     * Only run scenarios that comply with the custom predicate.
      * <p>
-     * Fully qualified class name of the Predicate.
+     * Fully qualified class name of the Custom Predicate.
      *
      * @return custom predicate class name
      */

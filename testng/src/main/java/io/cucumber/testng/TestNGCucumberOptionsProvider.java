@@ -73,8 +73,8 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
 
         @Override
         public Class<? extends Predicate<io.cucumber.core.gherkin.Pickle>> customPredicateClass() {
-            Class<? extends Predicate<io.cucumber.core.gherkin.Pickle>> customPredicateClass = annotation
-                    .customPredicateClass();
+            Class<? extends Predicate<io.cucumber.core.gherkin.Pickle>> customPredicateClass =
+                    annotation.customPredicateClass();
             return customPredicateClass == AnyCucumberPicklePredicate.class
                     ? null
                     : customPredicateClass;

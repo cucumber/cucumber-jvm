@@ -86,9 +86,7 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addCustomPredicate(CucumberOptions options, RuntimeOptionsBuilder args) {
-        if (options.customPredicateClass() != null) {
-            args.setCustomPredicateClass(options.customPredicateClass());
-        }
+        args.setCustomPredicateClass(options.customPredicateClass());
     }
 
     private void addPlugins(CucumberOptions options, RuntimeOptionsBuilder args) {

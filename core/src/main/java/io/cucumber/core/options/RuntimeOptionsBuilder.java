@@ -126,7 +126,6 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setTagExpressions(this.parsedTagFilters);
             runtimeOptions.setNameFilters(this.parsedNameFilters);
         }
-
         if (!this.parsedFeaturePaths.isEmpty() || this.parsedRerunPaths != null) {
             List<FeatureWithLines> features = new ArrayList<>(this.parsedFeaturePaths);
             if (parsedRerunPaths != null) {
@@ -135,9 +134,7 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setFeaturePaths(features);
         }
 
-        if (this.parsedCustomPredicateClass != null) {
-            runtimeOptions.setCustomPredicateClass(parsedCustomPredicateClass);
-        }
+        runtimeOptions.setCustomPredicateClass(parsedCustomPredicateClass);
 
         if (!this.parsedGlue.isEmpty()) {
             runtimeOptions.setGlue(this.parsedGlue);
