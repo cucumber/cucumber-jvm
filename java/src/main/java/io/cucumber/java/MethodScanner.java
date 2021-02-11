@@ -1,13 +1,19 @@
 package io.cucumber.java;
 
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.function.BiConsumer;
 
+import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
 import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
 
 final class MethodScanner {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodScanner.class);
 
     private MethodScanner() {
     }
@@ -21,9 +27,19 @@ final class MethodScanner {
         if (!isInstantiable(aClass)) {
             return;
         }
-        for (Method method : aClass.getMethods()) {
+        for (Method method : safelyGetMethods(aClass)) {
             scan(consumer, aClass, method);
         }
+    }
+
+    private static Method[] safelyGetMethods(Class<?> aClass) {
+        try {
+            return aClass.getMethods();
+        } catch (NoClassDefFoundError e) {
+            log.warn(e,
+                () -> "Failed to load methods of class '" + aClass.getName() + "'.\n" + classPathScanningExplanation());
+        }
+        return new Method[0];
     }
 
     private static boolean isInstantiable(Class<?> clazz) {
