@@ -23,7 +23,7 @@
         <apiguardian-api.version>1.1.1</apiguardian-api.version>
 
         <!-- io.cucumber dependencies -->
-        <cucumber-expressions.version>11.0.0</cucumber-expressions.version>
+        <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
         <datatable.version>3.5.0</datatable.version>
         <create-meta.version>2.0.4</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
