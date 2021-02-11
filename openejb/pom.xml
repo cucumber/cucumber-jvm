@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
-        <openejb-core.version>8.0.5</openejb-core.version>
+        <openejb-core.version>8.0.6</openejb-core.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <activation.version>1.1.1</activation.version>
     </properties>

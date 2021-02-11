@@ -203,7 +203,7 @@ final class FeatureResolver {
     void resolveUniqueId(UniqueIdSelector uniqueIdSelector) {
         UniqueId uniqueId = uniqueIdSelector.getUniqueId();
         // Ignore any ids not from our own engine
-        if (!engineDescriptor.getUniqueId().getEngineId().equals(uniqueId.getEngineId())) {
+        if (!uniqueId.hasPrefix(engineDescriptor.getUniqueId())) {
             return;
         }
 
