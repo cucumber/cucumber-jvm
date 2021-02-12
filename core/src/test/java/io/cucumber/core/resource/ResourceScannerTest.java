@@ -125,6 +125,12 @@ class ResourceScannerTest {
     }
 
     @Test
+    void shouldThrowIfForResourcesPathNotExist() {
+        File file = new File("src/test/resources/io/cucumber/core/does/not/exist");
+        assertThrows(IllegalArgumentException.class, () -> resourceScanner.scanForResourcesPath(file.toPath()));
+    }
+
+    @Test
     @DisabledOnOs(value = OS.WINDOWS,
             disabledReason = "Only works if repository is explicitly cloned activated symlinks and " +
                     "developer mode in windows is activated")
