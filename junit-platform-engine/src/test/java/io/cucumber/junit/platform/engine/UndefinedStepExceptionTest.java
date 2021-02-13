@@ -1,6 +1,6 @@
-package io.cucumber.junit;
+package io.cucumber.junit.platform.engine;
 
-import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
+import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;

@@ -37,7 +37,7 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
     }
 
     private void handleSnippetsSuggestedEvent(SnippetsSuggestedEvent event) {
-        this.snippets.addAll(event.getSnippets());
+        this.snippets.addAll(event.getSuggestion().getSnippets());
     }
 
     private void print() {

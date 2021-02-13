@@ -1,7 +1,7 @@
-package io.cucumber.junit;
+package io.cucumber.testng;
 
-import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
-import org.junit.jupiter.api.Test;
+import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
+import org.testng.annotations.Test;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -9,16 +9,16 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class UndefinedStepExceptionTest {
+public class UndefinedStepExceptionTest {
 
     @Test
-    void should_generate_a_message_for_no_suggestions() {
+    public void should_generate_a_message_for_no_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(emptyList());
         assertThat(exception.getMessage(), is("This step is undefined"));
     }
 
     @Test
-    void should_generate_a_message_for_one_suggestions() {
+    public void should_generate_a_message_for_one_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             singletonList(
                 new Suggestion("some step", singletonList("some snippet")))
@@ -32,7 +32,7 @@ class UndefinedStepExceptionTest {
     }
 
     @Test
-    void should_generate_a_message_for_one_suggestions_with_multiple_snippets() {
+    public void should_generate_a_message_for_one_suggestions_with_multiple_snippets() {
         UndefinedStepException exception = new UndefinedStepException(
             singletonList(
                 new Suggestion("some step", asList("some snippet", "some other snippet")))
@@ -47,7 +47,7 @@ class UndefinedStepExceptionTest {
     }
 
     @Test
-    void should_generate_a_message_for_two_suggestions() {
+    public void should_generate_a_message_for_two_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             asList(
                 new Suggestion("some step", singletonList("some snippet")),
@@ -63,7 +63,7 @@ class UndefinedStepExceptionTest {
     }
 
     @Test
-    void should_generate_a_message_without_duplicate_suggestions() {
+    public void should_generate_a_message_without_duplicate_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             asList(
                 new Suggestion("some step", asList("some snippet", "some snippet")),
@@ -79,7 +79,7 @@ class UndefinedStepExceptionTest {
     }
 
     @Test
-    void should_generate_a_message_for_three_suggestions() {
+    public void should_generate_a_message_for_three_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             asList(
                 new Suggestion("some step", singletonList("some snippet")),

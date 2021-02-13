@@ -11,7 +11,9 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.plugin.event.HookType;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -147,15 +149,24 @@ public final class Runner {
             if (match != null) {
                 return match;
             }
-            List<String> snippets = generateSnippetsForStep(step);
-            if (!snippets.isEmpty()) {
-                bus.send(new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), pickle.getScenarioLocation(),
-                    step.getLocation(), snippets));
-            }
+            emitSnippetSuggestedEvent(pickle, step);
             return new UndefinedPickleStepDefinitionMatch(pickle.getUri(), step);
         } catch (AmbiguousStepDefinitionsException e) {
             return new AmbiguousPickleStepDefinitionsMatch(pickle.getUri(), step, e);
         }
+    }
+
+    private void emitSnippetSuggestedEvent(Pickle pickle, Step step) {
+        List<String> snippets = generateSnippetsForStep(step);
+        if (snippets.isEmpty()) {
+            return;
+        }
+        Suggestion suggestion = new Suggestion(step.getText(), snippets);
+        Location scenarioLocation = pickle.getLocation();
+        Location stepLocation = step.getLocation();
+        SnippetsSuggestedEvent event = new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), scenarioLocation,
+            stepLocation, suggestion);
+        bus.send(event);
     }
 
     private List<HookTestStep> createAfterStepHooks(List<String> tags) {

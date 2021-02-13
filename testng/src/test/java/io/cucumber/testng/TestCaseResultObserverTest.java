@@ -2,10 +2,13 @@ package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.Step;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestStepFinished;
@@ -38,17 +41,18 @@ public class TestCaseResultObserverTest {
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     private final URI uri = URI.create("file:path/to.feature");
-    private final int line = 0;
+    private final Location location = new Location(0, -1);
     private final Exception error = new Exception();
     private final TestCase testCase = mock(TestCase.class);
     private final PickleStepTestStep step = createPickleStepTestStep();
 
     private PickleStepTestStep createPickleStepTestStep() {
-        PickleStepTestStep step = mock(PickleStepTestStep.class);
-        when(step.getStepLine()).thenReturn(line);
-        when(step.getUri()).thenReturn(uri);
-        when(step.getStepText()).thenReturn("some step");
-        return step;
+        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
+        Step step = mock(Step.class);
+        when(step.getLocation()).thenReturn(location);
+        when(testStep.getStep()).thenReturn(step);
+        when(testStep.getUri()).thenReturn(uri);
+        return testStep;
     }
 
     @Test
@@ -96,7 +100,8 @@ public class TestCaseResultObserverTest {
     public void should_be_failed_for_undefined_result() {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
-        bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
+        bus.send(new SnippetsSuggestedEvent(now(), uri, location, location,
+            new Suggestion("some step", singletonList("stub snippet"))));
 
         Result stepResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -109,7 +114,8 @@ public class TestCaseResultObserverTest {
         SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
-                "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "The step 'some step' is undefined.\n" +
+                "You can implement this step using the snippet(s) below:\n" +
                 "\n" +
                 "stub snippet\n"));
     }
@@ -118,7 +124,8 @@ public class TestCaseResultObserverTest {
     public void should_not_be_skipped_for_undefined_result() {
         TestCaseResultObserver resultListener = TestCaseResultObserver.observe(bus);
 
-        bus.send(new SnippetsSuggestedEvent(now(), uri, line, line, singletonList("stub snippet")));
+        bus.send(new SnippetsSuggestedEvent(now(), uri, location,
+            location, new SnippetsSuggestedEvent.Suggestion("some step", singletonList("stub snippet"))));
 
         Result stepResult = new Result(UNDEFINED, ZERO, error);
         bus.send(new TestStepFinished(now(), testCase, step, stepResult));
@@ -131,7 +138,8 @@ public class TestCaseResultObserverTest {
         SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(false));
         assertThat(skipException.getMessage(), is("" +
-                "The step \"some step\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "The step 'some step' is undefined.\n" +
+                "You can implement this step using the snippet(s) below:\n" +
                 "\n" +
                 "stub snippet\n"));
     }
