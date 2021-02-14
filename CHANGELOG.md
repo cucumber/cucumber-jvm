@@ -10,17 +10,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+ * Upgraded various internal dependencies
+    - create-meta v3.0.0 
+    - gherkin v17.0.1 
+    - messages v14.0.1 
+    - html-formatter v12.0.0
 
 ### Deprecated
  * [Java] Deprecated `io.cucumber.java.tl` in favour of `io.cucumber.java.te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
  * [Java8] Deprecated `io.cucumber.java8.Tl`. in favour of `io.cucumber.java8.Te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
+ * [Core] Deprecated `# language: tl` in favour of `# language: te`.  
 
 ### Removed
 
 ### Fixed
  * [Core] Pass class loader to ServiceLoader.load invocations ([#2220](https://github.com/cucumber/cucumber-jvm/issues/2220) M.P. Korstanje)
  * [Core] Log warnings when classes or resource could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
-
+ * [Core] Improve undefined step reporting ([#2208](https://github.com/cucumber/cucumber-jvm/issues/2208) M.P. Korstanje)
+ * [Core] Log warnings when resources and classes could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
+    
 ## [6.9.1] (2020-12-14)
 
 ### Fixed
