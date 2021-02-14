@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [6.10.0] (2021-02-14)
+
+### Changed
  * Upgraded various internal dependencies
     - create-meta v3.0.0 
     - gherkin v17.0.1 
@@ -20,8 +30,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Java] Deprecated `io.cucumber.java.tl` in favour of `io.cucumber.java.te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
  * [Java8] Deprecated `io.cucumber.java8.Tl`. in favour of `io.cucumber.java8.Te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
  * [Core] Deprecated `# language: tl` in favour of `# language: te`.  
-
-### Removed
 
 ### Fixed
  * [Core] Pass class loader to ServiceLoader.load invocations ([#2220](https://github.com/cucumber/cucumber-jvm/issues/2220) M.P. Korstanje)
@@ -1595,7 +1603,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.0...main
+[6.10.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...v6.10.0
 [6.9.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.0...v6.9.1
 [6.9.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.2...v6.9.0
 [6.8.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.1...v6.8.2
