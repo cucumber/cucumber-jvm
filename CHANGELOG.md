@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Deprecated
+ * [Java] Deprecated `io.cucumber.java.tl` in favour of `io.cucumber.java.te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
 
 ### Removed
 
