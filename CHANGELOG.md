@@ -23,10 +23,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
 
 ### Deprecated
+ * [Java] Deprecated `io.cucumber.java.tl` in favour of `io.cucumber.java.te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
+ * [Java8] Deprecated `io.cucumber.java8.Tl`. in favour of `io.cucumber.java8.Te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
 
 ### Removed
 
 ### Fixed
+ * [Core] Pass class loader to ServiceLoader.load invocations ([#2220](https://github.com/cucumber/cucumber-jvm/issues/2220) M.P. Korstanje)
+ * [Core] Log warnings when classes or resource could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
 
 ## [6.9.1] (2020-12-14)
 

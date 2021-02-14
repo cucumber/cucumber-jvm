@@ -44,7 +44,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
         log.debug(() -> "Parsing options");
         options = new CucumberEngineOptions(configurationParameters);
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader, options);
         EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
             classLoader, options);

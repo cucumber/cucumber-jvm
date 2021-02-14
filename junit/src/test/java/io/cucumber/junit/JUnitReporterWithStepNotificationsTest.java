@@ -7,9 +7,11 @@ import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.plugin.event.HookTestStep;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -53,7 +55,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class JUnitReporterWithStepNotificationsTest {
 
-    private static final int scenarioLine = 0;
+    private static final Location scenarioLine = new Location(0, 0);
     private static final URI featureUri = URI.create("file:example.feature");
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final JUnitReporter jUnitReporter = new JUnitReporter(bus,
@@ -93,8 +95,6 @@ class JUnitReporterWithStepNotificationsTest {
 
     private static PickleStepTestStep mockTestStep(Step step) {
         PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        lenient().when(testStep.getStepText()).thenReturn(step.getText());
-        lenient().when(testStep.getStepLine()).thenReturn(scenarioLine);
         lenient().when(testStep.getUri()).thenReturn(featureUri);
         lenient().when(testStep.getStep()).thenReturn(step);
         return testStep;
@@ -228,8 +228,8 @@ class JUnitReporterWithStepNotificationsTest {
     void test_step_undefined_fires_test_failure_and_test_finished_for_undefined_step() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
-        bus.send(
-            new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, singletonList("some snippet")));
+        Suggestion suggestion = new Suggestion("step name", singletonList("some snippet"));
+        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, suggestion));
         bus.send(new TestCaseStarted(now(), testCase));
         bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
         Throwable exception = new CucumberException("No step definitions found");
@@ -251,7 +251,8 @@ class JUnitReporterWithStepNotificationsTest {
         Failure pickleFailure = failureArgumentCaptor.getValue();
         assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
         assertThat(pickleFailure.getException().getMessage(), is("" +
-                "The step \"step name\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "The step 'step name' is undefined.\n" +
+                "You can implement this step using the snippet(s) below:\n" +
                 "\n" +
                 "some snippet\n"));
     }
@@ -265,8 +266,8 @@ class JUnitReporterWithStepNotificationsTest {
 
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
-        bus.send(
-            new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, singletonList("some snippet")));
+        Suggestion suggestion = new Suggestion("step name", singletonList("some snippet"));
+        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, suggestion));
         bus.send(new TestCaseStarted(now(), testCase));
         bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
         Throwable exception = new CucumberException("No step definitions found");
@@ -288,7 +289,8 @@ class JUnitReporterWithStepNotificationsTest {
         Failure pickleFailure = failureArgumentCaptor.getValue();
         assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
         assertThat(pickleFailure.getException().getMessage(), is("" +
-                "The step \"step name\" is undefined. You can implement it using the snippet(s) below:\n" +
+                "The step 'step name' is undefined.\n" +
+                "You can implement this step using the snippet(s) below:\n" +
                 "\n" +
                 "some snippet\n"));
     }

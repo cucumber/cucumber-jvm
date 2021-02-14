@@ -92,7 +92,8 @@ public final class TestNGCucumberRunner {
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         ExitStatus exitStatus = new ExitStatus(runtimeOptions);
         plugins.addPlugin(exitStatus);
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+            runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);

@@ -153,4 +153,14 @@ public final class ClasspathSupport {
         return URI.create(CLASSPATH_SCHEME_PREFIX + RESOURCE_SEPARATOR_CHAR);
     }
 
+    public static String classPathScanningExplanation() {
+        return "By default Cucumber scans the entire classpath for step definitions.\n" +
+                "You can restrict this by configuring the glue path.\n" +
+                "\n" +
+                "Examples:\n" +
+                " - @CucumberOptions(glue = \"com.example.application\")\n" +
+                " - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application\n" +
+                " - src/test/resources/cucumber.properties         cucumber.glue=com.example.application\n";
+    }
+
 }

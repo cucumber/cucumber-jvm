@@ -6,6 +6,7 @@ import io.cucumber.core.logging.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
@@ -22,10 +23,14 @@ import static java.nio.file.Files.walkFileTree;
 
 class PathScanner {
 
+    private static final Logger log = LoggerFactory.getLogger(PathScanner.class);
+
     void findResourcesForUri(URI baseUri, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
         try (CloseablePath closeablePath = open(baseUri)) {
             Path baseDir = closeablePath.getPath();
             findResourcesForPath(baseDir, filter, consumer);
+        } catch (FileSystemNotFoundException e) {
+            log.warn(e, () -> "Failed to find resources for '" + baseUri + "'");
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }

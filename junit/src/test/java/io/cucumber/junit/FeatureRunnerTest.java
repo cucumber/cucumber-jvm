@@ -94,7 +94,7 @@ class FeatureRunnerTest {
 
     private FeatureRunner createFeatureRunner(Feature feature, JUnitOptions junitOption) {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(
-            RuntimeOptions.defaultOptions());
+            getClass()::getClassLoader, RuntimeOptions.defaultOptions());
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
 

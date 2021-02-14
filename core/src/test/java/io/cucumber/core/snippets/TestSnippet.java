@@ -8,9 +8,11 @@ import java.util.Map;
 
 public class TestSnippet implements Snippet {
 
+    private int i;
+
     @Override
     public MessageFormat template() {
-        return new MessageFormat("");
+        return new MessageFormat("test snippet " + i++);
     }
 
     @Override
