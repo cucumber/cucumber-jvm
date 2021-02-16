@@ -101,7 +101,7 @@ class JarUriFileSystemService {
 
     private static CucumberException nestedJarEntriesAreUnsupported(URI uri) {
         return new CucumberException("" +
-                "The resource " + uri + " is located in a nested jar.\n" +
+                "The resource '" + uri + "' is located in a nested jar.\n" +
                 "\n" +
                 "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
                 "Cucumber currently doesn't support classpath scanning in nested jars.\n" +

@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
 import static io.cucumber.core.resource.ClasspathSupport.determineFullyQualifiedClassName;
 import static io.cucumber.core.resource.ClasspathSupport.getUrisForPackage;
 import static io.cucumber.core.resource.ClasspathSupport.requireValidPackageName;
@@ -95,14 +96,19 @@ public final class ClasspathScanner {
     ) {
         return baseDir -> classFile -> {
             String fqn = determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
-            try {
-                Optional.of(getClassLoader().loadClass(fqn))
-                        .filter(classFilter)
-                        .ifPresent(classConsumer);
-            } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                log.debug(e, () -> "Failed to load class " + fqn);
-            }
+            safelyLoadClass(fqn)
+                    .filter(classFilter)
+                    .ifPresent(classConsumer);
         };
+    }
+
+    private Optional<Class<?>> safelyLoadClass(String fqn) {
+        try {
+            return Optional.ofNullable(getClassLoader().loadClass(fqn));
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            log.warn(e, () -> "Failed to load class '" + fqn + "'.\n" + classPathScanningExplanation());
+        }
+        return Optional.empty();
     }
 
     public List<Class<?>> scanForClassesInPackage(String packageName) {

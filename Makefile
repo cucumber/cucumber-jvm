@@ -49,8 +49,11 @@ update-changelog:
 	git push
 .PHONY: .commit-and-push-changelog
 
-.release-in-docker: default update-changelog .commit-and-push-changelog
-	[ -f '/home/cukebot/import-gpg-key.sh' ] && /home/cukebot/import-gpg-key.sh
+.configure-cukebot-in-docker:
+	[ -f '/home/cukebot/configure' ] && /home/cukebot/configure
+.PHONY: .configure-cukebot-in-docker
+
+.release-in-docker: .configure-cukebot-in-docker default update-changelog .commit-and-push-changelog
 	mvn --batch-mode release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true -Darchetype.test.skip=true"
 	git checkout "v$(NEW_VERSION)"
 	mvn deploy -P-examples -P-compatibility -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
@@ -65,12 +68,12 @@ release:
 	docker pull cucumber/cucumber-build:latest
 	docker run \
 	  --volume "${shell pwd}":/app \
-	  --volume "${shell pwd}/../secrets/import-gpg-key.sh":/home/cukebot/import-gpg-key.sh \
+ 	  --volume "${shell pwd}/../secrets/configure":/home/cukebot/configure \
 	  --volume "${shell pwd}/../secrets/codesigning.key":/home/cukebot/codesigning.key \
+	  --volume "${shell pwd}/../secrets/gpg-with-passphrase":/home/cukebot/gpg-with-passphrase \
 	  --volume "${shell pwd}/../secrets/.ssh":/home/cukebot/.ssh \
 	  --volume "${HOME}/.m2/repository":/home/cukebot/.m2/repository \
-	  --volume "${HOME}/.gitconfig":/home/cukebot/.gitconfig \
-	  --env-file ../secrets/secrets.list \
+	  --env-file "${shell pwd}/../secrets/secrets.list" \
 	  --user 1000 \
 	  --rm \
 	  -it cucumber/cucumber-build:latest \

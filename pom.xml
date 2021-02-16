@@ -3,10 +3,10 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>2.1.1</version>
+        <version>2.1.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.9.2-SNAPSHOT</version>
+    <version>6.10.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -25,17 +25,17 @@
         <!-- io.cucumber dependencies -->
         <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
         <datatable.version>3.5.0</datatable.version>
-        <create-meta.version>2.0.4</create-meta.version>
+        <create-meta.version>3.0.0</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
-        <messages.version>13.2.1</messages.version>
-        <gherkin.version>15.0.2</gherkin.version>
-        <html-formatter.version>11.0.2</html-formatter.version>
+        <messages.version>14.0.1</messages.version>
+        <gherkin.version>17.0.1</gherkin.version>
+        <html-formatter.version>12.0.0</html-formatter.version>
 
         <!--Test Dependencies-->
-        <junit.version>4.13.1</junit.version>
-        <junit-jupiter.version>5.7.0</junit-jupiter.version>
-        <junit-platform.version>1.7.0</junit-platform.version>
+        <junit.version>4.13.2</junit.version>
+        <junit-jupiter.version>5.7.1</junit-jupiter.version>
+        <junit-platform.version>1.7.1</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.7.7</mockito.version>
         <!--Maven plugins-->

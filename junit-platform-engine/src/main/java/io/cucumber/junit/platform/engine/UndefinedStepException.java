@@ -3,40 +3,41 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
 import org.opentest4j.IncompleteExecutionException;
 
-import java.util.List;
-
-import static java.util.stream.Collectors.joining;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 final class UndefinedStepException extends IncompleteExecutionException {
 
     private static final long serialVersionUID = 1L;
 
-    UndefinedStepException(List<Suggestion> suggestions) {
+    UndefinedStepException(Collection<Suggestion> suggestions) {
         super(createMessage(suggestions));
     }
 
-    private static String createMessage(List<Suggestion> suggestions) {
-        return suggestions.stream()
-                .map(suggestion -> createStepMessage(suggestion.getStep(), suggestion.getSnippets()))
-                .collect(joining("\n", createPreAmble(suggestions), ""));
-    }
-
-    private static String createStepMessage(String stepText, List<String> snippets) {
-        StringBuilder sb = new StringBuilder("The step \"" + stepText + "\" is undefined");
-        appendSnippets(snippets, sb);
+    private static String createMessage(Collection<Suggestion> suggestions) {
+        if (suggestions.isEmpty()) {
+            return "This step is undefined";
+        }
+        Suggestion first = suggestions.iterator().next();
+        StringBuilder sb = new StringBuilder("The step '" + first.getStep() + "'");
+        if (suggestions.size() == 1) {
+            sb.append(" is undefined.");
+        } else {
+            sb.append(" and ").append(suggestions.size() - 1).append(" other step(s) are undefined.");
+        }
+        sb.append("\n");
+        if (suggestions.size() == 1) {
+            sb.append("You can implement this step using the snippet(s) below:\n\n");
+        } else {
+            sb.append("You can implement these steps using the snippet(s) below:\n\n");
+        }
+        String snippets = suggestions
+                .stream()
+                .map(Suggestion::getSnippets)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.joining("\n", "", "\n"));
+        sb.append(snippets);
         return sb.toString();
     }
-
-    private static String createPreAmble(List<Suggestion> suggestions) {
-        return suggestions.size() < 2 ? "" : "There were " + suggestions.size() + " undefined steps\n";
-    }
-
-    private static void appendSnippets(List<String> snippets, StringBuilder sb) {
-        if (snippets.isEmpty()) {
-            return;
-        }
-        sb.append(". You can implement it using the snippet(s) below:\n\n");
-        sb.append(snippets.stream().collect(joining("\n---\n", "", "\n")));
-    }
-
 }

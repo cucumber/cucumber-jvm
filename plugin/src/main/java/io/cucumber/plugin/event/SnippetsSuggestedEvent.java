@@ -13,23 +13,30 @@ import static java.util.Objects.requireNonNull;
 public final class SnippetsSuggestedEvent extends TimeStampedEvent {
 
     private final URI uri;
-    private final Location scenarioLocation;
+    private final Location testCaseLocation;
     private final Location stepLocation;
-    private final List<String> snippets;
+    private final Suggestion suggestion;
 
     @Deprecated
     public SnippetsSuggestedEvent(Instant timeInstant, URI uri, int scenarioLine, int stepLine, List<String> snippets) {
         this(timeInstant, uri, new Location(scenarioLine, -1), new Location(stepLine, -1), snippets);
     }
 
+    @Deprecated
     public SnippetsSuggestedEvent(
-            Instant instant, URI uri, Location scenarioLocation, Location stepLocation, List<String> snippets
+            Instant instant, URI uri, Location testCaseLocation, Location stepLocation, List<String> snippets
+    ) {
+        this(instant, uri, testCaseLocation, stepLocation, new Suggestion("", snippets));
+    }
+
+    public SnippetsSuggestedEvent(
+            Instant instant, URI uri, Location testCaseLocation, Location stepLocation, Suggestion suggestion
     ) {
         super(instant);
         this.uri = requireNonNull(uri);
-        this.scenarioLocation = scenarioLocation;
-        this.stepLocation = stepLocation;
-        this.snippets = unmodifiableList(requireNonNull(snippets));
+        this.testCaseLocation = requireNonNull(testCaseLocation);
+        this.stepLocation = requireNonNull(stepLocation);
+        this.suggestion = requireNonNull(suggestion);
     }
 
     public URI getUri() {
@@ -43,19 +50,48 @@ public final class SnippetsSuggestedEvent extends TimeStampedEvent {
 
     @Deprecated
     public int getScenarioLine() {
-        return scenarioLocation.getLine();
+        return testCaseLocation.getLine();
     }
 
+    @Deprecated
     public Location getScenarioLocation() {
-        return scenarioLocation;
+        return testCaseLocation;
+    }
+
+    public Location getTestCaseLocation() {
+        return testCaseLocation;
     }
 
     public Location getStepLocation() {
         return stepLocation;
     }
 
+    @Deprecated
     public List<String> getSnippets() {
-        return snippets;
+        return suggestion.getSnippets();
     }
 
+    public Suggestion getSuggestion() {
+        return suggestion;
+    }
+
+    public static final class Suggestion {
+
+        final String step;
+        final List<String> snippets;
+
+        public Suggestion(String step, List<String> snippets) {
+            this.step = requireNonNull(step);
+            this.snippets = unmodifiableList(requireNonNull(snippets));
+        }
+
+        public String getStep() {
+            return step;
+        }
+
+        public List<String> getSnippets() {
+            return snippets;
+        }
+
+    }
 }

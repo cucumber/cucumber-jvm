@@ -4,6 +4,7 @@ import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
@@ -48,13 +49,13 @@ class CanonicalEventOrderTest {
         URI.create("file:path/to/1.feature"),
         new Location(0, -1),
         new Location(0, -1),
-        Collections.emptyList());
+        new Suggestion("", Collections.emptyList()));
     private final Event suggested2 = new SnippetsSuggestedEvent(
         ofEpochMilli(5),
         URI.create("file:path/to/1.feature"),
         new Location(0, -1),
         new Location(0, -1),
-        Collections.emptyList());
+        new Suggestion("", Collections.emptyList()));
     private final Event feature1Case1Started = createTestCaseEvent(
         ofEpochMilli(5),
         URI.create("file:path/to/1.feature"),

@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>6.9.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-spring</artifactId>
@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
-        <spring.version>5.3.3</spring.version>
+        <spring.version>5.3.4</spring.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
     </properties>
 

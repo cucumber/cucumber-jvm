@@ -5,6 +5,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,14 +45,14 @@ class DefaultSummaryPrinterTest {
             URI.create("classpath:com/example.feature"),
             new Location(12, -1),
             new Location(13, -1),
-            singletonList("snippet")));
+            new Suggestion("", singletonList("snippet"))));
 
         bus.send(new SnippetsSuggestedEvent(
             bus.getInstant(),
             URI.create("classpath:com/example.feature"),
             new Location(12, -1),
             new Location(14, -1),
-            singletonList("snippet")));
+            new Suggestion("", singletonList("snippet"))));
 
         bus.send(new TestRunFinished(bus.getInstant(), new Result(Status.PASSED, Duration.ZERO, null)));
 

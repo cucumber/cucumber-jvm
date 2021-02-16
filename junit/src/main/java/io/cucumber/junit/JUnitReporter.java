@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStep;
@@ -20,8 +21,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.SCENARIO;
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.STEP;
@@ -30,7 +29,7 @@ final class JUnitReporter {
 
     private final JUnitOptions junitOptions;
     private final EventBus bus;
-    private final Map<StepLocation, Collection<String>> snippetsPerStep = new TreeMap<>();
+    private final Collection<Suggestion> suggestions = new ArrayList<>();
     private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedEventEventHandler = this::handleSnippetSuggested;
     private List<Throwable> stepErrors;
     private final EventHandler<TestCaseStarted> testCaseStartedHandler = this::handleTestCaseStarted;
@@ -53,10 +52,7 @@ final class JUnitReporter {
     }
 
     private void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
-        snippetsPerStep.putIfAbsent(new StepLocation(
-            snippetsSuggestedEvent.getUri(),
-            snippetsSuggestedEvent.getStepLine()),
-            snippetsSuggestedEvent.getSnippets());
+        suggestions.add(snippetsSuggestedEvent.getSuggestion());
     }
 
     void finishExecutionUnit() {
@@ -123,13 +119,8 @@ final class JUnitReporter {
                 stepNotifier.addFailure(error);
                 break;
             case UNDEFINED:
-                Collection<String> snippets = snippetsPerStep.remove(
-                    new StepLocation(testStep.getUri(), testStep.getStepLine()));
-                stepErrors.add(new UndefinedStepException(
-                    testStep.getStepText(),
-                    snippets,
-                    snippetsPerStep.values()));
-                stepNotifier.addFailure(error == null ? new UndefinedStepException(snippets) : error);
+                stepErrors.add(new UndefinedStepException(suggestions));
+                stepNotifier.addFailure(error == null ? new UndefinedStepException(suggestions) : error);
                 break;
             default:
                 throw new IllegalStateException("Unexpected result status: " + result.getStatus());
