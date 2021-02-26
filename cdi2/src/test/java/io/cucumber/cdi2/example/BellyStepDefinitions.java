@@ -4,12 +4,10 @@ import io.cucumber.cdi2.Belly;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
-import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Vetoed
 public class BellyStepDefinitions {
 
     @Inject

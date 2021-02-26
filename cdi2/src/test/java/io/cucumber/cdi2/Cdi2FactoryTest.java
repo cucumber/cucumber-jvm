@@ -1,6 +1,5 @@
 package io.cucumber.cdi2;
 
-import io.cucumber.cdi2.example.BellyStepDefinitions;
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.Test;
 
@@ -18,24 +17,26 @@ class Cdi2FactoryTest {
 
     @Test
     void shouldCreateNewInstancesForEachScenario() {
-        factory.addClass(BellyStepDefinitions.class);
+        factory.addClass(VetoedBean.class);
 
         // Scenario 1
         factory.start();
-        BellyStepDefinitions a1 = factory.getInstance(BellyStepDefinitions.class);
-        BellyStepDefinitions a2 = factory.getInstance(BellyStepDefinitions.class);
-         assertThat(a1, is(equalTo(a2)));
+        VetoedBean a1 = factory.getInstance(VetoedBean.class);
+        VetoedBean a2 = factory.getInstance(VetoedBean.class);
+        assertThat(a1, is(equalTo(a2)));
         factory.stop();
 
         // Scenario 2
         factory.start();
-        BellyStepDefinitions b1 = factory.getInstance(BellyStepDefinitions.class);
+        VetoedBean b1 = factory.getInstance(VetoedBean.class);
         factory.stop();
 
+        // VetoedBean makes it possible to compare the object outside the
+        // scenario/application scope
         assertAll(
-            () -> assertThat(a1, is(notNullValue())),
-            () -> assertThat(a1, is(not(equalTo(b1)))),
-            () -> assertThat(b1, is(not(equalTo(a1)))));
+                () -> assertThat(a1, is(notNullValue())),
+                () -> assertThat(a1, is(not(equalTo(b1)))),
+                () -> assertThat(b1, is(not(equalTo(a1)))));
     }
 
     @Test
