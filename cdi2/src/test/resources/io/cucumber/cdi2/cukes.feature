@@ -7,3 +7,8 @@ Feature: Cukes
   Scenario: Eat some more cukes
     Given I have 6 cukes in my belly
     Then there are 6 cukes in my belly
+
+  Scenario: Eat some cukes multiple times
+    Given I have 8 cukes in my belly
+    And I have 8 cukes in my belly
+    Then there are 8 cukes in my belly
