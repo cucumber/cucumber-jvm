@@ -1,7 +1,7 @@
 package io.cucumber.cdi2;
 
+import io.cucumber.cdi2.example.BellyStepDefinitions;
 import io.cucumber.core.backend.ObjectFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,7 +11,6 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 class Cdi2FactoryTest {
 
@@ -41,21 +40,21 @@ class Cdi2FactoryTest {
 
     @Test
     void shouldCreateApplicationScopedInstance() {
-        factory.addClass(CdiBellyStepDefinitions.class);
+        factory.addClass(ApplicationScopedBean.class);
         factory.start();
-        CdiBellyStepDefinitions cdiStep = factory.getInstance(CdiBellyStepDefinitions.class);
+        ApplicationScopedBean cdiStep = factory.getInstance(ApplicationScopedBean.class);
         assertAll(
                 // assert that it is is a CDI proxy
-                () -> assertThat(cdiStep.getClass(), not(is(CdiBellyStepDefinitions.class))),
-                () -> assertThat(cdiStep.getClass().getSuperclass(), is(CdiBellyStepDefinitions.class)));
+                () -> assertThat(cdiStep.getClass(), not(is(ApplicationScopedBean.class))),
+                () -> assertThat(cdiStep.getClass().getSuperclass(), is(ApplicationScopedBean.class)));
         factory.stop();
     }
 
     @Test
     void shouldCreateUnmanagedInstance() {
-        factory.addClass(UnmanagedBellyStepDefinitions.class);
+        factory.addClass(UnmanagedBean.class);
         factory.start();
-        assertNotNull(factory.getInstance(UnmanagedBellyStepDefinitions.class));
+        assertNotNull(factory.getInstance(UnmanagedBean.class));
         factory.stop();
     }
 
