@@ -1,6 +1,5 @@
 package io.cucumber.cdi2.example;
 
-import io.cucumber.cdi2.Belly;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
@@ -27,6 +26,5 @@ public class BellyStepDefinitions {
     public void checkCukes(int n) {
         assertEquals(n, belly.getCukes());
     }
-
 
 }

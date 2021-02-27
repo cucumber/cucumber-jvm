@@ -1,4 +1,4 @@
-package io.cucumber.cdi2;
+package io.cucumber.cdi2.example;
 
 import javax.enterprise.context.ApplicationScoped;
 
