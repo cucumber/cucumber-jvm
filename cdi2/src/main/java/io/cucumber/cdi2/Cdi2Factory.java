@@ -53,9 +53,9 @@ public final class Cdi2Factory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        final Object instance = standaloneInstances.get(type);
+        final Unmanaged.UnmanagedInstance<?> instance = standaloneInstances.get(type);
         if (instance != null) {
-            return type.cast(instance);
+            return type.cast(instance.get());
         }
         final Instance<T> selected = container.select(type);
         if (selected.isUnsatisfied()) {

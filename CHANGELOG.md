@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Cdi2] Correctly cast the UnmanagedInstance values ([#2242](https://github.com/cucumber/cucumber-jvm/pull/2242), [#2244](https://github.com/cucumber/cucumber-jvm/pull/2244) Daniel Beland)
 
 ## [6.10.0] (2021-02-14)
 
