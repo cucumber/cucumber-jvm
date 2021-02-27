@@ -1,4 +1,4 @@
-package io.cucumber.jakarta.cdi;
+package io.cucumber.jakarta.cdi.example;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
