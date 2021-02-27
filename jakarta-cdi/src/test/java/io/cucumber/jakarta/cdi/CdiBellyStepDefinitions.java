@@ -1,5 +1,6 @@
 package io.cucumber.jakarta.cdi;
 
+import io.cucumber.jakarta.cdi.example.Belly;
 import io.cucumber.java.en.Then;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
