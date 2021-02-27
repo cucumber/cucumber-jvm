@@ -15,12 +15,14 @@ import java.util.Map;
 public final class CdiJakartaFactory implements ObjectFactory {
 
     private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
-    private SeContainerInitializer initializer;
     private SeContainer container;
 
     @Override
     public void start() {
-        container = getInitializer().initialize();
+        if (container == null) {
+            SeContainerInitializer initializer = SeContainerInitializer.newInstance();
+            container = initializer.initialize();
+        }
     }
 
     @Override
@@ -28,35 +30,26 @@ public final class CdiJakartaFactory implements ObjectFactory {
         if (container != null) {
             container.close();
             container = null;
-            initializer = null;
         }
-        for (final Unmanaged.UnmanagedInstance<?> unmanaged : standaloneInstances.values()) {
+        for (Unmanaged.UnmanagedInstance<?> unmanaged : standaloneInstances.values()) {
             unmanaged.preDestroy();
             unmanaged.dispose();
         }
         standaloneInstances.clear();
     }
 
-    private SeContainerInitializer getInitializer() {
-        if (initializer == null) {
-            initializer = SeContainerInitializer.newInstance();
-        }
-        return initializer;
-    }
-
     @Override
     public boolean addClass(final Class<?> clazz) {
-        getInitializer().addBeanClasses(clazz);
         return true;
     }
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        final Unmanaged.UnmanagedInstance<?> instance = standaloneInstances.get(type);
+        Unmanaged.UnmanagedInstance<?> instance = standaloneInstances.get(type);
         if (instance != null) {
             return type.cast(instance.get());
         }
-        final Instance<T> selected = container.select(type);
+        Instance<T> selected = container.select(type);
         if (selected.isUnsatisfied()) {
             BeanManager beanManager = container.getBeanManager();
             Unmanaged<T> unmanaged = new Unmanaged<>(beanManager, type);
@@ -69,4 +62,5 @@ public final class CdiJakartaFactory implements ObjectFactory {
         }
         return selected.get();
     }
+
 }

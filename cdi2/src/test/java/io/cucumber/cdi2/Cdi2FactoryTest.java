@@ -21,12 +21,12 @@ class Cdi2FactoryTest {
     final ObjectFactory factory = new Cdi2Factory();
 
     @AfterEach
-    void stop(){
+    void stop() {
         factory.stop();
     }
 
     @Test
-    void lifecycleIsIdempotent(){
+    void lifecycleIsIdempotent() {
         assertDoesNotThrow(factory::stop);
         factory.start();
         assertDoesNotThrow(factory::start);
