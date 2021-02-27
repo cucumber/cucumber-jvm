@@ -30,7 +30,7 @@ jobs:
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: test
         run: mvn verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
-      - name: test cdi2-weld
+      - name: test cdi with weld
         run: cd cdi2 && mvn verify -Pcdi2-weld,jakarta-cdi-weld --toolchains ../.github/workflows/.toolchains.xml
 
   javadoc:
