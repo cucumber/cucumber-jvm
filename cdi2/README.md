@@ -27,7 +27,7 @@ And for Weld it is:
 <dependency>
   <groupId>org.jboss.weld.se</groupId>
   <artifactId>weld-se-core</artifactId>
-  <version>4.0.0.Final</version>
+  <version>3.1.1.Final</version>
   <scope>test</scope>
 </dependency>
 ```
