@@ -31,7 +31,7 @@ jobs:
       - name: test
         run: mvn verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
       - name: test cdi2-weld
-        run: cd cdi2 && mvn verify -Pcdi2-weld --toolchains ../.github/workflows/.toolchains.xml
+        run: cd cdi2 && mvn verify -Pcdi2-weld,jakarta-cdi-weld --toolchains ../.github/workflows/.toolchains.xml
 
   javadoc:
     name: 'Javadoc'
