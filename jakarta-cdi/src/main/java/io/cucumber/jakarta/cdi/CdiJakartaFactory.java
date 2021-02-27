@@ -62,5 +62,4 @@ public final class CdiJakartaFactory implements ObjectFactory {
         }
         return selected.get();
     }
-
 }
