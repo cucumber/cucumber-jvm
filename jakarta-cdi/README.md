@@ -73,7 +73,7 @@ And for Weld it is:
 <dependency>
   <groupId>org.jboss.weld.se</groupId>
   <artifactId>weld-se-core</artifactId>
-  <version>4.0.0.Alpha2</version>
+  <version>4.0.0</version>
   <scope>test</scope>
 </dependency>
 ```
@@ -85,13 +85,13 @@ If you don't know which one to use, you can import the following one but if you 
 <dependency>
     <groupId>jakarta.enterprise</groupId>
     <artifactId>jakarta.enterprise.cdi-api</artifactId>
-    <version>3.0.0-M3</version>
+    <version>3.0.0</version>
     <scope>provided</scope>
 </dependency>
 <dependency>
     <groupId>jakarta.activation</groupId>
     <artifactId>jakarta.activation-api</artifactId>
-    <version>2.0.0-RC3</version>
+    <version>2.0.0</version>
     <scope>provided</scope>
 </dependency>
 ```

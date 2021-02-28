@@ -3,5 +3,9 @@
        xsi:schemaLocation="
       http://java.sun.com/xml/ns/javaee
       http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
-
+    <!-- Exclude the class to force it to be loaded as an unmanaged dependency -->
+    <scan>
+        <exclude
+            name="io.cucumber.jakarta.cdi.CdiJakartaFactoryTest$UnmanagedBean" />
+    </scan>
 </beans>
