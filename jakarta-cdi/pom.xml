@@ -136,12 +136,6 @@
                     <version>${weld.version}</version>
                     <scope>test</scope>
                 </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld</groupId>
-                    <artifactId>weld-core-impl</artifactId>
-                    <version>${weld.version}</version>
-                    <scope>test</scope>
-                </dependency>
             </dependencies>
         </profile>
     </profiles>
