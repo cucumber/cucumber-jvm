@@ -9,14 +9,15 @@ import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition implements DefaultDataTableCellTransformerDefinition {
+class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition
+        implements DefaultDataTableCellTransformerDefinition {
 
     private final TableCellByTypeTransformer transformer;
 
     JavaDefaultDataTableCellTransformerDefinition(Method method, Lookup lookup, String[] emptyPatterns) {
         super(requireValidMethod(method), lookup, emptyPatterns);
-        this.transformer = (cellValue, toValueType) ->
-            execute(replaceEmptyPatternsWithEmptyString(cellValue), toValueType);
+        this.transformer = (cellValue, toValueType) -> invokeMethod(replaceEmptyPatternsWithEmptyString(cellValue),
+            toValueType);
     }
 
     private static Method requireValidMethod(Method method) {
@@ -43,19 +44,15 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableEle
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(DefaultDataTableCellTransformer.class)
-            .addSignature("public Object defaultDataTableCell(String fromValue, Type toValueType)")
-            .addSignature("public Object defaultDataTableCell(Object fromValue, Type toValueType)")
-            .build();
+                .addAnnotation(DefaultDataTableCellTransformer.class)
+                .addSignature("public Object defaultDataTableCell(String fromValue, Type toValueType)")
+                .addSignature("public Object defaultDataTableCell(Object fromValue, Type toValueType)")
+                .build();
     }
 
     @Override
     public TableCellByTypeTransformer tableCellByTypeTransformer() {
         return transformer;
-    }
-
-    private Object execute(String fromValue, Type toValueType) {
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
 }

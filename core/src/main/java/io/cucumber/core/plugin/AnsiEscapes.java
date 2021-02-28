@@ -1,9 +1,6 @@
 package io.cucumber.core.plugin;
 
 final class AnsiEscapes {
-    private static final char ESC = 27;
-    private static final char BRACKET = '[';
-
     static final AnsiEscapes RESET = color(0);
     static final AnsiEscapes BLACK = color(30);
     static final AnsiEscapes RED = color(31);
@@ -16,6 +13,14 @@ final class AnsiEscapes {
     static final AnsiEscapes DEFAULT = color(9);
     static final AnsiEscapes GREY = color(90);
     static final AnsiEscapes INTENSITY_BOLD = color(1);
+    static final AnsiEscapes UNDERLINE = color(4);
+    private static final char ESC = 27;
+    private static final char BRACKET = '[';
+    private final String value;
+
+    private AnsiEscapes(String value) {
+        this.value = value;
+    }
 
     private static AnsiEscapes color(int code) {
         return new AnsiEscapes(code + "m");
@@ -25,17 +30,7 @@ final class AnsiEscapes {
         return new AnsiEscapes(count + "A");
     }
 
-    private final String value;
-
-    private AnsiEscapes(String value) {
-        this.value = value;
-    }
-
     void appendTo(NiceAppendable a) {
-        a.append(ESC).append(BRACKET).append(value);
-    }
-
-    void appendTo(StringBuilder a) {
         a.append(ESC).append(BRACKET).append(value);
     }
 
@@ -45,4 +40,9 @@ final class AnsiEscapes {
         appendTo(sb);
         return sb.toString();
     }
+
+    void appendTo(StringBuilder a) {
+        a.append(ESC).append(BRACKET).append(value);
+    }
+
 }

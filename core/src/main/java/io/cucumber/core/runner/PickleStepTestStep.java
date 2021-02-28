@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep {
+
     private final URI uri;
     private final Step step;
     private final List<HookTestStep> afterStepHookSteps;
@@ -22,11 +23,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
         this(id, uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
-    PickleStepTestStep(UUID id, URI uri,
-                       Step step,
-                       List<HookTestStep> beforeStepHookSteps,
-                       List<HookTestStep> afterStepHookSteps,
-                       PickleStepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(
+            UUID id, URI uri,
+            Step step,
+            List<HookTestStep> beforeStepHookSteps,
+            List<HookTestStep> afterStepHookSteps,
+            PickleStepDefinitionMatch definitionMatch
+    ) {
         super(id, definitionMatch);
         this.uri = uri;
         this.step = step;
@@ -36,20 +39,25 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    boolean run(TestCase testCase, EventBus bus, TestCaseState state, boolean skipSteps, UUID testExecutionId) {
-        boolean skipNextStep = skipSteps;
+    ExecutionMode run(TestCase testCase, EventBus bus, TestCaseState state, ExecutionMode executionMode) {
+        ExecutionMode nextExecutionMode = executionMode;
 
         for (HookTestStep before : beforeStepHookSteps) {
-            skipNextStep |= before.run(testCase, bus, state, skipSteps, testExecutionId);
+            nextExecutionMode = before
+                    .run(testCase, bus, state, executionMode)
+                    .next(nextExecutionMode);
         }
 
-        skipNextStep |= super.run(testCase, bus, state, skipNextStep, testExecutionId);
+        nextExecutionMode = super.run(testCase, bus, state, nextExecutionMode)
+                .next(nextExecutionMode);
 
         for (HookTestStep after : afterStepHookSteps) {
-            skipNextStep |= after.run(testCase, bus, state, skipSteps, testExecutionId);
+            nextExecutionMode = after
+                    .run(testCase, bus, state, executionMode)
+                    .next(nextExecutionMode);
         }
 
-        return skipNextStep;
+        return nextExecutionMode;
     }
 
     List<HookTestStep> getBeforeStepHookSteps() {
@@ -61,28 +69,22 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
+    public String getPattern() {
+        return definitionMatch.getPattern();
+    }
+
+    @Override
     public Step getStep() {
         return step;
     }
 
     @Override
-    public URI getUri() {
-        return uri;
-    }
-
-    @Override
-    public int getStepLine() {
-        return step.getLine();
-    }
-
-    @Override
-    public String getStepText() {
-        return step.getText();
-    }
-
-    @Override
     public List<Argument> getDefinitionArgument() {
         return DefinitionArgument.createArguments(definitionMatch.getArguments());
+    }
+
+    public PickleStepDefinitionMatch getDefinitionMatch() {
+        return definitionMatch;
     }
 
     @Override
@@ -91,7 +93,18 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    public String getPattern() {
-        return definitionMatch.getPattern();
+    public int getStepLine() {
+        return step.getLine();
     }
+
+    @Override
+    public URI getUri() {
+        return uri;
+    }
+
+    @Override
+    public String getStepText() {
+        return step.getText();
+    }
+
 }

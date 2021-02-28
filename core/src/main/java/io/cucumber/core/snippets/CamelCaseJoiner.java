@@ -1,9 +1,11 @@
 package io.cucumber.core.snippets;
 
+import java.util.List;
+
 final class CamelCaseJoiner implements Joiner {
 
     @Override
-    public String concatenate(String[] words) {
+    public String concatenate(List<String> words) {
         StringBuilder functionName = new StringBuilder();
         boolean firstWord = true;
         for (String word : words) {
@@ -20,4 +22,5 @@ final class CamelCaseJoiner implements Joiner {
     private String capitalize(String line) {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1);
     }
+
 }

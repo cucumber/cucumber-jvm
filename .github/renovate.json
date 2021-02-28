@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "labels": [":robot: dependencies"],
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "updateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "branch"
+    }
+  ]
+}

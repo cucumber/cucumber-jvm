@@ -1,7 +1,7 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventHandler;
-import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestStepStarted;
 
@@ -10,13 +10,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 
-public class StepDurationTimeService extends Clock implements EventListener {
+public class StepDurationTimeService extends Clock implements ConcurrentEventListener {
 
     private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
     private final Duration stepDuration;
 
     private final EventHandler<TestStepStarted> stepStartedHandler = event -> handleTestStepStarted();
-    
+
     public StepDurationTimeService(Duration stepDuration) {
         this.stepDuration = stepDuration;
     }

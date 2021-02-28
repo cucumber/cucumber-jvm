@@ -1,16 +1,17 @@
 package io.cucumber.deltaspike;
 
 import io.cucumber.core.backend.ObjectFactory;
-import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
+import org.junit.jupiter.api.Test;
 
-public class DeltaSpikeObjectFactoryTest {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
+class DeltaSpikeObjectFactoryTest {
 
     private final ObjectFactory factory = new DeltaSpikeObjectFactory();
 
     @Test
-    public void shouldGiveUsNewInstancesForEachScenario() {
+    void shouldGiveUsNewInstancesForEachScenario() {
         factory.addClass(BellyStepDefinitions.class);
 
         // Scenario 1

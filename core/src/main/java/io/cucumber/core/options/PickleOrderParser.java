@@ -10,7 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 final class PickleOrderParser {
-    private static final Logger log = LoggerFactory.getLogger(RuntimeOptionsParser.class);
+
+    private static final Logger log = LoggerFactory.getLogger(PickleOrderParser.class);
 
     private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
 
@@ -38,4 +39,5 @@ final class PickleOrderParser {
         }
         return StandardPickleOrders.random(seed);
     }
+
 }

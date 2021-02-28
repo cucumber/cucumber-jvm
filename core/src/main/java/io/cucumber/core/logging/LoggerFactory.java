@@ -11,7 +11,8 @@ import static java.util.Objects.requireNonNull;
  * Cucumber uses the Java Logging APIs from {@link java.util.logging} (JUL).
  * <p>
  * See the {@link java.util.logging.LogManager} for configuration options or use
- * the <a href="https://www.slf4j.org/legacy.html#jul-to-slf4j">JUL to SLF4J Bridge</a>
+ * the <a href="https://www.slf4j.org/legacy.html#jul-to-slf4j">JUL to SLF4J
+ * Bridge</a>
  */
 public final class LoggerFactory {
 
@@ -32,8 +33,8 @@ public final class LoggerFactory {
     /**
      * Get a {@link Logger}
      *
-     * @param clazz the class for which to get the logger
-     * @return the logger
+     * @param  clazz the class for which to get the logger
+     * @return       the logger
      */
     public static Logger getLogger(Class<?> clazz) {
         requireNonNull(clazz, "Class must not be null");
@@ -150,5 +151,7 @@ public final class LoggerFactory {
 
             return logRecord;
         }
+
     }
+
 }

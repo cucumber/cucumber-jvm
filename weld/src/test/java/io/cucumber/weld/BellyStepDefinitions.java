@@ -32,4 +32,5 @@ public class BellyStepDefinitions {
         assertEquals(n, belly.getCukes());
         assertTrue(inTheBelly);
     }
+
 }

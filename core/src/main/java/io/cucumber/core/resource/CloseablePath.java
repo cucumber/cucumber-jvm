@@ -35,4 +35,5 @@ class CloseablePath implements Closeable {
     public void close() throws IOException {
         delegate.close();
     }
+
 }

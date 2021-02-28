@@ -4,17 +4,17 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-needle</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: Needle</name>
+    <name>Cucumber-JVM: Needle (Deprecated)</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.needle</project.Automatic-Module-Name>
         <needle.version>2.2</needle.version>
-        <javaee-api.version>7.0</javaee-api.version>
+        <javaee-api.version>8.0.1</javaee-api.version>
         <javax.inject.version>1</javax.inject.version>
         <logback.version>1.2.3</logback.version>
     </properties>

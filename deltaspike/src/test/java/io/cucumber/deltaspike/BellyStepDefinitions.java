@@ -2,11 +2,12 @@ package io.cucumber.deltaspike;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Singleton
 public class BellyStepDefinitions {
@@ -31,4 +32,5 @@ public class BellyStepDefinitions {
         assertEquals(n, belly.getCukes());
         assertTrue(inTheBelly);
     }
+
 }

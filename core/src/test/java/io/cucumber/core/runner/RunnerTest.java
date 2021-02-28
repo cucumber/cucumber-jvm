@@ -6,9 +6,9 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -60,9 +60,8 @@ class RunnerTest {
             return null;
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
-
         new Runner(bus, singletonList(backend), objectFactory, typeRegistryConfigurer, runtimeOptions)
-            .runPickle(createPicklesWithSteps());
+                .runPickle(createPicklesWithSteps());
 
         InOrder inOrder = inOrder(beforeHook, afterHook, backend);
         inOrder.verify(backend).buildWorld();
@@ -71,13 +70,36 @@ class RunnerTest {
         inOrder.verify(backend).disposeWorld();
     }
 
+    private HookDefinition addBeforeHook() {
+        return addHook();
+    }
+
+    private HookDefinition addAfterHook() {
+        return addHook();
+    }
+
+    private Pickle createPicklesWithSteps() {
+        Feature feature = TestFeatureParser.parse("file:path/to.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given some step\n");
+        return feature.getPickles().get(0);
+    }
+
+    private HookDefinition addHook() {
+        HookDefinition hook = mock(HookDefinition.class);
+        when(hook.getTagExpression()).thenReturn("");
+        when(hook.getLocation()).thenReturn("");
+        return hook;
+    }
+
     @Test
     void steps_are_skipped_after_failure() {
         StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step"));
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
         final HookDefinition failingBeforeHook = addBeforeHook();
-        doThrow(RuntimeException.class).when(failingBeforeHook).execute(ArgumentMatchers.any());
+        doThrow(new RuntimeException("Boom")).when(failingBeforeHook).execute(ArgumentMatchers.any());
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -93,6 +115,15 @@ class RunnerTest {
         inOrder.verify(stepDefinition, never()).execute(any(Object[].class));
     }
 
+    private Pickle createPickleMatchingStepDefinitions(StubStepDefinition stepDefinition) {
+        String pattern = stepDefinition.getPattern();
+        Feature feature = TestFeatureParser.parse("" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given " + pattern + "\n");
+        return feature.getPickles().get(0);
+    }
+
     @Test
     void aftersteps_are_executed_after_failed_step() {
         StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step") {
@@ -106,21 +137,25 @@ class RunnerTest {
 
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
-        final HookDefinition afteStepHook = addAfterStepHook();
+        final HookDefinition afterStepHook = addAfterStepHook();
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addAfterHook(afteStepHook);
+                glue.addAfterHook(afterStepHook);
                 glue.addStepDefinition(stepDefinition);
             }
         };
 
         runnerSupplier.get().runPickle(pickleMatchingStepDefinitions);
 
-        InOrder inOrder = inOrder(afteStepHook, stepDefinition);
+        InOrder inOrder = inOrder(afterStepHook, stepDefinition);
         inOrder.verify(stepDefinition).execute(any(Object[].class));
-        inOrder.verify(afteStepHook).execute(any(TestCaseState.class));
+        inOrder.verify(afterStepHook).execute(any(TestCaseState.class));
+    }
+
+    private HookDefinition addAfterStepHook() {
+        return addHook();
     }
 
     @Test
@@ -151,7 +186,7 @@ class RunnerTest {
     @Test
     void hooks_execute_also_after_failure() {
         final HookDefinition failingBeforeHook = addBeforeHook();
-        doThrow(RuntimeException.class).when(failingBeforeHook).execute(any(TestCaseState.class));
+        doThrow(new RuntimeException("boom")).when(failingBeforeHook).execute(any(TestCaseState.class));
         final HookDefinition beforeHook = addBeforeHook();
         final HookDefinition afterHook = addAfterHook();
 
@@ -249,6 +284,13 @@ class RunnerTest {
         verify(afterHook, never()).execute(any(TestCaseState.class));
     }
 
+    private Pickle createEmptyPickle() {
+        Feature feature = TestFeatureParser.parse("" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n");
+        return feature.getPickles().get(0);
+    }
+
     @Test
     void backends_are_asked_for_snippets_for_undefined_steps() {
         Backend backend = mock(Backend.class);
@@ -257,51 +299,6 @@ class RunnerTest {
         Runner runner = new Runner(bus, singletonList(backend), objectFactory, typeRegistryConfigurer, runtimeOptions);
         runner.runPickle(createPicklesWithSteps());
         verify(backend).getSnippet();
-    }
-
-    private HookDefinition addBeforeHook() {
-        return addHook();
-    }
-
-    private HookDefinition addAfterHook() {
-        return addHook();
-    }
-
-    private HookDefinition addAfterStepHook() {
-        return addHook();
-    }
-
-    private HookDefinition addHook() {
-        HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
-        return hook;
-    }
-
-    private Pickle createEmptyPickle() {
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n"
-        );
-        return feature.getPickles().get(0);
-    }
-
-    private Pickle createPickleMatchingStepDefinitions(StubStepDefinition stepDefinition) {
-        String pattern = stepDefinition.getPattern();
-        Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given " + pattern + "\n"
-        );
-        return feature.getPickles().get(0);
-    }
-
-    private Pickle createPicklesWithSteps() {
-        Feature feature = TestFeatureParser.parse("file:path/to.feature", "" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given some step\n"
-        );
-        return feature.getPickles().get(0);
     }
 
 }

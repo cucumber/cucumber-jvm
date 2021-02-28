@@ -1,11 +1,12 @@
 package io.cucumber.core.plugin;
 
 public interface Options {
+
     Iterable<Plugin> plugins();
 
     boolean isMonochrome();
 
-    boolean isStrict();
+    boolean isWip();
 
     interface Plugin {
 
@@ -14,5 +15,7 @@ public interface Options {
         String argument();
 
         String pluginString();
+
     }
+
 }

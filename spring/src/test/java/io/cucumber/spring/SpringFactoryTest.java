@@ -18,16 +18,19 @@ import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefiniti
 import io.cucumber.spring.metaconfig.general.BellyMetaStepDefinitions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,12 +51,11 @@ class SpringFactoryTest {
         final BellyStepDefinitions o2 = factory.getInstance(BellyStepDefinitions.class);
         factory.stop();
 
-        assertAll("Checking BellyStepdefs",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
     @Test
@@ -72,12 +74,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory2.getInstance(BellyStepDefinitions.class).getBellyBean();
         factory2.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(equalTo(o1))),
-            () -> assertThat(o2, is(equalTo(o2)))
-        );
+            () -> assertThat(o2, is(equalTo(o2))));
     }
 
     @Test
@@ -96,12 +97,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory2.getInstance(BellyMetaStepDefinitions.class).getBellyBean();
         factory2.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(equalTo(o1))),
-            () -> assertThat(o2, is(equalTo(o2)))
-        );
+            () -> assertThat(o2, is(equalTo(o2))));
     }
 
     @Test
@@ -116,12 +116,11 @@ class SpringFactoryTest {
         final ThirdStepDef o2 = factory1.getInstance(ThirdStepDef.class);
         factory1.stop();
 
-        assertAll("Checking ThirdStepDef",
+        assertAll(
             () -> assertThat(o1.getThirdStepDef(), is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1.getThirdStepDef(), is(equalTo(o2))),
-            () -> assertThat(o2, is(equalTo(o1.getThirdStepDef())))
-        );
+            () -> assertThat(o2, is(equalTo(o1.getThirdStepDef()))));
     }
 
     @Test
@@ -136,12 +135,11 @@ class SpringFactoryTest {
         final AutowiresThirdStepDef o3 = factory1.getInstance(AutowiresThirdStepDef.class);
         factory1.stop();
 
-        assertAll("Checking AutowiresThirdStepDef",
+        assertAll(
             () -> assertThat(o1.getThirdStepDef(), is(notNullValue())),
             () -> assertThat(o3.getThirdStepDef(), is(notNullValue())),
             () -> assertThat(o1.getThirdStepDef(), is(equalTo(o3.getThirdStepDef()))),
-            () -> assertThat(o3.getThirdStepDef(), is(equalTo(o1.getThirdStepDef())))
-        );
+            () -> assertThat(o3.getThirdStepDef(), is(equalTo(o1.getThirdStepDef()))));
     }
 
     @Test
@@ -184,12 +182,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory.getInstance(DirtiesContextBellyStepDefinitions.class).getBellyBean();
         factory.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
     @Test
@@ -208,12 +205,11 @@ class SpringFactoryTest {
         final BellyBean o2 = factory.getInstance(DirtiesContextBellyMetaStepDefinitions.class).getBellyBean();
         factory.stop();
 
-        assertAll("Checking BellyBean",
+        assertAll(
             () -> assertThat(o1, is(notNullValue())),
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1))))
-        );
+            () -> assertThat(o2, is(not(equalTo(o1)))));
     }
 
     @Test
@@ -228,26 +224,16 @@ class SpringFactoryTest {
     }
 
     @Test
-    void shouldUseCucumberXmlIfNoClassWithSpringAnnotationIsFound() {
-        final ObjectFactory factory = new SpringFactory();
-        factory.addClass(Object.class);
-        factory.start();
-        final BellyBean o1 = factory.getInstance(BellyBean.class);
-        factory.stop();
-
-        assertThat(o1, is(notNullValue()));
-    }
-
-    @Test
     void shouldFailIfMultipleClassesWithSpringAnnotationsAreFound() {
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
 
         Executable testMethod = () -> factory.addClass(BellyStepDefinitions.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations both attempt to configure the spring context. Please ensure only one glue class configures the spring context"
-        )));
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both annotated with @CucumberContextConfiguration.\n"
+                    +
+                    "Please ensure only one class configures the spring context")));
     }
 
     @Test
@@ -256,9 +242,8 @@ class SpringFactoryTest {
 
         Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component annotation"
-        )));
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component annotation")));
     }
 
     @Test
@@ -267,9 +252,8 @@ class SpringFactoryTest {
 
         Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Controller annotation"
-        )));
+        assertThat(actualThrown.getMessage(), is(equalTo(
+            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Controller annotation")));
     }
 
     @Test
@@ -279,30 +263,59 @@ class SpringFactoryTest {
 
         // Scenario 1
         factory.start();
-        final Belly belly1 = factory.getInstance(Belly.class);
-        final GlueScopedComponent glue1 = factory.getInstance(GlueScopedComponent.class);
-
-        assertAll("Checking factory.getInstance(Class)",
-            () -> assertThat(belly1, is(notNullValue())),
-            () -> assertThat(glue1, is(notNullValue()))
-        );
-
+        long bellyInstance1 = factory.getInstance(Belly.class).getInstanceId();
+        long glueInstance1 = factory.getInstance(GlueScopedComponent.class).getInstanceId();
         factory.stop();
 
         // Scenario 2
-        final Belly belly2 = factory.getInstance(Belly.class);
-        final GlueScopedComponent glue2 = factory.getInstance(GlueScopedComponent.class);
+        factory.start();
+        long bellyInstance2 = factory.getInstance(Belly.class).getInstanceId();
+        long glueInstance2 = factory.getInstance(GlueScopedComponent.class).getInstanceId();
+        factory.stop();
 
-        assertAll("Checking factory.getInstance(Class)",
-            () -> assertThat(belly2, is(notNullValue())),
-            () -> assertThat(glue2, is(notNullValue())),
-            () -> assertThat(glue1, is(not(equalTo(glue2)))),
-            () -> assertThat(glue2, is(not(equalTo(glue1)))),
-            () -> assertThat(belly1, is(equalTo(belly2))),
-            () -> assertThat(belly2, is(equalTo(belly1)))
-        );
+        assertAll(
+            () -> assertThat(glueInstance1, is(not(glueInstance2))),
+            () -> assertThat(glueInstance2, is(not(glueInstance1))),
+            () -> assertThat(bellyInstance1, is(bellyInstance2)),
+            () -> assertThat(bellyInstance2, is(bellyInstance1)));
     }
 
+    @Test
+    void shouldThrowWhenGlueScopedSpringBeanAreUsedOutsideLifecycle() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithSpringAnnotations.class);
+
+        factory.start();
+        final Belly belly = factory.getInstance(Belly.class);
+        final GlueScopedComponent glue = factory.getInstance(GlueScopedComponent.class);
+        factory.stop();
+
+        assertDoesNotThrow(belly::getInstanceId);
+        assertThrows(BeanCreationException.class, glue::getInstanceId);
+    }
+
+    @Test
+    void shouldBeStoppableWhenFacedWithInvalidConfiguration() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithEmptySpringAnnotations.class);
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
+        assertThat(exception.getMessage(),
+            containsString("DelegatingSmartContextLoader was unable to detect defaults"));
+        assertDoesNotThrow(factory::stop);
+    }
+
+    @Test
+    void shouldBeStoppableWhenFacedWithMissingContextConfiguration() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(WithoutContextConfiguration.class);
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
+        assertThat(exception.getMessage(), containsString("Failed to load ApplicationContext"));
+        assertDoesNotThrow(factory::stop);
+    }
+
+    @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
     public static class WithSpringAnnotations {
 
@@ -325,4 +338,16 @@ class SpringFactoryTest {
         }
 
     }
+
+    @CucumberContextConfiguration
+    @ContextConfiguration()
+    public static class WithEmptySpringAnnotations {
+
+    }
+
+    @CucumberContextConfiguration
+    public static class WithoutContextConfiguration {
+
+    }
+
 }

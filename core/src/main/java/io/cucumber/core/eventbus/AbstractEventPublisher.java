@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractEventPublisher implements EventPublisher {
-    protected final Map<Class<? extends Event>, List<EventHandler>> handlers = new HashMap<>();
+
+    protected final Map<Class<?>, List<EventHandler>> handlers = new HashMap<>();
 
     @Override
-    public final <T extends Event> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+    public final <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
         if (handlers.containsKey(eventType)) {
             handlers.get(eventType).add(handler);
         } else {
@@ -24,32 +25,32 @@ public abstract class AbstractEventPublisher implements EventPublisher {
     }
 
     @Override
-    public final <T extends Event> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+    public final <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
         if (handlers.containsKey(eventType)) {
             handlers.get(eventType).remove(handler);
         }
     }
 
+    protected <T> void sendAll(Iterable<T> events) {
+        for (T event : events) {
+            send(event);
+        }
+    }
 
-    protected void send(Event event) {
-        if (handlers.containsKey(Event.class)) {
+    protected <T> void send(T event) {
+        if (handlers.containsKey(Event.class) && event instanceof Event) {
             for (EventHandler handler : handlers.get(Event.class)) {
-                //noinspection unchecked: protected by registerHandlerFor
+                // noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }
         }
 
         if (handlers.containsKey(event.getClass())) {
             for (EventHandler handler : handlers.get(event.getClass())) {
-                //noinspection unchecked: protected by registerHandlerFor
+                // noinspection unchecked: protected by registerHandlerFor
                 handler.receive(event);
             }
         }
     }
 
-    protected void sendAll(Iterable<Event> events) {
-        for (Event event : events) {
-            send(event);
-        }
-    }
 }

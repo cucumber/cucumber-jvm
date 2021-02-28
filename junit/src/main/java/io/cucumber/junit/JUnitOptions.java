@@ -2,7 +2,6 @@ package io.cucumber.junit;
 
 final class JUnitOptions {
 
-    private boolean strict;
     private boolean filenameCompatibleNames = false;
     private boolean stepNotifications = false;
 
@@ -14,14 +13,6 @@ final class JUnitOptions {
         return stepNotifications;
     }
 
-    boolean isStrict() {
-        return strict;
-    }
-
-    void setStrict(boolean strict) {
-        this.strict = strict;
-    }
-
     void setFilenameCompatibleNames(boolean filenameCompatibleNames) {
         this.filenameCompatibleNames = filenameCompatibleNames;
     }
@@ -29,4 +20,5 @@ final class JUnitOptions {
     void setStepNotifications(boolean stepNotifications) {
         this.stepNotifications = stepNotifications;
     }
+
 }

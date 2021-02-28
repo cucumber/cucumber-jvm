@@ -4,49 +4,68 @@ Releasing
 The deployment process of `cucumber-jvm` is based on 
 [Deploying to OSSRH with Apache Maven](http://central.sonatype.org/pages/apache-maven.html#deploying-to-ossrh-with-apache-maven-introduction).
 
-## Check [![Build Status](https://travis-ci.org/cucumber/cucumber-jvm.svg?branch=master)](https://travis-ci.org/cucumber/cucumber-jvm) ##
+## Check [![Build Status](https://github.com/cucumber/cucumber-jvm/workflows/Cucumber%20CI/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions) ##
 
 Is the build passing?
 
 ```
-git checkout master
+git checkout main
 ```
 
 Also check if you can upgrade any dependencies:
 
 ```
-update-dependency-versions
+make update-dependency-versions
 ```
 
-## Prepare for release ##
+## Decide what the next version should be ##
 
-Update the version numbers in the changelog by running (replace X.Y.Z below with the next release number): 
+Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). To sum it up, it depends on what's changed (see `CHANGELOG.md`). Given a version number MAJOR.MINOR.PATCH:
+
+* Bump `MAJOR` when you make incompatible API changes:
+  * There are `Removed` entries, or `Changed` entries breaking compatibility
+  * A cucumber library dependency upgrade was major
+* Bump `MINOR` when you add functionality in a backwards compatible manner:
+  * There are `Added` entries, `Changed` entries preserving compatibility, or
+  `Deprecated` entries
+* Bump `PATCH` when you make backwards compatible bug fixes:
+  * There are `Fixed` entries
+
+Display future version by running:
 
 ```
-make update-changelog NEW_VERSION=X.Y.Z
+make version
 ```
 
-Then run (replace X.Y.Z below with the next release number): 
+Check if branch name and version are as expected. To change version run:
 
 ```
-git commit -am "Prepare for release X.Y.Z"
-``` 
+mvn versions:set -DnewVersion=X.Y.Z-SNAPSHOT
+```
+
+## Secrets ##
+
+Secrets are required to make releases. Members of the core team can install
+keybase and join the `cucumberbdd` team to access these secrets.
+
+During the release process, secrets are fetched from keybase and used to sign
+and upload the maven artifacts.
 
 ## Make the release ##
 
-Now release everything:
+Check if branch name and version are as expected:
 
 ```
-mvn release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true"
-git checkout vX.Y.Z
-mvn clean deploy -P-examples -Psign-source-javadoc -DskipTests=true -DskipITs=true
+make version
 ```
+
+Do the release:
+
+```
+make release
+``` 
 
 ## Last bits ##
-
-Wait for the release to show up on maven central. Then update the dependency in example projects:
-
-* https://github.com/cucumber/cucumber-java-skeleton
 
 Update the cucumber-jvm version in the documentation project:
 
@@ -55,49 +74,3 @@ Update the cucumber-jvm version in the documentation project:
 The cucumber-jvm version for the docs is specified in the docs [versions.yaml](https://github.com/cucumber/docs.cucumber.io/blob/master/data/versions.yaml)
 
 All done! Hurray!
-
-
-# GPG Keys #
-
-To make a release you must have the `devs@cucumber.io` GPG private key imported in gpg2.
-
-```
-gpg --import devs-cucumber.io.key
-```
-
-Additionally upload privileges to the Sonatype repositories are required. See the 
-[OSSRH Guide](http://central.sonatype.org/pages/ossrh-guide.html) for instructions. Then an 
-administrator will have to grant you access to the cucumber repository.
-
-Finally both your OSSRH credentials and private key must be setup in your `~/.m2/settings.xml` - 
-for example:
-
-```
-<settings>
-    <servers>
-        <server>
-            <id>ossrh</id>
-            <username>sonatype-user-name</username>
-            <password>sonatype-password</password>
-        </server>
-    </servers>
-    <profiles>
-        <profile>
-            <id>ossrh</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <gpg.executable>gpg2</gpg.executable>
-                <gpg.useagent>true</gpg.useagent>
-            </properties>
-        </profile>
-        <profile>
-            <id>sign-with-cucumber-key</id>
-            <properties>
-                <gpg.keyname>dev-cucumber.io-key-id</gpg.keyname>
-            </properties>
-        </profile>
-    </profiles>
-</settings>
-```

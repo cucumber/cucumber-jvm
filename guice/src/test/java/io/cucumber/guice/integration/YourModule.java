@@ -12,4 +12,5 @@ public class YourModule extends AbstractModule {
         bind(ScenarioScopedObject.class).in(ScenarioScoped.class);
         bind(SingletonObject.class).in(Scopes.SINGLETON);
     }
+
 }

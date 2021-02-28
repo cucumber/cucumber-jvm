@@ -5,16 +5,21 @@ import org.apiguardian.api.API;
 import java.net.URI;
 import java.util.Collection;
 
-
 @API(status = API.Status.STABLE)
 public interface TestCaseState {
+
     /**
-     * @return source_tag_names.
+     * @return tags of this scenario.
      */
     Collection<String> getSourceTagNames();
 
     /**
-     * @return the <em>most severe</em> status of the Scenario's Steps.
+     * Returns the current status of this test case.
+     * <p>
+     * The test case status is calculate as the most severe status of the
+     * executed steps in the testcase so far.
+     *
+     * @return the current status of this test case
      */
     Status getStatus();
 
@@ -24,22 +29,13 @@ public interface TestCaseState {
     boolean isFailed();
 
     /**
-     * @param data      what to embed, for example an image.
-     * @param mediaType what is the data? Using the
-     * @see #embed(byte[], String, String)
-     * @see #embed(byte[], String, String)
-     * @deprecated use {@link TestCaseState#embed(byte[], String, String)} instead.
-     */
-    @Deprecated
-    void embed(byte[] data, String mediaType);
-
-    /**
-     * Embeds data into the report(s).
+     * Attach data to the report(s).
+     * 
      * <pre>
      * {@code
-     * // Embed a screenshot. See your UI automation tool's docs for
+     * // Attach a screenshot. See your UI automation tool's docs for
      * // details about how to take a screenshot.
-     * scenario.embed(pngBytes, "image/png", "Bartholomew and the Bytes of the Oobleck");
+     * scenario.attach(pngBytes, "image/png", "Bartholomew and the Bytes of the Oobleck");
      * }
      * </pre>
      * <p>
@@ -47,20 +43,31 @@ public interface TestCaseState {
      * {@code mediaType} must be provided. For example: {@code text/plain},
      * {@code image/png}, {@code text/html;charset=utf-8}.
      * <p>
-     * Media types are defined in <a href= https://tools.ietf.org/html/rfc7231#section-3.1.1.1>RFC 7231 Section 3.1.1.1</a>.
+     * Media types are defined in <a href=
+     * https://tools.ietf.org/html/rfc7231#section-3.1.1.1>RFC 7231 Section
+     * 3.1.1.1</a>.
      *
-     * @param data      what to embed, for example an image.
+     * @param data      what to attach, for example an image.
      * @param mediaType what is the data?
-     * @param name      embedding name
+     * @param name      attachment name
      */
-    void embed(byte[] data, String mediaType, String name);
+    void attach(byte[] data, String mediaType, String name);
+
+    /**
+     * @param data      what to attach, for example html.
+     * @param mediaType what is the data?
+     * @param name      attachment name
+     * @see             #attach(byte[], String, String)
+     */
+    void attach(String data, String mediaType, String name);
 
     /**
      * Outputs some text into the report.
      *
      * @param text what to put in the report.
+     * @see        #attach(byte[], String, String)
      */
-    void write(String text);
+    void log(String text);
 
     /**
      * @return the name of the Scenario
@@ -78,9 +85,9 @@ public interface TestCaseState {
     URI getUri();
 
     /**
-     * @return the line in the feature file of the Scenario. If this is a Scenario
-     * from Scenario Outlines this will return the line of the example row in
-     * the Scenario Outline.
+     * @return the line in the feature file of the Scenario. If this is a
+     *         Scenario from Scenario Outlines this will return the line of the
+     *         example row in the Scenario Outline.
      */
     Integer getLine();
 

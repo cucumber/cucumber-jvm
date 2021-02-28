@@ -13,41 +13,11 @@ import java.util.logging.LogRecord;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-
 class LoggerFactoryTest {
 
     private final Exception exception = new Exception();
-    private LogRecord logged;
     private final Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
-
-    private static Matcher<LogRecord> logRecord(final String message, final Level level, final Throwable throwable) {
-        return new TypeSafeDiagnosingMatcher<LogRecord>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("error=");
-                description.appendValue(message);
-                description.appendText(" level=");
-                description.appendValue(level);
-                description.appendText(" throwable=");
-                description.appendValue(throwable);
-            }
-
-
-            @Override
-            protected boolean matchesSafely(LogRecord logRecord, Description description) {
-                description.appendText("error=");
-                description.appendValue(logRecord.getMessage());
-                description.appendText(" level=");
-                description.appendValue(logRecord.getLevel());
-                description.appendText(" throwable=");
-                description.appendValue(logRecord.getThrown());
-
-                return Objects.equals(logRecord.getMessage(), message)
-                    && Objects.equals(logRecord.getLevel(), level)
-                    && Objects.equals(logRecord.getThrown(), throwable);
-            }
-        };
-    }
+    private LogRecord logged;
 
     @BeforeEach
     void setup() {
@@ -84,6 +54,34 @@ class LoggerFactoryTest {
         assertThat(logged, logRecord("Error", Level.SEVERE, exception));
     }
 
+    private static Matcher<LogRecord> logRecord(final String message, final Level level, final Throwable throwable) {
+        return new TypeSafeDiagnosingMatcher<LogRecord>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("error=");
+                description.appendValue(message);
+                description.appendText(" level=");
+                description.appendValue(level);
+                description.appendText(" throwable=");
+                description.appendValue(throwable);
+            }
+
+            @Override
+            protected boolean matchesSafely(LogRecord logRecord, Description description) {
+                description.appendText("error=");
+                description.appendValue(logRecord.getMessage());
+                description.appendText(" level=");
+                description.appendValue(logRecord.getLevel());
+                description.appendText(" throwable=");
+                description.appendValue(logRecord.getThrown());
+
+                return Objects.equals(logRecord.getMessage(), message)
+                        && Objects.equals(logRecord.getLevel(), level)
+                        && Objects.equals(logRecord.getThrown(), throwable);
+            }
+        };
+    }
+
     @Test
     void warn() {
         logger.warn(() -> "Warn");
@@ -107,7 +105,6 @@ class LoggerFactoryTest {
         logger.config(exception, () -> "Config");
         assertThat(logged, logRecord("Config", Level.CONFIG, exception));
     }
-
 
     @Test
     void debug() {

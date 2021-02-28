@@ -8,5 +8,7 @@ import java.util.Map;
 @FunctionalInterface
 @API(status = API.Status.STABLE)
 public interface DefaultDataTableEntryTransformerBody {
+
     Object accept(Map<String, String> fromValue, Type toValueType) throws Throwable;
+
 }

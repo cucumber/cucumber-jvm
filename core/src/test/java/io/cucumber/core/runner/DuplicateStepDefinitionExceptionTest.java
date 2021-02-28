@@ -20,11 +20,12 @@ class DuplicateStepDefinitionExceptionTest {
         final StepDefinition mockStepDefinitionB = mock(StepDefinition.class);
         when(mockStepDefinitionB.getLocation()).thenReturn("StepDefinitionB_Location");
 
-        DuplicateStepDefinitionException expectedThrown = new DuplicateStepDefinitionException(mockStepDefinitionA, mockStepDefinitionB);
+        DuplicateStepDefinitionException expectedThrown = new DuplicateStepDefinitionException(mockStepDefinitionA,
+            mockStepDefinitionB);
         assertAll(
-            () -> assertThat(expectedThrown.getMessage(), is(equalTo("Duplicate step definitions in StepDefinitionA_Location and StepDefinitionB_Location"))),
-            () -> assertThat(expectedThrown.getCause(), is(nullValue()))
-        );
+            () -> assertThat(expectedThrown.getMessage(),
+                is(equalTo("Duplicate step definitions in StepDefinitionA_Location and StepDefinitionB_Location"))),
+            () -> assertThat(expectedThrown.getCause(), is(nullValue())));
     }
-}
 
+}

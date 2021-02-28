@@ -12,7 +12,8 @@ import java.util.Map;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableElementTransformerDefinition implements DefaultDataTableEntryTransformerDefinition {
+class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableElementTransformerDefinition
+        implements DefaultDataTableEntryTransformerDefinition {
 
     private final TableEntryByTypeTransformer transformer;
     private final boolean headersToProperties;
@@ -21,11 +22,13 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
         this(method, lookup, false, new String[0]);
     }
 
-    JavaDefaultDataTableEntryTransformerDefinition(Method method, Lookup lookup, boolean headersToProperties, String[] emptyPatterns) {
+    JavaDefaultDataTableEntryTransformerDefinition(
+            Method method, Lookup lookup, boolean headersToProperties, String[] emptyPatterns
+    ) {
         super(requireValidMethod(method), lookup, emptyPatterns);
         this.headersToProperties = headersToProperties;
-        this.transformer = (entryValue, toValueType, cellTransformer) ->
-            execute(replaceEmptyPatternsWithEmptyString(entryValue), toValueType, cellTransformer);
+        this.transformer = (entryValue, toValueType, cellTransformer) -> execute(
+            replaceEmptyPatternsWithEmptyString(entryValue), toValueType, cellTransformer);
     }
 
     private static Method requireValidMethod(Method method) {
@@ -65,7 +68,8 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
         }
 
         if (parameterTypes.length == 3) {
-            if (!(Object.class.equals(parameterTypes[2]) || TableCellByTypeTransformer.class.equals(parameterTypes[2]))) {
+            if (!(Object.class.equals(parameterTypes[2])
+                    || TableCellByTypeTransformer.class.equals(parameterTypes[2]))) {
                 throw createInvalidSignatureException(method);
             }
         }
@@ -73,17 +77,24 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
         return method;
     }
 
-    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
-            .addAnnotation(DefaultDataTableEntryTransformer.class)
-            .addSignature("public Object defaultDataTableEntry(Map<String, String> fromValue, Type toValueType)")
-            .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
-            .build();
+    private Object execute(
+            Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer
+    ) {
+        Object[] args;
+        if (method.getParameterTypes().length == 3) {
+            args = new Object[] { fromValue, toValueType, cellTransformer };
+        } else {
+            args = new Object[] { fromValue, toValueType };
+        }
+        return invokeMethod(args);
     }
 
-    @Override
-    public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
-        return transformer;
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
+        return builder(method)
+                .addAnnotation(DefaultDataTableEntryTransformer.class)
+                .addSignature("public Object defaultDataTableEntry(Map<String, String> fromValue, Type toValueType)")
+                .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
+                .build();
     }
 
     @Override
@@ -91,14 +102,9 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
         return headersToProperties;
     }
 
-    private Object execute(Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer) {
-        Object[] args;
-        if (method.getParameterTypes().length == 3) {
-            args = new Object[]{fromValue, toValueType, cellTransformer};
-        } else {
-            args = new Object[]{fromValue, toValueType};
-        }
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
+    @Override
+    public TableEntryByTypeTransformer tableEntryByTypeTransformer() {
+        return transformer;
     }
 
 }

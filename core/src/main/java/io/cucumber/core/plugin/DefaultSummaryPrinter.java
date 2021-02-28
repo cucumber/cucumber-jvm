@@ -1,30 +1,43 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.plugin.ColorAware;
+import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.SummaryPrinter;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.ColorAware;
-import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.StrictAware;
-import io.cucumber.plugin.SummaryPrinter;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
-public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, StrictAware, ConcurrentEventListener {
+public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, ConcurrentEventListener {
 
-    private final List<String> snippets = new ArrayList<>();
-    private final Stats stats = new Stats();
-
+    private final Set<String> snippets = new LinkedHashSet<>();
+    private final Stats stats;
     private final PrintStream out;
 
     public DefaultSummaryPrinter() {
-        this.out = System.out;
+        this(System.out, Locale.getDefault());
+    }
+
+    DefaultSummaryPrinter(OutputStream out, Locale locale) {
+        this.out = new PrintStream(out);
+        this.stats = new Stats(locale);
+    }
+
+    @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        stats.setEventPublisher(publisher);
+        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetsSuggestedEvent);
+        publisher.registerHandlerFor(TestRunFinished.class, event -> print());
     }
 
     private void handleSnippetsSuggestedEvent(SnippetsSuggestedEvent event) {
-        this.snippets.addAll(event.getSnippets());
+        this.snippets.addAll(event.getSuggestion().getSnippets());
     }
 
     private void print() {
@@ -67,19 +80,8 @@ public final class DefaultSummaryPrinter implements SummaryPrinter, ColorAware, 
     }
 
     @Override
-    public void setEventPublisher(EventPublisher publisher) {
-        stats.setEventPublisher(publisher);
-        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetsSuggestedEvent);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> print());
-    }
-
-    @Override
     public void setMonochrome(boolean monochrome) {
         stats.setMonochrome(monochrome);
     }
 
-    @Override
-    public void setStrict(boolean strict) {
-        stats.setStrict(strict);
-    }
 }

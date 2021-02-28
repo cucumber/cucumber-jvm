@@ -7,9 +7,11 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
- * Reads cucumber-needle.properties to initialize additional {@link InjectionProvider}s.
+ * Reads cucumber-needle.properties to initialize additional
+ * {@link InjectionProvider}s.
  */
 class CucumberNeedleConfiguration {
+
     /**
      * Default properties fiel name.
      */
@@ -18,7 +20,8 @@ class CucumberNeedleConfiguration {
     private final Set<InjectionProvider<?>> injectionProviders = new HashSet<>();
 
     /**
-     * Creates new instance from default resource {@link #RESOURCE_CUCUMBER_NEEDLE}.
+     * Creates new instance from default resource
+     * {@link #RESOURCE_CUCUMBER_NEEDLE}.
      */
     CucumberNeedleConfiguration() {
         this(RESOURCE_CUCUMBER_NEEDLE);
@@ -36,7 +39,7 @@ class CucumberNeedleConfiguration {
                     injectionProviders.add((InjectionProvider<?>) createInstance.apply(clazz));
                 } else if (isInjectionProviderInstanceSupplier(clazz)) {
                     final InjectionProviderInstancesSupplier supplier = (InjectionProviderInstancesSupplier) createInstance
-                        .apply(clazz);
+                            .apply(clazz);
                     final Set<InjectionProvider<?>> providers = supplier.get();
                     if (providers != null) {
                         injectionProviders.addAll(providers);
@@ -51,8 +54,9 @@ class CucumberNeedleConfiguration {
     /**
      * Checks if given class is an {@link InjectionProvider}
      *
-     * @param type Class to check
-     * @return <code>true</code> if type can be cast to {@link InjectionProvider}
+     * @param  type Class to check
+     * @return      <code>true</code> if type can be cast to
+     *              {@link InjectionProvider}
      */
     static boolean isInjectionProvider(final Class<?> type) {
         return InjectionProvider.class.isAssignableFrom(type);
@@ -61,8 +65,9 @@ class CucumberNeedleConfiguration {
     /**
      * Checks if given class is an {@link InjectionProviderInstancesSupplier}
      *
-     * @param type Class to check
-     * @return <code>true</code> if type can be cast to {@link InjectionProviderInstancesSupplier}
+     * @param  type Class to check
+     * @return      <code>true</code> if type can be cast to
+     *              {@link InjectionProviderInstancesSupplier}
      */
     static boolean isInjectionProviderInstanceSupplier(final Class<?> type) {
         return InjectionProviderInstancesSupplier.class.isAssignableFrom(type);
@@ -71,4 +76,5 @@ class CucumberNeedleConfiguration {
     InjectionProvider<?>[] getInjectionProviders() {
         return injectionProviders.toArray(new InjectionProvider<?>[0]);
     }
+
 }

@@ -10,6 +10,7 @@ import java.net.URI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class TestSourceReadResource implements Resource {
+
     private final TestSourceRead event;
 
     TestSourceReadResource(TestSourceRead event) {
@@ -25,4 +26,5 @@ final class TestSourceReadResource implements Resource {
     public InputStream getInputStream() {
         return new ByteArrayInputStream(event.getSource().getBytes(UTF_8));
     }
+
 }

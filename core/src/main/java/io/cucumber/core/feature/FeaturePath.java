@@ -12,15 +12,15 @@ import static java.util.Objects.requireNonNull;
 /**
  * A feature path is a URI to a single feature file or directory of features.
  * <p>
- * This URI can either be absolute:
- * {@code scheme:/absolute/path/to.feature}, or relative to the
- * current working directory: {@code scheme:relative/path/to.feature}. In
- * either form, when the scheme is omitted {@code file} will be assumed.
+ * This URI can either be absolute: {@code scheme:/absolute/path/to.feature}, or
+ * relative to the current working directory:
+ * {@code scheme:relative/path/to.feature}. In either form, when the scheme is
+ * omitted {@code file} will be assumed.
  * <p>
  * On systems that use a {@code File.separatorChar} other then `{@code /}`
- * {@code File.separatorChar} can be used as a path separator. When
- * doing so when the scheme must be omitted: {@code path\to.feature}.
- * <em>It is recommended to use `{@code /}` as the path separator.</em>
+ * {@code File.separatorChar} can be used as a path separator. When doing so
+ * when the scheme must be omitted: {@code path\to.feature}. <em>It is
+ * recommended to use `{@code /}` as the path separator.</em>
  *
  * @see FeatureIdentifier
  * @see FeatureWithLines
@@ -59,12 +59,18 @@ public class FeaturePath {
         return parseAssumeFileScheme(featureIdentifier);
     }
 
-    private static URI parseProbableURI(String featureIdentifier) {
-        URI uri = URI.create(featureIdentifier);
-        if ("file".equals(uri.getScheme())) {
-            return parseAssumeFileScheme(uri.getSchemeSpecificPart());
-        }
-        return uri;
+    private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
+        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
+                && featureIdentifier.contains(File.separator);
+    }
+
+    private static String replaceNonStandardPathSeparator(String featureIdentifier) {
+        return featureIdentifier.replace(File.separatorChar, RESOURCE_SEPARATOR_CHAR);
+    }
+
+    private static URI parseAssumeFileScheme(String featureIdentifier) {
+        File featureFile = new File(featureIdentifier);
+        return featureFile.toURI();
     }
 
     private static boolean isWindowsOS() {
@@ -80,18 +86,12 @@ public class FeaturePath {
         return featureIdentifier.matches("^[a-zA-Z+.\\-]+:.*$");
     }
 
-    private static String replaceNonStandardPathSeparator(String featureIdentifier) {
-        return featureIdentifier.replace(File.separatorChar, RESOURCE_SEPARATOR_CHAR);
-    }
-
-    private static boolean nonStandardPathSeparatorInUse(String featureIdentifier) {
-        return File.separatorChar != RESOURCE_SEPARATOR_CHAR
-            && featureIdentifier.contains(File.separator);
-    }
-
-    private static URI parseAssumeFileScheme(String featureIdentifier) {
-        File featureFile = new File(featureIdentifier);
-        return featureFile.toURI();
+    private static URI parseProbableURI(String featureIdentifier) {
+        URI uri = URI.create(featureIdentifier);
+        if ("file".equals(uri.getScheme())) {
+            return parseAssumeFileScheme(uri.getSchemeSpecificPart());
+        }
+        return uri;
     }
 
     private static String normalize(final String value) {

@@ -10,11 +10,12 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DateSteps {
+
     private String result;
     private DateCalculator calculator;
 
     @ParameterType("([0-9]{4})-([0-9]{2})-([0-9]{2})")
-    public LocalDate iso8601Date(String year, String month, String day){
+    public LocalDate iso8601Date(String year, String month, String day) {
         return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
     }
 
@@ -32,4 +33,5 @@ public class DateSteps {
     public void the_result_should_be(String expectedResult) {
         assertEquals(expectedResult, result);
     }
+
 }

@@ -11,7 +11,8 @@ public interface Event {
      * Returns instant from epoch.
      *
      * @return time instant in Instant
-     * @see Instant#now()
+     * @see    Instant#now()
      */
     Instant getInstant();
+
 }

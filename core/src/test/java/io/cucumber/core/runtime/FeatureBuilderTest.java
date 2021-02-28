@@ -38,6 +38,20 @@ class FeatureBuilderTest {
         assertThat(features.size(), equalTo(1));
     }
 
+    private Feature createResourceMock(URI featurePath) {
+        return parser.parseResource(new Resource() {
+            @Override
+            public URI getUri() {
+                return featurePath;
+            }
+
+            @Override
+            public InputStream getInputStream() {
+                return new ByteArrayInputStream("Feature: Example\n  Scenario: Empty".getBytes(UTF_8));
+            }
+        }).orElse(null);
+    }
+
     @Test
     void duplicate_content_with_different_file_names_are_intentionally_duplicated() {
         URI featurePath1 = URI.create("src/feature1/example-first.feature");
@@ -54,10 +68,8 @@ class FeatureBuilderTest {
         assertAll(
             () -> assertThat(features.size(), equalTo(2)),
             () -> assertThat(features.get(0).getUri(), equalTo(featurePath1)),
-            () -> assertThat(features.get(1).getUri(), equalTo(featurePath2))
-        );
+            () -> assertThat(features.get(1).getUri(), equalTo(featurePath2)));
     }
-
 
     @Test
     void features_are_sorted_by_uri() {
@@ -78,22 +90,7 @@ class FeatureBuilderTest {
         assertAll(
             () -> assertThat(features.get(0).getUri(), equalTo(featurePath3)),
             () -> assertThat(features.get(1).getUri(), equalTo(featurePath2)),
-            () -> assertThat(features.get(2).getUri(), equalTo(featurePath1))
-        );
-    }
-
-    private Feature createResourceMock(URI featurePath) {
-        return parser.parseResource(new Resource() {
-            @Override
-            public URI getUri() {
-                return featurePath;
-            }
-
-            @Override
-            public InputStream getInputStream() {
-                return new ByteArrayInputStream("Feature: Example".getBytes(UTF_8));
-            }
-        });
+            () -> assertThat(features.get(2).getUri(), equalTo(featurePath1)));
     }
 
 }

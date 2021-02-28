@@ -14,15 +14,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RpnCalculatorSteps {
+
     private RpnCalculator calc;
 
     @BeforeAll
-    public static void enable_super_math_engine(){
+    public static void enable_super_math_engine() {
         // System.enableSuperMaths()
     }
 
     @AfterAll
-    public static void disable_super_math_engine(){
+    public static void disable_super_math_engine() {
         // System.disableSuperMaths()
     }
 
@@ -50,7 +51,7 @@ public class RpnCalculatorSteps {
 
     @Before("not @foo")
     public void before(Scenario scenario) {
-        scenario.write("Runs before scenarios *not* tagged with @foo");
+        scenario.log("Runs before scenarios *not* tagged with @foo");
     }
 
     @After
@@ -68,6 +69,7 @@ public class RpnCalculatorSteps {
     }
 
     static final class Entry {
+
         private Integer first;
         private Integer second;
         private String operation;
@@ -95,5 +97,7 @@ public class RpnCalculatorSteps {
         public void setOperation(String operation) {
             this.operation = operation;
         }
+
     }
+
 }

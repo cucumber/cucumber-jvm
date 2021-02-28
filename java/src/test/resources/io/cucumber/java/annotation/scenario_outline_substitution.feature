@@ -1,4 +1,5 @@
 Feature: Scenario Outline Substitution
+
   Scenario Outline: Email confirmation
     Given I have a user account with my name "Jojo Binks"
     When an Admin grants me <Role> rights

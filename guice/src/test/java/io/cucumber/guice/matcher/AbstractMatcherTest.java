@@ -12,7 +12,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 abstract class AbstractMatcherTest {
 
     static <T> void assertMatches(Matcher<T> matcher, T arg) {
-        assertTrue(matcher.matches(arg), "Expected match, but mismatched because: '" + mismatchDescription(matcher, arg) + "'");
+        assertTrue(matcher.matches(arg),
+            "Expected match, but mismatched because: '" + mismatchDescription(matcher, arg) + "'");
+    }
+
+    private static <T> String mismatchDescription(Matcher<? super T> matcher, T arg) {
+        Description description = new StringDescription();
+        matcher.describeMismatch(arg, description);
+        return description.toString().trim();
     }
 
     static <T> void assertDoesNotMatch(Matcher<? super T> c, T arg) {
@@ -46,12 +53,8 @@ abstract class AbstractMatcherTest {
         }
     }
 
-    private static <T> String mismatchDescription(Matcher<? super T> matcher, T arg) {
-        Description description = new StringDescription();
-        matcher.describeMismatch(arg, description);
-        return description.toString().trim();
+    private static class UnknownType {
+
     }
 
-    private static class UnknownType {
-    }
 }

@@ -19,10 +19,12 @@ class ReflectionsTest {
     }
 
     public static class StaticInnerClass {
+
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
     public class NonStaticInnerClass {
+
     }
 
 }

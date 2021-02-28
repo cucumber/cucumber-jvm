@@ -8,30 +8,66 @@ sub modules together e.g. `cucumber-junit` and `cucumber-java`.
 
 ## Properties, Environment variables, System Options ##
 
-When property parsing functionality is not provided by the runner (i.e. 
-`cucumber-junit-platform-engine`) Cucumber will in order of precedence parse
-properties from system properties, environment variables and the
-`cucumber.properties` file.
+Cucumber will in order of precedence parse properties from system properties,
+environment variables, `@CucumberOptions` and the `cucumber.properties` file.
+Note that the CLI arguments take precedence over all.
 
-Note that options provided by `@CucumberOptions` takes precedence over the
-properties file and CLI arguments take precedence over all.
+Note that the `cucumber-junit-platform-engine` is provided with properties
+by the Junit Platform rather than Cucumber. See
+[junit-platform-engine Configuration Options](../junit-platform-engine#configuration-options)
+for more information.
 
 Supported properties are:
 
 ```
-cucumber.ansi-colors.disabled=  # true or false. default: true                     
-cucumber.execution.dry-run=     # true or false. default: false 
-cucumber.execution.limit=       # number of scenarios to execute (CLI only).  
+cucumber.ansi-colors.disabled=  # true or false. default: false
+                     
+cucumber.execution.dry-run=     # true or false. default: false
+ 
+cucumber.execution.limit=       # number of scenarios to execute (CLI only).
+  
 cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+
 cucumber.execution.strict=      # true or false. default: false.
+
 cucumber.execution.wip=         # true or false. default: false.
-cucumber.features=              # command separated paths to feature files. example: path/to/example.feature, path/to/other.feature  
-cucumber.filter.name=           # regex. example: .*Hello.*
-cucumber.filter.tags=           # tag expression. example: @smoke and not @slow 
-cucumber.glue=                  # comma separated package names. example: com.example.glue  
-cucumber.plugin=                # comma separated plugin strings. example: pretty, json:path/to/report.json
-cucumber.object-factory=        # object factory class name. example: com.example.MyObjectFactory
-cucumber.snippet-type=          # underscore or camelcase. default: underscore
+                                # Fails if there any passing scenarios
+                                # CLI only.   
+
+cucumber.features=              # command separated paths to feature files. 
+                                # example: path/to/example.feature, path/to/other.feature
+  
+cucumber.filter.name=           # a regular expression
+                                # only scenarios with matching names are executed. 
+                                # example: ^Hello (World|Cucumber)$     
+
+cucumber.filter.tags=           # a cucumber tag expression. 
+                                # only scenarios with matching tags are executed. 
+                                # example: @Cucumber and not (@Gherkin or @Zucchini)
+
+cucumber.glue=                  # comma separated package names. 
+                                # example: com.example.glue  
+  
+cucumber.plugin=                # comma separated plugin strings. 
+                                # example: pretty, json:path/to/report.json
+
+cucumber.object-factory=        # object factory class name.
+                                # example: com.example.MyObjectFactory
+
+cucumber.publish.enabled        # true or false. default: false
+                                # enable publishing of test results 
+
+cucumber.publish.quiet          # true or false. default: false
+                                # supress publish banner after test exeuction  
+
+cucumber.publish.token          # any string value.
+                                # publish authenticated test results
+
+cucumber.publish.url            # a valid url
+                                # location to publish test reports to
+
+cucumber.snippet-type=          # underscore or camelcase. 
+                                # default: underscore
 ```
 
 Each property also has an `UPPER_CASE` and `snake_case` variant. For example
@@ -40,10 +76,10 @@ Each property also has an `UPPER_CASE` and `snake_case` variant. For example
 
 ## Backend ##
 
-Backends consists of two components, a `Backend` and `ObjectFactory`. They are
-respectively responsible for discovering glue classes, registering step definitions
+Backends consist of two components: a `Backend`, and an `ObjectFactory`. They are
+respectively responsible for discovering glue classes, registering step definitions,
 and creating instances of said glue classes. Backend and object factory
-implementations are discovered via SPI
+implementations are discovered via SPI.
 
 ## Plugin ##
 

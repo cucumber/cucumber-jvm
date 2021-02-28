@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.util.HashSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,6 +47,7 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
         protected void initMyTestcase(final Object test) throws Exception {
             initTestcase(test);
         }
+
     }
 
     public static class A {
@@ -53,6 +55,7 @@ public class CollectInjectionProvidersFromStepsInstanceTest {
         @Inject
         @Named("foo")
         private String bar;
+
     }
 
 }

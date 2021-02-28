@@ -18,4 +18,5 @@ public abstract class TestCaseEvent extends TimeStampedEvent {
     public TestCase getTestCase() {
         return testCase;
     }
+
 }

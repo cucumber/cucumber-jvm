@@ -7,6 +7,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface ColorAware extends Plugin {
+
     /**
      * When set to monochrome the plugin should not use colored output.
      * <p>
@@ -15,4 +16,5 @@ public interface ColorAware extends Plugin {
      * @param monochrome true if monochrome output should be used
      */
     void setMonochrome(boolean monochrome);
+
 }

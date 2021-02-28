@@ -7,9 +7,11 @@ import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.plugin.event.HookTestStep;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
@@ -53,15 +55,15 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class JUnitReporterWithStepNotificationsTest {
 
-    private static final int scenarioLine = 0;
+    private static final Location scenarioLine = new Location(0, 0);
     private static final URI featureUri = URI.create("file:example.feature");
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-    private final JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder().setStepNotifications(true).build());
+    private final JUnitReporter jUnitReporter = new JUnitReporter(bus,
+        new JUnitOptionsBuilder().setStepNotifications(true).build());
     private final Feature feature = TestFeatureParser.parse("" +
-        "Feature: Test feature\n" +
-        "  Scenario: Test scenario\n" +
-        "     Given step name\n"
-    );
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given step name\n");
     private final Step step = feature.getPickles().get(0).getSteps().get(0);
     @Mock
     private TestCase testCase;
@@ -75,15 +77,6 @@ class JUnitReporterWithStepNotificationsTest {
 
     @Captor
     private ArgumentCaptor<Failure> failureArgumentCaptor;
-
-    private static PickleStepTestStep mockTestStep(Step step) {
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        lenient().when(testStep.getStepText()).thenReturn(step.getText());
-        lenient().when(testStep.getStepLine()).thenReturn(scenarioLine);
-        lenient().when(testStep.getUri()).thenReturn(featureUri);
-        lenient().when(testStep.getStep()).thenReturn(step);
-        return testStep;
-    }
 
     @BeforeEach
     void mockPickleRunner() {
@@ -100,6 +93,13 @@ class JUnitReporterWithStepNotificationsTest {
         jUnitReporter.finishExecutionUnit();
     }
 
+    private static PickleStepTestStep mockTestStep(Step step) {
+        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
+        lenient().when(testStep.getUri()).thenReturn(featureUri);
+        lenient().when(testStep.getStep()).thenReturn(step);
+        return testStep;
+    }
+
     @Test
     void disconnects_from_bus_once_execution_unit_finished() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
@@ -112,8 +112,8 @@ class JUnitReporterWithStepNotificationsTest {
     void ignores_steps_when_step_notification_are_disabled() {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder()
-            .setStepNotifications(false)
-            .build());
+                .setStepNotifications(false)
+                .build());
 
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
@@ -197,7 +197,7 @@ class JUnitReporterWithStepNotificationsTest {
     }
 
     @Test
-    void test_step_finished_fires_assumption_failed_and_test_finished_for_skipped_step_with_pending_exception() {
+    void test_step_finished_fires_test_failure_and_test_finished_for_skipped_step_with_pending_exception() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
         bus.send(new TestCaseStarted(now(), testCase));
@@ -206,7 +206,7 @@ class JUnitReporterWithStepNotificationsTest {
         Result result = new Result(Status.PENDING, ZERO, exception);
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
-        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
 
         Failure stepFailure = failureArgumentCaptor.getValue();
@@ -215,7 +215,7 @@ class JUnitReporterWithStepNotificationsTest {
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
-        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
+        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
         verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
@@ -225,48 +225,11 @@ class JUnitReporterWithStepNotificationsTest {
     }
 
     @Test
-    void test_step_undefined_fires_assumption_failed_and_test_finished_for_undefined_step() {
+    void test_step_undefined_fires_test_failure_and_test_finished_for_undefined_step() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 
-        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, singletonList("some snippet")));
-        bus.send(new TestCaseStarted(now(), testCase));
-        bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
-        Throwable exception = new CucumberException("No step definitions found");
-        Result result = new Result(Status.UNDEFINED, ZERO, exception);
-        bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
-
-        verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
-
-        Failure stepFailure = failureArgumentCaptor.getValue();
-        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
-        assertThat(stepFailure.getException(), is(equalTo(exception)));
-
-        bus.send(new TestCaseFinished(now(), testCase, result));
-
-        verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
-
-        Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
-        assertThat(pickleFailure.getException().getMessage(), is("" +
-            "The step \"step name\" is undefined. You can implement it using tne snippet(s) below:\n" +
-            "\n" +
-            "some snippet"
-        ));
-    }
-
-    @Test
-    void test_step_undefined_fires_test_failure_and_test_finished_for_undefined_step_in_strict_mode() {
-        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder()
-            .setStepNotifications(true)
-            .setStrict(true)
-            .build());
-
-        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
-
-        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, singletonList("some snippet")));
+        Suggestion suggestion = new Suggestion("step name", singletonList("some snippet"));
+        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, suggestion));
         bus.send(new TestCaseStarted(now(), testCase));
         bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
         Throwable exception = new CucumberException("No step definitions found");
@@ -288,10 +251,48 @@ class JUnitReporterWithStepNotificationsTest {
         Failure pickleFailure = failureArgumentCaptor.getValue();
         assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
         assertThat(pickleFailure.getException().getMessage(), is("" +
-            "The step \"step name\" is undefined. You can implement it using tne snippet(s) below:\n" +
-            "\n" +
-            "some snippet"
-        ));
+                "The step 'step name' is undefined.\n" +
+                "You can implement this step using the snippet(s) below:\n" +
+                "\n" +
+                "some snippet\n"));
+    }
+
+    @Test
+    void test_step_undefined_fires_test_failure_and_test_finished_for_undefined_step_in_strict_mode() {
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder()
+                .setStepNotifications(true)
+                .build());
+
+        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
+
+        Suggestion suggestion = new Suggestion("step name", singletonList("some snippet"));
+        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, suggestion));
+        bus.send(new TestCaseStarted(now(), testCase));
+        bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
+        Throwable exception = new CucumberException("No step definitions found");
+        Result result = new Result(Status.UNDEFINED, ZERO, exception);
+        bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
+
+        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+
+        Failure stepFailure = failureArgumentCaptor.getValue();
+        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.getException(), is(equalTo(exception)));
+
+        bus.send(new TestCaseFinished(now(), testCase, result));
+
+        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
+        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+
+        Failure pickleFailure = failureArgumentCaptor.getValue();
+        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.getException().getMessage(), is("" +
+                "The step 'step name' is undefined.\n" +
+                "You can implement this step using the snippet(s) below:\n" +
+                "\n" +
+                "some snippet\n"));
     }
 
     @Test
@@ -358,8 +359,7 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
         List<Throwable> failures = asList(
             new Exception("Oops"),
-            new Exception("I did it again")
-        );
+            new Exception("I did it again"));
         Throwable exception = new MultipleFailureException(failures);
         Result result = new Result(Status.FAILED, ZERO, exception);
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
@@ -390,6 +390,5 @@ class JUnitReporterWithStepNotificationsTest {
         assertThat(pickleFailure.get(5).getDescription(), is(equalTo(pickleRunner.getDescription())));
         assertThat(pickleFailure.get(5).getException(), is(equalTo(failures.get(1))));
     }
-
 
 }

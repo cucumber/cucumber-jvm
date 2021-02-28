@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class SingletonScopedSteps {
         provide();
     }
 
+    private void provide() {
+        SingletonObject singletonObject = singletonObjectProvider.get();
+        assertThat(singletonObject, notNullValue());
+        OBJECTS.add(singletonObject);
+    }
+
     @When("another singleton scope instance is provided")
     public void another_singleton_scope_instance_is_provided() {
         provide();
@@ -56,9 +63,4 @@ public class SingletonScopedSteps {
         assertThat(OBJECTS, elementsAreAllEqual());
     }
 
-    private void provide() {
-        SingletonObject singletonObject = singletonObjectProvider.get();
-        assertThat(singletonObject, notNullValue());
-        OBJECTS.add(singletonObject);
-    }
 }

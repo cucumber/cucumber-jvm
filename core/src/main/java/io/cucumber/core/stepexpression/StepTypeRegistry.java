@@ -20,7 +20,6 @@ public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry
 
     private final DocStringTypeRegistry docStringTypeRegistry;
 
-
     public StepTypeRegistry(Locale locale) {
         parameterTypeRegistry = new ParameterTypeRegistry(locale);
         dataTableTypeRegistry = new DataTableTypeRegistry(locale);
@@ -55,12 +54,14 @@ public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry
     }
 
     @Override
-    public void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer){
+    public void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer) {
         parameterTypeRegistry.setDefaultParameterTransformer(defaultParameterByTypeTransformer);
     }
 
     @Override
-    public void setDefaultDataTableEntryTransformer(TableEntryByTypeTransformer defaultDataTableEntryByTypeTransformer) {
+    public void setDefaultDataTableEntryTransformer(
+            TableEntryByTypeTransformer defaultDataTableEntryByTypeTransformer
+    ) {
         dataTableTypeRegistry.setDefaultDataTableEntryTransformer(defaultDataTableEntryByTypeTransformer);
     }
 
@@ -68,4 +69,5 @@ public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry
     public void setDefaultDataTableCellTransformer(TableCellByTypeTransformer defaultDataTableByTypeTransformer) {
         dataTableTypeRegistry.setDefaultDataTableCellTransformer(defaultDataTableByTypeTransformer);
     }
+
 }

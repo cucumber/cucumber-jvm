@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-examples</artifactId>
@@ -19,32 +19,6 @@
         <module>java-calculator-testng</module>
         <module>java-wicket</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>coveralls.io</id>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>cobertura-maven-plugin</artifactId>
-                            <version>${cobertura-maven-plugin.version}</version>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <artifactId>maven-surefire-plugin</artifactId>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-    </profiles>
 
     <build>
         <pluginManagement>

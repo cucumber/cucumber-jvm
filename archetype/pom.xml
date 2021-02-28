@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-archetype</artifactId>
@@ -59,7 +59,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-archetype-plugin</artifactId>
-                    <version>3.0.1</version>
                     <configuration>
                         <ignoreEOLStyle>true</ignoreEOLStyle>
                     </configuration>
@@ -71,7 +70,7 @@
             <extension>
                 <groupId>org.apache.maven.archetype</groupId>
                 <artifactId>archetype-packaging</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.0</version>
             </extension>
         </extensions>
     </build>

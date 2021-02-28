@@ -4,9 +4,8 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 
-import static net.jodah.typetools.TypeResolver.resolveRawArguments;
-
-final class Java8DataTableDefinition extends AbstractDatatableElementTransformerDefinition implements DataTableTypeDefinition {
+final class Java8DataTableDefinition extends AbstractDatatableElementTransformerDefinition
+        implements DataTableTypeDefinition {
 
     private final DataTableType dataTableType;
 
@@ -15,8 +14,7 @@ final class Java8DataTableDefinition extends AbstractDatatableElementTransformer
         Class<?> returnType = resolveRawArguments(DataTableDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
-            (DataTable table) -> execute(replaceEmptyPatternsWithEmptyString(table))
-        );
+            (DataTable table) -> invokeMethod(replaceEmptyPatternsWithEmptyString(table)));
     }
 
     @Override
@@ -24,7 +22,4 @@ final class Java8DataTableDefinition extends AbstractDatatableElementTransformer
         return dataTableType;
     }
 
-    private Object execute(DataTable table) {
-        return Invoker.invoke(this, body, method, table);
-    }
 }

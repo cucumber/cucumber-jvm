@@ -1,0 +1,51 @@
+{
+  "6.0.0": [
+    {
+      "extension": "revapi.differences",
+      "id": "intentional-api-changes",
+      "ignore": true,
+      "configuration": {
+        "differences": [
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.nonPublicPartOfAPI",
+            "new": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.missing.oldClass",
+            "old": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.nonPublicPartOfAPI",
+            "old": ".* io\\.cucumber\\.core\\.gherkin\\.messages\\.internal\\..*",
+            "new": ".* io\\.cucumber\\.core\\.gherkin\\.messages\\.internal\\..*",
+            "justification": "Internal API"
+          },
+
+          {
+            "code": "java.class.nonPublicPartOfAPI",
+            "old": "class io.cucumber.gherkin.internal.com.eclipsesource.json.JsonWriter",
+            "new": "class io.cucumber.gherkin.internal.com.eclipsesource.json.JsonWriter",
+            "justification": "Internal API"
+          },
+          {
+            "code": "java.class.nonPublicPartOfAPI",
+            "old": "interface io.cucumber.messages.internal.com.google.protobuf.MutabilityOracle",
+            "new": "interface io.cucumber.messages.internal.com.google.protobuf.MutabilityOracle",
+            "justification": "Internal API"
+          }
+        ]
+      }
+    }
+  ]
+}

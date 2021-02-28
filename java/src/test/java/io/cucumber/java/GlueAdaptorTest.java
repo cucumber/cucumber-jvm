@@ -64,12 +64,12 @@ public class GlueAdaptorTest {
     private final Glue container = new Glue() {
         @Override
         public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
-            //TODO
+            // TODO
         }
 
         @Override
         public void addAfterAllHook(StaticHookDefinition afterAllHook) {
-            //TODO
+            // TODO
         }
 
         @Override
@@ -120,13 +120,17 @@ public class GlueAdaptorTest {
         }
 
         @Override
-        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
+        public void addDefaultDataTableEntryTransformer(
+                DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+        ) {
             GlueAdaptorTest.this.defaultDataTableEntryTransformer = defaultDataTableEntryTransformer;
 
         }
 
         @Override
-        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
+        public void addDefaultDataTableCellTransformer(
+                DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer
+        ) {
             GlueAdaptorTest.this.defaultDataTableCellTransformer = defaultDataTableCellTransformer;
 
         }
@@ -136,7 +140,6 @@ public class GlueAdaptorTest {
             GlueAdaptorTest.this.docStringTypeDefinition = docStringType;
         }
     };
-
     private final GlueAdaptor adaptor = new GlueAdaptor(lookup, container);
 
     @Test
@@ -151,12 +154,14 @@ public class GlueAdaptorTest {
             () -> assertThat(dataTableTypeDefinition, notNullValue()),
             () -> assertThat(parameterTypeDefinition.parameterType().getRegexps(), is(singletonList("pattern"))),
             () -> assertThat(parameterTypeDefinition.parameterType().getName(), is("name")),
+            () -> assertThat(parameterTypeDefinition.parameterType().preferForRegexpMatch(), is(true)),
+            () -> assertThat(parameterTypeDefinition.parameterType().useForSnippets(), is(true)),
+            () -> assertThat(parameterTypeDefinition.parameterType().useRegexpMatchAsStrongTypeHint(), is(false)),
             () -> assertThat(afterStepHook, notNullValue()),
             () -> assertThat(beforeStepHook, notNullValue()),
             () -> assertThat(afterHook, notNullValue()),
             () -> assertThat(beforeHook, notNullValue()),
-            () -> assertThat(docStringTypeDefinition, notNullValue())
-        );
+            () -> assertThat(docStringTypeDefinition, notNullValue()));
     }
 
     @Given(value = "a step")
@@ -185,7 +190,12 @@ public class GlueAdaptorTest {
         return "data_table_type";
     }
 
-    @ParameterType(value = "pattern", name = "name")
+    @ParameterType(
+            value = "pattern",
+            name = "name",
+            preferForRegexMatch = true,
+            useForSnippets = true,
+            useRegexpMatchAsStrongTypeHint = false)
     public String parameter_type(String fromValue) {
         return "parameter_type";
     }

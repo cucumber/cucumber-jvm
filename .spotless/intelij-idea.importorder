@@ -1,0 +1,6 @@
+# Organize import order using Intelij IDEA defaults
+# Escaped hashes sort static methods last: https://github.com/diffplug/spotless/issues/306
+1=
+2=javax
+3=java
+4=\#

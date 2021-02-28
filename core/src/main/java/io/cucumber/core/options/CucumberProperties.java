@@ -5,13 +5,16 @@ import io.cucumber.core.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import static io.cucumber.core.options.Constants.CUCUMBER_PROPERTIES_FILE_NAME;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Store properties.
@@ -39,7 +42,8 @@ public final class CucumberProperties {
     }
 
     public static Map<String, String> fromPropertiesFile() {
-        InputStream resourceAsStream = CucumberProperties.class.getResourceAsStream("/" + CUCUMBER_PROPERTIES_FILE_NAME);
+        InputStream resourceAsStream = CucumberProperties.class
+                .getResourceAsStream("/" + CUCUMBER_PROPERTIES_FILE_NAME);
         if (resourceAsStream == null) {
             log.debug(() -> CUCUMBER_PROPERTIES_FILE_NAME + " file did not exist");
             return Collections.emptyMap();
@@ -55,45 +59,39 @@ public final class CucumberProperties {
         }
     }
 
+    public static Map<String, String> fromEnvironment() {
+        Map<String, String> p = System.getenv();
+        return new CucumberPropertiesMap(p);
+    }
+
     public static Map<String, String> fromSystemProperties() {
         Properties p = System.getProperties();
         return CucumberPropertiesMap.create(p);
     }
 
-    public static Map<String, String> fromEnvironment() {
-        Map<String, String> p = System.getenv();
-        CucumberPropertiesMap properties = new CucumberPropertiesMap();
-        properties.putAll(p);
-        return properties;
-    }
-
-    static class CucumberPropertiesMap extends HashMap<String, String> {
+    static class CucumberPropertiesMap extends AbstractMap<String, String> {
 
         private final CucumberPropertiesMap parent;
+        private final Map<String, String> delegate;
 
-        CucumberPropertiesMap() {
-            this(null);
-        }
-
-        CucumberPropertiesMap(CucumberPropertiesMap parent) {
-            this(parent, Collections.emptyMap());
-        }
-
-        CucumberPropertiesMap(Map<String, String> properties) {
-            this(null, properties);
-        }
-
-        CucumberPropertiesMap(CucumberPropertiesMap parent, Map<String, String> properties) {
-            super(properties);
+        CucumberPropertiesMap(CucumberPropertiesMap parent, Map<String, String> delegate) {
+            this.delegate = requireNonNull(delegate);
             this.parent = parent;
         }
 
+        CucumberPropertiesMap(Map<String, String> delegate) {
+            this(null, delegate);
+        }
+
+        @Override
+        public Set<Entry<String, String>> entrySet() {
+            return delegate.entrySet();
+        }
+
         private static CucumberPropertiesMap create(Properties p) {
-            CucumberPropertiesMap properties = new CucumberPropertiesMap();
-            for (String key : p.stringPropertyNames()) {
-                properties.put(key, p.getProperty(key));
-            }
-            return properties;
+            Map<String, String> copy = new HashMap<>();
+            p.stringPropertyNames().forEach(s -> copy.put(s, p.getProperty(s)));
+            return new CucumberPropertiesMap(copy);
         }
 
         @Override
@@ -113,18 +111,18 @@ public final class CucumberProperties {
             String keyString = (String) key;
 
             String uppercase = keyString
-                .replace(".", "_")
-                .replace("-", "_")
-                .toUpperCase(Locale.ENGLISH);
+                    .replace(".", "_")
+                    .replace("-", "_")
+                    .toUpperCase(Locale.ENGLISH);
             String upperCaseMatch = super.get(uppercase);
             if (upperCaseMatch != null) {
                 return upperCaseMatch;
             }
 
             String lowercase = keyString
-                .replace(".", "_")
-                .replace("-", "_")
-                .toLowerCase(Locale.ENGLISH);
+                    .replace(".", "_")
+                    .replace("-", "_")
+                    .toLowerCase(Locale.ENGLISH);
             String lowerValue = super.get(lowercase);
             if (lowerValue != null)
                 return lowerValue;
@@ -136,4 +134,5 @@ public final class CucumberProperties {
         }
 
     }
+
 }

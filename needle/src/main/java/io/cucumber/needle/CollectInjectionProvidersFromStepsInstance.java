@@ -27,8 +27,8 @@ enum CollectInjectionProvidersFromStepsInstance {
     /**
      * Collect providers direct in the step definition.
      *
-     * @param instance step definition instance
-     * @return collected injection providers.
+     * @param  instance step definition instance
+     * @return          collected injection providers.
      */
     final <T> InjectionProvider<?>[] apply(final T instance) {
         final Set<InjectionProvider<?>> providers = new LinkedHashSet<>();

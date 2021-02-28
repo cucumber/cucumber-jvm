@@ -9,4 +9,5 @@ public interface AtmService {
     void deposit(int amount);
 
     String getInfo();
+
 }

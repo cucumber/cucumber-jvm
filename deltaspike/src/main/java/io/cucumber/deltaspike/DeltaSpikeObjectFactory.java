@@ -1,13 +1,15 @@
 package io.cucumber.deltaspike;
 
+import io.cucumber.core.backend.ObjectFactory;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
-import io.cucumber.core.backend.ObjectFactory;
+import org.apiguardian.api.API;
+
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+
 import java.util.Set;
-import org.apiguardian.api.API;
 
 @API(status = API.Status.STABLE)
 public final class DeltaSpikeObjectFactory implements ObjectFactory {

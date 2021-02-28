@@ -31,14 +31,16 @@ class ThreadLocalRunnerSupplierTest {
     void before() {
         Supplier<ClassLoader> classLoader = ThreadLocalRunnerSupplierTest.class::getClassLoader;
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+            runtimeOptions);
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(classLoader, objectFactory);
         eventBus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
-        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory, typeRegistryConfigurerSupplier);
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
+            classLoader, runtimeOptions);
+        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory,
+            typeRegistryConfigurerSupplier);
     }
-
 
     @Test
     void should_create_a_runner() {
@@ -58,10 +60,9 @@ class ThreadLocalRunnerSupplierTest {
         thread0.join();
         thread1.join();
 
-        assertAll("Checking Runner",
+        assertAll(
             () -> assertThat(runners[0], is(not(equalTo(runners[1])))),
-            () -> assertThat(runners[1], is(not(equalTo(runners[0]))))
-        );
+            () -> assertThat(runners[1], is(not(equalTo(runners[0])))));
     }
 
     @Test
@@ -71,22 +72,20 @@ class ThreadLocalRunnerSupplierTest {
 
     @Test
     void runner_should_wrap_event_bus_bus() {
-        //This avoids problems with JUnit which listens to individual runners
+        // This avoids problems with JUnit which listens to individual runners
         EventBus runnerBus = runnerSupplier.get().getBus();
 
-        assertAll("Checking EventBus",
+        assertAll(
             () -> assertThat(eventBus, is(not(equalTo(runnerBus)))),
-            () -> assertThat(runnerBus, is(not(equalTo(eventBus))))
-        );
+            () -> assertThat(runnerBus, is(not(equalTo(eventBus)))));
     }
 
     @Test
     void should_limit_runner_bus_scope_to_events_generated_by_runner() {
-        //This avoids problems with JUnit which listens to individual runners
+        // This avoids problems with JUnit which listens to individual runners
         runnerSupplier.get().getBus().registerHandlerFor(
             TestCaseStarted.class,
-            event -> fail("Should not receive event")
-        );
+            event -> fail("Should not receive event"));
         eventBus.send(new TestCaseStarted(EPOCH, mock(TestCase.class)));
     }
 

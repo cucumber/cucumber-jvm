@@ -1,13 +1,14 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.core.gherkin.Location;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
 import io.cucumber.messages.Messages.Pickle.PickleStep;
 import io.cucumber.messages.Messages.Pickle.PickleTag;
+import io.cucumber.plugin.event.Location;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,23 +33,27 @@ final class GherkinMessagesPickle implements Pickle {
         this.steps = createCucumberSteps(pickle, dialect, this.cucumberQuery);
     }
 
-    private static List<Step> createCucumberSteps(Messages.Pickle pickle, GherkinDialect dialect, CucumberQuery cucumberQuery) {
+    private static List<Step> createCucumberSteps(
+            Messages.Pickle pickle,
+            GherkinDialect dialect,
+            CucumberQuery cucumberQuery
+    ) {
         List<Step> list = new ArrayList<>();
         String previousGivenWhenThen = dialect.getGivenKeywords()
-            .stream()
-            .filter(s -> !StepType.isAstrix(s))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
+                .stream()
+                .filter(s -> !StepType.isAstrix(s))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
         for (PickleStep pickleStep : pickle.getStepsList()) {
             String gherkinStepId = pickleStep.getAstNodeIds(0);
             Messages.GherkinDocument.Feature.Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
-            int stepLine = gherkinStep.getLocation().getLine();
+            Messages.Location location = gherkinStep.getLocation();
             String keyword = gherkinStep.getKeyword();
 
-            Step step = new GherkinMessagesStep(pickleStep, dialect, previousGivenWhenThen, stepLine, keyword);
+            Step step = new GherkinMessagesStep(pickleStep, dialect, previousGivenWhenThen, location, keyword);
             if (step.getType().isGivenWhenThen()) {
-                previousGivenWhenThen = step.getKeyWord();
+                previousGivenWhenThen = step.getKeyword();
             }
             list.add(step);
         }
@@ -70,18 +75,19 @@ final class GherkinMessagesPickle implements Pickle {
         return pickle.getName();
     }
 
-
     @Override
     public Location getLocation() {
         List<String> sourceIds = pickle.getAstNodeIdsList();
-        String sourceId = sourceIds.get(sourceIds.size() -1);
+        String sourceId = sourceIds.get(sourceIds.size() - 1);
         Messages.Location location = cucumberQuery.getLocation(sourceId);
         return GherkinMessagesLocation.from(location);
     }
 
     @Override
     public Location getScenarioLocation() {
-        Messages.Location location = cucumberQuery.getGherkinScenario(pickle.getAstNodeIds(0)).getLocation();
+        String sourceId = pickle.getAstNodeIds(0);
+        Scenario scenario = cucumberQuery.getGherkinScenario(sourceId);
+        Messages.Location location = scenario.getLocation();
         return GherkinMessagesLocation.from(location);
     }
 

@@ -16,8 +16,7 @@ class CucumberExceptionTest {
         CucumberException expectedThrown = new CucumberException(new RuntimeException());
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(equalTo("java.lang.RuntimeException"))),
-            () -> assertThat(expectedThrown.getCause(), isA(RuntimeException.class))
-        );
+            () -> assertThat(expectedThrown.getCause(), isA(RuntimeException.class)));
     }
 
     @Test
@@ -25,8 +24,7 @@ class CucumberExceptionTest {
         CucumberException expectedThrown = new CucumberException((Throwable) null);
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(nullValue())),
-            () -> assertThat(expectedThrown.getCause(), is(nullValue()))
-        );
+            () -> assertThat(expectedThrown.getCause(), is(nullValue())));
     }
 
     @Test
@@ -34,8 +32,7 @@ class CucumberExceptionTest {
         CucumberException expectedThrown = new CucumberException("message");
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(equalTo("message"))),
-            () -> assertThat(expectedThrown.getCause(), is(nullValue()))
-        );
+            () -> assertThat(expectedThrown.getCause(), is(nullValue())));
     }
 
     @Test
@@ -43,8 +40,7 @@ class CucumberExceptionTest {
         CucumberException expectedThrown = new CucumberException((String) null);
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(nullValue())),
-            () -> assertThat(expectedThrown.getCause(), is(nullValue()))
-        );
+            () -> assertThat(expectedThrown.getCause(), is(nullValue())));
     }
 
     @Test
@@ -52,8 +48,7 @@ class CucumberExceptionTest {
         CucumberException expectedThrown = new CucumberException("message", new RuntimeException());
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(equalTo("message"))),
-            () -> assertThat(expectedThrown.getCause(), isA(RuntimeException.class))
-        );
+            () -> assertThat(expectedThrown.getCause(), isA(RuntimeException.class)));
     }
 
     @Test
@@ -61,7 +56,7 @@ class CucumberExceptionTest {
         CucumberException expectedThrown = new CucumberException(null, null);
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(nullValue())),
-            () -> assertThat(expectedThrown.getCause(), is(nullValue()))
-        );
+            () -> assertThat(expectedThrown.getCause(), is(nullValue())));
     }
+
 }

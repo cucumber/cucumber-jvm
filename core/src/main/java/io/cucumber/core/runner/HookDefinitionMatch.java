@@ -8,6 +8,7 @@ import io.cucumber.core.exception.CucumberException;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
 
 final class HookDefinitionMatch implements StepDefinitionMatch {
+
     private final CoreHookDefinition hookDefinition;
 
     HookDefinitionMatch(CoreHookDefinition hookDefinition) {
@@ -28,10 +29,9 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
     private Throwable couldNotInvokeHook(CucumberBackendException e) {
         return new CucumberException(String.format("" +
                 "Could not invoke hook defined at '%s'.\n" +
-                "It appears there was a problem with the hook definition.\n" +
-                "The details are in the stacktrace below.", //TODO: Add doc URL
-            hookDefinition.getLocation()
-        ), e);
+                // TODO: Add doc URL
+                "It appears there was a problem with the hook definition.",
+            hookDefinition.getLocation()), e);
     }
 
     @Override
@@ -42,6 +42,10 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
     @Override
     public String getCodeLocation() {
         return hookDefinition.getLocation();
+    }
+
+    CoreHookDefinition getHookDefinition() {
+        return hookDefinition;
     }
 
 }

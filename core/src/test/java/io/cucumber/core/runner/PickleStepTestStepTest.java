@@ -1,9 +1,10 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseEvent;
@@ -46,6 +47,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,31 +55,29 @@ import static org.mockito.Mockito.when;
 class PickleStepTestStepTest {
 
     private final Feature feature = TestFeatureParser.parse("" +
-        "Feature: Test feature\n" +
-        "  Scenario: Test scenario\n" +
-        "     Given I have 4 cukes in my belly\n"
-    );
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n");
     private final Pickle pickle = feature.getPickles().get(0);
-    private final TestCase testCase = new TestCase(UUID.randomUUID(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), pickle, false);
+    private final TestCase testCase = new TestCase(UUID.randomUUID(), Collections.emptyList(), Collections.emptyList(),
+        Collections.emptyList(), pickle, false);
     private final EventBus bus = mock(EventBus.class);
-    private final TestCaseState state = new TestCaseState(bus, testCase);
+    private final UUID testExecutionId = UUID.randomUUID();
+    private final TestCaseState state = new TestCaseState(bus, testExecutionId, testCase);
     private final PickleStepDefinitionMatch definitionMatch = mock(PickleStepDefinitionMatch.class);
     private final CoreHookDefinition afterHookDefinition = mock(CoreHookDefinition.class);
-    private final HookTestStep afterHook = new HookTestStep(UUID.randomUUID(), AFTER_STEP, new HookDefinitionMatch(afterHookDefinition));
+    private final HookTestStep afterHook = new HookTestStep(UUID.randomUUID(), AFTER_STEP,
+        new HookDefinitionMatch(afterHookDefinition));
     private final CoreHookDefinition beforeHookDefinition = mock(CoreHookDefinition.class);
-    private final HookTestStep beforeHook = new HookTestStep(UUID.randomUUID(), BEFORE_STEP, new HookDefinitionMatch(beforeHookDefinition));
+    private final HookTestStep beforeHook = new HookTestStep(UUID.randomUUID(), BEFORE_STEP,
+        new HookDefinitionMatch(beforeHookDefinition));
     private final PickleStepTestStep step = new PickleStepTestStep(
         UUID.randomUUID(),
         URI.create("file:path/to.feature"),
         pickle.getSteps().get(0),
         singletonList(beforeHook),
         singletonList(afterHook),
-        definitionMatch
-    );
-    private final UUID testExecutionId = UUID.randomUUID();
-    private static ArgumentMatcher<TestCaseState> scenarioDoesNotHave(final Throwable type) {
-        return argument -> !type.equals(argument.getError());
-    }
+        definitionMatch);
 
     @BeforeEach
     void init() {
@@ -86,7 +86,7 @@ class PickleStepTestStepTest {
 
     @Test
     void run_wraps_run_step_in_test_step_started_and_finished_events() throws Throwable {
-        step.run(testCase, bus, state, false, testExecutionId);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
 
         InOrder order = inOrder(bus, definitionMatch);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -95,8 +95,8 @@ class PickleStepTestStepTest {
     }
 
     @Test
-    void run_does_dry_run_step_when_skip_steps_is_true() throws Throwable {
-        step.run(testCase, bus, state, true, testExecutionId);
+    void run_does_dry_run_step_when_dry_run_steps_is_true() throws Throwable {
+        step.run(testCase, bus, state, ExecutionMode.DRY_RUN);
 
         InOrder order = inOrder(bus, definitionMatch);
         order.verify(bus).send(isA(TestStepStarted.class));
@@ -105,33 +105,53 @@ class PickleStepTestStepTest {
     }
 
     @Test
-    void result_is_passed_when_step_definition_does_not_throw_exception() {
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertFalse(skipNextStep);
+    void run_skips_step_when_dry_run_and_skip_step_is_true() throws Throwable {
+        step.run(testCase, bus, state, ExecutionMode.SKIP);
+
+        InOrder order = inOrder(bus, definitionMatch);
+        order.verify(bus).send(isA(TestStepStarted.class));
+        order.verify(definitionMatch, never()).dryRunStep(state);
+        order.verify(bus).send(isA(TestStepFinished.class));
+    }
+
+    @Test
+    void run_skips_step_when_skip_step_is_true() throws Throwable {
+        step.run(testCase, bus, state, ExecutionMode.SKIP);
+
+        InOrder order = inOrder(bus, definitionMatch);
+        order.verify(bus).send(isA(TestStepStarted.class));
+        order.verify(definitionMatch, never()).dryRunStep(state);
+        order.verify(bus).send(isA(TestStepFinished.class));
+    }
+
+    @Test
+    void result_is_passed_run_when_step_definition_does_not_throw_exception() {
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.RUN));
         assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
     void result_is_skipped_when_skip_step_is_not_run_all() {
-        boolean skipNextStep = step.run(testCase, bus, state, true, testExecutionId);
-
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.SKIP);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
     }
 
     @Test
     void result_is_skipped_when_before_step_hook_does_not_pass() {
         doThrow(TestAbortedException.class).when(beforeHookDefinition).execute(any(TestCaseState.class));
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
     }
 
     @Test
-    void step_execution_is_dry_run_when_before_step_hook_does_not_pass() throws Throwable {
+    void step_execution_is_skipped_when_before_step_hook_does_not_pass() throws Throwable {
         doThrow(TestAbortedException.class).when(beforeHookDefinition).execute(any(TestCaseState.class));
-        step.run(testCase, bus, state, false, testExecutionId);
-        verify(definitionMatch).dryRunStep(any(TestCaseState.class));
+        step.run(testCase, bus, state, ExecutionMode.RUN);
+        verify(definitionMatch, never()).runStep(any(TestCaseState.class));
+        verify(definitionMatch, never()).dryRunStep(any(TestCaseState.class));
     }
 
     @Test
@@ -139,14 +159,14 @@ class PickleStepTestStepTest {
         Exception exception = new RuntimeException();
         doThrow(exception).when(beforeHookDefinition).execute(any(TestCaseState.class));
         Result failure = new Result(Status.FAILED, ZERO, exception);
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(FAILED)));
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
-        verify(bus, times(6)).send(captor.capture());
+        verify(bus, times(12)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertThat(((TestStepFinished) allValues.get(1)).getResult(), is(equalTo(failure)));
+        assertThat(((TestStepFinished) allValues.get(2)).getResult(), is(equalTo(failure)));
     }
 
     @Test
@@ -154,14 +174,14 @@ class PickleStepTestStepTest {
         RuntimeException runtimeException = new RuntimeException();
         Result failure = new Result(Status.FAILED, ZERO, runtimeException);
         doThrow(runtimeException).when(definitionMatch).runStep(any(TestCaseState.class));
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(FAILED)));
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
-        verify(bus, times(6)).send(captor.capture());
+        verify(bus, times(12)).send(captor.capture());
         List<TestCaseEvent> allValues = captor.getAllValues();
-        assertThat(((TestStepFinished) allValues.get(3)).getResult(), is(equalTo(failure)));
+        assertThat(((TestStepFinished) allValues.get(6)).getResult(), is(equalTo(failure)));
     }
 
     @Test
@@ -169,27 +189,27 @@ class PickleStepTestStepTest {
         Exception exception = new RuntimeException();
         Result failure = new Result(Status.FAILED, ZERO, exception);
         doThrow(exception).when(afterHookDefinition).execute(any(TestCaseState.class));
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(FAILED)));
 
-        ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
-        verify(bus, times(6)).send(captor.capture());
-        List<TestCaseEvent> allValues = captor.getAllValues();
-        assertThat(((TestStepFinished) allValues.get(5)).getResult(), is(equalTo(failure)));
+        ArgumentCaptor<Object> captor = forClass(TestCaseEvent.class);
+        verify(bus, times(12)).send(captor.capture());
+        List<Object> allValues = captor.getAllValues();
+        assertThat(((TestStepFinished) allValues.get(10)).getResult(), is(equalTo(failure)));
     }
 
     @Test
     void after_step_hook_is_run_when_before_step_hook_does_not_pass() {
         doThrow(RuntimeException.class).when(beforeHookDefinition).execute(any(TestCaseState.class));
-        step.run(testCase, bus, state, false, testExecutionId);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
         verify(afterHookDefinition).execute(any(TestCaseState.class));
     }
 
     @Test
     void after_step_hook_is_run_when_step_does_not_pass() throws Throwable {
         doThrow(Exception.class).when(definitionMatch).runStep(any(TestCaseState.class));
-        step.run(testCase, bus, state, false, testExecutionId);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
         verify(afterHookDefinition).execute(any(TestCaseState.class));
     }
 
@@ -198,8 +218,12 @@ class PickleStepTestStepTest {
         Throwable expectedError = new TestAbortedException("oops");
         doThrow(expectedError).when(definitionMatch).runStep(any(TestCaseState.class));
         doThrow(new RuntimeException()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
-        step.run(testCase, bus, state, false, testExecutionId);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(state.getError(), is(expectedError));
+    }
+
+    private static ArgumentMatcher<TestCaseState> scenarioDoesNotHave(final Throwable type) {
+        return argument -> !type.equals(argument.getError());
     }
 
     @Test
@@ -207,7 +231,7 @@ class PickleStepTestStepTest {
         Throwable expectedError = new TestAbortedException("oops");
         doThrow(expectedError).when(beforeHookDefinition).execute(any(TestCaseState.class));
         doThrow(new RuntimeException()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
-        step.run(testCase, bus, state, false, testExecutionId);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(state.getError(), is(expectedError));
     }
 
@@ -215,8 +239,8 @@ class PickleStepTestStepTest {
     void result_is_skipped_when_step_definition_throws_assumption_violated_exception() throws Throwable {
         doThrow(TestAbortedException.class).when(definitionMatch).runStep(any());
 
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
 
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
     }
@@ -225,18 +249,18 @@ class PickleStepTestStepTest {
     void result_is_failed_when_step_definition_throws_exception() throws Throwable {
         doThrow(RuntimeException.class).when(definitionMatch).runStep(any(TestCaseState.class));
 
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
 
         assertThat(state.getStatus(), is(equalTo(FAILED)));
     }
 
     @Test
     void result_is_pending_when_step_definition_throws_pending_exception() throws Throwable {
-        doThrow(TestPendingException.class).when(definitionMatch).runStep(any(TestCaseState.class));
+        doThrow(StubPendingException.class).when(definitionMatch).runStep(any(TestCaseState.class));
 
-        boolean skipNextStep = step.run(testCase, bus, state, false, testExecutionId);
-        assertTrue(skipNextStep);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
+        assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
 
         assertThat(state.getStatus(), is(equalTo(PENDING)));
     }
@@ -244,32 +268,29 @@ class PickleStepTestStepTest {
     @Test
     void step_execution_time_is_measured() {
         Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n"
-        );
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given I have 4 cukes in my belly\n");
 
         TestStep step = new PickleStepTestStep(
             UUID.randomUUID(),
             URI.create("file:path/to.feature"),
             feature.getPickles().get(0).getSteps().get(0),
-            definitionMatch
-        );
+            definitionMatch);
         when(bus.getInstant()).thenReturn(ofEpochMilli(234L), ofEpochMilli(1234L));
-        step.run(testCase, bus, state, false, testExecutionId);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
 
         ArgumentCaptor<TestCaseEvent> captor = forClass(TestCaseEvent.class);
-        verify(bus, times(2)).send(captor.capture());
+        verify(bus, times(4)).send(captor.capture());
 
         List<TestCaseEvent> allValues = captor.getAllValues();
         TestStepStarted started = (TestStepStarted) allValues.get(0);
-        TestStepFinished finished = (TestStepFinished) allValues.get(1);
+        TestStepFinished finished = (TestStepFinished) allValues.get(2);
 
-        assertAll("Checking TestStep",
+        assertAll(
             () -> assertThat(started.getInstant(), is(equalTo(ofEpochMilli(234L)))),
             () -> assertThat(finished.getInstant(), is(equalTo(ofEpochMilli(1234L)))),
-            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L))))
-        );
+            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L)))));
     }
 
 }

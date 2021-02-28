@@ -7,13 +7,13 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.gherkin.Gherkin;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
-import io.cucumber.gherkin.ParserException;
 import io.cucumber.messages.Messages;
+import io.cucumber.messages.Messages.Envelope;
 import io.cucumber.messages.Messages.GherkinDocument;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -24,47 +24,64 @@ import static java.util.stream.Collectors.toList;
 public final class GherkinMessagesFeatureParser implements FeatureParser {
 
     @Override
-    public Feature parse(URI path, String source, Supplier<UUID> idGenerator) {
-        try {
-            CucumberQuery cucumberQuery = new CucumberQuery();
+    public Optional<Feature> parse(URI path, String source, Supplier<UUID> idGenerator) {
+        List<Envelope> sources = singletonList(
+            makeSourceEnvelope(source, path.toString()));
 
-            List<Messages.Envelope> sources = singletonList(
-                makeSourceEnvelope(source, path.toString())
-            );
+        List<Envelope> envelopes = Gherkin.fromSources(
+            sources,
+            true,
+            true,
+            true,
+            () -> idGenerator.get().toString()).collect(toList());
 
-            List<Messages.Envelope> envelopes = Gherkin.fromSources(
-                sources,
-                true,
-                true,
-                true,
-                () -> idGenerator.get().toString()
-            ).collect(toList());
+        GherkinDocument gherkinDocument = envelopes.stream()
+                .filter(Envelope::hasGherkinDocument)
+                .map(Envelope::getGherkinDocument)
+                .findFirst()
+                .orElse(null);
 
-            GherkinDialect dialect = null;
-            GherkinDocument gherkinDocument = null;
-            List<Pickle> pickles = new ArrayList<>();
-            for (Messages.Envelope envelope : envelopes) {
-                if (envelope.hasGherkinDocument()) {
-                    gherkinDocument = envelope.getGherkinDocument();
-                    cucumberQuery.update(gherkinDocument);
-                    GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-                    String language = gherkinDocument.getFeature().getLanguage();
-                    dialect = dialectProvider.getDialect(language, null);
-                }
-                if (envelope.hasPickle()) {
-                    Messages.Pickle pickle = envelope.getPickle();
-                    pickles.add(new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery));
-                }
+        if (gherkinDocument == null || !gherkinDocument.hasFeature()) {
+            List<String> errors = envelopes.stream()
+                    .filter(Envelope::hasParseError)
+                    .map(Envelope::getParseError)
+                    .map(Messages.ParseError::getMessage)
+                    .collect(toList());
+            if (!errors.isEmpty()) {
+                throw new FeatureParserException(
+                    "Failed to parse resource at: " + path.toString() + "\n" + String.join("\n", errors));
             }
-
-            return new GherkinMessagesFeature(gherkinDocument, path, source, pickles, envelopes);
-        } catch (ParserException e) {
-            throw new FeatureParserException("Failed to parse resource at: " + path.toString(), e);
+            return Optional.empty();
         }
+
+        CucumberQuery cucumberQuery = new CucumberQuery();
+        cucumberQuery.update(gherkinDocument);
+        GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
+        GherkinDocument.Feature feature = gherkinDocument.getFeature();
+        String language = feature.getLanguage();
+        GherkinDialect dialect = dialectProvider.getDialect(language, null);
+
+        List<Messages.Pickle> pickleMessages = envelopes.stream()
+                .filter(Envelope::hasPickle)
+                .map(Envelope::getPickle)
+                .collect(toList());
+
+        List<Pickle> pickles = pickleMessages.stream()
+                .map(pickle -> new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery))
+                .collect(toList());
+
+        GherkinMessagesFeature messagesFeature = new GherkinMessagesFeature(
+            feature,
+            path,
+            source,
+            pickles,
+            envelopes);
+        return Optional.of(messagesFeature);
     }
 
     @Override
     public String version() {
         return "8";
     }
+
 }

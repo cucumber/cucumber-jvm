@@ -23,30 +23,27 @@ class ElementsAreAllEqualMatcherTest {
     void testDoesNotMatchNullCollection() {
         Collection<?> arg = null;
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("was null", matcher, arg)
-        );
+            () -> assertMismatchDescription("was null", matcher, arg));
     }
 
     @Test
     void testDoesNotMatchCollectionWithLessThanTwoElements() {
         Collection<String> arg = Collections.singletonList("foo");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection did not contain more than one element <[foo]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection did not contain more than one element <[foo]>", matcher, arg));
     }
 
     @Test
     void testDoesNotMatchCollectionWithNullElements() {
         Collection<Object> arg = Arrays.asList(null, null);
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained null element <[null, null]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained null element <[null, null]>", matcher, arg));
     }
 
     @Test
@@ -58,10 +55,10 @@ class ElementsAreAllEqualMatcherTest {
     void testDoesNotMatchCollectionWithTwoElementsThatAreNotEqual() {
         Collection<String> arg = Arrays.asList("foo", "bar");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained elements that are not equal <[foo, bar]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained elements that are not equal <[foo, bar]>", matcher,
+                arg));
     }
 
     @Test
@@ -73,20 +70,20 @@ class ElementsAreAllEqualMatcherTest {
     void testDoesNotMatchCollectionWithSomeElementsThatAreNotEqual() {
         Collection<String> arg = Arrays.asList("foo", "foo", "bar");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained elements that are not equal <[foo, foo, bar]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained elements that are not equal <[foo, foo, bar]>",
+                matcher, arg));
     }
 
     @Test
     void testDoesNotMatchCollectionWithThreeElementsThatAreNotEqual() {
         Collection<String> arg = Arrays.asList("foo", "bar", "baz");
 
-        assertAll("Checking Matcher",
+        assertAll(
             () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("collection contained elements that are not equal <[foo, bar, baz]>", matcher, arg)
-        );
+            () -> assertMismatchDescription("collection contained elements that are not equal <[foo, bar, baz]>",
+                matcher, arg));
     }
 
     @Test

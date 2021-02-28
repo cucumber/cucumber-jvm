@@ -24,6 +24,10 @@ class ReadInjectionProviderClassNamesTest {
         assertThat(classNames.iterator().next(), is(SimpleNameGetterProvider.class.getCanonicalName()));
     }
 
+    private ResourceBundle loadBundle(final String resourceName) {
+        return LoadResourceBundle.INSTANCE.apply(resourceName);
+    }
+
     @Test
     void shouldReturnEmptySetWhenResourceBundleIsNull() {
         final Set<String> classNames = function.apply(null);
@@ -57,14 +61,9 @@ class ReadInjectionProviderClassNamesTest {
     void shouldReturnTwoTrimmedClassNames() {
         final Set<String> classNames = function.apply(loadBundle("resource-bundles/two-classname"));
 
-        assertAll("Checking function",
+        assertAll(
             () -> assertThat(classNames.size(), is(2)),
-            () -> assertThat(classNames, hasItems("java.lang.String", "java.util.Set"))
-        );
-    }
-
-    private ResourceBundle loadBundle(final String resourceName) {
-        return LoadResourceBundle.INSTANCE.apply(resourceName);
+            () -> assertThat(classNames, hasItems("java.lang.String", "java.util.Set")));
     }
 
 }

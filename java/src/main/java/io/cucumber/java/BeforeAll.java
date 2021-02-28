@@ -16,8 +16,8 @@ import java.lang.annotation.Target;
 public @interface BeforeAll {
 
     /**
-     * The order in which this hook should run. Lower numbers are run first.
-     * The default order is 10000.
+     * The order in which this hook should run. Lower numbers are run first. The
+     * default order is 10000.
      *
      * @return the order in which this hook should run.
      */

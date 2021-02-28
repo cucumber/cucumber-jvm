@@ -10,11 +10,23 @@ import java.util.UUID;
 public interface TestCase {
 
     /**
-     * @return the line in the feature file of the Scenario. If this is a Scenario
-     * from Scenario Outlines this wil return the line of the example row in
-     * the Scenario Outline.
+     * Returns the line of this Scenario in the feature file. If this Scenario
+     * is an example in a Scenario Outline the method wil return the line of the
+     * example.
+     *
+     * @return the line of this scenario.
      */
+    @Deprecated
     Integer getLine();
+
+    /**
+     * Returns the location of this Scenario in the feature file. If this
+     * Scenario is an example in a Scenario Outline the method wil return the
+     * location of the example.
+     *
+     * @return the location of this scenario.
+     */
+    Location getLocation();
 
     String getKeyword();
 
@@ -33,4 +45,5 @@ public interface TestCase {
     URI getUri();
 
     UUID getId();
+
 }

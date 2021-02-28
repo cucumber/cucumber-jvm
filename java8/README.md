@@ -1,7 +1,7 @@
 Cucumber Java8
 ==============
 
-Provides annotation based step definitions. To use add the `cucumber-java` dependency to your pom.xml:
+Provides lambda based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
 
 ```xml
 <dependencies>
@@ -21,10 +21,15 @@ Provides annotation based step definitions. To use add the `cucumber-java` depen
 Declare a step definition calling a method in the constructor of the glue class.
 For localized methods import the interface from `io.cucumber.java8.<ISO2 Language Code>`
 
+Data tables and Docstrings from Gherkin can be accessed by using a `DataTable`
+or `DocString` object as the last parameter.
+
 ```java
 package com.example.app;
 
 import io.cucumber.java8.En;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,6 +49,15 @@ public class StepDefinitions implements En {
         });
 
         Then("the result is {double}", (Double expected) -> assertEquals(expected, calc.value()));
+
+        Given("the previous entries:", (DataTable dataTable) -> {
+            List<Entry> entries = dataTable.asList(Entry.class);
+            ...
+        });
+
+        Then("the calculation log displays:", (DocString docString) -> {
+            ...
+        });
     }
 }
 ```
@@ -86,7 +100,7 @@ Data table types can be declared by calling `DataTableType` in the constructor.
 Depending on the lambda type this will be either a: 
  * `String` -> `io.cucumber.datatable.TableCellTranformer`
  * `Map<String,String>` -> `io.cucumber.datatable.TableEntry`
- * `List<String` -> `io.cucumber.datatable.TableRow`
+ * `List<String>` -> `io.cucumber.datatable.TableRow`
  * `DataTable` -> `io.cucumber.datatable.TableTransformer`
 
 ```java
@@ -118,6 +132,9 @@ Jackson to quickly transform well known string representations to Java objects.
  * `DefaultParameterTransformer`
  * `DefaultDataTableEntryTransformer`
  * `DefaultDataTableCellTransformer`
+ 
+For a full list of transformations that can be achieved with data table types
+see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
  
 ```java
 package com.example.app;
@@ -183,6 +200,53 @@ public class StepDefinitions implements En {
             List<Author> authors = authorsTable.asList(Author.class);
           // authors = [Author(name="Aspiring Author", firstPublication=null), Author(name="Ancient Author", firstPublication=)]
 
+        });
+    }
+}
+```
+
+# Transposing Tables
+
+A data table can be transposed by calling `.transpose()`. This means the keys
+will be in the first column rather then the first row.
+
+```gherkin
+ Given the user is
+    | firstname	    | Roberto	|
+    | lastname	    | Lo Giacco |
+    | nationality	| Italian	|
+ ```
+
+And a data table type to create a User
+
+```java 
+package com.example.app;
+
+import io.cucumber.datatable.DataTable;
+
+import io.cucumber.java8.En;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class StepDefinitions implements En {
+    
+    public StepDefinitions() {
+        DataTableType((Map<String, String> entry) -> new User(
+            entry.get("firstname"),
+            entry.get("lastname")
+            entry.get("nationality")
+        ));
+    
+        Given("the user is",  (DataTable authorsTable) -> {
+            User user = authorsTable.transpose().asList(User.class);
+            // user  = User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
         });
     }
 }

@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class ShellWords {
+
     private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s'\"]+|[']([^']*)[']|[\"]([^\"]*)[\"]");
 
     private ShellWords() {
@@ -20,8 +21,8 @@ class ShellWords {
             } else {
                 String shellword = shellwordsMatcher.group();
                 if (shellword.startsWith("\"")
-                    && shellword.endsWith("\"")
-                    && shellword.length() > 2) {
+                        && shellword.endsWith("\"")
+                        && shellword.length() > 2) {
                     shellword = shellword.substring(1, shellword.length() - 1);
                 }
                 matchList.add(shellword);
@@ -29,4 +30,5 @@ class ShellWords {
         }
         return matchList;
     }
+
 }

@@ -1,6 +1,5 @@
 package io.cucumber.testng;
 
-
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
@@ -29,12 +28,21 @@ public class StubBackendProviderService implements BackendProviderService {
      * We need an implementation of Backend to prevent Runtime from blowing up.
      */
     private static class StubBackend implements Backend {
+
         StubBackend() {
 
         }
 
         @Override
         public void loadGlue(Glue glue, List<URI> gluePaths) {
+            glue.addStepDefinition(createStepDefinition("a scenario"));
+            glue.addStepDefinition(createStepDefinition("a scenario outline"));
+            glue.addStepDefinition(createStepDefinition("it is executed"));
+            glue.addStepDefinition(createStepDefinition("is only runs once"));
+            glue.addStepDefinition(createStepDefinition("A is used"));
+            glue.addStepDefinition(createStepDefinition("B is used"));
+            glue.addStepDefinition(createStepDefinition("C is used"));
+            glue.addStepDefinition(createStepDefinition("D is used"));
             glue.addStepDefinition(createStepDefinition("step"));
             glue.addStepDefinition(createStepDefinition("another step"));
             glue.addStepDefinition(createStepDefinition("foo"));
@@ -50,18 +58,8 @@ public class StubBackendProviderService implements BackendProviderService {
             return new StepDefinition() {
 
                 @Override
-                public String getLocation() {
-                    return "stubbed location";
-                }
-
-                @Override
                 public void execute(Object[] args) {
 
-                }
-
-                @Override
-                public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-                    return false;
                 }
 
                 @Override
@@ -72,6 +70,16 @@ public class StubBackendProviderService implements BackendProviderService {
                 @Override
                 public String getPattern() {
                     return pattern;
+                }
+
+                @Override
+                public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+                    return false;
+                }
+
+                @Override
+                public String getLocation() {
+                    return "stubbed location";
                 }
             };
         }
@@ -111,5 +119,7 @@ public class StubBackendProviderService implements BackendProviderService {
                 }
             };
         }
+
     }
+
 }

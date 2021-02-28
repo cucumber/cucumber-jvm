@@ -15,24 +15,38 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import javax.inject.Singleton;
+
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GuiceFactoryTest {
 
+    final AbstractModule boundScenarioScopedClassModule = new AbstractModule() {
+        @Override
+        protected void configure() {
+            bind(BoundScenarioScopedClass.class).in(ScenarioScoped.class);
+        }
+    };
+    final AbstractModule boundSingletonClassModule = new AbstractModule() {
+        @Override
+        protected void configure() {
+            bind(BoundSingletonClass.class).in(Scopes.SINGLETON);
+        }
+    };
     private ObjectFactory factory;
     private List<?> instancesFromSameScenario;
     private List<?> instancesFromDifferentScenarios;
 
     @AfterEach
     void tearDown() {
-        // If factory is left in start state it can cause cascading failures due to scope being left open
+        // If factory is left in start state it can cause cascading failures due
+        // to scope being left open
         try {
             factory.stop();
         } catch (Exception ignored) {
@@ -59,13 +73,9 @@ class GuiceFactoryTest {
         ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalToCompressingWhiteSpace(
             "Guice configuration errors:\n\n" +
-                "1) No implementation for io.cucumber.guice.ScenarioScope was bound.\n" +
-                "  while locating io.cucumber.guice.ScenarioScope\n\n" +
-                "1 error"
-        )));
-    }
-
-    static class UnscopedClass {
+                    "1) No implementation for io.cucumber.guice.ScenarioScope was bound.\n" +
+                    "  while locating io.cucumber.guice.ScenarioScope\n\n" +
+                    "1 error")));
     }
 
     @Test
@@ -75,6 +85,22 @@ class GuiceFactoryTest {
         assertThat(instancesFromSameScenario, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
 
+    private Injector injector(Module... module) {
+        return Guice.createInjector(Stage.PRODUCTION, module);
+    }
+
+    private <E> List<E> getInstancesFromSameScenario(ObjectFactory factory, Class<E> aClass) {
+
+        // Scenario
+        factory.start();
+        E o1 = factory.getInstance(aClass);
+        E o2 = factory.getInstance(aClass);
+        E o3 = factory.getInstance(aClass);
+        factory.stop();
+
+        return Arrays.asList(o1, o2, o3);
+    }
+
     @Test
     void shouldGiveNewInstanceOfUnscopedClassForEachScenario() {
         factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
@@ -82,8 +108,24 @@ class GuiceFactoryTest {
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
 
-    @ScenarioScoped
-    static class AnnotatedScenarioScopedClass {
+    private <E> List<E> getInstancesFromDifferentScenarios(ObjectFactory factory, Class<E> aClass) {
+
+        // Scenario 1
+        factory.start();
+        E o1 = factory.getInstance(aClass);
+        factory.stop();
+
+        // Scenario 2
+        factory.start();
+        E o2 = factory.getInstance(aClass);
+        factory.stop();
+
+        // Scenario 3
+        factory.start();
+        E o3 = factory.getInstance(aClass);
+        factory.stop();
+
+        return Arrays.asList(o1, o2, o3);
     }
 
     @Test
@@ -96,12 +138,9 @@ class GuiceFactoryTest {
     @Test
     void shouldGiveNewInstanceOfAnnotatedScenarioScopedClassForEachScenario() {
         factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
-        instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, AnnotatedScenarioScopedClass.class);
+        instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory,
+            AnnotatedScenarioScopedClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
-    }
-
-    @Singleton
-    static class AnnotatedSingletonClass {
     }
 
     @Test
@@ -118,16 +157,6 @@ class GuiceFactoryTest {
         assertThat(instancesFromDifferentScenarios, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
-    static class BoundScenarioScopedClass {
-    }
-
-    final AbstractModule boundScenarioScopedClassModule = new AbstractModule() {
-        @Override
-        protected void configure() {
-            bind(BoundScenarioScopedClass.class).in(ScenarioScoped.class);
-        }
-    };
-
     @Test
     void shouldGiveTheSameInstanceOfBoundScenarioScopedClassWithinAScenario() {
         factory = new GuiceFactory(injector(CucumberModules.createScenarioModule(), boundScenarioScopedClassModule));
@@ -141,16 +170,6 @@ class GuiceFactoryTest {
         instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, BoundScenarioScopedClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
-
-    static class BoundSingletonClass {
-    }
-
-    final AbstractModule boundSingletonClassModule = new AbstractModule() {
-        @Override
-        protected void configure() {
-            bind(BoundSingletonClass.class).in(Scopes.SINGLETON);
-        }
-    };
 
     @Test
     void shouldGiveTheSameInstanceOfBoundSingletonClassWithinAScenario() {
@@ -178,41 +197,26 @@ class GuiceFactoryTest {
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
 
-    private Injector injector(Module... module) {
-        return Guice.createInjector(Stage.PRODUCTION, module);
+    static class UnscopedClass {
+
     }
 
+    @ScenarioScoped
+    static class AnnotatedScenarioScopedClass {
 
-    private <E> List<E> getInstancesFromSameScenario(ObjectFactory factory, Class<E> aClass) {
-
-        // Scenario
-        factory.start();
-        E o1 = factory.getInstance(aClass);
-        E o2 = factory.getInstance(aClass);
-        E o3 = factory.getInstance(aClass);
-        factory.stop();
-
-        return Arrays.asList(o1, o2, o3);
     }
 
-    private <E> List<E> getInstancesFromDifferentScenarios(ObjectFactory factory, Class<E> aClass) {
+    @Singleton
+    static class AnnotatedSingletonClass {
 
-        // Scenario 1
-        factory.start();
-        E o1 = factory.getInstance(aClass);
-        factory.stop();
+    }
 
-        // Scenario 2
-        factory.start();
-        E o2 = factory.getInstance(aClass);
-        factory.stop();
+    static class BoundScenarioScopedClass {
 
-        // Scenario 3
-        factory.start();
-        E o3 = factory.getInstance(aClass);
-        factory.stop();
+    }
 
-        return Arrays.asList(o1, o2, o3);
+    static class BoundSingletonClass {
+
     }
 
 }

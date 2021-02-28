@@ -10,12 +10,12 @@ class MapConfigurationParameters implements ConfigurationParameters {
 
     private final Map<String, String> parameters;
 
-    private MapConfigurationParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
-    }
-
     MapConfigurationParameters(String key, String value) {
         this(Collections.singletonMap(key, value));
+    }
+
+    MapConfigurationParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 
     @Override
@@ -32,4 +32,5 @@ class MapConfigurationParameters implements ConfigurationParameters {
     public int size() {
         return 0;
     }
+
 }

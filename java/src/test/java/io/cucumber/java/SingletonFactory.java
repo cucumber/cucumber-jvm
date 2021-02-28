@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.ObjectFactory;
 
 class SingletonFactory implements ObjectFactory {
+
     private Object singleton;
 
     public SingletonFactory() {
@@ -37,4 +38,5 @@ class SingletonFactory implements ObjectFactory {
     public void setInstance(Object o) {
         singleton = o;
     }
+
 }

@@ -1,12 +1,12 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.options.CommandlineOptionsParser;
-import io.cucumber.core.options.RuntimeOptions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -24,122 +24,7 @@ class ExitStatusTest {
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
 
     private EventBus bus;
-    private Runtime.ExitStatus exitStatus;
-
-    @Test
-    void non_strict_wip_with_ambiguous_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    private void createNonStrictWipExitStatus() {
-        createExitStatus("-g", "anything", "--wip");
-    }
-
-    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
-        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
-    }
-
-    private void createExitStatus(String... runtimeArgs) {
-        RuntimeOptions runtimeOptions = new CommandlineOptionsParser()
-            .parse(runtimeArgs)
-            .build();
-        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        exitStatus = new Runtime.ExitStatus(runtimeOptions);
-        exitStatus.setEventPublisher(bus);
-    }
-
-    @Test
-    void non_strict_wip_with_failed_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.FAILED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_wip_with_passed_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PASSED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    @Test
-    void non_strict_wip_with_pending_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PENDING));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_wip_with_skipped_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_wip_with_undefined_scenarios() {
-        createNonStrictWipExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_ambiguous_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    private void createNonStrictExitStatus() {
-        createExitStatus("-g", "anything");
-    }
-
-    @Test
-    void non_strict_with_failed_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.FAILED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
-    }
-
-    @Test
-    void non_strict_with_passed_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PASSED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_pending_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.PENDING));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_skipped_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
-
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
-
-    @Test
-    void non_strict_with_undefined_scenarios() {
-        createNonStrictExitStatus();
-        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
-        assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
-    }
+    private ExitStatus exitStatus;
 
     @Test
     void should_pass_if_no_features_are_found() {
@@ -147,8 +32,18 @@ class ExitStatusTest {
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
+    private void createStrictRuntime() {
+        createExitStatus(new RuntimeOptionsBuilder().build());
+    }
+
+    private void createExitStatus(RuntimeOptions runtimeOptions) {
+        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        exitStatus = new ExitStatus(runtimeOptions);
+        exitStatus.setEventPublisher(bus);
+    }
+
     @Test
-    void strict_wip_with_ambiguous_scenarios() {
+    void wip_with_ambiguous_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
@@ -156,11 +51,15 @@ class ExitStatusTest {
     }
 
     private void createStrictWipRuntime() {
-        createExitStatus("-g", "anything", "--strict", "--wip");
+        createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
+    }
+
+    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
+        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
     }
 
     @Test
-    void strict_wip_with_failed_failed_scenarios() {
+    void wip_with_failed_failed_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
@@ -169,7 +68,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_wip_with_failed_passed_scenarios() {
+    void wip_with_failed_passed_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
@@ -178,7 +77,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_wip_with_failed_scenarios() {
+    void wip_with_failed_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
@@ -186,7 +85,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_wip_with_passed_failed_scenarios() {
+    void wip_with_passed_failed_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
@@ -195,7 +94,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_wip_with_passed_scenarios() {
+    void wip_with_passed_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
@@ -203,7 +102,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_wip_with_pending_scenarios() {
+    void wip_with_pending_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
@@ -211,34 +110,34 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_wip_with_skipped_scenarios() {
+    void wip_with_skipped_scenarios() {
         createNonStrictWipExitStatus();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
+    private void createNonStrictWipExitStatus() {
+        createExitStatus(new RuntimeOptionsBuilder().setWip(true).build());
+    }
+
     @Test
-    void strict_wip_with_undefined_scenarios() {
+    void wip_with_undefined_scenarios() {
         createStrictWipRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
-    void strict_with_ambiguous_scenarios() {
+    void with_ambiguous_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
-    private void createStrictRuntime() {
-        createExitStatus("-g", "anything", "--strict");
-    }
-
     @Test
-    void strict_with_failed_failed_scenarios() {
+    void with_failed_failed_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
@@ -247,7 +146,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_with_failed_passed_scenarios() {
+    void with_failed_passed_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
@@ -256,7 +155,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_with_failed_scenarios() {
+    void with_failed_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
@@ -264,7 +163,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_with_passed_failed_scenarios() {
+    void with_passed_failed_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
@@ -273,7 +172,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_with_passed_passed_scenarios() {
+    void with_passed_passed_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
@@ -282,7 +181,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_with_passed_scenarios() {
+    void with_passed_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
@@ -290,7 +189,7 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_with_pending_scenarios() {
+    void with_pending_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
@@ -298,15 +197,15 @@ class ExitStatusTest {
     }
 
     @Test
-    void strict_with_skipped_scenarios() {
-        createNonStrictExitStatus();
+    void with_skipped_scenarios() {
+        createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
-    void strict_with_undefined_scenarios() {
+    void with_undefined_scenarios() {
         createStrictRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertThat(exitStatus.exitStatus(), is(equalTo((byte) 0x1)));

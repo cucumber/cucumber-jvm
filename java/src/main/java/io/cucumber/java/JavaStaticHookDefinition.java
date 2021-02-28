@@ -34,10 +34,10 @@ final class JavaStaticHookDefinition extends AbstractGlueDefinition implements S
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(BeforeAll.class)
-            .addAnnotation(AfterAll.class)
-            .addSignature("public static void before_or_after_all()")
-            .build();
+                .addAnnotation(BeforeAll.class)
+                .addAnnotation(AfterAll.class)
+                .addSignature("public static void before_or_after_all()")
+                .build();
     }
 
     @Override

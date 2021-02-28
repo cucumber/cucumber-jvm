@@ -21,8 +21,8 @@ final class AmbiguousStepDefinitionsException extends Exception {
         requireNonNull(matches);
 
         return quoteText(step.getText()) + " matches more than one step definition:\n" + matches.stream()
-            .map(match -> "  " + quoteText(match.getPattern()) + " in " + match.getLocation())
-            .collect(joining("\n"));
+                .map(match -> "  " + quoteText(match.getPattern()) + " in " + match.getLocation())
+                .collect(joining("\n"));
     }
 
     private static String quoteText(String text) {

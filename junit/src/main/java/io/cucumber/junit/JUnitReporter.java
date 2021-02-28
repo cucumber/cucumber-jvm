@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStep;
@@ -18,9 +19,8 @@ import org.junit.runners.model.MultipleFailureException;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.SCENARIO;
 import static io.cucumber.junit.SkippedThrowable.NotificationLevel.STEP;
@@ -29,16 +29,16 @@ final class JUnitReporter {
 
     private final JUnitOptions junitOptions;
     private final EventBus bus;
-    private final Map<StepLocation, List<String>> snippetsPerStep = new TreeMap<>();
+    private final Collection<Suggestion> suggestions = new ArrayList<>();
     private final EventHandler<SnippetsSuggestedEvent> snippetsSuggestedEventEventHandler = this::handleSnippetSuggested;
     private List<Throwable> stepErrors;
+    private final EventHandler<TestCaseStarted> testCaseStartedHandler = this::handleTestCaseStarted;
     private TestNotifier stepNotifier;
     private final EventHandler<TestStepFinished> testStepFinishedHandler = this::handleTestStepFinished;
     private PickleRunner pickleRunner;
     private RunNotifier runNotifier;
     private final EventHandler<TestStepStarted> testStepStartedHandler = this::handTestStepStarted;
     private TestNotifier pickleRunnerNotifier;
-    private final EventHandler<TestCaseStarted> testCaseStartedHandler = this::handleTestCaseStarted;
     private final EventHandler<TestCaseFinished> testCaseFinishedHandler = this::handleTestCaseResult;
 
     JUnitReporter(EventBus bus, JUnitOptions junitOption) {
@@ -52,12 +52,7 @@ final class JUnitReporter {
     }
 
     private void handleSnippetSuggested(SnippetsSuggestedEvent snippetsSuggestedEvent) {
-        snippetsPerStep.putIfAbsent(new StepLocation(
-                snippetsSuggestedEvent.getUri(),
-                snippetsSuggestedEvent.getStepLine()
-            ),
-            snippetsSuggestedEvent.getSnippets()
-        );
+        suggestions.add(snippetsSuggestedEvent.getSuggestion());
     }
 
     void finishExecutionUnit() {
@@ -118,37 +113,25 @@ final class JUnitReporter {
                 stepNotifier.addFailedAssumption(error);
                 break;
             case PENDING:
-                stepErrors.add(error);
-                addFailureOrFailedAssumptionDependingOnStrictMode(
-                    stepNotifier,
-                    error
-                );
-                break;
-            case UNDEFINED:
-                List<String> snippets = snippetsPerStep.remove(
-                    new StepLocation(testStep.getUri(), testStep.getStepLine())
-                );
-                stepErrors.add(new UndefinedStepException(
-                    testStep.getStepText(),
-                    snippets,
-                    snippetsPerStep.values()
-                ));
-                addFailureOrFailedAssumptionDependingOnStrictMode(
-                    stepNotifier,
-                    error == null
-                        ? new UndefinedStepException(snippets)
-                        : error
-                );
-                break;
             case AMBIGUOUS:
             case FAILED:
                 stepErrors.add(error);
                 stepNotifier.addFailure(error);
                 break;
+            case UNDEFINED:
+                stepErrors.add(new UndefinedStepException(suggestions));
+                stepNotifier.addFailure(error == null ? new UndefinedStepException(suggestions) : error);
+                break;
             default:
                 throw new IllegalStateException("Unexpected result status: " + result.getStatus());
         }
         stepNotifier.fireTestFinished();
+    }
+
+    private void handleHookResult(Result result) {
+        if (result.getError() != null) {
+            stepErrors.add(result.getError());
+        }
     }
 
     private void handleTestCaseResult(TestCaseFinished event) {
@@ -162,33 +145,19 @@ final class JUnitReporter {
                     stepErrors.add(new SkippedThrowable(SCENARIO));
                 }
                 stepErrors.stream()
-                    .findFirst()
-                    .ifPresent(error -> pickleRunnerNotifier.addFailedAssumption(error));
+                        .findFirst()
+                        .ifPresent(pickleRunnerNotifier::addFailedAssumption);
                 break;
             case PENDING:
             case UNDEFINED:
                 stepErrors.stream()
-                    .findFirst()
-                    .ifPresent(error -> addFailureOrFailedAssumptionDependingOnStrictMode(pickleRunnerNotifier, error));
+                        .findFirst()
+                        .ifPresent(pickleRunnerNotifier::addFailure);
                 break;
             case AMBIGUOUS:
             case FAILED:
-                stepErrors.forEach(error -> pickleRunnerNotifier.addFailure(error));
+                stepErrors.forEach(pickleRunnerNotifier::addFailure);
                 break;
-        }
-    }
-
-    private void handleHookResult(Result result) {
-        if (result.getError() != null) {
-            stepErrors.add(result.getError());
-        }
-    }
-
-    private void addFailureOrFailedAssumptionDependingOnStrictMode(TestNotifier notifier, Throwable error) {
-        if (junitOptions.isStrict()) {
-            notifier.addFailure(error);
-        } else {
-            notifier.addFailedAssumption(error);
         }
     }
 
@@ -201,9 +170,11 @@ final class JUnitReporter {
         void addFailedAssumption(Throwable error);
 
         void fireTestFinished();
+
     }
 
     private static final class StepLocation implements Comparable<StepLocation> {
+
         private final URI uri;
         private final int line;
 
@@ -217,6 +188,7 @@ final class JUnitReporter {
             int order = uri.compareTo(o.uri);
             return order != 0 ? order : Integer.compare(line, o.line);
         }
+
     }
 
     static final class NoTestNotifier implements TestNotifier {
@@ -240,9 +212,11 @@ final class JUnitReporter {
         public void fireTestFinished() {
             // Does nothing
         }
+
     }
 
     static class EachTestNotifier implements TestNotifier {
+
         private final RunNotifier notifier;
 
         private final Description description;
@@ -252,17 +226,21 @@ final class JUnitReporter {
             this.description = description;
         }
 
+        private void addMultipleFailureException(MultipleFailureException mfe) {
+            for (Throwable each : mfe.getFailures()) {
+                addFailure(each);
+            }
+        }
+
+        public void fireTestStarted() {
+            notifier.fireTestStarted(description);
+        }
+
         public void addFailure(Throwable targetException) {
             if (targetException instanceof MultipleFailureException) {
                 addMultipleFailureException((MultipleFailureException) targetException);
             } else {
                 notifier.fireTestFailure(new Failure(description, targetException));
-            }
-        }
-
-        private void addMultipleFailureException(MultipleFailureException mfe) {
-            for (Throwable each : mfe.getFailures()) {
-                addFailure(each);
             }
         }
 
@@ -274,8 +252,6 @@ final class JUnitReporter {
             notifier.fireTestFinished(description);
         }
 
-        public void fireTestStarted() {
-            notifier.fireTestStarted(description);
-        }
     }
+
 }

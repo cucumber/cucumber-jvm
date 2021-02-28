@@ -1,8 +1,8 @@
 package io.cucumber.core.stepexpression;
 
-import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.core.gherkin.DocStringArgument;
+import io.cucumber.core.gherkin.Step;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -16,14 +16,6 @@ public final class ArgumentMatcher {
         this.expression = expression;
     }
 
-    private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
-        return cells.stream()
-            .map(row -> row.stream()
-                .map(s -> s.isEmpty() ? null : s)
-                .collect(Collectors.toList()))
-            .collect(Collectors.toList());
-    }
-
     public List<Argument> argumentsFrom(Step step, Type... types) {
         io.cucumber.core.gherkin.Argument arg = step.getArgument();
         if (arg == null) {
@@ -33,7 +25,7 @@ public final class ArgumentMatcher {
         if (arg instanceof io.cucumber.core.gherkin.DocStringArgument) {
             DocStringArgument docString = (DocStringArgument) arg;
             String content = docString.getContent();
-            String contentType = docString.getContentType();
+            String contentType = docString.getMediaType();
             return expression.match(step.getText(), content, contentType, types);
         }
 
@@ -44,6 +36,14 @@ public final class ArgumentMatcher {
         }
 
         throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
+    }
+
+    private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
+        return cells.stream()
+                .map(row -> row.stream()
+                        .map(s -> s.isEmpty() ? null : s)
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 
 }

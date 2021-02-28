@@ -18,4 +18,5 @@ public class FrenchSteps {
     public void jAiConcombres(int arg0) {
         assertThat(arg0, is(5));
     }
+
 }

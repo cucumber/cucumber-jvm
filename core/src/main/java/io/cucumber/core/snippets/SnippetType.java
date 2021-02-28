@@ -1,7 +1,7 @@
 package io.cucumber.core.snippets;
 
 public enum SnippetType {
-    UNDERSCORE(new UnderscoreJoiner()),
+    UNDERSCORE(new SnakeCaseJoiner()),
     CAMELCASE(new CamelCaseJoiner());
 
     private final Joiner joiner;

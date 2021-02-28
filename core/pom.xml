@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -13,11 +13,12 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
-        <jsoup.version>1.12.1</jsoup.version>
-        <xmlunit.version>2.6.3</xmlunit.version>
-        <webbit.version>0.4.15</webbit.version>
-        <webbit-rest.version>0.3.0</webbit-rest.version>
+        <jackson-databind.version>2.12.1</jackson-databind.version>
+        <jsoup.version>1.13.1</jsoup.version>
+        <xmlunit.version>2.8.2</xmlunit.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
+        <vertx.version>4.0.2</vertx.version>
+        <reactive-streams.version>1.0.3</reactive-streams.version>
     </properties>
 
     <dependencies>
@@ -27,18 +28,11 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-gherkin-vintage</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>gherkin</artifactId>
-            <version>${gherkin-vintage.version}</version>
+            <artifactId>cucumber-gherkin-messages</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>gherkin-jvm-deps</artifactId>
-            <version>${gherkin-vintage-jvm-deps.version}</version>
+            <artifactId>messages</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -59,6 +53,14 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>docstring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>html-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>create-meta</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apiguardian</groupId>
@@ -94,15 +96,52 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.webbitserver</groupId>
-            <artifactId>webbit</artifactId>
-            <version>${webbit.version}</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>${vertx.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Fix dependency convergence -->
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.webbitserver</groupId>
-            <artifactId>webbit-rest</artifactId>
-            <version>${webbit-rest.version}</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-junit5</artifactId>
+            <version>${vertx.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <!-- Fix dependency convergence -->
+                <exclusion>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-params</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.reactivestreams</groupId>
+                    <artifactId>reactive-streams</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Fix dependency convergence -->
+        <dependency>
+            <groupId>org.reactivestreams</groupId>
+            <artifactId>reactive-streams</artifactId>
+            <version>${reactive-streams.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -131,6 +170,28 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- the cucumber-* dependencies of cucumber-core are
+                             non-trivial. This ensures that we not forget to
+                             update all intermediate dependencies. For instance
+                             when updating messages -->
+                        <id>enforce-dependency-convergence</id>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence />
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
@@ -154,7 +215,6 @@
                             <artifactSet>
                                 <includes>
                                     <include>io.cucumber:gherkin</include>
-                                    <include>io.cucumber:gherkin-jvm-deps</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -163,6 +223,14 @@
                                     <shadedPattern>io.cucumber.core.internal.gherkin</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>io.cucumber:gherkin</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

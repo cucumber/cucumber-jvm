@@ -5,11 +5,11 @@ public enum StepType {
 
     private static final String ASTRIX_KEY_WORD = "* ";
 
-    public boolean isGivenWhenThen() {
-        return this == GIVEN || this == WHEN || this == THEN;
-    }
-
     public static boolean isAstrix(String stepType) {
         return ASTRIX_KEY_WORD.equals(stepType);
+    }
+
+    public boolean isGivenWhenThen() {
+        return this == GIVEN || this == WHEN || this == THEN;
     }
 }

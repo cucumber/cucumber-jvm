@@ -10,10 +10,12 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to mark InjectionProviders in the cucumber glue or cucumber steps.
- * Should be placed on fields of type {@link InjectionProvider} or an array of those.
+ * Should be placed on fields of type {@link InjectionProvider} or an array of
+ * those.
  */
-@Target({ElementType.FIELD})
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @API(status = API.Status.STABLE)
 public @interface NeedleInjectionProvider {
+
 }

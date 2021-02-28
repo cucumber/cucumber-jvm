@@ -4,10 +4,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 /**
- *  An example base class
+ * An example base class
  */
 class RunCucumberByCompositionBase {
-    
+
     @BeforeClass
     public void beforeClass() {
         // do expensive setup
@@ -17,4 +17,5 @@ class RunCucumberByCompositionBase {
     public void beforeMethod() {
         // do expensive setup
     }
+
 }

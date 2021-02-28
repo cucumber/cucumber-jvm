@@ -18,8 +18,7 @@ class FeatureWithLinesTest {
 
         assertAll(
             () -> assertThat(featureWithLines.uri(), is(URI.create("classpath:example.feature"))),
-            () -> assertThat(featureWithLines.lines(), emptyCollectionOf(Integer.class))
-        );
+            () -> assertThat(featureWithLines.lines(), emptyCollectionOf(Integer.class)));
     }
 
     @Test
@@ -28,8 +27,7 @@ class FeatureWithLinesTest {
 
         assertAll(
             () -> assertThat(featureWithLines.uri(), is(URI.create("classpath:example.feature"))),
-            () -> assertThat(featureWithLines.lines(), contains(999))
-        );
+            () -> assertThat(featureWithLines.lines(), contains(999)));
     }
 
     @Test
@@ -38,8 +36,7 @@ class FeatureWithLinesTest {
 
         assertAll(
             () -> assertThat(featureWithLines.uri(), is(URI.create("classpath:example.feature"))),
-            () -> assertThat(featureWithLines.lines(), contains(999, 2000))
-        );
+            () -> assertThat(featureWithLines.lines(), contains(999, 2000)));
     }
 
 }

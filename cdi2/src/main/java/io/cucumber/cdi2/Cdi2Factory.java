@@ -6,16 +6,18 @@ import org.apiguardian.api.API;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.se.SeContainer;
 import javax.enterprise.inject.se.SeContainerInitializer;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Unmanaged;
+
 import java.util.HashMap;
 import java.util.Map;
 
 @API(status = API.Status.STABLE)
 public final class Cdi2Factory implements ObjectFactory {
 
+    private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
     private SeContainerInitializer initializer;
     private SeContainer container;
-    private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
 
     @Override
     public void start() {
@@ -36,6 +38,13 @@ public final class Cdi2Factory implements ObjectFactory {
         standaloneInstances.clear();
     }
 
+    private SeContainerInitializer getInitializer() {
+        if (initializer == null) {
+            initializer = SeContainerInitializer.newInstance();
+        }
+        return initializer;
+    }
+
     @Override
     public boolean addClass(final Class<?> clazz) {
         getInitializer().addBeanClasses(clazz);
@@ -44,13 +53,15 @@ public final class Cdi2Factory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(final Class<T> type) {
-        final Object instance = standaloneInstances.get(type);
+        final Unmanaged.UnmanagedInstance<?> instance = standaloneInstances.get(type);
         if (instance != null) {
-            return type.cast(instance);
+            return type.cast(instance.get());
         }
         final Instance<T> selected = container.select(type);
         if (selected.isUnsatisfied()) {
-            final Unmanaged.UnmanagedInstance<T> value = new Unmanaged<>(container.getBeanManager(), type).newInstance();
+            BeanManager beanManager = container.getBeanManager();
+            Unmanaged<T> unmanaged = new Unmanaged<>(beanManager, type);
+            Unmanaged.UnmanagedInstance<T> value = unmanaged.newInstance();
             value.produce();
             value.inject();
             value.postConstruct();
@@ -60,10 +71,4 @@ public final class Cdi2Factory implements ObjectFactory {
         return selected.get();
     }
 
-    private SeContainerInitializer getInitializer() {
-        if (initializer == null) {
-            initializer = SeContainerInitializer.newInstance();
-        }
-        return initializer;
-    }
 }

@@ -46,8 +46,8 @@ public class DataTableSteps {
         assertThat(currency, is(Currency.getInstance("EUR")));
     }
 
-
     public static class Author {
+
         String firstName;
         String lastName;
         String birthDate;
@@ -86,33 +86,38 @@ public class DataTableSteps {
         }
 
         @Override
-        public String toString() {
-            return "Author{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Author author = (Author) o;
-
-            if (!firstName.equals(author.firstName)) return false;
-            if (!lastName.equals(author.lastName)) return false;
-            return birthDate.equals(author.birthDate);
-        }
-
-        @Override
         public int hashCode() {
             int result = firstName.hashCode();
             result = 31 * result + lastName.hashCode();
             result = 31 * result + birthDate.hashCode();
             return result;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            Author author = (Author) o;
+
+            if (!firstName.equals(author.firstName))
+                return false;
+            if (!lastName.equals(author.lastName))
+                return false;
+            return birthDate.equals(author.birthDate);
+        }
+
+        @Override
+        public String toString() {
+            return "Author{" +
+                    "firstName='" + firstName + '\'' +
+                    ", lastName='" + lastName + '\'' +
+                    ", birthDate='" + birthDate + '\'' +
+                    '}';
+        }
+
     }
 
 }

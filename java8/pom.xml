@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-java8</artifactId>
@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.java8</project.Automatic-Module-Name>
-        <typetools.version>0.6.1</typetools.version>
+        <typetools.version>0.6.2</typetools.version>
     </properties>
 
     <dependencies>
@@ -107,15 +107,6 @@
                         <!-- ISO 639-3 Language -->
                         <exclude>**/io/cucumber/java8/???.*</exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <configuration>
-                    <sourceDirectories>
-                        <sourceDirectory>${project.build.outputDirectory}/generated-sources/i18n/java</sourceDirectory>
-                    </sourceDirectories>
                 </configuration>
             </plugin>
         </plugins>

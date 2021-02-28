@@ -11,6 +11,7 @@ import java.util.Map;
 import static org.testng.Assert.assertEquals;
 
 public class ShoppingStepDefinitions {
+
     private final RpnCalculator calc = new RpnCalculator();
 
     @Given("the following groceries:")
@@ -36,11 +37,11 @@ public class ShoppingStepDefinitions {
     public Grocery grocery(Map<String, String> entry) {
         return new Grocery(
             entry.get("name"),
-            Price.fromString(entry.get("price"))
-        );
+            Price.fromString(entry.get("price")));
     }
 
     static class Grocery {
+
         private final String name;
         private final Price price;
 
@@ -48,9 +49,11 @@ public class ShoppingStepDefinitions {
             this.name = name;
             this.price = price;
         }
+
     }
 
     static final class Price {
+
         private final int value;
 
         Price(int value) {
@@ -62,4 +65,5 @@ public class ShoppingStepDefinitions {
         }
 
     }
+
 }

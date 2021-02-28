@@ -1,7 +1,6 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
@@ -14,19 +13,9 @@ import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
-import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.event.EventHandler;
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -43,9 +32,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.max;
-import static java.util.Collections.min;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
@@ -58,78 +44,74 @@ public final class Runtime {
 
     private final ExitStatus exitStatus;
 
-    private final RunnerSupplier runnerSupplier;
     private final Predicate<Pickle> filter;
     private final int limit;
-    private final EventBus bus;
     private final FeatureSupplier featureSupplier;
     private final ExecutorService executor;
     private final PickleOrder pickleOrder;
+    private final CucumberExecutionContext context;
 
-    private Runtime(final ExitStatus exitStatus,
-                    final EventBus bus,
-                    final Predicate<Pickle> filter,
-                    final int limit,
-                    final RunnerSupplier runnerSupplier,
-                    final FeatureSupplier featureSupplier,
-                    final ExecutorService executor,
-                    final PickleOrder pickleOrder) {
-        this.bus = bus;
+    private Runtime(
+            final ExitStatus exitStatus,
+            final CucumberExecutionContext context,
+            final Predicate<Pickle> filter,
+            final int limit,
+            final FeatureSupplier featureSupplier,
+            final ExecutorService executor,
+            final PickleOrder pickleOrder
+    ) {
         this.filter = filter;
+        this.context = context;
         this.limit = limit;
-        this.runnerSupplier = runnerSupplier;
         this.featureSupplier = featureSupplier;
         this.executor = executor;
         this.exitStatus = exitStatus;
         this.pickleOrder = pickleOrder;
     }
 
-    public void run() {
-        final List<Feature> features = featureSupplier.get();
-        bus.send(new TestRunStarted(bus.getInstant()));
-        for (Feature feature : features) {
-            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        }
-        runnerSupplier.get().runBeforeAllHooks();
+    public static Builder builder() {
+        return new Builder();
+    }
 
+    public void run() {
+        context.startTestRun();
+        final List<Feature> features = featureSupplier.get();
+        features.forEach(context::beforeFeature);
         final List<Future<?>> executingPickles = features.stream()
-            .flatMap(feature -> feature.getPickles().stream())
-            .filter(filter)
-            .collect(collectingAndThen(toList(),
-                list -> pickleOrder.orderPickles(list).stream()))
-            .limit(limit > 0 ? limit : Integer.MAX_VALUE)
-            .map(pickle -> executor.submit(() -> runnerSupplier.get().runPickle(pickle)))
-            .collect(toList());
+                .flatMap(feature -> feature.getPickles().stream())
+                .filter(filter)
+                .collect(collectingAndThen(toList(),
+                    list -> pickleOrder.orderPickles(list).stream()))
+                .limit(limit > 0 ? limit : Integer.MAX_VALUE)
+                .map(pickle -> executor.submit(execute(pickle)))
+                .collect(toList());
 
         executor.shutdown();
 
-        List<Throwable> thrown = new ArrayList<>();
         for (Future<?> executingPickle : executingPickles) {
             try {
                 executingPickle.get();
             } catch (ExecutionException e) {
                 log.error(e, () -> "Exception while executing pickle");
-                thrown.add(e.getCause());
             } catch (InterruptedException e) {
                 executor.shutdownNow();
-                throw new CucumberException(e);
+                log.debug(e, () -> "Interrupted while executing pickle");
             }
         }
-        if (thrown.size() == 1) {
-            throw new CucumberException(thrown.get(0));
-        } else if (thrown.size() > 1) {
-            throw new CompositeCucumberException(thrown);
+        context.finishTestRun();
+
+        CucumberException exception = context.getException();
+        if (exception != null) {
+            throw exception;
         }
-        runnerSupplier.get().runAfterAllHooks();
-        bus.send(new TestRunFinished(bus.getInstant()));
+    }
+
+    private Runnable execute(Pickle pickle) {
+        return () -> context.runTestCase(runner -> runner.runPickle(pickle));
     }
 
     public byte exitStatus() {
         return exitStatus.exitStatus();
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static class Builder {
@@ -175,15 +157,16 @@ public final class Runtime {
         }
 
         public Runtime build() {
-            final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(runtimeOptions);
+            final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+                runtimeOptions);
 
             final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
-                : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+                    ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
+                    : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
-                ? this.backendSupplier
-                : new BackendServiceLoader(this.classLoader, objectFactorySupplier);
+                    ? this.backendSupplier
+                    : new BackendServiceLoader(this.classLoader, objectFactorySupplier);
 
             final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
             for (final Plugin plugin : additionalPlugins) {
@@ -197,28 +180,33 @@ public final class Runtime {
                 plugins.setEventBusOnEventListenerPlugins(eventBus);
             }
 
-            final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, runtimeOptions);
+            final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
+                classLoader, runtimeOptions);
 
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
-                ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier)
-                : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+                    ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier,
+                        typeRegistryConfigurerSupplier)
+                    : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier,
+                        typeRegistryConfigurerSupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
-                ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
-                : new SameThreadExecutorService();
+                    ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
+                    : new SameThreadExecutorService();
 
             final FeatureParser parser = new FeatureParser(eventBus::generateId);
 
             final FeatureSupplier featureSupplier = this.featureSupplier != null
-                ? this.featureSupplier
-                : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+                    ? this.featureSupplier
+                    : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
 
             final Predicate<Pickle> filter = new Filters(runtimeOptions);
             final int limit = runtimeOptions.getLimitCount();
             final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
+            final CucumberExecutionContext context = new CucumberExecutionContext(eventBus, exitStatus, runnerSupplier);
 
-            return new Runtime(exitStatus, eventBus, filter, limit, runnerSupplier, featureSupplier, executor, pickleOrder);
+            return new Runtime(exitStatus, context, filter, limit, featureSupplier, executor, pickleOrder);
         }
+
     }
 
     private static final class CucumberThreadFactory implements ThreadFactory {
@@ -235,6 +223,7 @@ public final class Runtime {
         public Thread newThread(Runnable r) {
             return new Thread(r, namePrefix + this.threadNumber.getAndIncrement());
         }
+
     }
 
     private static final class SameThreadExecutorService extends AbstractExecutorService {
@@ -246,7 +235,7 @@ public final class Runtime {
 
         @Override
         public void shutdown() {
-            //no-op
+            // no-op
         }
 
         @Override
@@ -268,38 +257,7 @@ public final class Runtime {
         public boolean awaitTermination(long timeout, TimeUnit unit) {
             return true;
         }
+
     }
 
-    static final class ExitStatus implements ConcurrentEventListener {
-        private static final byte DEFAULT = 0x0;
-        private static final byte ERRORS = 0x1;
-
-        private final List<Result> results = new ArrayList<>();
-        private final RuntimeOptions runtimeOptions;
-
-        private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> results.add(event.getResult());
-
-        ExitStatus(RuntimeOptions runtimeOptions) {
-            this.runtimeOptions = runtimeOptions;
-        }
-
-        @Override
-        public void setEventPublisher(EventPublisher publisher) {
-            publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
-        }
-
-        byte exitStatus() {
-            if (results.isEmpty()) {
-                return DEFAULT;
-            }
-
-            if (runtimeOptions.isWip()) {
-                Result leastSeverResult = min(results, comparing(Result::getStatus));
-                return leastSeverResult.getStatus().is(Status.PASSED) ? ERRORS : DEFAULT;
-            } else {
-                Result mostSevereResult = max(results, comparing(Result::getStatus));
-                return mostSevereResult.getStatus().isOk(runtimeOptions.isStrict()) ? DEFAULT : ERRORS;
-            }
-        }
-    }
 }

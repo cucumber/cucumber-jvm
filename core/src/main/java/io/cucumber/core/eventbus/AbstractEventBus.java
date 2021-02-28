@@ -1,16 +1,15 @@
 package io.cucumber.core.eventbus;
 
-import io.cucumber.plugin.event.Event;
-
 public abstract class AbstractEventBus extends AbstractEventPublisher implements EventBus {
 
     @Override
-    public void send(Event event) {
-        super.send(event);
+    public <T> void sendAll(Iterable<T> queue) {
+        super.sendAll(queue);
     }
 
     @Override
-    public void sendAll(Iterable<Event> queue) {
-        super.sendAll(queue);
+    public <T> void send(T event) {
+        super.send(event);
     }
+
 }

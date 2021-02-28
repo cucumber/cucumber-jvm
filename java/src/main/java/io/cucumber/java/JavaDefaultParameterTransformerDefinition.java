@@ -9,7 +9,8 @@ import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
-class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition implements DefaultParameterTransformerDefinition {
+class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
+        implements DefaultParameterTransformerDefinition {
 
     private final Lookup lookup;
     private final ParameterByTypeTransformer transformer;
@@ -42,21 +43,21 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition i
         return method;
     }
 
+    private Object execute(String fromValue, Type toValueType) {
+        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
+    }
+
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(DefaultParameterTransformer.class)
-            .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")
-            .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
-            .build();
+                .addAnnotation(DefaultParameterTransformer.class)
+                .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")
+                .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
+                .build();
     }
 
     @Override
     public ParameterByTypeTransformer parameterByTypeTransformer() {
         return transformer;
-    }
-
-    private Object execute(String fromValue, Type toValueType) {
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
 }

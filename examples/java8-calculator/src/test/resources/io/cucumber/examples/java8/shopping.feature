@@ -17,10 +17,10 @@ Feature: Shopping
     coffee
     """
     And the shop has following groceries:
-      | name  | price |
-      | milk  | 9     |
-      | bread | 7     |
-      | coffee| 2     |
-      | soap  | 5     |
+      | name   | price |
+      | milk   | 9     |
+      | bread  | 7     |
+      | coffee | 2     |
+      | soap   | 5     |
     When I count shopping price
     Then price would be 18

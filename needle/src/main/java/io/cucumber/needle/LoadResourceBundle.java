@@ -8,12 +8,18 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Null safe Resource Loader. If ResourceBundle does not exist, an empty Bundle is returned.
+ * Null safe Resource Loader. If ResourceBundle does not exist, an empty Bundle
+ * is returned.
  */
 enum LoadResourceBundle {
     INSTANCE;
 
     public static final ResourceBundle EMPTY_RESOURCE_BUNDLE = new ResourceBundle() {
+
+        @Override
+        protected Object handleGetObject(final String key) {
+            return "";
+        }
 
         @Override
         public Enumeration<String> getKeys() {
@@ -29,11 +35,6 @@ enum LoadResourceBundle {
                     return null;
                 }
             };
-        }
-
-        @Override
-        protected Object handleGetObject(final String key) {
-            return "";
         }
     };
 

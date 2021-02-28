@@ -6,6 +6,7 @@ import io.cucumber.core.backend.TypeResolver;
 import java.lang.reflect.Type;
 
 final class Java8ParameterInfo implements ParameterInfo {
+
     private final LambdaTypeResolver typeResolver;
 
     Java8ParameterInfo(LambdaTypeResolver typeResolver) {

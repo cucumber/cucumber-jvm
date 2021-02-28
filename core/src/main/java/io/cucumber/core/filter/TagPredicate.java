@@ -2,31 +2,17 @@ package io.cucumber.core.filter;
 
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.tagexpressions.Expression;
-import io.cucumber.tagexpressions.TagExpressionParser;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-
-
 final class TagPredicate implements Predicate<Pickle> {
-    private final List<Expression> expressions = new ArrayList<>();
 
-    TagPredicate(String tagExpression) {
-        this(tagExpression.isEmpty() ? emptyList() : singletonList(tagExpression));
-    }
+    private final List<Expression> expressions;
 
-    TagPredicate(List<String> tagExpressions) {
-        if (tagExpressions == null) {
-            return;
-        }
-        TagExpressionParser parser = new TagExpressionParser();
-        for (String tagExpression : tagExpressions) {
-            expressions.add(parser.parse(tagExpression));
-        }
+    TagPredicate(List<Expression> tagExpressions) {
+        expressions = Objects.requireNonNull(tagExpressions);
     }
 
     @Override
@@ -37,6 +23,7 @@ final class TagPredicate implements Predicate<Pickle> {
 
         List<String> tags = pickle.getTags();
         return expressions.stream()
-            .allMatch(expression -> expression.evaluate(tags));
+                .allMatch(expression -> expression.evaluate(tags));
     }
+
 }

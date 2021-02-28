@@ -13,7 +13,7 @@ final class ConversionRequired implements DocStringConverter {
         throw new CucumberDocStringException(format("" +
                 "Can't convert DocString to %s. " +
                 "You have to write the conversion for it in this method",
-            type
-        ));
+            type));
     }
+
 }

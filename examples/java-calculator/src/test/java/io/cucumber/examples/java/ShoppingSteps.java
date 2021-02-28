@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShoppingSteps {
+
     private final RpnCalculator calc = new RpnCalculator();
 
     private List<Grocery> shoppingList;
@@ -31,7 +32,7 @@ public class ShoppingSteps {
 
     @ParameterType(name = "amount", value = "\\d+\\.\\d+\\s[a-zA-Z]+")
     public Amount defineAmount(String value) {
-        String [] arr = value.split("\\s");
+        String[] arr = value.split("\\s");
         return new Amount(new BigDecimal(arr[0]), Currency.getInstance(arr[1]));
     }
 
@@ -73,7 +74,7 @@ public class ShoppingSteps {
     @When("I count shopping price")
     public void i_count_shopping_price() {
         shoppingList.forEach(grocery -> {
-            for (Grocery shopGrocery: shopStock) {
+            for (Grocery shopGrocery : shopStock) {
                 if (grocery.equals(shopGrocery)) {
                     groceriesPrice += shopGrocery.price.value;
                 }
@@ -87,6 +88,7 @@ public class ShoppingSteps {
     }
 
     static class Grocery {
+
         private String name;
         private Price price;
 
@@ -99,26 +101,28 @@ public class ShoppingSteps {
             this.name = name;
         }
 
-        public void setPrice(Price price) {
-            this.price = price;
-        }
-
         public Price getPrice() {
             return price;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setPrice(Price price) {
+            this.price = price;
         }
 
         public String getName() {
             return name;
         }
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Grocery grocery = (Grocery) o;
             return Objects.equals(name, grocery.name);
         }
@@ -126,6 +130,7 @@ public class ShoppingSteps {
     }
 
     static final class Price {
+
         private final int value;
 
         Price(int value) {
@@ -139,6 +144,7 @@ public class ShoppingSteps {
     }
 
     static final class Amount {
+
         private final BigDecimal price;
         private final Currency currency;
 
@@ -146,5 +152,7 @@ public class ShoppingSteps {
             this.price = price;
             this.currency = currency;
         }
+
     }
+
 }

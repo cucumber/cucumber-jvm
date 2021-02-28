@@ -21,4 +21,5 @@ public class AtmWithdrawalGlue {
     public void assertInjection() {
         assertThat(fooGetter.getName(), is(SimpleNameGetterProvider.FOO));
     }
+
 }

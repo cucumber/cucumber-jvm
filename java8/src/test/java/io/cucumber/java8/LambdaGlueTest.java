@@ -5,10 +5,10 @@ import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
-import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.TestCaseState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,11 +24,76 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LambdaGlueTest {
 
+    private final AtomicBoolean invoked = new AtomicBoolean();
+    private final TestCaseState state = Mockito.mock(TestCaseState.class);
+    private final LambdaGlue lambdaGlue = new LambdaGlue() {
+
+    };
     private HookDefinition beforeStepHook;
     private HookDefinition afterHook;
     private HookDefinition beforeHook;
     private HookDefinition afterStepHook;
-    private final AtomicBoolean invoked = new AtomicBoolean();
+    private final LambdaGlueRegistry lambdaGlueRegistry = new LambdaGlueRegistry() {
+        @Override
+        public void addStepDefinition(StepDefinition stepDefinition) {
+        }
+
+        @Override
+        public void addBeforeStepHookDefinition(HookDefinition beforeStepHook) {
+            LambdaGlueTest.this.beforeStepHook = beforeStepHook;
+
+        }
+
+        @Override
+        public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
+            LambdaGlueTest.this.afterStepHook = afterStepHook;
+
+        }
+
+        @Override
+        public void addBeforeHookDefinition(HookDefinition beforeHook) {
+            LambdaGlueTest.this.beforeHook = beforeHook;
+
+        }
+
+        @Override
+        public void addAfterHookDefinition(HookDefinition afterHook) {
+            LambdaGlueTest.this.afterHook = afterHook;
+        }
+
+        @Override
+        public void addDocStringType(DocStringTypeDefinition docStringType) {
+        }
+
+        @Override
+        public void addDataTableType(DataTableTypeDefinition dataTableType) {
+
+        }
+
+        @Override
+        public void addParameterType(ParameterTypeDefinition parameterType) {
+
+        }
+
+        @Override
+        public void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer) {
+
+        }
+
+        @Override
+        public void addDefaultDataTableCellTransformer(
+                DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer
+        ) {
+
+        }
+
+        @Override
+        public void addDefaultDataTableEntryTransformer(
+                DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer
+        ) {
+
+        }
+    };
 
     @BeforeEach
     void setup() {
@@ -54,6 +119,22 @@ class LambdaGlueTest {
         assertHook(beforeHook, EMPTY_TAG_EXPRESSION, 42);
         lambdaGlue.Before("taxExpression", 42, this::hook);
         assertHook(beforeHook, "taxExpression", 42);
+    }
+
+    void hookNoArgs() {
+        invoked.set(true);
+    }
+
+    private void assertHook(HookDefinition hook, String tagExpression, int beforeOrder) {
+        assertThat(hook.getTagExpression(), is(tagExpression));
+        assertThat(hook.getOrder(), is(beforeOrder));
+        hook.execute(state);
+        assertTrue(invoked.get());
+        invoked.set(false);
+    }
+
+    void hook(Scenario scenario) {
+        invoked.set(true);
     }
 
     @Test
@@ -117,86 +198,6 @@ class LambdaGlueTest {
         assertHook(afterStepHook, EMPTY_TAG_EXPRESSION, 42);
         lambdaGlue.AfterStep("taxExpression", 42, this::hook);
         assertHook(afterStepHook, "taxExpression", 42);
-    }
-
-    private final TestCaseState state = Mockito.mock(TestCaseState.class);
-
-    private final LambdaGlueRegistry lambdaGlueRegistry = new LambdaGlueRegistry() {
-        @Override
-        public void addStepDefinition(StepDefinition stepDefinition) {
-        }
-
-        @Override
-        public void addBeforeStepHookDefinition(HookDefinition beforeStepHook) {
-            LambdaGlueTest.this.beforeStepHook = beforeStepHook;
-
-        }
-
-        @Override
-        public void addAfterStepHookDefinition(HookDefinition afterStepHook) {
-            LambdaGlueTest.this.afterStepHook = afterStepHook;
-
-        }
-
-        @Override
-        public void addBeforeHookDefinition(HookDefinition beforeHook) {
-            LambdaGlueTest.this.beforeHook = beforeHook;
-
-        }
-
-        @Override
-        public void addAfterHookDefinition(HookDefinition afterHook) {
-            LambdaGlueTest.this.afterHook = afterHook;
-        }
-
-        @Override
-        public void addDocStringType(DocStringTypeDefinition docStringType) {
-        }
-
-        @Override
-        public void addDataTableType(DataTableTypeDefinition dataTableType) {
-
-        }
-
-        @Override
-        public void addParameterType(ParameterTypeDefinition parameterType) {
-
-        }
-
-        @Override
-        public void addDefaultParameterTransformer(DefaultParameterTransformerDefinition defaultParameterTransformer) {
-
-        }
-
-        @Override
-        public void addDefaultDataTableCellTransformer(DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer) {
-
-        }
-
-        @Override
-        public void addDefaultDataTableEntryTransformer(DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer) {
-
-        }
-    };
-
-    private final LambdaGlue lambdaGlue = new LambdaGlue() {
-
-    };
-
-    private void assertHook(HookDefinition hook, String tagExpression, int beforeOrder) {
-        assertThat(hook.getTagExpression(), is(tagExpression));
-        assertThat(hook.getOrder(), is(beforeOrder));
-        hook.execute(state);
-        assertTrue(invoked.get());
-        invoked.set(false);
-    }
-
-    void hookNoArgs() {
-        invoked.set(true);
-    }
-
-    void hook(Scenario scenario) {
-        invoked.set(true);
     }
 
 }

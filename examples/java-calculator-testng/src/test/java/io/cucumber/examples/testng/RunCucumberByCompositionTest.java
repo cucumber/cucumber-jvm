@@ -14,8 +14,9 @@ import org.testng.annotations.Test;
  * AbstractTestNGCucumberTests but still executes each scenario as a separate
  * TestNG test.
  */
-@CucumberOptions(strict = true, plugin = "json:target/cucumber-report-feature-composite.json")
+@CucumberOptions(plugin = "message:target/cucumber-report-feature-composite.ndjson")
 public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
+
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
@@ -24,7 +25,7 @@ public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
     }
 
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
-    public void scenario(PickleWrapper pickle, FeatureWrapper cucumberFeature) throws Throwable {
+    public void scenario(PickleWrapper pickle, FeatureWrapper cucumberFeature) {
         testNGCucumberRunner.runScenario(pickle.getPickle());
     }
 
@@ -37,4 +38,5 @@ public class RunCucumberByCompositionTest extends RunCucumberByCompositionBase {
     public void tearDownClass() {
         testNGCucumberRunner.finish();
     }
+
 }

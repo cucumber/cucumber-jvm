@@ -17,10 +17,9 @@ class FeatureIdentifierTest {
     void can_parse_feature_path_with_feature() {
         URI uri = FeatureIdentifier.parse(FeaturePath.parse("classpath:/path/to/file.feature"));
 
-        assertAll("Checking uri",
+        assertAll(
             () -> assertThat(uri.getScheme(), is(equalTo("classpath"))),
-            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to/file.feature")))
-        );
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/path/to/file.feature"))));
     }
 
     @Test
@@ -28,8 +27,7 @@ class FeatureIdentifierTest {
         Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to/file.feature:10:40"));
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "featureIdentifier does not reference a single feature file: classpath:/path/to/file.feature:10:40"
-        )));
+            "featureIdentifier does not reference a single feature file: classpath:/path/to/file.feature:10:40")));
     }
 
     @Test
@@ -37,8 +35,7 @@ class FeatureIdentifierTest {
         Executable testMethod = () -> FeatureIdentifier.parse(URI.create("classpath:/path/to"));
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "featureIdentifier does not reference a single feature file: classpath:/path/to"
-        )));
+            "featureIdentifier does not reference a single feature file: classpath:/path/to")));
     }
 
 }

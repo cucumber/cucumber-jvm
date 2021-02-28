@@ -12,20 +12,29 @@ public enum Status {
     FAILED,
     UNUSED;
 
-    public boolean is(Status status) {
-        return this == status;
-    }
-
+    /**
+     * Does this state allow the build to pass
+     *
+     * @param      isStrict should this result be evaluated strictly? Ignored.
+     * @return              true if this result does not fail the build
+     * @deprecated          please use {@link #isOk()}}
+     */
+    @Deprecated
     public boolean isOk(boolean isStrict) {
-        return hasAlwaysOkStatus() || !isStrict && hasOkWhenNotStrictStatus();
+        return isOk();
     }
 
-    private boolean hasAlwaysOkStatus() {
+    /**
+     * Does this state allow the build to pass
+     *
+     * @return true if this result does not fail the build
+     */
+    public boolean isOk() {
         return is(Status.PASSED) || is(Status.SKIPPED);
     }
 
-    private boolean hasOkWhenNotStrictStatus() {
-        return is(Status.UNDEFINED) || is(Status.PENDING);
+    public boolean is(Status status) {
+        return this == status;
     }
 
 }

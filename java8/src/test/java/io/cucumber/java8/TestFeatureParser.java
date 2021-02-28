@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 class TestFeatureParser {
+
     static Feature parse(final String source) {
         return parse("file:test.feature", source);
     }
@@ -32,6 +33,7 @@ class TestFeatureParser {
                 return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
             }
 
-        });
+        }).orElse(null);
     }
+
 }

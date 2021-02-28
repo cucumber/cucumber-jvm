@@ -5,25 +5,25 @@ import org.picocontainer.Disposable;
 import java.util.List;
 
 /**
- * A test helper class which simulates a class that holds system resources
- * which need disposing at the end of the test.
- *
+ * A test helper class which simulates a class that holds system resources which
+ * need disposing at the end of the test.
+ * <p>
  * In a real app, this could be a database connector or similar.
  */
 public class DisposableCucumberBelly
-    implements Disposable {
+        implements Disposable {
 
     private List<String> contents;
     private boolean isDisposed = false;
 
-    public void setContents(List<String> contents) {
-        assert !isDisposed;
-        this.contents = contents;
-    }
-
     public List<String> getContents() {
         assert !isDisposed;
         return contents;
+    }
+
+    public void setContents(List<String> contents) {
+        assert !isDisposed;
+        this.contents = contents;
     }
 
     /**
@@ -39,4 +39,5 @@ public class DisposableCucumberBelly
     public boolean isDisposed() {
         return isDisposed;
     }
+
 }

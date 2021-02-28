@@ -21,18 +21,18 @@ class CompositeCucumberExceptionTest {
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(equalTo("There were 0 exceptions:\n"))),
             () -> assertThat(expectedThrown.getCause(), is(nullValue())),
-            () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes)))
-        );
+            () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes))));
     }
+
     @Test
     void throws_for_one_exception() {
         final List<Throwable> causes = Collections.singletonList(new IllegalArgumentException());
         CompositeCucumberException expectedThrown = new CompositeCucumberException(causes);
         assertAll(
-            () -> assertThat(expectedThrown.getMessage(), is(equalTo("There were 1 exceptions:\n  java.lang.IllegalArgumentException(null)"))),
+            () -> assertThat(expectedThrown.getMessage(),
+                is(equalTo("There were 1 exceptions:\n  java.lang.IllegalArgumentException(null)"))),
             () -> assertThat(expectedThrown.getCause(), is(nullValue())),
-            () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes)))
-        );
+            () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes))));
     }
 
     @Test
@@ -40,9 +40,10 @@ class CompositeCucumberExceptionTest {
         final List<Throwable> causes = Arrays.asList(new IllegalArgumentException(), new RuntimeException());
         CompositeCucumberException expectedThrown = new CompositeCucumberException(causes);
         assertAll(
-            () -> assertThat(expectedThrown.getMessage(), is(equalTo("There were 2 exceptions:\n  java.lang.IllegalArgumentException(null)\n  java.lang.RuntimeException(null)"))),
+            () -> assertThat(expectedThrown.getMessage(), is(equalTo(
+                "There were 2 exceptions:\n  java.lang.IllegalArgumentException(null)\n  java.lang.RuntimeException(null)"))),
             () -> assertThat(expectedThrown.getCause(), is(nullValue())),
-            () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes)))
-        );
+            () -> assertThat(expectedThrown.getCauses(), is(equalTo(causes))));
     }
+
 }

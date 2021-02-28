@@ -6,6 +6,7 @@ set -uf -o pipefail
 # * The [Unreleased] diff link is updated
 # * A new diff link for the new release is added
 # * The ## [Unreleased] header is changed to a version header with date
+# * The empty sections are removed
 # * A new, empty [Unreleased] paragraph is added at the top
 #
 
@@ -43,7 +44,7 @@ changelog=$(echo "${changelog}" | sed "s/## \[Unreleased\] (In Git)/## \[${new_v
 # Update [Unreleased] diff link
 line_number_colon_unreleased_link=$(echo "${changelog}" | grep -n "\[Unreleased\]")
 line_number=$(echo "${line_number_colon_unreleased_link}" | cut -d: -f1)
-unreleased_link=$(echo "${line_number_colon_unreleased_link}" | cut -d' ' -f2)
+unreleased_link=$(echo "${line_number_colon_unreleased_link}" | awk '{print $2}')
 
 if [[ "${unreleased_link}" =~ \/v([0-9]+\.[0-9]+\.[0-9]+(-RC[0-9]+)?) ]]; then
   last_version="${BASH_REMATCH[1]}"
@@ -61,10 +62,19 @@ new_release_link=$(echo "${release_link}" | \
   sed "s/${last_version}/${new_version}/g" | \
   sed "s/v[0-9]\+.[0-9]\+.[0-9]\+/v${last_version}/")
 
-changelog=$(echo "${changelog}" | sed "${insertion_line_number} i ${new_release_link}")
+changelog=$(echo "${changelog}" | sed "${insertion_line_number} i \\
+${new_release_link}
+")
+
+# Remove empty sections
+
+scripts_path="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+changelog=$(echo "${changelog}" | awk -f "${scripts_path}/remove-empty-sections-changelog.awk")
 
 # Insert a new [Unreleased] header
 
-changelog=$(echo "${changelog}" | sed "s/----/----\n${header_escaped}\n/g")
+changelog=$(echo "${changelog}" | sed "s/----/----\\
+${header_escaped}\\
+/g")
 
 echo "${changelog}"

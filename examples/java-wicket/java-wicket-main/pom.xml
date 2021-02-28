@@ -3,23 +3,30 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>java-wicket</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
     <artifactId>java-wicket-main</artifactId>
     <name>Examples: Wicket application</name>
     <packaging>war</packaging>
 
-    <build>
-        <finalName>rentit</finalName>
-    </build>
-
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.wicket.main</project.Automatic-Module-Name>
-        <wicket.version>8.7.0</wicket.version>
-        <jetty.version>9.4.26.v20200117</jetty.version>
+        <wicket.version>9.1.0</wicket.version>
+        <jetty.version>9.4.33.v20201020</jetty.version>
         <jcl-over-slf4.version>1.7.30</jcl-over-slf4.version>
         <logback-classic.version>1.2.3</logback-classic.version>
     </properties>
+
+    <build>
+        <finalName>rentit</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -27,7 +34,6 @@
             <artifactId>wicket-core</artifactId>
             <version>${wicket.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>

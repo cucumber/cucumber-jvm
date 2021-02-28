@@ -43,6 +43,12 @@ class CollectionUtilTest {
         assertThatListContainsOneElement("foo");
     }
 
+    private void assertThatListContainsOneElement(String element) {
+        assertAll(
+            () -> assertThat(list.size(), equalTo(1)),
+            () -> assertThat(list.get(0), equalTo(element)));
+    }
+
     @Test
     void testSecondItemIsRemovedWhenListContainsTwoItems() {
         list.add("foo");
@@ -58,13 +64,6 @@ class CollectionUtilTest {
         list.add("baz");
         CollectionUtil.removeAllExceptFirstElement(list);
         assertThatListContainsOneElement("foo");
-    }
-
-    private void assertThatListContainsOneElement(String element) {
-        assertAll("Checking list",
-            () -> assertThat(list.size(), equalTo(1)),
-            () -> assertThat(list.get(0), equalTo(element))
-        );
     }
 
 }

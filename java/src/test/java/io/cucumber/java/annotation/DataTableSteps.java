@@ -19,16 +19,16 @@ public class DataTableSteps {
     private final Person mononymousPerson = new Person("Plato", "");
 
     @DataTableType
+    public Author singleAuthorTransformer(DataTable table) {
+        return authorEntryTransformer(table.asMaps().get(0));
+    }
+
+    @DataTableType
     public Author authorEntryTransformer(Map<String, String> entry) {
         return new DataTableSteps.Author(
             entry.get("firstName"),
             entry.get("lastName"),
             entry.get("birthDate"));
-    }
-
-    @DataTableType
-    public Author singleAuthorTransformer(DataTable table) {
-        return authorEntryTransformer(table.asMaps().get(0));
     }
 
     @Given("a list of authors in a table")
@@ -51,47 +51,6 @@ public class DataTableSteps {
         assertEquals(expectedAuthor, author);
     }
 
-    public static class Author {
-        final String firstName;
-        final String lastName;
-        final String birthDate;
-
-        Author(String firstName, String lastName, String birthDate) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.birthDate = birthDate;
-        }
-
-        @Override
-        public String toString() {
-            return "Author{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Author author = (Author) o;
-
-            if (!firstName.equals(author.firstName)) return false;
-            if (!lastName.equals(author.lastName)) return false;
-            return birthDate.equals(author.birthDate);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = firstName.hashCode();
-            result = 31 * result + lastName.hashCode();
-            result = 31 * result + birthDate.hashCode();
-            return result;
-        }
-    }
-
     @Given("a list of people in a table")
     public void this_table_of_authors(List<DataTableSteps.Person> persons) {
         assertTrue(persons.contains(expectedPerson));
@@ -103,7 +62,55 @@ public class DataTableSteps {
         return new Person(tableEntry.get("first"), tableEntry.get("last"));
     }
 
+    public static class Author {
+
+        final String firstName;
+        final String lastName;
+        final String birthDate;
+
+        Author(String firstName, String lastName, String birthDate) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.birthDate = birthDate;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = firstName.hashCode();
+            result = 31 * result + lastName.hashCode();
+            result = 31 * result + birthDate.hashCode();
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            Author author = (Author) o;
+
+            if (!firstName.equals(author.firstName))
+                return false;
+            if (!lastName.equals(author.lastName))
+                return false;
+            return birthDate.equals(author.birthDate);
+        }
+
+        @Override
+        public String toString() {
+            return "Author{" +
+                    "firstName='" + firstName + '\'' +
+                    ", lastName='" + lastName + '\'' +
+                    ", birthDate='" + birthDate + '\'' +
+                    '}';
+        }
+
+    }
+
     public static class Person {
+
         private final String first;
         private final String last;
 
@@ -112,23 +119,22 @@ public class DataTableSteps {
             this.last = last;
         }
 
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Person person = (Person) o;
-            return first.equals(person.first) &&
-                last.equals(person.last);
-        }
-
         @Override
         public int hashCode() {
             return Objects.hash(first, last);
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            Person person = (Person) o;
+            return first.equals(person.first) &&
+                    last.equals(person.last);
+        }
 
     }
-
 
 }

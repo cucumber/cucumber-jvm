@@ -1,8 +1,8 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.TestCaseState;
 
 import java.lang.reflect.Method;
 
@@ -13,13 +13,11 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     private final String tagExpression;
     private final int order;
-    private final Lookup lookup;
 
     JavaHookDefinition(Method method, String tagExpression, int order, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
-        this.lookup = lookup;
     }
 
     private static Method requireValidMethod(Method method) {
@@ -40,25 +38,25 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
         return builder(method)
-            .addAnnotation(Before.class)
-            .addAnnotation(After.class)
-            .addAnnotation(BeforeStep.class)
-            .addAnnotation(AfterStep.class)
-            .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
-            .addSignature("public void before_or_after()")
-            .build();
+                .addAnnotation(Before.class)
+                .addAnnotation(After.class)
+                .addAnnotation(BeforeStep.class)
+                .addAnnotation(AfterStep.class)
+                .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
+                .addSignature("public void before_or_after()")
+                .build();
     }
 
     @Override
     public void execute(TestCaseState state) {
         Object[] args;
         if (method.getParameterTypes().length == 1) {
-            args = new Object[]{new io.cucumber.java.Scenario(state)};
+            args = new Object[] { new io.cucumber.java.Scenario(state) };
         } else {
             args = new Object[0];
         }
 
-        Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, args);
+        invokeMethod(args);
     }
 
     @Override
@@ -70,4 +68,5 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     public int getOrder() {
         return order;
     }
+
 }

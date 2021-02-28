@@ -4,7 +4,8 @@ import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Located;
 
 final class StackManipulation {
-    private StackManipulation(){
+
+    private StackManipulation() {
 
     }
 
@@ -38,7 +39,9 @@ final class StackManipulation {
         return newStackTraceLength;
     }
 
-    static Throwable removeFrameworkFramesAndAppendStepLocation(CucumberInvocationTargetException invocationException, StackTraceElement stepLocation) {
+    static Throwable removeFrameworkFramesAndAppendStepLocation(
+            CucumberInvocationTargetException invocationException, StackTraceElement stepLocation
+    ) {
         Located located = invocationException.getLocated();
         Throwable error = invocationException.getInvocationTargetExceptionCause();
         if (stepLocation == null) {
@@ -55,4 +58,5 @@ final class StackManipulation {
         error.setStackTrace(newStackTrace);
         return error;
     }
+
 }

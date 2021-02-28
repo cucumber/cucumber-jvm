@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>5.1.2-SNAPSHOT</version>
+        <version>6.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-openejb</artifactId>
@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
-        <openejb-core.version>8.0.1</openejb-core.version>
+        <openejb-core.version>8.0.6</openejb-core.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <activation.version>1.1.1</activation.version>
     </properties>
@@ -71,21 +71,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <!--
-    Using source level 1.7 in combination with openejb-core results in 'An unknown compilation
-    error'. Use 1.6 instead and compile up to avoid this problem.
-     -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

@@ -2,37 +2,21 @@ package io.cucumber.examples.spring.txn;
 
 import io.cucumber.java.en.Given;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserStepDefinitions {
+
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private User currentUser;
 
-    private User user;
-
-    public void thereIsAuser() {
-        user = new User();
-        user.setUsername("testuser");
-        userRepository.save(user);
+    @Given("there is a user")
+    public void there_is_a_user() {
+        currentUser = userRepository.save(new User("John Doe"));
     }
 
-    @Given("a User has posted the following messages:")
-    public void a_User_has_posted_the_following_messages(List<Message> messages) {
-        thereIsAuser();
-        for (Message m : messages) {
-            m.setAuthor(user);
-            messageRepository.save(m);
-        }
-        assertTrue(
-            TransactionSynchronizationManager.isActualTransactionActive(),
-            "No transaction is active"
-        );
+    public User getCurrentUser() {
+        return currentUser;
     }
+
 }

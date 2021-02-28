@@ -2,21 +2,23 @@ package io.cucumber.spring.contextcaching;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.hamcrest.MatcherAssert;
+import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@ContextConfiguration(classes = {ContextConfig.class})
+@CucumberContextConfiguration
+@ContextConfiguration(classes = ContextConfig.class)
 public class ContextCachingSteps {
 
     @Autowired
     ContextCounter contextCounter;
 
-    @When("I run a scenario")
+    @When("I run a scenario in the same JVM as the SharedContextTest")
     public void runningScenario() {
+        // happens automatically
     }
 
     @Then("there should be only one Spring context")

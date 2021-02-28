@@ -4,8 +4,9 @@
 [![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.cucumber%22%20AND%20a:%22cucumber-java%22)
-[![Build Status](https://travis-ci.org/cucumber/cucumber-jvm.svg?branch=master)](https://travis-ci.org/cucumber/cucumber-jvm)
-[![Coverage Status](https://coveralls.io/repos/github/cucumber/cucumber-jvm/badge.svg?branch=master)](https://coveralls.io/github/cucumber/cucumber-jvm?branch=master)
+[![Build Status](https://github.com/cucumber/cucumber-jvm/workflows/Cucumber%20CI/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
+[![Coverage Status](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg)](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main)
+
 
 Cucumber-JVM is a pure Java implementation of Cucumber. 
 You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with 
@@ -24,6 +25,7 @@ Cucumber-JVM also integrates with all the popular
 Please ask on 
  * [The Cukes Google Group](http://groups.google.com/group/cukes).
  * [CucumberBDD Slack](https://cucumberbdd-slack-invite.herokuapp.com/) <sup>[direct link](https://cucumberbdd.slack.com/)</sup>
+
 ## Bugs and Feature requests
 
 You can register bugs and feature requests in the 
@@ -39,4 +41,4 @@ people than you might care enough to provide a fix.
 If you'd like to contribute to the documentation, checkout 
 [cucumber/docs.cucumber.io](https://github.com/cucumber/docs.cucumber.io) 
 otherwise see our
-[CONTRIBUTING.md](https://github.com/cucumber/cucumber-jvm/blob/master/CONTRIBUTING.md).
+[CONTRIBUTING.md](https://github.com/cucumber/cucumber-jvm/blob/main/CONTRIBUTING.md).

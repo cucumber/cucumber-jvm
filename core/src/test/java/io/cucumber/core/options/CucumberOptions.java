@@ -8,12 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface CucumberOptions {
 
     boolean dryRun() default false;
 
-    boolean strict() default false;
+    boolean strict() default true;
 
     String[] features() default {};
 
@@ -21,15 +21,15 @@ public @interface CucumberOptions {
 
     String[] extraGlue() default {};
 
-    String[] tags() default {};
+    String tags() default "";
 
     String[] plugin() default {};
 
+    boolean publish() default false;
 
     boolean monochrome() default false;
 
     String[] name() default {};
-
 
     SnippetType snippets() default SnippetType.UNDERSCORE;
 

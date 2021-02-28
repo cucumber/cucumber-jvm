@@ -15,6 +15,7 @@ import static java.util.Locale.ENGLISH;
 import static org.testng.Assert.assertEquals;
 
 public class DateSteps {
+
     private String result;
     private DateCalculator calculator;
 

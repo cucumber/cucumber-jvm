@@ -17,8 +17,7 @@ final class DuplicateStepDefinitionException extends CucumberException {
 
         return String.format("Duplicate step definitions in %s and %s",
             a.getLocation(),
-            b.getLocation()
-        );
+            b.getLocation());
     }
 
 }

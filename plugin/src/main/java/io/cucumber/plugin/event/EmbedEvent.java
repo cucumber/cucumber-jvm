@@ -3,25 +3,24 @@ package io.cucumber.plugin.event;
 import org.apiguardian.api.API;
 
 import java.time.Instant;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
 public final class EmbedEvent extends TestCaseEvent {
+
+    public final String name;
     private final byte[] data;
     private final String mediaType;
-    public final String name;
 
     public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mediaType) {
-        super(timeInstant, testCase);
-        this.data = Objects.requireNonNull(data);
-        this.mediaType = Objects.requireNonNull(mediaType);
-        this.name = null;
+        this(timeInstant, testCase, data, mediaType, null);
     }
 
     public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mediaType, String name) {
         super(timeInstant, testCase);
-        this.data = data;
-        this.mediaType = mediaType;
+        this.data = requireNonNull(data);
+        this.mediaType = requireNonNull(mediaType);
         this.name = name;
     }
 
@@ -34,9 +33,8 @@ public final class EmbedEvent extends TestCaseEvent {
     }
 
     /**
+     * @return     media type of the embedding.
      * @deprecated use {@link #getMediaType()}
-     *
-     * @return media type of the embedding.
      */
     @Deprecated
     public String getMimeType() {
@@ -46,4 +44,5 @@ public final class EmbedEvent extends TestCaseEvent {
     public String getName() {
         return name;
     }
+
 }

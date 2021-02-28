@@ -1,0 +1,444 @@
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": 3,
+        "name": "",
+        "description": "",
+        "type": "background",
+        "keyword": "Background",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 4,
+            "name": "bg_1",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 5,
+            "name": "bg_2",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 6,
+            "name": "bg_3",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
+        "before": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "match": {
+              "location": "{stubbed location with details}"
+            }
+          }
+        ],
+        "line": 8,
+        "name": "Scenario_1",
+        "description": "",
+        "id": "feature-3;scenario-1",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 9,
+            "name": "step_1",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 10,
+            "name": "step_2",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 11,
+            "name": "step_3",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 12,
+            "name": "cliché",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "line": 3,
+        "name": "",
+        "description": "",
+        "type": "background",
+        "keyword": "Background",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 4,
+            "name": "bg_1",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 5,
+            "name": "bg_2",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 6,
+            "name": "bg_3",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
+        "before": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "match": {
+              "location": "{stubbed location with details}"
+            }
+          }
+        ],
+        "line": 21,
+        "name": "ScenarioOutline_1",
+        "description": "",
+        "id": "feature-3;scenariooutline-1;;2",
+        "type": "scenario",
+        "keyword": "Scenario Outline",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 15,
+            "name": "so_1 12",
+            "match": {
+              "arguments": [
+                {
+                  "val": "12",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 16,
+            "name": "so_2 7 cucumbers",
+            "match": {
+              "arguments": [
+                {
+                  "val": "7",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 17,
+            "name": "5 so_3",
+            "match": {
+              "arguments": [
+                {
+                  "val": "5",
+                  "offset": 0
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "line": 3,
+        "name": "",
+        "description": "",
+        "type": "background",
+        "keyword": "Background",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 4,
+            "name": "bg_1",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 5,
+            "name": "bg_2",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 6,
+            "name": "bg_3",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
+        "before": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "match": {
+              "location": "{stubbed location with details}"
+            }
+          }
+        ],
+        "line": 22,
+        "name": "ScenarioOutline_1",
+        "description": "",
+        "id": "feature-3;scenariooutline-1;;3",
+        "type": "scenario",
+        "keyword": "Scenario Outline",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 15,
+            "name": "so_1 20",
+            "match": {
+              "arguments": [
+                {
+                  "val": "20",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 16,
+            "name": "so_2 15 cucumbers",
+            "match": {
+              "arguments": [
+                {
+                  "val": "15",
+                  "offset": 5
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 17,
+            "name": "5 so_3",
+            "match": {
+              "arguments": [
+                {
+                  "val": "5",
+                  "offset": 0
+                }
+              ],
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "line": 3,
+        "name": "",
+        "description": "",
+        "type": "background",
+        "keyword": "Background",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 4,
+            "name": "bg_1",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 5,
+            "name": "bg_2",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 6,
+            "name": "bg_3",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          }
+        ]
+      },
+      {
+        "start_timestamp": "1970-01-01T00:00:00.000Z",
+        "before": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "match": {
+              "location": "{stubbed location with details}"
+            }
+          }
+        ],
+        "line": 24,
+        "name": "Scenario_2",
+        "description": "",
+        "id": "feature-3;scenario-2",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 25,
+            "name": "a",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Given "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 26,
+            "name": "b",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "Then "
+          },
+          {
+            "result": {
+              "status": "passed"
+            },
+            "line": 27,
+            "name": "c",
+            "match": {
+              "location": "{stubbed location with details}"
+            },
+            "keyword": "When "
+          }
+        ]
+      }
+    ],
+    "name": "Feature_3",
+    "description": "",
+    "id": "feature-3",
+    "keyword": "Feature",
+    "uri": "classpath:io/cucumber/core/plugin/JsonPrettyFormatterTest.feature",
+    "tags": []
+  }
+]

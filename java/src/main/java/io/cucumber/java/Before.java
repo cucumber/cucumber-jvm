@@ -14,19 +14,21 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)
 public @interface Before {
+
     /**
-     * Tag expression. If the expression applies to the current
-     * scenario this hook will be executed.
+     * Tag expression. If the expression applies to the current scenario this
+     * hook will be executed.
      *
      * @return a tag expression
      */
     String value() default "";
 
     /**
-     * The order in which this hook should run. Lower numbers are run first.
-     * The default order is 10000.
+     * The order in which this hook should run. Lower numbers are run first. The
+     * default order is 10000.
      *
      * @return the order in which this hook should run.
      */
     int order() default 10000;
+
 }

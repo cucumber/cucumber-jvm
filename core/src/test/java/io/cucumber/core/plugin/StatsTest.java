@@ -1,12 +1,19 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Status;
+import io.cucumber.plugin.event.TestCase;
+import io.cucumber.plugin.event.TestStep;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofMillis;
@@ -29,7 +36,13 @@ class StatsTest {
 
         assertThat(baos.toString(), startsWith(String.format(
             "0 Scenarios%n" +
-                "0 Steps%n")));
+                    "0 Steps%n")));
+    }
+
+    private Stats createMonochromeSummaryCounter() {
+        Stats stats = new Stats(Locale.US);
+        stats.setMonochrome(true);
+        return stats;
     }
 
     @Test
@@ -40,12 +53,12 @@ class StatsTest {
         counter.addStep(Status.PASSED);
         counter.addStep(Status.PASSED);
         counter.addStep(Status.PASSED);
-        counter.addScenario(Status.PASSED, "scenario designation");
+        counter.addScenario(Status.PASSED, createTestCase("classpath:com/example", 42, "scenario designation"));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format(
             "1 Scenarios (1 passed)%n" +
-                "3 Steps (3 passed)%n")));
+                    "3 Steps (3 passed)%n")));
     }
 
     @Test
@@ -62,8 +75,13 @@ class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), containsString(String.format("" +
-            "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
-            "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
+                "6 Scenarios (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n" +
+                "6 Steps (1 failed, 1 ambiguous, 1 skipped, 1 pending, 1 undefined, 1 passed)%n")));
+    }
+
+    private void addOneStepScenario(Stats counter, Status status) {
+        counter.addStep(status);
+        counter.addScenario(status, createTestCase("classpath:com/example", 14, "scenario designation"));
     }
 
     @Test
@@ -80,15 +98,19 @@ class StatsTest {
         counter.printStats(new PrintStream(baos));
 
         String colorSubCounts = "" +
-            AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.RED + "1 ambiguous" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.CYAN + "1 skipped" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
-            AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
+                AnsiEscapes.RED + "1 failed" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.RED + "1 ambiguous" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.CYAN + "1 skipped" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.YELLOW + "1 pending" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.YELLOW + "1 undefined" + AnsiEscapes.RESET + ", " +
+                AnsiEscapes.GREEN + "1 passed" + AnsiEscapes.RESET;
         assertThat(baos.toString(), containsString(String.format("" +
-            "6 Scenarios (" + colorSubCounts + ")%n" +
-            "6 Steps (" + colorSubCounts + ")%n")));
+                "6 Scenarios (" + colorSubCounts + ")%n" +
+                "6 Steps (" + colorSubCounts + ")%n")));
+    }
+
+    private Stats createColorSummaryCounter() {
+        return new Stats(Locale.US);
     }
 
     @Test
@@ -144,7 +166,6 @@ class StatsTest {
     @Test
     void should_use_locale_for_decimal_separator() {
         Stats counter = new Stats(Locale.GERMANY);
-        counter.setStrict(true);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.setStartTime(ANY_TIME);
@@ -160,23 +181,29 @@ class StatsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.addStep(Status.FAILED);
-        counter.addScenario(Status.FAILED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addScenario(Status.FAILED, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.addStep(Status.AMBIGUOUS);
-        counter.addScenario(Status.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addScenario(Status.AMBIGUOUS, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.addStep(Status.UNDEFINED);
-        counter.addScenario(Status.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addScenario(Status.UNDEFINED, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.addStep(Status.PENDING);
-        counter.addScenario(Status.PENDING, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addScenario(Status.PENDING, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
-            "Failed scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Ambiguous scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "4 Scenarios")));
+                "Failed scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Ambiguous scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Pending scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Undefined scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "4 Scenarios")));
     }
 
     @Test
@@ -185,45 +212,78 @@ class StatsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         counter.addStep(Status.FAILED);
-        counter.addScenario(Status.FAILED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addScenario(Status.FAILED, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.addStep(Status.AMBIGUOUS);
-        counter.addScenario(Status.AMBIGUOUS, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addScenario(Status.AMBIGUOUS, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.addStep(Status.UNDEFINED);
-        counter.addScenario(Status.UNDEFINED, "path/file.feature:3 # Scenario: scenario_name");
+        counter.addScenario(Status.UNDEFINED, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.addStep(Status.PENDING);
-        counter.addScenario(Status.PENDING, "path/file.feature:3 # Scenario: scenario_name");
-        counter.setStrict(true);
+        counter.addScenario(Status.PENDING, createTestCase("path/file.feature", 3, "Scenario: scenario_name"));
         counter.printStats(new PrintStream(baos));
 
         assertThat(baos.toString(), startsWith(String.format("" +
-            "Failed scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Ambiguous scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Pending scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "Undefined scenarios:%n" +
-            "path/file.feature:3 # Scenario: scenario_name%n" +
-            "%n" +
-            "4 Scenarios")));
+                "Failed scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Ambiguous scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Pending scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "Undefined scenarios:%n" +
+                "path/file.feature:3 # Scenario: scenario_name%n" +
+                "%n" +
+                "4 Scenarios")));
     }
 
-    private void addOneStepScenario(Stats counter, Status status) {
-        counter.addStep(status);
-        counter.addScenario(status, "scenario designation");
-    }
+    private static TestCase createTestCase(String uri, int line, String name) {
+        return new TestCase() {
+            @Override
+            public Integer getLine() {
+                return getLocation().getLine();
+            }
 
-    private Stats createMonochromeSummaryCounter() {
-        Stats stats = new Stats(Locale.US);
-        stats.setMonochrome(true);
-        return stats;
-    }
+            @Override
+            public Location getLocation() {
+                return new Location(line, -1);
+            }
 
-    private Stats createColorSummaryCounter() {
-        return new Stats(Locale.US);
+            @Override
+            public String getKeyword() {
+                return "Scenario";
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getScenarioDesignation() {
+                return null;
+            }
+
+            @Override
+            public List<String> getTags() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<TestStep> getTestSteps() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public URI getUri() {
+                return URI.create(uri);
+            }
+
+            @Override
+            public UUID getId() {
+                return UUID.randomUUID();
+            }
+        };
     }
 
 }

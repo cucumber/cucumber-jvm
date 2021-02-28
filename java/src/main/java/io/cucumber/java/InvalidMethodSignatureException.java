@@ -1,6 +1,5 @@
 package io.cucumber.java;
 
-
 import io.cucumber.core.backend.CucumberBackendException;
 
 import java.lang.reflect.Method;
@@ -35,7 +34,6 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
             return this;
         }
 
-
         InvalidMethodSignatureExceptionBuilder addSignature(String signature) {
             signatures.add(signature);
             return this;
@@ -48,23 +46,10 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
 
         public InvalidMethodSignatureException build() {
             return new InvalidMethodSignatureException("" +
-                describeAnnotations() + " must have one of these signatures:\n" +
-                " * " + describeAvailableSignature() + "\n" +
-                "at " + describeLocation() + "\n" +
-                describeNote() + "\n"
-            );
-        }
-
-        private String describeNote() {
-            return String.join("\n", notes);
-        }
-
-        private Object describeLocation() {
-            return MethodFormat.FULL.format(method);
-        }
-
-        private String describeAvailableSignature() {
-            return String.join("\n * ", signatures);
+                    describeAnnotations() + " must have one of these signatures:\n" +
+                    " * " + describeAvailableSignature() + "\n" +
+                    "at " + describeLocation() + "\n" +
+                    describeNote() + "\n");
         }
 
         private String describeAnnotations() {
@@ -85,5 +70,19 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
 
             return "A method annotated with " + builder.toString();
         }
+
+        private String describeAvailableSignature() {
+            return String.join("\n * ", signatures);
+        }
+
+        private Object describeLocation() {
+            return MethodFormat.FULL.format(method);
+        }
+
+        private String describeNote() {
+            return String.join("\n", notes);
+        }
+
     }
+
 }

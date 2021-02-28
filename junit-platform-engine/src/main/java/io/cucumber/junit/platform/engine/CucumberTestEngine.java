@@ -20,13 +20,13 @@ import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENA
  * Supports discovery and execution of {@code .feature} files using the
  * following selectors:
  * <ul>
- *     <li>{@link org.junit.platform.engine.discovery.ClasspathRootSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.ClasspathResourceSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.PackageSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.FileSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.DirectorySelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.UniqueIdSelector}</li>
- *     <li>{@link org.junit.platform.engine.discovery.UriSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.ClasspathRootSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.ClasspathResourceSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.PackageSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.FileSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.DirectorySelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.UniqueIdSelector}</li>
+ * <li>{@link org.junit.platform.engine.discovery.UriSelector}</li>
  * </ul>
  */
 @API(status = API.Status.STABLE)
@@ -45,11 +45,6 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
     }
 
     @Override
-    protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
-    }
-
-    @Override
     protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {
         ConfigurationParameters config = request.getConfigurationParameters();
         if (config.getBoolean(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME).orElse(false)) {
@@ -57,6 +52,11 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
                 new PrefixedConfigurationParameters(config, PARALLEL_CONFIG_PREFIX));
         }
         return super.createExecutorService(request);
+    }
+
+    @Override
+    protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
+        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
     }
 
 }

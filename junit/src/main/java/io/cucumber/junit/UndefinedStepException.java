@@ -1,52 +1,42 @@
 package io.cucumber.junit;
 
+import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
+
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collectors;
 
 final class UndefinedStepException extends RuntimeException {
+
     private static final long serialVersionUID = 1L;
 
-    UndefinedStepException(List<String> snippets) {
-        super(createMessage(snippets), null, false, false);
+    UndefinedStepException(Collection<Suggestion> suggestions) {
+        super(createMessage(suggestions), null, false, false);
     }
 
-    private static String createMessage(List<String> snippets) {
-        StringBuilder sb = new StringBuilder("This step is undefined");
-        appendSnippets(snippets, sb);
+    private static String createMessage(Collection<Suggestion> suggestions) {
+        if (suggestions.isEmpty()) {
+            return "This step is undefined";
+        }
+        Suggestion first = suggestions.iterator().next();
+        StringBuilder sb = new StringBuilder("The step '" + first.getStep() + "'");
+        if (suggestions.size() == 1) {
+            sb.append(" is undefined.");
+        } else {
+            sb.append(" and ").append(suggestions.size() - 1).append(" other step(s) are undefined.");
+        }
+        sb.append("\n");
+        if (suggestions.size() == 1) {
+            sb.append("You can implement this step using the snippet(s) below:\n\n");
+        } else {
+            sb.append("You can implement these steps using the snippet(s) below:\n\n");
+        }
+        String snippets = suggestions
+                .stream()
+                .map(Suggestion::getSnippets)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.joining("\n", "", "\n"));
+        sb.append(snippets);
         return sb.toString();
     }
-
-    UndefinedStepException(String stepText, List<String> snippets, Collection<List<String>> otherSnippets) {
-        super(createMessage(stepText, snippets, otherSnippets), null, false, false);
-    }
-
-    private static String createMessage(String stepText, List<String> snippets, Collection<List<String>> otherSnippets) {
-        StringBuilder sb = new StringBuilder("The step \"" + stepText + "\" is undefined");
-        appendSnippets(snippets, sb);
-        appendOtherSnippets(otherSnippets, sb);
-        return sb.toString();
-    }
-
-    private static void appendOtherSnippets(Collection<List<String>> otherSnippets, StringBuilder sb) {
-        if (otherSnippets.isEmpty()) {
-            return;
-        }
-
-        sb.append("\n");
-        sb.append("\n");
-        sb.append("Some other steps were also undefined:\n\n");
-        otherSnippets.forEach(snippet -> {
-            sb.append(String.join("\n", snippet));
-            sb.append("\n");
-        });
-    }
-
-    private static void appendSnippets(List<String> snippets, StringBuilder sb) {
-        if (snippets.isEmpty()) {
-            return;
-        }
-        sb.append(". You can implement it using tne snippet(s) below:\n\n");
-        sb.append(String.join("\n", snippets));
-    }
-
 }

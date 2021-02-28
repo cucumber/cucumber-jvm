@@ -36,31 +36,30 @@ import static org.mockito.Mockito.when;
 class TestCaseStateResultTest {
 
     private final Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-        "Feature: Test feature\n" +
-        "  Scenario: Test scenario\n" +
-        "     Given I have 4 cukes in my belly\n"
-    );
+            "Feature: Test feature\n" +
+            "  Scenario: Test scenario\n" +
+            "     Given I have 4 cukes in my belly\n");
     private final EventBus bus = mock(EventBus.class);
     private final TestCaseState s = new TestCaseState(
         bus,
+        UUID.randomUUID(),
         new TestCase(
             UUID.randomUUID(),
             Collections.emptyList(),
             Collections.emptyList(),
             Collections.emptyList(),
             feature.getPickles().get(0),
-            false
-        )
-    );
+            false));
 
     @BeforeEach
     void setup() {
         when(bus.getInstant()).thenReturn(Instant.now());
+        s.setCurrentTestStepId(UUID.randomUUID());
     }
 
     @Test
-    void no_steps_is_undefined() {
-        assertThat(s.getStatus(), is(equalTo(UNDEFINED)));
+    void no_steps_is_passed() {
+        assertThat(s.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
@@ -77,10 +76,9 @@ class TestCaseStateResultTest {
         s.add(new Result(Status.UNDEFINED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
-        assertAll("Checking Scenario",
+        assertAll(
             () -> assertThat(s.getStatus(), is(equalTo(FAILED))),
-            () -> assertTrue(s.isFailed())
-        );
+            () -> assertTrue(s.isFailed()));
     }
 
     @Test
@@ -88,10 +86,9 @@ class TestCaseStateResultTest {
         s.add(new Result(Status.PASSED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
-        assertAll("Checking Scenario",
+        assertAll(
             () -> assertThat(s.getStatus(), is(equalTo(SKIPPED))),
-            () -> assertFalse(s.isFailed())
-        );
+            () -> assertFalse(s.isFailed()));
     }
 
     @Test
@@ -101,10 +98,9 @@ class TestCaseStateResultTest {
         s.add(new Result(Status.PENDING, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
-        assertAll("Checking Scenario",
+        assertAll(
             () -> assertThat(s.getStatus(), is(equalTo(UNDEFINED))),
-            () -> assertFalse(s.isFailed())
-        );
+            () -> assertFalse(s.isFailed()));
     }
 
     @Test
@@ -113,23 +109,22 @@ class TestCaseStateResultTest {
         s.add(new Result(Status.UNDEFINED, ZERO, null));
         s.add(new Result(Status.SKIPPED, ZERO, null));
 
-        assertAll("Checking Scenario",
+        assertAll(
             () -> assertThat(s.getStatus(), is(equalTo(UNDEFINED))),
-            () -> assertFalse(s.isFailed())
-        );
+            () -> assertFalse(s.isFailed()));
     }
 
     @SuppressWarnings("deprecation")
     @Test
     void embeds_data() {
-        byte[] data = new byte[]{1, 2, 3};
-        s.embed(data, "bytes/foo");
+        byte[] data = new byte[] { 1, 2, 3 };
+        s.attach(data, "bytes/foo", null);
         verify(bus).send(argThat(new EmbedEventMatcher(data, "bytes/foo")));
     }
 
     @Test
     void prints_output() {
-        s.write("Hi");
+        s.log("Hi");
         verify(bus).send(argThat(new WriteEventMatcher("Hi")));
     }
 
@@ -156,6 +151,7 @@ class TestCaseStateResultTest {
     }
 
     private static final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
+
         private final byte[] data;
         private final String mediaType;
 
@@ -167,11 +163,13 @@ class TestCaseStateResultTest {
         @Override
         public boolean matches(EmbedEvent argument) {
             return (argument != null &&
-                Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType));
+                    Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType));
         }
+
     }
 
     private static final class WriteEventMatcher implements ArgumentMatcher<WriteEvent> {
+
         private final String text;
 
         WriteEventMatcher(String text) {
@@ -182,6 +180,7 @@ class TestCaseStateResultTest {
         public boolean matches(WriteEvent argument) {
             return (argument != null && argument.getText().equals(text));
         }
+
     }
 
 }

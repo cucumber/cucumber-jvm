@@ -13,4 +13,5 @@ public final class FeatureParserException extends RuntimeException {
     public FeatureParserException(Throwable cause) {
         super(cause);
     }
+
 }

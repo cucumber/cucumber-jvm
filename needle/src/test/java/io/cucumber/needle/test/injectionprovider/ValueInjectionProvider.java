@@ -7,8 +7,8 @@ import io.cucumber.needle.DefaultInstanceInjectionProvider;
  */
 public class ValueInjectionProvider extends DefaultInstanceInjectionProvider<ValueGetter> {
 
-  public ValueInjectionProvider(final String value) {
-    super(() -> value);
-  }
+    public ValueInjectionProvider(final String value) {
+        super(() -> value);
+    }
 
 }

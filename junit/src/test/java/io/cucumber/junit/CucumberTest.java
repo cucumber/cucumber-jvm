@@ -28,7 +28,6 @@ import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -54,38 +53,39 @@ class CucumberTest {
     @Test
     void finds_features_based_on_implicit_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ImplicitFeatureAndGluePath.class);
-        assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getDescription().getDisplayName(), is(equalTo("Feature A")));
+        assertThat(cucumber.getChildren().size(), is(equalTo(7)));
+        assertThat(cucumber.getChildren().get(1).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 
     @Test
     void finds_features_based_on_explicit_root_package() throws InitializationError {
         Cucumber cucumber = new Cucumber(ExplicitFeaturePath.class);
-        assertThat(cucumber.getChildren().size(), is(equalTo(2)));
-        assertThat(cucumber.getChildren().get(0).getDescription().getDisplayName(), is(equalTo("Feature A")));
+        assertThat(cucumber.getChildren().size(), is(equalTo(7)));
+        assertThat(cucumber.getChildren().get(1).getDescription().getDisplayName(), is(equalTo("Feature A")));
     }
 
     @Test
     void testThatParsingErrorsIsNicelyReported() {
         Executable testMethod = () -> new Cucumber(LexerErrorFeature.class);
         FeatureParserException actualThrown = assertThrows(FeatureParserException.class, testMethod);
-        assertAll("Checking Exception including cause",
-            () -> assertThat(
-                actualThrown.getMessage(),
-                is(equalTo("Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature"))
-            )
-        );
+        assertThat(
+            actualThrown.getMessage(),
+            equalTo("" +
+                    "Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature\n" +
+                    "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Feature  FA'\n" +
+                    "(3:3): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Scenario SA'\n" +
+                    "(4:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Given GA'\n" +
+                    "(5:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'When GA'\n" +
+                    "(6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'"));
     }
 
     @Test
     void testThatFileIsNotCreatedOnParsingError() {
         assertThrows(FeatureParserException.class,
-            () -> new Cucumber(FormatterWithLexerErrorFeature.class)
-        );
+            () -> new Cucumber(FormatterWithLexerErrorFeature.class));
         assertFalse(
-            new File("target/lexor_error_feature.json").exists(),
-            "File is created despite Lexor Error"
-        );
+            new File("target/lexor_error_feature.ndjson").exists(),
+            "File is created despite Lexor Error");
     }
 
     @Test
@@ -104,12 +104,19 @@ class CucumberTest {
         Request.classes(computer, ValidEmpty.class).getRunner().run(notifier);
         {
             InOrder order = Mockito.inOrder(listener);
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("Followed by some examples(Feature A)")));
+
+            order.verify(listener)
+                    .testStarted(argThat(new DescriptionMatcher("Followed by some examples #1(Feature A)")));
+            order.verify(listener)
+                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples #1(Feature A)")));
+            order.verify(listener)
+                    .testStarted(argThat(new DescriptionMatcher("Followed by some examples #2(Feature A)")));
+            order.verify(listener)
+                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples #2(Feature A)")));
+            order.verify(listener)
+                    .testStarted(argThat(new DescriptionMatcher("Followed by some examples #3(Feature A)")));
+            order.verify(listener)
+                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples #3(Feature A)")));
         }
         {
             InOrder order = Mockito.inOrder(listener);
@@ -117,12 +124,38 @@ class CucumberTest {
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("A(Feature B)")));
             order.verify(listener).testStarted(argThat(new DescriptionMatcher("B(Feature B)")));
             order.verify(listener).testFinished(argThat(new DescriptionMatcher("B(Feature B)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C(Feature B)")));
+            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C #1(Feature B)")));
+            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C #1(Feature B)")));
+            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C #2(Feature B)")));
+            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C #2(Feature B)")));
+            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C #3(Feature B)")));
+            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C #3(Feature B)")));
+        }
+    }
+
+    @Test
+    void cucumber_distinguishes_between_identical_features() throws Exception {
+        RunNotifier notifier = new RunNotifier();
+        RunListener listener = Mockito.mock(RunListener.class);
+        notifier.addListener(listener);
+        Request.classes(ValidEmpty.class).getRunner().run(notifier);
+        {
+            InOrder order = Mockito.inOrder(listener);
+
+            order.verify(listener)
+                    .testStarted(
+                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #1)")));
+            order.verify(listener)
+                    .testFinished(
+                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #1)")));
+
+            order.verify(listener)
+                    .testStarted(
+                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #2)")));
+            order.verify(listener)
+                    .testFinished(
+                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #2)")));
+
         }
     }
 
@@ -131,28 +164,10 @@ class CucumberTest {
         Description description = new Cucumber(ValidEmpty.class).getDescription();
 
         assertThat(description.getDisplayName(), is("io.cucumber.junit.CucumberTest$ValidEmpty"));
-        Description feature = description.getChildren().get(0);
+        Description feature = description.getChildren().get(1);
         assertThat(feature.getDisplayName(), is("Feature A"));
         Description pickle = feature.getChildren().get(0);
         assertThat(pickle.getDisplayName(), is("A good start(Feature A)"));
-    }
-
-
-    @RunWith(Cucumber.class)
-    public static class ValidEmpty {
-    }
-
-    @RunWith(Cucumber.class)
-    public static class ValidIgnored {
-        public void ignoreMe() {
-        }
-    }
-
-    @RunWith(Cucumber.class)
-    private static class Invalid {
-        @DummyWhen
-        public void ignoreMe() {
-        }
     }
 
     @Test
@@ -165,38 +180,66 @@ class CucumberTest {
     void no_stepdefs_in_cucumber_runner_invalid() {
         Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(Invalid.class);
         CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(expectedThrown.getMessage(), is(equalTo("\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public static class ImplicitFeatureAndGluePath {
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:io/cucumber/junit"})
-    public static class ExplicitFeaturePath {
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:gibber/ish"})
-    public static class ExplicitFeaturePathWithNoFeatures {
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"})
-    public static class LexerErrorFeature {
-
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @CucumberOptions(features = {"classpath:io/cucumber/error/lexer_error.feature"}, plugin = {"json:target/lexor_error_feature.json"})
-    public static class FormatterWithLexerErrorFeature {
-
+        assertThat(expectedThrown.getMessage(), is(equalTo(
+            "\n\nClasses annotated with @RunWith(Cucumber.class) must not define any\nStep Definition or Hook methods. Their sole purpose is to serve as\nan entry point for JUnit. Step Definitions and Hooks should be defined\nin their own classes. This allows them to be reused across features.\nOffending class: class io.cucumber.junit.CucumberTest$Invalid\n")));
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @interface DummyWhen {
+
+    }
+
+    @RunWith(Cucumber.class)
+    public static class ValidEmpty {
+
+    }
+
+    @RunWith(Cucumber.class)
+    public static class ValidIgnored {
+
+        public void ignoreMe() {
+        }
+
+    }
+
+    @RunWith(Cucumber.class)
+    private static class Invalid {
+
+        @DummyWhen
+        public void ignoreMe() {
+        }
+
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static class ImplicitFeatureAndGluePath {
+
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @CucumberOptions(features = "classpath:io/cucumber/junit")
+    public static class ExplicitFeaturePath {
+
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @CucumberOptions(features = "classpath:gibber/ish")
+    public static class ExplicitFeaturePathWithNoFeatures {
+
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @CucumberOptions(features = "classpath:io/cucumber/error/lexer_error.feature")
+    public static class LexerErrorFeature {
+
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @CucumberOptions(
+            features = "classpath:io/cucumber/error/lexer_error.feature",
+            plugin = "message:target/lexor_error_feature.ndjson")
+    public static class FormatterWithLexerErrorFeature {
 
     }
 

@@ -1,8 +1,8 @@
 package io.cucumber.needle;
 
-import io.cucumber.core.backend.ObjectFactory;
 import de.akquinet.jbosscc.needle.NeedleTestcase;
 import de.akquinet.jbosscc.needle.injection.InjectionProvider;
+import io.cucumber.core.backend.ObjectFactory;
 import org.apiguardian.api.API;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,47 +27,16 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
         super(setUpInjectionProviders());
     }
 
+    static InjectionProvider<?>[] setUpInjectionProviders() {
+        return new CucumberNeedleConfiguration().getInjectionProviders();
+    }
+
     @Override
     public <T> T getInstance(final Class<T> type) {
+        logger.warn("cucumber-needle has been deprecated. Consider using cucumber-cdi2 or cucumber-jakarta-cdi");
         logger.trace("getInstance: {}", type.getCanonicalName());
         assertTypeHasBeenAdded(type);
         return nullSafeGetInstance(type);
-    }
-
-    @Override
-    public void start() {
-        logger.trace("start()");
-        try {
-            // First create all instances
-            cachedStepsInstances.replaceAll((t, v) -> createStepsInstance(t));
-            // Then collect injection providers from all instances
-            for (Object stepsInstance : cachedStepsInstances.values()) {
-                addInjectionProvider(collectInjectionProvidersFromStepsInstance.apply(stepsInstance));
-            }
-            // Now init all instances, having the injection providers from all other instances available
-            for (Object stepsInstance : cachedStepsInstances.values()) {
-                initTestcase(stepsInstance);
-            }
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
-    public void stop() {
-        logger.trace("stop()");
-        cachedStepsInstances.replaceAll((t, v) -> null);
-    }
-
-    @Override
-    public boolean addClass(final Class<?> type) {
-        logger.trace("addClass(): {}", type.getCanonicalName());
-
-        // build up cache keys ...
-        if (!cachedStepsInstances.containsKey(type)) {
-            cachedStepsInstances.put(type, null);
-        }
-        return true;
     }
 
     private void assertTypeHasBeenAdded(final Class<?> type) {
@@ -86,12 +55,46 @@ public final class NeedleFactory extends NeedleTestcase implements ObjectFactory
         return (T) instance;
     }
 
+    @Override
+    public void start() {
+        logger.trace("start()");
+        try {
+            // First create all instances
+            cachedStepsInstances.replaceAll((t, v) -> createStepsInstance(t));
+            // Then collect injection providers from all instances
+            for (Object stepsInstance : cachedStepsInstances.values()) {
+                addInjectionProvider(collectInjectionProvidersFromStepsInstance.apply(stepsInstance));
+            }
+            // Now init all instances, having the injection providers from all
+            // other instances available
+            for (Object stepsInstance : cachedStepsInstances.values()) {
+                initTestcase(stepsInstance);
+            }
+        } catch (final Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public void stop() {
+        logger.trace("stop()");
+        cachedStepsInstances.replaceAll((t, v) -> null);
+    }
+
     private <T> T createStepsInstance(final Class<T> type) {
         logger.trace("createInstance(): {}", type.getCanonicalName());
         return createInstanceByDefaultConstructor.apply(type);
     }
 
-    static InjectionProvider<?>[] setUpInjectionProviders() {
-        return new CucumberNeedleConfiguration().getInjectionProviders();
+    @Override
+    public boolean addClass(final Class<?> type) {
+        logger.trace("addClass(): {}", type.getCanonicalName());
+
+        // build up cache keys ...
+        if (!cachedStepsInstances.containsKey(type)) {
+            cachedStepsInstances.put(type, null);
+        }
+        return true;
     }
+
 }

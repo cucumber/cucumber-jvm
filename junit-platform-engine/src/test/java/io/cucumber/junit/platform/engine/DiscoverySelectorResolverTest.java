@@ -1,7 +1,11 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.junit.platform.engine.nofeatures.NoFeatures;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
@@ -11,6 +15,7 @@ import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.engine.discovery.FilePosition;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 
 import java.io.File;
@@ -26,12 +31,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
@@ -41,32 +50,23 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPacka
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 
-
 class DiscoverySelectorResolverTest {
-    private final DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
-    private TestDescriptor testDescriptor;
 
-    private static Matcher<TestDescriptor> allDescriptorsPrefixedBy(UniqueId targetId) {
-        return new CustomTypeSafeMatcher<TestDescriptor>("All descendants are prefixed by " + targetId) {
-            @Override
-            protected boolean matchesSafely(TestDescriptor descriptor) {
-                return descriptor.getDescendants()
-                    .stream()
-                    .filter(TestDescriptor::isTest)
-                    .map(TestDescriptor::getUniqueId)
-                    .allMatch(selectedId -> selectedId.hasPrefix(targetId));
-            }
-        };
-    }
+    private final DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
+    private final LogRecordListener logRecordListener = new LogRecordListener();
+    private CucumberEngineDescriptor testDescriptor;
 
     @BeforeEach
     void before() {
-        CucumberTestEngine engine = new CucumberTestEngine();
-        ConfigurationParameters configuration = new EmptyConfigurationParameters();
-        EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
-        UniqueId id = UniqueId.forEngine(engine.getId());
-        testDescriptor = engine.discover(discoveryRequest, id);
+        LoggerFactory.addListener(logRecordListener);
+        UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
+        testDescriptor = new CucumberEngineDescriptor(id);
         assertEquals(0, testDescriptor.getChildren().size());
+    }
+
+    @AfterEach
+    void after() {
+        LoggerFactory.removeListener(logRecordListener);
     }
 
     @Test
@@ -78,9 +78,36 @@ class DiscoverySelectorResolverTest {
     }
 
     @Test
+    void resolveRequestWithClasspathResourceSelectorAndFilePosition() {
+        String feature = "io/cucumber/junit/platform/engine/rule.feature";
+        FilePosition line = FilePosition.from(5);
+        DiscoverySelector resource = selectClasspathResource(feature, line);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(1L, testDescriptor.getDescendants()
+                .stream()
+                .filter(TestDescriptor::isTest)
+                .count());
+    }
+
+    @Test
+    void resolveRequestWithClasspathResourceSelectorAndFilePositionOfContainer() {
+        String feature = "io/cucumber/junit/platform/engine/rule.feature";
+        FilePosition line = FilePosition.from(3);
+        DiscoverySelector resource = selectClasspathResource(feature, line);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(2L, testDescriptor.getDescendants()
+                .stream()
+                .filter(TestDescriptor::isTest)
+                .count());
+    }
+
+    @Test
     void resolveRequestWithMultipleClasspathResourceSelector() {
         DiscoverySelector resource1 = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
-        DiscoverySelector resource2 = selectClasspathResource("io/cucumber/junit/platform/engine/feature-with-outline.feature");
+        DiscoverySelector resource2 = selectClasspathResource(
+            "io/cucumber/junit/platform/engine/feature-with-outline.feature");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource1, resource2);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         assertEquals(2, testDescriptor.getChildren().size());
@@ -92,17 +119,24 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectClasspathRoots(singleton(classpathRoot)).get(0);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(4, testDescriptor.getChildren().size());
+        assertEquals(6, testDescriptor.getChildren().size());
     }
 
     @Test
-    void resolveRequestWithUriSelector() {
-        URI uri = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature").toURI();
-        DiscoverySelector resource = selectUri(uri);
+    void resolveFeatureTestDescriptorsInUriOrder() {
+        Path classpathRoot = Paths.get("src/test/resources/");
+        DiscoverySelector resource = selectClasspathRoots(singleton(classpathRoot)).get(0);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(1, testDescriptor.getChildren().size());
+
+        Set<? extends TestDescriptor> features = testDescriptor.getChildren();
+        List<TestDescriptor> unsorted = new ArrayList<>(features);
+        List<TestDescriptor> sorted = new ArrayList<>(features);
+        // Sorts by URI
+        sorted.sort(comparing(feature -> feature.getUniqueId().getSegments().get(1).getValue()));
+        assertEquals(unsorted, sorted);
     }
+
     @Test
     void resolveRequestWithUriSelectorWithScenarioOutlineLine() {
         File file = new File("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
@@ -111,8 +145,8 @@ class DiscoverySelectorResolverTest {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
-            .filter(TestDescriptor::isTest)
-            .collect(Collectors.toList());
+                .filter(TestDescriptor::isTest)
+                .collect(Collectors.toList());
         assertEquals(4, tests.size()); // 4 examples in the outline
     }
 
@@ -124,11 +158,10 @@ class DiscoverySelectorResolverTest {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
-            .filter(TestDescriptor::isTest)
-            .collect(Collectors.toList());
+                .filter(TestDescriptor::isTest)
+                .collect(Collectors.toList());
         assertEquals(2, tests.size()); // 2 examples in the examples section
     }
-
 
     @Test
     void resolveRequestWithUriSelectorWithExampleLine() {
@@ -138,11 +171,10 @@ class DiscoverySelectorResolverTest {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
-            .filter(TestDescriptor::isTest)
-            .collect(Collectors.toList());
+                .filter(TestDescriptor::isTest)
+                .collect(Collectors.toList());
         assertEquals(1, tests.size());
     }
-
 
     @Test
     void resolveRequestWithClassPathUriSelectorWithLine() {
@@ -151,8 +183,8 @@ class DiscoverySelectorResolverTest {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
-            .filter(TestDescriptor::isTest)
-            .collect(Collectors.toList());
+                .filter(TestDescriptor::isTest)
+                .collect(Collectors.toList());
         assertEquals(1, tests.size());
     }
 
@@ -165,11 +197,37 @@ class DiscoverySelectorResolverTest {
     }
 
     @Test
+    void resolveRequestWithFileSelectorAndPosition() {
+        String feature = "src/test/resources/io/cucumber/junit/platform/engine/rule.feature";
+        FilePosition line = FilePosition.from(5);
+        DiscoverySelector resource = selectFile(feature, line);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(1L, testDescriptor.getDescendants()
+                .stream()
+                .filter(TestDescriptor::isTest)
+                .count());
+    }
+
+    @Test
+    void resolveRequestWithFileSelectorAndPositionOfContainer() {
+        String feature = "src/test/resources/io/cucumber/junit/platform/engine/rule.feature";
+        FilePosition line = FilePosition.from(3);
+        DiscoverySelector resource = selectFile(feature, line);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(2L, testDescriptor.getDescendants()
+                .stream()
+                .filter(TestDescriptor::isTest)
+                .count());
+    }
+
+    @Test
     void resolveRequestWithDirectorySelector() {
         DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(3, testDescriptor.getChildren().size());
+        assertEquals(5, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -177,7 +235,15 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectPackage("io.cucumber.junit.platform.engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(3, testDescriptor.getChildren().size());
+        assertEquals(5, testDescriptor.getChildren().size());
+    }
+
+    @Test
+    void ignoreRequestWithUniqueIdSelectorFromDifferentEngine() {
+        DiscoverySelector selector = selectUniqueId(UniqueId.forEngine("not-cucumber"));
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(selector);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertTrue(testDescriptor.getDescendants().isEmpty());
     }
 
     @Test
@@ -196,6 +262,30 @@ class DiscoverySelectorResolverTest {
         });
     }
 
+    private void resetTestDescriptor() {
+        Set<? extends TestDescriptor> descendants = new HashSet<>(testDescriptor.getDescendants());
+        descendants.forEach(o -> testDescriptor.removeChild(o));
+    }
+
+    private void resolveRequestWithUniqueIdSelector(UniqueId targetId) {
+        UniqueIdSelector uniqueIdSelector = selectUniqueId(targetId);
+        EngineDiscoveryRequest descendantRequest = new SelectorRequest(uniqueIdSelector);
+        resolver.resolveSelectors(descendantRequest, testDescriptor);
+    }
+
+    private static Matcher<TestDescriptor> allDescriptorsPrefixedBy(UniqueId targetId) {
+        return new CustomTypeSafeMatcher<TestDescriptor>("All descendants are prefixed by " + targetId) {
+            @Override
+            protected boolean matchesSafely(TestDescriptor descriptor) {
+                return descriptor.getDescendants()
+                        .stream()
+                        .filter(TestDescriptor::isTest)
+                        .map(TestDescriptor::getUniqueId)
+                        .allMatch(selectedId -> selectedId.hasPrefix(targetId));
+            }
+        };
+    }
+
     @Test
     void resolveRequestWithUniqueIdSelectorFromFileUri() {
         DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
@@ -211,7 +301,6 @@ class DiscoverySelectorResolverTest {
             assertThat(testDescriptor, allDescriptorsPrefixedBy(targetDescriptor.getUniqueId()));
         });
     }
-
 
     @Test
     void resolveRequestWithUniqueIdSelectorFromJarFileUri() {
@@ -239,36 +328,28 @@ class DiscoverySelectorResolverTest {
     void resolveRequestWithMultipleUniqueIdSelector() {
         Set<UniqueId> selectors = new HashSet<>();
 
-        DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
+        DiscoverySelector resource = selectDirectory(
+            "src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
         selectSomePickle(resource).ifPresent(selectors::add);
 
-        DiscoverySelector resource2 = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine/single.feature");
+        DiscoverySelector resource2 = selectDirectory(
+            "src/test/resources/io/cucumber/junit/platform/engine/single.feature");
         selectSomePickle(resource2).ifPresent(selectors::add);
 
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(
             selectors.stream()
-                .map(DiscoverySelectors::selectUniqueId)
-                .collect(Collectors.toList())
-        );
+                    .map(DiscoverySelectors::selectUniqueId)
+                    .collect(Collectors.toList()));
 
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
 
         assertEquals(
             selectors,
             testDescriptor.getDescendants()
-                .stream()
-                .filter(PickleDescriptor.class::isInstance)
-                .map(TestDescriptor::getUniqueId)
-                .collect(toSet())
-        );
-    }
-
-    @Test
-    void resolveRequestWithClassSelector() {
-        DiscoverySelector resource = selectClass(RunCucumberTest.class);
-        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
-        resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(3, testDescriptor.getChildren().size());
+                    .stream()
+                    .filter(PickleDescriptor.class::isInstance)
+                    .map(TestDescriptor::getUniqueId)
+                    .collect(toSet()));
     }
 
     private Optional<UniqueId> selectSomePickle(DiscoverySelector resource) {
@@ -277,20 +358,30 @@ class DiscoverySelectorResolverTest {
         Set<? extends TestDescriptor> descendants = testDescriptor.getDescendants();
         resetTestDescriptor();
         return descendants.stream()
-            .filter(PickleDescriptor.class::isInstance)
-            .map(TestDescriptor::getUniqueId)
-            .findFirst();
+                .filter(PickleDescriptor.class::isInstance)
+                .map(TestDescriptor::getUniqueId)
+                .findFirst();
     }
 
-    private void resolveRequestWithUniqueIdSelector(UniqueId targetId) {
-        UniqueIdSelector uniqueIdSelector = selectUniqueId(targetId);
-        EngineDiscoveryRequest descendantRequest = new SelectorRequest(uniqueIdSelector);
-        resolver.resolveSelectors(descendantRequest, testDescriptor);
+    @Test
+    void resolveRequestWithClassSelector() {
+        DiscoverySelector resource = selectClass(RunCucumberTest.class);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(5, testDescriptor.getChildren().size());
     }
 
-    private void resetTestDescriptor() {
-        Set<? extends TestDescriptor> descendants = new HashSet<>(testDescriptor.getDescendants());
-        descendants.forEach(o -> testDescriptor.removeChild(o));
+    @Test
+    void resolveRequestWithClassSelectorShouldLogWarnIfNoFeaturesFound() {
+        DiscoverySelector resource = selectClass(NoFeatures.class);
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(0, testDescriptor.getChildren().size());
+        assertEquals(1, logRecordListener.getLogRecords().size());
+        LogRecord logRecord = logRecordListener.getLogRecords().get(0);
+        assertEquals(Level.WARNING, logRecord.getLevel());
+        assertEquals("No features found in package 'io.cucumber.junit.platform.engine.nofeatures'",
+            logRecord.getMessage());
     }
 
     private static class SelectorRequest implements EngineDiscoveryRequest {
@@ -327,5 +418,7 @@ class DiscoverySelectorResolverTest {
         public ConfigurationParameters getConfigurationParameters() {
             return new EmptyConfigurationParameters();
         }
+
     }
+
 }

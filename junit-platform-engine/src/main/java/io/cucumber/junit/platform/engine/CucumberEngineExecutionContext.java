@@ -3,11 +3,14 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
-import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.BackendServiceLoader;
 import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.CucumberExecutionContext;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.RunnerSupplier;
@@ -18,12 +21,7 @@ import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestSourceRead;
 import org.apiguardian.api.API;
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
@@ -31,74 +29,73 @@ import java.time.Clock;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
+import static io.cucumber.junit.platform.engine.TestCaseResultObserver.observe;
+
 @API(status = API.Status.STABLE)
 public final class CucumberEngineExecutionContext implements EngineExecutionContext {
 
-    private static final Logger logger = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
-    private final RunnerSupplier runnerSupplier;
-    private final EventBus bus;
+    private static final Logger log = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
+    private final CucumberEngineOptions options;
+    private final CucumberExecutionContext context;
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
 
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
-        logger.debug(() -> "Parsing options");
-        CucumberEngineOptions options = new CucumberEngineOptions(configurationParameters);
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(options);
-        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(classLoader, options);
+        log.debug(() -> "Parsing options");
+        options = new CucumberEngineOptions(configurationParameters);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader, options);
+        EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
+        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
+                classLoader, options);
         Plugins plugins = new Plugins(new PluginFactory(), options);
+        ExitStatus exitStatus = new ExitStatus(options);
+        plugins.addPlugin(exitStatus);
 
+        RunnerSupplier runnerSupplier;
         if (options.isParallelExecutionEnabled()) {
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
-            ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
+            ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(
+                    objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-            this.runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+            runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier,
+                    typeRegistryConfigurerSupplier);
         } else {
             plugins.setEventBusOnEventListenerPlugins(bus);
-            ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+            ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(
+                    objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-            this.runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier, typeRegistryConfigurerSupplier);
+            runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier,
+                    typeRegistryConfigurerSupplier);
         }
+        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
+    }
+
+    CucumberEngineOptions getOptions() {
+        return options;
     }
 
     void startTestRun() {
-        logger.debug(() -> "running before all hooks");
-        bus.send(new TestRunStarted(bus.getInstant()));
-        logger.debug(() -> "Sending run test started event");
-        runnerSupplier.get().runBeforeAllHooks();
+        context.startTestRun();
     }
 
-    void beforeFeature(Feature feature) {
-        logger.debug(() -> "Sending test source read event for " + feature.getUri());
-        // Invoked concurrently.
-        getRunner().getBus().send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+    public void beforeFeature(Feature feature) {
+        context.beforeFeature(feature);
     }
 
     void runTestCase(Pickle pickle) {
-        Runner runner = getRunner();
-        try (TestCaseResultObserver observer = TestCaseResultObserver.observe(runner.getBus())) {
-            logger.debug(() -> "Executing test case " + pickle.getName());
-            runner.runPickle(pickle);
-            logger.debug(() -> "Finished test case " + pickle.getName());
-            observer.assertTestCasePassed();
-        }
+        context.runTestCase((runner) -> {
+            try (TestCaseResultObserver observer = observe(runner.getBus())) {
+                log.debug(() -> "Executing test case " + pickle.getName());
+                runner.runPickle(pickle);
+                log.debug(() -> "Finished test case " + pickle.getName());
+                observer.assertTestCasePassed();
+            }
+        });
     }
 
-    void finishTestRun() {
-        logger.debug(() -> "running after all hooks");
-        runnerSupplier.get().runAfterAllHooks();
-        logger.debug(() -> "Sending test run finished event");
-        bus.send(new TestRunFinished(bus.getInstant()));
-    }
-
-    private Runner getRunner() {
-        try {
-            return runnerSupplier.get();
-        } catch (Throwable e) {
-            logger.error(e, () -> "Unable to start Cucumber");
-            throw e;
-        }
+    public void finishTestRun() {
+        context.finishTestRun();
     }
 
 }
-

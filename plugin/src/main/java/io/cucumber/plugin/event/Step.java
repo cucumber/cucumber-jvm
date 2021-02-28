@@ -7,6 +7,7 @@ import org.apiguardian.api.API;
  */
 @API(status = API.Status.STABLE)
 public interface Step {
+
     /**
      * Returns this Gherkin step argument. Can be either a data table or doc
      * string.
@@ -18,9 +19,19 @@ public interface Step {
     /**
      * Returns this steps keyword. I.e. Given, When, Then.
      *
+     * @return     step key word
+     * @deprecated use {@link #getKeyword()} instead
+     */
+    default String getKeyWord() {
+        return getKeyword();
+    }
+
+    /**
+     * Returns this steps keyword. I.e. Given, When, Then.
+     *
      * @return step key word
      */
-    String getKeyWord();
+    String getKeyword();
 
     /**
      * Returns this steps text.
@@ -35,4 +46,12 @@ public interface Step {
      * @return step line number
      */
     int getLine();
+
+    /**
+     * Location of this step in in the source.
+     *
+     * @return location in the source
+     */
+    Location getLocation();
+
 }

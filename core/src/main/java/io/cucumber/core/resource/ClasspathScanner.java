@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
 import static io.cucumber.core.resource.ClasspathSupport.determineFullyQualifiedClassName;
 import static io.cucumber.core.resource.ClasspathSupport.getUrisForPackage;
 import static io.cucumber.core.resource.ClasspathSupport.requireValidPackageName;
@@ -37,31 +38,11 @@ public final class ClasspathScanner {
         this.classLoaderSupplier = classLoaderSupplier;
     }
 
-    private static boolean isClassFile(Path file) {
-        return file.getFileName().toString().endsWith(CLASS_FILE_SUFFIX);
-    }
-
-    private static boolean isNotPackageInfo(Path path) {
-        return !path.endsWith(PACKAGE_INFO_FILE_NAME);
-    }
-
-    private static boolean isNotModuleInfo(Path path) {
-        return !path.endsWith(MODULE_INFO_FILE_NAME);
-    }
-
-    private static <T> Predicate<Class<?>> isSubClassOf(Class<T> parentClass) {
-        return aClass -> !parentClass.equals(aClass) && parentClass.isAssignableFrom(aClass);
-    }
-
     public <T> List<Class<? extends T>> scanForSubClassesInPackage(String packageName, Class<T> parentClass) {
         return scanForClassesInPackage(packageName, isSubClassOf(parentClass))
-            .stream()
-            .map(aClass -> (Class<? extends T>) aClass.asSubclass(parentClass))
-            .collect(toList());
-    }
-
-    public List<Class<?>> scanForClassesInPackage(String packageName) {
-        return scanForClassesInPackage(packageName, NULL_FILTER);
+                .stream()
+                .map(aClass -> (Class<? extends T>) aClass.asSubclass(parentClass))
+                .collect(toList());
     }
 
     private List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classFilter) {
@@ -71,12 +52,20 @@ public final class ClasspathScanner {
         return findClassesForUris(rootUris, packageName, classFilter);
     }
 
+    private static <T> Predicate<Class<?>> isSubClassOf(Class<T> parentClass) {
+        return aClass -> !parentClass.equals(aClass) && parentClass.isAssignableFrom(aClass);
+    }
+
+    private ClassLoader getClassLoader() {
+        return this.classLoaderSupplier.get();
+    }
+
     private List<Class<?>> findClassesForUris(List<URI> baseUris, String packageName, Predicate<Class<?>> classFilter) {
         return baseUris.stream()
-            .map(baseUri -> findClassesForUri(baseUri, packageName, classFilter))
-            .flatMap(Collection::stream)
-            .distinct()
-            .collect(toList());
+                .map(baseUri -> findClassesForUri(baseUri, packageName, classFilter))
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(toList());
     }
 
     private List<Class<?>> findClassesForUri(URI baseUri, String packageName, Predicate<Class<?>> classFilter) {
@@ -84,28 +73,46 @@ public final class ClasspathScanner {
         pathScanner.findResourcesForUri(
             baseUri,
             path -> isNotModuleInfo(path) && isNotPackageInfo(path) && isClassFile(path),
-            processClassFiles(packageName, classFilter, classes::add)
-        );
+            processClassFiles(packageName, classFilter, classes::add));
         return classes;
     }
 
-    private Function<Path, Consumer<Path>> processClassFiles(String basePackageName,
-                                                             Predicate<Class<?>> classFilter,
-                                                             Consumer<Class<?>> classConsumer) {
+    private static boolean isNotModuleInfo(Path path) {
+        return !path.endsWith(MODULE_INFO_FILE_NAME);
+    }
+
+    private static boolean isNotPackageInfo(Path path) {
+        return !path.endsWith(PACKAGE_INFO_FILE_NAME);
+    }
+
+    private static boolean isClassFile(Path file) {
+        return file.getFileName().toString().endsWith(CLASS_FILE_SUFFIX);
+    }
+
+    private Function<Path, Consumer<Path>> processClassFiles(
+            String basePackageName,
+            Predicate<Class<?>> classFilter,
+            Consumer<Class<?>> classConsumer
+    ) {
         return baseDir -> classFile -> {
             String fqn = determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
-            try {
-                Optional.of(getClassLoader().loadClass(fqn))
+            safelyLoadClass(fqn)
                     .filter(classFilter)
                     .ifPresent(classConsumer);
-            } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                log.debug(e, () -> "Failed to load class " + fqn);
-            }
         };
     }
 
-    private ClassLoader getClassLoader() {
-        return this.classLoaderSupplier.get();
+    private Optional<Class<?>> safelyLoadClass(String fqn) {
+        try {
+            return Optional.ofNullable(getClassLoader().loadClass(fqn));
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            log.warn(e, () -> "Failed to load class '" + fqn + "'.\n" + classPathScanningExplanation());
+        }
+        return Optional.empty();
+    }
+
+    public List<Class<?>> scanForClassesInPackage(String packageName) {
+        return scanForClassesInPackage(packageName, NULL_FILTER);
     }
 
 }

@@ -8,7 +8,9 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-@CucumberOptions(features = "classpath:io/cucumber/testng/scenarios_with_tags.feature", plugin = "timeline:target/timeline")
+@CucumberOptions(
+        features = "classpath:io/cucumber/testng/scenarios-with-tags.feature",
+        plugin = "timeline:target/timeline")
 public class ScenariosInDifferentGroupsTest {
 
     private static final Predicate<Pickle> isSerial = pickle -> pickle.getTags().contains("@Serial");
@@ -21,7 +23,7 @@ public class ScenariosInDifferentGroupsTest {
     }
 
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "parallelScenarios")
-    public void runParallelScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) throws Throwable {
+    public void runParallelScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) {
         testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }
 
@@ -33,8 +35,18 @@ public class ScenariosInDifferentGroupsTest {
         return filter(testNGCucumberRunner.provideScenarios(), isSerial.negate());
     }
 
-    @Test(groups = "cucumber", description = "Runs Cucumber Scenarios in the Serial group", dataProvider = "serialScenarios")
-    public void runSerialScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) throws Throwable {
+    private Object[][] filter(Object[][] scenarios, Predicate<Pickle> accept) {
+        return Arrays.stream(scenarios).filter(objects -> {
+            PickleWrapper candidate = (PickleWrapper) objects[0];
+            return accept.test(candidate.getPickle());
+        }).toArray(Object[][]::new);
+    }
+
+    @Test(
+            groups = "cucumber",
+            description = "Runs Cucumber Scenarios in the Serial group",
+            dataProvider = "serialScenarios")
+    public void runSerialScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) {
         testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }
 
@@ -53,13 +65,6 @@ public class ScenariosInDifferentGroupsTest {
             return;
         }
         testNGCucumberRunner.finish();
-    }
-
-    private Object[][] filter(Object[][] scenarios, Predicate<Pickle> accept) {
-        return Arrays.stream(scenarios).filter(objects -> {
-            PickleWrapper candidate = (PickleWrapper) objects[0];
-            return accept.test(candidate.getPickle());
-        }).toArray(Object[][]::new);
     }
 
 }

@@ -1,12 +1,15 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.ParameterInfo;
+import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TypeResolver;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,16 +34,20 @@ class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public String getLocation() {
-        return "{stubbed location with details}";
-    }
-
-    @Override
     public void execute(Object[] args) {
         assertEquals(parameterInfos.size(), args.length);
         this.args = Arrays.asList(args);
     }
 
+    @Override
+    public List<ParameterInfo> parameterInfos() {
+        return parameterInfos;
+    }
+
+    @Override
+    public String getPattern() {
+        return expression;
+    }
 
     public List<Object> getArgs() {
         return args;
@@ -52,13 +59,8 @@ class StubStepDefinition implements StepDefinition {
     }
 
     @Override
-    public List<ParameterInfo> parameterInfos() {
-        return parameterInfos;
-    }
-
-    @Override
-    public String getPattern() {
-        return expression;
+    public String getLocation() {
+        return "{stubbed location with details}";
     }
 
     private final class StubParameterInfo implements ParameterInfo {
@@ -82,6 +84,17 @@ class StubStepDefinition implements StepDefinition {
         @Override
         public TypeResolver getTypeResolver() {
             return () -> type;
+        }
+
+    }
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        try {
+            Method method = getClass().getMethod("getSourceReference");
+            return Optional.of(SourceReference.fromMethod(method));
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
         }
     }
 

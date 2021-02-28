@@ -14,9 +14,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @API(status = API.Status.STABLE)
 public @interface After {
+
     /**
-     * Tag expression. If the expression applies to the current
-     * scenario this hook will be executed.
+     * Tag expression. If the expression applies to the current scenario this
+     * hook will be executed.
      *
      * @return a tag expression
      */
@@ -29,4 +30,5 @@ public @interface After {
      * @return the order in which this hook should run.
      */
     int order() default 10000;
+
 }

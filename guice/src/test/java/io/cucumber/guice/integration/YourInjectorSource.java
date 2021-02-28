@@ -12,4 +12,5 @@ public class YourInjectorSource implements InjectorSource {
     public Injector getInjector() {
         return Guice.createInjector(Stage.PRODUCTION, CucumberModules.createScenarioModule(), new YourModule());
     }
+
 }
