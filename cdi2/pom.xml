@@ -56,12 +56,12 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-		<dependency>
-		    <groupId>org.junit.jupiter</groupId>
-		    <artifactId>junit-jupiter-params</artifactId>
-		    <version>${junit-jupiter.version}</version>
-		    <scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -71,7 +71,7 @@
 
     <profiles>
         <profile>
-            <id>cdi2-weld</id>
+            <id>cdi2-all-implementations</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -83,6 +83,64 @@
                     <scope>test</scope>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>cdi2-openwebbeans</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.openwebbeans</groupId>
+                    <artifactId>openwebbeans-se</artifactId>
+                    <version>${openwebbeans.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openwebbeans</groupId>
+                    <artifactId>openwebbeans-impl</artifactId>
+                    <version>${openwebbeans.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.weld.se</groupId>
+                    <artifactId>weld-se-core</artifactId>
+                    <version>${weld-se-core.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <classpathDependencyExcludes>
+                                        <classpathDependencyExclude>org.jboss.weld.se:weld-se-core</classpathDependencyExclude>
+                                    </classpathDependencyExcludes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>weld</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <classpathDependencyExcludes>
+                                        <classpathDependencyExclude>org.apache.openwebbeans:openwebbeans-se</classpathDependencyExclude>
+                                        <classpathDependencyExclude>org.apache.openwebbeans:openwebbeans-impl</classpathDependencyExclude>
+                                    </classpathDependencyExcludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>cdi2-openwebbeans</id>
