@@ -229,12 +229,12 @@
                                 <goals>
                                     <goal>test</goal>
                                 </goals>
-                            </execution>
                                 <configuration>
                                     <classpathDependencyExcludes>
                                         <classpathDependencyExclude>org.jboss.weld.se:weld-se-core</classpathDependencyExclude>
                                     </classpathDependencyExcludes>
                                 </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
