@@ -72,6 +72,17 @@
             </activation>
             <dependencies>
                 <dependency>
+                    <groupId>org.jboss.weld.se</groupId>
+                    <artifactId>weld-se-core</artifactId>
+                    <version>${weld.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jakarta-cdi-openwebbeans</id>
+            <dependencies>
+                <dependency>
                     <groupId>org.apache.openwebbeans</groupId>
                     <artifactId>openwebbeans-se</artifactId>
                     <version>${openwebbeans.version}</version>
@@ -120,17 +131,6 @@
                     <groupId>org.apache.xbean</groupId>
                     <artifactId>xbean-asm9-shaded</artifactId>
                     <version>${xbean.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>jakarta-cdi-weld</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.weld.se</groupId>
-                    <artifactId>weld-se-core</artifactId>
-                    <version>${weld.version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -144,6 +144,12 @@
             </activation>
             <dependencies>
                 <dependency>
+                    <groupId>org.jboss.weld.se</groupId>
+                    <artifactId>weld-se-core</artifactId>
+                    <version>${weld.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
                     <groupId>org.apache.openwebbeans</groupId>
                     <artifactId>openwebbeans-se</artifactId>
                     <version>${openwebbeans.version}</version>
@@ -192,12 +198,6 @@
                     <groupId>org.apache.xbean</groupId>
                     <artifactId>xbean-asm9-shaded</artifactId>
                     <version>${xbean.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld.se</groupId>
-                    <artifactId>weld-se-core</artifactId>
-                    <version>${weld.version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -215,18 +215,6 @@
                                 </goals>
                                 <configuration>
                                     <classpathDependencyExcludes>
-                                        <classpathDependencyExclude>org.jboss.weld.se:weld-se-core</classpathDependencyExclude>
-                                    </classpathDependencyExcludes>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>weld</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <classpathDependencyExcludes>
                                         <classpathDependencyExclude>org.apache.openwebbeans:openwebbeans-se</classpathDependencyExclude>
                                         <classpathDependencyExclude>org.apache.openwebbeans:openwebbeans-impl</classpathDependencyExclude>
                                         <classpathDependencyExclude>org.apache.openwebbeans:openwebbeans-spi</classpathDependencyExclude>
@@ -235,6 +223,18 @@
                                     </classpathDependencyExcludes>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>openwebbeans</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                                <configuration>
+                                    <classpathDependencyExcludes>
+                                        <classpathDependencyExclude>org.jboss.weld.se:weld-se-core</classpathDependencyExclude>
+                                    </classpathDependencyExcludes>
+                                </configuration>
                         </executions>
                     </plugin>
                 </plugins>
