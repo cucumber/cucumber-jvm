@@ -18,10 +18,15 @@ public final class Cdi2Factory implements ObjectFactory {
     private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
     private SeContainer container;
 
+    private static class Dummy {
+    };
+
     @Override
     public void start() {
         if (container == null) {
             SeContainerInitializer initializer = SeContainerInitializer.newInstance();
+            // Do not fail initialization when beans.xml is missing
+            initializer.addBeanClasses(Dummy.class);
             container = initializer.initialize();
         }
     }

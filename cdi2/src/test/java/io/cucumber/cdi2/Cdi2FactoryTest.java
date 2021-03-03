@@ -3,6 +3,8 @@ package io.cucumber.cdi2;
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Vetoed;
@@ -23,6 +25,7 @@ class Cdi2FactoryTest {
     @AfterEach
     void stop() {
         factory.stop();
+        IgnoreLocalBeansXmlClassLoader.restoreClassLoader();
     }
 
     @Test
@@ -81,8 +84,10 @@ class Cdi2FactoryTest {
 
     }
 
-    @Test
-    void shouldCreateUnmanagedInstance() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldCreateUnmanagedInstance(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         factory.start();
         UnmanagedBean bean = factory.getInstance(UnmanagedBean.class);
         assertThat(bean.getClass(), is(UnmanagedBean.class));
