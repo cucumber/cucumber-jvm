@@ -1,11 +1,10 @@
+Feature: Cukes without beans.xml
 
-Feature: Cukes without a belly
+  Scenario: Eat some cukes
+    Given I have 4 cukes in my belly
+    Then there are 4 cukes in my belly
 
-  Scenario: Have some cukes
-    Given I have 4 cukes
-    Then there are 4 cukes
-
-  Scenario: Have some more cukes
-    Given I have 6 cukes
-    And I add 2 more cukes
-    Then there are 8 cukes
+  Scenario: Eat some more cukes
+    Given I have 6 cukes in my belly
+    And I eat 2 more cukes
+    Then there are 8 cukes in my belly

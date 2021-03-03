@@ -3,30 +3,38 @@ package io.cucumber.cdi2;
 import io.cucumber.core.backend.ObjectFactory;
 import org.apiguardian.api.API;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.se.SeContainer;
 import javax.enterprise.inject.se.SeContainerInitializer;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.Unmanaged;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @API(status = API.Status.STABLE)
-public final class Cdi2Factory implements ObjectFactory {
+public final class Cdi2Factory implements ObjectFactory, Extension {
+
+    private final Set<Class<?>> stepClasses = new HashSet<>();
 
     private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
     private SeContainer container;
-
-    private static class Dummy {
-    };
 
     @Override
     public void start() {
         if (container == null) {
             SeContainerInitializer initializer = SeContainerInitializer.newInstance();
-            // Do not fail initialization when beans.xml is missing
-            initializer.addBeanClasses(Dummy.class);
+            initializer.addExtensions(this);
             container = initializer.initialize();
         }
     }
@@ -46,6 +54,7 @@ public final class Cdi2Factory implements ObjectFactory {
 
     @Override
     public boolean addClass(final Class<?> clazz) {
+        stepClasses.add(clazz);
         return true;
     }
 
@@ -67,6 +76,52 @@ public final class Cdi2Factory implements ObjectFactory {
             return value.get();
         }
         return selected.get();
+    }
+
+    void afterBeanDiscovery(final @Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager bm) {
+        Set<Class<?>> unmanagedClasses = new HashSet<>();
+
+        for (Class<?> stepClass : stepClasses) {
+            discoverUnmanagedClasses(afterBeanDiscovery, bm, unmanagedClasses, stepClass);
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    void discoverUnmanagedClasses(
+            AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Set<Class<?>> unmanagedClasses,
+            Class<?> clazz
+    ) {
+        if (!unmanagedClasses.contains(clazz) && bm.getBeans(clazz).isEmpty()) {
+            unmanagedClasses.add(clazz);
+
+            final InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, clazz);
+
+            Set<InjectionPoint> ips = injectionTarget.getInjectionPoints();
+            for (InjectionPoint ip : ips) {
+                Type type = ip.getType();
+                if (type instanceof Class) {
+                    discoverUnmanagedClasses(afterBeanDiscovery, bm, unmanagedClasses, (Class<?>) type);
+                }
+            }
+
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    InjectionTarget addBean(AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Class<?> clazz) {
+        AnnotatedType clazzAnnotatedType = bm.createAnnotatedType(clazz);
+        final InjectionTarget injectionTarget = bm.getInjectionTargetFactory(clazzAnnotatedType)
+                .createInjectionTarget(null);
+
+        afterBeanDiscovery.addBean().read(clazzAnnotatedType).createWith(o -> {
+            CreationalContext c = (CreationalContext) o;
+            Object instance = injectionTarget.produce(c);
+            injectionTarget.inject(instance, c);
+            injectionTarget.postConstruct(instance);
+            return instance;
+        });
+
+        return injectionTarget;
     }
 
 }

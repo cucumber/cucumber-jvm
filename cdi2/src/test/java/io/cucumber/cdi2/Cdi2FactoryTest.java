@@ -42,10 +42,13 @@ class Cdi2FactoryTest {
 
     }
 
-    @Test
-    void shouldCreateNewInstancesForEachScenario() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldCreateNewInstancesForEachScenario(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         // Scenario 1
         factory.start();
+        factory.addClass(VetoedBean.class);
         VetoedBean a1 = factory.getInstance(VetoedBean.class);
         VetoedBean a2 = factory.getInstance(VetoedBean.class);
         assertThat(a1, is(equalTo(a2)));
@@ -69,8 +72,11 @@ class Cdi2FactoryTest {
 
     }
 
-    @Test
-    void shouldCreateApplicationScopedInstance() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldCreateApplicationScopedInstance(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
+        factory.addClass(ApplicationScopedBean.class);
         factory.start();
         ApplicationScopedBean bean = factory.getInstance(ApplicationScopedBean.class);
         assertAll(
@@ -105,8 +111,10 @@ class Cdi2FactoryTest {
 
     }
 
-    @Test
-    void shouldInjectStepDefinitions() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldInjectStepDefinitions(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         factory.addClass(OtherStepDefinitions.class);
         factory.addClass(StepDefinitions.class);
         factory.start();
