@@ -6,6 +6,8 @@ import jakarta.enterprise.inject.Vetoed;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -22,6 +24,7 @@ class CdiJakartaFactoryTest {
     @AfterEach
     void stop() {
         factory.stop();
+        IgnoreLocalBeansXmlClassLoader.restoreClassLoader();
     }
 
     @Test
@@ -38,8 +41,10 @@ class CdiJakartaFactoryTest {
 
     }
 
-    @Test
-    void shouldCreateNewInstancesForEachScenario() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldCreateNewInstancesForEachScenario(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         // Scenario 1
         factory.start();
         VetoedBean a1 = factory.getInstance(VetoedBean.class);
@@ -65,8 +70,11 @@ class CdiJakartaFactoryTest {
 
     }
 
-    @Test
-    void shouldCreateApplicationScopedInstance() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldCreateApplicationScopedInstance(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
+        factory.addClass(ApplicationScopedBean.class);
         factory.start();
         ApplicationScopedBean bean = factory.getInstance(ApplicationScopedBean.class);
         assertAll(
@@ -80,8 +88,10 @@ class CdiJakartaFactoryTest {
 
     }
 
-    @Test
-    void shouldCreateUnmanagedInstance() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldCreateUnmanagedInstance(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         factory.start();
         UnmanagedBean bean = factory.getInstance(UnmanagedBean.class);
         assertThat(bean.getClass(), is(UnmanagedBean.class));
@@ -99,8 +109,10 @@ class CdiJakartaFactoryTest {
 
     }
 
-    @Test
-    void shouldInjectStepDefinitions() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void shouldInjectStepDefinitions(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         factory.addClass(OtherStepDefinitions.class);
         factory.addClass(StepDefinitions.class);
         factory.start();
