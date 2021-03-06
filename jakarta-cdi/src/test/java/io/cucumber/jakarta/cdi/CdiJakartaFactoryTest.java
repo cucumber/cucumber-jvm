@@ -2,16 +2,15 @@ package io.cucumber.jakarta.cdi;
 
 import io.cucumber.core.backend.ObjectFactory;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.Vetoed;
-import jakarta.enterprise.inject.se.SeContainerInitializer;
-import jakarta.enterprise.inject.spi.DeploymentException;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -20,7 +19,6 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CdiJakartaFactoryTest {
 
@@ -134,44 +132,18 @@ class CdiJakartaFactoryTest {
     static class ParameterizedStepDefinitions {
 
         @Inject
-        ParameterizedBean<String, String> injected;
+        ParameterizedBean<Map<String, List<String>>, String> injected;
 
     }
 
-    @Test
-    void canInjectParameterizedBeansWithBeanXml() {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void canInjectParameterizedBeans(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         factory.addClass(ParameterizedStepDefinitions.class);
         factory.start();
         ParameterizedStepDefinitions stepDefinitions = factory.getInstance(ParameterizedStepDefinitions.class);
         assertThat(stepDefinitions.injected, is(notNullValue()));
         factory.stop();
-    }
-
-    @Test
-    @EnabledIf("io.cucumber.jakarta.cdi.CdiJakartaFactoryTest#usingOpenWebBeans")
-    void openWebBeansCanNotInjectParameterizedBeansWithoutBeansXml() {
-        IgnoreLocalBeansXmlClassLoader.setClassLoader(true);
-        factory.addClass(ParameterizedStepDefinitions.class);
-        factory.start();
-        assertThrows(UnsatisfiedResolutionException.class,
-            () -> factory.getInstance(ParameterizedStepDefinitions.class));
-    }
-
-    @Test
-    @EnabledIf("io.cucumber.jakarta.cdi.CdiJakartaFactoryTest#usingWeld")
-    void weldCanNotInjectParameterizedBeansWithoutBeanXml() {
-        IgnoreLocalBeansXmlClassLoader.setClassLoader(true);
-        factory.addClass(ParameterizedStepDefinitions.class);
-        assertThrows(DeploymentException.class, factory::start);
-    }
-
-    static boolean usingWeld() {
-        String name = SeContainerInitializer.newInstance().getClass().getName();
-        return "org.jboss.weld.environment.se.Weld".equals(name);
-    }
-
-    static boolean usingOpenWebBeans() {
-        String name = SeContainerInitializer.newInstance().getClass().getName();
-        return "org.apache.openwebbeans.se.SeInitializerFacade".equals(name);
     }
 }

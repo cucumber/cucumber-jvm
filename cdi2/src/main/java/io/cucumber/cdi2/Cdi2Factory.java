@@ -18,6 +18,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.Unmanaged;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -97,12 +98,15 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
             return;
         }
         unmanaged.add(candidate);
-        if (!(candidate instanceof Class<?>)) {
+
+        Type rawCandidate = candidate instanceof ParameterizedType ? ((ParameterizedType) candidate).getRawType()
+                : candidate;
+        if (!(rawCandidate instanceof Class<?>)) {
             log.warn(() -> "Could not add '" + candidate
                     + "' as an unmanaged bean. Consider adding a beans.xml file.");
             return;
         }
-        InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, (Class<?>) candidate);
+        InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, (Class<?>) rawCandidate, candidate);
         Set<InjectionPoint> ips = injectionTarget.getInjectionPoints();
         for (InjectionPoint ip : ips) {
             discoverUnmanagedTypes(afterBeanDiscovery, bm, unmanaged, ip.getType());
@@ -110,7 +114,9 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private InjectionTarget addBean(AfterBeanDiscovery afterBeanDiscovery, BeanManager beanManager, Class<?> clazz) {
+    private InjectionTarget addBean(
+            AfterBeanDiscovery afterBeanDiscovery, BeanManager beanManager, Class<?> clazz, Type type
+    ) {
         AnnotatedType clazzAnnotatedType = beanManager.createAnnotatedType(clazz);
         // @formatter:off
         InjectionTarget injectionTarget = beanManager
@@ -121,6 +127,7 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
         afterBeanDiscovery
                 .addBean()
                 .read(clazzAnnotatedType)
+                .addType(type)
                 .createWith(callback -> {
                     CreationalContext c = (CreationalContext) callback;
                     Object instance = injectionTarget.produce(c);
