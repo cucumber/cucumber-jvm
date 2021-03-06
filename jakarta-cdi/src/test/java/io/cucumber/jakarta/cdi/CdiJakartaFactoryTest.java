@@ -127,7 +127,7 @@ class CdiJakartaFactoryTest {
         factory.stop();
     }
 
-    static class ParameterizedBean<K,V> {
+    static class ParameterizedBean<K, V> {
 
     }
 
@@ -147,14 +147,14 @@ class CdiJakartaFactoryTest {
         factory.stop();
     }
 
-
     @Test
     @EnabledIf("io.cucumber.jakarta.cdi.CdiJakartaFactoryTest#usingOpenWebBeans")
     void openWebBeansCanNotInjectParameterizedBeansWithoutBeansXml() {
         IgnoreLocalBeansXmlClassLoader.setClassLoader(true);
         factory.addClass(ParameterizedStepDefinitions.class);
         factory.start();
-        assertThrows(UnsatisfiedResolutionException.class, () -> factory.getInstance(ParameterizedStepDefinitions.class));
+        assertThrows(UnsatisfiedResolutionException.class,
+            () -> factory.getInstance(ParameterizedStepDefinitions.class));
     }
 
     @Test
@@ -165,12 +165,12 @@ class CdiJakartaFactoryTest {
         assertThrows(DeploymentException.class, factory::start);
     }
 
-    static boolean usingWeld(){
+    static boolean usingWeld() {
         String name = SeContainerInitializer.newInstance().getClass().getName();
         return "org.jboss.weld.environment.se.Weld".equals(name);
     }
 
-    static boolean usingOpenWebBeans(){
+    static boolean usingOpenWebBeans() {
         String name = SeContainerInitializer.newInstance().getClass().getName();
         return "org.apache.openwebbeans.se.SeInitializerFacade".equals(name);
     }
