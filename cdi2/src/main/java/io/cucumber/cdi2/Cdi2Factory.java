@@ -1,6 +1,8 @@
 package io.cucumber.cdi2;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import org.apiguardian.api.API;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -24,6 +26,7 @@ import java.util.Set;
 @API(status = API.Status.STABLE)
 public final class Cdi2Factory implements ObjectFactory, Extension {
 
+    private static final Logger log = LoggerFactory.getLogger(Cdi2Factory.class);
     private final Set<Class<?>> stepClasses = new HashSet<>();
 
     private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
@@ -78,41 +81,40 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
     }
 
     void afterBeanDiscovery(@Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager bm) {
-        Set<Class<?>> unmanagedClasses = new HashSet<>();
-
+        Set<Type> unmanaged = new HashSet<>();
         for (Class<?> stepClass : stepClasses) {
-            discoverUnmanagedClasses(afterBeanDiscovery, bm, unmanagedClasses, stepClass);
+            discoverUnmanagedTypes(afterBeanDiscovery, bm, unmanaged, stepClass);
         }
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void discoverUnmanagedClasses(
-            AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Set<Class<?>> unmanagedClasses,
-            Class<?> clazz
+    private void discoverUnmanagedTypes(
+            AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Set<Type> unmanaged,
+            Type candidate
     ) {
-        if (unmanagedClasses.contains(clazz) || !bm.getBeans(clazz).isEmpty()) {
+        if (unmanaged.contains(candidate) || !bm.getBeans(candidate).isEmpty()) {
             return;
         }
-        unmanagedClasses.add(clazz);
-
-        InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, clazz);
-
+        unmanaged.add(candidate);
+        if (!(candidate instanceof Class<?>)) {
+            log.warn(() -> "Can not add '" + candidate + "' as an unmanaged bean");
+            return;
+        }
+        InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, (Class<?>) candidate);
         Set<InjectionPoint> ips = injectionTarget.getInjectionPoints();
         for (InjectionPoint ip : ips) {
-            Type type = ip.getType();
-            if (type instanceof Class) {
-                discoverUnmanagedClasses(afterBeanDiscovery, bm, unmanagedClasses, (Class<?>) type);
-            }
+            discoverUnmanagedTypes(afterBeanDiscovery, bm, unmanaged, ip.getType());
         }
-
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private InjectionTarget addBean(AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Class<?> clazz) {
-        AnnotatedType clazzAnnotatedType = bm.createAnnotatedType(clazz);
-        InjectionTarget injectionTarget = bm.getInjectionTargetFactory(clazzAnnotatedType)
+    private InjectionTarget addBean(AfterBeanDiscovery afterBeanDiscovery, BeanManager beanManager, Class<?> clazz) {
+        AnnotatedType clazzAnnotatedType = beanManager.createAnnotatedType(clazz);
+        // @formatter:off
+        InjectionTarget injectionTarget = beanManager
+                .getInjectionTargetFactory(clazzAnnotatedType)
                 .createInjectionTarget(null);
-
+        // @formatter:on
         // @formatter:off
         afterBeanDiscovery
                 .addBean()
