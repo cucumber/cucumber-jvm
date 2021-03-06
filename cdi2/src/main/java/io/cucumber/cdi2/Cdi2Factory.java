@@ -15,7 +15,6 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.Unmanaged;
-
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,13 +52,13 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
     }
 
     @Override
-    public boolean addClass(final Class<?> clazz) {
+    public boolean addClass(Class<?> clazz) {
         stepClasses.add(clazz);
         return true;
     }
 
     @Override
-    public <T> T getInstance(final Class<T> type) {
+    public <T> T getInstance(Class<T> type) {
         Unmanaged.UnmanagedInstance<?> instance = standaloneInstances.get(type);
         if (instance != null) {
             return type.cast(instance.get());
@@ -78,7 +77,7 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
         return selected.get();
     }
 
-    void afterBeanDiscovery(final @Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager bm) {
+    void afterBeanDiscovery(@Observes AfterBeanDiscovery afterBeanDiscovery, BeanManager bm) {
         Set<Class<?>> unmanagedClasses = new HashSet<>();
 
         for (Class<?> stepClass : stepClasses) {
@@ -87,40 +86,45 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    void discoverUnmanagedClasses(
+    private void discoverUnmanagedClasses(
             AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Set<Class<?>> unmanagedClasses,
             Class<?> clazz
     ) {
-        if (!unmanagedClasses.contains(clazz) && bm.getBeans(clazz).isEmpty()) {
-            unmanagedClasses.add(clazz);
-
-            final InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, clazz);
-
-            Set<InjectionPoint> ips = injectionTarget.getInjectionPoints();
-            for (InjectionPoint ip : ips) {
-                Type type = ip.getType();
-                if (type instanceof Class) {
-                    discoverUnmanagedClasses(afterBeanDiscovery, bm, unmanagedClasses, (Class<?>) type);
-                }
-            }
-
+        if (unmanagedClasses.contains(clazz) || !bm.getBeans(clazz).isEmpty()) {
+            return;
         }
+        unmanagedClasses.add(clazz);
+
+        InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, clazz);
+
+        Set<InjectionPoint> ips = injectionTarget.getInjectionPoints();
+        for (InjectionPoint ip : ips) {
+            Type type = ip.getType();
+            if (type instanceof Class) {
+                discoverUnmanagedClasses(afterBeanDiscovery, bm, unmanagedClasses, (Class<?>) type);
+            }
+        }
+
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    InjectionTarget addBean(AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Class<?> clazz) {
+    private InjectionTarget addBean(AfterBeanDiscovery afterBeanDiscovery, BeanManager bm, Class<?> clazz) {
         AnnotatedType clazzAnnotatedType = bm.createAnnotatedType(clazz);
-        final InjectionTarget injectionTarget = bm.getInjectionTargetFactory(clazzAnnotatedType)
+        InjectionTarget injectionTarget = bm.getInjectionTargetFactory(clazzAnnotatedType)
                 .createInjectionTarget(null);
 
-        afterBeanDiscovery.addBean().read(clazzAnnotatedType).createWith(o -> {
-            CreationalContext c = (CreationalContext) o;
-            Object instance = injectionTarget.produce(c);
-            injectionTarget.inject(instance, c);
-            injectionTarget.postConstruct(instance);
-            return instance;
-        });
-
+        // @formatter:off
+        afterBeanDiscovery
+                .addBean()
+                .read(clazzAnnotatedType)
+                .createWith(callback -> {
+                    CreationalContext c = (CreationalContext) callback;
+                    Object instance = injectionTarget.produce(c);
+                    injectionTarget.inject(instance, c);
+                    injectionTarget.postConstruct(instance);
+                    return instance;
+                });
+        // @formatter:on
         return injectionTarget;
     }
 
