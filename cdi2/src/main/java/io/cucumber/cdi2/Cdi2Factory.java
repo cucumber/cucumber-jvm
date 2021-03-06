@@ -98,7 +98,8 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
         }
         unmanaged.add(candidate);
         if (!(candidate instanceof Class<?>)) {
-            log.warn(() -> "Can not add '" + candidate + "' as an unmanaged bean");
+            log.warn(() -> "Could not add '" + candidate
+                    + "' as an unmanaged bean. Consider adding a beans.xml file.");
             return;
         }
         InjectionTarget injectionTarget = addBean(afterBeanDiscovery, bm, (Class<?>) candidate);
