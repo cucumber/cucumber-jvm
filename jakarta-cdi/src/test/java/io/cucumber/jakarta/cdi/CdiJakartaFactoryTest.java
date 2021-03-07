@@ -41,9 +41,9 @@ class CdiJakartaFactoryTest {
         // VetoedBean makes it possible to compare the object outside the
         // scenario/application scope
         assertAll(
-                () -> assertThat(a1, is(notNullValue())),
-                () -> assertThat(a1, is(not(equalTo(b1)))),
-                () -> assertThat(b1, is(not(equalTo(a1)))));
+            () -> assertThat(a1, is(notNullValue())),
+            () -> assertThat(a1, is(not(equalTo(b1)))),
+            () -> assertThat(b1, is(not(equalTo(a1)))));
     }
 
     @ApplicationScoped
@@ -57,9 +57,9 @@ class CdiJakartaFactoryTest {
         factory.start();
         ApplicationScopedBean cdiStep = factory.getInstance(ApplicationScopedBean.class);
         assertAll(
-                // assert that it is is a CDI proxy
-                () -> assertThat(cdiStep.getClass(), not(is(ApplicationScopedBean.class))),
-                () -> assertThat(cdiStep.getClass().getSuperclass(), is(ApplicationScopedBean.class)));
+            // assert that it is is a CDI proxy
+            () -> assertThat(cdiStep.getClass(), not(is(ApplicationScopedBean.class))),
+            () -> assertThat(cdiStep.getClass().getSuperclass(), is(ApplicationScopedBean.class)));
         factory.stop();
     }
 
