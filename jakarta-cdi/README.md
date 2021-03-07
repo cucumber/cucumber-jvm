@@ -103,8 +103,8 @@ Note: Only step definition classes are added as unmanaged beans if not explicitl
 defined. Other support code is not. Consider adding a `beans.xml` to
 automatically declare test all classes as beans. 
 
-Note: To share state step definitions and other support code must be application
-scoped.
+Note: To share state step definitions and other support code must at least be
+application scoped.
 
 ```java
 package com.example.app;
