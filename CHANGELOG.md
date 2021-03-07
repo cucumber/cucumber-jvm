@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
  * [Cdi2] Correctly cast the UnmanagedInstance values ([#2242](https://github.com/cucumber/cucumber-jvm/pull/2242), [#2244](https://github.com/cucumber/cucumber-jvm/pull/2244) Daniel Beland)
- * [Cdi2] Add step definitions as unmanaged beans when not discovered ([#2248](https://github.com/cucumber/cucumber-jvm/pull/2248)) Daniel Beland, M.P. Korstanje)
+ * [Cdi2] Add step definitions as beans when not discovered ([#2248](https://github.com/cucumber/cucumber-jvm/pull/2248)) Daniel Beland, M.P. Korstanje)
  * [Jakarta Cdi] Correctly cast the UnmanagedInstance values ([#2242](https://github.com/cucumber/cucumber-jvm/pull/2242), [#2248](https://github.com/cucumber/cucumber-jvm/pull/2248) Daniel Beland)
- * [Jakarta Cdi] Add step definitions as unmanaged beans when not discovered ([#2248](https://github.com/cucumber/cucumber-jvm/pull/2248)) Daniel Beland, M.P. Korstanje)
+ * [Jakarta Cdi] Add step definitions as beans when not discovered ([#2248](https://github.com/cucumber/cucumber-jvm/pull/2248)) Daniel Beland, M.P. Korstanje)
 
 ## [6.10.0] (2021-02-14)
 
