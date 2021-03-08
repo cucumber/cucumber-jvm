@@ -73,7 +73,6 @@ public final class CucumberExecutionContext {
         try {
             runnerSupplier.get().runBeforeAllHooks();
         } catch (Throwable e) {
-            log.error(e, () -> "Unable to start Cucumber");
             thrown.add(e);
             throw e;
         }
@@ -83,7 +82,6 @@ public final class CucumberExecutionContext {
         try {
             runnerSupplier.get().runAfterAllHooks();
         } catch (Throwable e) {
-            log.error(e, () -> "Unable to start Cucumber");
             thrown.add(e);
             throw e;
         }
@@ -114,7 +112,7 @@ public final class CucumberExecutionContext {
         bus.send(new TestRunFinished(instant, result));
 
         Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
-                .setSuccess(cucumberException != null && exitStatus.isSuccess())
+                .setSuccess(cucumberException == null && exitStatus.isSuccess())
                 .setTimestamp(javaInstantToTimestamp(instant));
 
         if (cucumberException != null) {
@@ -148,7 +146,6 @@ public final class CucumberExecutionContext {
         try {
             return runnerSupplier.get();
         } catch (Throwable e) {
-            log.error(e, () -> "Unable to start Cucumber");
             thrown.add(e);
             throw e;
         }
