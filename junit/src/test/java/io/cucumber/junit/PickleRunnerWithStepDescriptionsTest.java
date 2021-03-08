@@ -1,15 +1,23 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.plugin.Options;
+import io.cucumber.core.runtime.CucumberExecutionContext;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import io.cucumber.junit.PickleRunners.WithStepDescriptions;
 import io.cucumber.plugin.event.Step;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 
+import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 
 import static io.cucumber.junit.TestPickleBuilder.picklesFromFeature;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.mock;
 
 class PickleRunnerWithStepDescriptionsTest {
+
+    final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+    final Options options = RuntimeOptions.defaultOptions();
+    final RunnerSupplier runnerSupplier = mock(RunnerSupplier.class);
+    final CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
 
     @Test
     void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() {
@@ -32,7 +45,7 @@ class PickleRunnerWithStepDescriptionsTest {
                 "    Then baz\n");
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-            mock(RunnerSupplier.class),
+            context,
             pickles.get(0),
             null,
             createJunitOptions());
@@ -68,7 +81,7 @@ class PickleRunnerWithStepDescriptionsTest {
                 "    |   a1   |   r1   |\n");
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
-            mock(RunnerSupplier.class),
+            context,
             features.getPickles().get(0),
             null,
             createJunitOptions());
@@ -93,7 +106,7 @@ class PickleRunnerWithStepDescriptionsTest {
                 "    Then another step\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-            mock(RunnerSupplier.class),
+            context,
             features.getPickles().get(0),
             null,
             createJunitOptions());
@@ -116,7 +129,7 @@ class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-            mock(RunnerSupplier.class),
+            context,
             pickles.get(0),
             null,
             createJunitOptions());
@@ -132,7 +145,7 @@ class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-            mock(RunnerSupplier.class),
+            context,
             pickles.get(0),
             null,
             createJunitOptions());
@@ -148,7 +161,7 @@ class PickleRunnerWithStepDescriptionsTest {
                 "    Then it works\n");
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
-            mock(RunnerSupplier.class),
+            context,
             pickles.get(0),
             null,
             createFileNameCompatibleJunitOptions());

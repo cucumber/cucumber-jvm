@@ -54,14 +54,12 @@ import static java.util.stream.Collectors.toList;
  * A class annotated with {@code @RunWith(Cucumber.class)} will run feature
  * files as junit tests. In general, the runner class should be empty without
  * any fields or methods. For example: <blockquote>
- *
  * <pre>
  * &#64;RunWith(Cucumber.class)
  * &#64;CucumberOptions(plugin = "pretty")
  * public class RunCucumberTest {
  * }
  * </pre>
- *
  * </blockquote>
  * <p>
  * By default Cucumber will look for {@code .feature} and glue files on the
@@ -101,9 +99,9 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     /**
      * Constructor called by JUnit.
      *
-     * @param  clazz                                       the class with
-     *                                                     the @RunWith
-     *                                                     annotation.
+     * @param clazz the class with
+     *              the @RunWith
+     *              annotation.
      * @throws org.junit.runners.model.InitializationError if there is another
      *                                                     problem
      */
@@ -154,7 +152,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         FeatureParser parser = new FeatureParser(bus::generateId);
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
-            parser);
+                parser);
         this.features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty
@@ -164,13 +162,13 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         this.plugins.addPlugin(exitStatus);
 
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
-            runtimeOptions);
+                runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-            classLoader, runtimeOptions);
+                classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
-            objectFactorySupplier, typeRegistryConfigurerSupplier);
+                objectFactorySupplier, typeRegistryConfigurerSupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         Predicate<Pickle> filters = new Filters(runtimeOptions);
 
@@ -179,7 +177,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         this.children = features.stream()
                 .map(feature -> {
                     Integer uniqueSuffix = uniqueSuffix(groupedByName, feature, Feature::getName);
-                    return FeatureRunner.create(feature, uniqueSuffix, filters, runnerSupplier, junitOptions);
+                    return FeatureRunner.create(feature, uniqueSuffix, filters, context, junitOptions);
                 })
                 .filter(runner -> !runner.isEmpty())
                 .collect(toList());
@@ -202,8 +200,15 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
     @Override
     protected Statement childrenInvoker(RunNotifier notifier) {
-        Statement runFeatures = super.childrenInvoker(notifier);
-        return new RunCucumber(runFeatures);
+        Statement statement = super.childrenInvoker(notifier);
+
+        statement = new RunBeforeAllHooks(statement);
+        statement = new RunAfterAllHooks(statement);
+
+        statement = new StartTestRun(statement);
+        statement = new FinishTestRun(statement);
+
+        return statement;
     }
 
     @Override
@@ -212,12 +217,11 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         multiThreadingAssumed = true;
     }
 
-    class RunCucumber extends Statement {
+    private class StartTestRun extends Statement {
+        private final Statement next;
 
-        private final Statement runFeatures;
-
-        RunCucumber(Statement runFeatures) {
-            this.runFeatures = runFeatures;
+        public StartTestRun(Statement next) {
+            this.next = next;
         }
 
         @Override
@@ -227,14 +231,60 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
-
             context.startTestRun();
-            features.forEach(context::beforeFeature);
 
+            next.evaluate();
+        }
+
+    }
+
+    private class FinishTestRun extends Statement {
+        private final Statement next;
+
+        public FinishTestRun(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
             try {
-                runFeatures.evaluate();
+                next.evaluate();
             } finally {
                 context.finishTestRun();
+            }
+        }
+
+    }
+
+    private class RunBeforeAllHooks extends Statement {
+        private final Statement next;
+
+        public RunBeforeAllHooks(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            context.runBeforeAllHooks();
+            features.forEach(context::beforeFeature);
+            next.evaluate();
+        }
+
+    }
+
+    private class RunAfterAllHooks extends Statement {
+        private final Statement next;
+
+        public RunAfterAllHooks(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                next.evaluate();
+            } finally {
+                context.runAfterAllHooks();
             }
         }
 

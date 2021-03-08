@@ -75,9 +75,24 @@ public final class Runtime {
 
     public void run() {
         context.startTestRun();
-        final List<Feature> features = featureSupplier.get();
+        try {
+            context.runBeforeAllHooks();
+            runFeatures();
+            context.runAfterAllHooks();
+        } finally {
+            context.finishTestRun();
+        }
+
+        CucumberException exception = context.getException();
+        if (exception != null) {
+            throw exception;
+        }
+    }
+
+    private void runFeatures() {
+        List<Feature> features = featureSupplier.get();
         features.forEach(context::beforeFeature);
-        final List<Future<?>> executingPickles = features.stream()
+        List<Future<?>> executingPickles = features.stream()
                 .flatMap(feature -> feature.getPickles().stream())
                 .filter(filter)
                 .collect(collectingAndThen(toList(),
@@ -97,12 +112,6 @@ public final class Runtime {
                 executor.shutdownNow();
                 log.debug(e, () -> "Interrupted while executing pickle");
             }
-        }
-        context.finishTestRun();
-
-        CucumberException exception = context.getException();
-        if (exception != null) {
-            throw exception;
         }
     }
 

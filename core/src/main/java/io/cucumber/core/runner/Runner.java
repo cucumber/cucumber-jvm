@@ -2,9 +2,12 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.CucumberBackendException;
+import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.logging.Logger;
@@ -24,6 +27,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
+import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
 import static java.util.Collections.emptyList;
 
 public final class Runner {
@@ -66,7 +71,7 @@ public final class Runner {
             snippetGenerators = createSnippetGeneratorsForPickle(stepTypeRegistry);
 
             buildBackendWorlds(); // Java8 step definitions will be added to the
-                                  // glue here
+            // glue here
 
             glue.prepareGlue(stepTypeRegistry);
 
@@ -79,11 +84,29 @@ public final class Runner {
     }
 
     public void runBeforeAllHooks() {
-        glue.getBeforeAllHooks().forEach(StaticHookDefinition::execute);
+        glue.getBeforeAllHooks().forEach(this::executeHook);
     }
 
     public void runAfterAllHooks() {
-        glue.getAfterAllHooks().forEach(StaticHookDefinition::execute);
+        glue.getAfterAllHooks().forEach(this::executeHook);
+    }
+
+    private void executeHook(StaticHookDefinition hookDefinition) {
+        if (runnerOptions.isDryRun()) {
+            return;
+        }
+        try {
+            hookDefinition.execute();
+        } catch (CucumberBackendException e) {
+            CucumberException exception = new CucumberException(String.format("" +
+                            "Could not invoke hook defined at '%s'.\n" +
+                            "It appears there was a problem with the hook definition.",
+                    hookDefinition.getLocation()), e);
+            throwAsUncheckedException(exception);
+        } catch (CucumberInvocationTargetException e) {
+            Throwable throwable = removeFrameworkFrames(e);
+            throwAsUncheckedException(throwable);
+        }
     }
 
     private List<SnippetGenerator> createSnippetGeneratorsForPickle(StepTypeRegistry stepTypeRegistry) {
@@ -114,7 +137,7 @@ public final class Runner {
     private TestCase createTestCaseForPickle(Pickle pickle) {
         if (pickle.getSteps().isEmpty()) {
             return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle,
-                runnerOptions.isDryRun());
+                    runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
@@ -138,7 +161,7 @@ public final class Runner {
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
             testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps,
-                afterStepHookSteps, match));
+                    afterStepHookSteps, match));
         }
 
         return testSteps;
@@ -174,7 +197,7 @@ public final class Runner {
         Location scenarioLocation = pickle.getLocation();
         Location stepLocation = step.getLocation();
         SnippetsSuggestedEvent event = new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), scenarioLocation,
-            stepLocation, suggestion);
+                stepLocation, suggestion);
         bus.send(event);
     }
 

@@ -50,8 +50,8 @@ public final class CucumberExecutionContext {
     public void startTestRun() {
         emitMeta();
         emitTestRunStarted();
-        runnerSupplier.get().runBeforeAllHooks();
     }
+
 
     private void emitMeta() {
         bus.send(Envelope.newBuilder()
@@ -69,8 +69,27 @@ public final class CucumberExecutionContext {
                 .build());
     }
 
+    public void runBeforeAllHooks() {
+        try {
+            runnerSupplier.get().runBeforeAllHooks();
+        } catch (Throwable e) {
+            log.error(e, () -> "Unable to start Cucumber");
+            thrown.add(e);
+            throw e;
+        }
+    }
+
+    public void runAfterAllHooks() {
+        try {
+            runnerSupplier.get().runAfterAllHooks();
+        } catch (Throwable e) {
+            log.error(e, () -> "Unable to start Cucumber");
+            thrown.add(e);
+            throw e;
+        }
+    }
+
     public void finishTestRun() {
-        runnerSupplier.get().runAfterAllHooks();
         log.debug(() -> "Sending test run finished event");
         CucumberException cucumberException = getException();
         emitTestRunFinished(cucumberException);

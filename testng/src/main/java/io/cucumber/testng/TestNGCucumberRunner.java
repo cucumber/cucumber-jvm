@@ -107,6 +107,7 @@ public final class TestNGCucumberRunner {
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
         features = featureSupplier.get();
         context.startTestRun();
+        context.runBeforeAllHooks();
         features.forEach(context::beforeFeature);
     }
 
@@ -124,7 +125,11 @@ public final class TestNGCucumberRunner {
      * Finishes test execution by Cucumber.
      */
     public void finish() {
-        context.finishTestRun();
+        try {
+            context.runAfterAllHooks();
+        } finally {
+            context.finishTestRun();
+        }
     }
 
     /**

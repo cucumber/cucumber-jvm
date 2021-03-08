@@ -79,6 +79,10 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         context.startTestRun();
     }
 
+    public void runBeforeAllHooks() {
+        context.runBeforeAllHooks();
+    }
+
     public void beforeFeature(Feature feature) {
         context.beforeFeature(feature);
     }
@@ -92,6 +96,10 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
                 observer.assertTestCasePassed();
             }
         });
+    }
+
+    public void runAfterAllHooks() {
+        context.runAfterAllHooks();
     }
 
     public void finishTestRun() {
