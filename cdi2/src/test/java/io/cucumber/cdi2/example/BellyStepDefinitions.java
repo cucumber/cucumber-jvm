@@ -3,10 +3,12 @@ package io.cucumber.cdi2.example;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ApplicationScoped
 public class BellyStepDefinitions {
 
     @Inject

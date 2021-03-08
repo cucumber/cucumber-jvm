@@ -2,12 +2,12 @@ package io.cucumber.jakarta.cdi.example;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Vetoed
+@ApplicationScoped
 public class BellyStepDefinitions {
 
     @Inject

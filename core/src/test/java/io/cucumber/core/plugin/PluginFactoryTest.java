@@ -91,7 +91,7 @@ class PluginFactoryTest {
     }
 
     @Test
-    void cant_create_plugin_when_parent_directory_is_a_file() {
+    void cant_create_plugin_when_parent_directory_is_a_file() throws IOException {
         Path htmlReport = tmp.resolve("target/cucumber/reports");
         PluginOption htmlOption = parse("html:" + htmlReport);
         plugin = fc.create(htmlOption);
@@ -101,8 +101,9 @@ class PluginFactoryTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(jsonOption));
         assertThat(exception.getMessage(), is(equalTo(
-            "Couldn't create parent directories of '" + jsonReport + "'.\n" +
-                    "Make sure the the parent directory '" + jsonReport.getParent() + "' isn't a file.\n" +
+            "Couldn't create parent directories of '" + jsonReport.toFile().getCanonicalPath() + "'.\n" +
+                    "Make sure the the parent directory '" + jsonReport.getParent().toFile().getCanonicalPath()
+                    + "' isn't a file.\n" +
                     "\n" +
                     "Note: This usually happens when plugins write to colliding paths.\n" +
                     "For example: 'html:target/cucumber, json:target/cucumber/report.json'\n" +
