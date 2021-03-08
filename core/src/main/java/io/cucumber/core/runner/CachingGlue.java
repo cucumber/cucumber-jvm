@@ -49,9 +49,14 @@ import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
 
-    private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
+    private static final Comparator<CoreHookDefinition> HOOK_ORDER_ASCENDING = Comparator
             .comparingInt(CoreHookDefinition::getOrder)
             .thenComparing(ScenarioScoped.class::isInstance);
+
+    private static final Comparator<StaticHookDefinition> STATIC_HOOK_ORDER_ASCENDING = Comparator
+            .comparingInt(StaticHookDefinition::getOrder);
+
+
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
@@ -85,12 +90,13 @@ final class CachingGlue implements Glue {
     @Override
     public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
         beforeAllHooks.add(beforeAllHook);
-
+        afterAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterAllHook(StaticHookDefinition afterAllHook) {
         afterAllHooks.add(afterAllHook);
+        afterAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
     }
 
     @Override
@@ -101,25 +107,25 @@ final class CachingGlue implements Glue {
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
         beforeHooks.add(CoreHookDefinition.create(hookDefinition));
-        beforeHooks.sort(ASCENDING);
+        beforeHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterHooks.sort(ASCENDING);
+        afterHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
         beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        beforeStepHooks.sort(ASCENDING);
+        beforeStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterStepHooks.sort(ASCENDING);
+        afterStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
