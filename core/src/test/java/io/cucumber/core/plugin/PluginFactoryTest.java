@@ -102,8 +102,8 @@ class PluginFactoryTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(jsonOption));
         assertThat(exception.getMessage(), is(equalTo(
             "Couldn't create parent directories of '" + jsonReport.toFile().getCanonicalPath() + "'.\n" +
-                    "Make sure the the parent directory '" + jsonReport.getParent().toFile().getCanonicalPath() + "' isn't a file.\n" +
-                    "\n" +
+                    "Make sure the the parent directory '" + jsonReport.getParent().toFile().getCanonicalPath()
+                    + "' isn't a file.\n\n" +
                     "Note: This usually happens when plugins write to colliding paths.\n" +
                     "For example: 'html:target/cucumber, json:target/cucumber/report.json'\n" +
                     "You can fix this by making the paths do no collide.\n" +

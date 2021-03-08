@@ -43,6 +43,16 @@
             "old": "interface io.cucumber.messages.internal.com.google.protobuf.MutabilityOracle",
             "new": "interface io.cucumber.messages.internal.com.google.protobuf.MutabilityOracle",
             "justification": "Internal API"
+          },
+          {
+            "code": "java.method.addedToInterface",
+            "new": "method java.lang.Class<? extends java.util.function.Predicate<io.cucumber.core.gherkin.Pickle>> io.cucumber.core.filter.Options::getCustomPredicateClass()",
+            "justification": "New configuration"
+          },
+          {
+            "code": "java.method.addedToInterface",
+            "new": "method java.lang.Class<? extends java.util.function.Predicate<io.cucumber.core.gherkin.Pickle>> io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::customPredicateClass()",
+            "justification": "New configuration"
           }
         ]
       }
