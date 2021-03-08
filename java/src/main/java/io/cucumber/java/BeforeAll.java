@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@API(status = API.Status.STABLE)
+@API(status = API.Status.EXPERIMENTAL)
 public @interface BeforeAll {
 
     /**
