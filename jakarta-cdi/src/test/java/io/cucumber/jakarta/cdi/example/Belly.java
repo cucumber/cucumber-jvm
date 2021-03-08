@@ -1,6 +1,6 @@
-package io.cucumber.cdi2;
+package io.cucumber.jakarta.cdi.example;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class Belly {
