@@ -266,7 +266,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         @Override
         public void evaluate() throws Throwable {
             context.runBeforeAllHooks();
-            features.forEach(context::beforeFeature);
             next.evaluate();
         }
 

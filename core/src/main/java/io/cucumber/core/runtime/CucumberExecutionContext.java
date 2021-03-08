@@ -114,7 +114,7 @@ public final class CucumberExecutionContext {
         bus.send(new TestRunFinished(instant, result));
 
         Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
-                .setSuccess(exitStatus.isSuccess())
+                .setSuccess(cucumberException != null && exitStatus.isSuccess())
                 .setTimestamp(javaInstantToTimestamp(instant));
 
         if (cucumberException != null) {

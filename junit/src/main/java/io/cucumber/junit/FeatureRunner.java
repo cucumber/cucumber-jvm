@@ -131,10 +131,15 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     @Override
+    public void run(RunNotifier notifier) {
+        context.beforeFeature(feature);
+        super.run(notifier);
+    }
+
+    @Override
     protected void runChild(PickleRunner child, RunNotifier notifier) {
         notifier.fireTestStarted(describeChild(child));
         try {
-            context.beforeFeature(feature);
             child.run(notifier);
         } catch (Throwable e) {
             notifier.fireTestFailure(new Failure(describeChild(child), e));
