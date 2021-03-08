@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.StaticHookDefinition;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.lang.reflect.Modifier.isStatic;
@@ -11,12 +12,10 @@ import static java.lang.reflect.Modifier.isStatic;
 final class JavaStaticHookDefinition extends AbstractGlueDefinition implements StaticHookDefinition {
 
     private final int order;
-    private final Lookup lookup;
 
     JavaStaticHookDefinition(Method method, int order, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.order = order;
-        this.lookup = lookup;
     }
 
     private static Method requireValidMethod(Method method) {
@@ -26,6 +25,11 @@ final class JavaStaticHookDefinition extends AbstractGlueDefinition implements S
         }
 
         if (!isStatic(method.getModifiers())) {
+            throw createInvalidSignatureException(method);
+        }
+
+        Type returnType = method.getGenericReturnType();
+        if (!Void.class.equals(returnType) && !void.class.equals(returnType)) {
             throw createInvalidSignatureException(method);
         }
 
@@ -42,7 +46,7 @@ final class JavaStaticHookDefinition extends AbstractGlueDefinition implements S
 
     @Override
     public void execute() {
-        Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method);
+        invokeMethod();
     }
 
     @Override
