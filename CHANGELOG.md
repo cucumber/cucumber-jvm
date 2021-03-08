@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.10.1] (2021-03-08)
+
+### Fixed
  * [Cdi2] Correctly cast the UnmanagedInstance values ([#2242](https://github.com/cucumber/cucumber-jvm/pull/2242), [#2244](https://github.com/cucumber/cucumber-jvm/pull/2244) Daniel Beland)
  * [Cdi2] Add step definitions as beans when not discovered ([#2248](https://github.com/cucumber/cucumber-jvm/pull/2248)) Daniel Beland, M.P. Korstanje)
  * [Jakarta Cdi] Correctly cast the UnmanagedInstance values ([#2242](https://github.com/cucumber/cucumber-jvm/pull/2242), [#2248](https://github.com/cucumber/cucumber-jvm/pull/2248) Daniel Beland)
@@ -1607,7 +1611,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...main
+[6.10.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.0...v6.10.1
 [6.10.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...v6.10.0
 [6.9.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.0...v6.9.1
 [6.9.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.2...v6.9.0
