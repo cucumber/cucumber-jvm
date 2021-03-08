@@ -47,8 +47,8 @@ public class JavaStaticHookDefinitionTest {
     void fails_with_arguments() throws Throwable {
         Method method = JavaStaticHookDefinitionTest.class.getMethod("single_argument", Scenario.class);
         InvalidMethodSignatureException exception = assertThrows(
-                InvalidMethodSignatureException.class,
-                () -> new JavaStaticHookDefinition(method, 0, lookup));
+            InvalidMethodSignatureException.class,
+            () -> new JavaStaticHookDefinition(method, 0, lookup));
         assertThat(exception.getMessage(), startsWith("" +
                 "A method annotated with BeforeAll or AfterAll must have one of these signatures:\n" +
                 " * public static void before_or_after_all()\n" +
@@ -64,8 +64,8 @@ public class JavaStaticHookDefinitionTest {
     void fails_with_non_void_return_type() throws Throwable {
         Method method = JavaStaticHookDefinitionTest.class.getMethod("string_return_type");
         InvalidMethodSignatureException exception = assertThrows(
-                InvalidMethodSignatureException.class,
-                () -> new JavaStaticHookDefinition(method, 0, lookup));
+            InvalidMethodSignatureException.class,
+            () -> new JavaStaticHookDefinition(method, 0, lookup));
         assertThat(exception.getMessage(), startsWith("" +
                 "A method annotated with BeforeAll or AfterAll must have one of these signatures:\n" +
                 " * public static void before_or_after_all()\n" +

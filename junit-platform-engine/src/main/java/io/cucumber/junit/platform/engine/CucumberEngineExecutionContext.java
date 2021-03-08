@@ -47,7 +47,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader, options);
         EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
         TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-                classLoader, options);
+            classLoader, options);
         Plugins plugins = new Plugins(new PluginFactory(), options);
         ExitStatus exitStatus = new ExitStatus(options);
         plugins.addPlugin(exitStatus);
@@ -56,17 +56,17 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         if (options.isParallelExecutionEnabled()) {
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
             ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(
-                    objectFactoryServiceLoader);
+                objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
             runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier,
-                    typeRegistryConfigurerSupplier);
+                typeRegistryConfigurerSupplier);
         } else {
             plugins.setEventBusOnEventListenerPlugins(bus);
             ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(
-                    objectFactoryServiceLoader);
+                objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
             runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier,
-                    typeRegistryConfigurerSupplier);
+                typeRegistryConfigurerSupplier);
         }
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
     }

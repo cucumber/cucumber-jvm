@@ -52,7 +52,6 @@ public final class CucumberExecutionContext {
         emitTestRunStarted();
     }
 
-
     private void emitMeta() {
         bus.send(Envelope.newBuilder()
                 .setMeta(createMeta("cucumber-jvm", VERSION, System.getenv()))

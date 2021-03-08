@@ -125,7 +125,8 @@ class FeatureRunnerTest {
             classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
             objectFactory, typeRegistrySupplier);
-        CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(runtimeOptions), runnerSupplier);
+        CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(runtimeOptions),
+            runnerSupplier);
         return FeatureRunner.create(feature, null, filters, context, junitOption);
     }
 

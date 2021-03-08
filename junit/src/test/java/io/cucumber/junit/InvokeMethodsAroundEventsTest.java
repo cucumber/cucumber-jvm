@@ -30,7 +30,7 @@ class InvokeMethodsAroundEventsTest {
     private final Consumer<String> callback = events::add;
 
     @BeforeEach
-    void before(){
+    void before() {
         callbacks.add(callback);
     }
 
@@ -45,42 +45,40 @@ class InvokeMethodsAroundEventsTest {
         Cucumber cucumber = new Cucumber(BeforeAfterClass.class);
         cucumber.run(new RunNotifier());
         assertThat(events, contains(
-                "BeforeClass",
-                "TestRunStarted",
-                "BeforeAll",
-                "TestSourceRead",
-                "TestCaseStarted",
-                "Before",
-                "Step",
-                "Step",
-                "Step",
-                "After",
-                "TestCaseFinished",
-                "TestCaseStarted",
-                "Before",
-                "Step",
-                "Step",
-                "Step",
-                "After",
-                "TestCaseFinished",
-                "TestSourceRead",
-                "TestCaseStarted",
-                "Before",
-                "Step",
-                "Step",
-                "Step",
-                "After",
-                "TestCaseFinished",
-                "AfterAll",
-                "TestRunFinished",
-                "AfterClass"
-        ));
+            "BeforeClass",
+            "TestRunStarted",
+            "BeforeAll",
+            "TestSourceRead",
+            "TestCaseStarted",
+            "Before",
+            "Step",
+            "Step",
+            "Step",
+            "After",
+            "TestCaseFinished",
+            "TestCaseStarted",
+            "Before",
+            "Step",
+            "Step",
+            "Step",
+            "After",
+            "TestCaseFinished",
+            "TestSourceRead",
+            "TestCaseStarted",
+            "Before",
+            "Step",
+            "Step",
+            "Step",
+            "After",
+            "TestCaseFinished",
+            "AfterAll",
+            "TestRunFinished",
+            "AfterClass"));
     }
 
     @CucumberOptions(
             plugin = "io.cucumber.junit.InvokeMethodsAroundEventsTest$TestRunStartedFinishedListener",
-            features = {"classpath:io/cucumber/junit/rule.feature", "classpath:io/cucumber/junit/single.feature"}
-    )
+            features = { "classpath:io/cucumber/junit/rule.feature", "classpath:io/cucumber/junit/single.feature" })
     public static class BeforeAfterClass {
 
         @BeforeClass

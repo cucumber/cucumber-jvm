@@ -83,6 +83,16 @@ public final class Runner {
         }
     }
 
+    private StepTypeRegistry createTypeRegistryForPickle(Pickle pickle) {
+        Locale locale = typeRegistryConfigurer.locale();
+        if (locale == null) {
+            locale = new Locale(pickle.getLanguage());
+        }
+        StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(locale);
+        typeRegistryConfigurer.configureTypeRegistry(stepTypeRegistry);
+        return stepTypeRegistry;
+    }
+
     public void runBeforeAllHooks() {
         glue.getBeforeAllHooks().forEach(this::executeHook);
     }
@@ -99,9 +109,9 @@ public final class Runner {
             hookDefinition.execute();
         } catch (CucumberBackendException e) {
             CucumberException exception = new CucumberException(String.format("" +
-                            "Could not invoke hook defined at '%s'.\n" +
-                            "It appears there was a problem with the hook definition.",
-                    hookDefinition.getLocation()), e);
+                    "Could not invoke hook defined at '%s'.\n" +
+                    "It appears there was a problem with the hook definition.",
+                hookDefinition.getLocation()), e);
             throwAsUncheckedException(exception);
         } catch (CucumberInvocationTargetException e) {
             Throwable throwable = removeFrameworkFrames(e);
@@ -117,16 +127,6 @@ public final class Runner {
                 .collect(Collectors.toList());
     }
 
-    private StepTypeRegistry createTypeRegistryForPickle(Pickle pickle) {
-        Locale locale = typeRegistryConfigurer.locale();
-        if (locale == null) {
-            locale = new Locale(pickle.getLanguage());
-        }
-        StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(locale);
-        typeRegistryConfigurer.configureTypeRegistry(stepTypeRegistry);
-        return stepTypeRegistry;
-    }
-
     private void buildBackendWorlds() {
         objectFactory.start();
         for (Backend backend : backends) {
@@ -137,7 +137,7 @@ public final class Runner {
     private TestCase createTestCaseForPickle(Pickle pickle) {
         if (pickle.getSteps().isEmpty()) {
             return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle,
-                    runnerOptions.isDryRun());
+                runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
@@ -161,7 +161,7 @@ public final class Runner {
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
             testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps,
-                    afterStepHookSteps, match));
+                afterStepHookSteps, match));
         }
 
         return testSteps;
@@ -197,7 +197,7 @@ public final class Runner {
         Location scenarioLocation = pickle.getLocation();
         Location stepLocation = step.getLocation();
         SnippetsSuggestedEvent event = new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), scenarioLocation,
-                stepLocation, suggestion);
+            stepLocation, suggestion);
         bus.send(event);
     }
 

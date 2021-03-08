@@ -56,7 +56,6 @@ final class CachingGlue implements Glue {
     private static final Comparator<StaticHookDefinition> STATIC_HOOK_ORDER_ASCENDING = Comparator
             .comparingInt(StaticHookDefinition::getOrder);
 
-
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
