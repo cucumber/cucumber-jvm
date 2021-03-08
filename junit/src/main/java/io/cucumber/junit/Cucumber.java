@@ -90,7 +90,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
     private final List<ParentRunner<?>> children;
     private final EventBus bus;
-    private final List<Feature> features;
     private final Plugins plugins;
     private final CucumberExecutionContext context;
 
@@ -153,7 +152,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
                 parser);
-        this.features = featureSupplier.get();
+        List<Feature> features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty
         // files on lexer errors.
