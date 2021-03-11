@@ -543,7 +543,7 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.13.2</version>
+                    <version>0.13.4</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
