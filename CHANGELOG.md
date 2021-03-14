@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] Mark pending steps as failed in teamcity plugin ([#2264](https://github.com/cucumber/cucumber-jvm/pull/2264)) M.P. Korstanje)
 
 ## [6.10.1] (2021-03-08)
 

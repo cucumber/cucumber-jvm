@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -213,6 +214,28 @@ class TeamCityPluginTest {
 
         assertThat(out, bytesContainsString("" +
                 "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement this step and 1 other step(s)using the snippet(s) below:|n|ntest snippet 0|ntest snippet 1|n' name = 'first step']"));
+    }
+
+    @Test
+    void should_print_error_message_for_pending_steps() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n" +
+                "    Given second step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(
+                    new StubBackendSupplier(new StubStepDefinition("first step", new StubPendingException())))
+                .build()
+                .run();
+
+        assertThat(out, bytesContainsString("" +
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step pending' details = 'TODO: implement me' name = 'first step']"));
     }
 
     @Test
