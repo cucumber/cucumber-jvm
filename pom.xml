@@ -6,7 +6,7 @@
         <version>2.1.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.10.2-SNAPSHOT</version>
+    <version>6.10.2</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -45,7 +45,7 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>HEAD</tag>
+        <tag>v6.10.2</tag>
     </scm>
 
     <dependencyManagement>
