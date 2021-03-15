@@ -48,6 +48,13 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 
+/**
+ * Outputs Teamcity services messages to std out.
+ *
+ * @see <a
+ *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
+ *      - Service Messages</a>
+ */
 public class TeamCityPlugin implements EventListener {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
@@ -230,7 +237,7 @@ public class TeamCityPlugin implements EventListener {
         if (java8Matcher.matches()) {
             String fqDeclaringClassName = java8Matcher.group(1);
             String declaringClassName;
-            int indexOfPackageSeparator = fqDeclaringClassName.indexOf(".");
+            int indexOfPackageSeparator = fqDeclaringClassName.lastIndexOf(".");
             if (indexOfPackageSeparator != -1) {
                 declaringClassName = fqDeclaringClassName.substring(indexOfPackageSeparator + 1);
             } else {
@@ -250,22 +257,27 @@ public class TeamCityPlugin implements EventListener {
         Throwable error = event.getResult().getError();
         Status status = event.getResult().getStatus();
         switch (status) {
-            case SKIPPED:
-                print(TEMPLATE_TEST_IGNORED, timeStamp, duration, error == null ? "Step skipped" : error.getMessage(),
-                    name);
+            case SKIPPED: {
+                String message = error == null ? "Step skipped" : error.getMessage();
+                print(TEMPLATE_TEST_IGNORED, timeStamp, duration, message, name);
                 break;
-            case PENDING:
-                print(TEMPLATE_TEST_IGNORED, timeStamp, duration, error == null ? "Step pending" : error.getMessage(),
-                    name);
+            }
+            case PENDING: {
+                String details = error == null ? "" : error.getMessage();
+                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step pending", details, name);
                 break;
-            case UNDEFINED:
-                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step undefined", getSnippets(currentTestCase), name);
+            }
+            case UNDEFINED: {
+                String snippets = getSnippets(currentTestCase);
+                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step undefined", snippets, name);
                 break;
+            }
             case AMBIGUOUS:
-            case FAILED:
+            case FAILED: {
                 String details = extractStackTrace(error);
                 print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step failed", details, name);
                 break;
+            }
             default:
                 break;
         }
@@ -307,8 +319,8 @@ public class TeamCityPlugin implements EventListener {
         URI uri = testCase.getUri();
         Location location = testCase.getLocation();
         List<Suggestion> suggestionForTestCase = suggestions.stream()
-                .filter(suggestions -> suggestions.getUri().equals(uri) &&
-                        suggestions.getTestCaseLocation().equals(location))
+                .filter(suggestion -> suggestion.getUri().equals(uri) &&
+                        suggestion.getTestCaseLocation().equals(location))
                 .map(SnippetsSuggestedEvent::getSuggestion)
                 .collect(Collectors.toList());
         return createMessage(suggestionForTestCase);
@@ -322,7 +334,7 @@ public class TeamCityPlugin implements EventListener {
         if (suggestions.size() > 1) {
             sb.append(" and ").append(suggestions.size() - 1).append(" other step(s)");
         }
-        sb.append("using the snippet(s) below:\n\n");
+        sb.append(" using the snippet(s) below:\n\n");
         String snippets = suggestions
                 .stream()
                 .map(Suggestion::getSnippets)
@@ -379,7 +391,7 @@ public class TeamCityPlugin implements EventListener {
             escapedParameters[i] = escape(parameters[i].toString());
         }
 
-        return String.format(command, escapedParameters);
+        return String.format(command, (Object[]) escapedParameters);
     }
 
     private String escape(String source) {
