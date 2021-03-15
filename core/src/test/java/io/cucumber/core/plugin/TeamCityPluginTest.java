@@ -213,7 +213,7 @@ class TeamCityPluginTest {
                 .run();
 
         assertThat(out, bytesContainsString("" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement this step and 1 other step(s)using the snippet(s) below:|n|ntest snippet 0|ntest snippet 1|n' name = 'first step']"));
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement this step and 1 other step(s) using the snippet(s) below:|n|ntest snippet 0|ntest snippet 1|n' name = 'first step']"));
     }
 
     @Test
@@ -264,7 +264,7 @@ class TeamCityPluginTest {
     }
 
     @Test
-    void should_print_location_hint_for_hooks() {
+    void should_print_location_hint_for_java_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
@@ -284,6 +284,29 @@ class TeamCityPluginTest {
 
         assertThat(out, bytesContainsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n"));
+    }
+
+    @Test
+    void should_print_location_hint_for_lambda_hooks() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition("com.example.HookDefinition.<init>(HookDefinition.java:12)")),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList()))
+                .build()
+                .run();
+
+        assertThat(out, bytesContainsString("" +
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/HookDefinition' captureStandardOutput = 'true' name = 'Before']\n"));
     }
 
 }

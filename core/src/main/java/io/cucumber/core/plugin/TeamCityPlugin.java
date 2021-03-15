@@ -237,7 +237,7 @@ public class TeamCityPlugin implements EventListener {
         if (java8Matcher.matches()) {
             String fqDeclaringClassName = java8Matcher.group(1);
             String declaringClassName;
-            int indexOfPackageSeparator = fqDeclaringClassName.indexOf(".");
+            int indexOfPackageSeparator = fqDeclaringClassName.lastIndexOf(".");
             if (indexOfPackageSeparator != -1) {
                 declaringClassName = fqDeclaringClassName.substring(indexOfPackageSeparator + 1);
             } else {
@@ -334,7 +334,7 @@ public class TeamCityPlugin implements EventListener {
         if (suggestions.size() > 1) {
             sb.append(" and ").append(suggestions.size() - 1).append(" other step(s)");
         }
-        sb.append("using the snippet(s) below:\n\n");
+        sb.append(" using the snippet(s) below:\n\n");
         String snippets = suggestions
                 .stream()
                 .map(Suggestion::getSnippets)
