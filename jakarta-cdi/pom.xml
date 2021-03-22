@@ -7,7 +7,7 @@
         <xbean.version>4.18</xbean.version>
         <jakarta.enterprise.cdi-api.version>3.0.0</jakarta.enterprise.cdi-api.version>
         <jakarta.activation-api.version>2.0.0</jakarta.activation-api.version>
-        <weld.version>4.0.0.Final</weld.version>
+        <weld.version>4.0.1.Final</weld.version>
     </properties>
 
     <parent>
