@@ -81,6 +81,13 @@ public class TeamCityPlugin implements EventListener {
     private static final String TEMPLATE_TEST_IGNORED = TEAMCITY_PREFIX
             + "[testIgnored timestamp = '%s' duration = '%s' message = '%s' name = '%s']";
 
+    private static final String TEMPLATE_BEFORE_ALL_AFTER_ALL_STARTED = TEAMCITY_PREFIX
+            + "[testStarted timestamp = '%s' name = '%s']";
+    private static final String TEMPLATE_BEFORE_ALL_AFTER_ALL_FAILED = TEAMCITY_PREFIX
+            + "[testFailed timestamp = '%s' message = '%s' details = '%s' name = '%s']";
+    private static final String TEMPLATE_BEFORE_ALL_AFTER_ALL_FINISHED = TEAMCITY_PREFIX
+            + "[testFinished timestamp = '%s' name = '%s']";
+
     private static final String TEMPLATE_PROGRESS_COUNTING_STARTED = TEAMCITY_PREFIX
             + "[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '%s']";
     private static final String TEMPLATE_PROGRESS_COUNTING_FINISHED = TEAMCITY_PREFIX
@@ -364,7 +371,20 @@ public class TeamCityPlugin implements EventListener {
         poppedNodes(emptyStack).forEach(node -> finishNode(timestamp, node));
         currentStack = emptyStack;
 
+        printSystemResults(event, timestamp);
         print(TEMPLATE_TEST_RUN_FINISHED, timestamp);
+    }
+
+    private void printSystemResults(TestRunFinished event, String timestamp) {
+        Throwable error = event.getResult().getError();
+        if (error == null) {
+            return;
+        }
+        String name = "Before All/After All";
+        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_STARTED, timestamp, name);
+        String details = extractStackTrace(error);
+        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FAILED, timestamp, name, details, name);
+        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FINISHED, timestamp, name);
     }
 
     private void handleSnippetSuggested(SnippetsSuggestedEvent event) {

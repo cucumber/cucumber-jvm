@@ -88,34 +88,34 @@ public final class CucumberExecutionContext {
 
     public void finishTestRun() {
         log.debug(() -> "Sending test run finished event");
-        CucumberException cucumberException = getException();
+        Throwable cucumberException = getException();
         emitTestRunFinished(cucumberException);
     }
 
-    public CucumberException getException() {
+    public Throwable getException() {
         if (thrown.isEmpty()) {
             return null;
         }
         if (thrown.size() == 1) {
-            return new CucumberException(thrown.get(0));
+            return thrown.get(0);
         }
         return new CompositeCucumberException(thrown);
     }
 
-    private void emitTestRunFinished(CucumberException cucumberException) {
+    private void emitTestRunFinished(Throwable exception) {
         Instant instant = bus.getInstant();
         Result result = new Result(
-            cucumberException != null ? Status.FAILED : exitStatus.getStatus(),
+            exception != null ? Status.FAILED : exitStatus.getStatus(),
             Duration.between(start, instant),
-            cucumberException);
+            exception);
         bus.send(new TestRunFinished(instant, result));
 
         Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
-                .setSuccess(cucumberException == null && exitStatus.isSuccess())
+                .setSuccess(exception == null && exitStatus.isSuccess())
                 .setTimestamp(javaInstantToTimestamp(instant));
 
-        if (cucumberException != null) {
-            testRunFinished.setMessage(cucumberException.getMessage());
+        if (exception != null) {
+            testRunFinished.setMessage(exception.getMessage());
         }
         bus.send(Envelope.newBuilder()
                 .setTestRunFinished(testRunFinished)
