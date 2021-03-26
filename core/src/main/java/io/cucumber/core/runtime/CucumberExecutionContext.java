@@ -2,7 +2,6 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.createmeta.CreateMeta.createMeta;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
@@ -115,7 +115,7 @@ public final class CucumberExecutionContext {
                 .setTimestamp(javaInstantToTimestamp(instant));
 
         if (exception != null) {
-            testRunFinished.setMessage(exception.getMessage());
+            testRunFinished.setMessage(printStackTrace(exception));
         }
         bus.send(Envelope.newBuilder()
                 .setTestRunFinished(testRunFinished)

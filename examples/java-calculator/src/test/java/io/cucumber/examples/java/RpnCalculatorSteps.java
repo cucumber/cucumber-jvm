@@ -25,6 +25,7 @@ public class RpnCalculatorSteps {
     @AfterAll
     public static void disable_super_math_engine() {
         // System.disableSuperMaths()
+        throw new RuntimeException("Hello!");
     }
 
     @Given("a calculator I just turned on")
