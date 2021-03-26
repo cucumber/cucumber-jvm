@@ -454,7 +454,6 @@ class PrettyFormatterTest {
                 AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
     }
 
-
     @Test
     void should_print_system_failure_for_failed_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
@@ -467,13 +466,13 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
                 .build()
                 .run());
 
@@ -481,6 +480,5 @@ class PrettyFormatterTest {
                 "      " + AnsiEscapes.RED + "Hook failed" + AnsiEscapes.RESET + "\n" +
                 "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
     }
-
 
 }

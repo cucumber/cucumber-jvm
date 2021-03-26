@@ -146,10 +146,6 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         if (error != null) {
             String name = result.getStatus().name().toLowerCase(ROOT);
             Format format = formats.get(name);
-            String message = error.getMessage();
-            if (message != null) {
-                out.println("      " + format.text(error.getMessage()));
-            }
             String text = printStackTrace(error);
             out.println("      " + format.text(text));
         }

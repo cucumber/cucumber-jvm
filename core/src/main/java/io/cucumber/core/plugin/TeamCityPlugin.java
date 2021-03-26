@@ -51,8 +51,8 @@ import static java.util.stream.Collectors.joining;
  * Outputs Teamcity services messages to std out.
  *
  * @see <a
- * href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
- * - Service Messages</a>
+ *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
+ *      - Service Messages</a>
  */
 public class TeamCityPlugin implements EventListener {
 

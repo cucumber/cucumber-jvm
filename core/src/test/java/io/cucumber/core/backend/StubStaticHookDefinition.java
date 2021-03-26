@@ -32,6 +32,7 @@ public class StubStaticHookDefinition implements StaticHookDefinition {
     public StubStaticHookDefinition(String location) {
         this(location, null, null);
     }
+
     @Override
     public void execute() {
         if (action != null) {

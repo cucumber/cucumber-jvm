@@ -325,19 +325,20 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        emptyList(),
-                        singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
                 .build()
                 .run());
 
         assertThat(out, bytesContainsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']\n" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/ After All failed' details = 'the stack trace' name = 'Before All/After All']\n" +
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/ After All failed' details = 'the stack trace' name = 'Before All/After All']\n"
+                +
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']"));
     }
 
