@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>6.10.2-SNAPSHOT</version>
+        <version>6.10.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-deltaspike</artifactId>
@@ -14,7 +14,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.deltaspike</project.Automatic-Module-Name>
-        <deltaspike.version>1.9.4</deltaspike.version>
+        <deltaspike.version>1.9.5</deltaspike.version>
         <cdi-api.version>1.2</cdi-api.version>
     </properties>
 

@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [6.10.2] (2021-03-15)
+
+### Fixed
+ * [Core] Mark pending steps as failed in teamcity plugin ([#2264](https://github.com/cucumber/cucumber-jvm/pull/2264)) M.P. Korstanje)
+
 ## [6.10.1] (2021-03-08)
 
 ### Fixed
@@ -1611,7 +1616,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...main
+[6.10.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...v6.10.2
 [6.10.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.0...v6.10.1
 [6.10.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...v6.10.0
 [6.9.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.0...v6.9.1

@@ -6,7 +6,7 @@
         <version>2.1.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.10.2-SNAPSHOT</version>
+    <version>6.10.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -28,7 +28,7 @@
         <create-meta.version>3.0.0</create-meta.version>
         <tag-expressions.version>3.0.0</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
-        <messages.version>14.0.1</messages.version>
+        <messages.version>14.1.2</messages.version>
         <gherkin.version>17.0.2</gherkin.version>
         <html-formatter.version>12.0.0</html-formatter.version>
 
@@ -543,7 +543,7 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.13.2</version>
+                    <version>0.13.6</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
