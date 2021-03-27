@@ -477,7 +477,6 @@ class PrettyFormatterTest {
                 .run());
 
         assertThat(out, bytesContainsString("" +
-                "      " + AnsiEscapes.RED + "Hook failed" + AnsiEscapes.RESET + "\n" +
                 "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
     }
 

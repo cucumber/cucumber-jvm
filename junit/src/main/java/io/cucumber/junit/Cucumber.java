@@ -233,7 +233,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
             context.startTestRun();
-
             next.evaluate();
         }
 

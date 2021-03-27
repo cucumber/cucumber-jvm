@@ -1,6 +1,7 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.ExceptionUtils;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
@@ -83,6 +84,11 @@ public final class Runtime {
             } finally {
                 context.finishTestRun();
             }
+        }
+
+        Throwable exception = context.getException();
+        if (exception != null) {
+            ExceptionUtils.throwAsUncheckedException(exception);
         }
     }
 
