@@ -59,7 +59,7 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>CLI-test</id>
+                        <id>cli-test</id>
                         <phase>integration-test</phase>
                         <goals>
                             <goal>run</goal>
