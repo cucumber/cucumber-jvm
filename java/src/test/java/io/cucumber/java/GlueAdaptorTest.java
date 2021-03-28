@@ -60,16 +60,18 @@ public class GlueAdaptorTest {
     private HookDefinition beforeStepHook;
     private HookDefinition afterHook;
     private HookDefinition beforeHook;
+    private StaticHookDefinition afterAllHook;
+    private StaticHookDefinition beforeAllHook;
     private DocStringTypeDefinition docStringTypeDefinition;
     private final Glue container = new Glue() {
         @Override
         public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
-            // TODO
+            GlueAdaptorTest.this.beforeAllHook = beforeAllHook;
         }
 
         @Override
         public void addAfterAllHook(StaticHookDefinition afterAllHook) {
-            // TODO
+            GlueAdaptorTest.this.afterAllHook = afterAllHook;
         }
 
         @Override
@@ -161,6 +163,8 @@ public class GlueAdaptorTest {
             () -> assertThat(beforeStepHook, notNullValue()),
             () -> assertThat(afterHook, notNullValue()),
             () -> assertThat(beforeHook, notNullValue()),
+            () -> assertThat(beforeAllHook, notNullValue()),
+            () -> assertThat(afterAllHook, notNullValue()),
             () -> assertThat(docStringTypeDefinition, notNullValue()));
     }
 
@@ -217,6 +221,16 @@ public class GlueAdaptorTest {
 
     @Before
     public void before() {
+
+    }
+
+    @AfterAll
+    public static void afterAll() {
+
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
 
     }
 
