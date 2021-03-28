@@ -12,12 +12,13 @@
     <name>Examples</name>
 
     <modules>
-        <module>spring-txn</module>
-        <module>java-calculator</module>
-        <module>java-calculator-junit5</module>
-        <module>java8-calculator</module>
-        <module>java-calculator-testng</module>
-        <module>java-wicket</module>
+        <module>calculator-java8-cli</module>
+        <module>calculator-java-cli</module>
+        <module>calculator-java-junit4</module>
+        <module>calculator-java-junit5</module>
+        <module>calculator-java-testng</module>
+        <module>spring-java-junit5</module>
+        <module>wicket-java-junit4</module>
     </modules>
 
     <build>
