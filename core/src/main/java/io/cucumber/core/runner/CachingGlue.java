@@ -89,7 +89,7 @@ final class CachingGlue implements Glue {
     @Override
     public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
         beforeAllHooks.add(beforeAllHook);
-        afterAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
+        beforeAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
     }
 
     @Override
