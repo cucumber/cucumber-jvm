@@ -187,7 +187,9 @@ final class CachingGlue implements Glue {
     }
 
     List<StaticHookDefinition> getAfterAllHooks() {
-        return new ArrayList<>(afterAllHooks);
+        ArrayList<StaticHookDefinition> hooks = new ArrayList<>(afterAllHooks);
+        Collections.reverse(hooks);
+        return hooks;
     }
 
     Collection<ParameterTypeDefinition> getParameterTypeDefinitions() {
