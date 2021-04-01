@@ -25,8 +25,8 @@
         <!-- io.cucumber dependencies -->
         <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
         <datatable.version>3.5.0</datatable.version>
-        <create-meta.version>3.0.0</create-meta.version>
-        <tag-expressions.version>3.0.0</tag-expressions.version>
+        <create-meta.version>4.0.0</create-meta.version>
+        <tag-expressions.version>3.0.1</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>15.0.0</messages.version>
         <gherkin.version>18.0.0</gherkin.version>
