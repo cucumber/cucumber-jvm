@@ -119,15 +119,93 @@ public class StepDefinitions {
 
 ## Hooks
 
-Declare hooks that will be executed before/after each scenario/step by
-annotating a method. The method may declare an argument of type 
-`io.cucumber.java.Scenario`.
+Hooks are executed before or after all scenarios/each scenario/each step. A hook
+is declared by annotating a method. 
 
- * `@Before` 
- * `@After`
- * `@BeforeStep`
- * `@AfterStep`
- 
+Hooks are global, all hooks declared in any step definition class will be 
+executed. The order in which hooks are executed is not defined. An explicit
+order can be provided by using the `order` property in the annotation. 
+
+### BeforeAll / AfterAll
+
+`BeforeAll` and `AfterAll` hooks are executed before all scenarios are executed and
+after all scenarios have been executed. A hook is declared by annotating a method.
+This methods must be static and do not take any arguments.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.AfterAll;
+import io.cucumber.java.BeforeAll;
+
+public class StepDefinitions {
+
+    @BeforeAll
+    public static void beforeAll() {
+        // Runs before all scenarios
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        // Runs after all scenarios
+    }
+}
+```
+
+### Before / After
+
+`Before` and `After` hooks are executed before and after each scenario is executed.
+A hook is declared by annotating a method. This method may take an argument of
+`io.cucumber.java.Scenario`. A tag-expression can be used to execute a hook
+conditionally.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+
+public class StepDefinitions {
+
+    @Before("not @zukini")
+    public void before(Scenario scenario) {
+        scenario.log("Runs before each scenarios *not* tagged with @zukini");
+    }
+
+    @After
+    public void after(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
+    }
+}
+```
+
+### BeforeStep / AfterStep
+
+`BeforeStep` and `AfterStep` hooks are executed before and after each step is
+executed. A hook is declared by annotating a method. This method may take an
+argument of `io.cucumber.java.Scenario`. A tag-expression can be used to execute
+a hook  conditionally.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.AfterStep;
+import io.cucumber.java.BeforeStep;
+
+public class StepDefinitions {
+
+    @BeforeStep("not @zukini")
+    public void before(Scenario scenario) {
+        scenario.log("Runs before each step in scenarios *not* tagged with @zukini");
+    }
+
+    @AfterStep
+    public void after(Scenario scenario) {
+        scenario.log("Runs after each step");
+    }
+}
+```
+    
 ## Transformers 
 
 Cucumber expression parameters, data tables and docs strings can be transformed

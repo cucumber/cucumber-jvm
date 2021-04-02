@@ -15,19 +15,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RpnCalculatorStepDefinitions {
 
+    private RpnCalculator calc;
+
     @BeforeAll
-    public static void enable_super_math_engine() {
-        // System.enableSuperMaths()
-        throw new RuntimeException();
+    public static void beforeAll() {
+        // Runs before all scenarios
     }
 
     @AfterAll
-    public static void disable_super_math_engine() {
-        // System.disableSuperMaths()
-        throw new RuntimeException();
+    public static void afterAll() {
+        // Runs after all scenarios
     }
 
-    private RpnCalculator calc;
+    @Before("not @foo")
+    public void before(Scenario scenario) {
+        scenario.log("Runs before each scenarios *not* tagged with @foo");
+    }
+
+    @After
+    public void after(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
+    }
 
     @Given("a calculator I just turned on")
     public void a_calculator_I_just_turned_on() {
@@ -49,16 +57,6 @@ public class RpnCalculatorStepDefinitions {
     @Then("the result is {int}")
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
-    }
-
-    @Before("not @foo")
-    public void before(Scenario scenario) {
-        scenario.log("Runs before scenarios *not* tagged with @foo");
-    }
-
-    @After
-    public void after(Scenario scenario) {
-        // result.write("HELLLLOO");
     }
 
     @Given("the previous entries:")

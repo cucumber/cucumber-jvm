@@ -18,13 +18,23 @@ public class RpnCalculatorSteps {
     private RpnCalculator calc;
 
     @BeforeAll
-    public static void enable_super_math_engine() {
-        // System.enableSuperMaths()
+    public static void beforeAll() {
+        // Runs before all scenarios
     }
 
     @AfterAll
-    public static void disable_super_math_engine() {
-        // System.disableSuperMaths()
+    public static void afterAll() {
+        // Runs after all scenarios
+    }
+
+    @Before("not @foo")
+    public void before(Scenario scenario) {
+        scenario.log("Runs before each scenarios *not* tagged with @foo");
+    }
+
+    @After
+    public void after(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
     }
 
     @Given("a calculator I just turned on")
@@ -47,16 +57,6 @@ public class RpnCalculatorSteps {
     @Then("the result is {int}")
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
-    }
-
-    @Before("not @foo")
-    public void before(Scenario scenario) {
-        scenario.log("Runs before scenarios *not* tagged with @foo");
-    }
-
-    @After
-    public void after(Scenario scenario) {
-        // scenario.write("HELLLLOO");
     }
 
     @Given("the previous entries:")
