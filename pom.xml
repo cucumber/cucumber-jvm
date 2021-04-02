@@ -26,7 +26,7 @@
         <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
         <datatable.version>3.5.0</datatable.version>
         <create-meta.version>3.0.0</create-meta.version>
-        <tag-expressions.version>3.0.0</tag-expressions.version>
+        <tag-expressions.version>3.0.1</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>14.1.2</messages.version>
         <gherkin.version>17.0.2</gherkin.version>

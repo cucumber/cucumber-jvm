@@ -7,10 +7,10 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>io.cucumber</groupId>
-    <artifactId>cucumber-junit-platform-engine</artifactId>
-    <version>${cucumber.version}</version>
-    <scope>test</scope>
+   <groupId>io.cucumber</groupId>
+   <artifactId>cucumber-junit-platform-engine</artifactId>
+   <version>${cucumber.version}</version>
+   <scope>test</scope>
 </dependency>
 ```
 
@@ -57,48 +57,48 @@ Add the following to your `pom.xml`:
 
 ```xml
 <dependencies>
-    ....
-    <dependency>
-        <groupId>org.junit.platform</groupId>
-        <artifactId>junit-platform-launcher</artifactId>
-        <version>${junit-platform.version}</version>
-        <scope>test</scope>
-    </dependency>
+   ....
+   <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-console</artifactId>
+      <version>${junit-platform.version}</version>
+      <scope>test</scope>
+   </dependency>
 </dependencies>
 
 <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-                <execution>
-                    <!--Work around. Surefire does not use JUnit's Test Engine discovery functionality -->
-                    <id>CLI-test</id>
-                    <phase>integration-test</phase>
-                    <goals>
-                        <goal>run</goal>
-                    </goals>
-                    <configuration>
-                        <target>
-                            <echo message="Running JUnit Platform CLI"/>
-                            <java classname="org.junit.platform.console.ConsoleLauncher"
-                                  fork="true"
-                                  failonerror="true"
-                                  newenvironment="true"
-                                  maxmemory="512m"
-                                  classpathref="maven.test.classpath">
-                                <arg value="--include-engine"/>
-                                <arg value="cucumber"/>
-                                <arg value="--scan-classpath"/>
-                                <arg value="${project.build.testOutputDirectory}"/>
-                            </java>
-                        </target>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
+<plugins>
+   <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-antrun-plugin</artifactId>
+      <executions>
+         <execution>
+            <!--Work around. Surefire does not use JUnit's Test Engine discovery functionality -->
+            <id>CLI-test</id>
+            <phase>integration-test</phase>
+            <goals>
+               <goal>run</goal>
+            </goals>
+            <configuration>
+               <target>
+                  <echo message="Running JUnit Platform CLI"/>
+                  <java classname="org.junit.platform.console.ConsoleLauncher"
+                        fork="true"
+                        failonerror="true"
+                        newenvironment="true"
+                        maxmemory="512m"
+                        classpathref="maven.test.classpath">
+                     <arg value="--include-engine"/>
+                     <arg value="cucumber"/>
+                     <arg value="--scan-classpath"/>
+                     <arg value="${project.build.testOutputDirectory}"/>
+                  </java>
+               </target>
+            </configuration>
+         </execution>
+      </executions>
+   </plugin>
+</plugins>
 </build>
 ```
 #### Use the Gradle JavaExec task  ####
