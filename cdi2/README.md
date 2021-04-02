@@ -1,9 +1,23 @@
 Cucumber CDI 2
 ==============
 
-This module relies on CDI Standalone Edition (CDI SE) API to start/stop a CDI container
-and customize it - adding steps. It looks up the beans/steps in CDI and if not available
-it instantiates it as POJO with CDI injection support - unmanaged bean.
+Use CDI Standalone Edition (CDI SE) API to provide dependency injection in to
+steps definitions
+
+Add the `cucumber-cdi2` dependency to your pom.xml:
+
+```xml
+<dependencies>
+  [...]
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-cdi2</artifactId>
+        <version>${cucumber.version}</version>
+        <scope>test</scope>
+    </dependency>
+  [...]
+</dependencies>
+```
 
 ## Setup
 
@@ -27,18 +41,54 @@ And for Weld it is:
 <dependency>
   <groupId>org.jboss.weld.se</groupId>
   <artifactId>weld-se-core</artifactId>
-  <version>3.1.1.Final</version>
+  <version>3.1.6.Final</version>
   <scope>test</scope>
 </dependency>
 ```
 
-To ensure the module is compatible with all implementations and future API version, it does not transitively bring the API.
-If you don't know which one to use, you can import the following one but if you develop CDI code you should already have one provided:
+## Usage
 
-```xml
-<dependency>
-  <groupId>javax.enterprise</groupId>
-  <artifactId>cdi-api</artifactId>
-  <version>2.0</version>
-</dependency>
+For each scenario a new CDI container is started. If not present in the
+container, step definitions are added as unmanaged beans and dependencies are
+injected.
+
+Note: Only step definition classes are added as unmanaged beans if not explicitly
+defined. Other support code is not. Consider adding a `beans.xml` to
+automatically declare test all classes as beans. 
+
+Note: To share state step definitions and other support code must at least be
+application scoped.
+
+```java
+package com.example.app;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class StepDefinition {
+
+    @Inject
+    private final Belly belly;
+
+    public StepDefinitions(Belly belly) {
+        this.belly = belly;
+    }
+
+    @Given("I have {int} {word} in my belly")
+    public void I_have_n_things_in_my_belly(int n, String what) {
+        belly.setContents(Collections.nCopies(n, what));
+    }
+
+    @Then("there are {int} cukes in my belly")
+    public void checkCukes(int n) {
+        assertEquals(belly.getContents(), Collections.nCopies(n, "cukes"));
+    }
+}
 ```

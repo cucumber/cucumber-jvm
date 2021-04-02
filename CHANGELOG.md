@@ -23,15 +23,44 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
 
 ### Deprecated
- * [Java] Deprecated `io.cucumber.java.tl` in favour of `io.cucumber.java.te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
- * [Java8] Deprecated `io.cucumber.java8.Tl`. in favour of `io.cucumber.java8.Te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
 
 ### Removed
 
 ### Fixed
+
+## [6.10.2] (2021-03-15)
+
+### Fixed
+ * [Core] Mark pending steps as failed in teamcity plugin ([#2264](https://github.com/cucumber/cucumber-jvm/pull/2264)) M.P. Korstanje)
+
+## [6.10.1] (2021-03-08)
+
+### Fixed
+ * [Cdi2] Correctly cast the UnmanagedInstance values ([#2242](https://github.com/cucumber/cucumber-jvm/pull/2242), [#2244](https://github.com/cucumber/cucumber-jvm/pull/2244) Daniel Beland)
+ * [Cdi2] Add step definitions as beans when not discovered ([#2248](https://github.com/cucumber/cucumber-jvm/pull/2248)) Daniel Beland, M.P. Korstanje)
+ * [Jakarta Cdi] Correctly cast the UnmanagedInstance values ([#2242](https://github.com/cucumber/cucumber-jvm/pull/2242), [#2248](https://github.com/cucumber/cucumber-jvm/pull/2248) Daniel Beland)
+ * [Jakarta Cdi] Add step definitions as beans when not discovered ([#2248](https://github.com/cucumber/cucumber-jvm/pull/2248)) Daniel Beland, M.P. Korstanje)
+
+## [6.10.0] (2021-02-14)
+
+### Changed
+ * Upgraded various internal dependencies
+    - create-meta v3.0.0 
+    - gherkin v17.0.1 
+    - messages v14.0.1 
+    - html-formatter v12.0.0
+
+### Deprecated
+ * [Java] Deprecated `io.cucumber.java.tl` in favour of `io.cucumber.java.te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
+ * [Java8] Deprecated `io.cucumber.java8.Tl`. in favour of `io.cucumber.java8.Te` ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
+ * [Core] Deprecated `# language: tl` in favour of `# language: te`.  
+
+### Fixed
  * [Core] Pass class loader to ServiceLoader.load invocations ([#2220](https://github.com/cucumber/cucumber-jvm/issues/2220) M.P. Korstanje)
  * [Core] Log warnings when classes or resource could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
-
+ * [Core] Improve undefined step reporting ([#2208](https://github.com/cucumber/cucumber-jvm/issues/2208) M.P. Korstanje)
+ * [Core] Log warnings when resources and classes could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
+    
 ## [6.9.1] (2020-12-14)
 
 ### Fixed
@@ -1598,7 +1627,10 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...main
+[6.10.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...v6.10.2
+[6.10.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.0...v6.10.1
+[6.10.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...v6.10.0
 [6.9.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.0...v6.9.1
 [6.9.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.2...v6.9.0
 [6.8.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.8.1...v6.8.2
