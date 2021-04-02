@@ -1,7 +1,9 @@
 package io.cucumber.examples.calculator;
 
 import io.cucumber.java.After;
+import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
+import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,6 +14,18 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RpnCalculatorStepDefinitions {
+
+    @BeforeAll
+    public static void enable_super_math_engine() {
+        // System.enableSuperMaths()
+        throw new RuntimeException();
+    }
+
+    @AfterAll
+    public static void disable_super_math_engine() {
+        // System.disableSuperMaths()
+        throw new RuntimeException();
+    }
 
     private RpnCalculator calc;
 

@@ -16,17 +16,19 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class RpnCalculatorSteps {
 
-    private RpnCalculator calc;
-
     @BeforeAll
     public static void enable_super_math_engine() {
         // System.enableSuperMaths()
+        throw new RuntimeException();
     }
 
     @AfterAll
     public static void disable_super_math_engine() {
         // System.disableSuperMaths()
+        throw new RuntimeException();
     }
+
+    private RpnCalculator calc;
 
     @Given("a calculator I just turned on")
     public void a_calculator_I_just_turned_on() {

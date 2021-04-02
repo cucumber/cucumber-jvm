@@ -70,7 +70,7 @@ class RunnerTest {
         runner.runPickle(createPicklesWithSteps());
         runner.runAfterAllHooks();
 
-        InOrder inOrder = inOrder(beforeAllHook,  afterAllHook, beforeHook, afterHook, backend);
+        InOrder inOrder = inOrder(beforeAllHook, afterAllHook, beforeHook, afterHook, backend);
         inOrder.verify(beforeAllHook).execute();
         inOrder.verify(backend).buildWorld();
         inOrder.verify(beforeHook).execute(any(TestCaseState.class));

@@ -36,21 +36,17 @@ import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
-import org.opentest4j.TestAbortedException;
 
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import static java.time.Clock.fixed;
 import static java.time.Duration.ZERO;
-import static java.time.Duration.ofMillis;
 import static java.time.Instant.EPOCH;
 import static java.time.ZoneId.of;
 import static java.util.Arrays.asList;
@@ -59,6 +55,7 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -361,11 +358,8 @@ class RuntimeTest {
                 .build()
                 .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo(
-            "There were 3 exceptions:\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)")));
+        assertThat(actualThrown.getMessage(), is(equalTo("There were 3 exceptions. The details are in the stacktrace below.")));
+        assertThat(actualThrown.getSuppressed(), is(arrayWithSize(3)));
     }
 
     @Test
