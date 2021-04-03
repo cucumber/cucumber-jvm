@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
  * [Core] Removed `--strict` and `--no-strict` options ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)
   - Cucumber executes scenarios in strict mode by default
+ * [Weld] Removed `cucumber-weld` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
+  - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
+ * [Needle] Removed `cucumber-needled` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
+  - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
 
 ### Fixed
 
