@@ -9,6 +9,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.java.en.Given;
 import org.hamcrest.CustomTypeSafeMatcher;
@@ -59,8 +60,20 @@ public class GlueAdaptorTest {
     private HookDefinition beforeStepHook;
     private HookDefinition afterHook;
     private HookDefinition beforeHook;
+    private StaticHookDefinition afterAllHook;
+    private StaticHookDefinition beforeAllHook;
     private DocStringTypeDefinition docStringTypeDefinition;
     private final Glue container = new Glue() {
+        @Override
+        public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
+            GlueAdaptorTest.this.beforeAllHook = beforeAllHook;
+        }
+
+        @Override
+        public void addAfterAllHook(StaticHookDefinition afterAllHook) {
+            GlueAdaptorTest.this.afterAllHook = afterAllHook;
+        }
+
         @Override
         public void addStepDefinition(StepDefinition stepDefinition) {
             GlueAdaptorTest.this.stepDefinitions.add(stepDefinition);
@@ -150,6 +163,8 @@ public class GlueAdaptorTest {
             () -> assertThat(beforeStepHook, notNullValue()),
             () -> assertThat(afterHook, notNullValue()),
             () -> assertThat(beforeHook, notNullValue()),
+            () -> assertThat(beforeAllHook, notNullValue()),
+            () -> assertThat(afterAllHook, notNullValue()),
             () -> assertThat(docStringTypeDefinition, notNullValue()));
     }
 
@@ -206,6 +221,16 @@ public class GlueAdaptorTest {
 
     @Before
     public void before() {
+
+    }
+
+    @AfterAll
+    public static void afterAll() {
+
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
 
     }
 

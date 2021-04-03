@@ -11,6 +11,7 @@ import io.cucumber.core.backend.JavaMethodReference;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StackTraceElementReference;
+import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Step;
@@ -48,9 +49,13 @@ import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
 
-    private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
+    private static final Comparator<CoreHookDefinition> HOOK_ORDER_ASCENDING = Comparator
             .comparingInt(CoreHookDefinition::getOrder)
             .thenComparing(ScenarioScoped.class::isInstance);
+
+    private static final Comparator<StaticHookDefinition> STATIC_HOOK_ORDER_ASCENDING = Comparator
+            .comparingInt(StaticHookDefinition::getOrder);
+
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
@@ -58,11 +63,13 @@ final class CachingGlue implements Glue {
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
     private final List<DocStringTypeDefinition> docStringTypeDefinitions = new ArrayList<>();
 
+    private final List<StaticHookDefinition> beforeAllHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeStepHooks = new ArrayList<>();
     private final List<StepDefinition> stepDefinitions = new ArrayList<>();
     private final List<CoreHookDefinition> afterStepHooks = new ArrayList<>();
     private final List<CoreHookDefinition> afterHooks = new ArrayList<>();
+    private final List<StaticHookDefinition> afterAllHooks = new ArrayList<>();
 
     /*
      * Storing the pattern that matches the step text allows us to cache the
@@ -80,6 +87,18 @@ final class CachingGlue implements Glue {
     }
 
     @Override
+    public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
+        beforeAllHooks.add(beforeAllHook);
+        beforeAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
+    }
+
+    @Override
+    public void addAfterAllHook(StaticHookDefinition afterAllHook) {
+        afterAllHooks.add(afterAllHook);
+        afterAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
+    }
+
+    @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
         stepDefinitions.add(stepDefinition);
     }
@@ -87,25 +106,25 @@ final class CachingGlue implements Glue {
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
         beforeHooks.add(CoreHookDefinition.create(hookDefinition));
-        beforeHooks.sort(ASCENDING);
+        beforeHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterHooks.sort(ASCENDING);
+        afterHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
         beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        beforeStepHooks.sort(ASCENDING);
+        beforeStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterStepHooks.sort(ASCENDING);
+        afterStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
@@ -143,6 +162,10 @@ final class CachingGlue implements Glue {
         docStringTypeDefinitions.add(docStringType);
     }
 
+    List<StaticHookDefinition> getBeforeAllHooks() {
+        return new ArrayList<>(beforeAllHooks);
+    }
+
     Collection<CoreHookDefinition> getBeforeHooks() {
         return new ArrayList<>(beforeHooks);
     }
@@ -159,6 +182,12 @@ final class CachingGlue implements Glue {
 
     Collection<CoreHookDefinition> getAfterStepHooks() {
         List<CoreHookDefinition> hooks = new ArrayList<>(afterStepHooks);
+        Collections.reverse(hooks);
+        return hooks;
+    }
+
+    List<StaticHookDefinition> getAfterAllHooks() {
+        ArrayList<StaticHookDefinition> hooks = new ArrayList<>(afterAllHooks);
         Collections.reverse(hooks);
         return hooks;
     }

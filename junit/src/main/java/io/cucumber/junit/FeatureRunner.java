@@ -3,7 +3,7 @@ package io.cucumber.junit;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.core.runtime.CucumberExecutionContext;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -30,10 +30,11 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final Feature feature;
     private final JUnitOptions options;
     private final Integer uniqueSuffix;
+    private final CucumberExecutionContext context;
     private Description description;
 
     private FeatureRunner(
-            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, RunnerSupplier runners,
+            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, CucumberExecutionContext context,
             JUnitOptions options
     )
             throws InitializationError {
@@ -41,6 +42,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         this.feature = feature;
         this.uniqueSuffix = uniqueSuffix;
         this.options = options;
+        this.context = context;
 
         Map<String, List<Pickle>> groupedByName = feature.getPickles().stream()
                 .collect(groupingBy(Pickle::getName));
@@ -51,18 +53,18 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
                     String featureName = getName();
                     Integer exampleId = uniqueSuffix(groupedByName, pickle, Pickle::getName);
                     return options.stepNotifications()
-                            ? withStepDescriptions(runners, pickle, exampleId, options)
-                            : withNoStepDescriptions(featureName, runners, pickle, exampleId, options);
+                            ? withStepDescriptions(context, pickle, exampleId, options)
+                            : withNoStepDescriptions(featureName, context, pickle, exampleId, options);
                 })
                 .collect(toList());
     }
 
     static FeatureRunner create(
-            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, RunnerSupplier runners,
+            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, CucumberExecutionContext context,
             JUnitOptions options
     ) {
         try {
-            return new FeatureRunner(feature, uniqueSuffix, filter, runners, options);
+            return new FeatureRunner(feature, uniqueSuffix, filter, context, options);
         } catch (InitializationError e) {
             throw new CucumberException("Failed to create scenario runner", e);
         }
@@ -126,6 +128,12 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     @Override
     protected Description describeChild(PickleRunner child) {
         return child.getDescription();
+    }
+
+    @Override
+    public void run(RunNotifier notifier) {
+        context.beforeFeature(feature);
+        super.run(notifier);
     }
 
     @Override

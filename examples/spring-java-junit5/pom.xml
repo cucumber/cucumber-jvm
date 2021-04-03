@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>spring-java-junit5</artifactId>
-    <name>Examples: Spring Transactions</name>
+    <name>Examples: Spring Transactions - Java - Junit 5</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.spring.application</project.Automatic-Module-Name>

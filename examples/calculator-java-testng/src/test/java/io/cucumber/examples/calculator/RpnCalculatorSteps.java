@@ -1,7 +1,9 @@
 package io.cucumber.examples.calculator;
 
 import io.cucumber.java.After;
+import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
+import io.cucumber.java.BeforeAll;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
@@ -16,6 +18,26 @@ import static org.testng.Assert.assertEquals;
 public class RpnCalculatorSteps {
 
     private RpnCalculator calc;
+
+    @BeforeAll
+    public static void beforeAll() {
+        // Runs before all scenarios
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        // Runs after all scenarios
+    }
+
+    @Before("not @foo")
+    public void before(Scenario scenario) {
+        scenario.log("Runs before each scenarios *not* tagged with @foo");
+    }
+
+    @After
+    public void after(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
+    }
 
     @Given("a calculator I just turned on")
     public void a_calculator_I_just_turned_on() {
@@ -37,16 +59,6 @@ public class RpnCalculatorSteps {
     @Then("the result is {int}")
     public void the_result_is(double expected) {
         assertEquals(expected, calc.value());
-    }
-
-    @Before("not @foo")
-    public void before() {
-        System.out.println("Runs before scenarios *not* tagged with @foo");
-    }
-
-    @After
-    public void after(Scenario scenario) {
-        // result.write("HELLLLOO");
     }
 
     @Given("the previous entries:")

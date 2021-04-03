@@ -8,20 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Execute method after each scenario.
+ * Executes a method before all scenarios
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@API(status = API.Status.STABLE)
-public @interface After {
-
-    /**
-     * Tag expression. If the expression applies to the current scenario this
-     * hook will be executed.
-     *
-     * @return a tag expression
-     */
-    String value() default "";
+@API(status = API.Status.EXPERIMENTAL)
+public @interface AfterAll {
 
     /**
      * The order in which this hook should run. Higher numbers are run first.
@@ -30,5 +22,4 @@ public @interface After {
      * @return the order in which this hook should run.
      */
     int order() default 10000;
-
 }

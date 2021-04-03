@@ -354,9 +354,9 @@ public final class JsonFormatter implements EventListener {
 
             scenario.put("start_timestamp", getDateTimeFromTimeStamp(event.getInstant()));
             scenario.put("line", 2);
-            scenario.put("name", "Could not execute Cucumber");
+            scenario.put("name", "Failure while executing Cucumber");
             scenario.put("description", "");
-            scenario.put("id", "failure;could-not-execute-cucumber");
+            scenario.put("id", "failure;failure-while-executing-cucumber");
             scenario.put("type", "scenario");
             scenario.put("keyword", "Scenario");
 
@@ -372,18 +372,18 @@ public final class JsonFormatter implements EventListener {
                     whenResult.put("status", "passed");
                 }
                 when.put("line", 3);
-                when.put("name", "Cucumber could not execute");
+                when.put("name", "Cucumber failed while executing");
                 Map<String, Object> whenMatch = new LinkedHashMap<>();
                 when.put("match", whenMatch);
                 whenMatch.put("arguments", new ArrayList<>());
-                whenMatch.put("location", "io.cucumber.core.Failure.cucumber_could_not_execute()");
+                whenMatch.put("location", "io.cucumber.core.Failure.failure_while_executing_cucumber()");
                 when.put("keyword", "When ");
 
                 {
                     Map<String, Object> thenResult = new LinkedHashMap<>();
                     then.put("result", thenResult);
                     thenResult.put("duration", 0);
-                    thenResult.put("error_message", exception.getMessage());
+                    thenResult.put("error_message", printStackTrace(exception));
                     thenResult.put("status", "failed");
                 }
                 then.put("line", 4);

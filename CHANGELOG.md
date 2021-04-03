@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+ * [Java] Added `BeforeAll` and `AfterAll` hooks ([cucumber/#1876](https://github.com/cucumber/cucumber/pull/1876) M.P. Korstanje)
 
 ### Changed
  * [Core] Updated Cucumber Expressions to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)

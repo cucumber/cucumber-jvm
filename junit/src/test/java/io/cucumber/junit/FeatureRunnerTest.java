@@ -6,6 +6,8 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.BackendSupplier;
+import io.cucumber.core.runtime.CucumberExecutionContext;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.RunnerSupplier;
@@ -123,7 +125,9 @@ class FeatureRunnerTest {
             classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
             objectFactory, typeRegistrySupplier);
-        return FeatureRunner.create(feature, null, filters, runnerSupplier, junitOption);
+        CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(runtimeOptions),
+            runnerSupplier);
+        return FeatureRunner.create(feature, null, filters, context, junitOption);
     }
 
     @Test
@@ -366,8 +370,10 @@ class FeatureRunnerTest {
         RunnerSupplier runnerSupplier = () -> {
             throw illegalStateException;
         };
-
-        FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, runnerSupplier, new JUnitOptions());
+        TimeServiceEventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
+        CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
+        FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, context, new JUnitOptions());
 
         RunNotifier notifier = mock(RunNotifier.class);
         PickleRunners.PickleRunner pickleRunner = featureRunner.getChildren().get(0);
@@ -407,7 +413,9 @@ class FeatureRunnerTest {
             throw illegalStateException;
         };
 
-        FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, runnerSupplier, new JUnitOptions());
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
+        FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, context, new JUnitOptions());
         assertThat(featureRunner.getChildren().size(), is(1));
         assertThat(featureRunner.getChildren().get(0).getDescription().getDisplayName(),
             is("scenario_2 name(feature name)"));

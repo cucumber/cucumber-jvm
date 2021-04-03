@@ -24,10 +24,8 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import io.cucumber.plugin.event.WriteEvent;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,6 +43,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 
@@ -80,6 +79,13 @@ public class TeamCityPlugin implements EventListener {
             + "[testFailed timestamp = '%s' duration = '%s' message = '%s' details = '%s' name = '%s']";
     private static final String TEMPLATE_TEST_IGNORED = TEAMCITY_PREFIX
             + "[testIgnored timestamp = '%s' duration = '%s' message = '%s' name = '%s']";
+
+    private static final String TEMPLATE_BEFORE_ALL_AFTER_ALL_STARTED = TEAMCITY_PREFIX
+            + "[testStarted timestamp = '%s' name = '%s']";
+    private static final String TEMPLATE_BEFORE_ALL_AFTER_ALL_FAILED = TEAMCITY_PREFIX
+            + "[testFailed timestamp = '%s' message = '%s' details = '%s' name = '%s']";
+    private static final String TEMPLATE_BEFORE_ALL_AFTER_ALL_FINISHED = TEAMCITY_PREFIX
+            + "[testFinished timestamp = '%s' name = '%s']";
 
     private static final String TEMPLATE_PROGRESS_COUNTING_STARTED = TEAMCITY_PREFIX
             + "[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '%s']";
@@ -274,7 +280,7 @@ public class TeamCityPlugin implements EventListener {
             }
             case AMBIGUOUS:
             case FAILED: {
-                String details = extractStackTrace(error);
+                String details = printStackTrace(error);
                 print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step failed", details, name);
                 break;
             }
@@ -282,13 +288,6 @@ public class TeamCityPlugin implements EventListener {
                 break;
         }
         print(TEMPLATE_TEST_FINISHED, timeStamp, duration, name);
-    }
-
-    private String extractStackTrace(Throwable error) {
-        ByteArrayOutputStream s = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(s);
-        error.printStackTrace(printStream);
-        return new String(s.toByteArray(), StandardCharsets.UTF_8);
     }
 
     private String extractName(TestStep step) {
@@ -364,7 +363,21 @@ public class TeamCityPlugin implements EventListener {
         poppedNodes(emptyStack).forEach(node -> finishNode(timestamp, node));
         currentStack = emptyStack;
 
+        printBeforeAfterAllResult(event, timestamp);
         print(TEMPLATE_TEST_RUN_FINISHED, timestamp);
+    }
+
+    private void printBeforeAfterAllResult(TestRunFinished event, String timestamp) {
+        Throwable error = event.getResult().getError();
+        if (error == null) {
+            return;
+        }
+        // Use dummy test to display before all after all failures
+        String name = "Before All/After All";
+        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_STARTED, timestamp, name);
+        String details = printStackTrace(error);
+        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FAILED, timestamp, "Before All/ After All failed", details, name);
+        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FINISHED, timestamp, name);
     }
 
     private void handleSnippetSuggested(SnippetsSuggestedEvent event) {

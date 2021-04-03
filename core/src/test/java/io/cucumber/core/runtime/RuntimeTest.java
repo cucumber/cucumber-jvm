@@ -51,6 +51,7 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -347,11 +348,9 @@ class RuntimeTest {
                 .build()
                 .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo(
-            "There were 3 exceptions:\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)")));
+        assertThat(actualThrown.getMessage(),
+            is(equalTo("There were 3 exceptions. The details are in the stacktrace below.")));
+        assertThat(actualThrown.getSuppressed(), is(arrayWithSize(3)));
     }
 
     @Test

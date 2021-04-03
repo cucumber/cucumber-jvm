@@ -84,6 +84,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     }
 
     private void handleTestRunFinished(TestRunFinished event) {
+        printError(event);
         out.close();
     }
 
@@ -132,11 +133,21 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     private void printError(TestStepFinished event) {
         Result result = event.getResult();
+        printError(result);
+    }
+
+    private void printError(TestRunFinished event) {
+        Result result = event.getResult();
+        printError(result);
+    }
+
+    private void printError(Result result) {
         Throwable error = result.getError();
         if (error != null) {
             String name = result.getStatus().name().toLowerCase(ROOT);
+            Format format = formats.get(name);
             String text = printStackTrace(error);
-            out.println("      " + formats.get(name).text(text));
+            out.println("      " + format.text(text));
         }
     }
 
