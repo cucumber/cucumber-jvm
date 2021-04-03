@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+ * [Core] Updated Cucumber Expressions to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)
+  - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions
+  - May break Cucumber expressions that depend on these ambiguities
+ * [Core] Removed incorrect ISO 639-1 code for Telugu language ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
+  - Change imports of `io.cucumber.java.tl.*` to `io.cucumber.java.te.*`
+  - Change imports of `io.cucumber.java8.Tl` to `io.cucumber.java.Te`
+  - Change `# language: tl` to `# language: te` 
+ * [Core] Deprecated the `Summary` plugin interface for removal.
+  - Removed the `default_summary` and `null_summary` plugins
+  - The `summary` plugin is enabled default when using the CLI. Use `--no-summary` to disable.
+  - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
 
 ### Deprecated
 

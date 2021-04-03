@@ -34,7 +34,6 @@ import java.net.URL;
  * <li>{@link StrictAware}</li>
  * <li>{@link EventListener}</li>
  * <li>{@link ConcurrentEventListener}</li>
- * <li>{@link SummaryPrinter}</li>
  * </ul>
  */
 @API(status = API.Status.STABLE)

@@ -70,8 +70,7 @@ public class Main {
                 .parse(argv)
                 .addDefaultGlueIfAbsent()
                 .addDefaultFeaturePathIfAbsent()
-                .addDefaultFormatterIfAbsent()
-                .addDefaultSummaryPrinterIfAbsent()
+                .addDefaultSummaryPrinterIfNotDisabled()
                 .enablePublishPlugin()
                 .build(systemOptions);
 

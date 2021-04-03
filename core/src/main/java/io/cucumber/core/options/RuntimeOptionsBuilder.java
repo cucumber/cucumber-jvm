@@ -21,8 +21,7 @@ public final class RuntimeOptionsBuilder {
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
-    private final List<Options.Plugin> formatters = new ArrayList<>();
-    private final List<Options.Plugin> summaryPrinters = new ArrayList<>();
+    private final List<Options.Plugin> plugins = new ArrayList<>();
     private List<FeatureWithLines> parsedRerunPaths = null;
     private Integer parsedThreads = null;
     private Boolean parsedDryRun = null;
@@ -32,8 +31,7 @@ public final class RuntimeOptionsBuilder {
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
-    private boolean addDefaultSummaryPrinterIfAbsent;
-    private boolean addDefaultFormatterIfAbsent;
+    private Boolean addDefaultSummaryPrinter = null;
     private boolean addDefaultGlueIfAbsent;
     private boolean addDefaultFeaturePathIfAbsent;
     private String parsedPublishToken = null;
@@ -66,10 +64,8 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder addPluginName(String pluginSpecification) {
         PluginOption pluginOption = PluginOption.parse(pluginSpecification);
-        if (pluginOption.isSummaryPrinter()) {
-            summaryPrinters.add(pluginOption);
-        } else if (pluginOption.isFormatter()) {
-            formatters.add(pluginOption);
+        if (pluginOption.isEventListener() || pluginOption.isSummaryPrinter()) {
+            plugins.add(pluginOption);
         } else {
             throw new CucumberException("Unrecognized plugin: " + pluginSpecification);
         }
@@ -130,19 +126,14 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setGlue(this.parsedGlue);
         }
 
-        runtimeOptions.addFormatters(this.formatters);
-        runtimeOptions.addSummaryPrinters(this.summaryPrinters);
+        runtimeOptions.addPlugins(this.plugins);
 
         if (parsedObjectFactoryClass != null) {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
         }
 
-        if (addDefaultFormatterIfAbsent) {
-            runtimeOptions.addDefaultFormatterIfAbsent();
-        }
-
-        if (addDefaultSummaryPrinterIfAbsent) {
-            runtimeOptions.addDefaultSummaryPrinterIfAbsent();
+        if (addDefaultSummaryPrinter != null && addDefaultSummaryPrinter) {
+            runtimeOptions.addDefaultSummaryPrinter();
         }
 
         if (addDefaultGlueIfAbsent) {
@@ -221,13 +212,15 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder addDefaultSummaryPrinterIfAbsent() {
-        this.addDefaultSummaryPrinterIfAbsent = true;
+    public RuntimeOptionsBuilder setNoSummary() {
+        this.addDefaultSummaryPrinter = false;
         return this;
     }
 
-    public RuntimeOptionsBuilder addDefaultFormatterIfAbsent() {
-        this.addDefaultFormatterIfAbsent = true;
+    public RuntimeOptionsBuilder addDefaultSummaryPrinterIfNotDisabled() {
+        if (this.addDefaultSummaryPrinter == null) {
+            this.addDefaultSummaryPrinter = true;
+        }
         return this;
     }
 
