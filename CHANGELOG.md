@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
 
 ### Deprecated
+ * [Java8] Deprecated `cucumber-java8` ([#2174](https://github.com/cucumber/cucumber-jvm/issues/2174) M.P. Korstanje)
+   - For details please see:
+      * https://github.com/cucumber/cucumber-jvm/issues/2174
+      * https://github.com/cucumber/cucumber-jvm/issues/1817
+      * https://github.com/jhalterman/typetools/issues/52
 
 ### Removed
  * [Core] Removed `--strict` and `--no-strict` options ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)
