@@ -238,13 +238,11 @@
         <module>junit</module>
         <module>junit-platform-engine</module>
         <module>kotlin-java8</module>
-        <module>needle</module>
         <module>openejb</module>
         <module>picocontainer</module>
         <module>plugin</module>
         <module>spring</module>
         <module>testng</module>
-        <module>weld</module>
     </modules>
 
     <profiles>
@@ -542,7 +540,7 @@
                             <group>
                                 <title>Dependency Injection Providers</title>
                                 <packages>
-                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
+                                    io.cucumber.spring:io.cucumber.guice:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
                                 </packages>
                             </group>
                         </groups>
