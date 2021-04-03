@@ -31,8 +31,8 @@ public class TestNGCucumberRunnerTest {
     }
 
     @Test
-    public void runScenarioWithUndefinedStepsStrict() {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedStepsStrict.class);
+    public void runScenarioWithUndefinedSteps() {
+        testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedSteps.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios();
 
         // the feature file only contains one scenario
@@ -75,7 +75,7 @@ public class TestNGCucumberRunnerTest {
 
     @CucumberOptions(
             features = "classpath:io/cucumber/undefined/undefined_steps.feature")
-    static class RunScenarioWithUndefinedStepsStrict extends AbstractTestNGCucumberTests {
+    static class RunScenarioWithUndefinedSteps extends AbstractTestNGCucumberTests {
 
     }
 

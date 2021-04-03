@@ -42,7 +42,6 @@ import static io.cucumber.core.cli.CommandlineOptions.NAME;
 import static io.cucumber.core.cli.CommandlineOptions.NAME_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.NO_DRY_RUN;
 import static io.cucumber.core.cli.CommandlineOptions.NO_MONOCHROME;
-import static io.cucumber.core.cli.CommandlineOptions.NO_STRICT;
 import static io.cucumber.core.cli.CommandlineOptions.NO_SUMMARY;
 import static io.cucumber.core.cli.CommandlineOptions.OBJECT_FACTORY;
 import static io.cucumber.core.cli.CommandlineOptions.ORDER;
@@ -50,8 +49,6 @@ import static io.cucumber.core.cli.CommandlineOptions.PLUGIN;
 import static io.cucumber.core.cli.CommandlineOptions.PLUGIN_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.PUBLISH;
 import static io.cucumber.core.cli.CommandlineOptions.SNIPPETS;
-import static io.cucumber.core.cli.CommandlineOptions.STRICT;
-import static io.cucumber.core.cli.CommandlineOptions.STRICT_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.TAGS;
 import static io.cucumber.core.cli.CommandlineOptions.TAGS_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.THREADS;
@@ -141,14 +138,8 @@ public final class CommandlineOptionsParser {
                 parsedOptions.setDryRun(true);
             } else if (arg.equals(NO_DRY_RUN)) {
                 parsedOptions.setDryRun(false);
-            } else if (arg.equals(NO_STRICT)) {
-                out.println("--no-strict is no longer effective");
-                exitCode = 1;
-                return parsedOptions;
             } else if (arg.equals(NO_SUMMARY)) {
                 parsedOptions.setNoSummary();
-            } else if (arg.equals(STRICT) || arg.equals(STRICT_SHORT)) {
-                log.warn(() -> "--strict is enabled by default. This option will be removed in a future release.");
             } else if (arg.equals(MONOCHROME) || arg.equals(MONOCHROME_SHORT)) {
                 parsedOptions.setMonochrome(true);
             } else if (arg.equals(NO_MONOCHROME)) {

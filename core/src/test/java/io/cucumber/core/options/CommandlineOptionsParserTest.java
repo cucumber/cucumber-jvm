@@ -421,7 +421,7 @@ class CommandlineOptionsParserTest {
     @Test
     void set_strict_on_strict_aware_formatters() {
         RuntimeOptions options = parser
-                .parse("--strict", "--plugin", AwareFormatter.class.getName())
+                .parse("--plugin", AwareFormatter.class.getName())
                 .build();
         Plugins plugins = new Plugins(new PluginFactory(), options);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));

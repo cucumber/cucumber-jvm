@@ -28,8 +28,6 @@ cucumber.execution.limit=       # number of scenarios to execute (CLI only).
   
 cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
 
-cucumber.execution.strict=      # true or false. default: false.
-
 cucumber.execution.wip=         # true or false. default: false.
                                 # Fails if there any passing scenarios
                                 # CLI only.   

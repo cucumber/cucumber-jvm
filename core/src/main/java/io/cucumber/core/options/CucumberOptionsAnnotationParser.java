@@ -40,7 +40,6 @@ public final class CucumberOptionsAnnotationParser {
                 addTags(classWithOptions, options, args);
                 addPlugins(options, args);
                 addPublish(options, args);
-                addStrict(options, args);
                 addName(options, args);
                 addSnippets(options, args);
                 addGlue(options, args);
@@ -91,13 +90,6 @@ public final class CucumberOptionsAnnotationParser {
     private void addPublish(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options.publish()) {
             args.setPublish(true);
-        }
-    }
-
-    private void addStrict(CucumberOptions options, RuntimeOptionsBuilder args) {
-        if (!options.strict()) {
-            throw new CucumberException(
-                "@CucumberOptions(strict=false) is no longer supported. Please use strict=true");
         }
     }
 
@@ -195,8 +187,6 @@ public final class CucumberOptionsAnnotationParser {
     public interface CucumberOptions {
 
         boolean dryRun();
-
-        boolean strict();
 
         String[] features();
 
