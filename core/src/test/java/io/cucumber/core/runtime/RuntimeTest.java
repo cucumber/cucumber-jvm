@@ -358,7 +358,8 @@ class RuntimeTest {
                 .build()
                 .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo("There were 3 exceptions. The details are in the stacktrace below.")));
+        assertThat(actualThrown.getMessage(),
+            is(equalTo("There were 3 exceptions. The details are in the stacktrace below.")));
         assertThat(actualThrown.getSuppressed(), is(arrayWithSize(3)));
     }
 
