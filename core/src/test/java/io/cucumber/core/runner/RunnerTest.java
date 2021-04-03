@@ -144,7 +144,7 @@ class RunnerTest {
 
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
-        final HookDefinition afterStepHook = addAfterStepHook();
+        final HookDefinition afterStepHook = createHook();
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -161,17 +161,13 @@ class RunnerTest {
         inOrder.verify(afterStepHook).execute(any(TestCaseState.class));
     }
 
-    private HookDefinition addAfterStepHook() {
-        return createHook();
-    }
-
     @Test
     void aftersteps_executed_for_passed_step() {
         StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step"));
         Pickle pickle = createPickleMatchingStepDefinitions(stepDefinition);
 
-        HookDefinition afteStepHook1 = addAfterStepHook();
-        HookDefinition afteStepHook2 = addAfterStepHook();
+        HookDefinition afteStepHook1 = createHook();
+        HookDefinition afteStepHook2 = createHook();
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -192,10 +188,11 @@ class RunnerTest {
 
     @Test
     void hooks_execute_also_after_failure() {
-        final HookDefinition failingBeforeHook = createHook();
+        HookDefinition beforeHook = createHook();
+        HookDefinition afterHook = createHook();
+
+        HookDefinition failingBeforeHook = createHook();
         doThrow(new RuntimeException("boom")).when(failingBeforeHook).execute(any(TestCaseState.class));
-        final HookDefinition beforeHook = createHook();
-        final HookDefinition afterHook = createHook();
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -248,38 +245,51 @@ class RunnerTest {
     void hooks_not_executed_in_dry_run_mode() {
         RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
 
-        final HookDefinition beforeHook = createHook();
-        final HookDefinition afterHook = createHook();
-        final HookDefinition afterStepHook = addAfterStepHook();
+        StaticHookDefinition beforeAllHook = createStaticHook();
+        StaticHookDefinition afterAllHook = createStaticHook();
+        HookDefinition beforeHook = createHook();
+        HookDefinition afterHook = createHook();
+        HookDefinition beforeStepHook = createHook();
+        HookDefinition afterStepHook = createHook();
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
+                glue.addBeforeAllHook(beforeAllHook);
+                glue.addAfterAllHook(afterAllHook);
                 glue.addBeforeHook(beforeHook);
-                glue.addBeforeHook(afterHook);
+                glue.addAfterHook(afterHook);
+                glue.addBeforeStepHook(beforeStepHook);
                 glue.addAfterStepHook(afterStepHook);
             }
         };
+        runnerSupplier.get().runBeforeAllHooks();
         runnerSupplier.get().runPickle(createPicklesWithSteps());
+        runnerSupplier.get().runAfterAllHooks();
 
+        verify(beforeAllHook, never()).execute();
+        verify(afterAllHook, never()).execute();
         verify(beforeHook, never()).execute(any(TestCaseState.class));
-        verify(afterStepHook, never()).execute(any(TestCaseState.class));
         verify(afterHook, never()).execute(any(TestCaseState.class));
+        verify(beforeStepHook, never()).execute(any(TestCaseState.class));
+        verify(afterStepHook, never()).execute(any(TestCaseState.class));
     }
 
     @Test
-    void hooks_not_executed_for_empty_pickles() {
-        final HookDefinition beforeHook = createHook();
-        final HookDefinition afterHook = createHook();
-        final HookDefinition afterStepHook = addAfterStepHook();
+    void scenario_hooks_not_executed_for_empty_pickles() {
+        HookDefinition beforeHook = createHook();
+        HookDefinition afterHook = createHook();
+        HookDefinition beforeStepHook = createHook();
+        HookDefinition afterStepHook = createHook();
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
                 glue.addBeforeHook(beforeHook);
-                glue.addBeforeHook(afterHook);
+                glue.addAfterHook(afterHook);
+                glue.addBeforeStepHook(beforeStepHook);
                 glue.addAfterStepHook(afterStepHook);
             }
         };
