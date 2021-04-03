@@ -258,16 +258,6 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
-    @CucumberOptions(strict = true)
-    private static class Strict {
-        // empty
-    }
-
-    @CucumberOptions
-    private static class NotStrict {
-        // empty
-    }
-
     @CucumberOptions(name = { "name1", "name2" })
     private static class MultipleNames {
         // empty
@@ -385,11 +375,6 @@ class CucumberOptionsAnnotationParserTest {
         @Override
         public boolean dryRun() {
             return annotation.dryRun();
-        }
-
-        @Override
-        public boolean strict() {
-            return annotation.strict();
         }
 
         @Override

@@ -22,14 +22,6 @@ public @interface CucumberOptions {
     boolean dryRun() default false;
 
     /**
-     * @return     true if undefined and pending steps should be treated as
-     *             errors.
-     * @deprecated will be removed and cucumber will default to strict
-     */
-    @Deprecated
-    boolean strict() default true;
-
-    /**
      * Either a URI or path to a directory of features or a URI or path to a
      * single feature optionally followed by a colon and line numbers.
      * <p>
