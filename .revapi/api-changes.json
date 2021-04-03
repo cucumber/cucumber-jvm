@@ -43,6 +43,41 @@
             "old": "interface io.cucumber.messages.internal.com.google.protobuf.MutabilityOracle",
             "new": "interface io.cucumber.messages.internal.com.google.protobuf.MutabilityOracle",
             "justification": "Internal API"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": "java\\.method\\.parameterTypeParameterChanged",
+            "old": "parameter com\\.google\\.inject\\..*",
+            "new": "parameter com\\.google\\.inject\\..*",
+            "justification": "Provided dependency"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "enum com\\.google\\.inject\\..*",
+            "justification": "Provided dependency"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": "java\\.class\\.externalClassExposedInAPI",
+            "new": "class com\\.google\\.inject\\..*",
+            "justification": "Provided dependency"
+          },
+          {
+            "ignore": true,
+            "code": "java.field.serialVersionUIDUnchanged",
+            "old": "field com.google.inject.spi.Message.serialVersionUID",
+            "new": "field com.google.inject.spi.Message.serialVersionUID",
+            "justification": "Provided dependency"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method java.util.List<com.google.inject.spi.DependencyAndSource> com.google.inject.spi.ProvisionListener.ProvisionInvocation<T>::getDependencyChain()",
+            "justification": "Provided dependency"
           }
         ]
       }
