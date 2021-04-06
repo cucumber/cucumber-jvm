@@ -78,6 +78,31 @@
             "code": "java.method.removed",
             "old": "method java.util.List<com.google.inject.spi.DependencyAndSource> com.google.inject.spi.ProvisionListener.ProvisionInvocation<T>::getDependencyChain()",
             "justification": "Provided dependency"
+          },
+          {
+            "code": "java.method.addedToInterface",
+            "new": "method io.cucumber.messages.Messages.GherkinDocument.Feature.Tag io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleOrBuilder::getTags(int)",
+            "justification": "Internal API"
+          },
+          {
+            "code": "java.method.addedToInterface",
+            "new": "method int io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleOrBuilder::getTagsCount()",
+            "justification": "Internal API"
+          },
+          {
+            "code": "java.method.addedToInterface",
+            "new": "method java.util.List<io.cucumber.messages.Messages.GherkinDocument.Feature.Tag> io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleOrBuilder::getTagsList()",
+            "justification": "Internal API"
+          },
+          {
+            "code": "java.method.addedToInterface",
+            "new": "method io.cucumber.messages.Messages.GherkinDocument.Feature.TagOrBuilder io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleOrBuilder::getTagsOrBuilder(int)",
+            "justification": "Internal API"
+          },
+          {
+            "code": "java.method.addedToInterface",
+            "new": "method java.util.List<? extends io.cucumber.messages.Messages.GherkinDocument.Feature.TagOrBuilder> io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleOrBuilder::getTagsOrBuilderList()",
+            "justification": "Internal API"
           }
         ]
       }
