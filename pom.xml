@@ -29,7 +29,7 @@
         <tag-expressions.version>3.0.1</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>15.0.0</messages.version>
-        <gherkin.version>18.0.0</gherkin.version>
+        <gherkin.version>18.1.0</gherkin.version>
         <html-formatter.version>13.0.0</html-formatter.version>
 
         <!--Test Dependencies-->
