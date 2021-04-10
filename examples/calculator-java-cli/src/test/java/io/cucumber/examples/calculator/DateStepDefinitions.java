@@ -7,9 +7,10 @@ import io.cucumber.java.en.When;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
-public class DateSteps {
+public class DateStepDefinitions {
 
     private String result;
     private DateCalculator calculator;
@@ -31,7 +32,7 @@ public class DateSteps {
 
     @Then("^the result should be (yes|no)$")
     public void the_result_should_be(String expectedResult) {
-        assertEquals(expectedResult, result);
+        assertThat(result, equalTo(expectedResult));
     }
 
 }
