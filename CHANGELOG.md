@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
 
 ### Fixed
+ * [Gherkin Messages] Rules can be tagged ([cucumber/#1356](https://github.com/cucumber/cucumber/pull/1356) Gáspár Nagy, Seb Rose, Björn Rasmusson, Wannes Fransen) 
 
 ## [6.10.2] (2021-03-15)
 
