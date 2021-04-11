@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
  * [Gherkin Messages] Rules can be tagged ([cucumber/#1356](https://github.com/cucumber/cucumber/pull/1356) Gáspár Nagy, Seb Rose, Björn Rasmusson, Wannes Fransen) 
+ * [Java8] `cucumber-java8` works on Java 12+ ([jhalterman/typetools/#66](https://github.com/jhalterman/typetools/pull/66) Nuclearfarts)
 
 ## [6.10.2] (2021-03-15)
 
