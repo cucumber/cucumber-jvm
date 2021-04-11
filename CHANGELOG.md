@@ -12,16 +12,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
  * [Core] Updated Cucumber Expressions to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)
-  - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions
-  - May break Cucumber expressions that depend on these ambiguities
+   - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions
+   - May break Cucumber expressions that depend on these ambiguities
  * [Core] Removed incorrect ISO 639-1 code for Telugu language ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
-  - Change imports of `io.cucumber.java.tl.*` to `io.cucumber.java.te.*`
-  - Change imports of `io.cucumber.java8.Tl` to `io.cucumber.java.Te`
-  - Change `# language: tl` to `# language: te` 
+   - Change imports of `io.cucumber.java.tl.*` to `io.cucumber.java.te.*`
+   - Change imports of `io.cucumber.java8.Tl` to `io.cucumber.java.Te`
+   - Change `# language: tl` to `# language: te` 
  * [Core] Deprecated the `Summary` plugin interface for removal.
-  - Removed the `default_summary` and `null_summary` plugins
-  - The `summary` plugin is enabled default when using the CLI. Use `--no-summary` to disable.
-  - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
+   - Removed the `default_summary` and `null_summary` plugins
+   - The `summary` plugin is enabled default when using the CLI. Use `--no-summary` to disable.
+   - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
+ * [Core] Use transformer for all `DataTable.asX` methods. ([#2262](https://github.com/cucumber/cucumber-jvm/issues/2262) [cucumber/#1419](https://github.com/cucumber/cucumber/pull/1419) M.P. Korstanje)
+   - To retain the old behaviour:
+     - Replace `DataTable.asList()` with -> `DataTable.values()`
+     - Replace `DataTable.asLists()` with -> `DataTable.cells()`
+     - Replace `DataTable.asMaps()` with -> `DataTable.entries()`
 
 ### Deprecated
 
