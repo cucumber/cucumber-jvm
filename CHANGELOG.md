@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.10.3] (2021-04-14)
+
+### Fixed
  * [Gherkin Messages] Rules can be tagged ([cucumber/#1356](https://github.com/cucumber/cucumber/pull/1356) Gáspár Nagy, Seb Rose, Björn Rasmusson, Wannes Fransen) 
  * [Java8] `cucumber-java8` works on Java 12+ ([jhalterman/typetools/#66](https://github.com/jhalterman/typetools/pull/66) Nuclearfarts)
 
@@ -1618,7 +1622,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.3...main
+[6.10.3]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...v6.10.3
 [6.10.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...v6.10.2
 [6.10.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.0...v6.10.1
 [6.10.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.9.1...v6.10.0
