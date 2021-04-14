@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>6.10.3-SNAPSHOT</version>
+        <version>6.10.3</version>
     </parent>
 
     <artifactId>calculator-java8-cli</artifactId>
@@ -43,14 +42,14 @@
                         </goals>
                         <configuration>
                             <target unless="maven.test.skip">
-                                <echo message="Running Cucumber through the CLI"/>
+                                <echo message="Running Cucumber through the CLI" />
                                 <java classname="io.cucumber.core.cli.Main" fork="true" failonerror="true" newenvironment="true" maxmemory="512m" classpathref="maven.test.classpath">
-                                    <arg value="--plugin"/>
-                                    <arg value="pretty"/>
-                                    <arg value="--plugin"/>
-                                    <arg value="html:target/results.html"/>
-                                    <arg value="--plugin"/>
-                                    <arg value="message:target/results.ndjson"/>
+                                    <arg value="--plugin" />
+                                    <arg value="pretty" />
+                                    <arg value="--plugin" />
+                                    <arg value="html:target/results.html" />
+                                    <arg value="--plugin" />
+                                    <arg value="message:target/results.ndjson" />
                                 </java>
                             </target>
                         </configuration>
