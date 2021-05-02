@@ -24,7 +24,7 @@ Cucumber-JVM also integrates with all the popular
 ## Questions, Problems, Help needed?
 
 Please ask on 
- * [The Cukes Google Group](http://groups.google.com/group/cukes).
+ * [Stack Overflow](https://stackoverflow.com/questions/tagged/cucumber-jvm).
  * [CucumberBDD Slack](https://cucumberbdd-slack-invite.herokuapp.com/) <sup>[direct link](https://cucumberbdd.slack.com/)</sup>
 
 ## Bugs and Feature requests
