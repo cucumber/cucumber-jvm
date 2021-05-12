@@ -39,7 +39,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.10.0</mockito.version>
         <!--Maven plugins-->
-        <groovy.version>2.5.14</groovy.version>
+        <groovy.version>3.0.8</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
