@@ -106,8 +106,8 @@ class TimelineFormatterTest {
 
         assertThat(reportJsFile.exists(), is(equalTo(true)));
 
-        final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.5.1.min.js", "vis.min.css",
-            "vis.min.js", "vis.override.css");
+        final List<String> files = Arrays.asList("index.html", "formatter.js", "jquery-3.5.1.min.js", "vis-timeline-graph2d.min.css",
+            "vis-timeline-graph2d.min.js", "vis-timeline-graph2d.override.css");
         for (final String e : files) {
             final File actualFile = new File(reportDir, e);
             assertThat(e + ": did not exist in output dir", actualFile.exists(), is(equalTo(true)));
