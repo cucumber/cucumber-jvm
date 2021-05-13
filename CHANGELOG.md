@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [6.10.4] (2021-05-13)
+
+### Fixed
  * [Core] Upgraded `vis-timeline` to v7.4.8
   - Fixes CVE-2020-28487
 
@@ -1624,7 +1628,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.3...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...main
+[6.10.4]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.3...v6.10.4
 [6.10.3]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...v6.10.3
 [6.10.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...v6.10.2
 [6.10.1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.0...v6.10.1
