@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] Upgraded `vis-timeline` to v7.4.8
+  - Fixes CVE-2020-28487
 
 ## [6.10.3] (2021-04-14)
 

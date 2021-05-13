@@ -39,9 +39,9 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             "/io/cucumber/core/plugin/timeline/formatter.js",
             "/io/cucumber/core/plugin/timeline/report.css",
             "/io/cucumber/core/plugin/timeline/jquery-3.5.1.min.js",
-            "/io/cucumber/core/plugin/timeline/vis.min.css",
-            "/io/cucumber/core/plugin/timeline/vis.min.js",
-            "/io/cucumber/core/plugin/timeline/vis.override.css",
+            "/io/cucumber/core/plugin/timeline/vis-timeline-graph2d.min.css",
+            "/io/cucumber/core/plugin/timeline/vis-timeline-graph2d.min.js",
+            "/io/cucumber/core/plugin/timeline/vis-timeline-graph2d.override.css",
             "/io/cucumber/core/plugin/timeline/chosen.jquery.min.js",
             "/io/cucumber/core/plugin/timeline/chosen.min.css",
             "/io/cucumber/core/plugin/timeline/chosen.override.css",
@@ -212,7 +212,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         TestData(final TestCaseStarted started, final Long threadId) {
             this.id = getId(started);
             final TestCase testCase = started.getTestCase();
-            final URI uri = testCase.getUri();
             this.feature = findRootNodeName(testCase);
             this.scenario = testCase.getName();
             this.startTime = started.getInstant().toEpochMilli();
