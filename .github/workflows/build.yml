@@ -31,6 +31,8 @@ jobs:
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: test
         run: mvn verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
+        env:
+          CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
   javadoc:
     name: 'Javadoc'

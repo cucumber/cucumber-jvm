@@ -7,7 +7,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.cucumber%22%20AND%20a:%22cucumber-java%22)
 [![Build Status](https://github.com/cucumber/cucumber-jvm/workflows/Cucumber%20CI/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
 [![Coverage Status](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg)](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main)
-
+[Cucumber Reports](https://reports.cucumber.io/report-collections/d14ef1e3-59f3-4bc6-8316-a4e160c6ead4)
 
 Cucumber-JVM is a pure Java implementation of Cucumber. 
 You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with 
@@ -24,7 +24,7 @@ Cucumber-JVM also integrates with all the popular
 ## Questions, Problems, Help needed?
 
 Please ask on 
- * [The Cukes Google Group](http://groups.google.com/group/cukes).
+ * [Stack Overflow](https://stackoverflow.com/questions/tagged/cucumber-jvm).
  * [CucumberBDD Slack](https://cucumberbdd-slack-invite.herokuapp.com/) <sup>[direct link](https://cucumberbdd.slack.com/)</sup>
 
 ## Bugs and Feature requests

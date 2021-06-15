@@ -6,7 +6,7 @@
         <version>2.1.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>6.10.3-SNAPSHOT</version>
+    <version>6.10.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -29,15 +29,15 @@
         <tag-expressions.version>3.0.1</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>15.0.0</messages.version>
-        <gherkin.version>18.1.0</gherkin.version>
+        <gherkin.version>18.1.1</gherkin.version>
         <html-formatter.version>13.0.0</html-formatter.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13.2</junit.version>
-        <junit-jupiter.version>5.7.1</junit-jupiter.version>
-        <junit-platform.version>1.7.1</junit-platform.version>
+        <junit-jupiter.version>5.7.2</junit-jupiter.version>
+        <junit-platform.version>1.7.2</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.9.0</mockito.version>
+        <mockito.version>3.11.1</mockito.version>
         <!--Maven plugins-->
         <groovy.version>2.5.14</groovy.version>
     </properties>
@@ -552,12 +552,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.13.6</version>
+                    <version>0.14.3</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.23.2</version>
+                            <version>0.24.2</version>
                         </dependency>
                     </dependencies>
                     <configuration>

@@ -65,7 +65,6 @@ release:
 	[ -d '../secrets' ]  || git clone keybase://team/cucumberbdd/secrets ../secrets
 	git -C ../secrets pull
 	../secrets/update_permissions
-	docker pull cucumber/cucumber-build:latest
 	docker run \
 	  --volume "${shell pwd}":/app \
  	  --volume "${shell pwd}/../secrets/configure":/home/cukebot/configure \
@@ -76,6 +75,6 @@ release:
 	  --env-file "${shell pwd}/../secrets/secrets.list" \
 	  --user 1000 \
 	  --rm \
-	  -it cucumber/cucumber-build:latest \
+	  -it cucumber/cucumber-build:0.1.0@sha256:2ce049493dfadad62b78594e6728d1f85ccc5a2441b5a8b3f7a106a7bba39ec1 \
 	  make .release-in-docker
 .PHONY: release
