@@ -14,9 +14,9 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.UUID;
 
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runner.ExecutionMode.SKIP;
 import static io.cucumber.core.runner.TestStepResultStatus.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
@@ -24,17 +24,6 @@ import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
-
-    private static final String[] TEST_ABORTED_OR_SKIPPED_EXCEPTIONS = {
-            "org.junit.AssumptionViolatedException",
-            "org.junit.internal.AssumptionViolatedException",
-            "org.opentest4j.TestAbortedException",
-            "org.testng.SkipException",
-    };
-
-    static {
-        Arrays.sort(TEST_ABORTED_OR_SKIPPED_EXCEPTIONS);
-    }
 
     private final StepDefinitionMatch stepDefinitionMatch;
     private final UUID id;
@@ -63,6 +52,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         try {
             status = executeStep(state, executionMode);
         } catch (Throwable t) {
+            rethrowIfUnrecoverable(t);
             error = t;
             status = mapThrowableToStatus(t);
         }
@@ -99,7 +89,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         if (t.getClass().isAnnotationPresent(Pending.class)) {
             return Status.PENDING;
         }
-        if (Arrays.binarySearch(TEST_ABORTED_OR_SKIPPED_EXCEPTIONS, t.getClass().getName()) >= 0) {
+        if (TestAbortedExceptions.isTestAbortedException(t)) {
             return Status.SKIPPED;
         }
         if (t.getClass() == UndefinedStepDefinitionException.class) {

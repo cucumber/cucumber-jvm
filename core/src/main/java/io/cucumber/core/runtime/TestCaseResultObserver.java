@@ -1,5 +1,6 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.exception.ExceptionUtils;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.Result;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.plugin.event.Status.PASSED;
 import static io.cucumber.plugin.event.Status.PENDING;
 import static io.cucumber.plugin.event.Status.SKIPPED;
@@ -76,6 +78,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
         throw new TestCaseFailed(error);
     }
 
+    //TODO:
     static class TestCaseFailed extends RuntimeException {
 
         public TestCaseFailed(Throwable throwable) {

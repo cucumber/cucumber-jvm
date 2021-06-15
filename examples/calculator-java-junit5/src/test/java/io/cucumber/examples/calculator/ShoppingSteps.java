@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ShoppingStepDefinitions {
+public class ShoppingSteps {
 
     private final RpnCalculator calc = new RpnCalculator();
 

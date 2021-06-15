@@ -1,5 +1,7 @@
 package io.cucumber.core.resource;
 
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
+
 public final class ClassLoaders {
 
     private ClassLoaders() {
@@ -12,8 +14,8 @@ public final class ClassLoaders {
             if (contextClassLoader != null) {
                 return contextClassLoader;
             }
-        } catch (Throwable ex) {
-            /* ignore */
+        } catch (Throwable t) {
+            rethrowIfUnrecoverable(t);
         }
         return ClassLoader.getSystemClassLoader();
     }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.junit.FileNameCompatibleNames.createName;
 import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static io.cucumber.junit.PickleRunners.withNoStepDescriptions;
@@ -141,8 +142,9 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         notifier.fireTestStarted(describeChild(child));
         try {
             child.run(notifier);
-        } catch (Throwable e) {
-            notifier.fireTestFailure(new Failure(describeChild(child), e));
+        } catch (Throwable t) {
+            rethrowIfUnrecoverable(t);
+            notifier.fireTestFailure(new Failure(describeChild(child), t));
             notifier.pleaseStop();
         } finally {
             notifier.fireTestFinished(describeChild(child));

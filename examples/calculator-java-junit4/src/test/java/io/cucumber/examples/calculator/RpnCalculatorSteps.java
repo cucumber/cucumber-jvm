@@ -25,6 +25,12 @@ public class RpnCalculatorSteps {
     @AfterAll
     public static void afterAll() {
         // Runs after all scenarios
+        throw new RuntimeException();
+    }
+    @AfterAll
+    public static void afterAll2() {
+        // Runs after all scenarios
+        throw new RuntimeException();
     }
 
     @Before("not @foo")
@@ -35,6 +41,12 @@ public class RpnCalculatorSteps {
     @After
     public void after(Scenario scenario) {
         scenario.log("Runs after each scenarios");
+        throw new RuntimeException();
+    }
+    @After
+    public void after2(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
+        throw new RuntimeException();
     }
 
     @Given("a calculator I just turned on")

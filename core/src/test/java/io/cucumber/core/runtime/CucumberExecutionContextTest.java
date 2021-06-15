@@ -50,7 +50,7 @@ class CucumberExecutionContextTest {
             throw failure;
         }));
         assertThat(thrown, is(failure));
-        assertThat(context.getException(), is(failure));
+        assertThat(context.getThrowable(), is(failure));
     }
 
     @Test
@@ -67,7 +67,7 @@ class CucumberExecutionContextTest {
             }
         }));
         assertThat(thrown, is(failure));
-        assertThat(context.getException(), nullValue());
+        assertThat(context.getThrowable(), nullValue());
     }
 
     @Test
