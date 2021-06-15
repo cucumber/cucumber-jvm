@@ -28,7 +28,7 @@
         <create-meta.version>5.0.0</create-meta.version>
         <tag-expressions.version>3.0.1</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
-        <messages.version>15.0.0</messages.version>
+        <messages.version>16.0.1</messages.version>
         <gherkin.version>19.0.3</gherkin.version>
         <html-formatter.version>15.0.2</html-formatter.version>
 
