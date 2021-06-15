@@ -2,7 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;

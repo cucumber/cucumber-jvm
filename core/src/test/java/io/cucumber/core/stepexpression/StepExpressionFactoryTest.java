@@ -14,7 +14,7 @@ import io.cucumber.datatable.TableEntryTransformer;
 import io.cucumber.datatable.TableTransformer;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringType;
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;

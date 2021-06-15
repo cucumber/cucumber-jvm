@@ -1,5 +1,6 @@
 package io.cucumber.core.gherkin.messages;
 
+import io.cucumber.messages.types.Scenario;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
@@ -7,9 +8,9 @@ import java.util.Optional;
 
 final class GherkinMessagesScenario implements Node.Scenario {
 
-    private final io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario scenario;
+    private final io.cucumber.messages.types.Scenario scenario;
 
-    GherkinMessagesScenario(io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario scenario) {
+    GherkinMessagesScenario(io.cucumber.messages.types.Scenario scenario) {
         this.scenario = scenario;
     }
 

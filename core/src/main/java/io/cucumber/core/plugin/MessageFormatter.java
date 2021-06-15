@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.internal.com.google.protobuf.util.JsonFormat;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;

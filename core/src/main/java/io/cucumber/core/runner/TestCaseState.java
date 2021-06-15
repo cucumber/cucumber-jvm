@@ -2,9 +2,9 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.Attachment;
-import io.cucumber.messages.Messages.Attachment.ContentEncoding;
+import io.cucumber.messages.types;
+import io.cucumber.messages.types.Attachment;
+import io.cucumber.messages.types.Attachment.ContentEncoding;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;

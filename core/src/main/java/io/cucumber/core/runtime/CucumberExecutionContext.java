@@ -6,8 +6,7 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -53,19 +52,18 @@ public final class CucumberExecutionContext {
     }
 
     private void emitMeta() {
-        bus.send(Envelope.newBuilder()
-                .setMeta(createMeta("cucumber-jvm", VERSION, System.getenv()))
-                .build());
+        Envelope envelope = new Envelope();
+        envelope.setMeta(createMeta("cucumber-jvm", VERSION, System.getenv()));
+        bus.send(envelope);
     }
 
     private void emitTestRunStarted() {
         log.debug(() -> "Sending run test started event");
         start = bus.getInstant();
         bus.send(new TestRunStarted(start));
-        bus.send(Envelope.newBuilder()
-                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                        .setTimestamp(javaInstantToTimestamp(start)))
-                .build());
+        Envelope envelope = new Envelope();
+        envelope.setTestRunStarted(new io.cucumber.messages.types.TestRunStarted(javaInstantToTimestamp(start)));
+        bus.send(envelope);
     }
 
     public void runBeforeAllHooks() {
@@ -110,16 +108,14 @@ public final class CucumberExecutionContext {
             exception);
         bus.send(new TestRunFinished(instant, result));
 
-        Messages.TestRunFinished.Builder testRunFinished = Messages.TestRunFinished.newBuilder()
-                .setSuccess(exception == null && exitStatus.isSuccess())
-                .setTimestamp(javaInstantToTimestamp(instant));
-
-        if (exception != null) {
-            testRunFinished.setMessage(printStackTrace(exception));
-        }
-        bus.send(Envelope.newBuilder()
-                .setTestRunFinished(testRunFinished)
-                .build());
+        io.cucumber.messages.types.TestRunFinished testRunFinished = new io.cucumber.messages.types.TestRunFinished(
+                exception != null ? printStackTrace(exception) : null,
+                exception == null && exitStatus.isSuccess(),
+                javaInstantToTimestamp(instant)
+        );
+        Envelope envelope = new Envelope();
+        envelope.setTestRunFinished(testRunFinished);
+        bus.send(envelope);
     }
 
     public void beforeFeature(Feature feature) {

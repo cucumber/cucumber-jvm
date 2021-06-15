@@ -1,9 +1,9 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.Messages.GherkinDocument.Feature;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Background;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
+import io.cucumber.messages.types.GherkinDocument.Feature;
+import io.cucumber.messages.types.GherkinDocument.Feature.Background;
+import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.GherkinDocument.Feature.Step;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
 import io.cucumber.plugin.EventListener;

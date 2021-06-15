@@ -3,8 +3,6 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.TestCase.TestStep.StepMatchArgumentsList.StepMatchArgument;
 import io.cucumber.plugin.event.Group;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Result;
@@ -54,27 +52,16 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         this.executionMode = dryRun ? DRY_RUN : RUN;
     }
 
-    private static StepMatchArgument.Group makeMessageGroup(
+    private static io.cucumber.messages.types.Group makeMessageGroup(
             Group group
     ) {
-        StepMatchArgument.Group.Builder builder = StepMatchArgument.Group.newBuilder();
-        if (group == null) {
-            return builder.build();
-        }
-
-        if (group.getValue() != null) {
-            builder.setValue(group.getValue());
-        }
-
-        if (group.getStart() != -1) {
-            builder.setStart(group.getStart());
-        }
-
-        return builder
-                .addAllChildren(group.getChildren().stream()
+        return new io.cucumber.messages.types.Group(
+                group.getChildren().stream()
                         .map(TestCase::makeMessageGroup)
-                        .collect(toList()))
-                .build();
+                        .collect(toList()),
+                (long) group.getStart(),
+                group.getValue()
+        );
     }
 
     private static String toString(Throwable error) {

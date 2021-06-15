@@ -1,16 +1,16 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.gherkin.Gherkin;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.GherkinDocument;
-import io.cucumber.messages.Messages.GherkinDocument.Feature;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Background;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
+import io.cucumber.messages.types;
+import io.cucumber.messages.types.GherkinDocument;
+import io.cucumber.messages.types.GherkinDocument.Feature;
+import io.cucumber.messages.types.GherkinDocument.Feature.Background;
+import io.cucumber.messages.types.GherkinDocument.Feature.FeatureChild;
+import io.cucumber.messages.types.GherkinDocument.Feature.FeatureChild.RuleChild;
+import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.Scenario.Examples;
+import io.cucumber.messages.types.GherkinDocument.Feature.Step;
+import io.cucumber.messages.types.GherkinDocument.Feature.TableRow;
 import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
 import io.cucumber.messages.internal.com.google.protobuf.Message;
 import io.cucumber.plugin.event.TestSourceRead;

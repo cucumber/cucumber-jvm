@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 
 final class GherkinMessagesExamples implements Node.Examples {
 
-    private final io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples examples;
+    private final io.cucumber.messages.types.Examples examples;
     private final List<Example> children;
     private final Location location;
 
-    GherkinMessagesExamples(io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples examples) {
+    GherkinMessagesExamples(io.cucumber.messages.types.Examples examples) {
         this.examples = examples;
         this.location = GherkinMessagesLocation.from(examples.getLocation());
         AtomicInteger row = new AtomicInteger(1);
-        this.children = examples.getTableBodyList().stream()
+        this.children = examples.getTableBody().stream()
                 .map(tableRow -> new GherkinMessagesExample(tableRow, row.getAndIncrement()))
                 .collect(Collectors.toList());
     }

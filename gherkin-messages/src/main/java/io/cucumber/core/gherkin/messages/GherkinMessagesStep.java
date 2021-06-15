@@ -4,11 +4,10 @@ import io.cucumber.core.gherkin.Argument;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.Pickle.PickleStep;
-import io.cucumber.messages.Messages.PickleStepArgument;
-import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
-import io.cucumber.messages.Messages.PickleStepArgument.PickleTable;
+import io.cucumber.messages.types.PickleDocString;
+import io.cucumber.messages.types.PickleStep;
+import io.cucumber.messages.types.PickleStepArgument;
+import io.cucumber.messages.types.PickleTable;
 import io.cucumber.plugin.event.Location;
 
 final class GherkinMessagesStep implements Step {
@@ -18,13 +17,13 @@ final class GherkinMessagesStep implements Step {
     private final String keyWord;
     private final StepType stepType;
     private final String previousGwtKeyWord;
-    private final Messages.Location location;
+    private final Location location;
 
     GherkinMessagesStep(
             PickleStep pickleStep,
             GherkinDialect dialect,
             String previousGwtKeyWord,
-            Messages.Location location,
+            Location location,
             String keyword
     ) {
         this.pickleStep = pickleStep;
@@ -35,14 +34,14 @@ final class GherkinMessagesStep implements Step {
         this.location = location;
     }
 
-    private static Argument extractArgument(PickleStep pickleStep, Messages.Location location) {
+    private static Argument extractArgument(PickleStep pickleStep, Location location) {
         PickleStepArgument argument = pickleStep.getArgument();
-        if (argument.hasDocString()) {
+        if (argument.getDocString() != null) {
             PickleDocString docString = argument.getDocString();
             // TODO: Fix this work around
             return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
         }
-        if (argument.hasDataTable()) {
+        if (argument.getDataTable() != null) {
             PickleTable table = argument.getDataTable();
             return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
         }
@@ -83,7 +82,7 @@ final class GherkinMessagesStep implements Step {
 
     @Override
     public Location getLocation() {
-        return GherkinMessagesLocation.from(location);
+        return location;
     }
 
     @Override

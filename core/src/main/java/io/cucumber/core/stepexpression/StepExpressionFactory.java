@@ -11,8 +11,8 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
-import io.cucumber.messages.Messages.Envelope;
-import io.cucumber.messages.Messages.UndefinedParameterType;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.UndefinedParameterType;
 
 import java.lang.reflect.Type;
 import java.util.List;

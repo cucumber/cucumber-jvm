@@ -6,7 +6,7 @@ import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JsonFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types;
 import io.cucumber.messages.NdjsonToMessageIterable;
 import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
 import org.hamcrest.Matcher;

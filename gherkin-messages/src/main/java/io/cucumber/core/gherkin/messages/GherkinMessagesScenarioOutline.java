@@ -1,6 +1,5 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.messages.Messages;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
@@ -11,12 +10,12 @@ import java.util.stream.Collectors;
 
 final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
 
-    private final Messages.GherkinDocument.Feature.Scenario scenario;
+    private final io.cucumber.messages.types.Scenario scenario;
     private final List<Examples> children;
 
-    GherkinMessagesScenarioOutline(Messages.GherkinDocument.Feature.Scenario scenario) {
+    GherkinMessagesScenarioOutline(io.cucumber.messages.types.Scenario scenario) {
         this.scenario = scenario;
-        this.children = scenario.getExamplesList().stream()
+        this.children = scenario.getExamples().stream()
                 .map(GherkinMessagesExamples::new)
                 .collect(Collectors.toList());
     }

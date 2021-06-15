@@ -2,7 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Pending;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
@@ -78,12 +78,13 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private void emitTestStepStarted(TestCase testCase, EventBus bus, UUID textExecutionId, Instant startTime) {
         bus.send(new TestStepStarted(startTime, testCase, this));
-        bus.send(Messages.Envelope.newBuilder()
-                .setTestStepStarted(Messages.TestStepStarted.newBuilder()
-                        .setTestCaseStartedId(textExecutionId.toString())
-                        .setTestStepId(id.toString())
-                        .setTimestamp(javaInstantToTimestamp(startTime)))
-                .build());
+        Envelope envelope = new Envelope();
+        envelope.setTestStepStarted(new io.cucumber.messages.types.TestStepStarted(
+                textExecutionId.toString(),
+                id.toString(),
+                javaInstantToTimestamp(startTime)
+        ));
+        bus.send(envelope);
     }
 
     private Status executeStep(TestCaseState state, ExecutionMode executionMode) throws Throwable {
