@@ -2,9 +2,9 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.messages.types;
 import io.cucumber.messages.types.Attachment;
 import io.cucumber.messages.types.Attachment.ContentEncoding;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
@@ -72,16 +72,14 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
-        Attachment.Builder attachment = createAttachment()
-                .setBody(Base64.getEncoder().encodeToString(data))
-                .setContentEncoding(ContentEncoding.BASE64)
-                .setMediaType(mediaType);
+        Attachment attachment = createAttachment();
+        attachment.setBody(Base64.getEncoder().encodeToString(data));
+        attachment.setContentEncoding(ContentEncoding.BASE_64);
+        attachment.setMediaType(mediaType);
         if (name != null) {
             attachment.setFileName(name);
         }
-        bus.send(Messages.Envelope.newBuilder()
-                .setAttachment(attachment)
-                .build());
+        bus.send(createEnvelope(attachment));
     }
 
     @Override
@@ -91,35 +89,38 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
-        Attachment.Builder attachment = createAttachment()
-                .setBody(data)
-                .setContentEncoding(ContentEncoding.IDENTITY)
-                .setMediaType(mediaType);
+        Attachment attachment = createAttachment();
+        attachment.setBody(data);
+        attachment.setContentEncoding(ContentEncoding.IDENTITY);
+        attachment.setMediaType(mediaType);
         if (name != null) {
             attachment.setFileName(name);
         }
-        bus.send(Messages.Envelope.newBuilder()
-                .setAttachment(attachment)
-                .build());
+        bus.send(createEnvelope(attachment));
     }
 
     @Override
     public void log(String text) {
         requireActiveTestStep();
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
-        Attachment.Builder attachment = createAttachment()
-                .setBody(text)
-                .setContentEncoding(ContentEncoding.IDENTITY)
-                .setMediaType("text/x.cucumber.log+plain");
-        bus.send(Messages.Envelope.newBuilder()
-                .setAttachment(attachment)
-                .build());
+        Attachment attachment = createAttachment();
+        attachment.setBody(text);
+        attachment.setContentEncoding(ContentEncoding.IDENTITY);
+        attachment.setMediaType("text/x.cucumber.log+plain");
+        bus.send(createEnvelope(attachment));
     }
 
-    private Attachment.Builder createAttachment() {
-        return Attachment.newBuilder()
-                .setTestCaseStartedId(testExecutionId.toString())
-                .setTestStepId(currentTestStepId.toString());
+    private Envelope createEnvelope(Attachment attachment) {
+        Envelope envelope = new Envelope();
+        envelope.setAttachment(attachment);
+        return envelope;
+    }
+
+    private Attachment createAttachment() {
+        Attachment attachment = new Attachment();
+        attachment.setTestCaseStartedId(testExecutionId.toString());
+        attachment.setTestStepId(currentTestStepId.toString());
+        return attachment;
     }
 
     @Override
@@ -161,7 +162,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private void requireActiveTestStep() {
         if (currentTestStepId == null) {
             throw new IllegalStateException(
-                "You can not use Scenario.log or Scenario.attach when a step is not being executed");
+                    "You can not use Scenario.log or Scenario.attach when a step is not being executed");
         }
     }
 
