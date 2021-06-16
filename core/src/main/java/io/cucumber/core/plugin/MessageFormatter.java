@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.messages.types.Envelope;
-import io.cucumber.messages.internal.com.google.protobuf.util.JsonFormat;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
@@ -12,8 +12,7 @@ import java.io.Writer;
 public final class MessageFormatter implements ConcurrentEventListener {
 
     private final Writer writer;
-    private final JsonFormat.Printer jsonPrinter = JsonFormat.printer()
-            .omittingInsignificantWhitespace();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MessageFormatter(OutputStream outputStream) {
         this.writer = new UTF8OutputStreamWriter(outputStream);
@@ -26,10 +25,10 @@ public final class MessageFormatter implements ConcurrentEventListener {
 
     private void writeMessage(Envelope envelope) {
         try {
-            jsonPrinter.appendTo(envelope, writer);
+            objectMapper.writeValue(writer, envelope);
             writer.write("\n");
             writer.flush();
-            if (envelope.hasTestRunFinished()) {
+            if (envelope.getTestRunFinished() != null) {
                 writer.close();
             }
         } catch (IOException e) {
