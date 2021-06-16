@@ -1,6 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.types;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -31,11 +31,11 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(Messages.Envelope.class, this::writeMessage);
+        publisher.registerHandlerFor(Envelope.class, this::writeMessage);
     }
 
-    private void writeMessage(Messages.Envelope envelope) {
-        if (envelope.hasTestRunFinished()) {
+    private void writeMessage(Envelope envelope) {
+        if (envelope.getTestRunFinished() != null) {
             printBanner();
         }
     }
