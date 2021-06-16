@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Pending;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.TestStepResult;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
@@ -123,22 +124,22 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
             TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result
     ) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        Messages.TestStepFinished.TestStepResult.Builder builder = Messages.TestStepFinished.TestStepResult
-                .newBuilder();
 
+        TestStepResult testStepResult = new TestStepResult();
         if (result.getError() != null) {
-            builder.setMessage(extractStackTrace(result.getError()));
+            testStepResult.setMessage(extractStackTrace(result.getError()));
         }
-        Messages.TestStepFinished.TestStepResult testResult = builder.setStatus(from(result.getStatus()))
-                .setDuration(javaDurationToDuration(duration))
-                .build();
-        bus.send(Messages.Envelope.newBuilder()
-                .setTestStepFinished(Messages.TestStepFinished.newBuilder()
-                        .setTestCaseStartedId(textExecutionId.toString())
-                        .setTestStepId(id.toString())
-                        .setTimestamp(javaInstantToTimestamp(stopTime))
-                        .setTestStepResult(testResult))
-                .build());
+        testStepResult.setStatus(from(result.getStatus()));
+        testStepResult.setDuration(javaDurationToDuration(duration));
+
+        Envelope envelope = new Envelope();
+        envelope.setTestStepFinished(new io.cucumber.messages.types.TestStepFinished(
+                textExecutionId.toString(),
+                id.toString(),
+                testStepResult,
+                javaInstantToTimestamp(stopTime)
+        ));
+        bus.send(envelope);
     }
 
     private String extractStackTrace(Throwable error) {
