@@ -11,7 +11,7 @@ Options:
                                            provided Cucumber will search the
                                            classpath.
 
-  -p, --[add-]plugin PLUGIN[:[PATH|[URI [OPTIONS]]]
+  -p, --plugin PLUGIN[:[PATH|[URI [OPTIONS]]]
                                            Register a plugin.
                                            Built-in formatter PLUGIN types:
                                            html, json, junit, message, pretty,
