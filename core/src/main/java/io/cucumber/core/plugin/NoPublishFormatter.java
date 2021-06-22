@@ -75,7 +75,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
                 new Banner.Line(""),
                 new Banner.Line(
                     new Banner.Span("More information at "),
-                    new Banner.Span("https://reports.cucumber.io/docs/cucumber-jvm", AnsiEscapes.CYAN)),
+                    new Banner.Span("https://cucumber.io/docs/cucumber/environment-variables/", AnsiEscapes.CYAN)),
                 new Banner.Line(""),
                 new Banner.Line(
                     new Banner.Span("Disable this message with one of the following:")),

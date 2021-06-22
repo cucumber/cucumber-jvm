@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+* Fixed reports banner to point to [new docs](https://cucumber.io/docs/cucumber/environment-variables/) about environment variables
+
 ## [6.10.4] (2021-05-13)
 
 ### Fixed
@@ -26,7 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [6.10.3] (2021-04-14)
 
 ### Fixed
- * [Gherkin Messages] Rules can be tagged ([cucumber/#1356](https://github.com/cucumber/cucumber/pull/1356) Gáspár Nagy, Seb Rose, Björn Rasmusson, Wannes Fransen) 
+ * [Gherkin Messages] Rules can be tagged ([cucumber/#1356](https://github.com/cucumber/cucumber/pull/1356) Gáspár Nagy, Seb Rose, Björn Rasmusson, Wannes Fransen)
  * [Java8] `cucumber-java8` works on Java 12+ ([jhalterman/typetools/#66](https://github.com/jhalterman/typetools/pull/66) Nuclearfarts)
 
 ## [6.10.2] (2021-03-15)
@@ -46,9 +48,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
  * Upgraded various internal dependencies
-    - create-meta v3.0.0 
-    - gherkin v17.0.1 
-    - messages v14.0.1 
+    - create-meta v3.0.0
+    - gherkin v17.0.1
+    - messages v14.0.1
     - html-formatter v12.0.0
 
 ### Deprecated
@@ -61,7 +63,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Core] Log warnings when classes or resource could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
  * [Core] Improve undefined step reporting ([#2208](https://github.com/cucumber/cucumber-jvm/issues/2208) M.P. Korstanje)
  * [Core] Log warnings when resources and classes could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
-    
+
 ## [6.9.1] (2020-12-14)
 
 ### Fixed
@@ -84,8 +86,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Core] Handle null values in ci-dict [cucumber/#1228](https://github.com/cucumber/cucumber/issues/1228)
 
 ### Security
- * [JUnit] Update dependency junit:junit to v4.13.1. 
-   * See the [published security advisory](https://github.com/junit-team/junit4/security/advisories/GHSA-269g-pwp5-87pp) for details. 
+ * [JUnit] Update dependency junit:junit to v4.13.1.
+   * See the [published security advisory](https://github.com/junit-team/junit4/security/advisories/GHSA-269g-pwp5-87pp) for details.
 
 ## [6.8.1] (2020-10-07)
 
