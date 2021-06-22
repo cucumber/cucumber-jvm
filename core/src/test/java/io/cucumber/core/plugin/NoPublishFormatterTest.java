@@ -28,7 +28,7 @@ class NoPublishFormatterTest {
                 "│ Environment variable:                            CUCUMBER_PUBLISH_ENABLED=true    │\n" +
                 "│ JUnit:                                           @CucumberOptions(publish = true) │\n" +
                 "│                                                                                   │\n" +
-                "│ More information at https://reports.cucumber.io/docs/cucumber-jvm                 │\n" +
+                "│ More information at https://cucumber.io/docs/cucumber/environment-variables/      │\n" +
                 "│                                                                                   │\n" +
                 "│ Disable this message with one of the following:                                   │\n" +
                 "│                                                                                   │\n" +
