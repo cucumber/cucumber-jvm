@@ -2,7 +2,13 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.messages.types;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Hook;
+import io.cucumber.messages.types.ParameterType;
+import io.cucumber.messages.types.StepDefinition;
+import io.cucumber.messages.types.TestRunFinished;
+import io.cucumber.messages.types.TestRunStarted;
+import io.cucumber.messages.types.Timestamp;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -22,29 +28,24 @@ class HtmlFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        bus.send(Messages.Envelope.newBuilder()
-                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                        .setTimestamp(Messages.Timestamp.newBuilder()
-                                .setSeconds(10)
-                                .build())
-                        .build())
-                .build());
+        TestRunStarted testRunStarted = new TestRunStarted();
+        testRunStarted.setTimestamp(new Timestamp(10L, 0L));
+        Envelope testRunStartedEnvelope = new Envelope();
+        testRunStartedEnvelope.setTestRunStarted(testRunStarted);
+        bus.send(testRunStartedEnvelope);
 
-        bus.send(
-            Messages.Envelope.newBuilder()
-                    .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                            .setTimestamp(Messages.Timestamp.newBuilder()
-                                    .setSeconds(15)
-                                    .build())
-                            .build())
-                    .build());
+        TestRunFinished testRunFinished = new TestRunFinished();
+        testRunFinished.setTimestamp(new Timestamp(15L, 0L));
+        Envelope testRunFinishedEnvelope = new Envelope();
+        testRunFinishedEnvelope.setTestRunFinished(testRunFinished);
+        bus.send(testRunFinishedEnvelope);
 
         String html = new String(bytes.toByteArray(), UTF_8);
         assertThat(html, containsString("" +
                 "window.CUCUMBER_MESSAGES = [" +
-                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}," +
-                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}" +
-                "];"));
+                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}," +
+                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":15,\"nanos\":0}}}" +
+                "];\n"));
     }
 
     @Test
@@ -54,44 +55,42 @@ class HtmlFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        bus.send(Messages.Envelope.newBuilder()
-                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                        .setTimestamp(Messages.Timestamp.newBuilder()
-                                .setSeconds(10)
-                                .build())
-                        .build())
-                .build());
+        TestRunStarted testRunStarted = new TestRunStarted();
+        testRunStarted.setTimestamp(new Timestamp(10L, 0L));
+        Envelope testRunStartedEnvelope = new Envelope();
+        testRunStartedEnvelope.setTestRunStarted(testRunStarted);
+        bus.send(testRunStartedEnvelope);
 
-        bus.send(Messages.Envelope.newBuilder()
-                .setStepDefinition(Messages.StepDefinition.newBuilder()
-                        .build())
-                .build());
 
-        bus.send(Messages.Envelope.newBuilder()
-                .setHook(Messages.Hook.newBuilder()
-                        .build())
-                .build());
+        StepDefinition stepDefinition = new StepDefinition();
+        Envelope stepDefinitionEnvelope = new Envelope();
+        stepDefinitionEnvelope.setStepDefinition(stepDefinition);
+        bus.send(stepDefinitionEnvelope);
 
-        bus.send(Messages.Envelope.newBuilder()
-                .setParameterType(Messages.ParameterType.newBuilder()
-                        .build())
-                .build());
 
-        bus.send(
-            Messages.Envelope.newBuilder()
-                    .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                            .setTimestamp(Messages.Timestamp.newBuilder()
-                                    .setSeconds(15)
-                                    .build())
-                            .build())
-                    .build());
+        Hook hook = new Hook();
+        Envelope hookEnvelope = new Envelope();
+        hookEnvelope.setHook(hook);
+        bus.send(hookEnvelope);
+
+
+        ParameterType parameterType = new ParameterType();
+        Envelope parameterTypeEnvelope = new Envelope();
+        parameterTypeEnvelope.setParameterType(parameterType);
+        bus.send(parameterTypeEnvelope);
+
+        TestRunFinished testRunFinished = new TestRunFinished();
+        testRunFinished.setTimestamp(new Timestamp(15L, 0L));
+        Envelope testRunFinishedEnvelope = new Envelope();
+        testRunFinishedEnvelope.setTestRunFinished(testRunFinished);
+        bus.send(testRunFinishedEnvelope);
 
         String html = new String(bytes.toByteArray(), UTF_8);
         assertThat(html, containsString("" +
                 "window.CUCUMBER_MESSAGES = [" +
-                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}," +
-                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}" +
-                "];"));
+                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}," +
+                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":15,\"nanos\":0}}}" +
+                "];\n"));
     }
 
 }
