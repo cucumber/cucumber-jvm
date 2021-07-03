@@ -198,7 +198,7 @@ final class TestSourcesModel {
             parseGherkinSource(path);
         }
         if (pathToNodeMap.containsKey(path)) {
-            return pathToNodeMap.get(path).get(line);
+            return pathToNodeMap.get(path).get(Long.valueOf(line));
         }
         return null;
     }
@@ -208,7 +208,7 @@ final class TestSourcesModel {
             parseGherkinSource(path);
         }
         if (pathToNodeMap.containsKey(path)) {
-            AstNode astNode = pathToNodeMap.get(path).get(line);
+            AstNode astNode = pathToNodeMap.get(path).get(Long.valueOf(line));
             return getBackgroundForTestCase(astNode).isPresent();
         }
         return false;

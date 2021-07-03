@@ -2,7 +2,10 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.messages.types;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.TestRunFinished;
+import io.cucumber.messages.types.TestRunStarted;
+import io.cucumber.messages.types.Timestamp;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -22,27 +25,22 @@ public class MessageFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        bus.send(Messages.Envelope.newBuilder()
-                .setTestRunStarted(Messages.TestRunStarted.newBuilder()
-                        .setTimestamp(Messages.Timestamp.newBuilder()
-                                .setSeconds(10)
-                                .build())
-                        .build())
-                .build());
+        TestRunStarted testRunStarted = new TestRunStarted();
+        testRunStarted.setTimestamp(new Timestamp(10L, 0L));
+        Envelope testRunStartedEnvelope = new Envelope();
+        testRunStartedEnvelope.setTestRunStarted(testRunStarted);
+        bus.send(testRunStartedEnvelope);
 
-        bus.send(
-            Messages.Envelope.newBuilder()
-                    .setTestRunFinished(Messages.TestRunFinished.newBuilder()
-                            .setTimestamp(Messages.Timestamp.newBuilder()
-                                    .setSeconds(15)
-                                    .build())
-                            .build())
-                    .build());
+        TestRunFinished testRunFinished = new TestRunFinished();
+        testRunFinished.setTimestamp(new Timestamp(15L, 0L));
+        Envelope testRunFinishedEnvelope = new Envelope();
+        testRunFinishedEnvelope.setTestRunFinished(testRunFinished);
+        bus.send(testRunFinishedEnvelope);
 
-        String html = new String(bytes.toByteArray(), UTF_8);
-        assertThat(html, containsString("" +
-                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":\"10\"}}}\n" +
-                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":\"15\"}}}"));
+        String ndjson = new String(bytes.toByteArray(), UTF_8);
+        assertThat(ndjson, containsString("" +
+                "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}\n" +
+                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":15,\"nanos\":0}}}\n"));
     }
 
 }

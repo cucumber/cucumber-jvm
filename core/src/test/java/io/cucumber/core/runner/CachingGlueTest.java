@@ -24,6 +24,8 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.plugin.event.EventHandler;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -464,11 +466,11 @@ class CachingGlueTest {
     @Test
     public void emits_hook_messages_to_bus() {
 
-        List<Messages.Envelope> events = new ArrayList<>();
-        EventHandler<Messages.Envelope> messageEventHandler = e -> events.add(e);
+        List<Envelope> events = new ArrayList<>();
+        EventHandler<Envelope> messageEventHandler = e -> events.add(e);
 
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        bus.registerHandlerFor(Messages.Envelope.class, messageEventHandler);
+        bus.registerHandlerFor(Envelope.class, messageEventHandler);
         CachingGlue glue = new CachingGlue(bus);
 
         glue.addBeforeHook(new MockedScenarioScopedHookDefinition());

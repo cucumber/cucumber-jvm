@@ -30,7 +30,7 @@
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>16.0.2-SNAPSHOT</messages.version>
         <gherkin.version>19.0.4-SNAPSHOT</gherkin.version>
-        <html-formatter.version>15.0.2</html-formatter.version>
+        <html-formatter.version>15.0.3-SNAPSHOT</html-formatter.version>
 
         <!--Test Dependencies-->
         <junit.version>4.13.2</junit.version>

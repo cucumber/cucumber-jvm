@@ -13,7 +13,8 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.messages.types;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Meta;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
@@ -451,14 +452,14 @@ class RuntimeTest {
 
     @Test
     void emits_a_meta_message() {
-        List<Messages.Envelope> messages = new ArrayList<>();
-        EventListener listener = publisher -> publisher.registerHandlerFor(Messages.Envelope.class, messages::add);
+        List<Envelope> messages = new ArrayList<>();
+        EventListener listener = publisher -> publisher.registerHandlerFor(Envelope.class, messages::add);
         Runtime.builder()
                 .withAdditionalPlugins(listener)
                 .build()
                 .run();
 
-        Messages.Meta meta = messages.get(0).getMeta();
+        Meta meta = messages.get(0).getMeta();
         assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
         assertThat(meta.getImplementation().getVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));

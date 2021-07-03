@@ -126,7 +126,7 @@ class TestCaseStateTest {
         Envelope envelope = envelopes.get(0);
         assertThat(envelope.getAttachment().getBody(),
             is(Base64.getEncoder().encodeToString("Hello World".getBytes(UTF_8))));
-        assertThat(envelope.getAttachment().getContentEncoding(), is(ContentEncoding.BASE64));
+        assertThat(envelope.getAttachment().getContentEncoding(), is(ContentEncoding.BASE_64));
         assertThat(envelope.getAttachment().getMediaType(), is("text/plain"));
         assertThat(envelope.getAttachment().getFileName(), is("hello.txt"));
         assertThat(envelope.getAttachment().getTestStepId(), is(activeTestStep.toString()));
