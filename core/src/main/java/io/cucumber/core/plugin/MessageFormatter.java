@@ -24,7 +24,7 @@ public final class MessageFormatter implements ConcurrentEventListener {
 
     private void writeMessage(Envelope envelope) {
         try {
-            writer.write(JSON.toJSON(envelope));
+            JSON.writeValue(writer, envelope);
             writer.write("\n");
             writer.flush();
             if (envelope.getTestRunFinished() != null) {

@@ -275,21 +275,21 @@ class TimelineFormatterTest {
                             () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
                                 actual.startTime, is(equalTo(expected.startTime))),
                             () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
-                                actual.endTime, is(equalTo(expected.endTime))));
+                                actual.end, is(equalTo(expected.end))));
                     } else {
                         assertAll(
                             () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
                                 actual.startTime, is(notNullValue())),
                             () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
-                                actual.endTime, is(notNullValue())));
+                                actual.end, is(notNullValue())));
                     }
                 },
                 () -> {
                     if (checkActualThreadData) {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.threadId,
-                            is(equalTo(expected.threadId)));
+                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.group,
+                            is(equalTo(expected.group)));
                     } else {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.threadId,
+                        assertThat(String.format("threadId on item %s, was not as expected", idx), actual.group,
                             is(notNullValue()));
                     }
                 });

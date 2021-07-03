@@ -233,7 +233,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         }
 
         Envelope envelope = new Envelope();
-        envelope.setTestCaseFinished(new io.cucumber.messages.types.TestCaseFinished(executionId.toString(), javaInstantToTimestamp(stop)));
+        envelope.setTestCaseFinished(new io.cucumber.messages.types.TestCaseFinished(executionId.toString(), javaInstantToTimestamp(stop), false));
         bus.send(envelope);
     }
 

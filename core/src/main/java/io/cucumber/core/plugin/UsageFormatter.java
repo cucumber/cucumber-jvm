@@ -1,9 +1,6 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.internal.com.google.gson.Gson;
-import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
-import io.cucumber.messages.internal.com.google.gson.JsonPrimitive;
-import io.cucumber.messages.internal.com.google.gson.JsonSerializer;
+import io.cucumber.messages.JSON;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
@@ -13,6 +10,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStepFinished;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -31,7 +29,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     private static final long NANOS_PER_SECOND = TimeUnit.SECONDS.toNanos(1);
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
-    private final NiceAppendable out;
+    private final UTF8OutputStreamWriter out;
 
     /**
      * Constructor
@@ -40,7 +38,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
      */
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public UsageFormatter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new UTF8OutputStreamWriter(out);
     }
 
     @Override
@@ -65,8 +63,12 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
             stepDefContainers.add(stepDefContainer);
         }
 
-        gson().toJson(stepDefContainers, out);
-        out.close();
+        try {
+            JSON.writeValue(out, stepDefContainers);
+            out.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void addUsageEntry(Result result, PickleStepTestStep testStep) {
@@ -84,15 +86,15 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         return stepContainers;
     }
 
-    private Gson gson() {
-        JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
-                jsonSerializationContext) -> new JsonPrimitive((double) duration.toNanos() / NANOS_PER_SECOND);
-
-        return new GsonBuilder()
-                .registerTypeAdapter(Duration.class, durationJsonSerializer)
-                .setPrettyPrinting()
-                .create();
-    }
+//    private Gson gson() {
+//        JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
+//                jsonSerializationContext) -> new JsonPrimitive((double) duration.toNanos() / NANOS_PER_SECOND);
+//
+//        return new GsonBuilder()
+//                .registerTypeAdapter(Duration.class, durationJsonSerializer)
+//                .setPrettyPrinting()
+//                .create();
+//    }
 
     private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
         for (StepContainer container : stepContainers) {

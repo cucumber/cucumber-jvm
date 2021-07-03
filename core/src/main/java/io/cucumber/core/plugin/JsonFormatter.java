@@ -145,7 +145,7 @@ public final class JsonFormatter implements EventListener {
         }
 
         try {
-            writer.write(JSON.toJSON(featureMaps));
+            JSON.writeValue(writer, featureMaps);
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
