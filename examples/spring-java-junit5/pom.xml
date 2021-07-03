@@ -12,7 +12,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.spring.application</project.Automatic-Module-Name>
-        <spring-boot.version>2.4.1</spring-boot.version>
+        <spring-boot.version>2.5.2</spring-boot.version>
     </properties>
 
     <dependencyManagement>
