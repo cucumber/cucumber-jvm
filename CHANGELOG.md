@@ -10,14 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+* [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.2
+* [Core] Update dependency org.apiguardian:apiguardian-api to v1.1.2
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-
-* Fixed reports banner to point to [new docs](https://cucumber.io/docs/cucumber/environment-variables/) about environment variables
+ * [Core] Fixed reports banner to point to [new docs](https://cucumber.io/docs/cucumber/environment-variables/) about environment variables
+ * [Core] Remove `--add-plugin` alternate name from USAGE.txt ([#2319](https://github.com/cucumber/cucumber-jvm/pull/2319) ebreck)
 
 ## [6.10.4] (2021-05-13)
 
