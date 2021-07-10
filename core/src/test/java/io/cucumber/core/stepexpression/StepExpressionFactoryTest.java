@@ -100,7 +100,7 @@ class StepExpressionFactoryTest {
 
     private TableTransformer<Ingredient> beanMapper(final StepTypeRegistry registry) {
         return table -> {
-            Map<String, String> tableRow = table.transpose().asMaps().get(0);
+            Map<String, String> tableRow = table.transpose().entries().get(0);
             return listBeanMapper(registry).transform(tableRow);
         };
     }
