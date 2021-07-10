@@ -245,8 +245,8 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         public Literature(DataTable dataTable) {
             dataTable = dataTable.subTable(1, 0); // throw away headers
-            types = dataTable.transpose().asLists().get(0);
-            characters = dataTable.transpose().asLists().get(1);
+            types = dataTable.transpose().cells().get(0);
+            characters = dataTable.transpose().cells().get(1);
         }
 
         public Literature(List<String> types, List<String> characters) {
