@@ -12,7 +12,7 @@ static def normalize(s) {
     return Normalizer.normalize(s, Normalizer.Form.NFC)
 }
 
-def unsupported = ["em"] // The generated files for Emoij do not compile.
+def unsupported = ["em", "en_tx"] // The generated files for Emoij and Texan do not compile.
 GherkinDialectProvider dialectProvider = new GherkinDialectProvider()
 
 dialectProvider.getLanguages().each { language ->

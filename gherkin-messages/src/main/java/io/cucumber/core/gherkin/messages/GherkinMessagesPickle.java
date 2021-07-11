@@ -4,10 +4,8 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
-import io.cucumber.messages.Messages.Pickle.PickleStep;
-import io.cucumber.messages.Messages.Pickle.PickleTag;
+import io.cucumber.messages.types.PickleTag;
+import io.cucumber.messages.types.Scenario;
 import io.cucumber.plugin.event.Location;
 
 import java.net.URI;
@@ -16,17 +14,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Wraps {@link Messages.Pickle} to avoid exposing the gherkin library to all of
+ * Wraps {@link Pickle} to avoid exposing the gherkin library to all of
  * Cucumber.
  */
 final class GherkinMessagesPickle implements Pickle {
 
-    private final Messages.Pickle pickle;
+    private final io.cucumber.messages.types.Pickle pickle;
     private final List<Step> steps;
     private final URI uri;
     private final CucumberQuery cucumberQuery;
 
-    GherkinMessagesPickle(Messages.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery) {
+    GherkinMessagesPickle(
+            io.cucumber.messages.types.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery
+    ) {
         this.pickle = pickle;
         this.uri = uri;
         this.cucumberQuery = cucumberQuery;
@@ -34,7 +34,7 @@ final class GherkinMessagesPickle implements Pickle {
     }
 
     private static List<Step> createCucumberSteps(
-            Messages.Pickle pickle,
+            io.cucumber.messages.types.Pickle pickle,
             GherkinDialect dialect,
             CucumberQuery cucumberQuery
     ) {
@@ -45,10 +45,10 @@ final class GherkinMessagesPickle implements Pickle {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
-        for (PickleStep pickleStep : pickle.getStepsList()) {
-            String gherkinStepId = pickleStep.getAstNodeIds(0);
-            Messages.GherkinDocument.Feature.Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
-            Messages.Location location = gherkinStep.getLocation();
+        for (io.cucumber.messages.types.PickleStep pickleStep : pickle.getSteps()) {
+            String gherkinStepId = pickleStep.getAstNodeIds().get(0);
+            io.cucumber.messages.types.Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
+            Location location = GherkinMessagesLocation.from(gherkinStep.getLocation());
             String keyword = gherkinStep.getKeyword();
 
             Step step = new GherkinMessagesStep(pickleStep, dialect, previousGivenWhenThen, location, keyword);
@@ -62,7 +62,7 @@ final class GherkinMessagesPickle implements Pickle {
 
     @Override
     public String getKeyword() {
-        return cucumberQuery.getGherkinScenario(pickle.getAstNodeIds(0)).getKeyword();
+        return cucumberQuery.getGherkinScenario(pickle.getAstNodeIds().get(0)).getKeyword();
     }
 
     @Override
@@ -77,17 +77,17 @@ final class GherkinMessagesPickle implements Pickle {
 
     @Override
     public Location getLocation() {
-        List<String> sourceIds = pickle.getAstNodeIdsList();
+        List<String> sourceIds = pickle.getAstNodeIds();
         String sourceId = sourceIds.get(sourceIds.size() - 1);
-        Messages.Location location = cucumberQuery.getLocation(sourceId);
+        io.cucumber.messages.types.Location location = cucumberQuery.getLocation(sourceId);
         return GherkinMessagesLocation.from(location);
     }
 
     @Override
     public Location getScenarioLocation() {
-        String sourceId = pickle.getAstNodeIds(0);
+        String sourceId = pickle.getAstNodeIds().get(0);
         Scenario scenario = cucumberQuery.getGherkinScenario(sourceId);
-        Messages.Location location = scenario.getLocation();
+        io.cucumber.messages.types.Location location = scenario.getLocation();
         return GherkinMessagesLocation.from(location);
     }
 
@@ -98,7 +98,7 @@ final class GherkinMessagesPickle implements Pickle {
 
     @Override
     public List<String> getTags() {
-        return pickle.getTagsList().stream().map(PickleTag::getName).collect(Collectors.toList());
+        return pickle.getTags().stream().map(PickleTag::getName).collect(Collectors.toList());
     }
 
     @Override

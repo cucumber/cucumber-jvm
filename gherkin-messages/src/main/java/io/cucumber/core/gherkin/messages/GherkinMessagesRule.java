@@ -1,7 +1,5 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
@@ -12,16 +10,16 @@ import java.util.stream.Collectors;
 
 final class GherkinMessagesRule implements Node.Rule {
 
-    private final Messages.GherkinDocument.Feature.FeatureChild.Rule rule;
+    private final io.cucumber.messages.types.Rule rule;
     private final List<Node> children;
 
-    GherkinMessagesRule(Messages.GherkinDocument.Feature.FeatureChild.Rule rule) {
+    GherkinMessagesRule(io.cucumber.messages.types.Rule rule) {
         this.rule = rule;
-        this.children = rule.getChildrenList().stream()
-                .filter(RuleChild::hasScenario)
+        this.children = rule.getChildren().stream()
+                .filter(ruleChild -> ruleChild.getScenario() != null)
                 .map(ruleChild -> {
-                    Messages.GherkinDocument.Feature.Scenario scenario = ruleChild.getScenario();
-                    if (scenario.getExamplesCount() > 0) {
+                    io.cucumber.messages.types.Scenario scenario = ruleChild.getScenario();
+                    if (!scenario.getExamples().isEmpty()) {
                         return new GherkinMessagesScenarioOutline(scenario);
                     } else {
                         return new GherkinMessagesScenario(scenario);

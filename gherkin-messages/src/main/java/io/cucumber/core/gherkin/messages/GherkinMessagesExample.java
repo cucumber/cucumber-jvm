@@ -1,6 +1,6 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
+import io.cucumber.messages.types.TableRow;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 

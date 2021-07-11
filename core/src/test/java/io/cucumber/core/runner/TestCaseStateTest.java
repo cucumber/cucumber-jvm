@@ -4,8 +4,8 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.messages.Messages.Attachment.ContentEncoding;
-import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.messages.types.Attachment.ContentEncoding;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.event.EmbedEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -126,7 +126,7 @@ class TestCaseStateTest {
         Envelope envelope = envelopes.get(0);
         assertThat(envelope.getAttachment().getBody(),
             is(Base64.getEncoder().encodeToString("Hello World".getBytes(UTF_8))));
-        assertThat(envelope.getAttachment().getContentEncoding(), is(ContentEncoding.BASE64));
+        assertThat(envelope.getAttachment().getContentEncoding(), is(ContentEncoding.BASE_64));
         assertThat(envelope.getAttachment().getMediaType(), is("text/plain"));
         assertThat(envelope.getAttachment().getFileName(), is("hello.txt"));
         assertThat(envelope.getAttachment().getTestStepId(), is(activeTestStep.toString()));

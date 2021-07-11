@@ -7,12 +7,13 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.gherkin.Gherkin;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.Envelope;
-import io.cucumber.messages.Messages.GherkinDocument;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.GherkinDocument;
+import io.cucumber.messages.types.ParseError;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -36,20 +37,20 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
             () -> idGenerator.get().toString()).collect(toList());
 
         GherkinDocument gherkinDocument = envelopes.stream()
-                .filter(Envelope::hasGherkinDocument)
                 .map(Envelope::getGherkinDocument)
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
 
-        if (gherkinDocument == null || !gherkinDocument.hasFeature()) {
+        if (gherkinDocument == null || gherkinDocument.getFeature() == null) {
             List<String> errors = envelopes.stream()
-                    .filter(Envelope::hasParseError)
                     .map(Envelope::getParseError)
-                    .map(Messages.ParseError::getMessage)
+                    .filter(Objects::nonNull)
+                    .map(ParseError::getMessage)
                     .collect(toList());
             if (!errors.isEmpty()) {
                 throw new FeatureParserException(
-                    "Failed to parse resource at: " + path.toString() + "\n" + String.join("\n", errors));
+                    "Failed to parse resource at: " + path + "\n" + String.join("\n", errors));
             }
             return Optional.empty();
         }
@@ -57,13 +58,13 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
         CucumberQuery cucumberQuery = new CucumberQuery();
         cucumberQuery.update(gherkinDocument);
         GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        GherkinDocument.Feature feature = gherkinDocument.getFeature();
+        io.cucumber.messages.types.Feature feature = gherkinDocument.getFeature();
         String language = feature.getLanguage();
         GherkinDialect dialect = dialectProvider.getDialect(language, null);
 
-        List<Messages.Pickle> pickleMessages = envelopes.stream()
-                .filter(Envelope::hasPickle)
+        List<io.cucumber.messages.types.Pickle> pickleMessages = envelopes.stream()
                 .map(Envelope::getPickle)
+                .filter(Objects::nonNull)
                 .collect(toList());
 
         List<Pickle> pickles = pickleMessages.stream()

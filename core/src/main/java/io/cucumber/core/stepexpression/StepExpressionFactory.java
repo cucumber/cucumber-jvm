@@ -11,8 +11,8 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
-import io.cucumber.messages.Messages.Envelope;
-import io.cucumber.messages.Messages.UndefinedParameterType;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.UndefinedParameterType;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -87,11 +87,11 @@ public final class StepExpressionFactory {
         try {
             expression = expressionFactory.createExpression(expressionString);
         } catch (UndefinedParameterTypeException e) {
-            bus.send(Envelope.newBuilder()
-                    .setUndefinedParameterType(UndefinedParameterType.newBuilder()
-                            .setExpression(expressionString)
-                            .setName(e.getUndefinedParameterTypeName()))
-                    .build());
+            Envelope envelope = new Envelope();
+            envelope.setUndefinedParameterType(new UndefinedParameterType(
+                expressionString,
+                e.getUndefinedParameterTypeName()));
+            bus.send(envelope);
             throw registerTypeInConfiguration(expressionString, e);
         }
         return expression;

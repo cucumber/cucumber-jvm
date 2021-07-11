@@ -14,7 +14,7 @@ import io.cucumber.datatable.TableEntryTransformer;
 import io.cucumber.datatable.TableTransformer;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringType;
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types.Envelope;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -32,8 +32,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StepExpressionFactoryTest {
 
@@ -59,8 +59,8 @@ class StepExpressionFactoryTest {
     void throws_for_unknown_parameter_types() {
         StepDefinition stepDefinition = new StubStepDefinition("Given a {unknownParameterType}");
 
-        List<Messages.Envelope> events = new ArrayList<>();
-        bus.registerHandlerFor(Messages.Envelope.class, events::add);
+        List<Envelope> events = new ArrayList<>();
+        bus.registerHandlerFor(Envelope.class, events::add);
 
         CucumberException exception = assertThrows(
             CucumberException.class,
@@ -71,7 +71,7 @@ class StepExpressionFactoryTest {
 
         ));
         assertThat(events, iterableWithSize(1));
-        assertTrue(events.get(0).hasUndefinedParameterType());
+        assertNotNull(events.get(0).getUndefinedParameterType());
     }
 
     @Test
@@ -100,7 +100,7 @@ class StepExpressionFactoryTest {
 
     private TableTransformer<Ingredient> beanMapper(final StepTypeRegistry registry) {
         return table -> {
-            Map<String, String> tableRow = table.transpose().asMaps().get(0);
+            Map<String, String> tableRow = table.transpose().entries().get(0);
             return listBeanMapper(registry).transform(tableRow);
         };
     }

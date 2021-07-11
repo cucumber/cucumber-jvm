@@ -37,10 +37,8 @@ public class TypeDefinitionsStepDefinitions implements En {
         });
 
         Given("data table, defined by lambda row transformer", (DataTable dataTable) -> {
-            List<Book> books = dataTable.subTable(1, 0).asList(Book.class); // throw
-                                                                            // away
-                                                                            // table
-                                                                            // headers
+            // throw away table headers
+            List<Book> books = dataTable.subTable(1, 0).asList(Book.class);
             Book book1 = new Book("Crime and Punishment", "Raskolnikov");
             Book book2 = new Book("War and Peace", "Bolkonsky");
             assertThat(book1, equalTo(books.get(0)));
@@ -245,8 +243,8 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         public Literature(DataTable dataTable) {
             dataTable = dataTable.subTable(1, 0); // throw away headers
-            types = dataTable.transpose().asLists().get(0);
-            characters = dataTable.transpose().asLists().get(1);
+            types = dataTable.transpose().cells().get(0);
+            characters = dataTable.transpose().cells().get(1);
         }
 
         public Literature(List<String> types, List<String> characters) {
