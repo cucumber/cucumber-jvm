@@ -26,7 +26,13 @@ import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.RegularExpression;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
-import io.cucumber.messages.types.*;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Hook;
+import io.cucumber.messages.types.JavaMethod;
+import io.cucumber.messages.types.JavaStackTraceElement;
+import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.SourceReference;
+import io.cucumber.messages.types.StepDefinitionPattern;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -265,7 +271,7 @@ final class CachingGlue implements Glue {
         stepDefinitions.forEach(stepDefinition -> {
             StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
             CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition,
-                    expression);
+                expression);
             CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
             if (previous != null) {
                 throw new DuplicateStepDefinitionException(previous, stepDefinition);
@@ -305,17 +311,16 @@ final class CachingGlue implements Glue {
 
     private void emitStepDefined(CoreStepDefinition coreStepDefinition) {
         bus.send(new StepDefinedEvent(
-                bus.getInstant(),
-                new io.cucumber.plugin.event.StepDefinition(
-                        coreStepDefinition.getStepDefinition().getLocation(),
-                        coreStepDefinition.getExpression().getSource())));
+            bus.getInstant(),
+            new io.cucumber.plugin.event.StepDefinition(
+                coreStepDefinition.getStepDefinition().getLocation(),
+                coreStepDefinition.getExpression().getSource())));
 
         io.cucumber.messages.types.StepDefinition messagesStepDefinition = new io.cucumber.messages.types.StepDefinition();
         messagesStepDefinition.setId(coreStepDefinition.getId().toString());
         messagesStepDefinition.setPattern(new StepDefinitionPattern(
-                coreStepDefinition.getExpression().getSource(),
-                getExpressionType(coreStepDefinition)
-        ));
+            coreStepDefinition.getExpression().getSource(),
+            getExpressionType(coreStepDefinition)));
         coreStepDefinition.getDefinitionLocation()
                 .ifPresent(reference -> messagesStepDefinition.setSourceReference(createSourceReference(reference)));
 
@@ -329,10 +334,9 @@ final class CachingGlue implements Glue {
         if (reference instanceof JavaMethodReference) {
             JavaMethodReference methodReference = (JavaMethodReference) reference;
             sourceReference.setJavaMethod(new JavaMethod(
-                    methodReference.className(),
-                    methodReference.methodName(),
-                    methodReference.methodParameterTypes())
-            );
+                methodReference.className(),
+                methodReference.methodName(),
+                methodReference.methodParameterTypes()));
         }
 
         if (reference instanceof StackTraceElementReference) {

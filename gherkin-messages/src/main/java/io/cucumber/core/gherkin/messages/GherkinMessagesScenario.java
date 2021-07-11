@@ -1,6 +1,5 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.messages.types.Scenario;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 

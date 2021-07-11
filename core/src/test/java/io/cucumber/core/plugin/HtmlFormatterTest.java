@@ -61,18 +61,15 @@ class HtmlFormatterTest {
         testRunStartedEnvelope.setTestRunStarted(testRunStarted);
         bus.send(testRunStartedEnvelope);
 
-
         StepDefinition stepDefinition = new StepDefinition();
         Envelope stepDefinitionEnvelope = new Envelope();
         stepDefinitionEnvelope.setStepDefinition(stepDefinition);
         bus.send(stepDefinitionEnvelope);
 
-
         Hook hook = new Hook();
         Envelope hookEnvelope = new Envelope();
         hookEnvelope.setHook(hook);
         bus.send(hookEnvelope);
-
 
         ParameterType parameterType = new ParameterType();
         Envelope parameterTypeEnvelope = new Envelope();

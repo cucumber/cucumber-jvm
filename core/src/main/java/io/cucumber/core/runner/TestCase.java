@@ -61,12 +61,11 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             Group group
     ) {
         return new io.cucumber.messages.types.Group(
-                group.getChildren().stream()
-                        .map(TestCase::makeMessageGroup)
-                        .collect(toList()),
-                (long) group.getStart(),
-                group.getValue()
-        );
+            group.getChildren().stream()
+                    .map(TestCase::makeMessageGroup)
+                    .collect(toList()),
+            (long) group.getStart(),
+            group.getValue());
     }
 
     private static String toString(Throwable error) {
@@ -169,13 +168,12 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private void emitTestCaseMessage(EventBus bus) {
         Envelope envelope = new Envelope();
         envelope.setTestCase(new io.cucumber.messages.types.TestCase(
-                id.toString(),
-                pickle.getId(),
-                getTestSteps()
-                        .stream()
-                        .map(this::createTestStep)
-                        .collect(toList())
-        ));
+            id.toString(),
+            pickle.getId(),
+            getTestSteps()
+                    .stream()
+                    .map(this::createTestStep)
+                    .collect(toList())));
         bus.send(envelope);
     }
 
@@ -204,21 +202,19 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     public StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
         return new StepMatchArgumentsList(
-                pickleStep.getDefinitionArgument().stream()
-                        .map(arg -> new StepMatchArgument(makeMessageGroup(arg.getGroup()), arg.getParameterTypeName()))
-                        .collect(Collectors.toList())
-        );
+            pickleStep.getDefinitionArgument().stream()
+                    .map(arg -> new StepMatchArgument(makeMessageGroup(arg.getGroup()), arg.getParameterTypeName()))
+                    .collect(Collectors.toList()));
     }
 
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
         bus.send(new TestCaseStarted(start, this));
         Envelope envelope = new Envelope();
         envelope.setTestCaseStarted(new io.cucumber.messages.types.TestCaseStarted(
-                null,
-                executionId.toString(),
-                id.toString(),
-                javaInstantToTimestamp(start)
-        ));
+            null,
+            executionId.toString(),
+            id.toString(),
+            javaInstantToTimestamp(start)));
     }
 
     private void emitTestCaseFinished(
@@ -233,7 +229,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         }
 
         Envelope envelope = new Envelope();
-        envelope.setTestCaseFinished(new io.cucumber.messages.types.TestCaseFinished(executionId.toString(), javaInstantToTimestamp(stop), false));
+        envelope.setTestCaseFinished(new io.cucumber.messages.types.TestCaseFinished(executionId.toString(),
+            javaInstantToTimestamp(stop), false));
         bus.send(envelope);
     }
 

@@ -4,8 +4,8 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.PickleTag;
+import io.cucumber.messages.types.Scenario;
 import io.cucumber.plugin.event.Location;
 
 import java.net.URI;
@@ -24,7 +24,9 @@ final class GherkinMessagesPickle implements Pickle {
     private final URI uri;
     private final CucumberQuery cucumberQuery;
 
-    GherkinMessagesPickle(io.cucumber.messages.types.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery) {
+    GherkinMessagesPickle(
+            io.cucumber.messages.types.Pickle pickle, URI uri, GherkinDialect dialect, CucumberQuery cucumberQuery
+    ) {
         this.pickle = pickle;
         this.uri = uri;
         this.cucumberQuery = cucumberQuery;

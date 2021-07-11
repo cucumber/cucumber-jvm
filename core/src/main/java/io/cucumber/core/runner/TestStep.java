@@ -81,10 +81,9 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         bus.send(new TestStepStarted(startTime, testCase, this));
         Envelope envelope = new Envelope();
         envelope.setTestStepStarted(new io.cucumber.messages.types.TestStepStarted(
-                textExecutionId.toString(),
-                id.toString(),
-                javaInstantToTimestamp(startTime)
-        ));
+            textExecutionId.toString(),
+            id.toString(),
+            javaInstantToTimestamp(startTime)));
         bus.send(envelope);
     }
 
@@ -134,11 +133,10 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
         Envelope envelope = new Envelope();
         envelope.setTestStepFinished(new io.cucumber.messages.types.TestStepFinished(
-                textExecutionId.toString(),
-                id.toString(),
-                testStepResult,
-                javaInstantToTimestamp(stopTime)
-        ));
+            textExecutionId.toString(),
+            id.toString(),
+            testStepResult,
+            javaInstantToTimestamp(stopTime)));
         bus.send(envelope);
     }
 

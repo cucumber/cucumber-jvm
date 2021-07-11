@@ -109,10 +109,9 @@ public final class CucumberExecutionContext {
         bus.send(new TestRunFinished(instant, result));
 
         io.cucumber.messages.types.TestRunFinished testRunFinished = new io.cucumber.messages.types.TestRunFinished(
-                exception != null ? printStackTrace(exception) : null,
-                exception == null && exitStatus.isSuccess(),
-                javaInstantToTimestamp(instant)
-        );
+            exception != null ? printStackTrace(exception) : null,
+            exception == null && exitStatus.isSuccess(),
+            javaInstantToTimestamp(instant));
         Envelope envelope = new Envelope();
         envelope.setTestRunFinished(testRunFinished);
         bus.send(envelope);

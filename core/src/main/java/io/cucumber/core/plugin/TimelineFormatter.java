@@ -99,7 +99,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             reportJs.append("\n");
             // Need to sort groups by id, so can guarantee output of order in
             // rendered timeline
-            appendAsJsonToJs( reportJs, "timelineGroups", new TreeMap<>(allGroups).values());
+            appendAsJsonToJs(reportJs, "timelineGroups", new TreeMap<>(allGroups).values());
             reportJs.append("\n");
             reportJs.append("});");
             reportJs.close();
@@ -113,7 +113,8 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         return testCaseEvent.getTestCase().getId().toString();
     }
 
-    private void appendAsJsonToJs(final UTF8OutputStreamWriter out, final String pushTo, final Collection<?> content
+    private void appendAsJsonToJs(
+            final UTF8OutputStreamWriter out, final String pushTo, final Collection<?> content
     ) throws IOException {
         out.append("CucumberHTML.").append(pushTo).append(".pushArray(");
         JSON.writeValue(out, content);
@@ -187,7 +188,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         String className;
 
         TestData(final TestCaseStarted started, final Long group) {
-            this.id = getId(started);
+            this.id = TimelineFormatter.this.getId(started);
             final TestCase testCase = started.getTestCase();
             this.feature = findRootNodeName(testCase);
             this.scenario = testCase.getName();
@@ -222,7 +223,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.end = event.getInstant().toEpochMilli();
             this.className = event.getResult().getStatus().name().toLowerCase(ROOT);
         }
-
     }
 
 }

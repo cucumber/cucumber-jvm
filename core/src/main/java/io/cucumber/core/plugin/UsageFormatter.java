@@ -86,15 +86,16 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         return stepContainers;
     }
 
-//    private Gson gson() {
-//        JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
-//                jsonSerializationContext) -> new JsonPrimitive((double) duration.toNanos() / NANOS_PER_SECOND);
-//
-//        return new GsonBuilder()
-//                .registerTypeAdapter(Duration.class, durationJsonSerializer)
-//                .setPrettyPrinting()
-//                .create();
-//    }
+    // private Gson gson() {
+    // JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
+    // jsonSerializationContext) -> new JsonPrimitive((double)
+    // duration.toNanos() / NANOS_PER_SECOND);
+    //
+    // return new GsonBuilder()
+    // .registerTypeAdapter(Duration.class, durationJsonSerializer)
+    // .setPrettyPrinting()
+    // .create();
+    // }
 
     private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
         for (StepContainer container : stepContainers) {

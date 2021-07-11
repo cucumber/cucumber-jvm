@@ -4,9 +4,9 @@ import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.messages.types.GherkinDocument;
+import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.RuleChild;
 import io.cucumber.messages.types.Scenario;
-import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.TableRow;
 

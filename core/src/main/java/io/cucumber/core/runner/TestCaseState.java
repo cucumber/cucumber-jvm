@@ -162,7 +162,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private void requireActiveTestStep() {
         if (currentTestStepId == null) {
             throw new IllegalStateException(
-                    "You can not use Scenario.log or Scenario.attach when a step is not being executed");
+                "You can not use Scenario.log or Scenario.attach when a step is not being executed");
         }
     }
 

@@ -36,7 +36,7 @@ final class GherkinMessagesStep implements Step {
 
     private static Argument extractArgument(PickleStep pickleStep, Location location) {
         PickleStepArgument argument = pickleStep.getArgument();
-        if (pickleStep.getArgument() == null){
+        if (pickleStep.getArgument() == null) {
             return null;
         }
         if (argument.getDocString() != null) {

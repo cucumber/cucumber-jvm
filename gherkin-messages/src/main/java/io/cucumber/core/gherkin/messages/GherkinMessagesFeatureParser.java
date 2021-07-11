@@ -27,14 +27,14 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
     @Override
     public Optional<Feature> parse(URI path, String source, Supplier<UUID> idGenerator) {
         List<Envelope> sources = singletonList(
-                makeSourceEnvelope(source, path.toString()));
+            makeSourceEnvelope(source, path.toString()));
 
         List<Envelope> envelopes = Gherkin.fromSources(
-                sources,
-                true,
-                true,
-                true,
-                () -> idGenerator.get().toString()).collect(toList());
+            sources,
+            true,
+            true,
+            true,
+            () -> idGenerator.get().toString()).collect(toList());
 
         GherkinDocument gherkinDocument = envelopes.stream()
                 .map(Envelope::getGherkinDocument)
@@ -50,7 +50,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                     .collect(toList());
             if (!errors.isEmpty()) {
                 throw new FeatureParserException(
-                        "Failed to parse resource at: " + path + "\n" + String.join("\n", errors));
+                    "Failed to parse resource at: " + path + "\n" + String.join("\n", errors));
             }
             return Optional.empty();
         }
@@ -72,11 +72,11 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                 .collect(toList());
 
         GherkinMessagesFeature messagesFeature = new GherkinMessagesFeature(
-                feature,
-                path,
-                source,
-                pickles,
-                envelopes);
+            feature,
+            path,
+            source,
+            pickles,
+            envelopes);
         return Optional.of(messagesFeature);
     }
 
