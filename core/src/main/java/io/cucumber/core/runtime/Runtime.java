@@ -121,6 +121,7 @@ public final class Runtime {
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
         private FeatureSupplier featureSupplier;
+        private ObjectFactorySupplier objectFactorySupplier;
         private List<Plugin> additionalPlugins = emptyList();
 
         private Builder() {
@@ -145,6 +146,11 @@ public final class Runtime {
             this.featureSupplier = featureSupplier;
             return this;
         }
+        
+        public Builder withObjectFactorySupplier(final ObjectFactorySupplier objectFactorySupplier) {
+            this.objectFactorySupplier = objectFactorySupplier;
+            return this;
+        }
 
         public Builder withAdditionalPlugins(final Plugin... plugins) {
             this.additionalPlugins = Arrays.asList(plugins);
@@ -157,12 +163,18 @@ public final class Runtime {
         }
 
         public Runtime build() {
-            final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
-                runtimeOptions);
+            final ObjectFactorySupplier objectFactorySupplier;
+            
+            if(this.objectFactorySupplier != null) {
+                objectFactorySupplier = this.objectFactorySupplier;
+            } else {
+                final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+                    runtimeOptions);
 
-            final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
-                    ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
-                    : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+                objectFactorySupplier = runtimeOptions.isMultiThreaded()
+                        ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
+                        : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+            }
 
             final BackendSupplier backendSupplier = this.backendSupplier != null
                     ? this.backendSupplier
