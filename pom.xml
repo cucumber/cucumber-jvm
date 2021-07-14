@@ -225,6 +225,7 @@
 
     <modules>
         <module>archetype</module>
+        <module>bom</module>
         <module>cdi2</module>
         <module>core</module>
         <module>deltaspike</module>
