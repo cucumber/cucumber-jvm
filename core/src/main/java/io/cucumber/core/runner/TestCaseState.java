@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
+import io.cucumber.core.backend.Step;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Messages;
 import io.cucumber.messages.Messages.Attachment;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -140,6 +142,22 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     @Override
     public Integer getLine() {
         return testCase.getLocation().getLine();
+    }
+
+    @Override
+    public Optional<Step> getCurrentTestStep() {
+        return testCase.getTestSteps().stream()
+                .filter(t -> t.getId().equals(currentTestStepId))
+                .findFirst()
+                .map(step -> {
+                    if (step instanceof HookTestStep) {
+                        return new HookStep((HookTestStep) step);
+                    }
+                    if (step instanceof PickleStepTestStep) {
+                        return new PickleStep((PickleStepTestStep) step);
+                    }
+                    return null;
+                });
     }
 
     Throwable getError() {

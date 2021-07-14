@@ -34,6 +34,13 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
             return this;
         }
 
+        InvalidMethodSignatureExceptionBuilder addAnnotations(Class<?>[] annotations) {
+            for (Class annotation : annotations) {
+                addAnnotation(annotation);
+            }
+            return this;
+        }
+
         InvalidMethodSignatureExceptionBuilder addSignature(String signature) {
             signatures.add(signature);
             return this;

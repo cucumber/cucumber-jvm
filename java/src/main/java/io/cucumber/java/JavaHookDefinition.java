@@ -25,14 +25,12 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         if (parameterTypes.length > 1) {
             throw createInvalidSignatureException(method);
         }
-
         if (parameterTypes.length == 1) {
             Class<?> parameterType = parameterTypes[0];
             if (!(Object.class.equals(parameterType) || io.cucumber.java.Scenario.class.equals(parameterType))) {
                 throw createInvalidSignatureException(method);
             }
         }
-
         return method;
     }
 
@@ -40,8 +38,6 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         return builder(method)
                 .addAnnotation(Before.class)
                 .addAnnotation(After.class)
-                .addAnnotation(BeforeStep.class)
-                .addAnnotation(AfterStep.class)
                 .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
                 .addSignature("public void before_or_after()")
                 .build();
@@ -55,7 +51,6 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         } else {
             args = new Object[0];
         }
-
         invokeMethod(args);
     }
 

@@ -6,6 +6,8 @@ public interface Step extends io.cucumber.plugin.event.Step {
 
     String getPreviousGivenWhenThenKeyword();
 
+    GwtStepType getGwtType();
+
     String getId();
 
     @Override

@@ -4,6 +4,7 @@ import org.apiguardian.api.API;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 
 @API(status = API.Status.STABLE)
 public interface TestCaseState {
@@ -91,4 +92,8 @@ public interface TestCaseState {
      */
     Integer getLine();
 
+    /**
+     * @return the current TestStep being executed in the Scenario.
+     */
+    Optional<Step> getCurrentTestStep();
 }

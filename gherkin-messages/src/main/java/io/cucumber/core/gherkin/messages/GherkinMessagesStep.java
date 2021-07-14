@@ -1,6 +1,7 @@
 package io.cucumber.core.gherkin.messages;
 
 import io.cucumber.core.gherkin.Argument;
+import io.cucumber.core.gherkin.GwtStepType;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
@@ -18,6 +19,7 @@ final class GherkinMessagesStep implements Step {
     private final String keyWord;
     private final StepType stepType;
     private final String previousGwtKeyWord;
+    private final GwtStepType gwtStepType;
     private final Messages.Location location;
 
     GherkinMessagesStep(
@@ -32,6 +34,11 @@ final class GherkinMessagesStep implements Step {
         this.keyWord = keyword;
         this.stepType = extractKeyWordType(keyWord, dialect);
         this.previousGwtKeyWord = previousGwtKeyWord;
+        if (stepType.isGivenWhenThen()) {
+            this.gwtStepType = GwtStepType.valueOf(stepType.name());
+        } else {
+            this.gwtStepType = extractGwtStepType(previousGwtKeyWord, dialect);
+        }
         this.location = location;
     }
 
@@ -71,6 +78,19 @@ final class GherkinMessagesStep implements Step {
         throw new IllegalStateException("Keyword " + keyWord + " was neither given, when, then, and, but nor *");
     }
 
+    private static GwtStepType extractGwtStepType(String keyWord, GherkinDialect dialect) {
+        if (dialect.getGivenKeywords().contains(keyWord)) {
+            return GwtStepType.GIVEN;
+        }
+        if (dialect.getWhenKeywords().contains(keyWord)) {
+            return GwtStepType.WHEN;
+        }
+        if (dialect.getThenKeywords().contains(keyWord)) {
+            return GwtStepType.THEN;
+        }
+        throw new IllegalStateException("Keyword " + keyWord + " was neither given, when nor then");
+    }
+
     @Override
     public String getKeyword() {
         return keyWord;
@@ -89,6 +109,11 @@ final class GherkinMessagesStep implements Step {
     @Override
     public StepType getType() {
         return stepType;
+    }
+
+    @Override
+    public GwtStepType getGwtType() {
+        return gwtStepType;
     }
 
     @Override

@@ -51,14 +51,14 @@ public class JavaHookDefinitionTest {
 
     @Test
     void can_create_with_single_scenario_argument() throws Throwable {
-        Method method = JavaHookDefinitionTest.class.getMethod("single_argument", Scenario.class);
+        Method method = JavaHookDefinitionTest.class.getMethod("scenario_argument", Scenario.class);
         JavaHookDefinition definition = new JavaHookDefinition(method, "", 0, lookup);
         definition.execute(state);
         assertTrue(invoked);
     }
 
     @Before
-    public void single_argument(Scenario scenario) {
+    public void scenario_argument(Scenario scenario) {
         invoked = true;
     }
 
@@ -69,12 +69,13 @@ public class JavaHookDefinitionTest {
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(method, "", 0, lookup));
         assertThat(exception.getMessage(), startsWith("" +
-                "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
+                "A method annotated with Before or After must have one of these signatures:\n" +
                 " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
                 " * public void before_or_after()\n" +
                 "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"));
     }
 
+    @Before
     public void invalid_parameter(String badType) {
 
     }
@@ -87,6 +88,7 @@ public class JavaHookDefinitionTest {
             () -> new JavaHookDefinition(method, "", 0, lookup));
     }
 
+    @Before
     public void invalid_generic_parameter(List<String> badType) {
 
     }
@@ -99,6 +101,7 @@ public class JavaHookDefinitionTest {
             () -> new JavaHookDefinition(method, "", 0, lookup));
     }
 
+    @Before
     public void too_many_parameters(Scenario arg1, String arg2) {
 
     }
