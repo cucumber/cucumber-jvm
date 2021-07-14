@@ -9,6 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -122,4 +126,44 @@ class CdiJakartaFactoryTest {
         factory.stop();
     }
 
+    static class SubParameterizedBean<K, V> {
+
+    }
+
+    static class ParameterizedBean<K, V> {
+
+        @Inject
+        SubParameterizedBean<K, V> injected;
+
+    }
+
+    static class ParameterizedStepDefinitions {
+
+        @Inject
+        ParameterizedBean<Map<String, List<String>>, String> injectedParams1;
+
+        @Inject
+        ParameterizedBean<Set<Boolean>, String> injectedParams2;
+
+        @Inject
+        @SuppressWarnings("rawtypes")
+        ParameterizedBean injectedRaw;
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void canInjectParameterizedBeans(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
+        factory.addClass(ParameterizedStepDefinitions.class);
+        factory.start();
+        ParameterizedStepDefinitions stepDefinitions = factory.getInstance(ParameterizedStepDefinitions.class);
+        assertThat(stepDefinitions.injectedParams1, is(notNullValue()));
+        assertThat(stepDefinitions.injectedParams1.injected, is(notNullValue()));
+        assertThat(stepDefinitions.injectedParams2, is(notNullValue()));
+        assertThat(stepDefinitions.injectedParams2.injected, is(notNullValue()));
+        assertThat(stepDefinitions.injectedRaw, is(notNullValue()));
+        assertThat(stepDefinitions.injectedRaw.injected, is(notNullValue()));
+        factory.stop();
+    }
 }
