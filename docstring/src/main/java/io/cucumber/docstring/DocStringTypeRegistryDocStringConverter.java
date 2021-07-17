@@ -4,6 +4,7 @@ import io.cucumber.docstring.DocString.DocStringConverter;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
@@ -23,14 +24,9 @@ public final class DocStringTypeRegistryDocStringConverter implements DocStringC
             return (T) docString;
         }
 
-        DocStringType docStringType = docStringTypeRegistry.lookupByContentType(docString.getContentType());
-        if (docStringType != null) {
-            return (T) docStringType.transform(docString.getContent());
-        }
-
-        docStringType = docStringTypeRegistry.lookupByType(targetType);
-        if (docStringType != null) {
-            return (T) docStringType.transform(docString.getContent());
+        Optional<DocStringType> lookup = docStringTypeRegistry.lookup(docString.getContentType(), targetType);
+        if (lookup.isPresent()) {
+            return (T) lookup.get().transform(docString.getContent());
         }
 
         if (docString.getContentType() == null) {
