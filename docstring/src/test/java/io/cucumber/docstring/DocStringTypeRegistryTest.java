@@ -27,10 +27,10 @@ class DocStringTypeRegistryTest {
     }
 
     @Test
-    void doc_string_types_must_be_unique() {
+    void doc_string_types_of_same_content_type_must_be_unique() {
         registry.defineDocStringType(new DocStringType(
             JsonNode.class,
-            "json",
+            "application/json",
             (String s) -> null));
 
         DocStringType duplicate = new DocStringType(
@@ -42,7 +42,8 @@ class DocStringTypeRegistryTest {
             CucumberDocStringException.class,
             () -> registry.defineDocStringType(duplicate));
         assertThat(exception.getMessage(), is("" +
-                "There is already docstring type registered for 'json' and com.fasterxml.jackson.databind.JsonNode.\n" +
+                "There is already docstring type registered for 'application/json' and com.fasterxml.jackson.databind.JsonNode.\n"
+                +
                 "You are trying to add 'application/json' and com.fasterxml.jackson.databind.JsonNode"));
     }
 
