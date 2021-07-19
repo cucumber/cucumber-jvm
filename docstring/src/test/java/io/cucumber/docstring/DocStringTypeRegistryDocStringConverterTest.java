@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DocStringTypeRegistryDocStringConverterTest {
@@ -42,10 +44,10 @@ class DocStringTypeRegistryDocStringConverterTest {
         registry.defineDocStringType(new DocStringType(
             JsonNode.class,
             "json",
-            (String s) -> new ObjectMapper().readTree(s)));
+            (String s) -> new ObjectMapper().convertValue(s, JsonNode.class)));
 
         JsonNode converted = converter.convert(docString, JsonNode.class);
-        assertThat(converted, instanceOf(JsonNode.class));
+        assertThat(converted.asText(), equalTo(docString.getContent()));
     }
 
     @Test
@@ -157,6 +159,111 @@ class DocStringTypeRegistryDocStringConverterTest {
         assertThat(exception.getMessage(), is("" +
                 "Multiple converters found for type com.fasterxml.jackson.databind.JsonNode, " +
                 "add one of the following content types to docstring [[anonymous], json, xml]"));
+    }
+
+    @Test
+    void different_docstring_content_types_convert_to_matching_doc_string_types() {
+        registry.defineDocStringType(new DocStringType(
+            String.class,
+            "json",
+            (String s) -> s));
+
+        registry.defineDocStringType(new DocStringType(
+            String.class,
+            "xml",
+            (String s) -> s));
+
+        registry.defineDocStringType(new DocStringType(
+            String.class,
+            "yml",
+            (String s) -> s));
+
+        DocString docStringJson = DocString.create(
+            "{\"content\":\"hello world\"}", "json");
+        DocString docStringXml = DocString.create(
+            "<content>hello world</content>}", "xml");
+        DocString docStringYml = DocString.create(
+            "  content: hello world", "yml");
+
+        String convertJson = converter.convert(docStringJson, String.class);
+        String convertXml = converter.convert(docStringXml, String.class);
+        String convertYml = converter.convert(docStringYml, String.class);
+
+        assertThat(docStringJson.getContent(), equalTo(convertJson));
+        assertThat(docStringXml.getContent(), equalTo(convertXml));
+        assertThat(docStringYml.getContent(), equalTo(convertYml));
+    }
+
+    @Test
+    void same_docstring_content_type_can_convert_to_different_registered_doc_string_types() {
+        registry.defineDocStringType(new DocStringType(
+            Greet.class,
+            "text",
+            Greet::new));
+
+        registry.defineDocStringType(new DocStringType(
+            Meet.class,
+            "text",
+            Meet::new));
+
+        registry.defineDocStringType(new DocStringType(
+            Leave.class,
+            "text",
+            Leave::new));
+
+        DocString docStringGreet = DocString.create(
+            "hello world", "text");
+        DocString docStringMeet = DocString.create(
+            "nice to meet", "text");
+        DocString docStringLeave = DocString.create(
+            "goodbye", "text");
+
+        Greet convertGreet = converter.convert(docStringGreet, Greet.class);
+        Meet convertMeet = converter.convert(docStringMeet, Meet.class);
+        Leave convertLeave = converter.convert(docStringLeave, Leave.class);
+
+        assertThat(docStringGreet.getContent(), equalTo(convertGreet.message));
+        assertThat(docStringMeet.getContent(), equalTo(convertMeet.message));
+        assertThat(docStringLeave.getContent(), equalTo(convertLeave.message));
+    }
+
+    private static class Greet {
+        private final String message;
+
+        Greet(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
+    }
+
+    private static class Meet {
+        private final String message;
+
+        Meet(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
+    }
+
+    private static class Leave {
+        private final String message;
+
+        Leave(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
     }
 
 }

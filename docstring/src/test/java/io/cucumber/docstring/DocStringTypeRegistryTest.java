@@ -107,4 +107,20 @@ class DocStringTypeRegistryTest {
         assertThat(registry.getDocStringTypes().get(DEFAULT_CONTENT_TYPE).size(), is(3));
     }
 
+    @Test
+    void can_add_same_content_type_with_different_return_types() {
+        registry.defineDocStringType(new DocStringType(
+            JsonNode.class,
+            "application/json",
+            (String s) -> null));
+
+        registry.defineDocStringType(new DocStringType(
+            TreeNode.class,
+            "application/json",
+            (String s) -> null));
+
+        // default String register
+        assertThat(registry.getDocStringTypes().get("application/json").size(), is(2));
+    }
+
 }
