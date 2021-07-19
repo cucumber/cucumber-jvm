@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -29,11 +30,34 @@ class JavaDocStringTypeDefinitionTest {
         registry);
 
     @Test
+    void doc_string_type_gets_correctly_init() throws NoSuchMethodException {
+        Method method = JavaDocStringTypeDefinitionTest.class.getMethod("convert_doc_string_to_string", String.class);
+        JavaDocStringTypeDefinition defaultContentType = new JavaDocStringTypeDefinition("", method, lookup);
+        JavaDocStringTypeDefinition hasContentType = new JavaDocStringTypeDefinition("text/plain", method, lookup);
+
+        assertThat(defaultContentType.docStringType().getContentType(),
+            is("convert_doc_string_to_string"));
+        assertThat(defaultContentType.docStringType().getType(), instanceOf(Object.class));
+        assertThat(hasContentType.docStringType().getContentType(),
+            is("text/plain"));
+        assertThat(hasContentType.docStringType().getType(), instanceOf(Object.class));
+    }
+
+    @Test
     void can_define_doc_string_converter() throws NoSuchMethodException {
+        Method method = JavaDocStringTypeDefinitionTest.class.getMethod("convert_doc_string_to_string", String.class);
+        JavaDocStringTypeDefinition definition = new JavaDocStringTypeDefinition("text/plain", method, lookup);
+        registry.defineDocStringType(definition.docStringType());
+        assertThat(converter.convert(docString, Object.class), is("convert_doc_string_to_string"));
+    }
+
+    @Test
+    void can_define_doc_string_without_content_types_converter() throws NoSuchMethodException {
         Method method = JavaDocStringTypeDefinitionTest.class.getMethod("convert_doc_string_to_string", String.class);
         JavaDocStringTypeDefinition definition = new JavaDocStringTypeDefinition("", method, lookup);
         registry.defineDocStringType(definition.docStringType());
-        assertThat(converter.convert(docString, Object.class), is("convert_doc_string_to_string"));
+        assertThat(converter.convert(DocString.create("some doc string"), Object.class),
+            is("convert_doc_string_to_string"));
     }
 
     public Object convert_doc_string_to_string(String docString) {

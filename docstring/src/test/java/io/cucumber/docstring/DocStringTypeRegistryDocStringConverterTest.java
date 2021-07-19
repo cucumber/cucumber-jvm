@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DocStringTypeRegistryDocStringConverterTest {
@@ -16,38 +17,10 @@ class DocStringTypeRegistryDocStringConverterTest {
         registry);
 
     @Test
-    void uses_doc_string_type_when_available() {
-        registry.defineDocStringType(new DocStringType(
-            JsonNode.class,
-            "json",
-            (String s) -> new ObjectMapper().readTree(s)));
-
-        DocString docString = DocString.create(
-            "{\"hello\":\"world\"}",
-            "json");
-
-        JsonNode converted = converter.convert(docString, Object.class);
-        assertThat(converted.get("hello").textValue(), is("world"));
-    }
-
-    @Test
-    void uses_target_type_when_available() {
-        registry.defineDocStringType(new DocStringType(
-            JsonNode.class,
-            "json",
-            (String s) -> new ObjectMapper().readTree(s)));
-
-        DocString docString = DocString.create(
-            "{\"hello\":\"world\"}");
-
-        JsonNode converted = converter.convert(docString, JsonNode.class);
-        assertThat(converted.get("hello").textValue(), is("world"));
-    }
-
-    @Test
     void target_type_to_string_is_predefined() {
         DocString docString = DocString.create(
             "hello world");
+
         String converted = converter.convert(docString, String.class);
         assertThat(converted, is("hello world"));
     }
@@ -59,6 +32,32 @@ class DocStringTypeRegistryDocStringConverterTest {
 
         DocString converted = converter.convert(docString, DocString.class);
         assertThat(converted, is(docString));
+    }
+
+    @Test
+    void converts_no_content_type_doc_string_to_registered_matching_convertor() {
+        DocString docString = DocString.create(
+            "{\"hello\":\"world\"}");
+
+        registry.defineDocStringType(new DocStringType(
+            JsonNode.class,
+            "json",
+            (String s) -> new ObjectMapper().readTree(s)));
+
+        JsonNode converted = converter.convert(docString, JsonNode.class);
+        assertThat(converted, instanceOf(JsonNode.class));
+    }
+
+    @Test
+    void throws_when_no_converter_defined() {
+        DocString docString = DocString.create("hello world");
+
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
+            () -> docString.convert(Object.class));
+
+        assertThat(exception.getMessage(), is("" +
+                "Can't convert DocString to class java.lang.Object. You have to write the conversion for it in this method"));
     }
 
     @Test
@@ -110,6 +109,54 @@ class DocStringTypeRegistryDocStringConverterTest {
                 "      \"\"\"json\n" +
                 "      {\"hello\":\"world\"}\n" +
                 "      \"\"\"")));
+    }
+
+    @Test
+    void throws_when_uses_doc_string_type_but_downcast_conversion() {
+        registry.defineDocStringType(new DocStringType(
+            JsonNode.class,
+            "json",
+            (String s) -> new ObjectMapper().readTree(s)));
+
+        DocString docString = DocString.create(
+            "{\"hello\":\"world\"}",
+            "json");
+
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
+            () -> converter.convert(docString, Object.class));
+
+        assertThat(exception.getMessage(), is("" +
+                "It appears you did not register docstring type for 'json' or java.lang.Object"));
+    }
+
+    @Test
+    void throws_when_multiple_convertors_available() {
+        registry.defineDocStringType(new DocStringType(
+            JsonNode.class,
+            "json",
+            (String s) -> new ObjectMapper().readTree(s)));
+
+        registry.defineDocStringType(new DocStringType(
+            JsonNode.class,
+            "xml",
+            (String s) -> new ObjectMapper().readTree(s)));
+
+        registry.defineDocStringType(new DocStringType(
+            JsonNode.class,
+            "",
+            (String s) -> new ObjectMapper().readTree(s)));
+
+        DocString docString = DocString.create(
+            "{\"hello\":\"world\"}");
+
+        CucumberDocStringException exception = assertThrows(
+            CucumberDocStringException.class,
+            () -> converter.convert(docString, JsonNode.class));
+
+        assertThat(exception.getMessage(), is("" +
+                "Multiple converters found for type com.fasterxml.jackson.databind.JsonNode, " +
+                "add one of the following content types to docstring [[anonymous], json, xml]"));
     }
 
 }
