@@ -163,7 +163,7 @@ class StepExpressionFactoryTest {
         String contentType = "doc";
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", String.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
+        List<Argument> match = expression.match("Given some stuff:", docString, null);
         assertThat(match.get(0).getValue(), is(equalTo(docString)));
     }
 
