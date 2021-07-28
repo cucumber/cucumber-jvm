@@ -87,7 +87,7 @@ disposed at the end of it.
 
 By using the `@ScenarioScope` annotation additional components can be added to
 the glue scope. These components can be used to safely share state between
-scenarios. 
+steps inside a scenario. 
 
 ```java
 package com.example.app;
