@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
 
 ### Fixed
+ * [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
 
 ## [6.10.4] (2021-05-13)
 
