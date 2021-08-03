@@ -211,10 +211,11 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         bus.send(new TestCaseStarted(start, this));
         Envelope envelope = new Envelope();
         envelope.setTestCaseStarted(new io.cucumber.messages.types.TestCaseStarted(
-            null,
+            0L,
             executionId.toString(),
             id.toString(),
             javaInstantToTimestamp(start)));
+        bus.send(envelope);
     }
 
     private void emitTestCaseFinished(

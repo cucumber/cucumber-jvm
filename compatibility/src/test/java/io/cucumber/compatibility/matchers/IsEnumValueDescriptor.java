@@ -4,7 +4,8 @@
 //import org.hamcrest.Description;
 //import org.hamcrest.TypeSafeDiagnosingMatcher;
 //
-//class IsEnumValueDescriptor extends TypeSafeDiagnosingMatcher<EnumValueDescriptor> {
+//class IsEnumValueDescriptor extends
+//        TypeSafeDiagnosingMatcher<EnumValueDescriptor> {
 //
 //    private final EnumValueDescriptor expected;
 //
@@ -18,7 +19,8 @@
 //    }
 //
 //    @Override
-//    protected boolean matchesSafely(EnumValueDescriptor item, Description mismatchDescription) {
+//    protected boolean matchesSafely(EnumValueDescriptor item, Description
+//            mismatchDescription) {
 //        if (!expected.getName().equals(item.getName())) {
 //            mismatchDescription.appendValue(item);
 //            return false;

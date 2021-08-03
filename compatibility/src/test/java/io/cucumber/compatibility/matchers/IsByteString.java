@@ -18,7 +18,8 @@
 //    }
 //
 //    @Override
-//    protected boolean matchesSafely(ByteString item, Description mismatchDescription) {
+//    protected boolean matchesSafely(ByteString item, Description
+//            mismatchDescription) {
 //        String actual = item.toStringUtf8();
 //        if (this.expected.toStringUtf8().equals(actual)) {
 //            return true;
