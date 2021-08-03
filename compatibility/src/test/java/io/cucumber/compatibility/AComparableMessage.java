@@ -1,4 +1,4 @@
-package io.cucumber.compatibility.matchers;
+package io.cucumber.compatibility;
 
 import io.cucumber.messages.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.ArrayNode;
@@ -16,9 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.StreamSupport.stream;
@@ -46,11 +44,9 @@ public class AComparableMessage extends
         this.expectedFields = extractExpectedFields(expectedMessage, this.depth);
     }
 
-    private static List<Matcher<?>> extractExpectedFields(JsonNode
-            expectedMessage, int depth) {
+    private static List<Matcher<?>> extractExpectedFields(JsonNode expectedMessage, int depth) {
         List<Matcher<?>> expected = new ArrayList<>();
-        asMapOfJsonNameToField(expectedMessage).forEach((fieldName, expectedValue) ->
-        {
+        asMapOfJsonNameToField(expectedMessage).forEach((fieldName, expectedValue) -> {
             switch (fieldName) {
                 // exception: error messages are platform specific
                 case "message":
@@ -86,7 +82,7 @@ public class AComparableMessage extends
                 case "astNodeIds":
                 case "stepDefinitionIds":
                     expected.add(hasEntry(is(fieldName),
-                            containsInRelativeOrder(isA(TextNode.class))));
+                        containsInRelativeOrder(isA(TextNode.class))));
                     break;
 
                 // exception: timestamps and durations are not predictable
@@ -105,12 +101,12 @@ public class AComparableMessage extends
                 case "ci":
                     // exception: Absent when running locally, present in ci
                     expected.add(
-                            anyOf(not(hasKey(is(fieldName))), hasEntry(is(fieldName),
-                                    isA(expectedValue.getClass()))));
+                        anyOf(not(hasKey(is(fieldName))), hasEntry(is(fieldName),
+                            isA(expectedValue.getClass()))));
                     break;
                 default:
                     expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue,
-                            depth)));
+                        depth)));
             }
         });
         return expected;
@@ -133,14 +129,6 @@ public class AComparableMessage extends
             return contains(allComparableValues);
         }
 
-//        if (value instanceof Descriptors.EnumValueDescriptor) {
-//            return new IsEnumValueDescriptor((Descriptors.EnumValueDescriptor) value);
-//        }
-//
-//        if (value instanceof ByteString) {
-//            return new IsByteString((ByteString) value);
-//        }
-
         if (value instanceof TextNode
                 || value instanceof NumericNode
                 || value instanceof BooleanNode) {
@@ -157,12 +145,11 @@ public class AComparableMessage extends
             padding.append("\t");
         }
         description.appendList("\n" + padding, ",\n" + padding,
-                "\n", expectedFields);
+            "\n", expectedFields);
     }
 
     @Override
-    protected boolean matchesSafely(JsonNode actual, Description
-            mismatchDescription) {
+    protected boolean matchesSafely(JsonNode actual, Description mismatchDescription) {
         Map<String, Object> actualFields = asMapOfJsonNameToField(actual);
         for (Matcher<?> expectedField : expectedFields) {
             if (!expectedField.matches(actualFields)) {

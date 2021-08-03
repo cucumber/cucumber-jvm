@@ -66,7 +66,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         reportDir.mkdirs();
         if (!reportDir.isDirectory()) {
             throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s",
-                    getClass().getName(), reportDir.getAbsolutePath()));
+                getClass().getName(), reportDir.getAbsolutePath()));
         }
 
         this.reportDir = reportDir;

@@ -1,6 +1,5 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.compatibility.matchers.AComparableMessage;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JsonFormatter;
@@ -37,7 +36,7 @@ public class CompatibilityTest {
     @MethodSource("io.cucumber.compatibility.TestCase#testCases")
     void produces_expected_output_for(TestCase testCase) throws IOException {
         Path parentDir = Files.createDirectories(Paths.get("target", "messages",
-                testCase.getId()));
+            testCase.getId()));
         Path outputNdjson = parentDir.resolve("out.ndjson");
         Path outputHtml = parentDir.resolve("out.html");
         Path outputJson = parentDir.resolve("out.json");
@@ -49,23 +48,20 @@ public class CompatibilityTest {
                             .addFeature(testCase.getFeature())
                             .build())
                     .withAdditionalPlugins(
-                            new MessageFormatter(newOutputStream(outputNdjson)),
-                            new HtmlFormatter(newOutputStream(outputHtml)),
-                            new JsonFormatter(newOutputStream(outputJson)))
+                        new MessageFormatter(newOutputStream(outputNdjson)),
+                        new HtmlFormatter(newOutputStream(outputHtml)),
+                        new JsonFormatter(newOutputStream(outputJson)))
                     .build()
                     .run();
         } catch (Exception ignored) {
 
         }
 
-        List<JsonNode> expected =
-                readAllMessages(testCase.getExpectedFile());
+        List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
         List<JsonNode> actual = readAllMessages(outputNdjson);
 
-        Map<String, List<JsonNode>> expectedEnvelopes =
-                openEnvelopes(expected);
-        Map<String, List<JsonNode>> actualEnvelopes =
-                openEnvelopes(actual);
+        Map<String, List<JsonNode>> expectedEnvelopes = openEnvelopes(expected);
+        Map<String, List<JsonNode>> actualEnvelopes = openEnvelopes(actual);
 
         // exception: Java step definitions are not in a predictable order
         // because Class#getMethods() does not return a predictable order.
@@ -83,15 +79,13 @@ public class CompatibilityTest {
         }
 
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
-                actualEnvelopes,
-                hasEntry(is(messageType),
-                        containsInRelativeOrder(aComparableMessage(expectedMessages)))));
+            actualEnvelopes,
+            hasEntry(is(messageType),
+                containsInRelativeOrder(aComparableMessage(expectedMessages)))));
     }
 
-    private static List<JsonNode> readAllMessages(Path output) throws
-            IOException {
+    private static List<JsonNode> readAllMessages(Path output) throws IOException {
         List<JsonNode> expectedEnvelopes = new ArrayList<>();
-
 
         ObjectMapper mapper = new ObjectMapper()
                 .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
@@ -119,18 +113,15 @@ public class CompatibilityTest {
         return map;
     }
 
-    private void sortStepDefinitions(Map<String, List<JsonNode>>
-            envelopes) {
-        Comparator<JsonNode> stepDefinitionPatternComparator =
-                Comparator.comparing(a -> a.get("pattern").asText());
-        List<JsonNode> actualStepDefinitions =envelopes.get("stepDefinition");
+    private void sortStepDefinitions(Map<String, List<JsonNode>> envelopes) {
+        Comparator<JsonNode> stepDefinitionPatternComparator = Comparator.comparing(a -> a.get("pattern").asText());
+        List<JsonNode> actualStepDefinitions = envelopes.get("stepDefinition");
         if (actualStepDefinitions != null) {
             actualStepDefinitions.sort(stepDefinitionPatternComparator);
         }
     }
 
-    private static List<Matcher<? super JsonNode>>
-    aComparableMessage(List<JsonNode> messages) {
+    private static List<Matcher<? super JsonNode>> aComparableMessage(List<JsonNode> messages) {
         return messages.stream()
                 .map(AComparableMessage::new)
                 .collect(Collectors.toList());
