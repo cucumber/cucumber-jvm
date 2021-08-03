@@ -21,7 +21,7 @@
         <toolchain.java.version>11</toolchain.java.version>
 
         <!--Semantic version -->
-        <apiguardian-api.version>1.1.1</apiguardian-api.version>
+        <apiguardian-api.version>1.1.2</apiguardian-api.version>
 
         <!-- io.cucumber dependencies -->
         <cucumber-expressions.version>12.1.1</cucumber-expressions.version>
@@ -38,7 +38,7 @@
         <junit-jupiter.version>5.7.2</junit-jupiter.version>
         <junit-platform.version>1.7.2</junit-platform.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.11.1</mockito.version>
+        <mockito.version>3.11.2</mockito.version>
         <!--Maven plugins-->
         <groovy.version>2.5.14</groovy.version>
     </properties>
