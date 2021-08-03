@@ -1,8 +1,11 @@
-package io.cucumber.compatibility.matchers;
+package io.cucumber.compatibility;
 
-import io.cucumber.messages.internal.com.google.protobuf.ByteString;
-import io.cucumber.messages.internal.com.google.protobuf.Descriptors;
-import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.JsonNode;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.ArrayNode;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.BooleanNode;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.NumericNode;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.ObjectNode;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.TextNode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -12,8 +15,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
 import java.util.stream.Collectors;
 
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.StreamSupport.stream;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
@@ -23,21 +29,22 @@ import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.contai
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.collection.IsMapContaining.hasKey;
 
-public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessageV3> {
+public class AComparableMessage extends
+        TypeSafeDiagnosingMatcher<JsonNode> {
 
     private final List<Matcher<?>> expectedFields;
     private final int depth;
 
-    public AComparableMessage(GeneratedMessageV3 expectedMessage) {
+    public AComparableMessage(JsonNode expectedMessage) {
         this(expectedMessage, 0);
     }
 
-    AComparableMessage(GeneratedMessageV3 expectedMessage, int depth) {
+    AComparableMessage(JsonNode expectedMessage, int depth) {
         this.depth = depth + 1;
         this.expectedFields = extractExpectedFields(expectedMessage, this.depth);
     }
 
-    private static List<Matcher<?>> extractExpectedFields(GeneratedMessageV3 expectedMessage, int depth) {
+    private static List<Matcher<?>> extractExpectedFields(JsonNode expectedMessage, int depth) {
         List<Matcher<?>> expected = new ArrayList<>();
         asMapOfJsonNameToField(expectedMessage).forEach((fieldName, expectedValue) -> {
             switch (fieldName) {
@@ -66,15 +73,16 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 case "testCaseId":
                 case "testStepId":
                 case "testCaseStartedId":
-                    expected.add(hasEntry(is(fieldName), isA(String.class)));
+                    expected.add(hasEntry(is(fieldName), isA(TextNode.class)));
                     break;
                 // exception: protocolVersion can vary
                 case "protocolVersion":
-                    expected.add(hasEntry(is(fieldName), isA(String.class)));
+                    expected.add(hasEntry(is(fieldName), isA(TextNode.class)));
                     break;
                 case "astNodeIds":
                 case "stepDefinitionIds":
-                    expected.add(hasEntry(is(fieldName), containsInRelativeOrder(isA(String.class))));
+                    expected.add(hasEntry(is(fieldName),
+                        containsInRelativeOrder(isA(TextNode.class))));
                     break;
 
                 // exception: timestamps and durations are not predictable
@@ -93,10 +101,12 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
                 case "ci":
                     // exception: Absent when running locally, present in ci
                     expected.add(
-                        anyOf(not(hasKey(is(fieldName))), hasEntry(is(fieldName), isA(expectedValue.getClass()))));
+                        anyOf(not(hasKey(is(fieldName))), hasEntry(is(fieldName),
+                            isA(expectedValue.getClass()))));
                     break;
                 default:
-                    expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue, depth)));
+                    expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue,
+                        depth)));
             }
         });
         return expected;
@@ -104,32 +114,28 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
 
     @SuppressWarnings("unchecked")
     private static Matcher<?> aComparableValue(Object value, int depth) {
-        if (value instanceof GeneratedMessageV3) {
-            GeneratedMessageV3 message = (GeneratedMessageV3) value;
+        if (value instanceof ObjectNode) {
+            JsonNode message = (JsonNode) value;
             return new AComparableMessage(message, depth);
         }
 
-        if (value instanceof List) {
-            List<?> values = (List<?>) value;
-            List<Matcher<? super Object>> allComparableValues = values.stream()
+        if (value instanceof ArrayNode) {
+            ArrayNode values = (ArrayNode) value;
+            Spliterator<JsonNode> spliterator = spliteratorUnknownSize(values.iterator(), 0);
+            List<Matcher<? super Object>> allComparableValues = stream(spliterator, false)
                     .map(o -> aComparableValue(o, depth))
                     .map(o -> (Matcher<? super Object>) o)
                     .collect(Collectors.toList());
             return contains(allComparableValues);
         }
 
-        if (value instanceof Descriptors.EnumValueDescriptor) {
-            return new IsEnumValueDescriptor((Descriptors.EnumValueDescriptor) value);
-        }
-
-        if (value instanceof ByteString) {
-            return new IsByteString((ByteString) value);
-        }
-
-        if (value instanceof String || value instanceof Integer || value instanceof Boolean) {
+        if (value instanceof TextNode
+                || value instanceof NumericNode
+                || value instanceof BooleanNode) {
             return CoreMatchers.is(value);
         }
-        throw new IllegalArgumentException("Unsupported type " + value.getClass() + ": " + value);
+        throw new IllegalArgumentException("Unsupported type " + value.getClass() +
+                ": " + value);
     }
 
     @Override
@@ -138,11 +144,12 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
         for (int i = 0; i < depth + 1; i++) {
             padding.append("\t");
         }
-        description.appendList("\n" + padding.toString(), ",\n" + padding.toString(), "\n", expectedFields);
+        description.appendList("\n" + padding, ",\n" + padding,
+            "\n", expectedFields);
     }
 
     @Override
-    protected boolean matchesSafely(GeneratedMessageV3 actual, Description mismatchDescription) {
+    protected boolean matchesSafely(JsonNode actual, Description mismatchDescription) {
         Map<String, Object> actualFields = asMapOfJsonNameToField(actual);
         for (Matcher<?> expectedField : expectedFields) {
             if (!expectedField.matches(actualFields)) {
@@ -153,12 +160,12 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<GeneratedMessa
         return true;
     }
 
-    private static Map<String, Object> asMapOfJsonNameToField(GeneratedMessageV3 envelope) {
+    private static Map<String, Object> asMapOfJsonNameToField(JsonNode envelope) {
         Map<String, Object> map = new LinkedHashMap<>();
-        envelope.getAllFields()
-                .forEach((fieldDescriptor, value) -> {
-                    String jsonName = fieldDescriptor.getJsonName();
-                    map.put(jsonName, value);
+        envelope.fieldNames()
+                .forEachRemaining(jsonField -> {
+                    JsonNode value = envelope.get(jsonField);
+                    map.put(jsonField, value);
                 });
         return map;
     }

@@ -1,20 +1,19 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.compatibility.matchers.AComparableMessage;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JsonFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.NdjsonToMessageIterable;
-import io.cucumber.messages.internal.com.google.protobuf.GeneratedMessageV3;
+import io.cucumber.messages.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.DeserializationFeature;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.JsonNode;
+import io.cucumber.messages.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +35,8 @@ public class CompatibilityTest {
     @ParameterizedTest
     @MethodSource("io.cucumber.compatibility.TestCase#testCases")
     void produces_expected_output_for(TestCase testCase) throws IOException {
-        Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
+        Path parentDir = Files.createDirectories(Paths.get("target", "messages",
+            testCase.getId()));
         Path outputNdjson = parentDir.resolve("out.ndjson");
         Path outputHtml = parentDir.resolve("out.html");
         Path outputJson = parentDir.resolve("out.json");
@@ -57,11 +57,11 @@ public class CompatibilityTest {
 
         }
 
-        List<Messages.Envelope> expected = readAllMessages(testCase.getExpectedFile());
-        List<Messages.Envelope> actual = readAllMessages(outputNdjson);
+        List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
+        List<JsonNode> actual = readAllMessages(outputNdjson);
 
-        Map<String, List<GeneratedMessageV3>> expectedEnvelopes = openEnvelopes(expected);
-        Map<String, List<GeneratedMessageV3>> actualEnvelopes = openEnvelopes(actual);
+        Map<String, List<JsonNode>> expectedEnvelopes = openEnvelopes(expected);
+        Map<String, List<JsonNode>> actualEnvelopes = openEnvelopes(actual);
 
         // exception: Java step definitions are not in a predictable order
         // because Class#getMethods() does not return a predictable order.
@@ -80,42 +80,48 @@ public class CompatibilityTest {
 
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
             actualEnvelopes,
-            hasEntry(is(messageType), containsInRelativeOrder(aComparableMessage(expectedMessages)))));
+            hasEntry(is(messageType),
+                containsInRelativeOrder(aComparableMessage(expectedMessages)))));
     }
 
-    private static List<Messages.Envelope> readAllMessages(Path output) throws IOException {
-        List<Messages.Envelope> expectedEnvelopes = new ArrayList<>();
-        InputStream input = Files.newInputStream(output);
-        new NdjsonToMessageIterable(input)
-                .forEach(expectedEnvelopes::add);
+    private static List<JsonNode> readAllMessages(Path output) throws IOException {
+        List<JsonNode> expectedEnvelopes = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper()
+                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        Files.readAllLines(output).forEach(s -> {
+            try {
+                expectedEnvelopes.add(mapper.readTree(s));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
         return expectedEnvelopes;
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Map<String, List<T>> openEnvelopes(List<? extends GeneratedMessageV3> actual) {
+    private static <T> Map<String, List<T>> openEnvelopes(List<JsonNode> actual) {
         Map<String, List<T>> map = new LinkedHashMap<>();
-        actual.forEach(envelope -> envelope.getAllFields()
-                .forEach((fieldDescriptor, value) -> {
-                    String jsonName = fieldDescriptor.getJsonName();
-                    map.putIfAbsent(jsonName, new ArrayList<>());
-                    map.get(jsonName).add((T) value);
+        actual.forEach(envelope -> envelope.fieldNames()
+                .forEachRemaining(fieldName -> {
+                    map.putIfAbsent(fieldName, new ArrayList<>());
+                    map.get(fieldName).add((T) envelope.get(fieldName));
                 }));
         return map;
     }
 
-    private void sortStepDefinitions(Map<String, List<GeneratedMessageV3>> envelopes) {
-        Comparator<GeneratedMessageV3> stepDefinitionPatternComparator = (a, b) -> {
-            Messages.StepDefinition sa = (Messages.StepDefinition) a;
-            Messages.StepDefinition sb = (Messages.StepDefinition) b;
-            return sa.getPattern().getSource().compareTo(sb.getPattern().getSource());
-        };
-        List<GeneratedMessageV3> actualStepDefinitions = envelopes.get("stepDefinition");
+    private void sortStepDefinitions(Map<String, List<JsonNode>> envelopes) {
+        Comparator<JsonNode> stepDefinitionPatternComparator = Comparator.comparing(a -> a.get("pattern").asText());
+        List<JsonNode> actualStepDefinitions = envelopes.get("stepDefinition");
         if (actualStepDefinitions != null) {
             actualStepDefinitions.sort(stepDefinitionPatternComparator);
         }
     }
 
-    private static List<Matcher<? super GeneratedMessageV3>> aComparableMessage(List<GeneratedMessageV3> messages) {
+    private static List<Matcher<? super JsonNode>> aComparableMessage(List<JsonNode> messages) {
         return messages.stream()
                 .map(AComparableMessage::new)
                 .collect(Collectors.toList());

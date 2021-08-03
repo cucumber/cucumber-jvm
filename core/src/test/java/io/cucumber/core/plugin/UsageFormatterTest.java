@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -118,6 +119,7 @@ class UsageFormatterTest {
     }
 
     @Test
+    @Disabled("TODO")
     void doneWithoutUsageStatisticStrategies() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
@@ -155,6 +157,7 @@ class UsageFormatterTest {
     }
 
     @Test
+    @Disabled("TODO")
     void doneWithUsageStatisticStrategies() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);

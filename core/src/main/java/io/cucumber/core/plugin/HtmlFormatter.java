@@ -1,7 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.htmlformatter.MessagesToHtmlWriter;
-import io.cucumber.messages.Messages.Envelope;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
@@ -25,7 +25,7 @@ public final class HtmlFormatter implements ConcurrentEventListener {
     private void write(Envelope event) {
         // Workaround to reduce the size of the report
         // See: https://github.com/cucumber/cucumber/issues/1232
-        if (event.hasStepDefinition() || event.hasHook() || event.hasParameterType()) {
+        if (event.getStepDefinition() != null || event.getHook() != null || event.getParameterType() != null) {
             return;
         }
 
@@ -37,7 +37,7 @@ public final class HtmlFormatter implements ConcurrentEventListener {
 
         // TODO: Plugins should implement the closable interface
         // and be closed by Cucumber
-        if (event.hasTestRunFinished()) {
+        if (event.getTestRunFinished() != null) {
             try {
                 writer.close();
             } catch (IOException e) {

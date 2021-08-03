@@ -7,9 +7,9 @@ import java.util.Optional;
 
 final class GherkinMessagesScenario implements Node.Scenario {
 
-    private final io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario scenario;
+    private final io.cucumber.messages.types.Scenario scenario;
 
-    GherkinMessagesScenario(io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario scenario) {
+    GherkinMessagesScenario(io.cucumber.messages.types.Scenario scenario) {
         this.scenario = scenario;
     }
 

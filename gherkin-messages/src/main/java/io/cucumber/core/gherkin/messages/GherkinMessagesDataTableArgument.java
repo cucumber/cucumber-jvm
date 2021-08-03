@@ -1,7 +1,7 @@
 package io.cucumber.core.gherkin.messages;
 
 import io.cucumber.core.gherkin.DataTableArgument;
-import io.cucumber.messages.Messages.PickleStepArgument.PickleTable;
+import io.cucumber.messages.types.PickleTable;
 
 import java.util.AbstractList;
 import java.util.List;
@@ -39,19 +39,19 @@ final class GherkinMessagesDataTableArgument implements DataTableArgument {
             return new AbstractList<String>() {
                 @Override
                 public String get(int column) {
-                    return table.getRows(row).getCells(column).getValue();
+                    return table.getRows().get(row).getCells().get(column).getValue();
                 }
 
                 @Override
                 public int size() {
-                    return table.getRows(row).getCellsCount();
+                    return table.getRows().get(row).getCells().size();
                 }
             };
         }
 
         @Override
         public int size() {
-            return table.getRowsCount();
+            return table.getRows().size();
         }
 
     }

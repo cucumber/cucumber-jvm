@@ -20,7 +20,7 @@ public class DataTableSteps {
 
     @DataTableType
     public Author singleAuthorTransformer(DataTable table) {
-        return authorEntryTransformer(table.asMaps().get(0));
+        return authorEntryTransformer(table.entries().get(0));
     }
 
     @DataTableType
