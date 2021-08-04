@@ -12,10 +12,11 @@ import org.apiguardian.api.API;
 public interface CucumberPropertiesProvider {
 
     /**
-     * Returns a configuration property for the given key, or null if there is no such property.
+     * Returns a configuration property for the given key, or null if there is
+     * no such property.
      *
-     * @param key the property name
-     * @return the property value or null
+     * @param  key the property name
+     * @return     the property value or null
      */
     String get(String key);
 }
