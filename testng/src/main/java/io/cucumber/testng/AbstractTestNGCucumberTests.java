@@ -1,6 +1,9 @@
 package io.cucumber.testng;
 
+import java.util.Map;
+
 import org.apiguardian.api.API;
+import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -18,10 +21,12 @@ public abstract class AbstractTestNGCucumberTests {
 
     private TestNGCucumberRunner testNGCucumberRunner;
 
-    @BeforeClass(alwaysRun = true)
-    public void setUpClass() {
-        testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
-    }
+	@BeforeClass(alwaysRun = true)
+	public void setUpClass(ITestContext context) {
+		// Reading the parameters from TestNG.xml and adds to the Runner as additional parameters
+		Map<String, String> parameters = context.getCurrentXmlTest().getAllParameters();
+		testNGCucumberRunner = new TestNGCucumberRunner(this.getClass(), parameters);
+	}
 
     @SuppressWarnings("unused")
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "scenarios")
