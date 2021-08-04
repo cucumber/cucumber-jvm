@@ -28,10 +28,7 @@ import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -65,17 +62,18 @@ public final class TestNGCucumberRunner {
      *              {@link org.testng.annotations.Test} annotations
      */
     public TestNGCucumberRunner(Class<?> clazz) {
-    	this(clazz, new HashMap<String,String>());
+        this(clazz, key -> null);
     }
-    
-    /** 
+
+    /**
      * Bootstrap the cucumber runtime
      *
-     * @param clazz Which has the {@link CucumberOptions} and
-     *              {@link org.testng.annotations.Test} annotations
-     * @param additionalOptions {@link java.util.Map} containing {@link CucumberOptions}
+     * @param clazz      Which has the {@link CucumberOptions} and
+     *                   {@link org.testng.annotations.Test} annotations
+     * @param properties additional properties (e.g. from {@code testng.xml}).
      */
-    public TestNGCucumberRunner(Class<?> clazz, Map<String, String> additionalOptions) {
+    @API(status = API.Status.EXPERIMENTAL, since = "6.11")
+    public TestNGCucumberRunner(Class<?> clazz, CucumberPropertiesProvider properties) {
         // Parse the options early to provide fast feedback about invalid
         // options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
@@ -86,11 +84,11 @@ public final class TestNGCucumberRunner {
                 .withOptionsProvider(new TestNGCucumberOptionsProvider())
                 .parse(clazz)
                 .build(propertiesFileOptions);
-        
-		RuntimeOptions otherOptions = new CucumberPropertiesParser()
-				.parse(additionalOptions)
-				.build(annotationOptions);
-		
+
+        RuntimeOptions otherOptions = new CucumberPropertiesParser()
+                .parse(properties::get)
+                .build(annotationOptions);
+
         RuntimeOptions environmentOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromEnvironment())
                 .build(otherOptions);
@@ -128,7 +126,7 @@ public final class TestNGCucumberRunner {
         context.runBeforeAllHooks();
         features.forEach(context::beforeFeature);
     }
-    
+
     public void runScenario(io.cucumber.testng.Pickle pickle) {
         context.runTestCase(runner -> {
             try (TestCaseResultObserver observer = observe(runner.getBus())) {
