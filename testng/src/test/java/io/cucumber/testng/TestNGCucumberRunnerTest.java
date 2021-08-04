@@ -80,19 +80,17 @@ public class TestNGCucumberRunnerTest {
     public void runWithCustomeOptions() {
 
         Map<String, String> customOptions = new HashMap<String, String>();
-        customOptions.put(Constants.PLUGIN_PROPERTY_NAME, "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin");
-        testNGCucumberRunner = new TestNGCucumberRunner(RunWithCustomOptions.class);
+        customOptions.put(Constants.FEATURES_PROPERTY_NAME, "classpath:io/cucumber/error/parse-error.feature");
+        CucumberPropertiesProvider cucumberProperties = customOptions::get;
 
-        testNGCucumberRunner.provideScenarios();
-        testNGCucumberRunner.provideScenarios();
-        testNGCucumberRunner.finish();
-
-        assertEquals(1, events.stream()
-                .map(Object::getClass)
-                .filter(TestRunStarted.class::isAssignableFrom).count());
-        assertEquals(1, events.stream()
-                .map(Object::getClass)
-                .filter(TestRunFinished.class::isAssignableFrom).count());
+        try {
+            testNGCucumberRunner = new TestNGCucumberRunner(RunWithCustomOptions.class, cucumberProperties);
+            Assert.fail("CucumberException not thrown");
+        } catch (FeatureParserException e) {
+            assertEquals(e.getMessage(),
+                "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature\n" +
+                        "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'");
+        }
     }
 
     @CucumberOptions(
