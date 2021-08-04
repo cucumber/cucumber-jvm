@@ -38,6 +38,10 @@ import static java.util.stream.Collectors.toList;
 public final class CucumberPropertiesParser {
 
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
+        return parse(properties::get);
+    }
+
+    public RuntimeOptionsBuilder parse(CucumberPropertiesProvider properties) {
         RuntimeOptionsBuilder builder = new RuntimeOptionsBuilder();
 
         parse(properties,
@@ -129,7 +133,7 @@ public final class CucumberPropertiesParser {
     }
 
     private <T> void parse(
-            Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter
+            CucumberPropertiesProvider properties, String propertyName, Function<String, T> parser, Consumer<T> setter
     ) {
         parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
     }
@@ -142,7 +146,7 @@ public final class CucumberPropertiesParser {
     }
 
     private <T> void parseAll(
-            Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser,
+            CucumberPropertiesProvider properties, String propertyName, Function<String, Collection<T>> parser,
             Consumer<T> setter
     ) {
         String property = properties.get(propertyName);
