@@ -89,7 +89,7 @@ If you need different [cucumber options](https://github.com/cucumber/cucumber-jv
 ```xml
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Test Suite">
-	<parameter name="cucumber.filter.tags" value="CustomTags.txt" />
+	<parameter name="cucumber.filter.tags" value="@WebTest" />
 	
 	<test name="Load Operation Apps" preserve-order="true">
 		<parameter name="cucumber.features" value="test/feature/loadOperationApps"/>
