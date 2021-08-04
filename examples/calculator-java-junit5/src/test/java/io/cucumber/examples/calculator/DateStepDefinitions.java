@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.util.Date;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,6 +27,20 @@ public class DateStepDefinitions {
     @Then("^the result should be (yes|no)$")
     public void the_result_should_be(String expectedResult) {
         assertEquals(expectedResult, result);
+    }
+
+    @When("they have submitted the following grades")
+    public void theyHaveSubmittedTheFollowingGrades(Map<String, String> reportDataMap) {
+
+        String report;
+
+        reportDataMap.forEach((subject, grade) ->
+
+                report = String.join(subject, ":", grade));
+
+        sendReportGrades(report);
+
+        ); //Unexpected token error here in IntelliJ
     }
 
 }

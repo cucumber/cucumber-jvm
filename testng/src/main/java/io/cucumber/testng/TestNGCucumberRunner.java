@@ -43,6 +43,7 @@ import static java.util.stream.Collectors.toList;
  * <ol>
  * <li>Properties from {@link System#getProperties()}</li>
  * <li>Properties from in {@link System#getenv()}</li>
+ * <li>Properties properties from {@code testng.xml}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
  * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
