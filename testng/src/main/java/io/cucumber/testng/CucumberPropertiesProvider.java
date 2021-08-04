@@ -8,6 +8,7 @@ import org.apiguardian.api.API;
  * @see io.cucumber.core.options.Constants
  */
 @API(status = API.Status.EXPERIMENTAL, since = "6.11")
+@FunctionalInterface
 public interface CucumberPropertiesProvider {
 
     /**
