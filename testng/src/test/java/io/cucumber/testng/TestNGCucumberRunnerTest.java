@@ -1,20 +1,24 @@
 package io.cucumber.testng;
 
+import static io.cucumber.testng.TestNGCucumberRunnerTest.Plugin.events;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import io.cucumber.core.gherkin.FeatureParserException;
+import io.cucumber.core.options.Constants;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static io.cucumber.testng.TestNGCucumberRunnerTest.Plugin.events;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertThrows;
 
 public class TestNGCucumberRunnerTest {
 
@@ -72,6 +76,25 @@ public class TestNGCucumberRunnerTest {
                 .map(Object::getClass)
                 .filter(TestRunFinished.class::isAssignableFrom).count());
     }
+    
+    @Test
+    public void runWithCustomeOptions() {
+    	
+    	Map<String, String> customOptions = new HashMap<String, String>();
+    	customOptions.put(Constants.PLUGIN_PROPERTY_NAME, "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin");
+        testNGCucumberRunner = new TestNGCucumberRunner(RunWithCustomOptions.class);
+
+        testNGCucumberRunner.provideScenarios();
+        testNGCucumberRunner.provideScenarios();
+        testNGCucumberRunner.finish();
+
+        assertEquals(1, events.stream()
+                .map(Object::getClass)
+                .filter(TestRunStarted.class::isAssignableFrom).count());
+        assertEquals(1, events.stream()
+                .map(Object::getClass)
+                .filter(TestRunFinished.class::isAssignableFrom).count());
+    }
 
     @CucumberOptions(
             features = "classpath:io/cucumber/undefined/undefined_steps.feature")
@@ -86,6 +109,10 @@ public class TestNGCucumberRunnerTest {
 
     @CucumberOptions(plugin = "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin")
     static class RunCucumberTestWithPlugin extends AbstractTestNGCucumberTests {
+
+    }
+    
+    static class RunWithCustomOptions extends AbstractTestNGCucumberTests {
 
     }
 
