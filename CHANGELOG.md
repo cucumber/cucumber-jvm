@@ -8,15 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [6.11.0] (2021-08-05)
+
+### Added
 * [TestNG] Add `CucumberPropertiesProvider` to allow properties from `testng.xml` to be used ([#2351](https://github.com/cucumber/cucumber-jvm/pull/2351) Gayan Sandaruwan)
 
 ### Changed
 * [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.2
 * [Core] Update dependency org.apiguardian:apiguardian-api to v1.1.2
-
-### Deprecated
-
-### Removed
 
 ### Fixed
  * [Core] Fixed reports banner to point to [new docs](https://cucumber.io/docs/cucumber/environment-variables/) about environment variables
@@ -1633,7 +1641,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...main
+[6.11.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...v6.11.0
 [6.10.4]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.3...v6.10.4
 [6.10.3]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...v6.10.3
 [6.10.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...v6.10.2
