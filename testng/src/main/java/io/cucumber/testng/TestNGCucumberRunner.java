@@ -86,13 +86,13 @@ public final class TestNGCucumberRunner {
                 .parse(clazz)
                 .build(propertiesFileOptions);
 
-        RuntimeOptions otherOptions = new CucumberPropertiesParser()
+        RuntimeOptions testngPropertiesOptions = new CucumberPropertiesParser()
                 .parse(properties::get)
                 .build(annotationOptions);
 
         RuntimeOptions environmentOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromEnvironment())
-                .build(otherOptions);
+                .build(testngPropertiesOptions);
 
         RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromSystemProperties())

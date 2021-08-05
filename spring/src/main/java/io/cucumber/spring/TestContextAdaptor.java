@@ -113,7 +113,6 @@ abstract class TestContextAdaptor {
         }
     }
 
-
     private void notifyTestContextManagerAboutAfterTestMethod() {
         try {
             CucumberTestContext.getInstance().start();
@@ -130,7 +129,7 @@ abstract class TestContextAdaptor {
         return applicationContext.getBean(type);
     }
 
-    public void cucumberDoesNotHaveASingleTestMethod(){
+    public void cucumberDoesNotHaveASingleTestMethod() {
 
     }
 }
