@@ -20,7 +20,7 @@ public abstract class AbstractTestNGCucumberTests {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
-    public void setUpClass(ITestContext context) {
+    public void setUpClass() {
         testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
