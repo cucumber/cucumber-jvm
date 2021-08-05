@@ -1,7 +1,6 @@
 package io.cucumber.testng;
 
 import org.apiguardian.api.API;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
