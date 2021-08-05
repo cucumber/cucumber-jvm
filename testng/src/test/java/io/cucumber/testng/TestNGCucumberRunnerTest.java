@@ -7,18 +7,27 @@ import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.testng.TestNGCucumberRunnerTest.Plugin.events;
+import static java.util.Collections.singletonMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 public class TestNGCucumberRunnerTest {
 
     private TestNGCucumberRunner testNGCucumberRunner;
+
+    @BeforeMethod
+    public void setup() {
+        events.clear();
+    }
 
     @Test
     public void runCucumberTest() {
@@ -60,6 +69,25 @@ public class TestNGCucumberRunnerTest {
     @Test
     public void provideScenariosIsIdempotent() {
         testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTestWithPlugin.class);
+
+        testNGCucumberRunner.provideScenarios();
+        testNGCucumberRunner.provideScenarios();
+        testNGCucumberRunner.finish();
+
+        assertEquals(1, events.stream()
+                .map(Object::getClass)
+                .filter(TestRunStarted.class::isAssignableFrom).count());
+        assertEquals(1, events.stream()
+                .map(Object::getClass)
+                .filter(TestRunFinished.class::isAssignableFrom).count());
+    }
+
+    @Test
+    public void runWithCustomOptions() {
+        Map<String, String> properties = singletonMap(
+            PLUGIN_PROPERTY_NAME, "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin");
+
+        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class, properties::get);
 
         testNGCucumberRunner.provideScenarios();
         testNGCucumberRunner.provideScenarios();

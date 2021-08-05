@@ -41,6 +41,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
  * [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
 
+## [6.11.0] (2021-08-05)
+
+### Added
+* [TestNG] Add `CucumberPropertiesProvider` to allow properties from `testng.xml` to be used ([#2351](https://github.com/cucumber/cucumber-jvm/pull/2351) Gayan Sandaruwan)
+
+### Changed
+* [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.2
+* [Core] Update dependency org.apiguardian:apiguardian-api to v1.1.2
+
+### Fixed
+ * [Core] Fixed reports banner to point to [new docs](https://cucumber.io/docs/cucumber/environment-variables/) about environment variables
+ * [Core] Remove `--add-plugin` alternate name from USAGE.txt ([#2319](https://github.com/cucumber/cucumber-jvm/pull/2319) ebreck)
+
 ## [6.10.4] (2021-05-13)
 
 ### Fixed
@@ -50,7 +63,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [6.10.3] (2021-04-14)
 
 ### Fixed
- * [Gherkin Messages] Rules can be tagged ([cucumber/#1356](https://github.com/cucumber/cucumber/pull/1356) Gáspár Nagy, Seb Rose, Björn Rasmusson, Wannes Fransen) 
+ * [Gherkin Messages] Rules can be tagged ([cucumber/#1356](https://github.com/cucumber/cucumber/pull/1356) Gáspár Nagy, Seb Rose, Björn Rasmusson, Wannes Fransen)
  * [Java8] `cucumber-java8` works on Java 12+ ([jhalterman/typetools/#66](https://github.com/jhalterman/typetools/pull/66) Nuclearfarts)
 
 ## [6.10.2] (2021-03-15)
@@ -70,9 +83,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
  * Upgraded various internal dependencies
-    - create-meta v3.0.0 
-    - gherkin v17.0.1 
-    - messages v14.0.1 
+    - create-meta v3.0.0
+    - gherkin v17.0.1
+    - messages v14.0.1
     - html-formatter v12.0.0
 
 ### Deprecated
@@ -85,7 +98,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Core] Log warnings when classes or resource could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
  * [Core] Improve undefined step reporting ([#2208](https://github.com/cucumber/cucumber-jvm/issues/2208) M.P. Korstanje)
  * [Core] Log warnings when resources and classes could not be loaded ([#2235](https://github.com/cucumber/cucumber-jvm/issues/2235) M.P. Korstanje)
-    
+
 ## [6.9.1] (2020-12-14)
 
 ### Fixed
@@ -108,8 +121,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  * [Core] Handle null values in ci-dict [cucumber/#1228](https://github.com/cucumber/cucumber/issues/1228)
 
 ### Security
- * [JUnit] Update dependency junit:junit to v4.13.1. 
-   * See the [published security advisory](https://github.com/junit-team/junit4/security/advisories/GHSA-269g-pwp5-87pp) for details. 
+ * [JUnit] Update dependency junit:junit to v4.13.1.
+   * See the [published security advisory](https://github.com/junit-team/junit4/security/advisories/GHSA-269g-pwp5-87pp) for details.
 
 ## [6.8.1] (2020-10-07)
 
@@ -1652,7 +1665,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...main
+[6.11.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...v6.11.0
 [6.10.4]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.3...v6.10.4
 [6.10.3]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...v6.10.3
 [6.10.2]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.1...v6.10.2

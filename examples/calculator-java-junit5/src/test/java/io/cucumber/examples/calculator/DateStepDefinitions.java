@@ -27,5 +27,4 @@ public class DateStepDefinitions {
     public void the_result_should_be(String expectedResult) {
         assertEquals(expectedResult, result);
     }
-
 }
