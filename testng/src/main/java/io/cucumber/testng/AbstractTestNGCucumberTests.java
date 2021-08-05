@@ -22,11 +22,7 @@ public abstract class AbstractTestNGCucumberTests {
 
     @BeforeClass(alwaysRun = true)
     public void setUpClass(ITestContext context) {
-        // Reading the parameters from TestNG.xml and adds to the Runner as
-        // additional parameters
-        XmlTest currentXmlTest = context.getCurrentXmlTest();
-        CucumberPropertiesProvider properties = currentXmlTest::getParameter;
-        testNGCucumberRunner = new TestNGCucumberRunner(this.getClass(), properties);
+        testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
     }
 
     @SuppressWarnings("unused")
