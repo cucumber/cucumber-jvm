@@ -6,7 +6,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.testng.xml.XmlTest;
 
 /**
  * Abstract TestNG Cucumber Test
