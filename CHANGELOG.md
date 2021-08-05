@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
      - Replace `DataTable.asList()` with -> `DataTable.values()`
      - Replace `DataTable.asLists()` with -> `DataTable.cells()`
      - Replace `DataTable.asMaps()` with -> `DataTable.entries()`
+ * [TestNG] Automatically pick up properties from `testng.xml` ([#2354](https://github.com/cucumber/cucumber-jvm/pull/2354) M.P. Korstanje, Gayan Sandaruwan)
 
 ### Deprecated
 
