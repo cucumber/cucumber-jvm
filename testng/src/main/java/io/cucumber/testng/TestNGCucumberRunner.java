@@ -43,6 +43,7 @@ import static java.util.stream.Collectors.toList;
  * <ol>
  * <li>Properties from {@link System#getProperties()}</li>
  * <li>Properties from in {@link System#getenv()}</li>
+ * <li>Properties properties from {@code testng.xml}</li>
  * <li>Annotating the runner class with {@link CucumberOptions}</li>
  * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
@@ -62,6 +63,18 @@ public final class TestNGCucumberRunner {
      *              {@link org.testng.annotations.Test} annotations
      */
     public TestNGCucumberRunner(Class<?> clazz) {
+        this(clazz, key -> null);
+    }
+
+    /**
+     * Bootstrap the cucumber runtime
+     *
+     * @param clazz      Which has the {@link CucumberOptions} and
+     *                   {@link org.testng.annotations.Test} annotations
+     * @param properties additional properties (e.g. from {@code testng.xml}).
+     */
+    @API(status = API.Status.EXPERIMENTAL, since = "6.11")
+    public TestNGCucumberRunner(Class<?> clazz, CucumberPropertiesProvider properties) {
         // Parse the options early to provide fast feedback about invalid
         // options
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
@@ -73,9 +86,13 @@ public final class TestNGCucumberRunner {
                 .parse(clazz)
                 .build(propertiesFileOptions);
 
+        RuntimeOptions testngPropertiesOptions = new CucumberPropertiesParser()
+                .parse(properties::get)
+                .build(annotationOptions);
+
         RuntimeOptions environmentOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromEnvironment())
-                .build(annotationOptions);
+                .build(testngPropertiesOptions);
 
         RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromSystemProperties())

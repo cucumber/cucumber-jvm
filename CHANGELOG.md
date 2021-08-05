@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+* [TestNG] Add `CucumberPropertiesProvider` to allow properties from `testng.xml` to be used ([#2351](https://github.com/cucumber/cucumber-jvm/pull/2351) Gayan Sandaruwan)
 
 ### Changed
 * [JUnit Platform] Update dependency org.junit.platform:junit-platform-engine to v1.7.2
