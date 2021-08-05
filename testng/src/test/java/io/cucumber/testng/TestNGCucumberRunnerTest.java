@@ -117,10 +117,6 @@ public class TestNGCucumberRunnerTest {
 
     }
 
-    static class RunWithCustomOptions extends AbstractTestNGCucumberTests {
-
-    }
-
     public static class Plugin implements ConcurrentEventListener {
 
         static List<Event> events = new ArrayList<>();
