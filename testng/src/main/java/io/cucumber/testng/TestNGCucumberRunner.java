@@ -73,7 +73,7 @@ public final class TestNGCucumberRunner {
      *                   {@link org.testng.annotations.Test} annotations
      * @param properties additional properties (e.g. from {@code testng.xml}).
      */
-    @API(status = API.Status.EXPERIMENTAL, since = "6.11")
+    @API(status = API.Status.STABLE, since = "6.11")
     public TestNGCucumberRunner(Class<?> clazz, CucumberPropertiesProvider properties) {
         // Parse the options early to provide fast feedback about invalid
         // options
