@@ -50,8 +50,8 @@ public class TestNGCucumberRunnerTest {
         PickleWrapper wrapper = (PickleWrapper) scenario[0];
 
         assertThrows(
-                UndefinedStepException.class,
-                () -> testNGCucumberRunner.runScenario(wrapper.getPickle()));
+            UndefinedStepException.class,
+            () -> testNGCucumberRunner.runScenario(wrapper.getPickle()));
     }
 
     @Test
@@ -61,8 +61,8 @@ public class TestNGCucumberRunnerTest {
             Assert.fail("CucumberException not thrown");
         } catch (FeatureParserException e) {
             assertEquals(e.getMessage(),
-                    "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature\n" +
-                            "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'");
+                "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature\n" +
+                        "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'");
         }
     }
 
@@ -85,7 +85,7 @@ public class TestNGCucumberRunnerTest {
     @Test
     public void runWithCustomOptions() {
         Map<String, String> properties = singletonMap(
-                PLUGIN_PROPERTY_NAME, "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin");
+            PLUGIN_PROPERTY_NAME, "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin");
 
         testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class, properties::get);
 
