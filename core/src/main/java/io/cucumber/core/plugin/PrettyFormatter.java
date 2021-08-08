@@ -1,6 +1,9 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.DataTableArgument;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.Argument;
@@ -8,6 +11,7 @@ import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -128,6 +132,21 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                 formats.get(status + "_arg"), testStep.getDefinitionArgument());
             String locationIndent = calculateLocationIndent(event.getTestCase(), formatPlainStep(keyword, stepText));
             out.println(STEP_INDENT + formattedStepText + locationIndent + formatLocation(testStep.getCodeLocation()));
+
+            StepArgument stepArgument = testStep.getStep().getArgument();
+            if (DataTableArgument.class.isInstance(stepArgument)) {
+                DataTableFormatter tableFormatter = DataTableFormatter
+                        .builder()
+                        .prefixRow(STEP_SCENARIO_INDENT)
+                        .escapeDelimiters(false)
+                        .build();
+                DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
+                try {
+                    tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
+                } catch (IOException e) {
+                    throw new CucumberException(e);
+                }
+            }
         }
     }
 

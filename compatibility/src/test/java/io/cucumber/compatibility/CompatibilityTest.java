@@ -114,7 +114,8 @@ public class CompatibilityTest {
     }
 
     private void sortStepDefinitions(Map<String, List<JsonNode>> envelopes) {
-        Comparator<JsonNode> stepDefinitionPatternComparator = Comparator.comparing(a -> a.get("pattern").asText());
+        Comparator<JsonNode> stepDefinitionPatternComparator = Comparator
+                .comparing(a -> a.get("pattern").get("source").asText());
         List<JsonNode> actualStepDefinitions = envelopes.get("stepDefinition");
         if (actualStepDefinitions != null) {
             actualStepDefinitions.sort(stepDefinitionPatternComparator);

@@ -15,6 +15,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
+import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -172,6 +173,75 @@ class PrettyFormatterTest {
                 "@feature_tag @scenario_outline_tag @examples_tag\n" +
                 "Scenario Outline: scenario outline name # path/test.feature:12\n" +
                 "  Then second step                      # path/step_definitions.java:11\n"));
+    }
+
+    @Test
+    void should_print_table() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test Scenario\n" +
+                "    Given first step\n" +
+                "      | key1     | key2     |\n" +
+                "      | value1   | value2   |\n" +
+                "      | another1 | another2 |\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", "path/step_definitions.java:7", DataTable.class)))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("" +
+
+                "\n" +
+                "Scenario: Test Scenario # path/test.feature:2\n" +
+                "  Given first step      # path/step_definitions.java:7\n" +
+                "    | key1     | key2     |\n" +
+                "    | value1   | value2   |\n" +
+                "    | another1 | another2 |\n"));
+    }
+
+    @Test
+    void should_print_multiple_tables() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test Scenario\n" +
+                "    Given first step\n" +
+                "      | key1     | key2     |\n" +
+                "      | value1   | value2   |\n" +
+                "      | another1 | another2 |\n" +
+                "    Given second step\n" +
+                "      | key3     | key4     |\n" +
+                "      | value3   | value4   |\n" +
+                "      | another3 | another4 |\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", "path/step_definitions.java:7", DataTable.class),
+                    new StubStepDefinition("second step", "path/step_definitions.java:15", DataTable.class)))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("" +
+
+                "\n" +
+                "Scenario: Test Scenario # path/test.feature:2\n" +
+                "  Given first step      # path/step_definitions.java:7\n" +
+                "    | key1     | key2     |\n" +
+                "    | value1   | value2   |\n" +
+                "    | another1 | another2 |\n" +
+                "  Given second step     # path/step_definitions.java:15\n" +
+                "    | key3     | key4     |\n" +
+                "    | value3   | value4   |\n" +
+                "    | another3 | another4 |\n"));
     }
 
     @Test
