@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -43,8 +42,6 @@ class RunnerTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-    private final TypeRegistryConfigurer typeRegistryConfigurer = typeRegistry -> {
-    };
 
     @Test
     void hooks_execute_inside_world_and_around_world() {
@@ -65,7 +62,7 @@ class RunnerTest {
             return null;
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
-        Runner runner = new Runner(bus, singletonList(backend), objectFactory, typeRegistryConfigurer, runtimeOptions);
+        Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runBeforeAllHooks();
         runner.runPickle(createPicklesWithSteps());
         runner.runAfterAllHooks();
@@ -313,7 +310,7 @@ class RunnerTest {
         Backend backend = mock(Backend.class);
         when(backend.getSnippet()).thenReturn(new TestSnippet());
         ObjectFactory objectFactory = mock(ObjectFactory.class);
-        Runner runner = new Runner(bus, singletonList(backend), objectFactory, typeRegistryConfigurer, runtimeOptions);
+        Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runPickle(createPicklesWithSteps());
         verify(backend).getSnippet();
     }

@@ -27,10 +27,7 @@ class SingletonRunnerSupplierTest {
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(getClass()::getClassLoader, objectFactory);
         EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-            classLoader, runtimeOptions);
-        runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory,
-            typeRegistryConfigurerSupplier);
+        runnerSupplier = new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
     }
 
     @Test

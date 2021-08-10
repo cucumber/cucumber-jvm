@@ -20,11 +20,9 @@ import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
@@ -114,10 +112,8 @@ public final class TestNGCucumberRunner {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-            classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
-            objectFactorySupplier, typeRegistryConfigurerSupplier);
+            objectFactorySupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
 
         // Start test execution now.

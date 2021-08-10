@@ -192,14 +192,9 @@ public final class Runtime {
                 plugins.setEventBusOnEventListenerPlugins(eventBus);
             }
 
-            final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-                classLoader, runtimeOptions);
-
             final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
-                    ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier,
-                        typeRegistryConfigurerSupplier)
-                    : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier,
-                        typeRegistryConfigurerSupplier);
+                    ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier)
+                    : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier);
 
             final ExecutorService executor = runtimeOptions.isMultiThreaded()
                     ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())

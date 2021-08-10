@@ -20,11 +20,9 @@ import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -166,10 +164,8 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-            classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
-            objectFactorySupplier, typeRegistryConfigurerSupplier);
+            objectFactorySupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         Predicate<Pickle> filters = new Filters(runtimeOptions);
 
