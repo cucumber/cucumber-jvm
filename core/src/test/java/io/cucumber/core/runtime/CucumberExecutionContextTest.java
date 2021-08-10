@@ -38,10 +38,8 @@ class CucumberExecutionContextTest {
         options);
     private final ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(
         objectFactoryServiceLoader);
-    private final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-        classLoader, options);
     private final RunnerSupplier runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier,
-        objectFactorySupplier, typeRegistryConfigurerSupplier);
+        objectFactorySupplier);
     private final CucumberExecutionContext context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
 
     @Test

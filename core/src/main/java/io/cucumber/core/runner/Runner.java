@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
@@ -40,19 +39,16 @@ public final class Runner {
     private final Collection<? extends Backend> backends;
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
-    private final TypeRegistryConfigurer typeRegistryConfigurer;
     private List<SnippetGenerator> snippetGenerators;
 
     public Runner(
-            EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory,
-            TypeRegistryConfigurer typeRegistryConfigurer, Options runnerOptions
+            EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, Options runnerOptions
     ) {
         this.bus = bus;
         this.runnerOptions = runnerOptions;
         this.backends = backends;
         this.glue = new CachingGlue(bus);
         this.objectFactory = objectFactory;
-        this.typeRegistryConfigurer = typeRegistryConfigurer;
         List<URI> gluePaths = runnerOptions.getGlue();
         log.debug(() -> "Loading glue from " + gluePaths);
         for (Backend backend : backends) {
@@ -84,13 +80,9 @@ public final class Runner {
     }
 
     private StepTypeRegistry createTypeRegistryForPickle(Pickle pickle) {
-        Locale locale = typeRegistryConfigurer.locale();
-        if (locale == null) {
-            locale = new Locale(pickle.getLanguage());
-        }
-        StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(locale);
-        typeRegistryConfigurer.configureTypeRegistry(stepTypeRegistry);
-        return stepTypeRegistry;
+        String language = pickle.getLanguage();
+        Locale locale = new Locale(language);
+        return new StepTypeRegistry(locale);
     }
 
     public void runBeforeAllHooks() {
