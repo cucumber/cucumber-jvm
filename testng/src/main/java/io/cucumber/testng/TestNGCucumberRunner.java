@@ -21,6 +21,7 @@ import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
+import io.cucumber.core.runtime.SynchronizedEventBus;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -33,6 +34,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.testng.TestCaseResultObserver.observe;
 import static java.util.stream.Collectors.toList;
 
@@ -99,7 +101,7 @@ public final class TestNGCucumberRunner {
                 .enablePublishPlugin()
                 .build(environmentOptions);
 
-        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeatureParser parser = new FeatureParser(bus::generateId);
