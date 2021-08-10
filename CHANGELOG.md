@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [Core] Synchronize event bus before use ([#2358](https://github.com/cucumber/cucumber-jvm/pull/2358)) M.P. Korstanje) 
 
 ## [6.11.0] (2021-08-05)
 

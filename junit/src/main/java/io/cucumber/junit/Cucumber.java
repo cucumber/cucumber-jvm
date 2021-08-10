@@ -21,6 +21,7 @@ import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
+import io.cucumber.core.runtime.SynchronizedEventBus;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -44,6 +45,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -148,7 +150,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 .parse(CucumberProperties.fromSystemProperties())
                 .build(junitEnvironmentOptions);
 
-        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        this.bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         // Parse the features early. Don't proceed when there are lexer errors
         FeatureParser parser = new FeatureParser(bus::generateId);
