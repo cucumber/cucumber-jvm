@@ -18,7 +18,7 @@ Cucumber-JVM also integrates with all the popular
 
 ## Getting started
  * [Installation](https://cucumber.io/docs/installation/java/)
- * [Documentation](https://cucumber.io/docs)
+ * [Documentation](https://cucumber.io/docs/cucumber/)
  * [Hello World project](https://github.com/cucumber/cucumber-java-skeleton)
 
 ## Questions, Problems, Help needed?
