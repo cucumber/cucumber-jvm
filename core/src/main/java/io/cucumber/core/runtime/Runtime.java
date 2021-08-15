@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
@@ -186,6 +187,9 @@ public final class Runtime {
             }
             final ExitStatus exitStatus = new ExitStatus(runtimeOptions);
             plugins.addPlugin(exitStatus);
+
+            final EventBus eventBus = synchronize(this.eventBus);
+
             if (runtimeOptions.isMultiThreaded()) {
                 plugins.setSerialEventBusOnEventListenerPlugins(eventBus);
             } else {
