@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 * [Java] Added `BeforeAll` and `AfterAll` hooks ([cucumber/#1876](https://github.com/cucumber/cucumber/pull/1876) M.P. Korstanje)
+* [JUnit Platform] Optionally use long names
+    - Adds `cucumber.junit-platform.naming-strategy=long` ([#2361](https://github.com/cucumber/cucumber-jvm/pull/2361) M.P. Korstanje)
 
 ### Changed
 * [Core] Updated Cucumber Expressions to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)

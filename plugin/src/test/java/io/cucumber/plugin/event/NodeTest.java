@@ -32,6 +32,11 @@ class NodeTest {
         public String toString() {
             return "Example #1";
         }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
+        }
     };
 
     private final Node.Example example2 = new Node.Example() {
@@ -54,6 +59,11 @@ class NodeTest {
         public String toString() {
             return "Example #2";
         }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
+        }
     };
     private final Node.Example example3 = new Node.Example() {
         @Override
@@ -74,6 +84,11 @@ class NodeTest {
         @Override
         public String toString() {
             return "Example #3";
+        }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
         }
     };
 
@@ -96,6 +111,11 @@ class NodeTest {
         @Override
         public String toString() {
             return "Example #4";
+        }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
         }
     };
 
@@ -125,6 +145,11 @@ class NodeTest {
         public String toString() {
             return "Examples A";
         }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
+        }
     };
     private final Node.Examples examplesB = new Node.Examples() {
         @Override
@@ -145,12 +170,16 @@ class NodeTest {
         @Override
         public Optional<String> getName() {
             return Optional.of(toString());
-
         }
 
         @Override
         public String toString() {
             return "Examples B";
+        }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
         }
     };
 
@@ -173,12 +202,16 @@ class NodeTest {
         @Override
         public Optional<String> getName() {
             return Optional.of(toString());
-
         }
 
         @Override
         public String toString() {
             return "Empty Examples A";
+        }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
         }
     };
 
@@ -201,12 +234,16 @@ class NodeTest {
         @Override
         public Optional<String> getName() {
             return Optional.of(toString());
-
         }
 
         @Override
         public String toString() {
             return "Empty Examples B";
+        }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
         }
     };
 
@@ -229,12 +266,16 @@ class NodeTest {
         @Override
         public Optional<String> getName() {
             return Optional.of(toString());
-
         }
 
         @Override
         public String toString() {
             return "Outline";
+        }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
         }
     };
 
@@ -257,12 +298,16 @@ class NodeTest {
         @Override
         public Optional<String> getName() {
             return Optional.of(toString());
-
         }
 
         @Override
         public String toString() {
             return "Empty Outline";
+        }
+
+        @Override
+        public Optional<Node> getParent() {
+            return Optional.empty();
         }
     };
 

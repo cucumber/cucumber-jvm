@@ -10,22 +10,29 @@ import java.util.stream.Collectors;
 
 final class GherkinMessagesRule implements Node.Rule {
 
+    private final Node parent;
     private final io.cucumber.messages.types.Rule rule;
     private final List<Node> children;
 
-    GherkinMessagesRule(io.cucumber.messages.types.Rule rule) {
+    GherkinMessagesRule(Node parent, io.cucumber.messages.types.Rule rule) {
+        this.parent = parent;
         this.rule = rule;
         this.children = rule.getChildren().stream()
                 .filter(ruleChild -> ruleChild.getScenario() != null)
                 .map(ruleChild -> {
                     io.cucumber.messages.types.Scenario scenario = ruleChild.getScenario();
                     if (!scenario.getExamples().isEmpty()) {
-                        return new GherkinMessagesScenarioOutline(scenario);
+                        return new GherkinMessagesScenarioOutline(this, scenario);
                     } else {
-                        return new GherkinMessagesScenario(scenario);
+                        return new GherkinMessagesScenario(this, scenario);
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Node> getParent() {
+        return Optional.of(parent);
     }
 
     @Override

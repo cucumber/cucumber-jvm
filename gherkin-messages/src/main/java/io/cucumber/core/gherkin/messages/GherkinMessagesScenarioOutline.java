@@ -12,12 +12,19 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
 
     private final io.cucumber.messages.types.Scenario scenario;
     private final List<Examples> children;
+    private final Node parent;
 
-    GherkinMessagesScenarioOutline(io.cucumber.messages.types.Scenario scenario) {
+    GherkinMessagesScenarioOutline(Node parent, io.cucumber.messages.types.Scenario scenario) {
+        this.parent = parent;
         this.scenario = scenario;
         this.children = scenario.getExamples().stream()
-                .map(GherkinMessagesExamples::new)
+                .map(examples -> new GherkinMessagesExamples(this, examples))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Node> getParent() {
+        return Optional.of(parent);
     }
 
     @Override
