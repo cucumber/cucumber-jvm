@@ -7,10 +7,17 @@ import java.util.Optional;
 
 final class GherkinMessagesScenario implements Node.Scenario {
 
+    private final Node parent;
     private final io.cucumber.messages.types.Scenario scenario;
 
-    GherkinMessagesScenario(io.cucumber.messages.types.Scenario scenario) {
+    GherkinMessagesScenario(Node parent, io.cucumber.messages.types.Scenario scenario) {
+        this.parent = parent;
         this.scenario = scenario;
+    }
+
+    @Override
+    public Optional<Node> getParent() {
+        return Optional.of(parent);
     }
 
     @Override

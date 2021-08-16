@@ -41,6 +41,8 @@ public interface Node {
 
     Optional<String> getName();
 
+    Optional<Node> getParent();
+
     /**
      * Recursively maps a node into another tree-like structure.
      *

@@ -241,6 +241,9 @@ cucumber.filter.tags=                                         # a cucumber tag e
 cucumber.glue=                                                # comma separated package names. 
                                                               # example: com.example.glue  
 
+cucumber.junit-platform.naming-strategy=                      # long or short. default: short
+                                                              # include parent descriptor name in test descriptor.                   
+
 cucumber.plugin=                                              # comma separated plugin strings. 
                                                               # example: pretty, json:path/to/report.json
 
