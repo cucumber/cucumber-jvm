@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy;
 import org.junit.platform.engine.support.hierarchical.ParallelExecutionConfigurationStrategy;
 
@@ -85,6 +86,7 @@ public final class Constants {
      * This is useful for tools that only report the test name such as Maven and
      * Gradle.
      */
+    @API(status = Status.EXPERIMENTAL, since = "7.0.0")
     public static final String JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy";
 
     /**
