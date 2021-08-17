@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
     - Adds `cucumber.junit-platform.naming-strategy=long` ([#2361](https://github.com/cucumber/cucumber-jvm/pull/2361) M.P. Korstanje)
 
 ### Changed
-* [Core] Updated Cucumber Expressions to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)
+* [Core] Updated `cucumber-expressions` to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)
     - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions
     - May break Cucumber expressions that depend on these ambiguities
 * [Core] Removed incorrect ISO 639-1 code for Telugu language ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
