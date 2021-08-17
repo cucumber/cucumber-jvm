@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import static io.cucumber.core.resource.ClasspathSupport.nestedJarEntriesExplanation;
 import static java.util.Collections.emptyMap;
 
 class JarUriFileSystemService {
@@ -94,20 +95,9 @@ class JarUriFileSystemService {
         String jarEntry = parts[1];
         String subEntry = parts[2];
         if (jarEntry.endsWith(JAR_FILE_SUFFIX)) {
-            throw nestedJarEntriesAreUnsupported(uri);
+            throw new CucumberException(nestedJarEntriesExplanation(uri));
         }
         return open(new URI(jarUri), fileSystem -> fileSystem.getPath(jarEntry + subEntry));
-    }
-
-    private static CucumberException nestedJarEntriesAreUnsupported(URI uri) {
-        return new CucumberException("" +
-                "The resource '" + uri + "' is located in a nested jar.\n" +
-                "\n" +
-                "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
-                "Cucumber currently doesn't support classpath scanning in nested jars.\n" +
-                "Feel free to send a pull request to make this possible!\n" +
-                "\n" +
-                "You can avoid this error by unpacking your application before executing.");
     }
 
 }
