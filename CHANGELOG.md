@@ -31,18 +31,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
         - Replace `DataTable.asMaps()` with -> `DataTable.entries()`
 * [TestNG] Automatically pick up properties from `testng.xml` ([#2354](https://github.com/cucumber/cucumber-jvm/pull/2354) M.P. Korstanje, Gayan Sandaruwan)
 * [Core] Pretty formatter to print step DataTables ([#2330](https://github.com/cucumber/cucumber-jvm/pull/2330) Arty Sidorenko)
+* [Core] `Scenario.getId()` returns the actual scenario id ([#2366](https://github.com/cucumber/cucumber-jvm/issues/2366) M.P. Korstanje)
+ - To obtain the original `<uri>:<line-number>` identifier use `scenario.getUri() + ":" + scenario.getLine()`.
 
 ### Deprecated
 
 ### Removed
 * [Core] Removed `--strict` and `--no-strict` options ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)
-- Cucumber executes scenarios in strict mode by default
+ - Cucumber executes scenarios in strict mode by default
 * [Core] Removed deprecated `TypeRegistryConfigurer` ([#2356](https://github.com/cucumber/cucumber-jvm/issues/2356) M.P. Korstanje)
-- Use `@ParameterType` instead.
+ - Use `@ParameterType` instead.
 * [Weld] Removed `cucumber-weld` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
-- Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
+ - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
 * [Needle] Removed `cucumber-needled` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
-- Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
+ - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
 
 ### Fixed
 * [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
