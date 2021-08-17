@@ -11,8 +11,7 @@ import io.cucumber.java.en.When;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RpnCalculatorSteps {
 
@@ -28,6 +27,11 @@ public class RpnCalculatorSteps {
         // Runs after all scenarios
     }
 
+    @AfterAll
+    public static void afterAll2() {
+        // Runs after all scenarios
+    }
+
     @Before("not @foo")
     public void before(Scenario scenario) {
         scenario.log("Runs before each scenarios *not* tagged with @foo");
@@ -35,6 +39,11 @@ public class RpnCalculatorSteps {
 
     @After
     public void after(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
+    }
+
+    @After
+    public void after2(Scenario scenario) {
         scenario.log("Runs after each scenarios");
     }
 
@@ -57,7 +66,7 @@ public class RpnCalculatorSteps {
 
     @Then("the result is {int}")
     public void the_result_is(double expected) {
-        assertThat(calc.value(), equalTo(expected));
+        assertEquals(expected, calc.value());
     }
 
     @Given("the previous entries:")

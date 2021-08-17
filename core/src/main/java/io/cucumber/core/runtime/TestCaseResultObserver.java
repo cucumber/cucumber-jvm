@@ -76,14 +76,6 @@ public final class TestCaseResultObserver implements AutoCloseable {
         throw new TestCaseFailed(error);
     }
 
-    static class TestCaseFailed extends RuntimeException {
-
-        public TestCaseFailed(Throwable throwable) {
-            super(throwable);
-        }
-
-    }
-
     public static final class Suggestion {
 
         final String step;

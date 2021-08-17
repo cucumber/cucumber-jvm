@@ -376,7 +376,7 @@ public class TeamCityPlugin implements EventListener {
         String name = "Before All/After All";
         print(TEMPLATE_BEFORE_ALL_AFTER_ALL_STARTED, timestamp, name);
         String details = printStackTrace(error);
-        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FAILED, timestamp, "Before All/ After All failed", details, name);
+        print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FAILED, timestamp, "Before All/After All failed", details, name);
         print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FINISHED, timestamp, name);
     }
 
