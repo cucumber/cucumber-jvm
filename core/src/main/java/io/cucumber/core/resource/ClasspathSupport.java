@@ -169,16 +169,16 @@ public final class ClasspathSupport {
                 "\n" +
                 "You can avoid this error by unpacking your application before executing.\n" +
                 "\n" +
-                "Alternatively you can restrict which packages cucumber scans configuring the glue path such that only "
-                +
-                "scans un-nested jars.\n" +
+                "Alternatively you can restrict which packages cucumber scans configuring the glue path such that " +
+                "Cucumber only scans un-nested jars.\n" +
                 "\n" +
                 configurationExamples();
     }
 
-    private static String configurationExamples() {
+    public static String configurationExamples() {
         return "Examples:\n" +
                 " - @CucumberOptions(glue = \"com.example.application\")\n" +
+                " - @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = \"com.example.application\")" +
                 " - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application\n" +
                 " - src/test/resources/cucumber.properties         cucumber.glue=com.example.application\n";
     }
