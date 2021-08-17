@@ -157,7 +157,27 @@ public final class ClasspathSupport {
         return "By default Cucumber scans the entire classpath for step definitions.\n" +
                 "You can restrict this by configuring the glue path.\n" +
                 "\n" +
-                "Examples:\n" +
+                configurationExamples();
+    }
+
+    static String nestedJarEntriesExplanation(URI uri) {
+        return "By default Cucumber scans the entire classpath for step definitions.\n" +
+                "However the resource '" + uri + "' is located in a nested jar.\n" +
+                "\n" +
+                "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
+                "Cucumber currently doesn't support classpath scanning in nested jars.\n" +
+                "\n" +
+                "You can avoid this error by unpacking your application before executing.\n" +
+                "\n" +
+                "Alternatively you can restrict which packages cucumber scans configuring the glue path such that only "
+                +
+                "scans un-nested jars.\n" +
+                "\n" +
+                configurationExamples();
+    }
+
+    private static String configurationExamples() {
+        return "Examples:\n" +
                 " - @CucumberOptions(glue = \"com.example.application\")\n" +
                 " - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application\n" +
                 " - src/test/resources/cucumber.properties         cucumber.glue=com.example.application\n";
