@@ -1,6 +1,7 @@
 package io.cucumber.core.stepexpression;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableFormatter;
 
 import java.util.List;
 
@@ -25,7 +26,10 @@ public final class DataTableArgument implements Argument {
     }
 
     private String getText() {
-        return DataTable.create(argument).toString();
+        return DataTableFormatter.builder()
+                .prefixRow("      ")
+                .build()
+                .format(DataTable.create(argument));
     }
 
 }

@@ -46,8 +46,7 @@ public class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactor
 
     @Override
     public Runner get() {
-        return new Runner(bus, singleton(this), this, typeRegistry -> {
-        }, runtimeOptions);
+        return new Runner(bus, singleton(this), this, runtimeOptions);
     }
 
     @Override

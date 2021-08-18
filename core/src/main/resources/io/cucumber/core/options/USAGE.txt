@@ -13,13 +13,10 @@ Options:
 
   -p, --plugin PLUGIN[:[PATH|[URI [OPTIONS]]]
                                            Register a plugin.
-                                           Built-in formatter PLUGIN types:
+                                           Built-in PLUGIN types:
                                            html, json, junit, message, pretty,
-                                           progress, rerun, teamcity, testng,
-                                           timeline, usage
-
-                                           Built-in summary PLUGIN types:
-                                           summary, null_summary, unused.
+                                           progress, rerun, summary, teamcity,
+                                           testng, timeline, usage, unused
 
                                            PLUGIN can also be a fully
                                            qualified class name, allowing
@@ -119,8 +116,6 @@ cucumber.execution.dry-run=     # true or false. default: false
 cucumber.execution.limit=       # number of scenarios to execute (CLI only).
 
 cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
-
-cucumber.execution.strict=      # true or false. default: false.
 
 cucumber.execution.wip=         # true or false. default: false.
                                 # Fails if there any passing scenarios

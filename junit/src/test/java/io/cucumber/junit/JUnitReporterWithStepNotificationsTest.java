@@ -258,44 +258,6 @@ class JUnitReporterWithStepNotificationsTest {
     }
 
     @Test
-    void test_step_undefined_fires_test_failure_and_test_finished_for_undefined_step_in_strict_mode() {
-        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        JUnitReporter jUnitReporter = new JUnitReporter(bus, new JUnitOptionsBuilder()
-                .setStepNotifications(true)
-                .build());
-
-        jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
-
-        Suggestion suggestion = new Suggestion("step name", singletonList("some snippet"));
-        bus.send(new SnippetsSuggestedEvent(now(), featureUri, scenarioLine, scenarioLine, suggestion));
-        bus.send(new TestCaseStarted(now(), testCase));
-        bus.send(new TestStepStarted(now(), testCase, mockTestStep(step)));
-        Throwable exception = new CucumberException("No step definitions found");
-        Result result = new Result(Status.UNDEFINED, ZERO, exception);
-        bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
-
-        verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
-
-        Failure stepFailure = failureArgumentCaptor.getValue();
-        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
-        assertThat(stepFailure.getException(), is(equalTo(exception)));
-
-        bus.send(new TestCaseFinished(now(), testCase, result));
-
-        verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
-
-        Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
-        assertThat(pickleFailure.getException().getMessage(), is("" +
-                "The step 'step name' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n"));
-    }
-
-    @Test
     void test_step_finished_fires_test_failure_and_test_finished_for_failed_step() {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
 

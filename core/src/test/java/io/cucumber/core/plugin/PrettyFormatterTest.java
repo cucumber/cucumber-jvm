@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubStaticHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -14,6 +15,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
+import io.cucumber.datatable.DataTable;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -30,6 +32,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PrettyFormatterTest {
 
@@ -170,6 +173,75 @@ class PrettyFormatterTest {
                 "@feature_tag @scenario_outline_tag @examples_tag\n" +
                 "Scenario Outline: scenario outline name # path/test.feature:12\n" +
                 "  Then second step                      # path/step_definitions.java:11\n"));
+    }
+
+    @Test
+    void should_print_table() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test Scenario\n" +
+                "    Given first step\n" +
+                "      | key1     | key2     |\n" +
+                "      | value1   | value2   |\n" +
+                "      | another1 | another2 |\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", "path/step_definitions.java:7", DataTable.class)))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("" +
+
+                "\n" +
+                "Scenario: Test Scenario # path/test.feature:2\n" +
+                "  Given first step      # path/step_definitions.java:7\n" +
+                "    | key1     | key2     |\n" +
+                "    | value1   | value2   |\n" +
+                "    | another1 | another2 |\n"));
+    }
+
+    @Test
+    void should_print_multiple_tables() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test Scenario\n" +
+                "    Given first step\n" +
+                "      | key1     | key2     |\n" +
+                "      | value1   | value2   |\n" +
+                "      | another1 | another2 |\n" +
+                "    Given second step\n" +
+                "      | key3     | key4     |\n" +
+                "      | value3   | value4   |\n" +
+                "      | another3 | another4 |\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", "path/step_definitions.java:7", DataTable.class),
+                    new StubStepDefinition("second step", "path/step_definitions.java:15", DataTable.class)))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("" +
+
+                "\n" +
+                "Scenario: Test Scenario # path/test.feature:2\n" +
+                "  Given first step      # path/step_definitions.java:7\n" +
+                "    | key1     | key2     |\n" +
+                "    | value1   | value2   |\n" +
+                "    | another1 | another2 |\n" +
+                "  Given second step     # path/step_definitions.java:15\n" +
+                "    | key3     | key4     |\n" +
+                "    | value3   | value4   |\n" +
+                "    | another3 | another4 |\n"));
     }
 
     @Test
@@ -450,6 +522,32 @@ class PrettyFormatterTest {
         assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
                 AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
                 AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
+    }
+
+    @Test
+    void should_print_system_failure_for_failed_hooks() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        assertThrows(StubException.class, () -> Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
+                .build()
+                .run());
+
+        assertThat(out, bytesContainsString("" +
+                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
     }
 
 }

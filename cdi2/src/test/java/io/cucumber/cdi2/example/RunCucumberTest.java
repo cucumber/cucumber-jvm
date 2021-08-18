@@ -1,8 +1,9 @@
 package io.cucumber.cdi2.example;
 
-import io.cucumber.junit.platform.engine.Cucumber;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.Suite;
 
-@Cucumber
+@Suite
+@IncludeEngines("cucumber")
 public class RunCucumberTest {
-
 }

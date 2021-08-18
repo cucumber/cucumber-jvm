@@ -2,9 +2,10 @@ package io.cucumber.java.annotation;
 
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
-import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParameterTypeSteps {
 
@@ -17,13 +18,7 @@ public class ParameterTypeSteps {
 
     @Given("today is {parameterTypeIso8601Date}")
     public void today_is(LocalDate date) {
-
-        Assertions.assertEquals(expected, date);
-    }
-
-    @Given("tomorrow is {parameterTypeRegistryIso8601Date}")
-    public void tomorrow_is(LocalDate date) {
-        Assertions.assertEquals(expected, date);
+        assertEquals(expected, date);
     }
 
 }

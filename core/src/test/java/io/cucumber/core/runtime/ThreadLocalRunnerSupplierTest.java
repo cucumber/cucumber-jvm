@@ -36,10 +36,7 @@ class ThreadLocalRunnerSupplierTest {
         ObjectFactorySupplier objectFactory = new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(classLoader, objectFactory);
         eventBus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-            classLoader, runtimeOptions);
-        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory,
-            typeRegistryConfigurerSupplier);
+        runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactory);
     }
 
     @Test

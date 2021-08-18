@@ -20,7 +20,6 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
     private final io.cucumber.core.runner.Options runnerOptions;
     private final SynchronizedEventBus sharedEventBus;
     private final ObjectFactorySupplier objectFactorySupplier;
-    private final TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier;
 
     private final ThreadLocal<Runner> runners = ThreadLocal.withInitial(this::createRunner);
 
@@ -28,14 +27,12 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
             Options runnerOptions,
             EventBus sharedEventBus,
             BackendSupplier backendSupplier,
-            ObjectFactorySupplier objectFactorySupplier,
-            TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier
+            ObjectFactorySupplier objectFactorySupplier
     ) {
         this.runnerOptions = runnerOptions;
         this.sharedEventBus = SynchronizedEventBus.synchronize(sharedEventBus);
         this.backendSupplier = backendSupplier;
         this.objectFactorySupplier = objectFactorySupplier;
-        this.typeRegistryConfigurerSupplier = typeRegistryConfigurerSupplier;
     }
 
     @Override
@@ -48,7 +45,6 @@ public final class ThreadLocalRunnerSupplier implements RunnerSupplier {
             new LocalEventBus(sharedEventBus),
             backendSupplier.get(),
             objectFactorySupplier.get(),
-            typeRegistryConfigurerSupplier.get(),
             runnerOptions);
     }
 

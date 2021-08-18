@@ -11,6 +11,7 @@ import io.cucumber.core.backend.JavaMethodReference;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StackTraceElementReference;
+import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Step;
@@ -25,14 +26,13 @@ import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.cucumberexpressions.RegularExpression;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.Envelope;
-import io.cucumber.messages.Messages.Hook;
-import io.cucumber.messages.Messages.Location;
-import io.cucumber.messages.Messages.SourceReference;
-import io.cucumber.messages.Messages.StepDefinition.Builder;
-import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern;
-import io.cucumber.messages.Messages.StepDefinition.StepDefinitionPattern.StepDefinitionPatternType;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Hook;
+import io.cucumber.messages.types.JavaMethod;
+import io.cucumber.messages.types.JavaStackTraceElement;
+import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.SourceReference;
+import io.cucumber.messages.types.StepDefinitionPattern;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -48,9 +48,13 @@ import java.util.TreeMap;
 
 final class CachingGlue implements Glue {
 
-    private static final Comparator<CoreHookDefinition> ASCENDING = Comparator
+    private static final Comparator<CoreHookDefinition> HOOK_ORDER_ASCENDING = Comparator
             .comparingInt(CoreHookDefinition::getOrder)
             .thenComparing(ScenarioScoped.class::isInstance);
+
+    private static final Comparator<StaticHookDefinition> STATIC_HOOK_ORDER_ASCENDING = Comparator
+            .comparingInt(StaticHookDefinition::getOrder);
+
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
     private final List<DefaultParameterTransformerDefinition> defaultParameterTransformers = new ArrayList<>();
@@ -58,11 +62,13 @@ final class CachingGlue implements Glue {
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
     private final List<DocStringTypeDefinition> docStringTypeDefinitions = new ArrayList<>();
 
+    private final List<StaticHookDefinition> beforeAllHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeStepHooks = new ArrayList<>();
     private final List<StepDefinition> stepDefinitions = new ArrayList<>();
     private final List<CoreHookDefinition> afterStepHooks = new ArrayList<>();
     private final List<CoreHookDefinition> afterHooks = new ArrayList<>();
+    private final List<StaticHookDefinition> afterAllHooks = new ArrayList<>();
 
     /*
      * Storing the pattern that matches the step text allows us to cache the
@@ -80,6 +86,18 @@ final class CachingGlue implements Glue {
     }
 
     @Override
+    public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
+        beforeAllHooks.add(beforeAllHook);
+        beforeAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
+    }
+
+    @Override
+    public void addAfterAllHook(StaticHookDefinition afterAllHook) {
+        afterAllHooks.add(afterAllHook);
+        afterAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
+    }
+
+    @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
         stepDefinitions.add(stepDefinition);
     }
@@ -87,25 +105,25 @@ final class CachingGlue implements Glue {
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
         beforeHooks.add(CoreHookDefinition.create(hookDefinition));
-        beforeHooks.sort(ASCENDING);
+        beforeHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterHooks.sort(ASCENDING);
+        afterHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
         beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        beforeStepHooks.sort(ASCENDING);
+        beforeStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(CoreHookDefinition.create(hookDefinition));
-        afterStepHooks.sort(ASCENDING);
+        afterStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
@@ -143,6 +161,10 @@ final class CachingGlue implements Glue {
         docStringTypeDefinitions.add(docStringType);
     }
 
+    List<StaticHookDefinition> getBeforeAllHooks() {
+        return new ArrayList<>(beforeAllHooks);
+    }
+
     Collection<CoreHookDefinition> getBeforeHooks() {
         return new ArrayList<>(beforeHooks);
     }
@@ -159,6 +181,12 @@ final class CachingGlue implements Glue {
 
     Collection<CoreHookDefinition> getAfterStepHooks() {
         List<CoreHookDefinition> hooks = new ArrayList<>(afterStepHooks);
+        Collections.reverse(hooks);
+        return hooks;
+    }
+
+    List<StaticHookDefinition> getAfterAllHooks() {
+        ArrayList<StaticHookDefinition> hooks = new ArrayList<>(afterAllHooks);
         Collections.reverse(hooks);
         return hooks;
     }
@@ -257,77 +285,78 @@ final class CachingGlue implements Glue {
     }
 
     private void emitParameterTypeDefined(ParameterType<?> parameterType) {
-        bus.send(Messages.Envelope.newBuilder()
-                .setParameterType(Messages.ParameterType.newBuilder()
-                        .setId(bus.generateId().toString())
-                        .setName(parameterType.getName())
-                        .addAllRegularExpressions(parameterType.getRegexps())
-                        .setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch())
-                        .setUseForSnippets(parameterType.useForSnippets()))
-                .build());
+        io.cucumber.messages.types.ParameterType messagesParameterType = new io.cucumber.messages.types.ParameterType();
+        messagesParameterType.setId(bus.generateId().toString());
+        messagesParameterType.setName(parameterType.getName());
+        messagesParameterType.setRegularExpressions(parameterType.getRegexps());
+        messagesParameterType.setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch());
+        messagesParameterType.setUseForSnippets(parameterType.useForSnippets());
+
+        Envelope envelope = new Envelope();
+        envelope.setParameterType(messagesParameterType);
+        bus.send(envelope);
     }
 
-    private void emitHook(CoreHookDefinition hook) {
-        Hook.Builder hookDefinitionBuilder = Hook.newBuilder()
-                .setId(hook.getId().toString())
-                .setTagExpression(hook.getTagExpression());
-        hook.getDefinitionLocation()
-                .ifPresent(reference -> hookDefinitionBuilder.setSourceReference(createSourceReference(reference)));
-        bus.send(Messages.Envelope.newBuilder()
-                .setHook(hookDefinitionBuilder)
-                .build());
+    private void emitHook(CoreHookDefinition coreHook) {
+        Hook messagesHook = new Hook();
+        messagesHook.setId(coreHook.getId().toString());
+        messagesHook.setTagExpression(coreHook.getTagExpression());
+        coreHook.getDefinitionLocation()
+                .ifPresent(reference -> messagesHook.setSourceReference(createSourceReference(reference)));
+
+        Envelope envelope = new Envelope();
+        envelope.setHook(messagesHook);
+        bus.send(envelope);
     }
 
-    private void emitStepDefined(CoreStepDefinition stepDefinition) {
+    private void emitStepDefined(CoreStepDefinition coreStepDefinition) {
         bus.send(new StepDefinedEvent(
             bus.getInstant(),
             new io.cucumber.plugin.event.StepDefinition(
-                stepDefinition.getStepDefinition().getLocation(),
-                stepDefinition.getExpression().getSource())));
+                coreStepDefinition.getStepDefinition().getLocation(),
+                coreStepDefinition.getExpression().getSource())));
 
-        Builder stepDefinitionBuilder = Messages.StepDefinition.newBuilder()
-                .setId(stepDefinition.getId().toString())
-                .setPattern(StepDefinitionPattern.newBuilder()
-                        .setSource(stepDefinition.getExpression().getSource())
-                        .setType(getExpressionType(stepDefinition)));
-        stepDefinition.getDefinitionLocation()
-                .ifPresent(reference -> stepDefinitionBuilder.setSourceReference(createSourceReference(reference)));
-        bus.send(Envelope.newBuilder()
-                .setStepDefinition(stepDefinitionBuilder)
-                .build());
+        io.cucumber.messages.types.StepDefinition messagesStepDefinition = new io.cucumber.messages.types.StepDefinition();
+        messagesStepDefinition.setId(coreStepDefinition.getId().toString());
+        messagesStepDefinition.setPattern(new StepDefinitionPattern(
+            coreStepDefinition.getExpression().getSource(),
+            getExpressionType(coreStepDefinition)));
+        coreStepDefinition.getDefinitionLocation()
+                .ifPresent(reference -> messagesStepDefinition.setSourceReference(createSourceReference(reference)));
+
+        Envelope envelope = new Envelope();
+        envelope.setStepDefinition(messagesStepDefinition);
+        bus.send(envelope);
     }
 
-    private SourceReference.Builder createSourceReference(io.cucumber.core.backend.SourceReference reference) {
-        SourceReference.Builder sourceReferenceBuilder = SourceReference.newBuilder();
+    private SourceReference createSourceReference(io.cucumber.core.backend.SourceReference reference) {
+        SourceReference sourceReference = new SourceReference();
         if (reference instanceof JavaMethodReference) {
             JavaMethodReference methodReference = (JavaMethodReference) reference;
-            sourceReferenceBuilder.setJavaMethod(SourceReference.JavaMethod.newBuilder()
-                    .setClassName(methodReference.className())
-                    .setMethodName(methodReference.methodName())
-                    .addAllMethodParameterTypes(methodReference.methodParameterTypes()));
+            sourceReference.setJavaMethod(new JavaMethod(
+                methodReference.className(),
+                methodReference.methodName(),
+                methodReference.methodParameterTypes()));
         }
 
         if (reference instanceof StackTraceElementReference) {
             StackTraceElementReference stackReference = (StackTraceElementReference) reference;
-            SourceReference.JavaStackTraceElement.Builder stackTraceElementBuilder = SourceReference.JavaStackTraceElement
-                    .newBuilder()
-                    .setClassName(stackReference.className())
-                    .setMethodName(stackReference.methodName());
+            JavaStackTraceElement stackTraceElementBuilder = new JavaStackTraceElement();
+            stackTraceElementBuilder.setClassName(stackReference.className());
+            stackTraceElementBuilder.setMethodName(stackReference.methodName());
             stackReference.fileName().ifPresent(stackTraceElementBuilder::setFileName);
-            sourceReferenceBuilder
-                    .setJavaStackTraceElement(stackTraceElementBuilder)
-                    .setLocation(Location.newBuilder()
-                            .setLine(stackReference.lineNumber()));
+            sourceReference.setJavaStackTraceElement(stackTraceElementBuilder);
+            sourceReference.setLocation(new Location(Long.valueOf(stackReference.lineNumber()), null));
         }
-        return sourceReferenceBuilder;
+        return sourceReference;
     }
 
-    private StepDefinitionPatternType getExpressionType(CoreStepDefinition stepDefinition) {
+    private StepDefinitionPattern.Type getExpressionType(CoreStepDefinition stepDefinition) {
         Class<? extends Expression> expressionType = stepDefinition.getExpression().getExpressionType();
         if (expressionType.isAssignableFrom(RegularExpression.class)) {
-            return StepDefinitionPatternType.REGULAR_EXPRESSION;
+            return StepDefinitionPattern.Type.REGULAR_EXPRESSION;
         } else if (expressionType.isAssignableFrom(CucumberExpression.class)) {
-            return StepDefinitionPatternType.CUCUMBER_EXPRESSION;
+            return StepDefinitionPattern.Type.CUCUMBER_EXPRESSION;
         } else {
             throw new IllegalArgumentException(expressionType.getName());
         }

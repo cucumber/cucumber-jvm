@@ -2,7 +2,8 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Pending;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.TestStepResult;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
@@ -14,10 +15,12 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.UUID;
+import java.util.function.Predicate;
 
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runner.ExecutionMode.SKIP;
+import static io.cucumber.core.runner.TestAbortedExceptions.createIsTestAbortedExceptionPredicate;
 import static io.cucumber.core.runner.TestStepResultStatus.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
@@ -25,17 +28,7 @@ import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
-    private static final String[] TEST_ABORTED_OR_SKIPPED_EXCEPTIONS = {
-            "org.junit.AssumptionViolatedException",
-            "org.junit.internal.AssumptionViolatedException",
-            "org.opentest4j.TestAbortedException",
-            "org.testng.SkipException",
-    };
-
-    static {
-        Arrays.sort(TEST_ABORTED_OR_SKIPPED_EXCEPTIONS);
-    }
-
+    private final Predicate<Throwable> isTestAbortedException = createIsTestAbortedExceptionPredicate();
     private final StepDefinitionMatch stepDefinitionMatch;
     private final UUID id;
 
@@ -63,6 +56,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         try {
             status = executeStep(state, executionMode);
         } catch (Throwable t) {
+            rethrowIfUnrecoverable(t);
             error = t;
             status = mapThrowableToStatus(t);
         }
@@ -78,12 +72,12 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private void emitTestStepStarted(TestCase testCase, EventBus bus, UUID textExecutionId, Instant startTime) {
         bus.send(new TestStepStarted(startTime, testCase, this));
-        bus.send(Messages.Envelope.newBuilder()
-                .setTestStepStarted(Messages.TestStepStarted.newBuilder()
-                        .setTestCaseStartedId(textExecutionId.toString())
-                        .setTestStepId(id.toString())
-                        .setTimestamp(javaInstantToTimestamp(startTime)))
-                .build());
+        Envelope envelope = new Envelope();
+        envelope.setTestStepStarted(new io.cucumber.messages.types.TestStepStarted(
+            textExecutionId.toString(),
+            id.toString(),
+            javaInstantToTimestamp(startTime)));
+        bus.send(envelope);
     }
 
     private Status executeStep(TestCaseState state, ExecutionMode executionMode) throws Throwable {
@@ -99,7 +93,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         if (t.getClass().isAnnotationPresent(Pending.class)) {
             return Status.PENDING;
         }
-        if (Arrays.binarySearch(TEST_ABORTED_OR_SKIPPED_EXCEPTIONS, t.getClass().getName()) >= 0) {
+        if (isTestAbortedException.test(t)) {
             return Status.SKIPPED;
         }
         if (t.getClass() == UndefinedStepDefinitionException.class) {
@@ -122,22 +116,21 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
             TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result
     ) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
-        Messages.TestStepFinished.TestStepResult.Builder builder = Messages.TestStepFinished.TestStepResult
-                .newBuilder();
 
+        TestStepResult testStepResult = new TestStepResult();
         if (result.getError() != null) {
-            builder.setMessage(extractStackTrace(result.getError()));
+            testStepResult.setMessage(extractStackTrace(result.getError()));
         }
-        Messages.TestStepFinished.TestStepResult testResult = builder.setStatus(from(result.getStatus()))
-                .setDuration(javaDurationToDuration(duration))
-                .build();
-        bus.send(Messages.Envelope.newBuilder()
-                .setTestStepFinished(Messages.TestStepFinished.newBuilder()
-                        .setTestCaseStartedId(textExecutionId.toString())
-                        .setTestStepId(id.toString())
-                        .setTimestamp(javaInstantToTimestamp(stopTime))
-                        .setTestStepResult(testResult))
-                .build());
+        testStepResult.setStatus(from(result.getStatus()));
+        testStepResult.setDuration(javaDurationToDuration(duration));
+
+        Envelope envelope = new Envelope();
+        envelope.setTestStepFinished(new io.cucumber.messages.types.TestStepFinished(
+            textExecutionId.toString(),
+            id.toString(),
+            testStepResult,
+            javaInstantToTimestamp(stopTime)));
+        bus.send(envelope);
     }
 
     private String extractStackTrace(Throwable error) {

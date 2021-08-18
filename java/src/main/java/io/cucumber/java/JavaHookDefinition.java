@@ -5,6 +5,7 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Objects.requireNonNull;
@@ -33,6 +34,10 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             }
         }
 
+        Type returnType = method.getGenericReturnType();
+        if (!Void.class.equals(returnType) && !void.class.equals(returnType)) {
+            throw createInvalidSignatureException(method);
+        }
         return method;
     }
 

@@ -2,9 +2,8 @@ package io.cucumber.core.gherkin.messages;
 
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.GherkinDocument;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
@@ -20,45 +19,45 @@ import static java.util.Objects.requireNonNull;
 
 final class GherkinMessagesFeature implements Feature {
 
-    private final GherkinDocument.Feature feature;
+    private final io.cucumber.messages.types.Feature feature;
     private final URI uri;
     private final List<Pickle> pickles;
-    private final List<Messages.Envelope> envelopes;
+    private final List<Envelope> envelopes;
     private final String gherkinSource;
     private final List<Node> children;
 
     GherkinMessagesFeature(
-            GherkinDocument.Feature feature,
+            io.cucumber.messages.types.Feature feature,
             URI uri,
             String gherkinSource,
             List<Pickle> pickles,
-            List<Messages.Envelope> envelopes
+            List<Envelope> envelopes
     ) {
         this.feature = requireNonNull(feature);
         this.uri = requireNonNull(uri);
         this.gherkinSource = requireNonNull(gherkinSource);
         this.pickles = requireNonNull(pickles);
         this.envelopes = requireNonNull(envelopes);
-        this.children = feature.getChildrenList().stream()
+        this.children = feature.getChildren().stream()
                 .filter(this::hasRuleOrScenario)
                 .map(this::mapRuleOrScenario)
                 .collect(Collectors.toList());
     }
 
     private Node mapRuleOrScenario(FeatureChild featureChild) {
-        if (featureChild.hasRule()) {
-            return new GherkinMessagesRule(featureChild.getRule());
+        if (featureChild.getRule() != null) {
+            return new GherkinMessagesRule(this, featureChild.getRule());
         }
 
-        GherkinDocument.Feature.Scenario scenario = featureChild.getScenario();
-        if (scenario.getExamplesCount() > 0) {
-            return new GherkinMessagesScenarioOutline(scenario);
+        io.cucumber.messages.types.Scenario scenario = featureChild.getScenario();
+        if (!scenario.getExamples().isEmpty()) {
+            return new GherkinMessagesScenarioOutline(this, scenario);
         }
-        return new GherkinMessagesScenario(scenario);
+        return new GherkinMessagesScenario(this, scenario);
     }
 
     private boolean hasRuleOrScenario(FeatureChild featureChild) {
-        return featureChild.hasRule() || featureChild.hasScenario();
+        return featureChild.getRule() != null || featureChild.getScenario() != null;
     }
 
     @Override
@@ -80,6 +79,11 @@ final class GherkinMessagesFeature implements Feature {
     public Optional<String> getName() {
         String name = feature.getName();
         return name.isEmpty() ? Optional.empty() : Optional.of(name);
+    }
+
+    @Override
+    public Optional<Node> getParent() {
+        return Optional.empty();
     }
 
     @Override

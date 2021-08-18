@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -19,25 +20,11 @@
         <toolchain.vendor>openjdk</toolchain.vendor>
         <toolchain.java.version>11</toolchain.java.version>
 
-        <!--Semantic version -->
-        <apiguardian-api.version>1.1.2</apiguardian-api.version>
-
         <!-- io.cucumber dependencies -->
-        <cucumber-expressions.version>10.3.0</cucumber-expressions.version>
-        <datatable.version>3.5.0</datatable.version>
-        <create-meta.version>4.0.0</create-meta.version>
-        <tag-expressions.version>3.0.1</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
-        <messages.version>15.0.0</messages.version>
-        <gherkin.version>18.1.1</gherkin.version>
-        <html-formatter.version>13.0.0</html-formatter.version>
+        <messages.version>17.0.1</messages.version>
+        <gherkin.version>20.0.1</gherkin.version>
 
-        <!--Test Dependencies-->
-        <junit.version>4.13.2</junit.version>
-        <junit-jupiter.version>5.7.2</junit-jupiter.version>
-        <junit-platform.version>1.7.2</junit-platform.version>
-        <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.11.2</mockito.version>
         <!--Maven plugins-->
         <groovy.version>2.5.14</groovy.version>
     </properties>
@@ -48,183 +35,9 @@
         <tag>HEAD</tag>
     </scm>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>tag-expressions</artifactId>
-                <version>${tag-expressions.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>messages</artifactId>
-                <version>${messages.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-expressions</artifactId>
-                <version>${cucumber-expressions.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>html-formatter</artifactId>
-                <version>${html-formatter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>datatable</artifactId>
-                <version>${datatable.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>datatable-matchers</artifactId>
-                <version>${datatable.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>create-meta</artifactId>
-                <version>${create-meta.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>docstring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java8</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-junit</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-testng</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-picocontainer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-kotlin-java8</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-gherkin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-gherkin-messages</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-messages</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-junit-platform-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apiguardian</groupId>
-                <artifactId>apiguardian-api</artifactId>
-                <version>${apiguardian-api.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-core</artifactId>
-                <version>${hamcrest.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>${junit-jupiter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit-jupiter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit-jupiter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit-jupiter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.platform</groupId>
-                <artifactId>junit-platform-console</artifactId>
-                <version>${junit-platform.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.platform</groupId>
-                <artifactId>junit-platform-engine</artifactId>
-                <version>${junit-platform.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.platform</groupId>
-                <artifactId>junit-platform-testkit</artifactId>
-                <version>${junit-platform.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
-
     <modules>
         <module>archetype</module>
+        <module>bom</module>
         <module>cdi2</module>
         <module>core</module>
         <module>deltaspike</module>
@@ -238,13 +51,11 @@
         <module>junit</module>
         <module>junit-platform-engine</module>
         <module>kotlin-java8</module>
-        <module>needle</module>
         <module>openejb</module>
         <module>picocontainer</module>
         <module>plugin</module>
         <module>spring</module>
         <module>testng</module>
-        <module>weld</module>
     </modules>
 
     <profiles>
@@ -289,6 +100,17 @@
                                 </execution>
                             </executions>
                         </plugin>
+                        <!-- Need the 3.0.0 release for Junit5 + Before/After hooks -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>3.0.0-M5</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-failsafe-plugin</artifactId>
+                            <version>3.0.0-M5</version>
+                        </plugin>
                     </plugins>
                 </pluginManagement>
             </build>
@@ -302,12 +124,13 @@
                         <groupId>org.revapi</groupId>
                         <artifactId>revapi-maven-plugin</artifactId>
                         <executions>
-                            <execution>
-                                <id>check</id>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
+                            <!-- TODO: Enable once on v7 -->
+                            <!-- <execution>-->
+                            <!--   <id>check</id>-->
+                            <!--   <goals>-->
+                            <!--     <goal>check</goal>-->
+                            <!--   </goals>-->
+                            <!--</execution>-->
                         </executions>
                     </plugin>
                 </plugins>
@@ -539,7 +362,7 @@
                             <group>
                                 <title>Dependency Injection Providers</title>
                                 <packages>
-                                    io.cucumber.spring:io.cucumber.weld:io.cucumber.guice:io.cucumber.needle:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
+                                    io.cucumber.spring:io.cucumber.guice:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
                                 </packages>
                             </group>
                         </groups>
@@ -561,7 +384,18 @@
                     </dependencies>
                     <configuration>
                         <analysisConfiguration>
+                            <revapi.semver.ignore>
+                                <enabled>true</enabled>
+                                <versionIncreaseAllows>
+                                    <major>breaking</major>
+                                    <minor>nonBreaking</minor>
+                                    <patch>equivalent</patch>
+                                </versionIncreaseAllows>
+                            </revapi.semver.ignore>
                             <revapi.differences id="intentional-api-changes">
+                                <ignore>true</ignore>
+                            </revapi.differences>
+                            <revapi.differences id="internal-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
                         </analysisConfiguration>
@@ -569,7 +403,8 @@
                             <configurationFile>
                                 <path>${main.basedir}/.revapi/api-changes.json</path>
                                 <roots>
-                                    <root>6.0.0</root>
+                                    <root>7.0.0</root>
+                                    <root>internal</root>
                                 </roots>
                             </configurationFile>
                         </analysisConfigurationFiles>
@@ -600,24 +435,24 @@
                         <failsOnError>true</failsOnError>
                         <checkstyleRules>
                             <module name="Checker">
-                                <property name="severity" value="error" />
+                                <property name="severity" value="error"/>
                                 <module name="TreeWalker">
-                                    <module name="AvoidStarImport" />
+                                    <module name="AvoidStarImport"/>
                                     <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true" />
-                                        <property name="allowMissingReturnTag" value="true" />
+                                        <property name="allowMissingParamTags" value="true"/>
+                                        <property name="allowMissingReturnTag" value="true"/>
                                     </module>
-                                    <module name="NonEmptyAtclauseDescription" />
-                                    <module name="SuppressWarningsHolder" />
+                                    <module name="NonEmptyAtclauseDescription"/>
+                                    <module name="SuppressWarningsHolder"/>
                                     <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true" />
+                                        <property name="processJavadoc" value="true"/>
                                     </module>
                                 </module>
-                                <module name="SuppressWarningsFilter" />
+                                <module name="SuppressWarningsFilter"/>
                                 <module name="RegexpSingleline">
-                                    <property name="format" value="@author" />
-                                    <property name="message" value="Please do not use @author tags" />
-                                    <property name="fileExtensions" value="java,groovy,kt" />
+                                    <property name="format" value="@author"/>
+                                    <property name="message" value="Please do not use @author tags"/>
+                                    <property name="fileExtensions" value="java,groovy,kt"/>
                                 </module>
                             </module>
                         </checkstyleRules>

@@ -20,11 +20,9 @@ import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
@@ -74,7 +72,7 @@ public final class TestNGCucumberRunner {
      *                   {@link org.testng.annotations.Test} annotations
      * @param properties additional properties (e.g. from {@code testng.xml}).
      */
-    @API(status = API.Status.EXPERIMENTAL, since = "6.11")
+    @API(status = API.Status.STABLE, since = "6.11")
     public TestNGCucumberRunner(Class<?> clazz, CucumberPropertiesProvider properties) {
         // Parse the options early to provide fast feedback about invalid
         // options
@@ -115,16 +113,15 @@ public final class TestNGCucumberRunner {
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-            classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
-            objectFactorySupplier, typeRegistryConfigurerSupplier);
+            objectFactorySupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
 
         // Start test execution now.
         plugins.setSerialEventBusOnEventListenerPlugins(bus);
         features = featureSupplier.get();
         context.startTestRun();
+        context.runBeforeAllHooks();
         features.forEach(context::beforeFeature);
     }
 
@@ -142,7 +139,11 @@ public final class TestNGCucumberRunner {
      * Finishes test execution by Cucumber.
      */
     public void finish() {
-        context.finishTestRun();
+        try {
+            context.runAfterAllHooks();
+        } finally {
+            context.finishTestRun();
+        }
     }
 
     /**

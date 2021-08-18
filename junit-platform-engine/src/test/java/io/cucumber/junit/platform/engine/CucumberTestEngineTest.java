@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.CucumberEngineDescriptor.ENGINE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,8 +49,19 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void selectAndExecuteNoScenario() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(0, event(test()));
+    }
+
+    @Test
     void selectAndExecuteSingleScenario() {
         EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
                 .testEvents()
@@ -61,6 +73,7 @@ class CucumberTestEngineTest {
     @Test
     void selectAndSkipDisabledScenarioByTags() {
         EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
@@ -74,6 +87,7 @@ class CucumberTestEngineTest {
     @Test
     void selectAndSkipDisabledScenarioByName() {
         EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^Nothing$")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute()

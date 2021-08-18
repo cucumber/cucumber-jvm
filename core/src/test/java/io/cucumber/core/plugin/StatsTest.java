@@ -207,7 +207,7 @@ class StatsTest {
     }
 
     @Test
-    void should_print_failed_ambiguous_pending_undefined_scenarios_if_strict() {
+    void should_print_failed_ambiguous_pending_undefined_scenarios() {
         Stats counter = createMonochromeSummaryCounter();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

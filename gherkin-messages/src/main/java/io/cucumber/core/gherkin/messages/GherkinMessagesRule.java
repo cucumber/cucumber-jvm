@@ -1,7 +1,5 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.messages.Messages;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
@@ -12,22 +10,29 @@ import java.util.stream.Collectors;
 
 final class GherkinMessagesRule implements Node.Rule {
 
-    private final Messages.GherkinDocument.Feature.FeatureChild.Rule rule;
+    private final Node parent;
+    private final io.cucumber.messages.types.Rule rule;
     private final List<Node> children;
 
-    GherkinMessagesRule(Messages.GherkinDocument.Feature.FeatureChild.Rule rule) {
+    GherkinMessagesRule(Node parent, io.cucumber.messages.types.Rule rule) {
+        this.parent = parent;
         this.rule = rule;
-        this.children = rule.getChildrenList().stream()
-                .filter(RuleChild::hasScenario)
+        this.children = rule.getChildren().stream()
+                .filter(ruleChild -> ruleChild.getScenario() != null)
                 .map(ruleChild -> {
-                    Messages.GherkinDocument.Feature.Scenario scenario = ruleChild.getScenario();
-                    if (scenario.getExamplesCount() > 0) {
-                        return new GherkinMessagesScenarioOutline(scenario);
+                    io.cucumber.messages.types.Scenario scenario = ruleChild.getScenario();
+                    if (!scenario.getExamples().isEmpty()) {
+                        return new GherkinMessagesScenarioOutline(this, scenario);
                     } else {
-                        return new GherkinMessagesScenario(scenario);
+                        return new GherkinMessagesScenario(this, scenario);
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Node> getParent() {
+        return Optional.of(parent);
     }
 
     @Override

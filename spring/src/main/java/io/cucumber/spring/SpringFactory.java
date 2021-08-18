@@ -2,6 +2,7 @@ package io.cucumber.spring;
 
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.resource.ClasspathSupport;
 import org.apiguardian.api.API;
 import org.springframework.beans.BeansException;
 import org.springframework.stereotype.Component;
@@ -91,7 +92,11 @@ public final class SpringFactory implements ObjectFactory {
         if (withCucumberContextConfiguration != null) {
             throw new CucumberBackendException(String.format("" +
                     "Glue class %1$s and %2$s are both annotated with @CucumberContextConfiguration.\n" +
-                    "Please ensure only one class configures the spring context",
+                    "Please ensure only one class configures the spring context\n" +
+                    "\n" +
+                    "By default Cucumber scans the entire classpath for context configuration.\n" +
+                    "You can restrict this by configuring the glue path.\n" +
+                    ClasspathSupport.configurationExamples(),
                 stepClass,
                 withCucumberContextConfiguration));
         }

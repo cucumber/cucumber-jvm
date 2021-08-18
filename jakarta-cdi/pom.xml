@@ -3,10 +3,13 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.cdi.jakarta</project.Automatic-Module-Name>
+        <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <openwebbeans.version>2.0.23</openwebbeans.version>
         <xbean.version>4.20</xbean.version>
         <jakarta.enterprise.cdi-api.version>3.0.0</jakarta.enterprise.cdi-api.version>
         <jakarta.activation-api.version>2.0.1</jakarta.activation-api.version>
+        <junit-jupiter.version>5.8.0-RC1</junit-jupiter.version>
+        <hamcrest.version>2.2</hamcrest.version>
         <weld.version>4.0.2.Final</weld.version>
     </properties>
 
@@ -20,6 +23,25 @@
     <packaging>jar</packaging>
     <name>Cucumber-JVM: CDI Jakarta</name>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -28,6 +50,7 @@
         <dependency>
             <groupId>org.apiguardian</groupId>
             <artifactId>apiguardian-api</artifactId>
+            <version>${apiguardian-api.version}</version>
         </dependency>
 
         <dependency>
@@ -57,15 +80,20 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 		    <groupId>org.junit.jupiter</groupId>
 		    <artifactId>junit-jupiter-params</artifactId>
-		    <version>${junit-jupiter.version}</version>
 		    <scope>test</scope>
 		</dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

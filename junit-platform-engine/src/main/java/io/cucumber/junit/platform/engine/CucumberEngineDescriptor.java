@@ -27,13 +27,36 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
     }
 
     @Override
-    public CucumberEngineExecutionContext before(CucumberEngineExecutionContext context) {
+    public CucumberEngineExecutionContext prepare(CucumberEngineExecutionContext context) {
+        if (getChildren().isEmpty()) {
+            return context;
+        }
         context.startTestRun();
         return context;
     }
 
     @Override
+    public CucumberEngineExecutionContext before(CucumberEngineExecutionContext context) {
+        if (getChildren().isEmpty()) {
+            return context;
+        }
+        context.runBeforeAllHooks();
+        return context;
+    }
+
+    @Override
     public void after(CucumberEngineExecutionContext context) {
+        if (getChildren().isEmpty()) {
+            return;
+        }
+        context.runAfterAllHooks();
+    }
+
+    @Override
+    public void cleanUp(CucumberEngineExecutionContext context) {
+        if (getChildren().isEmpty()) {
+            return;
+        }
         context.finishTestRun();
     }
 

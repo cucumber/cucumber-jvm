@@ -5,18 +5,51 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ----
-## [Unreleased] (In Git)
+## [Unreleased main] (In Git)
 
 ### Added
+* [Java] Added `BeforeAll` and `AfterAll` hooks ([cucumber/#1876](https://github.com/cucumber/cucumber/pull/1876) M.P. Korstanje)
+* [JUnit Platform] Optionally use long names
+    - Adds `cucumber.junit-platform.naming-strategy=long` ([#2361](https://github.com/cucumber/cucumber-jvm/pull/2361) M.P. Korstanje)
 
 ### Changed
+* [Core] Updated `cucumber-expressions` to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)
+    - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions
+    - May break Cucumber expressions that depend on these ambiguities
+* [Core] Removed incorrect ISO 639-1 code for Telugu language ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
+    - Change imports of `io.cucumber.java.tl.*` to `io.cucumber.java.te.*`
+    - Change imports of `io.cucumber.java8.Tl` to `io.cucumber.java.Te`
+    - Change `# language: tl` to `# language: te`
+* [Core] Deprecated the `Summary` plugin interface for removal.
+    - Removed the `default_summary` and `null_summary` plugins
+    - The `summary` plugin is enabled default when using the CLI. Use `--no-summary` to disable.
+    - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
+* [Core] Use transformer for all `DataTable.asX` methods. ([#2262](https://github.com/cucumber/cucumber-jvm/issues/2262) [cucumber/#1419](https://github.com/cucumber/cucumber/pull/1419) M.P. Korstanje)
+    - To retain the old behaviour:
+        - Replace `DataTable.asList()` with -> `DataTable.values()`
+        - Replace `DataTable.asLists()` with -> `DataTable.cells()`
+        - Replace `DataTable.asMaps()` with -> `DataTable.entries()`
+* [TestNG] Automatically pick up properties from `testng.xml` ([#2354](https://github.com/cucumber/cucumber-jvm/pull/2354) M.P. Korstanje, Gayan Sandaruwan)
+* [Core] Pretty formatter to print step DataTables ([#2330](https://github.com/cucumber/cucumber-jvm/pull/2330) Arty Sidorenko)
+* [Core] `Scenario.getId()` returns the actual scenario id ([#2366](https://github.com/cucumber/cucumber-jvm/issues/2366) M.P. Korstanje)
+ - To obtain the original `<uri>:<line-number>` identifier use `scenario.getUri() + ":" + scenario.getLine()`.
 
 ### Deprecated
+* [JUnit Platform] Deprecated `@Cucumber` in favour of `@Suite` ([#2362](https://github.com/cucumber/cucumber-jvm/pull/2362) M.P. Korstanje)
 
 ### Removed
+* [Core] Removed `--strict` and `--no-strict` options ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)
+ - Cucumber executes scenarios in strict mode by default
+* [Core] Removed deprecated `TypeRegistryConfigurer` ([#2356](https://github.com/cucumber/cucumber-jvm/issues/2356) M.P. Korstanje)
+ - Use `@ParameterType` instead.
+* [Weld] Removed `cucumber-weld` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
+ - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
+* [Needle] Removed `cucumber-needled` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
+ - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
 
 ### Fixed
-* [Core] Synchronize event bus before use ([#2358](https://github.com/cucumber/cucumber-jvm/pull/2358)) M.P. Korstanje) 
+ * [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
+ * [Core] Synchronize event bus before use ([#2358](https://github.com/cucumber/cucumber-jvm/pull/2358)) M.P. Korstanje)
 
 ## [6.11.0] (2021-08-05)
 

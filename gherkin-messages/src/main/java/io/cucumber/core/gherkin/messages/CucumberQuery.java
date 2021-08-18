@@ -1,13 +1,14 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.messages.Messages.GherkinDocument;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.FeatureChild.RuleChild;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario.Examples;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
-import io.cucumber.messages.Messages.Location;
+import io.cucumber.messages.types.Background;
+import io.cucumber.messages.types.Examples;
+import io.cucumber.messages.types.FeatureChild;
+import io.cucumber.messages.types.GherkinDocument;
+import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.RuleChild;
+import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.Step;
+import io.cucumber.messages.types.TableRow;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,28 +23,28 @@ final class CucumberQuery {
     private final Map<String, Location> locationBySourceId = new HashMap<>();
 
     void update(GherkinDocument gherkinDocument) {
-        for (FeatureChild featureChild : gherkinDocument.getFeature().getChildrenList()) {
-            if (featureChild.hasBackground()) {
+        for (FeatureChild featureChild : gherkinDocument.getFeature().getChildren()) {
+            if (featureChild.getBackground() != null) {
                 this.updateBackground(
                     featureChild.getBackground(),
                     gherkinDocument.getUri());
             }
 
-            if (featureChild.hasScenario()) {
+            if (featureChild.getScenario() != null) {
                 this.updateScenario(
                     featureChild.getScenario(),
                     gherkinDocument.getUri());
             }
 
-            if (featureChild.hasRule()) {
-                for (RuleChild ruleChild : featureChild.getRule().getChildrenList()) {
-                    if (ruleChild.hasBackground()) {
+            if (featureChild.getRule() != null) {
+                for (RuleChild ruleChild : featureChild.getRule().getChildren()) {
+                    if (ruleChild.getBackground() != null) {
                         this.updateBackground(
                             ruleChild.getBackground(),
                             gherkinDocument.getUri());
                     }
 
-                    if (ruleChild.hasScenario()) {
+                    if (ruleChild.getScenario() != null) {
                         this.updateScenario(
                             ruleChild.getScenario(),
                             gherkinDocument.getUri());
@@ -53,17 +54,17 @@ final class CucumberQuery {
         }
     }
 
-    private void updateBackground(GherkinDocument.Feature.Background background, String uri) {
-        updateStep(background.getStepsList());
+    private void updateBackground(Background background, String uri) {
+        updateStep(background.getSteps());
     }
 
     private void updateScenario(Scenario scenario, String uri) {
         gherkinScenarioById.put(requireNonNull(scenario.getId()), scenario);
         locationBySourceId.put(requireNonNull(scenario.getId()), scenario.getLocation());
-        updateStep(scenario.getStepsList());
+        updateStep(scenario.getSteps());
 
-        for (Examples examples : scenario.getExamplesList()) {
-            for (TableRow tableRow : examples.getTableBodyList()) {
+        for (Examples examples : scenario.getExamples()) {
+            for (TableRow tableRow : examples.getTableBody()) {
                 this.locationBySourceId.put(requireNonNull(tableRow.getId()), tableRow.getLocation());
             }
         }

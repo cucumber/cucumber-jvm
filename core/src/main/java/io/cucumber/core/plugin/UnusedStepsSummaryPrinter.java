@@ -2,7 +2,6 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.SummaryPrinter;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.StepDefinedEvent;
@@ -20,7 +19,7 @@ import static io.cucumber.core.plugin.Formats.ansi;
 import static io.cucumber.core.plugin.Formats.monochrome;
 import static java.util.Locale.ROOT;
 
-public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener, SummaryPrinter {
+public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener {
 
     private final Map<String, String> registeredSteps = new TreeMap<>();
     private final Set<String> usedSteps = new TreeSet<>();

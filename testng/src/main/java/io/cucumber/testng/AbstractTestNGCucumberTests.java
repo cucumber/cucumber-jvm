@@ -1,10 +1,12 @@
 package io.cucumber.testng;
 
 import org.apiguardian.api.API;
+import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.testng.xml.XmlTest;
 
 /**
  * Abstract TestNG Cucumber Test
@@ -19,8 +21,10 @@ public abstract class AbstractTestNGCucumberTests {
     private TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
-    public void setUpClass() {
-        testNGCucumberRunner = new TestNGCucumberRunner(this.getClass());
+    public void setUpClass(ITestContext context) {
+        XmlTest currentXmlTest = context.getCurrentXmlTest();
+        CucumberPropertiesProvider properties = currentXmlTest::getParameter;
+        testNGCucumberRunner = new TestNGCucumberRunner(this.getClass(), properties);
     }
 
     @SuppressWarnings("unused")

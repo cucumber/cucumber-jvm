@@ -40,15 +40,12 @@ public final class CommandlineOptions {
     public static final String PLUGIN = "--plugin";
     public static final String PLUGIN_SHORT = "-p";
 
+    public static final String NO_SUMMARY = "--no-summary";
+
     public static final String NO_DRY_RUN = "--no-dry-run";
 
     public static final String DRY_RUN = "--dry-run";
     public static final String DRY_RUN_SHORT = "-d";
-
-    public static final String NO_STRICT = "--no-strict";
-
-    public static final String STRICT = "--strict";
-    public static final String STRICT_SHORT = "-s";
 
     public static final String NO_MONOCHROME = "--no-monochrome";
 

@@ -5,11 +5,13 @@ import io.cucumber.core.logging.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.function.BiConsumer;
 
 import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
 import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
 
 final class MethodScanner {
 
@@ -43,9 +45,9 @@ final class MethodScanner {
     }
 
     private static boolean isInstantiable(Class<?> clazz) {
-        boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
-        return Modifier.isPublic(clazz.getModifiers()) && !Modifier.isAbstract(clazz.getModifiers())
-                && !isNonStaticInnerClass;
+        return isPublic(clazz.getModifiers())
+                && !isAbstract(clazz.getModifiers())
+                && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
     }
 
     private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {
@@ -78,7 +80,9 @@ final class MethodScanner {
     private static boolean isHookAnnotation(Annotation annotation) {
         Class<? extends Annotation> annotationClass = annotation.annotationType();
         return annotationClass.equals(Before.class)
+                || annotationClass.equals(BeforeAll.class)
                 || annotationClass.equals(After.class)
+                || annotationClass.equals(AfterAll.class)
                 || annotationClass.equals(BeforeStep.class)
                 || annotationClass.equals(AfterStep.class)
                 || annotationClass.equals(ParameterType.class)

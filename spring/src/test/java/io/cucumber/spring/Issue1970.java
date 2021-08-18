@@ -1,6 +1,7 @@
 package io.cucumber.spring;
 
 import io.cucumber.core.backend.ObjectFactory;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -11,7 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class Issue1970 {
 

@@ -13,8 +13,6 @@ public @interface CucumberOptions {
 
     boolean dryRun() default false;
 
-    boolean strict() default true;
-
     String[] features() default {};
 
     String[] glue() default {};

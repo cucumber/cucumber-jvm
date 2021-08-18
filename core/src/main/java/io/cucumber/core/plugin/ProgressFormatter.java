@@ -7,7 +7,6 @@ import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStepFinished;
-import io.cucumber.plugin.event.WriteEvent;
 
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -51,7 +50,6 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
-        publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
         publisher.registerHandlerFor(TestRunFinished.class, event -> handleTestRunFinished());
     }
 
@@ -65,10 +63,6 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
                 AnsiEscapes.RESET.appendTo(out);
             }
         }
-    }
-
-    private void handleWrite(WriteEvent event) {
-        out.append(event.getText());
     }
 
     private void handleTestRunFinished() {

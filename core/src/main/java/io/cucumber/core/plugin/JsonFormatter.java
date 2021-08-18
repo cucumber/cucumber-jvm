@@ -1,11 +1,10 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.Messages.GherkinDocument.Feature;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Background;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Scenario;
-import io.cucumber.messages.Messages.GherkinDocument.Feature.Step;
-import io.cucumber.messages.internal.com.google.gson.Gson;
-import io.cucumber.messages.internal.com.google.gson.GsonBuilder;
+import io.cucumber.messages.JSON;
+import io.cucumber.messages.types.Background;
+import io.cucumber.messages.types.Feature;
+import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.Step;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.DataTableArgument;
@@ -43,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
+import static io.cucumber.core.plugin.TestSourcesModel.getBackgroundForTestCase;
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.toList;
@@ -53,7 +53,6 @@ public final class JsonFormatter implements EventListener {
     private static final String after = "after";
     private final List<Map<String, Object>> featureMaps = new ArrayList<>();
     private final Map<String, Object> currentBeforeStepHookList = new HashMap<>();
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Writer writer;
     private final TestSourcesModel testSources = new TestSourcesModel();
     private URI currentFeatureFile;
@@ -145,8 +144,8 @@ public final class JsonFormatter implements EventListener {
             featureMaps.add(createDummyFeatureForFailure(event));
         }
 
-        gson.toJson(featureMaps, writer);
         try {
+            JSON.writeValue(writer, featureMaps);
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -164,7 +163,7 @@ public final class JsonFormatter implements EventListener {
             featureMap.put("description", feature.getDescription() != null ? feature.getDescription() : "");
             featureMap.put("line", feature.getLocation().getLine());
             featureMap.put("id", TestSourcesModel.convertToId(feature.getName()));
-            featureMap.put("tags", feature.getTagsList().stream().map(
+            featureMap.put("tags", feature.getTags().stream().map(
                 tag -> {
                     Map<String, Object> json = new LinkedHashMap<>();
                     json.put("name", tag.getName());
@@ -214,7 +213,7 @@ public final class JsonFormatter implements EventListener {
     private Map<String, Object> createBackground(TestCase testCase) {
         TestSourcesModel.AstNode astNode = testSources.getAstNode(currentFeatureFile, testCase.getLocation().getLine());
         if (astNode != null) {
-            Background background = TestSourcesModel.getBackgroundForTestCase(astNode);
+            Background background = getBackgroundForTestCase(astNode).get();
             Map<String, Object> testCaseMap = new HashMap<>();
             testCaseMap.put("name", background.getName());
             testCaseMap.put("line", background.getLocation().getLine());
@@ -354,9 +353,9 @@ public final class JsonFormatter implements EventListener {
 
             scenario.put("start_timestamp", getDateTimeFromTimeStamp(event.getInstant()));
             scenario.put("line", 2);
-            scenario.put("name", "Could not execute Cucumber");
+            scenario.put("name", "Failure while executing Cucumber");
             scenario.put("description", "");
-            scenario.put("id", "failure;could-not-execute-cucumber");
+            scenario.put("id", "failure;failure-while-executing-cucumber");
             scenario.put("type", "scenario");
             scenario.put("keyword", "Scenario");
 
@@ -372,18 +371,18 @@ public final class JsonFormatter implements EventListener {
                     whenResult.put("status", "passed");
                 }
                 when.put("line", 3);
-                when.put("name", "Cucumber could not execute");
+                when.put("name", "Cucumber failed while executing");
                 Map<String, Object> whenMatch = new LinkedHashMap<>();
                 when.put("match", whenMatch);
                 whenMatch.put("arguments", new ArrayList<>());
-                whenMatch.put("location", "io.cucumber.core.Failure.cucumber_could_not_execute()");
+                whenMatch.put("location", "io.cucumber.core.Failure.failure_while_executing_cucumber()");
                 when.put("keyword", "When ");
 
                 {
                     Map<String, Object> thenResult = new LinkedHashMap<>();
                     then.put("result", thenResult);
                     thenResult.put("duration", 0);
-                    thenResult.put("error_message", exception.getMessage());
+                    thenResult.put("error_message", printStackTrace(exception));
                     thenResult.put("status", "failed");
                 }
                 then.put("line", 4);
