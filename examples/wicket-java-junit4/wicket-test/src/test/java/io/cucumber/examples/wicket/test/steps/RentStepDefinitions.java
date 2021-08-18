@@ -7,7 +7,7 @@ import io.cucumber.java.en.When;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class RentSteps {
+public class RentStepDefinitions {
 
     private final RentACarSupport rentACarSupport = new RentACarSupport();
 

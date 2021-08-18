@@ -28,6 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -206,6 +207,28 @@ class RunnerTest {
         inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class));
         inOrder.verify(beforeHook).execute(any(TestCaseState.class));
         inOrder.verify(afterHook).execute(any(TestCaseState.class));
+    }
+
+    @Test
+    void all_static_hooks_execute_also_after_failure() {
+        StaticHookDefinition beforeAllHook = createStaticHook();
+        StaticHookDefinition failingBeforeAllHook = createStaticHook();
+        doThrow(new RuntimeException("boom")).when(failingBeforeAllHook).execute();
+
+        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
+            @Override
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+                glue.addBeforeAllHook(beforeAllHook);
+                glue.addBeforeAllHook(failingBeforeAllHook);
+            }
+        };
+
+        Runner runner = runnerSupplier.get();
+        assertThrows(RuntimeException.class, runner::runBeforeAllHooks);
+
+        InOrder inOrder = inOrder(beforeAllHook, failingBeforeAllHook);
+        inOrder.verify(beforeAllHook).execute();
+        inOrder.verify(failingBeforeAllHook).execute();
     }
 
     @Test

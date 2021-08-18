@@ -4,17 +4,18 @@ import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
+import io.cucumber.java.DataTableType;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.testng.Assert.assertEquals;
 
-public class RpnCalculatorSteps {
+public class RpnCalculatorStepDefinitions {
 
     private RpnCalculator calc;
 
@@ -57,7 +58,7 @@ public class RpnCalculatorSteps {
 
     @Then("the result is {int}")
     public void the_result_is(double expected) {
-        assertThat(calc.value(), equalTo(expected));
+        assertEquals(expected, calc.value());
     }
 
     @Given("the previous entries:")
@@ -69,33 +70,23 @@ public class RpnCalculatorSteps {
         }
     }
 
+    @DataTableType
+    public Entry entry(Map<String, String> entry) {
+        return new Entry(
+            Integer.valueOf(entry.get("first")),
+            Integer.valueOf(entry.get("second")),
+            entry.get("operation"));
+    }
+
     static final class Entry {
 
-        private Integer first;
-        private Integer second;
-        private String operation;
+        private final Integer first;
+        private final Integer second;
+        private final String operation;
 
-        public Integer getFirst() {
-            return first;
-        }
-
-        public void setFirst(Integer first) {
+        Entry(Integer first, Integer second, String operation) {
             this.first = first;
-        }
-
-        public Integer getSecond() {
-            return second;
-        }
-
-        public void setSecond(Integer second) {
             this.second = second;
-        }
-
-        public String getOperation() {
-            return operation;
-        }
-
-        public void setOperation(String operation) {
             this.operation = operation;
         }
 

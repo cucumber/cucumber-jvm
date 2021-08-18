@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
-public class ShoppingSteps {
+public class ShoppingStepDefinitions {
 
     private final RpnCalculator calc = new RpnCalculator();
 
@@ -27,7 +27,7 @@ public class ShoppingSteps {
 
     @DataTableType
     public Grocery defineGrocery(Map<String, String> entry) {
-        return new Grocery(entry.get("name"), ShoppingSteps.Price.fromString(entry.get("price")));
+        return new Grocery(entry.get("name"), ShoppingStepDefinitions.Price.fromString(entry.get("price")));
     }
 
     @ParameterType(name = "amount", value = "\\d+\\.\\d+\\s[a-zA-Z]+")

@@ -130,7 +130,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public String getId() {
-        return testCase.getUri() + ":" + getLine();
+        return testCase.getId().toString();
     }
 
     @Override

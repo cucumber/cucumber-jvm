@@ -108,6 +108,15 @@ public final class Scenario {
     }
 
     /**
+     * Returns the unique identifier for this scenario.
+     * <p>
+     * If this is a Scenario from Scenario Outlines this will return the id of
+     * the example row in the Scenario Outline.
+     * <p>
+     * The id is not stable across multiple executions of Cucumber but does
+     * correlate with ids used in messages output. Use the uri + line number to
+     * obtain a somewhat stable identifier of a scenario.
+     *
      * @return the id of the Scenario.
      */
     public String getId() {
@@ -122,9 +131,12 @@ public final class Scenario {
     }
 
     /**
-     * @return the line in the feature file of the Scenario. If this is a
-     *         Scenario from Scenario Outlines this will return the line of the
-     *         example row in the Scenario Outline.
+     * Returns the line in the feature file of the Scenario.
+     * <p>
+     * If this is a Scenario from Scenario Outlines this will return the line of
+     * the example row in the Scenario Outline.
+     *
+     * @return the line in the feature file of the Scenario
      */
     public Integer getLine() {
         return delegate.getLine();

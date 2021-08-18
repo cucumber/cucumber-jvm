@@ -337,7 +337,7 @@ class TeamCityPluginTest {
 
         assertThat(out, bytesContainsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']\n" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/ After All failed' details = 'the stack trace' name = 'Before All/After All']\n"
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/After All failed' details = 'the stack trace' name = 'Before All/After All']\n"
                 +
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']"));
     }

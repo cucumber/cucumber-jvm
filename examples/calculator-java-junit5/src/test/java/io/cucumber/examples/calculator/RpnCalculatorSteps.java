@@ -4,16 +4,14 @@ import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
-import io.cucumber.java.DataTableType;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.util.List;
-import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class RpnCalculatorSteps {
 
@@ -29,6 +27,11 @@ public class RpnCalculatorSteps {
         // Runs after all scenarios
     }
 
+    @AfterAll
+    public static void afterAll2() {
+        // Runs after all scenarios
+    }
+
     @Before("not @foo")
     public void before(Scenario scenario) {
         scenario.log("Runs before each scenarios *not* tagged with @foo");
@@ -36,6 +39,11 @@ public class RpnCalculatorSteps {
 
     @After
     public void after(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
+    }
+
+    @After
+    public void after2(Scenario scenario) {
         scenario.log("Runs after each scenarios");
     }
 
@@ -70,23 +78,33 @@ public class RpnCalculatorSteps {
         }
     }
 
-    @DataTableType
-    public Entry entry(Map<String, String> entry) {
-        return new Entry(
-            Integer.valueOf(entry.get("first")),
-            Integer.valueOf(entry.get("second")),
-            entry.get("operation"));
-    }
-
     static final class Entry {
 
-        private final Integer first;
-        private final Integer second;
-        private final String operation;
+        private Integer first;
+        private Integer second;
+        private String operation;
 
-        Entry(Integer first, Integer second, String operation) {
+        public Integer getFirst() {
+            return first;
+        }
+
+        public void setFirst(Integer first) {
             this.first = first;
+        }
+
+        public Integer getSecond() {
+            return second;
+        }
+
+        public void setSecond(Integer second) {
             this.second = second;
+        }
+
+        public String getOperation() {
+            return operation;
+        }
+
+        public void setOperation(String operation) {
             this.operation = operation;
         }
 
