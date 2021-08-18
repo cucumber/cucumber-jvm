@@ -49,6 +49,16 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void selectAndExecuteNoScenario() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(0, event(test()));
+    }
+
+    @Test
     void selectAndExecuteSingleScenario() {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
