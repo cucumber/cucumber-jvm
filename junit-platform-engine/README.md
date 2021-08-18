@@ -22,27 +22,16 @@ and execute Cucumber scenarios.
 Maven Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
 [SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
-workaround you can either use the `@Cucumber` annotation or the JUnit Platform
-Console Launcher.
+workaround you can either use the
+[JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine) 
+or the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher).
 
-### Use the @Cucumber annotation ###
+To improve the readability of the reports provide the
+`cucumber.junit-platform.naming-strategy=long` configuration parameter.
 
-Cucumber will scan the package of a class annotated with `@Cucumber` for feature
-files.  
+### Use the @Suite annotation ###
 
-To use this feature, add the `@Cucumber` annotation to the test runner. Doing so
-will make Cucumber run the feature files in the package containing the test
-runner.
-
-```java
-package com.example.app;
-
-import io.cucumber.junit.platform.engine.Cucumber;
-
-@Cucumber
-public class RunCucumberTest {
-}
-```
+See [Suites with different configurations](#suites-with-different-configurations).
 
 ### Use the JUnit Console Launcher ###
 
@@ -127,6 +116,39 @@ tasks {
 	}
 }
 ```
+
+## Suites with different configurations
+
+The JUnit Platform Suite Engine can be used to run Cucumber multiple times with
+different configurations. Add the `junit-platform-suite` dependency:
+
+```xml
+<dependency>
+   <groupId>org.junit.platform</groupId>
+   <artifactId>junit-platform-suite</artifactId>
+   <version>${junit-platform.version}</version>
+   <scope>test</scope>
+</dependency>
+```
+
+Then define suites as needed:
+
+```java
+package com.example;
+
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
+
+import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+
+@Suite
+@SelectClasspathResource("com/example")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
+public class RunCucumberTest {
+}
+```
+
 
 ## Parallel execution ## 
 

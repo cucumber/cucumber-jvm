@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - To obtain the original `<uri>:<line-number>` identifier use `scenario.getUri() + ":" + scenario.getLine()`.
 
 ### Deprecated
+* [JUnit Platform] Deprecated `@Cucumber` in favour of `@Suite` ([#2362](https://github.com/cucumber/cucumber-jvm/pull/2362) M.P. Korstanje)
 
 ### Removed
 * [Core] Removed `--strict` and `--no-strict` options ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)

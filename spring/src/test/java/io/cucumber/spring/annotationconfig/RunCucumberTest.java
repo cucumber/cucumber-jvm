@@ -1,4 +1,4 @@
-package io.cucumber.examples.spring.application;
+package io.cucumber.spring.annotationconfig;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -9,7 +9,8 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("io/cucumber/examples/spring/application")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.examples.spring.application")
+@SelectClasspathResource("io/cucumber/spring/annotationContextConfiguration.feature")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.spring.annotationconfig")
 public class RunCucumberTest {
+
 }
