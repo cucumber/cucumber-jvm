@@ -76,11 +76,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- Work around. Surefire does not include enough information to disambiguate between different
-                         examples. -->
-                    <configurationParameters>
-                        cucumber.junit-platform.naming-strategy=long
-                    </configurationParameters>
+                    <properties>
+                        <!-- Work around. Surefire does not include enough information to disambiguate between different
+                             examples. -->
+                        <configurationParameters>
+                            cucumber.junit-platform.naming-strategy=long
+                        </configurationParameters>
+                    </properties>
                 </configuration>
             </plugin>
 
