@@ -14,20 +14,8 @@
     <description>Cucumber JVM: Maven Archetype</description>
 
     <properties>
-        <junit.version>4.13.2</junit.version>
+        <junit-jupiter.version>5.8.0-RC1</junit-jupiter.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-bom</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <!-- Not used by this module, but used by the integration tests of
          created project. Declaring the dependencies keeps the project
@@ -42,19 +30,22 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Also not used by this module. But ensures the junit.version in the
-             archetype template is also automatically updated by renovate bot. -->
+        <!-- Also not used by this module. But ensures the junit-jupiter.version
+             in the archetype template is also automatically updated by renovate
+             bot. -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit</groupId>
+            <artifactId>junit-bom</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
