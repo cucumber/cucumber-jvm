@@ -5,10 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ----
-## [Unreleased main] (In Git)
+## [Unreleased] (In Git)
 
 ### Added
-* [Java] Added `BeforeAll` and `AfterAll` hooks ([cucumber/#1876](https://github.com/cucumber/cucumber/pull/1876) M.P. Korstanje)
+* [Java] Added `@BeforeAll` and `@AfterAll` hooks ([cucumber/#1876](https://github.com/cucumber/cucumber-jvm/pull/1876) M.P. Korstanje)
 * [JUnit Platform] Optionally use long names
     - Adds `cucumber.junit-platform.naming-strategy=long` ([#2361](https://github.com/cucumber/cucumber-jvm/pull/2361) M.P. Korstanje)
 
@@ -48,8 +48,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
 
 ### Fixed
- * [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
- * [Core] Synchronize event bus before use ([#2358](https://github.com/cucumber/cucumber-jvm/pull/2358)) M.P. Korstanje)
+* [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
+* [Core] Synchronize event bus before use ([#2358](https://github.com/cucumber/cucumber-jvm/pull/2358)) M.P. Korstanje)
 
 ## [6.11.0] (2021-08-05)
 
