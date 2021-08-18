@@ -12,11 +12,32 @@
     <name>Cucumber-JVM: OpenEJB</name>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
-        <openejb-core.version>8.0.7</openejb-core.version>
-        <jaxb-api.version>2.3.1</jaxb-api.version>
         <activation.version>1.1.1</activation.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <junit-jupiter.version>5.8.0-RC1</junit-jupiter.version>
+        <openejb-core.version>8.0.7</openejb-core.version>
+        <apiguardian-api.version>1.1.2</apiguardian-api.version>
+        <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -26,6 +47,7 @@
         <dependency>
             <groupId>org.apiguardian</groupId>
             <artifactId>apiguardian-api</artifactId>
+            <version>${apiguardian-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomee</groupId>

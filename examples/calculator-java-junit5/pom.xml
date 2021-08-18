@@ -14,7 +14,27 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.calculator</project.Automatic-Module-Name>
         <jackson-databind.version>2.12.4</jackson-databind.version>
+        <junit-jupiter.version>5.8.0-RC1</junit-jupiter.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
