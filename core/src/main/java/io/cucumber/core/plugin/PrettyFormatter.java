@@ -130,9 +130,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             String status = event.getResult().getStatus().name().toLowerCase(ROOT);
             String formattedStepText = formatStepText(keyword, stepText, formats.get(status),
                 formats.get(status + "_arg"), testStep.getDefinitionArgument());
-            String locationIndent = calculateLocationIndent(event.getTestCase(), formatPlainStep(keyword, stepText));
-            out.println(STEP_INDENT + formattedStepText + locationIndent + formatLocation(testStep.getCodeLocation()));
-
+            String locationComment = formatLocationComment(event, testStep, keyword, stepText);
+            out.println(STEP_INDENT + formattedStepText + locationComment);
             StepArgument stepArgument = testStep.getStep().getArgument();
             if (DataTableArgument.class.isInstance(stepArgument)) {
                 DataTableFormatter tableFormatter = DataTableFormatter
@@ -148,6 +147,17 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                 }
             }
         }
+    }
+
+    private String formatLocationComment(
+            TestStepFinished event, PickleStepTestStep testStep, String keyword, String stepText
+    ) {
+        String codeLocation = testStep.getCodeLocation();
+        if (codeLocation == null) {
+            return "";
+        }
+        String locationIndent = calculateLocationIndent(event.getTestCase(), formatPlainStep(keyword, stepText));
+        return locationIndent + formatLocation(codeLocation);
     }
 
     private void printError(TestStepFinished event) {

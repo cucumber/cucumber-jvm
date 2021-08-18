@@ -68,6 +68,35 @@ class PrettyFormatterTest {
     }
 
     @Test
+    void should_skip_missing_location_strings() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n" +
+                "    When second step\n" +
+                "    Then third step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", "path/step_definitions.java:3"),
+                    new StubStepDefinition("second step", (String) null),
+                    new StubStepDefinition("third step", "path/step_definitions.java:11")))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("" +
+                "\n" +
+                "Scenario: scenario name # path/test.feature:2\n" +
+                "  Given first step      # path/step_definitions.java:3\n" +
+                "  When second step\n" +
+                "  Then third step       # path/step_definitions.java:11\n"));
+    }
+
+    @Test
     void should_handle_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
