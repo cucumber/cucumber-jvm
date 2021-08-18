@@ -20,18 +20,10 @@
         <toolchain.vendor>openjdk</toolchain.vendor>
         <toolchain.java.version>11</toolchain.java.version>
 
-        <!--Semantic version -->
-        <apiguardian-api.version>1.1.2</apiguardian-api.version>
-
         <!-- io.cucumber dependencies -->
-        <cucumber-expressions.version>12.1.2</cucumber-expressions.version>
-        <datatable.version>4.1.0</datatable.version>
-        <create-meta.version>6.0.1</create-meta.version>
-        <tag-expressions.version>3.0.1</tag-expressions.version>
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>17.0.1</messages.version>
         <gherkin.version>20.0.1</gherkin.version>
-        <html-formatter.version>16.0.1</html-formatter.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.14</groovy.version>
@@ -65,17 +57,6 @@
         <module>spring</module>
         <module>testng</module>
     </modules>
-
-    <dependencyManagement>
-        <!-- TODO: Remove once JUnit 5.8 is released -->
-        <dependencies>
-            <dependency>
-                <groupId>org.apiguardian</groupId>
-                <artifactId>apiguardian-api</artifactId>
-                <version>${apiguardian-api.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <profiles>
         <profile>

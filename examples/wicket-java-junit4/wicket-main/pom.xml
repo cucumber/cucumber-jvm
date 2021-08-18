@@ -14,7 +14,7 @@
         <wicket.version>9.4.0</wicket.version>
         <jetty.version>9.4.43.v20210629</jetty.version>
         <jcl-over-slf4.version>1.7.32</jcl-over-slf4.version>
-        <junit-jupiter.version>5.7.2</junit-jupiter.version>
+        <junit-jupiter.version>5.8.0-RC1</junit-jupiter.version>
         <logback-classic.version>1.2.5</logback-classic.version>
     </properties>
 
