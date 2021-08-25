@@ -1,8 +1,8 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.Options;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -28,11 +29,18 @@ import static org.mockito.Mockito.mock;
 class CucumberExecutionContextTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-    private final Options options = new RuntimeOptionsBuilder().build();
+    private final RuntimeOptions options = new RuntimeOptionsBuilder().build();
     private final ExitStatus exitStatus = new ExitStatus(options);
     private final RuntimeException failure = new IllegalStateException("failure runner");
-    private final CucumberExecutionContext context = new CucumberExecutionContext(bus, exitStatus,
-        mock(RunnerSupplier.class));
+    private final BackendSupplier backendSupplier = new StubBackendSupplier();
+    private final Supplier<ClassLoader> classLoader = CucumberExecutionContext.class::getClassLoader;
+    private final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+        options);
+    private final ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(
+        objectFactoryServiceLoader);
+    private final RunnerSupplier runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier,
+        objectFactorySupplier);
+    private final CucumberExecutionContext context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
 
     @Test
     public void collects_and_rethrows_failures_in_runner() {
@@ -40,7 +48,7 @@ class CucumberExecutionContextTest {
             throw failure;
         }));
         assertThat(thrown, is(failure));
-        assertThat(context.getException().getCause(), is(failure));
+        assertThat(context.getThrowable(), is(failure));
     }
 
     @Test
@@ -57,7 +65,7 @@ class CucumberExecutionContextTest {
             }
         }));
         assertThat(thrown, is(failure));
-        assertThat(context.getException(), nullValue());
+        assertThat(context.getThrowable(), nullValue());
     }
 
     @Test
@@ -77,7 +85,7 @@ class CucumberExecutionContextTest {
         assertThat(testRunStarted.get(0), notNullValue());
         Result result = testRunFinished.get(0).getResult();
         assertThat(result.getStatus(), is(Status.FAILED));
-        assertThat(result.getError().getCause(), is(failure));
+        assertThat(result.getError(), is(failure));
     }
 
 }

@@ -20,11 +20,9 @@ import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.FeaturePathFeatureSupplier;
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.ObjectFactorySupplier;
-import io.cucumber.core.runtime.ScanningTypeRegistryConfigurerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.runtime.TypeRegistryConfigurerSupplier;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,6 +42,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -92,7 +91,6 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
     private final List<ParentRunner<?>> children;
     private final EventBus bus;
-    private final List<Feature> features;
     private final Plugins plugins;
     private final CucumberExecutionContext context;
 
@@ -148,14 +146,14 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 .parse(CucumberProperties.fromSystemProperties())
                 .build(junitEnvironmentOptions);
 
-        this.bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        this.bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
         // Parse the features early. Don't proceed when there are lexer errors
         FeatureParser parser = new FeatureParser(bus::generateId);
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
             parser);
-        this.features = featureSupplier.get();
+        List<Feature> features = featureSupplier.get();
 
         // Create plugins after feature parsing to avoid the creation of empty
         // files on lexer errors.
@@ -167,10 +165,8 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
-        TypeRegistryConfigurerSupplier typeRegistryConfigurerSupplier = new ScanningTypeRegistryConfigurerSupplier(
-            classLoader, runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
-            objectFactorySupplier, typeRegistryConfigurerSupplier);
+            objectFactorySupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
         Predicate<Pickle> filters = new Filters(runtimeOptions);
 
@@ -179,7 +175,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         this.children = features.stream()
                 .map(feature -> {
                     Integer uniqueSuffix = uniqueSuffix(groupedByName, feature, Feature::getName);
-                    return FeatureRunner.create(feature, uniqueSuffix, filters, runnerSupplier, junitOptions);
+                    return FeatureRunner.create(feature, uniqueSuffix, filters, context, junitOptions);
                 })
                 .filter(runner -> !runner.isEmpty())
                 .collect(toList());
@@ -202,8 +198,15 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
     @Override
     protected Statement childrenInvoker(RunNotifier notifier) {
-        Statement runFeatures = super.childrenInvoker(notifier);
-        return new RunCucumber(runFeatures);
+        Statement statement = super.childrenInvoker(notifier);
+
+        statement = new RunBeforeAllHooks(statement);
+        statement = new RunAfterAllHooks(statement);
+
+        statement = new StartTestRun(statement);
+        statement = new FinishTestRun(statement);
+
+        return statement;
     }
 
     @Override
@@ -212,12 +215,11 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         multiThreadingAssumed = true;
     }
 
-    class RunCucumber extends Statement {
+    private class StartTestRun extends Statement {
+        private final Statement next;
 
-        private final Statement runFeatures;
-
-        RunCucumber(Statement runFeatures) {
-            this.runFeatures = runFeatures;
+        public StartTestRun(Statement next) {
+            this.next = next;
         }
 
         @Override
@@ -227,14 +229,58 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
-
             context.startTestRun();
-            features.forEach(context::beforeFeature);
+            next.evaluate();
+        }
 
+    }
+
+    private class FinishTestRun extends Statement {
+        private final Statement next;
+
+        public FinishTestRun(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
             try {
-                runFeatures.evaluate();
+                next.evaluate();
             } finally {
                 context.finishTestRun();
+            }
+        }
+
+    }
+
+    private class RunBeforeAllHooks extends Statement {
+        private final Statement next;
+
+        public RunBeforeAllHooks(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            context.runBeforeAllHooks();
+            next.evaluate();
+        }
+
+    }
+
+    private class RunAfterAllHooks extends Statement {
+        private final Statement next;
+
+        public RunAfterAllHooks(Statement next) {
+            this.next = next;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                next.evaluate();
+            } finally {
+                context.runAfterAllHooks();
             }
         }
 

@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy;
 import org.junit.platform.engine.support.hierarchical.ParallelExecutionConfigurationStrategy;
 
@@ -71,6 +72,22 @@ public final class Constants {
      * @see io.cucumber.core.feature.GluePath
      */
     public static final String GLUE_PROPERTY_NAME = io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
+
+    /**
+     * Property name used to configure the naming strategy: {@value}
+     * <p>
+     * Value must be one of {@code long} or {@code short}. By default, short
+     * names are used.
+     * <p>
+     * When long names are used the parent descriptor names are included into
+     * each test descriptor name. So for example a single example would be
+     * named:
+     * {@code Feature Name - Rule Name - Scenario Name - Examples Name - Example #N }.
+     * This is useful for tools that only report the test name such as Maven and
+     * Gradle.
+     */
+    @API(status = Status.EXPERIMENTAL, since = "7.0.0")
+    public static final String JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy";
 
     /**
      * Property name to enable plugins: {@value}

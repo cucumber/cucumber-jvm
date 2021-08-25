@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-examples</artifactId>
-        <version>6.10.5-SNAPSHOT</version>
+        <version>7.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>calculator-java-cli</artifactId>
@@ -13,8 +13,22 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.calculator</project.Automatic-Module-Name>
-        <jackson-databind.version>2.12.3</jackson-databind.version>
+        <jackson-databind.version>2.12.4</jackson-databind.version>
+        <hamcrest.version>2.2</hamcrest.version>
     </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -25,6 +39,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

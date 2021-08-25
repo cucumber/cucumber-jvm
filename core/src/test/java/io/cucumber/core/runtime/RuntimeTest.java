@@ -4,20 +4,17 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
-import io.cucumber.core.backend.StubHookDefinition;
-import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.JUnitFormatter;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
-import io.cucumber.messages.Messages;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Meta;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
@@ -36,21 +33,17 @@ import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
-import org.opentest4j.TestAbortedException;
 
-import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import static java.time.Clock.fixed;
 import static java.time.Duration.ZERO;
-import static java.time.Duration.ofMillis;
 import static java.time.Instant.EPOCH;
 import static java.time.ZoneId.of;
 import static java.util.Arrays.asList;
@@ -59,6 +52,7 @@ import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -75,13 +69,13 @@ class RuntimeTest {
 
     @Test
     void with_passed_scenarios() {
-        Runtime runtime = createStrictRuntime();
+        Runtime runtime = createRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PASSED));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
-    private Runtime createStrictRuntime() {
+    private Runtime createRuntime() {
         return Runtime.builder()
                 .withRuntimeOptions(
                     new RuntimeOptionsBuilder()
@@ -96,14 +90,14 @@ class RuntimeTest {
 
     @Test
     void with_undefined_scenarios() {
-        Runtime runtime = createStrictRuntime();
+        Runtime runtime = createRuntime();
         bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
     void with_pending_scenarios() {
-        Runtime runtime = createStrictRuntime();
+        Runtime runtime = createRuntime();
         bus.send(testCaseFinishedWithStatus(Status.PENDING));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
@@ -111,21 +105,15 @@ class RuntimeTest {
 
     @Test
     void with_skipped_scenarios() {
-        Runtime runtime = createNonStrictRuntime();
+        Runtime runtime = createRuntime();
         bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
-    private Runtime createNonStrictRuntime() {
-        return Runtime.builder()
-                .withEventBus(bus)
-                .build();
-    }
-
     @Test
     void with_failed_scenarios() {
-        Runtime runtime = createStrictRuntime();
+        Runtime runtime = createRuntime();
         bus.send(testCaseFinishedWithStatus(Status.FAILED));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
@@ -133,7 +121,7 @@ class RuntimeTest {
 
     @Test
     void with_ambiguous_scenarios() {
-        Runtime runtime = createStrictRuntime();
+        Runtime runtime = createRuntime();
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
@@ -361,11 +349,9 @@ class RuntimeTest {
                 .build()
                 .run();
         CompositeCucumberException actualThrown = assertThrows(CompositeCucumberException.class, testMethod);
-        assertThat(actualThrown.getMessage(), is(equalTo(
-            "There were 3 exceptions:\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)\n" +
-                    "  java.lang.RuntimeException(This exception is expected)")));
+        assertThat(actualThrown.getMessage(),
+            is(equalTo("There were 3 exceptions. The details are in the stacktrace below.")));
+        assertThat(actualThrown.getSuppressed(), is(arrayWithSize(3)));
     }
 
     @Test
@@ -466,14 +452,14 @@ class RuntimeTest {
 
     @Test
     void emits_a_meta_message() {
-        List<Messages.Envelope> messages = new ArrayList<>();
-        EventListener listener = publisher -> publisher.registerHandlerFor(Messages.Envelope.class, messages::add);
+        List<Envelope> messages = new ArrayList<>();
+        EventListener listener = publisher -> publisher.registerHandlerFor(Envelope.class, messages::add);
         Runtime.builder()
                 .withAdditionalPlugins(listener)
                 .build()
                 .run();
 
-        Messages.Meta meta = messages.get(0).getMeta();
+        Meta meta = messages.get(0).getMeta();
         assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
         assertThat(meta.getImplementation().getVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));

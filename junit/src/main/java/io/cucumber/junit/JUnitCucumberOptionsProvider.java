@@ -46,11 +46,6 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         }
 
         @Override
-        public boolean strict() {
-            return annotation.strict();
-        }
-
-        @Override
         public String[] features() {
             return annotation.features();
         }

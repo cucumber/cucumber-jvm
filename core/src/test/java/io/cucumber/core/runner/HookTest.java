@@ -1,6 +1,5 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.api.TypeRegistryConfigurer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
@@ -21,7 +20,6 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +49,6 @@ class HookTest {
         ObjectFactory objectFactory = mock(ObjectFactory.class);
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getLocation()).thenReturn("hook-location");
-        TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
         when(hook.getTagExpression()).thenReturn("");
 
         doAnswer(invocation -> {
@@ -60,8 +57,7 @@ class HookTest {
             return null;
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
-        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer,
-            runtimeOptions);
+        Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, runtimeOptions);
 
         runner.runPickle(pickle);
 
@@ -78,8 +74,6 @@ class HookTest {
         ObjectFactory objectFactory = mock(ObjectFactory.class);
         final HookDefinition hook = mock(HookDefinition.class);
         when(hook.getLocation()).thenReturn("hook-location");
-        TypeRegistryConfigurer typeRegistryConfigurer = mock(TypeRegistryConfigurer.class);
-
         when(hook.getTagExpression()).thenReturn("(");
 
         doAnswer(invocation -> {
@@ -89,10 +83,11 @@ class HookTest {
         }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
 
         RuntimeException e = assertThrows(RuntimeException.class,
-            () -> new Runner(bus, Collections.singleton(backend), objectFactory, typeRegistryConfigurer,
+            () -> new Runner(bus, Collections.singleton(backend), objectFactory,
                 runtimeOptions));
 
         assertThat(e.getMessage(),
             is("Invalid tag expression at 'hook-location'"));
     }
+
 }

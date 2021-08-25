@@ -1,6 +1,9 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.DataTableArgument;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.Argument;
@@ -8,6 +11,7 @@ import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
+import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -84,6 +88,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     }
 
     private void handleTestRunFinished(TestRunFinished event) {
+        printError(event);
         out.close();
     }
 
@@ -125,18 +130,53 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             String status = event.getResult().getStatus().name().toLowerCase(ROOT);
             String formattedStepText = formatStepText(keyword, stepText, formats.get(status),
                 formats.get(status + "_arg"), testStep.getDefinitionArgument());
-            String locationIndent = calculateLocationIndent(event.getTestCase(), formatPlainStep(keyword, stepText));
-            out.println(STEP_INDENT + formattedStepText + locationIndent + formatLocation(testStep.getCodeLocation()));
+            String locationComment = formatLocationComment(event, testStep, keyword, stepText);
+            out.println(STEP_INDENT + formattedStepText + locationComment);
+            StepArgument stepArgument = testStep.getStep().getArgument();
+            if (DataTableArgument.class.isInstance(stepArgument)) {
+                DataTableFormatter tableFormatter = DataTableFormatter
+                        .builder()
+                        .prefixRow(STEP_SCENARIO_INDENT)
+                        .escapeDelimiters(false)
+                        .build();
+                DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
+                try {
+                    tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
+                } catch (IOException e) {
+                    throw new CucumberException(e);
+                }
+            }
         }
+    }
+
+    private String formatLocationComment(
+            TestStepFinished event, PickleStepTestStep testStep, String keyword, String stepText
+    ) {
+        String codeLocation = testStep.getCodeLocation();
+        if (codeLocation == null) {
+            return "";
+        }
+        String locationIndent = calculateLocationIndent(event.getTestCase(), formatPlainStep(keyword, stepText));
+        return locationIndent + formatLocation(codeLocation);
     }
 
     private void printError(TestStepFinished event) {
         Result result = event.getResult();
+        printError(result);
+    }
+
+    private void printError(TestRunFinished event) {
+        Result result = event.getResult();
+        printError(result);
+    }
+
+    private void printError(Result result) {
         Throwable error = result.getError();
         if (error != null) {
             String name = result.getStatus().name().toLowerCase(ROOT);
+            Format format = formats.get(name);
             String text = printStackTrace(error);
-            out.println("      " + formats.get(name).text(text));
+            out.println("      " + format.text(text));
         }
     }
 

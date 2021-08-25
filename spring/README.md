@@ -49,6 +49,51 @@ For more information configuring Spring tests see:
  - [Spring Framework Documentation - Testing](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/testing.html)
  - [Spring Boot Features - Testing](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing)
 
+### Configuring multiple Test Application Contexts
+
+Per execution Cucumber can only launch a single Test Application Contexts. To
+use multiple different application contexts Cucumber must be executed multiple
+times.
+
+#### JUnit 4 / TestNG
+
+```java
+package com.example;
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(glue = "com.example.application.one", features = "classpath:com/example/application.one")
+public class ApplicationOneTest {
+
+}
+```
+
+Repeat as needed.
+
+#### JUnit 5 + JUnit Platform Suite
+
+```java
+package com.example;
+
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
+
+import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+
+@Suite
+@SelectClasspathResource("com/example/application/one")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example.application.one")
+public class ApplicationOneTest {
+
+}
+```
+
+Repeat as needed.
+
 ## Accessing the application context
 
 Components from the application context can be accessed by autowiring.
@@ -87,7 +132,7 @@ disposed at the end of it.
 
 By using the `@ScenarioScope` annotation additional components can be added to
 the glue scope. These components can be used to safely share state between
-scenarios. 
+steps inside a scenario. 
 
 ```java
 package com.example.app;

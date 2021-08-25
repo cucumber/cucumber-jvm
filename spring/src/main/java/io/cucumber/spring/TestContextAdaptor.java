@@ -8,6 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestContextManager;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
@@ -44,15 +45,27 @@ abstract class TestContextAdaptor {
 
     public final void start() {
         // The TestContextManager delegate makes the application context
-        // available to other threads. Register the glue however requires
-        // modifies the application context. To avoid concurrent modification
-        // issues (#1823, #1153, #1148, #1106) we do this serially.
+        // available to other threads. Registering the glue however modifies the
+        // application context. To avoid concurrent modification issues (#1823,
+        // #1153, #1148, #1106) we do this serially.
         synchronized (monitor) {
             registerGlueCodeScope(applicationContext);
             notifyContextManagerAboutTestClassStarted();
             registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
         }
-        CucumberTestContext.getInstance().start();
+        notifyTestContextManagerAboutBeforeTestMethod();
+    }
+
+    private void notifyTestContextManagerAboutBeforeTestMethod() {
+        try {
+            CucumberTestContext.getInstance().start();
+            Class<?> testClass = delegate.getTestContext().getTestClass();
+            Object testContextInstance = applicationContext.getBean(testClass);
+            Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
+            delegate.beforeTestMethod(testContextInstance, dummyMethod);
+        } catch (Exception e) {
+            throw new CucumberBackendException(e.getMessage(), e);
+        }
     }
 
     final void registerGlueCodeScope(ConfigurableApplicationContext context) {
@@ -91,9 +104,22 @@ abstract class TestContextAdaptor {
     }
 
     public final void stop() {
+        notifyTestContextManagerAboutAfterTestMethod();
         CucumberTestContext.getInstance().stop();
         try {
             delegate.afterTestClass();
+        } catch (Exception e) {
+            throw new CucumberBackendException(e.getMessage(), e);
+        }
+    }
+
+    private void notifyTestContextManagerAboutAfterTestMethod() {
+        try {
+            CucumberTestContext.getInstance().start();
+            Class<?> testClass = delegate.getTestContext().getTestClass();
+            Object testContextInstance = applicationContext.getBean(testClass);
+            Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
+            delegate.afterTestMethod(testContextInstance, dummyMethod, null);
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }
@@ -103,4 +129,7 @@ abstract class TestContextAdaptor {
         return applicationContext.getBean(type);
     }
 
+    public void cucumberDoesNotHaveASingleTestMethod() {
+
+    }
 }

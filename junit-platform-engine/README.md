@@ -22,25 +22,45 @@ and execute Cucumber scenarios.
 Maven Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
 [SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
-workaround you can either use the `@Cucumber` annotation or the JUnit Platform
-Console Launcher.
+workaround you can either use the
+[JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine) 
+or the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher).
 
-### Use the @Cucumber annotation ###
+### Use the JUnit Platform Suite Engine
 
-Cucumber will scan the package of a class annotated with `@Cucumber` for feature
-files.  
+The JUnit Platform Suite Engine can be used to run Cucumber. See
+[Suites with different configurations](#suites-with-different-configurations)
+for a brief how to.
 
-To use this feature, add the `@Cucumber` annotation to the test runner. Doing so
-will make Cucumber run the feature files in the package containing the test
-runner.
+Because Surefire and Gradle reports the results in  a `<Class Name> - <Method Name>`
+format only scenario names or example numbers are reported. This
+can make for hard to read reports. To improve the readability of the reports
+provide the `cucumber.junit-platform.naming-strategy=long` configuration
+parameter. This will include the feature name as part of the tests name. 
 
-```java
-package com.example.app;
+#### Maven
 
-import io.cucumber.junit.platform.engine.Cucumber;
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.0.0-M5</version>
+    <configuration>
+        <properties>
+            <configurationParameters>
+                cucumber.junit-platform.naming-strategy=long
+            </configurationParameters>
+        </properties>
+    </configuration>
+</plugin>
+```            
 
-@Cucumber
-public class RunCucumberTest {
+#### Gradle
+
+```groovy
+test {
+    useJUnitPlatform()
+    systemProperty 'cucumber.junit-platform.naming-strategy', 'long'
 }
 ```
 
@@ -50,8 +70,6 @@ You can integrate the JUnit Platform Console Launcher in your build by using
 either the Maven Antrun plugin or the Gradle JavaExec task.
 
 #### Use the Maven Antrun plugin  ####
-
-Use the Maven Antrun plugin.
 
 Add the following to your `pom.xml`:
 
@@ -103,8 +121,6 @@ Add the following to your `pom.xml`:
 ```
 #### Use the Gradle JavaExec task  ####
 
-Use the Gradle JavaExec task.
-
 Add the following to your `build.gradle`:
 
 ```groovy
@@ -125,6 +141,40 @@ tasks {
 		dependsOn(consoleLauncherTest)
 		exclude("**/*")
 	}
+}
+```
+
+## Suites with different configurations
+
+The JUnit Platform Suite Engine can be used to run Cucumber multiple times with
+different configurations. Add the `junit-platform-suite` dependency:
+
+```xml
+<dependency>
+   <groupId>org.junit.platform</groupId>
+   <artifactId>junit-platform-suite</artifactId>
+   <version>${junit-platform.version}</version>
+   <scope>test</scope>
+</dependency>
+```
+
+Then define suites as needed:
+
+```java
+package com.example;
+
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
+
+import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("com/example")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
+public class RunCucumberTest {
 }
 ```
 
@@ -240,6 +290,9 @@ cucumber.filter.tags=                                         # a cucumber tag e
 
 cucumber.glue=                                                # comma separated package names. 
                                                               # example: com.example.glue  
+
+cucumber.junit-platform.naming-strategy=                      # long or short. default: short
+                                                              # include parent descriptor name in test descriptor.                   
 
 cucumber.plugin=                                              # comma separated plugin strings. 
                                                               # example: pretty, json:path/to/report.json
@@ -360,3 +413,65 @@ for more information.
 
 1. Do note that this is a [Cucumber Tag Expression](https://cucumber.io/docs/cucumber/api/#tags) rather than a JUnit5
    tag expression.
+
+## Rerunning Failed Scenarios ##
+
+When using `cucumber-junit-platform-engine` rerun files are not supported.
+However, the JUnit Platform allows you to rerun failed tests through its API.
+
+```java
+package com.example;
+
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.engine.discovery.UniqueIdSelector;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.TestIdentifier;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary.Failure;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
+
+public class RunCucumber {
+
+   public static void main(String[] args) {
+
+      LauncherDiscoveryRequest request = request()
+              .selectors(
+                      selectDirectory("path/to/features")
+              )
+              .build();
+
+      Launcher launcher = LauncherFactory.create();
+      SummaryGeneratingListener listener = new SummaryGeneratingListener();
+      launcher.registerTestExecutionListeners(listener);
+      launcher.execute(request);
+
+      TestExecutionSummary summary = listener.getSummary();
+      // Do something with summary
+
+      List<UniqueIdSelector> failures = summary.getFailures().stream()
+              .map(Failure::getTestIdentifier)
+              .filter(TestIdentifier::isTest)
+              .map(TestIdentifier::getUniqueId)
+              .map(DiscoverySelectors::selectUniqueId)
+              .collect(Collectors.toList());
+
+      LauncherDiscoveryRequest rerunRequest = request()
+              .selectors(failures)
+              .build();
+
+      launcher.execute(rerunRequest);
+
+      TestExecutionSummary rerunSummary = listener.getSummary();
+      // Do something with rerunSummary
+
+   }
+
+}
+```

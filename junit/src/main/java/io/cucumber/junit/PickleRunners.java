@@ -2,8 +2,7 @@ package io.cucumber.junit;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.runner.Runner;
-import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.core.runtime.CucumberExecutionContext;
 import io.cucumber.plugin.event.Step;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -22,20 +21,20 @@ import static io.cucumber.junit.FileNameCompatibleNames.createName;
 final class PickleRunners {
 
     static PickleRunner withStepDescriptions(
-            RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix, JUnitOptions options
+            CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix, JUnitOptions options
     ) {
         try {
-            return new WithStepDescriptions(runnerSupplier, pickle, uniqueSuffix, options);
+            return new WithStepDescriptions(context, pickle, uniqueSuffix, options);
         } catch (InitializationError e) {
             throw new CucumberException("Failed to create scenario runner", e);
         }
     }
 
     static PickleRunner withNoStepDescriptions(
-            String featureName, RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix,
+            String featureName, CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix,
             JUnitOptions jUnitOptions
     ) {
-        return new NoStepDescriptions(featureName, runnerSupplier, pickle, uniqueSuffix, jUnitOptions);
+        return new NoStepDescriptions(featureName, context, pickle, uniqueSuffix, jUnitOptions);
     }
 
     interface PickleRunner {
@@ -50,7 +49,7 @@ final class PickleRunners {
 
     static class WithStepDescriptions extends ParentRunner<Step> implements PickleRunner {
 
-        private final RunnerSupplier runnerSupplier;
+        private final CucumberExecutionContext context;
         private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
         private final Map<Step, Description> stepDescriptions = new HashMap<>();
@@ -58,11 +57,11 @@ final class PickleRunners {
         private Description description;
 
         WithStepDescriptions(
-                RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix, JUnitOptions jUnitOptions
+                CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix, JUnitOptions jUnitOptions
         )
                 throws InitializationError {
             super((Class<?>) null);
-            this.runnerSupplier = runnerSupplier;
+            this.context = context;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
             this.uniqueSuffix = uniqueSuffix;
@@ -104,11 +103,12 @@ final class PickleRunners {
         @Override
         public void run(final RunNotifier notifier) {
             // Possibly invoked by a thread other then the creating thread
-            Runner runner = runnerSupplier.get();
-            JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
-            jUnitReporter.startExecutionUnit(this, notifier);
-            runner.runPickle(pickle);
-            jUnitReporter.finishExecutionUnit();
+            context.runTestCase(runner -> {
+                JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
+                jUnitReporter.startExecutionUnit(this, notifier);
+                runner.runPickle(pickle);
+                jUnitReporter.finishExecutionUnit();
+            });
         }
 
         @Override
@@ -125,18 +125,18 @@ final class PickleRunners {
     static final class NoStepDescriptions implements PickleRunner {
 
         private final String featureName;
-        private final RunnerSupplier runnerSupplier;
+        private final CucumberExecutionContext context;
         private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
         private final Integer uniqueSuffix;
         private Description description;
 
         NoStepDescriptions(
-                String featureName, RunnerSupplier runnerSupplier, Pickle pickle, Integer uniqueSuffix,
+                String featureName, CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix,
                 JUnitOptions jUnitOptions
         ) {
             this.featureName = featureName;
-            this.runnerSupplier = runnerSupplier;
+            this.context = context;
             this.pickle = pickle;
             this.jUnitOptions = jUnitOptions;
             this.uniqueSuffix = uniqueSuffix;
@@ -145,11 +145,12 @@ final class PickleRunners {
         @Override
         public void run(final RunNotifier notifier) {
             // Possibly invoked by a thread other then the creating thread
-            Runner runner = runnerSupplier.get();
-            JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
-            jUnitReporter.startExecutionUnit(this, notifier);
-            runner.runPickle(pickle);
-            jUnitReporter.finishExecutionUnit();
+            context.runTestCase(runner -> {
+                JUnitReporter jUnitReporter = new JUnitReporter(runner.getBus(), jUnitOptions);
+                jUnitReporter.startExecutionUnit(this, notifier);
+                runner.runPickle(pickle);
+                jUnitReporter.finishExecutionUnit();
+            });
         }
 
         @Override

@@ -16,8 +16,7 @@ class RuntimeOptionsTest {
     @Test
     void shouldRemoveDuplicatePluginRegistrations() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        runtimeOptions.addSummaryPrinters(Arrays.asList(aPlugin, aPlugin));
-        runtimeOptions.addFormatters(Arrays.asList(aPlugin, aPlugin));
+        runtimeOptions.addPlugins(Arrays.asList(aPlugin, aPlugin));
         assertThat(runtimeOptions.plugins(), is(singletonList(aPlugin)));
     }
 

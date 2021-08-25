@@ -1,6 +1,6 @@
 package io.cucumber.core.gherkin.messages;
 
-import io.cucumber.messages.Messages.GherkinDocument.Feature.TableRow;
+import io.cucumber.messages.types.TableRow;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
@@ -10,8 +10,10 @@ final class GherkinMessagesExample implements Node.Example {
 
     private final TableRow tableRow;
     private final int rowIndex;
+    private final Node parent;
 
-    GherkinMessagesExample(TableRow tableRow, int rowIndex) {
+    GherkinMessagesExample(Node parent, TableRow tableRow, int rowIndex) {
+        this.parent = parent;
         this.tableRow = tableRow;
         this.rowIndex = rowIndex;
     }
@@ -29,6 +31,11 @@ final class GherkinMessagesExample implements Node.Example {
     @Override
     public Optional<String> getName() {
         return Optional.of("Example #" + rowIndex);
+    }
+
+    @Override
+    public Optional<Node> getParent() {
+        return Optional.of(parent);
     }
 
 }

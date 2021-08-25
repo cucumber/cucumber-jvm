@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.backend.StubHookDefinition;
 import io.cucumber.core.backend.StubPendingException;
+import io.cucumber.core.backend.StubStaticHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -26,6 +27,7 @@ import static java.time.ZoneId.of;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.WINDOWS)
 class TeamCityPluginTest {
@@ -307,6 +309,37 @@ class TeamCityPluginTest {
 
         assertThat(out, bytesContainsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/HookDefinition' captureStandardOutput = 'true' name = 'Before']\n"));
+    }
+
+    @Test
+    void should_print_system_failure_for_failed_hooks() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        assertThrows(StubException.class, () -> Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
+                .build()
+                .run());
+
+        assertThat(out, bytesContainsString("" +
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']\n" +
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/After All failed' details = 'the stack trace' name = 'Before All/After All']\n"
+                +
+                "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']"));
     }
 
 }

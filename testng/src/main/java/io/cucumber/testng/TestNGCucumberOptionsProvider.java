@@ -46,11 +46,6 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
         }
 
         @Override
-        public boolean strict() {
-            return annotation.strict();
-        }
-
-        @Override
         public String[] features() {
             return annotation.features();
         }

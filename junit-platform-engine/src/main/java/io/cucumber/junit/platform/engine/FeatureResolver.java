@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -43,6 +42,7 @@ final class FeatureResolver {
     private final CucumberEngineDescriptor engineDescriptor;
     private final Predicate<String> packageFilter;
     private final ConfigurationParameters parameters;
+    private final NamingStrategy namingStrategy;
 
     private FeatureResolver(
             ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor,
@@ -51,6 +51,7 @@ final class FeatureResolver {
         this.parameters = parameters;
         this.engineDescriptor = engineDescriptor;
         this.packageFilter = packageFilter;
+        this.namingStrategy = new CucumberEngineOptions(parameters).namingStrategy();
     }
 
     static FeatureResolver createFeatureResolver(
@@ -79,13 +80,13 @@ final class FeatureResolver {
             engineDescriptor,
             (Node.Feature self, TestDescriptor parent) -> new FeatureDescriptor(
                 source.featureSegment(parent.getUniqueId(), feature),
-                getNameOrKeyWord(self),
+                namingStrategy.name(self),
                 source.featureSource(),
                 feature),
             (Node.Rule node, TestDescriptor parent) -> {
                 TestDescriptor descriptor = new NodeDescriptor(
                     source.ruleSegment(parent.getUniqueId(), node),
-                    getNameOrKeyWord(node),
+                    namingStrategy.name(node),
                     source.nodeSource(node));
                 parent.addChild(descriptor);
                 return descriptor;
@@ -94,7 +95,7 @@ final class FeatureResolver {
                 TestDescriptor descriptor = new PickleDescriptor(
                     parameters,
                     source.scenarioSegment(parent.getUniqueId(), node),
-                    getNameOrKeyWord(node),
+                    namingStrategy.name(node),
                     source.nodeSource(node),
                     pickle);
                 parent.addChild(descriptor);
@@ -103,7 +104,7 @@ final class FeatureResolver {
             (Node.ScenarioOutline node, TestDescriptor parent) -> {
                 TestDescriptor descriptor = new NodeDescriptor(
                     source.scenarioSegment(parent.getUniqueId(), node),
-                    getNameOrKeyWord(node),
+                    namingStrategy.name(node),
                     source.nodeSource(node));
                 parent.addChild(descriptor);
                 return descriptor;
@@ -111,7 +112,7 @@ final class FeatureResolver {
             (Node.Examples node, TestDescriptor parent) -> {
                 NodeDescriptor descriptor = new NodeDescriptor(
                     source.examplesSegment(parent.getUniqueId(), node),
-                    getNameOrKeyWord(node),
+                    namingStrategy.name(node),
                     source.nodeSource(node));
                 parent.addChild(descriptor);
                 return descriptor;
@@ -121,17 +122,12 @@ final class FeatureResolver {
                 PickleDescriptor descriptor = new PickleDescriptor(
                     parameters,
                     source.exampleSegment(parent.getUniqueId(), node),
-                    getNameOrKeyWord(node),
+                    namingStrategy.name(node),
                     source.nodeSource(node),
                     pickle);
                 parent.addChild(descriptor);
                 return descriptor;
             });
-    }
-
-    private String getNameOrKeyWord(Node node) {
-        Supplier<String> keyword = () -> node.getKeyword().orElse("Unknown");
-        return node.getName().orElseGet(keyword);
     }
 
     void resolveDirectory(DirectorySelector selector) {

@@ -1,7 +1,7 @@
 package io.cucumber.core.gherkin.messages;
 
 import io.cucumber.core.gherkin.DocStringArgument;
-import io.cucumber.messages.Messages.PickleStepArgument.PickleDocString;
+import io.cucumber.messages.types.PickleDocString;
 
 final class GherkinMessagesDocStringArgument implements DocStringArgument {
 

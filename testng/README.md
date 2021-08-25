@@ -81,3 +81,32 @@ public class RunCucumberTest extends AbstractTestNGCucumberTests {
 </plugins>
 ```
 Where **dataproviderthreadcount** is the default number of threads to use for data providers when running tests in parallel.
+
+### Configure cucumber options via testNG xml
+
+If you need different [cucumber options](../core/src/main/java/io/cucumber/core/options/Constants.java) 
+for each test suite, add the cucumber options as parameters to the relevant suite. Add the common options inside the
+suite.
+
+```xml
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Example Suite">
+	<parameter name="cucumber.filter.tags" value="@Gherkin and not @Zucchini" />
+	
+	<test name="Vegetable garden" preserve-order="true">
+        <parameter name="cucumber.features" value="classpath:com/example/features/vegetable"/>
+		<parameter name="cucumber.glue" value="com.example.vegetables.glue"/>
+		<classes>
+			<class name="com.example.RunCucumberTests"/>
+		</classes>
+	</test>
+ 	
+	<test name="Herb garden" preserve-order="true">
+		<parameter name="cucumber.features" value="classpath:com/example/features/herbs"/>
+		<parameter name="cucumber.glue" value="com.example.herbs.glue"/>
+		<classes>
+			<class name="com.example.RunCucumberTests"/>
+		</classes>
+	</test>
+</suite>
+```

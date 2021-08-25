@@ -19,7 +19,6 @@ import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_N
 import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_LIMIT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
-import static io.cucumber.core.options.Constants.EXECUTION_STRICT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -38,6 +37,10 @@ import static java.util.stream.Collectors.toList;
 public final class CucumberPropertiesParser {
 
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
+        return parse(properties::get);
+    }
+
+    public RuntimeOptionsBuilder parse(CucumberPropertiesProvider properties) {
         RuntimeOptionsBuilder builder = new RuntimeOptionsBuilder();
 
         parse(properties,
@@ -59,11 +62,6 @@ public final class CucumberPropertiesParser {
             EXECUTION_ORDER_PROPERTY_NAME,
             PickleOrderParser::parse,
             builder::setPickleOrder);
-
-        parse(properties,
-            EXECUTION_STRICT_PROPERTY_NAME,
-            BooleanString::parseBoolean,
-            CucumberPropertiesParser::errorOnNonStrict);
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
@@ -129,20 +127,13 @@ public final class CucumberPropertiesParser {
     }
 
     private <T> void parse(
-            Map<String, String> properties, String propertyName, Function<String, T> parser, Consumer<T> setter
+            CucumberPropertiesProvider properties, String propertyName, Function<String, T> parser, Consumer<T> setter
     ) {
         parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
     }
 
-    private static void errorOnNonStrict(Boolean strict) {
-        if (!strict) {
-            throw new CucumberException(EXECUTION_STRICT_PROPERTY_NAME
-                    + "=false is no longer effective. Please use =true (the default) or remove this property");
-        }
-    }
-
     private <T> void parseAll(
-            Map<String, String> properties, String propertyName, Function<String, Collection<T>> parser,
+            CucumberPropertiesProvider properties, String propertyName, Function<String, Collection<T>> parser,
             Consumer<T> setter
     ) {
         String property = properties.get(propertyName);

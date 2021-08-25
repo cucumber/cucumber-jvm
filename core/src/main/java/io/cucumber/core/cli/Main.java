@@ -1,7 +1,5 @@
 package io.cucumber.core.cli;
 
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.CommandlineOptionsParser;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.options.CucumberProperties;
@@ -27,8 +25,6 @@ import java.util.Optional;
  */
 @API(status = API.Status.STABLE)
 public class Main {
-
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String... argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
@@ -74,8 +70,7 @@ public class Main {
                 .parse(argv)
                 .addDefaultGlueIfAbsent()
                 .addDefaultFeaturePathIfAbsent()
-                .addDefaultFormatterIfAbsent()
-                .addDefaultSummaryPrinterIfAbsent()
+                .addDefaultSummaryPrinterIfNotDisabled()
                 .enablePublishPlugin()
                 .build(systemOptions);
 

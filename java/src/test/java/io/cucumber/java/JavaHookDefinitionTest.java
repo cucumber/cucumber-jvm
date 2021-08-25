@@ -103,4 +103,23 @@ public class JavaHookDefinitionTest {
 
     }
 
+    @Test
+    void fails_with_non_void_return_type() throws Throwable {
+        Method method = JavaHookDefinitionTest.class.getMethod("string_return_type");
+        InvalidMethodSignatureException exception = assertThrows(
+            InvalidMethodSignatureException.class,
+            () -> new JavaHookDefinition(method, "", 0, lookup));
+        assertThat(exception.getMessage(), startsWith("" +
+                "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
+                " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
+                " * public void before_or_after()\n" +
+                "at io.cucumber.java.JavaHookDefinitionTest.string_return_type()\n"));
+    }
+
+    @Before
+    public String string_return_type() {
+        invoked = true;
+        return "";
+    }
+
 }

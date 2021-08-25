@@ -20,7 +20,6 @@ import static java.util.Objects.requireNonNull;
 public final class FeatureParser {
 
     private final EncodingParser encodingParser = new EncodingParser();
-    private final LanguageParser languageParser = new LanguageParser();
 
     private final Supplier<UUID> idGenerator;
 
@@ -32,8 +31,7 @@ public final class FeatureParser {
         requireNonNull(resource);
         URI uri = resource.getUri();
 
-        String encodingParsed = encodingParser.parse(resource);
-        String source = languageParser.parse(encodingParsed);
+        String source = encodingParser.parse(resource);
 
         ServiceLoader<io.cucumber.core.gherkin.FeatureParser> services = ServiceLoader
                 .load(io.cucumber.core.gherkin.FeatureParser.class);

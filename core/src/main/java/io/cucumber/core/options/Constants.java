@@ -46,16 +46,6 @@ public final class Constants {
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
 
     /**
-     * Property name used to disable strict execution: {@value}
-     * <p>
-     * When using strict execution Cucumber will treat undefined and pending
-     * steps as errors.
-     * <p>
-     * By default, strict execution is enabled.
-     */
-    public static final String EXECUTION_STRICT_PROPERTY_NAME = "cucumber.execution.strict";
-
-    /**
      * Property name used to enable wip execution: {@value}
      * <p>
      * When using wip execution Cucumber will fail if there are any passing

@@ -1,11 +1,19 @@
 package io.cucumber.junit;
 
+import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.plugin.Options;
+import io.cucumber.core.runtime.CucumberExecutionContext;
+import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.RunnerSupplier;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.junit.PickleRunners.PickleRunner;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -13,6 +21,11 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
 class PickleRunnerWithNoStepDescriptionsTest {
+
+    final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+    final Options options = RuntimeOptions.defaultOptions();
+    final RunnerSupplier runnerSupplier = mock(RunnerSupplier.class);
+    final CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
 
     @Test
     void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() {
@@ -23,7 +36,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
             "feature name",
-            mock(RunnerSupplier.class),
+            context,
             pickles.get(0),
             null,
             createJunitOptions());
@@ -44,7 +57,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
             "feature name",
-            mock(RunnerSupplier.class),
+            context,
             pickles.get(0),
             null,
             createFileNameCompatibleJUnitOptions());
@@ -66,7 +79,7 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
             "имя функции",
-            mock(RunnerSupplier.class),
+            context,
             pickles.get(0),
             null,
             createFileNameCompatibleJUnitOptions());

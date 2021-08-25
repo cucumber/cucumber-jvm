@@ -56,7 +56,8 @@ class ClasspathScannerTest {
 
     @Test
     void scanForSubClassesInPackage() {
-        List<Class<? extends ExampleInterface>> classes = scanner.scanForSubClassesInPackage("io.cucumber",
+        List<Class<? extends ExampleInterface>> classes = scanner.scanForSubClassesInPackage(
+            "io.cucumber.core.resource.test",
             ExampleInterface.class);
 
         assertThat(classes, contains(ExampleClass.class));

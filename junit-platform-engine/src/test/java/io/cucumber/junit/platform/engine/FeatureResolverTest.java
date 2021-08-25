@@ -1,6 +1,5 @@
 package io.cucumber.junit.platform.engine;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
@@ -16,6 +15,7 @@ import java.util.Set;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static io.cucumber.junit.platform.engine.FeatureResolver.createFeatureResolver;
@@ -34,26 +34,9 @@ class FeatureResolverTest {
 
     private final String featurePath = "io/cucumber/junit/platform/engine/feature-with-outline.feature";
     private final String featureSegmentValue = CLASSPATH_SCHEME_PREFIX + featurePath;
-    private CucumberEngineDescriptor testDescriptor;
-    private UniqueId id;
-
-    @BeforeEach
-    void before() {
-
-        ConfigurationParameters configurationParameters = new MapConfigurationParameters(
-            new HashMap<String, String>() {
-                {
-                    put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceA" + READ_WRITE_SUFFIX, "resource-a");
-                    put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceAReadOnly" + READ_SUFFIX, "resource-a");
-                }
-            });
-        EmptyEngineDiscoveryRequest request = new EmptyEngineDiscoveryRequest(configurationParameters);
-        id = UniqueId.forEngine(new CucumberTestEngine().getId());
-        testDescriptor = new CucumberEngineDescriptor(id);
-        FeatureResolver featureResolver = createFeatureResolver(request.getConfigurationParameters(), testDescriptor,
-            aPackage -> true);
-        featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
-    }
+    private final UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
+    private final CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(id);
+    private ConfigurationParameters configurationParameters = new EmptyConfigurationParameters();
 
     @Test
     void feature() {
@@ -68,7 +51,10 @@ class FeatureResolverTest {
     }
 
     private TestDescriptor getFeature() {
-        Set<? extends TestDescriptor> features = testDescriptor.getChildren();
+        FeatureResolver featureResolver = createFeatureResolver(configurationParameters, engineDescriptor,
+            aPackage -> true);
+        featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
+        Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
         return features.iterator().next();
     }
 
@@ -87,6 +73,19 @@ class FeatureResolverTest {
             scenario.getUniqueId());
         PickleDescriptor pickleDescriptor = (PickleDescriptor) scenario;
         assertEquals(Optional.of("io.cucumber.junit.platform.engine"), pickleDescriptor.getPackage());
+    }
+
+    @Test
+    void exclusiveResources() {
+        configurationParameters = new MapConfigurationParameters(
+            new HashMap<String, String>() {
+                {
+                    put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceA" + READ_WRITE_SUFFIX, "resource-a");
+                    put(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceAReadOnly" + READ_SUFFIX, "resource-a");
+                }
+            });
+
+        PickleDescriptor pickleDescriptor = (PickleDescriptor) getScenario();
         assertEquals(
             asSet(
                 new ExclusiveResource("resource-a", LockMode.READ_WRITE),
@@ -143,6 +142,16 @@ class FeatureResolverTest {
 
         PickleDescriptor pickleDescriptor = (PickleDescriptor) example;
         assertEquals(Optional.of("io.cucumber.junit.platform.engine"), pickleDescriptor.getPackage());
+    }
+
+    @Test
+    void longNames() {
+        configurationParameters = new MapConfigurationParameters(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long");
+
+        TestDescriptor example = getExample();
+        assertEquals("A feature with scenario outlines - A scenario outline - With some text - Example #1",
+            example.getDisplayName());
     }
 
     private TestDescriptor getExample() {

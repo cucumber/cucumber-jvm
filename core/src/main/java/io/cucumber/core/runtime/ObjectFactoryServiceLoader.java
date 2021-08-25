@@ -13,18 +13,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.Thread.currentThread;
 import static java.util.Objects.requireNonNull;
 
 public final class ObjectFactoryServiceLoader {
 
     private final Supplier<ClassLoader> classLoaderSupplier;
     private final Options options;
-
-    @Deprecated
-    public ObjectFactoryServiceLoader(Options options) {
-        this(currentThread()::getContextClassLoader, options);
-    }
 
     public ObjectFactoryServiceLoader(Supplier<ClassLoader> classLoaderSupplier, Options options) {
         this.classLoaderSupplier = requireNonNull(classLoaderSupplier);
