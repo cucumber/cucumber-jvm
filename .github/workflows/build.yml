@@ -28,7 +28,7 @@ jobs:
         with:
           version: '11'
       - name: install wrapper
-        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml -X
       - name: test
@@ -53,7 +53,7 @@ jobs:
         with:
           version: '11'
       - name: install wrapper
-        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: javadoc
@@ -76,7 +76,7 @@ jobs:
         with:
           version: '11'
       - name: install wrapper
-        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: test (coverage)
@@ -103,7 +103,7 @@ jobs:
         with:
           version: '11'
       - name: install wrapper
-        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: test (Semver check)
