@@ -27,6 +27,8 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
+      - name: debug
+        run: tree
       - name: install dependencies
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: test
