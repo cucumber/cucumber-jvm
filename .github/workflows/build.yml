@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     name: 'Build'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
@@ -28,7 +28,7 @@ jobs:
         with:
           version: '11'
       - name: debug
-        run: pwd && tree
+        run: mvn --version
       - name: install dependencies
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml -X
       - name: test
@@ -38,7 +38,7 @@ jobs:
 
   javadoc:
     name: 'Javadoc'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
@@ -59,7 +59,7 @@ jobs:
 
   coverage:
     name: 'Coverage'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
@@ -84,7 +84,7 @@ jobs:
 
   semver:
     name: 'Semver'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
