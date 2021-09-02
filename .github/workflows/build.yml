@@ -27,11 +27,11 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
-      - name: install wrapper
+      - name: Install Maven Wrapper
         run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
-      - name: install dependencies
+      - name: Install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
-      - name: test
+      - name: Test
         run: ./mvnw verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
         env:
           CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
@@ -52,11 +52,11 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
-      - name: install wrapper
+      - name: Install Maven Wrapper
         run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
-      - name: install dependencies
+      - name: Install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
-      - name: javadoc
+      - name: Javadoc
         run: ./mvnw javadoc:jar --toolchains .github/workflows/.toolchains.xml
 
   coverage:
@@ -75,11 +75,11 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
-      - name: install wrapper
+      - name: Install Maven Wrapper
         run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
-      - name: install dependencies
+      - name: Install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
-      - name: test (coverage)
+      - name: Test (Coverage)
         run: ./mvnw jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
       - uses: codecov/codecov-action@v1
         with:
@@ -102,9 +102,9 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
-      - name: install wrapper
+      - name: Install Maven Wrapper
         run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
-      - name: install dependencies
+      - name: Install dependencies
         run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
-      - name: test (Semver check)
+      - name: Test (Semver check)
         run: ./mvnw verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true --toolchains .github/workflows/.toolchains.xml
