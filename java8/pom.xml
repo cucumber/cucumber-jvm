@@ -40,14 +40,6 @@
     </dependencyManagement>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.commonjava.maven.plugins</groupId>
-            <artifactId>directory-maven-plugin</artifactId>
-            <version>0.3.1</version>
-        </dependency>
-
-
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
