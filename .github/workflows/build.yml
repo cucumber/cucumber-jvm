@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     name: 'Build'
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
@@ -27,18 +27,18 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
-      - name: debug
-        run: mvn --version
+      - name: install wrapper
+        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml -X
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml -X
       - name: test
-        run: mvn verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
+        run: ./mvnw verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
         env:
           CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
   javadoc:
     name: 'Javadoc'
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
@@ -52,14 +52,16 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
+      - name: install wrapper
+        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: javadoc
-        run: mvn javadoc:jar --toolchains .github/workflows/.toolchains.xml
+        run: ./mvnw javadoc:jar --toolchains .github/workflows/.toolchains.xml
 
   coverage:
     name: 'Coverage'
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
@@ -73,10 +75,12 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
+      - name: install wrapper
+        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: test (coverage)
-        run: mvn jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
+        run: ./mvnw jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
       - uses: codecov/codecov-action@v1
         with:
           file: ./**/target/site/jacoco/jacoco.xml
@@ -84,7 +88,7 @@ jobs:
 
   semver:
     name: 'Semver'
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Cache local Maven repository
@@ -98,7 +102,9 @@ jobs:
           AdoptOpenJDK/install-jdk@v1
         with:
           version: '11'
+      - name: install wrapper
+        run: ./mvnw -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
       - name: install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B -V --toolchains .github/workflows/.toolchains.xml
       - name: test (Semver check)
-        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true --toolchains .github/workflows/.toolchains.xml
+        run: ./mvnw verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true --toolchains .github/workflows/.toolchains.xml
