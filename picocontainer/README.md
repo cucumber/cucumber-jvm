@@ -20,9 +20,36 @@ Add the `cucumber-picocontainer` dependency to your pom.xml:
 
 ## Step dependencies
 
-PicoContainer will create singleton instances of any step definition class
-constructor parameters. When instantiating a step definition these
-instances are injected.
+PicoContainer uses constructor dependency injection to create instances
+of step definition classes and their dependencies.
+
+In the example bellow to create an instance of `StepDefinition` an instance of
+`Belly` is needed. So `Belly` is a dependency of `StepDefinition`. `Belly` has
+no dependencies and can be created with the default constructor.
+
+Once an instance of `Belly` has been created, this can be used to create an
+instance of `StepDefinition`. This instance is then used to invoke the Given/
+When/Then methods on.
+
+
+```java
+package com.example.app;
+
+import java.util.List;
+
+public class Belly {
+
+    private final List<String> contents;
+
+    public void setContents(List<String> contents){
+        this.contents = contents;
+    }
+    
+    public List<String getContents(){
+        return contents;
+    }
+}
+```
 
 
 ```java
@@ -34,6 +61,7 @@ import cucumber.api.java.en.Then;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class StepDefinition {
 
     private final Belly belly;
