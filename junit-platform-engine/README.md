@@ -414,6 +414,30 @@ for more information.
 1. Do note that this is a [Cucumber Tag Expression](https://cucumber.io/docs/cucumber/api/#tags) rather than a JUnit5
    tag expression.
 
+## Aborting Tests
+
+Cucumber supports [OpenTest4Js](https://github.com/ota4j-team/opentest4j)
+`TestAbortedException`. This makes it possible to use JUnit Jupiters
+`Assumptions` to abort rather than fail a scenario.
+
+```java
+package com.example;
+
+import io.cucumber.java.Before;
+import org.junit.jupiter.api.Assumptions;
+
+import java.util.List;
+
+public class RpnCalculatorSteps {
+
+   @Before
+   public void before() {
+       boolean condition = // decide if tests should abort
+       Assumptions.assumeTrue(condition, "Condition not met");
+   }
+}
+```
+
 ## Rerunning Failed Scenarios ##
 
 When using `cucumber-junit-platform-engine` rerun files are not supported.
