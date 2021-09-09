@@ -17,7 +17,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <junit-jupiter.version>5.8.0-RC1</junit-jupiter.version>
-        <openejb-core.version>8.0.7</openejb-core.version>
+        <openejb-core.version>8.0.8</openejb-core.version>
         <project.Automatic-Module-Name>io.cucumber.openejb</project.Automatic-Module-Name>
     </properties>
 
