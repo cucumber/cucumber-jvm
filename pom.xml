@@ -41,6 +41,7 @@
         <module>cdi2</module>
         <module>core</module>
         <module>datatable</module>
+        <module>datatable-matchers</module>
         <module>deltaspike</module>
         <module>docstring</module>
         <module>gherkin</module>
