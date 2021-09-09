@@ -1,18 +1,21 @@
 # DataTable
 
-DataTable is a simple data structure that allows the use and transformation 
+DataTable is a simple data structure that allows the use and transformation
 of Gherkin data tables in Cucumber.
 
 This intended to support:
- * manual conversion in step definitions
- * automatic conversion by Cucumber
+* manual conversion in step definitions
+* automatic conversion by Cucumber
+
+This README explains the way datatables can be converted. To register converters
+see [cucumber-java/README.md](../java)
 
 ## Introduction
 
 The introduction will describe how data tables are mapped to certain data
 structures. This conversion can be done either by Cucumber or manually.
 
-Let's write a simple data table and see how we might use it. 
+Let's write a simple data table and see how we might use it.
 
 ```gherkin
 | firstName   | lastName | birthDate  |
@@ -21,8 +24,8 @@ Let's write a simple data table and see how we might use it.
 | Astrid      | Lindgren | 1907-11-14 |
 ```
 
-As this is a table the natural representation would be a list of a 
-list of strings. 
+As this is a table the natural representation would be a list of a
+list of strings.
 
 `java type: List<List<String>>`
 
@@ -36,7 +39,7 @@ list of strings.
 ```  
 
 This representation is not very useful. The fields are no longer labeled and
-the first row has to be discarded. So instead we can convert this table 
+the first row has to be discarded. So instead we can convert this table
 into a list of maps.
 
 `java type: List<Map<String, String>>`
@@ -70,10 +73,10 @@ We can convert the table into a single map.
 }
 ```
 
-In the previous example the table only had a single column value for each key. A 
+In the previous example the table only had a single column value for each key. A
 table might have multiple column values per key.
 
-For example a table of airport codes and their coordinates expressed in 
+For example a table of airport codes and their coordinates expressed in
 latitude and longitude.
 
 ```gherkin
@@ -83,7 +86,7 @@ latitude and longitude.
 | KJFK | 40.639722 |  -73.778889 |
 ```
 
-These can be represented by a map that uses a list as its value. 
+These can be represented by a map that uses a list as its value.
 
 `java type: Map<String, List<String>>`
 ```json
@@ -124,7 +127,7 @@ map's keys should be created from the first column rather than the header.
 
 So far we have transformed a table to various collections of strings. As a
 string representation for a number is not very useful. A data table can
-transform individual cells to a different type. 
+transform individual cells to a different type.
 
 `java type: Map<String, Map<String, Double>>`
 
@@ -149,7 +152,7 @@ where `T` is any type for which a table cell transformer has been registered.
 
 ### Custom Table Types
 
-You can define custom data table types to represent tables from your own 
+You can define custom data table types to represent tables from your own
 domain. Doing this has the following benefits:
 
 1. Automatic conversion to custom types
@@ -189,7 +192,7 @@ The parameters are as follows:
 
 * `type`
 * `transformer` - a function that transforms either a cell, table entry, table
-   row or table.  
+  row or table.
 
 There are four ways to transform a table:
 
@@ -198,10 +201,10 @@ There are four ways to transform a table:
 3. Transform the entries. The entries of row paired with its corresponding
    header represent an object.
 4. Transform the table. The table as a whole is transformed into a single
-   object.  
+   object.
 
 When combined these four transforms are sufficient to convert a table to any
-other reasonable type. 
+other reasonable type.
 
 #### Example
 
@@ -256,7 +259,7 @@ registry.defineDataTableType(
 );
 ```
 
-The table can be transformed to a map of airports to geolocations. 
+The table can be transformed to a map of airports to geolocations.
 
 `java type: Map<Airport, Geolocation>`
 
@@ -349,7 +352,7 @@ private class JacksonDataTableTransformer implements TableEntryByTypeTransformer
 }
 ```
 
-The`TableEntryByTypeTransformer` and `TableCellByTypeTransformer` are used when there is no table entry or table cell 
+The`TableEntryByTypeTransformer` and `TableCellByTypeTransformer` are used when there is no table entry or table cell
 defined for a given type. Note that when installing both `TableEntryByTypeTransformer` and `TableCellByTypeTransformer`
 it becomes impossible to disambiguate between table entries and table cells. By default table entries are assumed over
 table cells. This ambiguity can be resolved by adding a header.
@@ -374,18 +377,18 @@ assertThat(actualTable, hasTheSameRowsAs(expectedTable));
 
 ## DataTable object
 
-An m-by-n immutable table of string values. A table is either empty or contains 
+An m-by-n immutable table of string values. A table is either empty or contains
 one or more cells. As such if a table has zero height it must have zero width and
 vice versa.
 
-The first row of the the table may be referred to as the table header. The 
+The first row of the the table may be referred to as the table header. The
 remaining cells as the table body.
 
 A table provides the following operations:
 
-* `diff` throws an exception if the two tables are different. 
-* `unorderedDiff` throws an exception if the two tables are different, allowing a difference in ordering. 
-* `isEmpty` returns true if the table has no cells. 
+* `diff` throws an exception if the two tables are different.
+* `unorderedDiff` throws an exception if the two tables are different, allowing a difference in ordering.
+* `isEmpty` returns true if the table has no cells.
 * `transpose` returns a transposed table
 * `height` returns the height of the table
 * `width` returns the width of the table
@@ -394,9 +397,9 @@ A table provides the following operations:
 * `rows(fromRow, toRow)`` returns table containing the rows between `fromRow`
   (inclusive) to `toRow` (exclusive).
 * `column(index)` returns a single column
-* `columns(fromColumn, toColumn)`` returns table containing the columns 
+* `columns(fromColumn, toColumn)`` returns table containing the columns
   between `fromColumn` (inclusive) to `toColumn` (exclusive).
-* `subTable(fromRow, fromColumn, toRow, toColumn)` returns a tablw containing the 
+* `subTable(fromRow, fromColumn, toRow, toColumn)` returns a tablw containing the
   cells between `fromRow` and `fromColumn` (inclusive) to `toRow` and `toColumn` (exclusive).
 
 Additionally it provides methods to conveniently convert the table into
@@ -404,7 +407,7 @@ other data structures using the the transformers from the previous section.
 
 * `asList|Lists(type)` converts a table to list or list of a given type.
 * `asMap|Maps(keyType, valueType)` converts a table to map of key to value types.
-* `convert(type)` converts a table to an object of an arbitrary type.    
+* `convert(type)` converts a table to an object of an arbitrary type.
 
 ## For contributors
 
@@ -413,20 +416,20 @@ DataTable programmatically. Here are some pointers:
 
 ### Transformation in detail.
 
-As described earlier there are four primitive table types. These can be used to transform a table into a 
-list of lists, a list of maps, a map a list or a single object. These transformations follow a number of 
+As described earlier there are four primitive table types. These can be used to transform a table into a
+list of lists, a list of maps, a map a list or a single object. These transformations follow a number of
 simple algorithms.
 
 **TableCellTransformer => list of lists of objects**
 
-1. Determine the type the object.  
+1. Determine the type the object.
 2. If no type could be determined assume it to be string.
-3. Lookup the TableCellTransformer for that type. 
-4. Apply the transformer to each cell. 
+3. Lookup the TableCellTransformer for that type.
+4. Apply the transformer to each cell.
 
 **TableEntryTransformer => a list of maps of keys to values**
 
-1. Split the header from the body of the table. Both are still tables.  
+1. Split the header from the body of the table. Both are still tables.
 
 ```gherkin
 Header: | firstName   | lastName | birthDate  |
@@ -435,29 +438,29 @@ Header: | firstName   | lastName | birthDate  |
         | Roald       | Dahl     | 1916-09-13 |
         | Astrid      | Lindgren | 1907-11-14 |
 ```
-   
+
 2. Transform the header to a list of lists take the first element
 3. Transform the body to a list of lists.
 4. For each row pair the elements of header with the elements of that row.
 
 **TableRowTransformer => a list of objects**
 
-1. Determine the type the object.  
+1. Determine the type the object.
 2. If no type could be determined assume it to be string.
-3. Lookup the TableRowTransformer for that type. 
+3. Lookup the TableRowTransformer for that type.
 4. Apply the transformer to each row.
- 
+
 **TableTransformer => an object**
 
-1. Determine the type the object.  
-2. Lookup the TableTransformer for that type. 
+1. Determine the type the object.
+2. Lookup the TableTransformer for that type.
 4. Apply the transformer to the table.
 
 **Combined  => a map of keys and values**
 
 Maps can be created combining the previous transformers.
 
-1. Split the keys from the values in the table. Both are still tables.  
+1. Split the keys from the values in the table. Both are still tables.
 
 ```gherkin
          Keys:              Values:
@@ -468,11 +471,61 @@ Header: | firstName   |    | lastName | birthDate  |
         | Astrid      |    | Lindgren | 1907-11-14 
 ```
 
-   
+
 2a. If the first table cell is blank use the TableCellTransformer to convert the other cells in the column.  
 2b. Otherwise use the TableEntryTransformer.
 
 3a. If the first table cell is blank use the TableEntryTransformer to convert the body values.  
 3b. Otherwise use the TableRowTransformer on all values.
 
-4. Pair up the keys and values from steps 2 and 3. 
+4. Pair up the keys and values from steps 2 and 3.
+
+
+## Comparing data tables
+
+The matchers module contains [Hamcrest matchers](http://hamcrest.org/) 
+to compare data tables. These can be used in most common test frameworks and
+produces pretty error messages.
+
+
+Add the `datatable-matchers` dependency to your pom.
+
+```
+<dependencies>
+  [...]
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>datatable-matchers</artifactId>
+        <version>${cucumber-datatable.version}</version>
+        <scope>test</scope>
+    </dependency>
+  [...]
+</dependencies>
+```
+
+Use the matcher in your step definition.
+
+```java
+import static io.cucumber.datatable.matchers.DataTableHasTheSameRowsAs.hasTheSameRowsAs;
+
+[...]
+
+private final DataTable expected = DataTable.create(
+    asList(
+        asList("Annie M. G.", "Schmidt"),
+        asList("Roald", "Dahl"),
+));
+    
+@Then("these authors have registered:")
+public void these_authors_have_registered(DataTable registeredAuthors){
+    assertThat(registeredAuthors, hasTheSameRowsAs(expected).inOrder());
+    
+    // java.lang.AssertionError: 
+    // Expected: a datable with the same rows
+    // but: the tables were different
+    // - | Annie M. G. | Schmidt  |
+    //   | Roald       | Dahl     |
+    // + | Astrid      | Lindgren |
+} 
+```
+
