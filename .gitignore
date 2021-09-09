@@ -1,0 +1,31 @@
+# IDE working files
+*.iws
+*.ipr
+*.iml
+.idea/
+.settings
+.project
+.classpath
+
+
+# Build directories
+distrib/
+target/
+tmp/
+gen-external-apklibs/
+out/
+
+# Build & test droppings
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+*.ser
+dependency-reduced-pom.xml
+*~
+libpeerconnection.log
+
+# OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db

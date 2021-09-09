@@ -1,0 +1,110 @@
+name: Cucumber CI
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+      - v4.x.x
+      - v5.x.x
+      - v6.x.x
+      - v7.x.x
+
+jobs:
+  build:
+    name: 'Build'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: build-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            build-${{ runner.os }}-maven-
+      - uses:
+          AdoptOpenJDK/install-jdk@v1
+        with:
+          version: '11'
+      - name: Install Maven Wrapper
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+      - name: Install dependencies
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B --show-version --toolchains .github/workflows/.toolchains.xml
+      - name: Test
+        run: ./mvnw verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
+        env:
+          CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
+
+  javadoc:
+    name: 'Javadoc'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: javadoc-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            javadoc-${{ runner.os }}-maven-
+      - uses:
+          AdoptOpenJDK/install-jdk@v1
+        with:
+          version: '11'
+      - name: Install Maven Wrapper
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+      - name: Install dependencies
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version --toolchains .github/workflows/.toolchains.xml
+      - name: Javadoc
+        run: ./mvnw javadoc:jar --toolchains .github/workflows/.toolchains.xml
+
+  coverage:
+    name: 'Coverage'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: coverage-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            coverage-${{ runner.os }}-maven-
+      - uses:
+          AdoptOpenJDK/install-jdk@v1
+        with:
+          version: '11'
+      - name: Install Maven Wrapper
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+      - name: Install dependencies
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version --toolchains .github/workflows/.toolchains.xml
+      - name: Test (Coverage)
+        run: ./mvnw jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
+      - uses: codecov/codecov-action@v1
+        with:
+          file: ./**/target/site/jacoco/jacoco.xml
+          name: codecov
+
+  semver:
+    name: 'Semver'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: semver-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            semver-${{ runner.os }}-maven-
+      - uses:
+          AdoptOpenJDK/install-jdk@v1
+        with:
+          version: '11'
+      - name: Install Maven Wrapper
+        run: mvn --non-recursive io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+      - name: Install dependencies
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version --toolchains .github/workflows/.toolchains.xml
+      - name: Test (Semver check)
+        run: ./mvnw verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true --toolchains .github/workflows/.toolchains.xml

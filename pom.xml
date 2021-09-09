@@ -1,0 +1,464 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-parent</artifactId>
+        <version>2.1.2</version>
+    </parent>
+    <artifactId>cucumber-jvm</artifactId>
+    <version>7.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Cucumber-JVM</name>
+    <description>Cucumber for the JVM</description>
+    <url>http://cucumber.io/</url>
+
+    <properties>
+        <!-- Tool chains, ect -->
+        <base.java.version>1.8</base.java.version>
+        <javadoc.java.version>8</javadoc.java.version>
+        <toolchain.vendor>openjdk</toolchain.vendor>
+        <toolchain.java.version>11</toolchain.java.version>
+
+        <!-- io.cucumber dependencies -->
+        <!-- Whenever messages is updated run `make update-cck` -->
+        <messages.version>17.1.0</messages.version>
+        <gherkin.version>21.0.0</gherkin.version>
+
+        <!--Maven plugins-->
+        <groovy.version>2.5.15</groovy.version>
+    </properties>
+    <scm>
+        <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
+        <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
+        <url>git://github.com/cucumber/cucumber-jvm.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <modules>
+        <module>archetype</module>
+        <module>bom</module>
+        <module>cdi2</module>
+        <module>core</module>
+        <module>deltaspike</module>
+        <module>docstring</module>
+        <module>gherkin</module>
+        <module>gherkin-messages</module>
+        <module>guice</module>
+        <module>jakarta-cdi</module>
+        <module>java8</module>
+        <module>java</module>
+        <module>junit</module>
+        <module>junit-platform-engine</module>
+        <module>kotlin-java8</module>
+        <module>openejb</module>
+        <module>picocontainer</module>
+        <module>plugin</module>
+        <module>spring</module>
+        <module>testng</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>examples</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>examples</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>compatibility</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>compatibility</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>spotless-apply</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- Apply code format by default -->
+                        <plugin>
+                            <groupId>com.diffplug.spotless</groupId>
+                            <artifactId>spotless-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>spotless-apply</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>apply</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <!-- Need the 3.0.0 release for Junit5 + Before/After hooks -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>3.0.0-M5</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-failsafe-plugin</artifactId>
+                            <version>3.0.0-M5</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <id>check-semantic-version</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.revapi</groupId>
+                        <artifactId>revapi-maven-plugin</artifactId>
+                        <executions>
+                            <!-- TODO: Enable once on v7 -->
+                            <!-- <execution>-->
+                            <!--   <id>check</id>-->
+                            <!--   <goals>-->
+                            <!--     <goal>check</goal>-->
+                            <!--   </goals>-->
+                            <!--</execution>-->
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>${toolchain.java.version}</version>
+                            <vendor>${toolchain.vendor}</vendor>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
+
+            <!-- enable Java 9,10,11 compilation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>java9</id>
+                        <phase>compile</phase>
+                    </execution>
+                    <execution>
+                        <id>java10</id>
+                        <phase>compile</phase>
+                    </execution>
+                    <execution>
+                        <id>java11</id>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>0.3.1</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>highest-basedir</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <property>main.basedir</property>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Check code format -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Check style -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <!-- Standard plugins - alphabetically -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-ant</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-templates</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                        <!--
+                        Gherkin is used during build time to generate code. We add it to the plugin classpath to prevent polluting
+                        the compile/test classpaths.
+                        -->
+                        <dependency>
+                            <groupId>io.cucumber</groupId>
+                            <artifactId>gherkin</artifactId>
+                            <version>${gherkin.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${base.java.version}</source>
+                        <target>${base.java.version}</target>
+                    </configuration>
+                    <executions>
+                        <!-- for Java 9 -->
+                        <execution>
+                            <id>java9</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <release>9</release>
+                                <jdkToolchain>
+                                    <version>9</version>
+                                </jdkToolchain>
+                                <compileSourceRoots>
+                                    <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                                </compileSourceRoots>
+                                <multiReleaseOutput>true</multiReleaseOutput>
+                            </configuration>
+                        </execution>
+
+                        <!-- for Java 10 -->
+                        <execution>
+                            <id>java10</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <release>10</release>
+                                <jdkToolchain>
+                                    <version>10</version>
+                                </jdkToolchain>
+                                <compileSourceRoots>
+                                    <compileSourceRoot>${project.basedir}/src/main/java10</compileSourceRoot>
+                                </compileSourceRoots>
+                                <multiReleaseOutput>true</multiReleaseOutput>
+                            </configuration>
+                        </execution>
+
+                        <!-- for Java 11 -->
+                        <execution>
+                            <id>java11</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <release>11</release>
+                                <jdkToolchain>
+                                    <version>11</version>
+                                </jdkToolchain>
+                                <compileSourceRoots>
+                                    <compileSourceRoot>${project.basedir}/src/main/java11</compileSourceRoot>
+                                </compileSourceRoots>
+                                <multiReleaseOutput>true</multiReleaseOutput>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <doclint>none</doclint>
+                        <source>${javadoc.java.version}</source>
+                        <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
+                        <links>
+                            <link>https://junit.org/junit4/javadoc/latest/</link>
+                            <!-- javadoc plugin can't port docs for modularized code to
+                               non-modularized code -->
+                            <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
+                            <!-- javadoc.io is down -->
+                            <!-- <link>https://javadoc.io/doc/org.testng/testng/7.1.0/</link> -->
+                        </links>
+                        <groups>
+                            <group>
+                                <title>API Packages</title>
+                                <packages>
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
+                                </packages>
+                            </group>
+                            <group>
+                                <title>I18n</title>
+                                <packages>io.cucumber.java8.*:io.cucumber.java.*</packages>
+                            </group>
+                            <group>
+                                <title>Dependency Injection Providers</title>
+                                <packages>
+                                    io.cucumber.spring:io.cucumber.guice:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
+                                </packages>
+                            </group>
+                        </groups>
+                        <stylesheet>java</stylesheet>
+                    </configuration>
+                </plugin>
+
+                <!-- Semantic version check  -->
+                <plugin>
+                    <groupId>org.revapi</groupId>
+                    <artifactId>revapi-maven-plugin</artifactId>
+                    <version>0.14.3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.revapi</groupId>
+                            <artifactId>revapi-java</artifactId>
+                            <version>0.24.4</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <analysisConfiguration>
+                            <revapi.semver.ignore>
+                                <enabled>true</enabled>
+                                <versionIncreaseAllows>
+                                    <major>breaking</major>
+                                    <minor>nonBreaking</minor>
+                                    <patch>equivalent</patch>
+                                </versionIncreaseAllows>
+                            </revapi.semver.ignore>
+                            <revapi.differences id="intentional-api-changes">
+                                <ignore>true</ignore>
+                            </revapi.differences>
+                            <revapi.differences id="internal-api-issues">
+                                <ignore>true</ignore>
+                            </revapi.differences>
+                        </analysisConfiguration>
+                        <analysisConfigurationFiles>
+                            <configurationFile>
+                                <path>${main.basedir}/.revapi/api-changes.json</path>
+                                <roots>
+                                    <root>7.0.0</root>
+                                    <root>internal</root>
+                                </roots>
+                            </configurationFile>
+                        </analysisConfigurationFiles>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <configuration>
+                        <java>
+                            <eclipse>
+                                <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
+                            </eclipse>
+                            <importOrder>
+                                <file>${main.basedir}/.spotless/intelij-idea.importorder</file>
+                            </importOrder>
+                        </java>
+                    </configuration>
+                </plugin>
+
+                <!-- Check style -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <configuration>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <checkstyleRules>
+                            <module name="Checker">
+                                <property name="severity" value="error"/>
+                                <module name="TreeWalker">
+                                    <module name="AvoidStarImport"/>
+                                    <module name="JavadocMethod">
+                                        <property name="allowMissingParamTags" value="true"/>
+                                        <property name="allowMissingReturnTag" value="true"/>
+                                    </module>
+                                    <module name="NonEmptyAtclauseDescription"/>
+                                    <module name="SuppressWarningsHolder"/>
+                                    <module name="UnusedImports">
+                                        <property name="processJavadoc" value="true"/>
+                                    </module>
+                                </module>
+                                <module name="SuppressWarningsFilter"/>
+                                <module name="RegexpSingleline">
+                                    <property name="format" value="@author"/>
+                                    <property name="message" value="Please do not use @author tags"/>
+                                    <property name="fileExtensions" value="java,groovy,kt"/>
+                                </module>
+                            </module>
+                        </checkstyleRules>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

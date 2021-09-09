@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="|${user.getUsername()}s page|"></title>
+</head>
+<body>
+
+<span th:text="|${user.getUsername()}s messages|"></span>
+<p th:each="message : ${user.getMessages()}" th:text="${message.getContent()}"></p>
+</body>
+</html>

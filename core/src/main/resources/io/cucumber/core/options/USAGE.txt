@@ -1,0 +1,153 @@
+Usage: java io.cucumber.core.cli.Main [options] [ [DIR|DIR URI] | [ [FILE|FILE URI][:LINE]* ] | @[FILE|FILE URI] ]+
+
+Options:
+
+      --threads COUNT                      Number of threads to run tests under.
+                                           Defaults to 1.
+
+  -g, --glue PATH                          Package to load glue code (step
+                                           definitions, hooks and plugins) from
+                                           e.g: com.example.app. When not
+                                           provided Cucumber will search the
+                                           classpath.
+
+  -p, --plugin PLUGIN[:[PATH|[URI [OPTIONS]]]
+                                           Register a plugin.
+                                           Built-in PLUGIN types:
+                                           html, json, junit, message, pretty,
+                                           progress, rerun, summary, teamcity,
+                                           testng, timeline, usage, unused
+
+                                           PLUGIN can also be a fully
+                                           qualified class name, allowing
+                                           registration of 3rd party plugins.
+
+                                           If a http:// or https:// URI is used,
+                                           the output will be sent as a PUT
+                                           request. This can be overridden by
+                                           providing additional options.
+
+                                           OPTIONS supports cUrls -X and -H
+                                           commands.
+
+  -t, --tags TAG_EXPRESSION                Only run scenarios tagged with tags
+                                           matching TAG_EXPRESSION.
+
+  -n, --name REGEXP                        Only run scenarios whose names match
+                                           REGEXP.
+
+  -d, --[no-]dry-run                       Skip execution of glue code.
+
+  -m, --[no-]monochrome                    Don't colour terminal output.
+
+      --snippets [underscore|camelcase]    Naming convention for generated
+                                           snippets. Defaults to underscore.
+
+  -v, --version                            Print version.
+
+  -h, --help                               You're looking at it.
+
+      --i18n LANG                          List keywords for in a particular
+                                           language
+                                           Run with "--i18n help" to see all
+                                           languages
+
+  -w, --wip                                Fail if there are any passing
+                                           scenarios.
+
+
+      --order                              Run the scenarios in a different
+                                           order. The options are 'reverse' and
+                                           'random'. In case of 'random' order
+                                           an optional seed parameter can be
+                                           added 'random:<seed>'.
+
+      --count                              Number of scenarios to be executed.
+                                           If not specified all scenarios are
+                                           run.
+
+      --object-factory CLASSNAME           Uses the class specified by CLASSNAME
+                                           as object factory. Be aware that the
+                                           class is loaded through a service
+                                           loader and therefore also needs to
+                                           be specified in:
+                                           META-INF/services/io.cucumber.core.backend.ObjectFactory
+
+Feature path examples:
+                                           When no feature path is provided
+                                           cucumber will scan the classpath root
+                                           and its sub directories.
+
+  <path>                                   Load the files with the extension
+                                           ".feature" for the directory <path>
+                                           and its sub directories.
+
+  <path>/<name>.feature                    Load the feature file
+                                           <path>/<name>.feature from the file
+                                           system.
+
+  classpath:<path>/<name>.feature          Load the feature file
+                                           <path>/<name>.feature from the
+                                           classpath.
+
+  <path>/<name>.feature:3:9                Load the scenarios on line 3 and line
+                                           9 in the file <path>/<name>.feature.
+
+  @<path>/<file>                           Load <path>/<file> from the file
+                                           system and parse feature paths
+                                           generated by the rerun formatter.
+
+
+Properties, Environment variables and System properties:
+
+Cucumber will in order of precedence parse properties from system properties,
+environment variables and the `cucumber.properties` file.
+
+Note that options provided by `@CucumberOptions` takes precedence over the
+properties file and CLI arguments take precedence over all.
+
+Supported properties are:
+
+```
+cucumber.ansi-colors.disabled=  # true or false. default: false
+
+cucumber.execution.dry-run=     # true or false. default: false
+
+cucumber.execution.limit=       # number of scenarios to execute (CLI only).
+
+cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+
+cucumber.execution.wip=         # true or false. default: false.
+                                # Fails if there any passing scenarios
+                                # CLI only.
+
+cucumber.features=              # command separated paths to feature files.
+                                # example: path/to/example.feature, path/to/other.feature
+
+cucumber.filter.name=           # a regular expression
+                                # only scenarios with matching names are executed.
+                                # example: ^Hello (World|Cucumber)$
+
+cucumber.filter.tags=           # a cucumber tag expression.
+                                # only scenarios with matching tags are executed.
+                                # example: @Cucumber and not (@Gherkin or @Zucchini)
+
+cucumber.glue=                  # comma separated package names.
+                                # example: com.example.glue
+
+cucumber.plugin=                # comma separated plugin strings.
+                                # example: pretty, json:path/to/report.json
+
+cucumber.object-factory=        # object factory class name.
+                                # example: com.example.MyObjectFactory
+
+cucumber.snippet-type=          # underscore or camelcase.
+                                # default: underscore
+```
+
+Each property also has an `UPPER_CASE` and `snake_case` variant. For example
+`cucumber.ansi-colors.disabled` would also be understood as
+`CUCUMBER_ANSI_COLORS_DISABLED` and `cucumber_ansi_colors_disabled`.
+
+
+TODO: Document --publish and new properties here

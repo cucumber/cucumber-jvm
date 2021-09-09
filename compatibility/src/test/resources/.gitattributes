@@ -1,0 +1,3 @@
+# Ensure that LF line endings are kept on checkout (even on windows). Tests will fail otherwise
+*.ndjson    text    eol=lf
+*.feature   text    eol=lf
