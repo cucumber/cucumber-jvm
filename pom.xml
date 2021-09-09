@@ -40,6 +40,7 @@
         <module>bom</module>
         <module>cdi2</module>
         <module>core</module>
+        <module>datatable</module>
         <module>deltaspike</module>
         <module>docstring</module>
         <module>gherkin</module>
