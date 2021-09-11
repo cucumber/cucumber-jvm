@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [7.0.0-RC1] (2021-09-11)
+
+### Added
 * [Java] Added `@BeforeAll` and `@AfterAll` hooks ([cucumber/#1876](https://github.com/cucumber/cucumber-jvm/pull/1876) M.P. Korstanje)
 * [JUnit Platform] Optionally use long names
     - Adds `cucumber.junit-platform.naming-strategy=long` ([#2361](https://github.com/cucumber/cucumber-jvm/pull/2361) M.P. Korstanje)
@@ -1675,7 +1687,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...main
+[7.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
 [6.11.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...v6.11.0
 [6.10.4]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.3...v6.10.4
 [6.10.3]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.2...v6.10.3
