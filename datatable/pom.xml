@@ -19,7 +19,7 @@
         <guava.version>30.1.1-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson-databind.version>2.12.5</jackson-databind.version>
-        <junit-jupiter.version>5.8.0-RC1</junit-jupiter.version>
+        <junit-jupiter.version>5.8.0</junit-jupiter.version>
         <mockito.version>3.12.4</mockito.version>
     </properties>
 
