@@ -24,18 +24,21 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.number.IsCloseTo.closeTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 class UsageFormatterTest {
 
+    public static final double EPSILON = 0.001;
+
     @Test
     void resultWithPassedStep() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
         TestStep testStep = mockTestStep();
-        Result result = new Result(Status.PASSED, Duration.ofNanos(12345L), null);
+        Result result = new Result(Status.PASSED, Duration.ofMillis(12345L), null);
 
         usageFormatter
                 .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
@@ -46,7 +49,7 @@ class UsageFormatterTest {
         assertThat(durationEntries.size(), is(equalTo(1)));
         assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
         assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ofNanos(12345L))));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(closeTo(12.345, EPSILON)));
     }
 
     private PickleStepTestStep mockTestStep() {
@@ -76,7 +79,7 @@ class UsageFormatterTest {
         assertThat(durationEntries.size(), is(equalTo(1)));
         assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
         assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ofSeconds(12345))));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(closeTo(12345.0, EPSILON)));
     }
 
     @Test
@@ -95,7 +98,7 @@ class UsageFormatterTest {
         assertThat(durationEntries.size(), is(equalTo(1)));
         assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
         assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ZERO)));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(0.0)));
     }
 
     // Note: Duplicate of above test
@@ -115,7 +118,7 @@ class UsageFormatterTest {
         assertThat(durationEntries.size(), is(equalTo(1)));
         assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
         assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(Duration.ZERO)));
+        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(0.0)));
     }
 
     @Test
@@ -200,60 +203,59 @@ class UsageFormatterTest {
     void calculateAverageFromList() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter
-                .calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
-        assertThat(result, is(equalTo(Duration.ofSeconds(2L))));
+        Double result = usageFormatter
+                .calculateAverage(asList(1.0, 2.0, 3.0));
+        assertThat(result, is(closeTo(2.0, EPSILON)));
     }
 
     @Test
     void calculateAverageOf() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter
-                .calculateAverage(asList(Duration.ofSeconds(1L), Duration.ofSeconds(1L), Duration.ofSeconds(2L)));
-        assertThat(result, is(equalTo(Duration.ofNanos(1333333333))));
+        Double result = usageFormatter.calculateAverage(asList(1.0, 1.0, 2.0));
+        assertThat(result, is(closeTo(1.33, 0.01)));
     }
 
     @Test
     void calculateAverageOfEmptylist() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateAverage(Collections.emptyList());
-        assertThat(result, is(equalTo(Duration.ZERO)));
+        Double result = usageFormatter.calculateAverage(Collections.emptyList());
+        assertThat(result, is(equalTo(0.0)));
     }
 
     @Test
     void calculateMedianOfOddNumberOfEntries() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter
-                .calculateMedian(asList(Duration.ofSeconds(1L), Duration.ofSeconds(2L), Duration.ofSeconds(3L)));
-        assertThat(result, is(equalTo(Duration.ofSeconds(2L))));
+        Double result = usageFormatter
+                .calculateMedian(asList(1.0, 2.0, 3.0));
+        assertThat(result, is(closeTo(2.0, EPSILON)));
     }
 
     @Test
     void calculateMedianOfEvenNumberOfEntries() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateMedian(
-            asList(Duration.ofSeconds(1L), Duration.ofSeconds(3L), Duration.ofSeconds(10L), Duration.ofSeconds(5L)));
-        assertThat(result, is(equalTo(Duration.ofSeconds(4))));
+        Double result = usageFormatter.calculateMedian(
+            asList(1.0, 3.0, 10.0, 5.0));
+        assertThat(result, is(closeTo(4.0, EPSILON)));
     }
 
     @Test
     void calculateMedianOf() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateMedian(asList(Duration.ofSeconds(2L), Duration.ofSeconds(9L)));
-        assertThat(result, is(equalTo(Duration.ofMillis(5500))));
+        Double result = usageFormatter.calculateMedian(asList(2.0, 9.0));
+        assertThat(result, is(closeTo(5.5, EPSILON)));
     }
 
     @Test
-    void calculateMedianOfEmptylist() {
+    void calculateMedianOfEmptyList() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        Duration result = usageFormatter.calculateMedian(Collections.emptyList());
-        assertThat(result, is(equalTo(Duration.ZERO)));
+        Double result = usageFormatter.calculateMedian(Collections.emptyList());
+        assertThat(result, is(equalTo(0.0)));
     }
 
 }

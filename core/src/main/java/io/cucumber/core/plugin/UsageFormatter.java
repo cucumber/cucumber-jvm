@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
  */
 public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
-    private static final long NANOS_PER_SECOND = TimeUnit.SECONDS.toNanos(1);
     final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
     private final UTF8OutputStreamWriter out;
 
@@ -86,17 +85,6 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         return stepContainers;
     }
 
-    // private Gson gson() {
-    // JsonSerializer<Duration> durationJsonSerializer = (duration, returnVal,
-    // jsonSerializationContext) -> new JsonPrimitive((double)
-    // duration.toNanos() / NANOS_PER_SECOND);
-    //
-    // return new GsonBuilder()
-    // .registerTypeAdapter(Duration.class, durationJsonSerializer)
-    // .setPrettyPrinting()
-    // .create();
-    // }
-
     private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
         for (StepContainer container : stepContainers) {
             if (stepNameWithArgs.equals(container.getName())) {
@@ -108,21 +96,21 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         return stepContainer;
     }
 
-    private Map<String, Duration> createAggregatedDurations(StepContainer stepContainer) {
-        Map<String, Duration> aggregatedResults = new LinkedHashMap<>();
-        List<Duration> rawDurations = getRawDurations(stepContainer.getDurations());
+    private Map<String, Double> createAggregatedDurations(StepContainer stepContainer) {
+        Map<String, Double> aggregatedResults = new LinkedHashMap<>();
+        List<Double> rawDurations = getRawDurations(stepContainer.getDurations());
 
-        Duration average = calculateAverage(rawDurations);
+        Double average = calculateAverage(rawDurations);
         aggregatedResults.put("average", average);
 
-        Duration median = calculateMedian(rawDurations);
+        Double median = calculateMedian(rawDurations);
         aggregatedResults.put("median", median);
 
         return aggregatedResults;
     }
 
-    private List<Duration> getRawDurations(List<StepDuration> stepDurations) {
-        List<Duration> rawDurations = new ArrayList<>();
+    private List<Double> getRawDurations(List<StepDuration> stepDurations) {
+        List<Double> rawDurations = new ArrayList<>();
 
         for (StepDuration stepDuration : stepDurations) {
             rawDurations.add(stepDuration.duration);
@@ -133,33 +121,32 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     /**
      * Calculate the average of a list of duration entries
      */
-    Duration calculateAverage(List<Duration> durationEntries) {
-
-        Duration sum = Duration.ZERO;
-        for (Duration duration : durationEntries) {
-            sum = sum.plus(duration);
+    Double calculateAverage(List<Double> durationEntries) {
+        double sum = 0.0;
+        for (Double duration : durationEntries) {
+            sum = sum + duration;
         }
-        if (sum.isZero()) {
-            return Duration.ZERO;
+        if (sum == 0) {
+            return 0.0;
         }
 
-        return sum.dividedBy(durationEntries.size());
+        return sum / durationEntries.size();
     }
 
     /**
      * Calculate the median of a list of duration entries
      */
-    Duration calculateMedian(List<Duration> durationEntries) {
+    Double calculateMedian(List<Double> durationEntries) {
         if (durationEntries.isEmpty()) {
-            return Duration.ZERO;
+            return 0.0;
         }
         Collections.sort(durationEntries);
         int middle = durationEntries.size() / 2;
         if (durationEntries.size() % 2 == 1) {
             return durationEntries.get(middle);
         } else {
-            Duration total = durationEntries.get(middle - 1).plus(durationEntries.get(middle));
-            return total.dividedBy(2);
+            double total = durationEntries.get(middle - 1) + durationEntries.get(middle);
+            return total / 2;
         }
     }
 
@@ -198,7 +185,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     static class StepContainer {
 
         private final String name;
-        private final Map<String, Duration> aggregatedDurations = new HashMap<>();
+        private final Map<String, Double> aggregatedDurations = new HashMap<>();
         private final List<StepDuration> durations = new ArrayList<>();
 
         StepContainer(String name) {
@@ -209,11 +196,11 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
             return name;
         }
 
-        void putAllAggregatedDurations(Map<String, Duration> aggregatedDurations) {
+        void putAllAggregatedDurations(Map<String, Double> aggregatedDurations) {
             this.aggregatedDurations.putAll(aggregatedDurations);
         }
 
-        public Map<String, Duration> getAggregatedDurations() {
+        public Map<String, Double> getAggregatedDurations() {
             return aggregatedDurations;
         }
 
@@ -223,17 +210,21 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     }
 
+    private static double durationToSeconds(Duration duration) {
+        return (double) duration.toNanos() / TimeUnit.SECONDS.toNanos(1);
+    }
+
     static class StepDuration {
 
-        private final Duration duration;
+        private final double duration;
         private final String location;
 
         StepDuration(Duration duration, String location) {
-            this.duration = duration;
+            this.duration = durationToSeconds(duration);
             this.location = location;
         }
 
-        public Duration getDuration() {
+        public double getDuration() {
             return duration;
         }
 
