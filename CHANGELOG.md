@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-## [7.0.0] (2021-10-06)
+## [7.0.0] (2021-10-06) - [Release Announcement](release-notes/v7.0.0.md)
 
 ## [7.0.0-RC1] (2021-09-11)
 
