@@ -74,10 +74,10 @@ Each property also has an `UPPER_CASE` and `snake_case` variant. For example
 
 ## Backend ##
 
-Backends consist of two components: a `Backend`, and an `ObjectFactory`. They are
-respectively responsible for discovering glue classes, registering step definitions,
-and creating instances of said glue classes. Backend and object factory
-implementations are discovered via SPI.
+Backends consist of two components: a `Backend`, and an optional `ObjectFactory`.
+They are  respectively responsible for discovering glue classes, registering
+step definitions, and creating instances of said glue classes. Backend and
+object factory implementations are discovered via SPI.
 
 ## Plugin ##
 
