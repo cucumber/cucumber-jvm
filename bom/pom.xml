@@ -16,7 +16,7 @@
         <cucumber-expressions.version>13.0.1</cucumber-expressions.version>
         <datatable.version>4.1.0</datatable.version>
         <html-formatter.version>17.0.0</html-formatter.version>
-        <tag-expressions.version>4.0.2</tag-expressions.version>
+        <tag-expressions.version>4.1.0</tag-expressions.version>
     </properties>
 
     <dependencyManagement>
