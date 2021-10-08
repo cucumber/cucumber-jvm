@@ -125,13 +125,12 @@
                         <groupId>org.revapi</groupId>
                         <artifactId>revapi-maven-plugin</artifactId>
                         <executions>
-                            <!-- TODO: Enable once on v7 -->
-                            <!-- <execution>-->
-                            <!--   <id>check</id>-->
-                            <!--   <goals>-->
-                            <!--     <goal>check</goal>-->
-                            <!--   </goals>-->
-                            <!--</execution>-->
+                             <execution>
+                               <id>check</id>
+                               <goals>
+                                 <goal>check</goal>
+                               </goals>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
@@ -385,18 +384,16 @@
                     </dependencies>
                     <configuration>
                         <analysisConfiguration>
-                            <revapi.semver.ignore>
+                            <revapi.versions>
                                 <enabled>true</enabled>
-                                <versionIncreaseAllows>
-                                    <major>breaking</major>
-                                    <minor>nonBreaking</minor>
-                                    <patch>equivalent</patch>
-                                </versionIncreaseAllows>
-                            </revapi.semver.ignore>
+                            </revapi.versions>
                             <revapi.differences id="intentional-api-changes">
                                 <ignore>true</ignore>
                             </revapi.differences>
                             <revapi.differences id="internal-api-issues">
+                                <ignore>true</ignore>
+                            </revapi.differences>
+                            <revapi.differences id="testng-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
                         </analysisConfiguration>
@@ -406,6 +403,7 @@
                                 <roots>
                                     <root>7.0.0</root>
                                     <root>internal</root>
+                                    <root>testng</root>
                                 </roots>
                             </configurationFile>
                         </analysisConfigurationFiles>
