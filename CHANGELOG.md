@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+* [Core] Include `DefaultObjectFactory` as part of the API ([#2400](https://github.com/cucumber/cucumber-jvm/pull/2400) M.P. Korstanje)
 
 ### Changed
-
+* [Core] Update dependency io.cucumber:tag-expressions to v4.1.0
+  - support escape backslashes in tag expressions ([common/#1778](https://github.com/cucumber/common/pull/1778) Yusuke Noda)
 ### Deprecated
 
 ### Removed
