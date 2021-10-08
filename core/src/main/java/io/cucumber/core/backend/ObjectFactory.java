@@ -7,10 +7,8 @@ import org.apiguardian.api.API;
  * <p>
  * Cucumber scenarios are executed against a test context that consists of
  * multiple glue classes. These must be instantiated and may optionally be
- * injected with dependencies.
- * <p>
- * When multiple {@code ObjectFactory} implementations are available Cucumber
- * will look for a preference in the provided properties or options.
+ * injected with dependencies. The object factory facilitates the creation of
+ * both the glue classes and dependencies.
  *
  * @see java.util.ServiceLoader
  * @see io.cucumber.core.runtime.ObjectFactoryServiceLoader
