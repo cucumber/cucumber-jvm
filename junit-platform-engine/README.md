@@ -57,10 +57,10 @@ parameter. This will include the feature name as part of the tests name.
 
 #### Gradle
 
-```groovy
-test {
+```kotlin
+tasks.test {
     useJUnitPlatform()
-    systemProperty 'cucumber.junit-platform.naming-strategy', 'long'
+    systemProperty("cucumber.junit-platform.naming-strategy", "long")
 }
 ```
 
@@ -121,9 +121,9 @@ Add the following to your `pom.xml`:
 ```
 #### Use the Gradle JavaExec task  ####
 
-Add the following to your `build.gradle`:
+Add the following to your `build.gradle.kts`:
 
-```groovy
+```kotlin
 tasks {
 
 	val consoleLauncherTest by registering(JavaExec::class) {
