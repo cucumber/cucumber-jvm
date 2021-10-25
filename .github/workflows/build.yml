@@ -77,7 +77,7 @@ jobs:
         run: mvn jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
       - uses: codecov/codecov-action@v2
         with:
-          files: ./**/target/site/jacoco/jacoco.xml
+          file: ./**/target/site/jacoco/jacoco.xml
           name: codecov
 
   semver:
