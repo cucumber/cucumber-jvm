@@ -77,7 +77,7 @@ jobs:
         run: mvn jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
       - uses: codecov/codecov-action@v2
         with:
-          file: ./**/target/site/jacoco/jacoco.xml,./core/target/site/jacoco/jacoco.xml
+          file: /**/target/site/jacoco/jacoco.xml
           name: codecov
           fail_ci_if_error: true
           verbose: true
