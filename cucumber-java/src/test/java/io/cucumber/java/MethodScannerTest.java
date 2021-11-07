@@ -21,9 +21,8 @@ class MethodScannerTest {
 
     private final List<Map.Entry<Method, Annotation>> scanResult = new ArrayList<>();
 
-    private boolean addScanResult(Method method, Annotation annotation) {
-        return scanResult
-                .add(new SimpleEntry<>(method, annotation));
+    private void addScanResult(Method method, Annotation annotation) {
+        scanResult.add(new SimpleEntry<>(method, annotation));
     }
 
     @BeforeEach
@@ -32,10 +31,45 @@ class MethodScannerTest {
     }
 
     @Test
-    void scan_finds_annotated_methods() throws NoSuchMethodException {
-        Method method = BaseSteps.class.getMethod("m");
+    void scan_finds_annotated_methods_in_public_class() throws NoSuchMethodException {
+        Method publicMethod = BaseSteps.class.getMethod("m");
+        Method packagePrivateMethod = BaseSteps.class.getDeclaredMethod("n");
+        Method protectedMethod = BaseSteps.class.getDeclaredMethod("o");
         MethodScanner.scan(BaseSteps.class, this::addScanResult);
-        assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
+        assertThat(scanResult,
+            contains(new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
+                new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
+                new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0])));
+    }
+
+    @Test
+    void scan_finds_annotated_methods_in_protected_class() throws NoSuchMethodException {
+        Method publicMethod = ProtectedSteps.class.getMethod("m");
+        Method packagePrivateMethod = ProtectedSteps.class.getDeclaredMethod("n");
+        Method protectedMethod = ProtectedSteps.class.getDeclaredMethod("o");
+        MethodScanner.scan(ProtectedSteps.class, this::addScanResult);
+        assertThat(scanResult,
+            contains(new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
+                new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
+                new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0])));
+    }
+
+    @Test
+    void scan_finds_annotated_methods_in_package_private_class() throws NoSuchMethodException {
+        Method publicMethod = PackagePrivateSteps.class.getMethod("m");
+        Method packagePrivateMethod = PackagePrivateSteps.class.getDeclaredMethod("n");
+        Method protectedMethod = PackagePrivateSteps.class.getDeclaredMethod("o");
+        MethodScanner.scan(PackagePrivateSteps.class, this::addScanResult);
+        assertThat(scanResult,
+            contains(new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
+                new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
+                new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0])));
+    }
+
+    @Test
+    void scan_ignores_private_class() {
+        MethodScanner.scan(PrivateSteps.class, this::addScanResult);
+        assertThat(scanResult, empty());
     }
 
     @Test
@@ -78,6 +112,86 @@ class MethodScannerTest {
 
         @Before
         public void m() {
+        }
+
+        @Before
+        void n() {
+        }
+
+        @Before
+        protected void o() {
+        }
+
+        @Before
+        @SuppressWarnings("unused")
+        private void p() {
+        }
+
+    }
+
+    protected static class ProtectedSteps {
+
+        @Before
+        public void m() {
+        }
+
+        @Before
+        void n() {
+        }
+
+        @Before
+        protected void o() {
+        }
+
+        @Before
+        @SuppressWarnings("unused")
+        private void p() {
+        }
+
+    }
+
+    static class PackagePrivateSteps {
+
+        @Before
+        public void m() {
+        }
+
+        @Before
+        void n() {
+        }
+
+        @Before
+        protected void o() {
+        }
+
+        @Before
+        @SuppressWarnings("unused")
+        private void p() {
+        }
+
+    }
+
+    @SuppressWarnings("FinalClass")
+    private static class PrivateSteps {
+
+        @Before
+        @SuppressWarnings({ "EffectivelyPrivate", "unused" })
+        public void m() {
+        }
+
+        @Before
+        @SuppressWarnings("unused")
+        void n() {
+        }
+
+        @Before
+        @SuppressWarnings({ "EffectivelyPrivate", "unused" })
+        protected void o() {
+        }
+
+        @Before
+        @SuppressWarnings("unused")
+        private void p() {
         }
 
     }

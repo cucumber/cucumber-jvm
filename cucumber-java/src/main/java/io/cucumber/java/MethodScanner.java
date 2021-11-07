@@ -5,12 +5,17 @@ import io.cucumber.core.logging.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
 import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
 import static io.cucumber.java.Invoker.invoke;
 import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPrivate;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Objects.requireNonNull;
@@ -31,12 +36,15 @@ final class MethodScanner {
         if (!isInstantiable(aClass)) {
             return;
         }
-        for (Method method : safelyGetMethods(aClass)) {
+        for (Method method : safelyGetPublicMethods(aClass)) {
+            scan(consumer, aClass, method);
+        }
+        for (Method method : safelyGetProtectedAndPackagePrivateMethods(aClass)) {
             scan(consumer, aClass, method);
         }
     }
 
-    private static Method[] safelyGetMethods(Class<?> aClass) {
+    private static Method[] safelyGetPublicMethods(Class<?> aClass) {
         try {
             return aClass.getMethods();
         } catch (NoClassDefFoundError e) {
@@ -46,8 +54,27 @@ final class MethodScanner {
         return new Method[0];
     }
 
+    private static List<Method> safelyGetProtectedAndPackagePrivateMethods(Class<?> aClass) {
+        try {
+            return Arrays.stream(aClass.getDeclaredMethods())
+                    .filter(MethodScanner::hasAcceptableModifiers)
+                    .collect(Collectors.toList());
+        } catch (NoClassDefFoundError e) {
+            log.warn(e,
+                () -> "Failed to load declared methods of class '" + aClass.getName() + "'.\n"
+                        + classPathScanningExplanation());
+        }
+        return Collections.emptyList();
+    }
+
+    private static boolean hasAcceptableModifiers(Method aMethod) {
+        return !isPrivate(aMethod.getModifiers())
+                && !isPublic(aMethod.getModifiers())
+                && !isAbstract(aMethod.getModifiers());
+    }
+
     private static boolean isInstantiable(Class<?> clazz) {
-        return isPublic(clazz.getModifiers())
+        return !isPrivate(clazz.getModifiers())
                 && !isAbstract(clazz.getModifiers())
                 && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
     }
