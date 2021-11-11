@@ -186,6 +186,11 @@
                         <phase>compile</phase>
                     </execution>
                 </executions>
+                    <configuration>
+                    	<fork>true</fork>
+                    	<useIncrementalCompilation>true</useIncrementalCompilation>
+
+                    </configuration>\n
             </plugin>
 
             <plugin>
@@ -272,6 +277,10 @@
                     <configuration>
                         <source>${base.java.version}</source>
                         <target>${base.java.version}</target>
+                    	<fork>true</fork>
+                    	<useIncrementalCompilation>true</useIncrementalCompilation>
+
+
                     </configuration>
                     <executions>
                         <!-- for Java 9 -->
