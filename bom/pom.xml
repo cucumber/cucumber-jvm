@@ -12,7 +12,7 @@
     <name>Cucumber-JVM: Bill of Materials</name>
 
     <properties>
-        <create-meta.version>6.0.2</create-meta.version>
+        <create-meta.version>6.0.4</create-meta.version>
         <cucumber-expressions.version>13.0.1</cucumber-expressions.version>
         <datatable.version>4.1.0</datatable.version>
         <html-formatter.version>17.0.0</html-formatter.version>
