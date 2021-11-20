@@ -158,12 +158,11 @@ class StepExpressionFactoryTest {
     }
 
     @Test
-    void docstring_expression_transform_doc_string_with_content_type_to_string() {
+    void docstring_expression_transform_doc_string_to_string() {
         String docString = "A rather long and boring string of documentation";
-        String contentType = "doc";
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", String.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", docString, contentType);
+        List<Argument> match = expression.match("Given some stuff:", docString, null);
         assertThat(match.get(0).getValue(), is(equalTo(docString)));
     }
 
