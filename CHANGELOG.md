@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [Core] Update dependency io.cucumber:tag-expressions to v4.1.0
   - support escape backslashes in tag expressions ([common/#1778](https://github.com/cucumber/common/pull/1778) Yusuke Noda)
 ### Deprecated
-
+* [Core] Deprecated forgotten `TypeRegistry`.
 ### Removed
 
 ### Fixed
