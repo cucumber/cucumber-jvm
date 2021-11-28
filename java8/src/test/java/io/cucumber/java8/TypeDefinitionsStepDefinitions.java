@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -18,8 +19,8 @@ public class TypeDefinitionsStepDefinitions implements En {
 
     public TypeDefinitionsStepDefinitions() {
         Given("docstring, defined by lambda",
-            (StringBuilder builder) -> assertThat(builder.getClass(), equalTo(StringBuilder.class)));
-        DocStringType("doc", (String docString) -> new StringBuilder(docString));
+            (DocString builder) -> assertThat(builder.getClass(), equalTo(DocString.class)));
+        DocStringType("doc", DocString::create);
 
         DataTableType((Map<String, String> entry) -> new Author(entry.get("name"), entry.get("surname"),
             entry.get("famousBook")));

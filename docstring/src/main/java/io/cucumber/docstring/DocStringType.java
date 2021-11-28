@@ -37,11 +37,11 @@ public final class DocStringType {
         this.transformer = requireNonNull(transformer);
     }
 
-    String getContentType() {
+    public String getContentType() {
         return contentType;
     }
 
-    Type getType() {
+    public Type getType() {
         return type;
     }
 
