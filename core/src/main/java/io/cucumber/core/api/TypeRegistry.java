@@ -12,7 +12,8 @@ import org.apiguardian.api.API;
  * The type registry records defines parameter types, data table types and
  * docstring transformers.
  *
- * @deprecated
+ * @deprecated use the dedicated type annotations to register data table and
+ *             parameter types instead
  */
 @API(status = API.Status.DEPRECATED)
 @Deprecated
