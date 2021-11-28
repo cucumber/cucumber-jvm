@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 * [Core] Update dependency io.cucumber:tag-expressions to v4.1.0
   - support escape backslashes in tag expressions ([common/#1778](https://github.com/cucumber/common/pull/1778) Yusuke Noda)
+* [JUnit Platform] Use JUnit Platform 1.8.2 (JUnit Jupiter 5.8.2)
 ### Deprecated
 * [Core] Deprecated forgotten `TypeRegistry`.
 ### Removed
