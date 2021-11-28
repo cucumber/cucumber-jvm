@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [7.1.0] (2021-11-28)
+
+### Added
 * [Core] Include `DefaultObjectFactory` as part of the API ([#2400](https://github.com/cucumber/cucumber-jvm/pull/2400) M.P. Korstanje)
 
 ### Changed
@@ -16,10 +28,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [JUnit Platform] Use JUnit Platform 1.8.2 (JUnit Jupiter 5.8.2)
 ### Deprecated
 * [Core] Deprecated forgotten `TypeRegistry`.
-### Removed
-
-### Fixed
-
 ## [7.0.0] (2021-10-06) - [Release Announcement](release-notes/v7.0.0.md)
 
 ## [7.0.0-RC1] (2021-09-11)
@@ -1692,7 +1700,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...main
+[7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.1.0
 [7.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
 [7.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
 [6.11.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...v6.11.0
