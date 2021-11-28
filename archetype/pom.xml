@@ -14,7 +14,7 @@
     <description>Cucumber JVM: Maven Archetype</description>
 
     <properties>
-        <junit-jupiter.version>5.8.1</junit-jupiter.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
     </properties>
 
     <!-- Not used by this module, but used by the integration tests of
