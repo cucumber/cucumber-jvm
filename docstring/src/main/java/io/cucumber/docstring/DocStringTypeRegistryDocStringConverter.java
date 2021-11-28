@@ -4,8 +4,8 @@ import io.cucumber.docstring.DocString.DocStringConverter;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
@@ -25,30 +25,38 @@ public final class DocStringTypeRegistryDocStringConverter implements DocStringC
             return (T) docString;
         }
 
-        if (Objects.isNull(docString.getContentType()) &&
-                docStringTypeRegistry.hasMultipleTypes(targetType)) {
+        List<DocStringType> docStringTypes = docStringTypeRegistry.lookup(docString.getContentType(), targetType);
+
+        if (docStringTypes.isEmpty()) {
+            if (docString.getContentType() == null) {
+                throw new CucumberDocStringException(format(
+                        "It appears you did not register docstring type for %s",
+                        targetType.getTypeName()));
+            }
             throw new CucumberDocStringException(format(
-                "Multiple converters found for type %s, add one of the following content types to docstring %s",
-                targetType.getTypeName(),
-                docStringTypeRegistry.gatherContentTypesForType(targetType)));
+                    "It appears you did not register docstring type for '%s' or %s",
+                    docString.getContentType(),
+                    targetType.getTypeName()));
+        }
+        if (docStringTypes.size() > 1) {
+            throw new CucumberDocStringException(format(
+                    "Multiple converters found for type %s, add one of the following content types to your docstring %s",
+                    targetType.getTypeName(),
+                    suggestedContentTypes(docStringTypes)));
         }
 
-        Optional<DocStringType> lookup = docStringTypeRegistry.lookup(docString.getContentType(), targetType);
-        if (lookup.isPresent()) {
-            return (T) lookup.get().transform(docString.getContent());
-        }
+        return (T) docStringTypes.get(0).transform(docString.getContent());
+    }
 
-        if (Objects.isNull(docString.getContentType())) {
-            throw new CucumberDocStringException(format(
-                "It appears you did not register docstring type for %s",
-                targetType.getTypeName()));
-        } else {
-            throw new CucumberDocStringException(format(
-                "It appears you did not register docstring type for '%s' or %s",
-                docString.getContentType(),
-                targetType.getTypeName()));
-        }
-
+    private List<String> suggestedContentTypes(List<DocStringType> docStringTypes) {
+        return docStringTypes.stream()
+                .map(DocStringType::getContentType)
+                // Can't use the anonymous content type to resolve
+                // the ambiguity.
+                .filter(contentType -> !contentType.isEmpty())
+                .sorted()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 }

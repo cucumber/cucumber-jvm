@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DocStringTypeRegistryTest {
@@ -66,8 +68,7 @@ class DocStringTypeRegistryTest {
             "application/yml",
             (String s) -> null));
 
-        // default String register
-        assertThat(registry.getDocStringTypes().size(), is(4));
+        assertThat(registry.lookup(null, JsonNode.class), hasSize(3));
     }
 
     @Test
@@ -87,8 +88,7 @@ class DocStringTypeRegistryTest {
             "json/application",
             (String s) -> null));
 
-        // default String register
-        assertThat(registry.getDocStringTypes().size(), is(4));
+        assertThat(registry.lookup(null, JsonNode.class), hasSize(3));
     }
 
     @Test
@@ -103,8 +103,8 @@ class DocStringTypeRegistryTest {
             DEFAULT_CONTENT_TYPE,
             (String s) -> null));
 
-        // default String register
-        assertThat(registry.getDocStringTypes().get(DEFAULT_CONTENT_TYPE).size(), is(3));
+        assertThat(registry.lookup(DEFAULT_CONTENT_TYPE, JsonNode.class), hasSize(1));
+        assertThat(registry.lookup(DEFAULT_CONTENT_TYPE, TreeNode.class), hasSize(1));
     }
 
     @Test
@@ -119,8 +119,8 @@ class DocStringTypeRegistryTest {
             "application/json",
             (String s) -> null));
 
-        // default String register
-        assertThat(registry.getDocStringTypes().get("application/json").size(), is(2));
+        assertThat(registry.lookup("application/json", JsonNode.class), hasSize(1));
+        assertThat(registry.lookup("application/json", TreeNode.class), hasSize(1));
     }
 
 }

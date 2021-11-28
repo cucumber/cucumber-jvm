@@ -3,17 +3,13 @@ package io.cucumber.docstring;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
 
 @API(status = API.Status.STABLE)
 public final class DocStringTypeRegistry {
@@ -27,9 +23,9 @@ public final class DocStringTypeRegistry {
     }
 
     public void defineDocStringType(DocStringType docStringType) {
-        Optional<DocStringType> optionalDocStringType = find(docStringType.getContentType(), docStringType.getType());
-        if (optionalDocStringType.isPresent()) {
-            throw createDuplicateTypeException(optionalDocStringType.get(), docStringType);
+        DocStringType existing = lookupByContentTypeAndType(docStringType.getContentType(), docStringType.getType());
+        if (existing != null) {
+            throw createDuplicateTypeException(existing, docStringType);
         }
         Map<Type, DocStringType> map = docStringTypes.computeIfAbsent(docStringType.getContentType(),
             s -> new HashMap<>());
@@ -54,49 +50,31 @@ public final class DocStringTypeRegistry {
         return contentType.isEmpty() ? "[anonymous]" : contentType;
     }
 
-    Optional<DocStringType> lookup(String contentType, Type type) {
-        return Objects.isNull(contentType) ? find(type) : find(contentType, type);
-    }
-
-    boolean hasMultipleTypes(Type type) {
-        int count = docStringTypes.values().stream()
-                .mapToInt(typeDocStringTypeMap -> (int) typeDocStringTypeMap.keySet().stream()
-                        .filter(key -> key.equals(type))
-                        .count())
-                .sum();
-        return count > 1;
-    }
-
-    List<String> gatherContentTypesForType(Type type) {
-        List<String> contentTypes = new ArrayList<>();
-        for (Map.Entry<String, Map<Type, DocStringType>> entry : docStringTypes.entrySet()) {
-            for (Type registeredType : entry.getValue().keySet()) {
-                if (registeredType.equals(type)) {
-                    contentTypes.add(emptyToAnonymous(entry.getKey()));
-                }
-            }
+    List<DocStringType> lookup(String contentType, Type type) {
+        if (contentType == null) {
+            return lookUpByType(type);
         }
-        Collections.sort(contentTypes);
-        return contentTypes;
+
+        DocStringType docStringType = lookupByContentTypeAndType(contentType, type);
+        if (docStringType == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(docStringType);
     }
 
-    private Optional<DocStringType> find(Type type) {
+    private List<DocStringType> lookUpByType(Type type) {
         return docStringTypes.values().stream()
                 .flatMap(typeDocStringTypeMap -> typeDocStringTypeMap.entrySet().stream()
                         .filter(entry -> entry.getKey().equals(type))
                         .map(Map.Entry::getValue))
-                .findFirst();
+                .collect(Collectors.toList());
     }
 
-    private Optional<DocStringType> find(String contentType, Type type) {
+    private DocStringType lookupByContentTypeAndType(String contentType, Type type) {
         Map<Type, DocStringType> docStringTypesByType = docStringTypes.get(contentType);
-        if (Objects.isNull(docStringTypesByType)) {
-            return empty();
+        if (docStringTypesByType == null) {
+            return null;
         }
-        return ofNullable(docStringTypesByType.get(type));
-    }
-
-    public Map<String, Map<Type, DocStringType>> getDocStringTypes() {
-        return docStringTypes;
+        return docStringTypesByType.get(type);
     }
 }

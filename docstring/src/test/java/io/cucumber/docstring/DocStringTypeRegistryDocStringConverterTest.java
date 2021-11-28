@@ -158,7 +158,7 @@ class DocStringTypeRegistryDocStringConverterTest {
 
         assertThat(exception.getMessage(), is("" +
                 "Multiple converters found for type com.fasterxml.jackson.databind.JsonNode, " +
-                "add one of the following content types to docstring [[anonymous], json, xml]"));
+                "add one of the following content types to docstring [json, xml]"));
     }
 
     @Test
