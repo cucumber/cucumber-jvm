@@ -167,6 +167,17 @@ class StepExpressionFactoryTest {
     }
 
     @Test
+    void docstring_and_datatable_match_same_step_definition() {
+        String docString = "A rather long and boring string of documentation";
+        StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", UNKNOWN_TYPE);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        List<Argument> match = expression.match("Given some stuff:", docString, null);
+        assertThat(match.get(0).getValue(), is(equalTo(DocString.create(docString))));
+        match = expression.match("Given some stuff:", table);
+        assertThat(match.get(0).getValue(), is(equalTo(DataTable.create(table))));
+    }
+
+    @Test
     void docstring_expression_transform_doc_string_to_json_node() {
         String docString = "{\"hello\": \"world\"}";
         String contentType = "json";
