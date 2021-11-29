@@ -21,17 +21,17 @@ class DocStringTypeRegistryDocStringConverterTest {
     @Test
     void throws_when_uses_doc_string_type_but_downcast_conversion() {
         registry.defineDocStringType(new DocStringType(
-                JsonNode.class,
-                "json",
-                (String s) -> new ObjectMapper().readTree(s)));
+            JsonNode.class,
+            "json",
+            (String s) -> new ObjectMapper().readTree(s)));
 
         DocString docString = DocString.create(
-                "{\"hello\":\"world\"}",
-                "json");
+            "{\"hello\":\"world\"}",
+            "json");
 
         CucumberDocStringException exception = assertThrows(
-                CucumberDocStringException.class,
-                () -> converter.convert(docString, Object.class));
+            CucumberDocStringException.class,
+            () -> converter.convert(docString, Object.class));
 
         assertThat(exception.getMessage(), is("" +
                 "It appears you did not register docstring type for 'json' or java.lang.Object"));

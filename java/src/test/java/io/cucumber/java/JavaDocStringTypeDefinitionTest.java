@@ -10,78 +10,42 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JavaDocStringTypeDefinitionTest {
 
-    private static final Type MAP_OF_STRING_TO_MAP_OF_INTEGER_DOUBLE = new TypeReference<Map<String, Map<Integer, Double>>>() {
+    @SuppressWarnings("rawtypes")
+    private static final Type MAP = new TypeReference<Map>() {
     }.getType();
-    private static final Type MAP_OF_STRING_TO_MAP_OF_INTEGER_GREET = new TypeReference<Map<String, Map<Integer, Greet>>>() {
-    }.getType();
-    private static final Type MAP_OF_MEET_TO_MAP_OF_GREET_LEAVE = new TypeReference<Map<Meet, Map<Greet, Leave>>>() {
-    }.getType();
-    private static final Type MAP_OF_STRING_TO_LIST_OF_DOUBLE = new TypeReference<Map<String, List<Double>>>() {
-    }.getType();
-    private static final Type MAP_OF_STRING_TO_LIST_OF_LEAVE = new TypeReference<Map<String, List<Leave>>>() {
-    }.getType();
-    private static final Type LIST_OF_MAP_OF_STRING_TO_INT = new TypeReference<List<Map<String, Integer>>>() {
-    }.getType();
-    private static final Type LIST_OF_MAP_OF_STRING_MEET = new TypeReference<List<Map<String, Meet>>>() {
-    }.getType();
-    private static final Type LIST_OF_LIST_OF_INT = new TypeReference<List<List<Integer>>>() {
-    }.getType();
-    private static final Type LIST_OF_LIST_OF_GREET = new TypeReference<List<List<Greet>>>() {
-    }.getType();
-    private static final Type OPTIONAL_STRING = new TypeReference<Optional<String>>() {
-    }.getType();
-    public static final Type OPTIONAL_GREET_TYPE = new TypeReference<Optional<Greet>>() {
-    }.getType();
-    private static final Type LIST_OF_OPTIONAL_STRING = new TypeReference<List<Optional<String>>>() {
-    }.getType();
-    private static final Type LIST_OF_OPTIONAL_LEAVE = new TypeReference<List<Optional<Leave>>>() {
+    private static final Type MAP_OF_STRING_AND_STRING = new TypeReference<Map<String, String>>() {
     }.getType();
     @SuppressWarnings("rawtypes")
-    private static final Type LIST_OF_MAP = new TypeReference<List<Map>>() {
+    private static final Type MAP_OF_MAP_AND_MAP = new TypeReference<Map<Map, Map>>() {
+    }.getType();
+    @SuppressWarnings("rawtypes")
+    private static final Type LIST = new TypeReference<List>() {
+    }.getType();
+    private static final Type LIST_OF_STRING = new TypeReference<List<String>>() {
     }.getType();
     @SuppressWarnings("rawtypes")
     private static final Type LIST_OF_LIST = new TypeReference<List<List>>() {
     }.getType();
     @SuppressWarnings("rawtypes")
-    private static final Type MAP_OF_STRING_TO_MAP = new TypeReference<Map<String, Map>>() {
+    private static final Type OPTIONAL = new TypeReference<Optional>() {
     }.getType();
-    private static final List<Type> TYPES = new ArrayList<>();
-
-    static {
-        TYPES.add(MAP_OF_STRING_TO_MAP_OF_INTEGER_DOUBLE);
-        TYPES.add(MAP_OF_STRING_TO_MAP_OF_INTEGER_GREET);
-        TYPES.add(MAP_OF_MEET_TO_MAP_OF_GREET_LEAVE);
-        TYPES.add(MAP_OF_STRING_TO_LIST_OF_DOUBLE);
-        TYPES.add(MAP_OF_STRING_TO_LIST_OF_LEAVE);
-        TYPES.add(LIST_OF_MAP_OF_STRING_TO_INT);
-        TYPES.add(LIST_OF_MAP_OF_STRING_MEET);
-        TYPES.add(LIST_OF_LIST_OF_INT);
-        TYPES.add(LIST_OF_LIST_OF_GREET);
-        TYPES.add(OPTIONAL_STRING);
-        TYPES.add(OPTIONAL_GREET_TYPE);
-        TYPES.add(LIST_OF_OPTIONAL_STRING);
-        TYPES.add(LIST_OF_OPTIONAL_LEAVE);
-
-        TYPES.add(LIST_OF_MAP);
-        TYPES.add(LIST_OF_LIST);
-        TYPES.add(MAP_OF_STRING_TO_MAP);
-    }
+    private static final Type OPTIONAL_STRING = new TypeReference<Optional<String>>() {
+    }.getType();
+    private static final Type OBJECT = new TypeReference<Object>() {
+    }.getType();
 
     private final Lookup lookup = new Lookup() {
         @Override
@@ -95,20 +59,6 @@ class JavaDocStringTypeDefinitionTest {
     private final DocStringTypeRegistry registry = new DocStringTypeRegistry();
     private final DocStringTypeRegistryDocStringConverter converter = new DocStringTypeRegistryDocStringConverter(
         registry);
-
-    @Test
-    void doc_string_type_gets_correctly_init() throws NoSuchMethodException {
-        Method method = JavaDocStringTypeDefinitionTest.class.getMethod("convert_doc_string_to_string", String.class);
-        JavaDocStringTypeDefinition defaultContentType = new JavaDocStringTypeDefinition("", method, lookup);
-        JavaDocStringTypeDefinition hasContentType = new JavaDocStringTypeDefinition("text/plain", method, lookup);
-
-        assertThat(defaultContentType.docStringType().getContentType(),
-            is("convert_doc_string_to_string"));
-        assertThat(defaultContentType.docStringType().getType(), instanceOf(Object.class));
-        assertThat(hasContentType.docStringType().getContentType(),
-            is("text/plain"));
-        assertThat(hasContentType.docStringType().getType(), instanceOf(Object.class));
-    }
 
     @Test
     void can_define_doc_string_converter() throws NoSuchMethodException {
@@ -174,199 +124,160 @@ class JavaDocStringTypeDefinitionTest {
     }
 
     @Test
-    public void complex_return_types_are_preserved() {
-        List<Method> methods = Arrays.stream(JavaDocStringTypeDefinitionTest.class.getMethods())
-                .filter(JavaDocStringTypeDefinitionTest::isConvertsToStringMethod)
-                .collect(Collectors.toList());
+    public void correct_conversion_is_returned_for_simple_and_complex_return_types() {
+        List<String> methodNames = new ArrayList<>();
+        methodNames.add("converts_string_to_list_of_string");
+        methodNames.add("converts_string_to_list");
+        methodNames.add("converts_string_to_list_of_list");
+        methodNames.add("converts_string_to_map");
+        methodNames.add("converts_string_to_map_of_string_and_string");
+        methodNames.add("converts_string_to_map_of_map_and_map");
+        methodNames.add("converts_string_to_optional_string");
+        methodNames.add("converts_string_to_optional");
+        Collections.sort(methodNames);
 
-        methods.forEach(method -> {
+        methodNames.forEach(methodName -> {
+            Method method = null;
+            try {
+                method = JavaDocStringTypeDefinitionTest.class.getMethod(methodName, String.class);
+            } catch (NoSuchMethodException ignored) {
+            }
             JavaDocStringTypeDefinition definition = new JavaDocStringTypeDefinition("text/plain",
                 method, lookup);
             registry.defineDocStringType(definition.docStringType());
         });
 
-        TYPES.forEach(type -> {
-            if (isMap(type)) {
-                assertThat(converter.convert(docString, type), is(Collections.emptyMap()));
-            }
-            if (isList(type)) {
-                assertThat(converter.convert(docString, type), is(Collections.emptyList()));
-            }
-            if (isOptional(type)) {
-                assertThat(converter.convert(docString, type), is(Optional.empty()));
-            }
-        });
+        assertThat(converter.convert(docString, MAP), is(integerMap()));
+        assertThat(converter.convert(docString, MAP_OF_STRING_AND_STRING), is(stringMap()));
+        assertThat(converter.convert(docString, MAP_OF_MAP_AND_MAP), is(mapOfMaps()));
+        assertThat(converter.convert(docString, LIST), is(integerList()));
+        assertThat(converter.convert(docString, LIST_OF_STRING), is(stringList()));
+        assertThat(converter.convert(docString, LIST_OF_LIST), is(integerListOfList()));
+        assertThat(converter.convert(docString, OPTIONAL), is(integerOptional()));
+        assertThat(converter.convert(docString, OPTIONAL_STRING), is(stringOptional()));
     }
 
-    private static boolean isMap(Type type) {
-        return type.getTypeName().startsWith("java.util.Map");
+    private List<String> stringList() {
+        List<String> list = new ArrayList<>();
+        list.add("Red");
+        list.add("Green");
+        list.add("Blue");
+        return list;
     }
 
-    private static boolean isList(Type type) {
-        return type.getTypeName().startsWith("java.util.List");
+    private List<Integer> integerList() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        return list;
     }
 
-    private static boolean isOptional(Type type) {
-        return type.getTypeName().startsWith("java.util.Optional");
+    private List<List<Integer>> integerListOfList() {
+        List<List<Integer>> listOfLists = new ArrayList<>();
+        listOfLists.add(integerList());
+        return listOfLists;
     }
 
-    private static boolean isConvertsToStringMethod(Method method) {
-        Type returnType = method.getGenericReturnType();
-        return method.getName().startsWith("converts_string_to") &&
-                !Void.class.equals(returnType) && !void.class.equals(returnType);
+    private Map<String, String> stringMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("R", "Red");
+        map.put("G", "Green");
+        map.put("B", "Blue");
+        return map;
     }
 
-    public Map<String, Map<Integer, Double>> converts_string_to_map_of_string_to_map_of_integer_double(
-            String docString
-    ) {
-        return Collections.emptyMap();
+    private Map<Integer, Integer> integerMap() {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        return map;
     }
 
-    public Map<String, Map<Integer, Greet>> converts_string_to_map_of_string_to_map_of_integer_greet(String docString) {
-        return Collections.emptyMap();
+    private Map<Map<Integer, Integer>, Map<String, String>> mapOfMaps() {
+        Map<Map<Integer, Integer>, Map<String, String>> maps = new HashMap<>();
+        maps.put(integerMap(), stringMap());
+        return maps;
     }
 
-    public Map<Meet, Map<Greet, Leave>> converts_string_to_map_of_meet_to_map_of_greet_leave(String docString) {
-        return Collections.emptyMap();
+    private Optional<String> stringOptional() {
+        return Optional.of("Red");
     }
 
-    public Map<String, List<Double>> converts_string_to_map_of_string_to_list_of_double(String docString) {
-        return Collections.emptyMap();
+    private Optional<Integer> integerOptional() {
+        return Optional.of(1);
     }
 
-    public Map<String, List<Leave>> converts_string_to_map_of_string_to_list_of_leave(String docString) {
-        return Collections.emptyMap();
-    }
-
-    public List<Map<String, Integer>> converts_string_to_list_of_map_of_string_to_int(String docString) {
-        return Collections.emptyList();
-    }
-
-    public List<Map<String, Meet>> converts_string_to_list_of_map_of_string_meet(String docString) {
-        return Collections.emptyList();
-    }
-
-    public List<List<Integer>> converts_string_to_list_of_list_of_int(String docString) {
-        return Collections.emptyList();
-    }
-
-    public List<List<Greet>> converts_string_to_list_of_list_of_greet(String docString) {
-        return Collections.emptyList();
-    }
-
-    public Optional<String> converts_string_to_optional_string(String docString) {
-        return Optional.empty();
-    }
-
-    public Optional<Greet> converts_string_to_optional_greet_type(String docString) {
-        return Optional.empty();
-    }
-
-    public List<Optional<String>> converts_string_to_list_of_optional_string(String docString) {
-        return Collections.emptyList();
-    }
-
-    public List<Optional<Leave>> converts_string_to_list_of_optional_leave(String docString) {
-        return Collections.emptyList();
+    public List<String> converts_string_to_list_of_string(String docString) {
+        List<String> list = new ArrayList<>();
+        list.add("Red");
+        list.add("Green");
+        list.add("Blue");
+        return list;
     }
 
     @SuppressWarnings("rawtypes")
-    public List<Map> converts_string_to_list_of_map(String docString) {
-        return Collections.emptyList();
+    public List converts_string_to_list(String docString) {
+        List list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        return list;
     }
 
     @SuppressWarnings("rawtypes")
     public List<List> converts_string_to_list_of_list(String docString) {
-        return Collections.emptyList();
+        List<List> listOfList = new ArrayList<>();
+        List list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        listOfList.add(list);
+        return listOfList;
     }
 
     @SuppressWarnings("rawtypes")
-    public Map<String, Map> converts_string_to_map_of_string_to_map(String docString) {
-        return Collections.emptyMap();
+    public Map converts_string_to_map(String docString) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        return map;
     }
 
-    private static class Greet {
-        private final String message;
-
-        Greet(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Greet greet = (Greet) o;
-            return Objects.equals(message, greet.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
-        }
+    public Map<String, String> converts_string_to_map_of_string_and_string(String docString) {
+        Map<String, String> map = new HashMap<>();
+        map.put("R", "Red");
+        map.put("G", "Green");
+        map.put("B", "Blue");
+        return map;
     }
 
-    private static class Meet {
-        private final String message;
+    @SuppressWarnings("rawtypes")
+    public Map<Map, Map> converts_string_to_map_of_map_and_map(String docString) {
+        Map mapOfMapAndMap = new HashMap<>();
+        Map mapInteger = new HashMap<>();
+        mapInteger.put(1, 1);
+        mapInteger.put(2, 2);
+        mapInteger.put(3, 3);
 
-        Meet(String message) {
-            this.message = message;
-        }
+        Map mapString = new HashMap<>();
+        mapString.put("R", "Red");
+        mapString.put("G", "Green");
+        mapString.put("B", "Blue");
 
-        @Override
-        public String toString() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Meet meet = (Meet) o;
-            return Objects.equals(message, meet.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
-        }
+        mapOfMapAndMap.put(mapInteger, mapString);
+        return mapOfMapAndMap;
     }
 
-    private static class Leave {
-        private final String message;
+    public Optional<String> converts_string_to_optional_string(String docString) {
+        return Optional.of("Red");
+    }
 
-        Leave(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Leave leave = (Leave) o;
-            return Objects.equals(message, leave.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
-        }
+    @SuppressWarnings("rawtypes")
+    public Optional converts_string_to_optional(String docString) {
+        return Optional.of(1);
     }
 
 }
