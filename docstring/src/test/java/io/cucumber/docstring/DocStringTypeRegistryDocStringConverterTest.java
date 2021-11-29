@@ -19,6 +19,39 @@ class DocStringTypeRegistryDocStringConverterTest {
         registry);
 
     @Test
+    void throws_when_uses_doc_string_type_but_downcast_conversion() {
+        registry.defineDocStringType(new DocStringType(
+                JsonNode.class,
+                "json",
+                (String s) -> new ObjectMapper().readTree(s)));
+
+        DocString docString = DocString.create(
+                "{\"hello\":\"world\"}",
+                "json");
+
+        CucumberDocStringException exception = assertThrows(
+                CucumberDocStringException.class,
+                () -> converter.convert(docString, Object.class));
+
+        assertThat(exception.getMessage(), is("" +
+                "It appears you did not register docstring type for 'json' or java.lang.Object"));
+    }
+
+    @Test
+    void uses_target_type_when_available() {
+        registry.defineDocStringType(new DocStringType(
+            JsonNode.class,
+            "json",
+            (String s) -> new ObjectMapper().readTree(s)));
+
+        DocString docString = DocString.create(
+            "{\"hello\":\"world\"}");
+
+        JsonNode converted = converter.convert(docString, JsonNode.class);
+        assertThat(converted.get("hello").textValue(), is("world"));
+    }
+
+    @Test
     void target_type_to_string_is_predefined() {
         DocString docString = DocString.create(
             "hello world");
@@ -34,32 +67,6 @@ class DocStringTypeRegistryDocStringConverterTest {
 
         DocString converted = converter.convert(docString, DocString.class);
         assertThat(converted, is(docString));
-    }
-
-    @Test
-    void converts_no_content_type_doc_string_to_registered_matching_convertor() {
-        DocString docString = DocString.create(
-            "{\"hello\":\"world\"}");
-
-        registry.defineDocStringType(new DocStringType(
-            JsonNode.class,
-            "json",
-            (String s) -> new ObjectMapper().convertValue(s, JsonNode.class)));
-
-        JsonNode converted = converter.convert(docString, JsonNode.class);
-        assertThat(converted.asText(), equalTo(docString.getContent()));
-    }
-
-    @Test
-    void throws_when_no_converter_defined() {
-        DocString docString = DocString.create("hello world");
-
-        CucumberDocStringException exception = assertThrows(
-            CucumberDocStringException.class,
-            () -> docString.convert(Object.class));
-
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DocString to class java.lang.Object. You have to write the conversion for it in this method"));
     }
 
     @Test
@@ -114,22 +121,17 @@ class DocStringTypeRegistryDocStringConverterTest {
     }
 
     @Test
-    void throws_when_uses_doc_string_type_but_downcast_conversion() {
+    void converts_no_content_type_doc_string_to_registered_matching_convertor() {
+        DocString docString = DocString.create(
+            "{\"hello\":\"world\"}");
+
         registry.defineDocStringType(new DocStringType(
             JsonNode.class,
             "json",
-            (String s) -> new ObjectMapper().readTree(s)));
+            (String s) -> new ObjectMapper().convertValue(s, JsonNode.class)));
 
-        DocString docString = DocString.create(
-            "{\"hello\":\"world\"}",
-            "json");
-
-        CucumberDocStringException exception = assertThrows(
-            CucumberDocStringException.class,
-            () -> converter.convert(docString, Object.class));
-
-        assertThat(exception.getMessage(), is("" +
-                "It appears you did not register docstring type for 'json' or java.lang.Object"));
+        JsonNode converted = converter.convert(docString, JsonNode.class);
+        assertThat(converted.asText(), equalTo(docString.getContent()));
     }
 
     @Test
