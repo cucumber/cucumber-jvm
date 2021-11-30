@@ -1252,7 +1252,7 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n" +
-                "    \"\"\"doc\n" +
+                "    \"\"\"text/plain\n" +
                 "    doc string content\n" +
                 "    \"\"\"\n");
 
@@ -1291,7 +1291,7 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"doc_string\": {\n" +
-                "              \"content_type\": \"doc\",\n" +
+                "              \"content_type\": \"text/plain\",\n" +
                 "              \"value\": \"doc string content\",\n" +
                 "              \"line\": 5\n" +
                 "            },\n" +
