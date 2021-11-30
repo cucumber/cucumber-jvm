@@ -91,14 +91,14 @@ class JavaDocStringTypeDefinitionTest {
     @Test
     void must_return_something() throws NoSuchMethodException {
         Method voidMethod = JavaDocStringTypeDefinitionTest.class.getMethod("converts_string_to_void", String.class);
-        Method voidObjectMethod = JavaDocStringTypeDefinitionTest.class.getMethod("converts_string_to_void_object", String.class);
+        Method voidObjectMethod = JavaDocStringTypeDefinitionTest.class.getMethod("converts_string_to_void_object",
+            String.class);
 
         assertAll(
-                () -> assertThrows(InvalidMethodSignatureException.class,
-                        () -> new JavaDocStringTypeDefinition("", voidMethod, lookup)),
-                () -> assertThrows(InvalidMethodSignatureException.class,
-                        () -> new JavaDocStringTypeDefinition("", voidObjectMethod, lookup))
-        );
+            () -> assertThrows(InvalidMethodSignatureException.class,
+                () -> new JavaDocStringTypeDefinition("", voidMethod, lookup)),
+            () -> assertThrows(InvalidMethodSignatureException.class,
+                () -> new JavaDocStringTypeDefinition("", voidObjectMethod, lookup)));
     }
 
     public void converts_string_to_void(String docString) {
