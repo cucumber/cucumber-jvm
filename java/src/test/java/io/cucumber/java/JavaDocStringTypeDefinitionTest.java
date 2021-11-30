@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JavaDocStringTypeDefinitionTest {
@@ -89,11 +90,22 @@ class JavaDocStringTypeDefinitionTest {
 
     @Test
     void must_return_something() throws NoSuchMethodException {
-        Method method = JavaDocStringTypeDefinitionTest.class.getMethod("converts_string_to_void", String.class);
-        assertThrows(InvalidMethodSignatureException.class, () -> new JavaDocStringTypeDefinition("", method, lookup));
+        Method voidMethod = JavaDocStringTypeDefinitionTest.class.getMethod("converts_string_to_void", String.class);
+        Method voidObjectMethod = JavaDocStringTypeDefinitionTest.class.getMethod("converts_string_to_void_object", String.class);
+
+        assertAll(
+                () -> assertThrows(InvalidMethodSignatureException.class,
+                        () -> new JavaDocStringTypeDefinition("", voidMethod, lookup)),
+                () -> assertThrows(InvalidMethodSignatureException.class,
+                        () -> new JavaDocStringTypeDefinition("", voidObjectMethod, lookup))
+        );
     }
 
     public void converts_string_to_void(String docString) {
+    }
+
+    public Void converts_string_to_void_object(String docString) {
+        return null;
     }
 
     @Test
