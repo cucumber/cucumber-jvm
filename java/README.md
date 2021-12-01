@@ -493,14 +493,18 @@ import java.util.List;
 
 public class StepDefinitions {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @DocStringType
     public List<Grocery> json(String docString) throws IOException {
-        return new ObjectMapper().readValue(docString, new TypeReference<List<Grocery>>() {}); 
+        return objectMapper.readValue(docString, new TypeReference<List<Grocery>>() {
+        });
     }
 
     @DocStringType(contentType = "json")
     public FoodItem convertFoodItem(String docString) throws IOException {
-        return new ObjectMapper().readValue(docString, new TypeReference<FoodItem>() {});
+        return objectMapper.readValue(docString, new TypeReference<FoodItem>() {
+        });
     }
 
     @Given("some more information")
