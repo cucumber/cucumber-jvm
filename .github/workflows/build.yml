@@ -75,9 +75,12 @@ jobs:
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version --toolchains .github/workflows/.toolchains.xml
       - name: Test (Coverage)
         run: mvn jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v2
         with:
-          file: ./**/target/site/jacoco/jacoco.xml
+          directory: ./**/target/site/jacoco
+          file: ./jacoco.xml
+          fail_ci_if_error: true
+          verbose: true
           name: codecov
 
   semver:
