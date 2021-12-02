@@ -78,7 +78,6 @@ jobs:
       - uses: codecov/codecov-action@v2
         with:
           directory: ./**/target/site/jacoco
-          file: ./jacoco.xml
           fail_ci_if_error: true
           verbose: true
           name: codecov
