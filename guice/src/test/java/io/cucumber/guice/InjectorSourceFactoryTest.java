@@ -7,9 +7,6 @@ import org.junit.jupiter.api.function.Executable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,27 +20,23 @@ class InjectorSourceFactoryTest {
 
     @Test
     void createsDefaultInjectorSourceWhenGuiceModulePropertyIsNotSet() {
-        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(Collections.emptyMap());
+        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(null);
         assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
     }
 
-    private InjectorSourceFactory createInjectorSourceFactory(Map<String, String> properties) {
-        return new InjectorSourceFactory(properties);
+    private InjectorSourceFactory createInjectorSourceFactory(String injectorClassName) {
+        return new InjectorSourceFactory(injectorClassName);
     }
 
     @Test
     void instantiatesInjectorSourceByFullyQualifiedName() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, CustomInjectorSource.class.getName());
-        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
+        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(CustomInjectorSource.class.getName());
         assertThat(injectorSourceFactory.create(), is(instanceOf(CustomInjectorSource.class)));
     }
 
     @Test
     void failsToInstantiateNonExistantClass() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, "some.bogus.Class");
-        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
+        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory("some.bogus.Class");
 
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
@@ -57,9 +50,7 @@ class InjectorSourceFactoryTest {
 
     @Test
     void failsToInstantiateClassNotImplementingInjectorSource() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, String.class.getName());
-        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
+        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(String.class.getName());
 
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
@@ -73,9 +64,7 @@ class InjectorSourceFactoryTest {
 
     @Test
     void failsToInstantiateClassWithPrivateConstructor() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, PrivateConstructor.class.getName());
-        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
+        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(PrivateConstructor.class.getName());
 
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
@@ -89,9 +78,7 @@ class InjectorSourceFactoryTest {
 
     @Test
     void failsToInstantiateClassWithNoDefaultConstructor() {
-        Map<String, String> properties = new HashMap<>();
-        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY, NoDefaultConstructor.class.getName());
-        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
+        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(NoDefaultConstructor.class.getName());
 
         Executable testMethod = injectorSourceFactory::create;
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
@@ -128,10 +115,8 @@ class InjectorSourceFactoryTest {
         ClassLoader childClassLoader = new MyChildClassLoader(this.getClass().getClassLoader());
         Thread.currentThread().setContextClassLoader(childClassLoader);
 
-        Map<String, String> properties = new HashMap<>();
-        properties.put(InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY,
+        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(
             "io.cucumber.guice.impl.LivesInChildClassLoader");
-        InjectorSourceFactory injectorSourceFactory = createInjectorSourceFactory(properties);
 
         assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
     }

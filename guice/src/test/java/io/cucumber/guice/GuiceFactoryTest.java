@@ -52,6 +52,12 @@ class GuiceFactoryTest {
         }
     }
 
+    private void initFactory(Injector injector) {
+        this.factory = new GuiceFactory();
+        if (injector != null)
+            ((GuiceFactory) factory).setInjector(injector);
+    }
+
     @Test
     void factoryCanBeIntantiatedWithDefaultConstructor() {
         factory = new GuiceFactory();
@@ -60,13 +66,13 @@ class GuiceFactoryTest {
 
     @Test
     void factoryCanBeIntantiatedWithArgConstructor() {
-        factory = new GuiceFactory(Guice.createInjector());
+        initFactory(Guice.createInjector());
         assertThat(factory, notNullValue());
     }
 
     @Test
     void factoryStartFailsIfScenarioScopeIsNotBound() {
-        factory = new GuiceFactory(Guice.createInjector());
+        initFactory(Guice.createInjector());
 
         Executable testMethod = () -> factory.start();
         ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
@@ -78,7 +84,7 @@ class GuiceFactoryTest {
 
     @Test
     void shouldGiveNewInstancesOfUnscopedClassWithinAScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
+        initFactory(injector(CucumberModules.createScenarioModule()));
         instancesFromSameScenario = getInstancesFromSameScenario(factory, UnscopedClass.class);
         assertThat(instancesFromSameScenario, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
@@ -101,7 +107,7 @@ class GuiceFactoryTest {
 
     @Test
     void shouldGiveNewInstanceOfUnscopedClassForEachScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
+        initFactory(injector(CucumberModules.createScenarioModule()));
         instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, UnscopedClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
@@ -128,14 +134,14 @@ class GuiceFactoryTest {
 
     @Test
     void shouldGiveTheSameInstanceOfAnnotatedScenarioScopedClassWithinAScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
+        initFactory(injector(CucumberModules.createScenarioModule()));
         instancesFromSameScenario = getInstancesFromSameScenario(factory, AnnotatedScenarioScopedClass.class);
         assertThat(instancesFromSameScenario, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
     @Test
     void shouldGiveNewInstanceOfAnnotatedScenarioScopedClassForEachScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
+        initFactory(injector(CucumberModules.createScenarioModule()));
         instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory,
             AnnotatedScenarioScopedClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
@@ -143,49 +149,49 @@ class GuiceFactoryTest {
 
     @Test
     void shouldGiveTheSameInstanceOfAnnotatedSingletonClassWithinAScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
+        initFactory(injector(CucumberModules.createScenarioModule()));
         instancesFromSameScenario = getInstancesFromSameScenario(factory, AnnotatedSingletonClass.class);
         assertThat(instancesFromSameScenario, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
     @Test
     void shouldGiveTheSameInstanceOfAnnotatedSingletonClassForEachScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule()));
+        initFactory(injector(CucumberModules.createScenarioModule()));
         instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, AnnotatedSingletonClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
     @Test
     void shouldGiveTheSameInstanceOfBoundScenarioScopedClassWithinAScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule(), boundScenarioScopedClassModule));
+        initFactory(injector(CucumberModules.createScenarioModule(), boundScenarioScopedClassModule));
         instancesFromSameScenario = getInstancesFromSameScenario(factory, BoundScenarioScopedClass.class);
         assertThat(instancesFromSameScenario, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
     @Test
     void shouldGiveNewInstanceOfBoundScenarioScopedClassForEachScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule(), boundScenarioScopedClassModule));
+        initFactory(injector(CucumberModules.createScenarioModule(), boundScenarioScopedClassModule));
         instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, BoundScenarioScopedClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
     }
 
     @Test
     void shouldGiveTheSameInstanceOfBoundSingletonClassWithinAScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule(), boundSingletonClassModule));
+        initFactory(injector(CucumberModules.createScenarioModule(), boundSingletonClassModule));
         instancesFromSameScenario = getInstancesFromSameScenario(factory, BoundSingletonClass.class);
         assertThat(instancesFromSameScenario, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
     @Test
     void shouldGiveTheSameInstanceOfBoundSingletonClassForEachScenario() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule(), boundSingletonClassModule));
+        initFactory(injector(CucumberModules.createScenarioModule(), boundSingletonClassModule));
         instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, BoundSingletonClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllEqualMatcher.elementsAreAllEqual());
     }
 
     @Test
     void shouldGiveNewInstanceOfAnnotatedSingletonClassForEachScenarioWhenOverridingModuleBindingIsScenarioScope() {
-        factory = new GuiceFactory(injector(CucumberModules.createScenarioModule(), new AbstractModule() {
+        initFactory(injector(CucumberModules.createScenarioModule(), new AbstractModule() {
             @Override
             protected void configure() {
                 bind(AnnotatedSingletonClass.class).in(ScenarioScoped.class);

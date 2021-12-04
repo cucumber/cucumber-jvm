@@ -3,21 +3,17 @@ package io.cucumber.guice;
 import com.google.inject.Guice;
 import com.google.inject.Stage;
 
-import java.util.Map;
-
 import static java.text.MessageFormat.format;
 
 final class InjectorSourceFactory {
 
-    static final String GUICE_INJECTOR_SOURCE_KEY = "guice.injector-source";
-    private final Map<String, String> properties;
+    private final String injectorSourceClassName;
 
-    InjectorSourceFactory(Map<String, String> properties) {
-        this.properties = properties;
+    InjectorSourceFactory(String injectorSourceClassName) {
+        this.injectorSourceClassName = injectorSourceClassName;
     }
 
     InjectorSource create() {
-        String injectorSourceClassName = properties.get(GUICE_INJECTOR_SOURCE_KEY);
         if (injectorSourceClassName == null) {
             return createDefaultScenarioModuleInjectorSource();
         } else {
