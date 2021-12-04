@@ -32,8 +32,8 @@ final class GuiceBackend implements Backend {
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
-                .flatMap((Class<?> clazz) -> Arrays.stream(clazz.getInterfaces()))
-                .filter((Class<?> clazz) -> clazz.getSimpleName().equals(InjectorSource.class.getSimpleName()))
+                .filter((Class<?> clazz) -> Arrays.stream(clazz.getInterfaces())
+                        .anyMatch((Class<?> clazzz) -> clazzz.getSimpleName().equals(InjectorSource.class.getSimpleName())))
                 .forEach(container::addClass);
     }
 
