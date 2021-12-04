@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith({ MockitoExtension.class })
 class GuiceBackendTest {
 
     @Mock

@@ -31,10 +31,12 @@ public final class GuiceFactory implements ObjectFactory {
         if (hasInjectorSource(stepClass)) {
             checkOnlyOneClassHasInjectorSource(stepClass);
             withInjectorSource = stepClass;
-            injector = new InjectorSourceFactory(withInjectorSource.getSimpleName()).create().getInjector();
+            injector = new InjectorSourceFactory(withInjectorSource.getName()).create().getInjector();
+            stepClasses.add(stepClass);
+            return true;
+        } else {
+            return false;
         }
-        stepClasses.add(stepClass);
-        return true;
     }
 
     private boolean hasInjectorSource(Class<?> stepClass) {
@@ -62,7 +64,7 @@ public final class GuiceFactory implements ObjectFactory {
 
     public void start() {
         if (injector == null) {
-            injector = new InjectorSourceFactory(null).create().getInjector();
+            injector = new InjectorSourceFactory().create().getInjector();
         }
         injector.getInstance(ScenarioScope.class).enterScope();
     }

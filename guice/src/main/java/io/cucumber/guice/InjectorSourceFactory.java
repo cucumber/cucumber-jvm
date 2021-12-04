@@ -9,6 +9,10 @@ final class InjectorSourceFactory {
 
     private final String injectorSourceClassName;
 
+    InjectorSourceFactory() {
+        this(null);
+    }
+
     InjectorSourceFactory(String injectorSourceClassName) {
         this.injectorSourceClassName = injectorSourceClassName;
     }

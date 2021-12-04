@@ -7,7 +7,11 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.resource.ClasspathSupport;
+import io.cucumber.guice.factory.SecondInjectorSource;
+import io.cucumber.guice.integration.YourInjectorSource;
 import io.cucumber.guice.matcher.ElementsAreAllEqualMatcher;
 import io.cucumber.guice.matcher.ElementsAreAllUniqueMatcher;
 import org.junit.jupiter.api.AfterEach;
@@ -19,10 +23,13 @@ import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GuiceFactoryTest {
 
@@ -59,13 +66,13 @@ class GuiceFactoryTest {
     }
 
     @Test
-    void factoryCanBeIntantiatedWithDefaultConstructor() {
+    void factoryCanBeInstantiatedWithDefaultConstructor() {
         factory = new GuiceFactory();
         assertThat(factory, notNullValue());
     }
 
     @Test
-    void factoryCanBeIntantiatedWithArgConstructor() {
+    void factoryCanBeInstantiatedWithArgConstructor() {
         initFactory(Guice.createInjector());
         assertThat(factory, notNullValue());
     }
@@ -199,6 +206,50 @@ class GuiceFactoryTest {
         }));
         instancesFromDifferentScenarios = getInstancesFromDifferentScenarios(factory, AnnotatedSingletonClass.class);
         assertThat(instancesFromDifferentScenarios, ElementsAreAllUniqueMatcher.elementsAreAllUnique());
+    }
+
+    @Test
+    void shouldStartWhenInjectorSourceIsNull() {
+        factory = new GuiceFactory();
+        factory.start();
+    }
+
+    @Test
+    void shouldAddInjectorSource() {
+        factory = new GuiceFactory();
+        assertTrue(factory.addClass(YourInjectorSource.class));
+    }
+
+    @Test
+    void shouldReturnSameIfInjectorSourceIsFoundTwice() {
+        factory = new GuiceFactory();
+        assertTrue(factory.addClass(YourInjectorSource.class));
+        assertTrue(factory.addClass(YourInjectorSource.class));
+    }
+
+    @Test
+    void shouldThrowExceptionIfTwoDifferentInjectorSourcesAreFound() {
+        factory = new GuiceFactory();
+        assertTrue(factory.addClass(YourInjectorSource.class));
+
+        Executable testMethod = () -> factory.addClass(SecondInjectorSource.class);
+        CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
+        String exceptionMessage = String.format("" +
+                "Glue class %1$s and %2$s are both implementing io.cucumber.guice.InjectorSource.\n" +
+                "Please ensure only one class configures the Guice context\n" +
+                "\n" +
+                "By default Cucumber scans the entire classpath for context configuration.\n" +
+                "You can restrict this by configuring the glue path.\n" +
+                ClasspathSupport.configurationExamples(),
+            SecondInjectorSource.class,
+            YourInjectorSource.class);
+        assertThat("Unexpected exception message", actualThrown.getMessage(), is(exceptionMessage));
+    }
+
+    @Test
+    void shouldReturnFalseIfClassIsNotAnInjectorSource() {
+        factory = new GuiceFactory();
+        assertFalse(factory.addClass(String.class));
     }
 
     static class UnscopedClass {
