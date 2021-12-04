@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Executes a method before all scenarios
+ * Executes a method after all scenarios
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

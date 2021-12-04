@@ -7,14 +7,14 @@
         <openwebbeans.version>2.0.23</openwebbeans.version>
         <weld-se-core.version>3.1.8.Final</weld-se-core.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <junit-jupiter.version>5.8.1</junit-jupiter.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <hamcrest.version>2.2</hamcrest.version>
     </properties>
 
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.1.0-SNAPSHOT</version>
+        <version>7.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-cdi2</artifactId>

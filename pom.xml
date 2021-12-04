@@ -6,7 +6,7 @@
         <version>2.1.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.1.0-SNAPSHOT</version>
+    <version>7.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -374,12 +374,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.14.5</version>
+                    <version>0.14.6</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.26.0</version>
+                            <version>0.26.1</version>
                         </dependency>
                     </dependencies>
                     <configuration>

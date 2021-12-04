@@ -7,12 +7,17 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
 import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * The type registry records defines parameter types, data table types and
  * docstring transformers.
+ *
+ * @deprecated use the dedicated type annotations to register data table and
+ *             parameter types instead
  */
-@API(status = API.Status.STABLE)
+@API(status = Status.STABLE)
+@Deprecated
 public interface TypeRegistry {
 
     /**
