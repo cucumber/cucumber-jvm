@@ -1,11 +1,17 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.cienvironment.CiEnvironment;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.runner.Runner;
+import io.cucumber.messages.ProtocolVersion;
+import io.cucumber.messages.types.Ci;
 import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Git;
+import io.cucumber.messages.types.Meta;
+import io.cucumber.messages.types.Product;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -18,8 +24,8 @@ import java.time.Instant;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
+import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
-import static io.cucumber.createmeta.CreateMeta.createMeta;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.singletonList;
 
@@ -48,8 +54,36 @@ public final class CucumberExecutionContext {
 
     private void emitMeta() {
         Envelope envelope = new Envelope();
-        envelope.setMeta(createMeta("cucumber-jvm", VERSION, System.getenv()));
+        envelope.setMeta(createMeta());
         bus.send(envelope);
+    }
+
+    private Meta createMeta() {
+        return new Meta(
+            ProtocolVersion.getVersion(),
+            new Product("cucumber-jvm", VERSION),
+            new Product(System.getProperty("java.vm.name"), System.getProperty("java.vm.version")),
+            new Product(System.getProperty("os.name"), null),
+            new Product(System.getProperty("os.arch"), null),
+            createCi());
+    }
+
+    private Ci createCi() {
+        CiEnvironment ciEnvironment = detectCiEnvironment(System.getenv());
+        if (ciEnvironment == null) {
+            return null;
+        }
+
+        CiEnvironment.Git git = ciEnvironment.getGit();
+        return new Ci(
+            ciEnvironment.getName(),
+            ciEnvironment.getUrl(),
+            ciEnvironment.getBuildNumber(),
+            new Git(
+                git.getRemote(),
+                git.getRevision(),
+                git.getBranch(),
+                git.getTag()));
     }
 
     private void emitTestRunStarted() {
