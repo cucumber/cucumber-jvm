@@ -12,6 +12,7 @@ import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -1251,7 +1252,7 @@ class JsonFormatterTest {
                 "\n" +
                 "  Scenario: Monkey eats bananas\n" +
                 "    Given there are bananas\n" +
-                "    \"\"\"doc\n" +
+                "    \"\"\"text/plain\n" +
                 "    doc string content\n" +
                 "    \"\"\"\n");
 
@@ -1262,7 +1263,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", String.class)))
+                    new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()", DocString.class)))
                 .build()
                 .run();
 
@@ -1290,7 +1291,7 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"doc_string\": {\n" +
-                "              \"content_type\": \"doc\",\n" +
+                "              \"content_type\": \"text/plain\",\n" +
                 "              \"value\": \"doc string content\",\n" +
                 "              \"line\": 5\n" +
                 "            },\n" +

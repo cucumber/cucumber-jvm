@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+* [Core] Support multiple doc strings types with same content type ([#2421](https://github.com/cucumber/cucumber-jvm/pull/2421) Postelnicu George)
+ - When transforming doc strings in addition to the content type Cucumber will
+   also look at the type used in the step definition to disambiguate between
+   doc string types.    
 
 ### Changed
 
