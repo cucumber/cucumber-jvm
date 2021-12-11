@@ -21,6 +21,31 @@
       }
     }
   ],
+  "7.2.0": [
+    {
+      "extension": "revapi.differences",
+      "id": "intentional-api-changes",
+      "ignore": true,
+      "configuration": {
+        "differences": [
+          {
+            "code": "java.generics.elementNowParameterized",
+            "old": "method void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<?>)",
+            "new": "method <T> void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<T>)",
+            "justification": "Should not impact the normal use case of the java8 API"
+
+          },
+          {
+            "code": "java.generics.formalTypeParameterAdded",
+            "old": "method void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<?>)",
+            "new": "method <T> void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<T>)",
+            "typeParameter": "T",
+            "justification": "Should not impact the normal use case of the java8 API"
+          }
+        ]
+      }
+    }
+  ],
   "internal": [
     {
       "extension": "revapi.differences",
