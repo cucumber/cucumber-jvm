@@ -12,7 +12,7 @@
     <name>Cucumber-JVM: Bill of Materials</name>
 
     <properties>
-        <create-meta.version>6.0.4</create-meta.version>
+        <ci-environment.version>7.0.1</ci-environment.version>
         <cucumber-expressions.version>13.0.1</cucumber-expressions.version>
         <datatable.version>4.1.0</datatable.version>
         <html-formatter.version>17.0.0</html-formatter.version>
@@ -54,8 +54,8 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>create-meta</artifactId>
-                <version>${create-meta.version}</version>
+                <artifactId>ci-environment</artifactId>
+                <version>${ci-environment.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>

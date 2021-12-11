@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
    doc string types.    
 
 ### Changed
+* [Core] Replaced `create-meta` dependency with `ci-environment` ([#2438](https://github.com/cucumber/cucumber-jvm/pull/2438) M.P. Korstanje)
 
 ### Deprecated
 
