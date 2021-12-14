@@ -16,7 +16,7 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
     JavaDocStringTypeDefinition(String contentType, Method method, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.docStringType = new DocStringType(
-            this.method.getReturnType(),
+            this.method.getGenericReturnType(),
             contentType.isEmpty() ? method.getName() : contentType,
             this::invokeMethod);
     }

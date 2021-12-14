@@ -8,7 +8,7 @@ final class Java8DocStringTypeDefinition extends AbstractGlueDefinition implemen
 
     private final DocStringType docStringType;
 
-    Java8DocStringTypeDefinition(String contentType, DocStringDefinitionBody<?> body) {
+    <T> Java8DocStringTypeDefinition(String contentType, DocStringDefinitionBody<T> body) {
         super(body, new Exception().getStackTrace()[3]);
         if (contentType == null) {
             throw new CucumberException("Docstring content type couldn't be null, define docstring content type");

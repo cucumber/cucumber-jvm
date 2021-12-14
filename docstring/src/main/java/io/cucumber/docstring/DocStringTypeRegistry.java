@@ -3,33 +3,34 @@ package io.cucumber.docstring;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
 @API(status = API.Status.STABLE)
 public final class DocStringTypeRegistry {
 
-    private final Map<String, DocStringType> docStringTypesByContentType = new HashMap<>();
-    private final Map<Type, DocStringType> docStringTypesByType = new HashMap<>();
+    private static final Class<String> DEFAULT_TYPE = String.class;
+    private static final String DEFAULT_CONTENT_TYPE = "";
+    private final Map<String, Map<Type, DocStringType>> docStringTypes = new HashMap<>();
 
     public DocStringTypeRegistry() {
-        defineDocStringType(new DocStringType(String.class, "", (String docString) -> docString));
+        defineDocStringType(new DocStringType(DEFAULT_TYPE, DEFAULT_CONTENT_TYPE, (String docString) -> docString));
     }
 
     public void defineDocStringType(DocStringType docStringType) {
-        DocStringType byContentType = docStringTypesByContentType.get(docStringType.getContentType());
-        if (byContentType != null) {
-            throw createDuplicateTypeException(byContentType, docStringType);
+        DocStringType existing = lookupByContentTypeAndType(docStringType.getContentType(), docStringType.getType());
+        if (existing != null) {
+            throw createDuplicateTypeException(existing, docStringType);
         }
-        DocStringType byClass = docStringTypesByType.get(docStringType.getType());
-        if (byClass != null) {
-            throw createDuplicateTypeException(byClass, docStringType);
-
-        }
-        docStringTypesByContentType.put(docStringType.getContentType(), docStringType);
-        docStringTypesByType.put(docStringType.getType(), docStringType);
+        Map<Type, DocStringType> map = docStringTypes.computeIfAbsent(docStringType.getContentType(),
+            s -> new HashMap<>());
+        map.put(docStringType.getType(), docStringType);
+        docStringTypes.put(docStringType.getContentType(), map);
     }
 
     private static CucumberDocStringException createDuplicateTypeException(
@@ -49,12 +50,31 @@ public final class DocStringTypeRegistry {
         return contentType.isEmpty() ? "[anonymous]" : contentType;
     }
 
-    DocStringType lookupByContentType(String contentType) {
-        return docStringTypesByContentType.get(contentType);
+    List<DocStringType> lookup(String contentType, Type type) {
+        if (contentType == null) {
+            return lookUpByType(type);
+        }
+
+        DocStringType docStringType = lookupByContentTypeAndType(contentType, type);
+        if (docStringType == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(docStringType);
     }
 
-    DocStringType lookupByType(Type type) {
+    private List<DocStringType> lookUpByType(Type type) {
+        return docStringTypes.values().stream()
+                .flatMap(typeDocStringTypeMap -> typeDocStringTypeMap.entrySet().stream()
+                        .filter(entry -> entry.getKey().equals(type))
+                        .map(Map.Entry::getValue))
+                .collect(Collectors.toList());
+    }
+
+    private DocStringType lookupByContentTypeAndType(String contentType, Type type) {
+        Map<Type, DocStringType> docStringTypesByType = docStringTypes.get(contentType);
+        if (docStringTypesByType == null) {
+            return null;
+        }
         return docStringTypesByType.get(type);
     }
-
 }
