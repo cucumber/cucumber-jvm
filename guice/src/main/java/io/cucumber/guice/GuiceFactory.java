@@ -59,7 +59,7 @@ public final class GuiceFactory implements ObjectFactory {
     public void start() {
         if (injector == null) {
             if (withInjectorSource != null) {
-                injector = new InjectorSourceFactory(withInjectorSource.getName()).create().getInjector();
+                injector = new InjectorSourceFactory(withInjectorSource).create().getInjector();
             } else {
                 injector = new InjectorSourceFactory().create().getInjector();
             }
