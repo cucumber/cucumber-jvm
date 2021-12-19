@@ -41,6 +41,31 @@
             "new": "method <T> void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<T>)",
             "typeParameter": "T",
             "justification": "Should not impact the normal use case of the java8 API"
+          },
+
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "(interface|class|enum) io\\.cucumber\\.core.backend\\..*",
+            "justification": "ADD YOUR EXPLANATION FOR THE NECESSITY OF THIS CHANGE"
+          },
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "(interface|class) io\\.cucumber\\.cucumberexpressions\\..*",
+            "justification": "ADD YOUR EXPLANATION FOR THE NECESSITY OF THIS CHANGE"
+          },
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "(interface|class) io\\.cucumber\\.datatable\\..*",
+            "justification": "ADD YOUR EXPLANATION FOR THE NECESSITY OF THIS CHANGE"
+          },
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class io\\.cucumber\\.docstring\\..*",
+            "justification": "ADD YOUR EXPLANATION FOR THE NECESSITY OF THIS CHANGE"
           }
         ]
       }
