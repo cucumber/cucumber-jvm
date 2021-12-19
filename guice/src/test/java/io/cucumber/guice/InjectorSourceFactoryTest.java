@@ -76,7 +76,6 @@ class InjectorSourceFactoryTest {
                 isA(NoSuchMethodException.class)));
     }
 
-
     public static class CustomInjectorSource implements InjectorSource {
 
         @Override

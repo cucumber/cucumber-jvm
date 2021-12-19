@@ -8,7 +8,6 @@ import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
@@ -32,9 +31,7 @@ final class GuiceBackend implements Backend {
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
-                .filter((Class<?> clazz) -> Arrays.stream(clazz.getInterfaces())
-                        .anyMatch(
-                            (Class<?> clazzz) -> clazzz.getSimpleName().equals(InjectorSource.class.getSimpleName())))
+                .filter(InjectorSource.class::isAssignableFrom)
                 .forEach(container::addClass);
     }
 
