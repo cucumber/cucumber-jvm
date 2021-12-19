@@ -9,10 +9,6 @@ final class InjectorSourceFactory {
 
     private final Class<?> injectorSourceClass;
 
-    InjectorSourceFactory() {
-        this(null);
-    }
-
     InjectorSourceFactory(Class<?> injectorSourceClass) {
         this.injectorSourceClass = injectorSourceClass;
     }
