@@ -6,7 +6,6 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.apiguardian.api.API;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -27,21 +26,16 @@ public final class GuiceFactory implements ObjectFactory {
         if (stepClasses.contains(stepClass)) {
             return true;
         }
-
         if (hasInjectorSource(stepClass)) {
             checkOnlyOneClassHasInjectorSource(stepClass);
             withInjectorSource = stepClass;
-            injector = new InjectorSourceFactory(withInjectorSource.getName()).create().getInjector();
-            stepClasses.add(stepClass);
-            return true;
-        } else {
-            return false;
         }
+        stepClasses.add(stepClass);
+        return true;
     }
 
     private boolean hasInjectorSource(Class<?> stepClass) {
-        return Arrays.stream(stepClass.getInterfaces())
-                .anyMatch((Class<?> clazz) -> clazz.getSimpleName().equals(InjectorSource.class.getSimpleName()));
+        return InjectorSource.class.isAssignableFrom(stepClass);
     }
 
     private void checkOnlyOneClassHasInjectorSource(Class<?> stepClass) {
@@ -64,7 +58,11 @@ public final class GuiceFactory implements ObjectFactory {
 
     public void start() {
         if (injector == null) {
-            injector = new InjectorSourceFactory().create().getInjector();
+            if (withInjectorSource != null) {
+                injector = new InjectorSourceFactory(withInjectorSource.getName()).create().getInjector();
+            } else {
+                injector = new InjectorSourceFactory().create().getInjector();
+            }
         }
         injector.getInstance(ScenarioScope.class).enterScope();
     }
