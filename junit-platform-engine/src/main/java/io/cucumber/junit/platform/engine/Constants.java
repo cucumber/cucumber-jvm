@@ -44,22 +44,34 @@ public final class Constants {
     /**
      * Property name used to set name filter: {@value}
      * <p>
-     * Filters features by name based on the provided regex pattern e.g:
+     * Filter scenarios by name based on the provided regex pattern e.g:
      * {@code ^Hello (World|Cucumber)$}. Scenarios that do not match the
      * expression are not executed.
      * <p>
-     * By default all scenarios are executed
+     * By default, all scenarios are executed
+     * <p>
+     * Note: To ensure consistent reports between Cucumber and JUnit 5 prefer
+     * using JUnit 5 discovery request filters,
+     * {@link org.junit.platform.suite.api.IncludeTags} or <a
+     * href=https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions>JUnit
+     * 5 tag expressions</a> instead.
      */
     public static final String FILTER_NAME_PROPERTY_NAME = io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 
     /**
      * Property name used to set tag filter: {@value}
      * <p>
-     * Filters scenarios by tag based on the provided tag expression e.g:
+     * Filter scenarios by tag based on the provided tag expression e.g:
      * {@code @Cucumber and not (@Gherkin or @Zucchini)}. Scenarios that do not
      * match the expression are not executed.
      * <p>
-     * By default all scenarios are executed
+     * By default, all scenarios are executed
+     * <p>
+     * Note: To ensure consistent reports between Cucumber and JUnit 5 prefer
+     * using JUnit 5 discovery request filters,
+     * {@link org.junit.platform.suite.api.IncludeTags} or <a
+     * href=https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions>JUnit
+     * 5 tag expressions</a> instead.
      */
     public static final String FILTER_TAGS_PROPERTY_NAME = io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 
