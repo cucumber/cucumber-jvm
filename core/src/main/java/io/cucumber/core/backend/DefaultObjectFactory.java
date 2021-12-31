@@ -61,7 +61,7 @@ public final class DefaultObjectFactory implements ObjectFactory {
                     " * cucumber-picocontainer\n" +
                     " * cucumber-spring\n" +
                     " * cucumber-jakarta-cdi\n" +
-                    " * ...ect\n",
+                    " * ...etc\n",
                 type), e);
         } catch (Exception e) {
             throw new CucumberException(String.format("Failed to instantiate %s", type), e);
