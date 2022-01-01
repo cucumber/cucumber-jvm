@@ -35,13 +35,19 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
 
     private static final Logger log = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
     private final CucumberEngineOptions options;
-    private final CucumberExecutionContext context;
+
+    private CucumberExecutionContext context;
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
-
-        Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
-        log.debug(() -> "Parsing options");
         options = new CucumberEngineOptions(configurationParameters);
+    }
+
+    CucumberEngineOptions getOptions() {
+        return options;
+    }
+
+    private CucumberExecutionContext createCucumberExecutionContext() {
+        Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader, options);
         EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
         Plugins plugins = new Plugins(new PluginFactory(), options);
@@ -62,18 +68,36 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
             runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier);
         }
-        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
-    }
-
-    CucumberEngineOptions getOptions() {
-        return options;
+        return new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
     }
 
     void startTestRun() {
+        log.debug(() -> "Starting test run");
+        // Problem: The JUnit Platform will always execute all engines that
+        // participated in discovery. In combination with the JUnit Platform
+        // Suite Engine this may result in CucumberEngine being executed
+        // twice.
+        //
+        // One of these instances may not have discovered any tests and would
+        // write empty reports. Therefor we do not invoke 'startTestRun' if
+        // there are no tests to execute. Additionally, we defer creating
+        // 'Plugins' until the last moment to avoid overwriting any output
+        // files.
+        //
+        // Ideally 'Plugin' implementations would not start writing until they
+        // received the `TestRunStarted` event but with the current setup this
+        // is rather hard to change.
+        //
+        // Solution: Defer the instantiation of `Plugin` and everything else
+        // until test execution starts.
+        //
+        // See: https://github.com/cucumber/cucumber-jvm/issues/2441
+        context = createCucumberExecutionContext();
         context.startTestRun();
     }
 
     public void runBeforeAllHooks() {
+        log.debug(() -> "Running before all hooks");
         context.runBeforeAllHooks();
     }
 
@@ -93,10 +117,12 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     }
 
     public void runAfterAllHooks() {
+        log.debug(() -> "Running after all hooks");
         context.runAfterAllHooks();
     }
 
     public void finishTestRun() {
+        log.debug(() -> "Finishing test run");
         context.finishTestRun();
     }
 
