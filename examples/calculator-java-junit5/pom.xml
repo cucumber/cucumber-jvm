@@ -93,8 +93,8 @@
                     <execution>
                         <!-- Work around. Surefire does not use JUnits Test Engine discovery functionality.
 
-                             Alternatively annotate a class with `io.cucumber.junit.platform.engine.Cucumber`
-                             to mark its package for the discovery of feature files.  -->
+                             Alternatively use the JUnit Platform Suite Engine.
+                         -->
                         <id>cli-test</id>
                         <phase>test</phase>
                         <goals>
