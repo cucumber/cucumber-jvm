@@ -4,10 +4,6 @@ import com.google.inject.Injector;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -105,40 +101,6 @@ class InjectorSourceFactoryTest {
         @Override
         public Injector getInjector() {
             return null;
-        }
-
-    }
-
-    private static class MyChildClassLoader extends ClassLoader {
-
-        MyChildClassLoader(ClassLoader parent) {
-            super(parent);
-        }
-
-        @Override
-        protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-            if (name.equals("io.cucumber.guice.impl.LivesInChildClassLoader")) {
-                String filename = getClass().getClassLoader()
-                        .getResource("io/cucumber/guice/impl/LivesInChildClassLoader.class.bin").getFile();
-                File file = new File(filename);
-                try {
-                    FileInputStream in = new FileInputStream(file);
-                    byte[] bytes = new byte[1024];
-                    ByteArrayOutputStream content = new ByteArrayOutputStream();
-                    while (true) {
-                        int iLen = in.read(bytes);
-                        content.write(bytes, 0, iLen);
-                        if (iLen < 1024) {
-                            break;
-                        }
-                    }
-                    byte[] bytecode = content.toByteArray();
-                    return defineClass(name, bytecode, 0, bytecode.length);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            return super.loadClass(name, resolve);
         }
 
     }
