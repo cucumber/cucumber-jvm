@@ -12,11 +12,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - When transforming doc strings in addition to the content type Cucumber will
    also look at the type used in the step definition to disambiguate between
    doc string types.    
+* [Guice] Automatically detect `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) Postelnicu George)
 
 ### Changed
 * [Core] Replaced `create-meta` dependency with `ci-environment` ([#2438](https://github.com/cucumber/cucumber-jvm/pull/2438) M.P. Korstanje)
 
 ### Deprecated
+* [Guice] Deprecated `guice.injector-source` in favour of discovering `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) M.P. Korstanje)
 
 ### Removed
 

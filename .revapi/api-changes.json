@@ -33,7 +33,6 @@
             "old": "method void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<?>)",
             "new": "method <T> void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<T>)",
             "justification": "Should not impact the normal use case of the java8 API"
-
           },
           {
             "code": "java.generics.formalTypeParameterAdded",
@@ -41,6 +40,30 @@
             "new": "method <T> void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<T>)",
             "typeParameter": "T",
             "justification": "Should not impact the normal use case of the java8 API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "(interface|class|enum) io\\.cucumber\\.core.backend\\..*",
+            "justification": "GuiceFactory implements BackendProviderService"
+          },
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "(interface|class) io\\.cucumber\\.cucumberexpressions\\..*",
+            "justification": "GuiceFactory implements BackendProviderService"
+          },
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "(interface|class) io\\.cucumber\\.datatable\\..*",
+            "justification": "GuiceFactory implements BackendProviderService"
+          },
+          {
+            "regex": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class io\\.cucumber\\.docstring\\..*",
+            "justification": "GuiceFactory implements BackendProviderService"
           }
         ]
       }
