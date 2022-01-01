@@ -3,6 +3,9 @@ package io.cucumber.core.options;
 import io.cucumber.core.options.CurlOption.HttpMethod;
 import org.junit.jupiter.api.Test;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleEntry;
@@ -70,6 +73,54 @@ class CurlOptionTest {
         String uri = "'https://example.com/path with spaces'";
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(uri));
         assertThat(exception.getCause(), instanceOf(URISyntaxException.class));
+    }
+
+    @Test
+    public void can_parse_https_proxy() {
+        CurlOption option = CurlOption.parse("https://example.com -x https://proxy.example.com:3129");
+        assertThat(option.getProxy(), is(new Proxy(Type.HTTP, new InetSocketAddress("proxy.example.com", 3129))));
+    }
+
+    @Test
+    public void can_parse_socks_proxy() {
+        CurlOption option = CurlOption.parse("https://example.com -x socks://proxy.example.com:3129");
+        assertThat(option.getProxy(), is(new Proxy(Type.SOCKS, new InetSocketAddress("proxy.example.com", 3129))));
+    }
+
+    @Test
+    public void must_provide_proxy_address() {
+        String uri = "https://example.com -x !@#%";
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(uri));
+        assertThat(exception.getMessage(), is("'!@#%' was not a valid proxy address"));
+    }
+
+    @Test
+    public void must_provide_proxy_protocol() {
+        String uri = "https://example.com -x //proxy.example.com:3129";
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(uri));
+        assertThat(exception.getMessage(), is("'//proxy.example.com:3129' did not have a valid proxy protocol"));
+    }
+
+    @Test
+    public void must_provide_valid_proxy_protocol() {
+        String uri = "https://example.com -x no-such-protocol://proxy.example.com:3129";
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(uri));
+        assertThat(exception.getMessage(),
+            is("'no-such-protocol://proxy.example.com:3129' did not have a valid proxy protocol"));
+    }
+
+    @Test
+    public void must_provide_valid_proxy_domain() {
+        String uri = "https://example.com -x https://:3129";
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(uri));
+        assertThat(exception.getMessage(), is("'https://:3129' did not have a valid proxy host"));
+    }
+
+    @Test
+    public void must_provide_valid_proxy_port() {
+        String uri = "https://example.com -x https://proxy.example.com";
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> CurlOption.parse(uri));
+        assertThat(exception.getMessage(), is("'https://proxy.example.com' did not have a valid proxy port"));
     }
 
 }

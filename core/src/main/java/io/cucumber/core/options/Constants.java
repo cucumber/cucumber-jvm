@@ -143,7 +143,7 @@ public final class Constants {
     public static final String PLUGIN_PROPERTY_NAME = "cucumber.plugin";
 
     /**
-     * Property name to enable publishing: {@value}
+     * Property name to enable publishing cucumber reports: {@value}
      * <p>
      * Enabling this will publish test results online.
      * <p>
@@ -152,7 +152,7 @@ public final class Constants {
     public static final String PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME = "cucumber.publish.enabled";
 
     /**
-     * Property name to publish with bearer token: {@value}
+     * Property name to publish cucumber reports with bearer token: {@value}
      * <p>
      * Enabling this will publish authenticated test results online.
      * <p>
@@ -160,10 +160,18 @@ public final class Constants {
     public static final String PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME = "cucumber.publish.token";
 
     /**
-     * Property name to override the publish URL: {@value} Note it is not
-     * sufficient to activate publishing.
+     * Property name to override the cucumber reports publish uri: {@value}
+     * <p>
+     * Note that setting this property is not sufficient to activate publishing.
      */
     public static final String PLUGIN_PUBLISH_URL_PROPERTY_NAME = "cucumber.publish.url";
+
+    /**
+     * Property name to set the proxy used to publish cucumber reports .
+     * <p>
+     * Note that setting this property is not sufficient to activate publishing.
+     */
+    public static final String PLUGIN_PUBLISH_PROXY_PROPERTY_NAME = "cucumber.publish.proxy";
 
     /**
      * Property name to suppress publishing advertising banner: {@value}

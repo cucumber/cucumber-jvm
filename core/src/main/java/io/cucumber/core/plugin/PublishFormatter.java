@@ -9,6 +9,7 @@ import io.cucumber.plugin.event.EventPublisher;
 import java.io.IOException;
 import java.util.Map;
 
+import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_PROXY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAME;
 
 public final class PublishFormatter implements ConcurrentEventListener, ColorAware {
@@ -45,10 +46,17 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
     }
 
     private static CurlOption createCurlOption(String token) {
+        // Note: This only includes properties from the environment and
+        // cucumber.properties. It does not include junit-platform.properties
+        // Fixing this requires an overhaul of the plugin system.
         Map<String, String> properties = CucumberProperties.create();
         String url = properties.getOrDefault(PLUGIN_PUBLISH_URL_PROPERTY_NAME, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
         if (token != null) {
-            url = url + String.format(" -H 'Authorization: Bearer %s'", token);
+            url += String.format(" -H 'Authorization: Bearer %s'", token);
+        }
+        String proxy = properties.get(PLUGIN_PUBLISH_PROXY_PROPERTY_NAME);
+        if (proxy != null) {
+            url += String.format(" -x '%s'", proxy);
         }
         return CurlOption.parse(url);
     }

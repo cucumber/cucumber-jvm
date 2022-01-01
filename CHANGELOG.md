@@ -12,7 +12,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - When transforming doc strings in addition to the content type Cucumber will
     also look at the type used in the step definition to disambiguate between
     doc string types.    
-* [Guice] Automatically detect `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) Postelnicu George)
+* [Guice] Automatically detect `InjectorSource` ([#2432](https://github.com/cucumber/cucumber-jvm/pull/2432) Postelnicu George)
+* [Core] Support proxy for publish plugin ([#2452](https://github.com/cucumber/cucumber-jvm/pull/2452) M.P. Korstanje)
+    ```
+    cucumber.publish.proxy=https://proxy.example.com:3129
+    ```
+    Note: The publish-plugin only reads properties from the `cucumber.properties`, the environment, system properties. And
+    not `junit-platform.properties`. 
 
 ### Changed
 * [Core] Replaced `create-meta` dependency with `ci-environment` ([#2438](https://github.com/cucumber/cucumber-jvm/pull/2438) M.P. Korstanje)
