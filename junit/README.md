@@ -46,7 +46,7 @@ after all scenarios. Using these is not recommended as it limits portability
 between different runners; they may not
 execute correctly when using the command line, [IntelliJ IDEA](https://www.jetbrains.com/help/idea/cucumber.html), or
 [Cucumber-Eclipse](https://github.com/cucumber/cucumber-eclipse). Instead it is
-recommended to use Cucumber's `Before` and `After` hooks.
+recommended to [use Cucumber's hooks](../java#beforeall--afterall).
 
 ## Using other JUnit features ##
 

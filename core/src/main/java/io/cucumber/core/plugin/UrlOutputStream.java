@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,12 +70,13 @@ class UrlOutputStream extends OutputStream {
     }
 
     private Optional<String> sendRequest(URL url, HttpMethod method, boolean setHeaders) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection urlConnection = openConnection(url, method);
         if (setHeaders) {
             for (Entry<String, String> header : option.getHeaders()) {
                 urlConnection.setRequestProperty(header.getKey(), header.getValue());
             }
         }
+
         Map<String, List<String>> requestHeaders = urlConnection.getRequestProperties();
         urlConnection.setInstanceFollowRedirects(true);
         urlConnection.setRequestMethod(method.name());
@@ -87,22 +89,32 @@ class UrlOutputStream extends OutputStream {
             }
         } else {
             urlConnection.setDoOutput(true);
-            try (OutputStream outputStream = urlConnection.getOutputStream()) {
-                Files.copy(temp, outputStream);
-                getResponseBody(urlConnection, requestHeaders);
-            }
+            sendRequestBody(urlConnection, requestHeaders, temp);
+            getResponseBody(urlConnection, requestHeaders);
         }
         return Optional.ofNullable(redirectMessage);
     }
 
-    /**
-     * return the request body
-     *
-     * @param  urlConnection  the http connection
-     * @param  requestHeaders the headers sent
-     * @return                the response body
-     * @throws IOException    if an exception occurs
-     */
+    private static HttpURLConnection openConnection(URL url, HttpMethod method) throws IOException {
+        try {
+            return (HttpURLConnection) url.openConnection();
+        } catch (IOException e) {
+            throw createCurlLikeException(method.name(), url, Collections.emptyMap(), Collections.emptyMap(), "", e);
+        }
+    }
+
+    private static void sendRequestBody(
+            HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders, Path requestBody
+    ) throws IOException {
+        try (OutputStream outputStream = urlConnection.getOutputStream()) {
+            Files.copy(requestBody, outputStream);
+        } catch (IOException e) {
+            String method = urlConnection.getRequestMethod();
+            URL url = urlConnection.getURL();
+            throw createCurlLikeException(method, url, requestHeaders, Collections.emptyMap(), "", e);
+        }
+    }
+
     private static String getResponseBody(
             HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders
     )
@@ -118,19 +130,20 @@ class UrlOutputStream extends OutputStream {
             if (unsuccessful) {
                 String method = urlConnection.getRequestMethod();
                 URL url = urlConnection.getURL();
-                throw createCurlLikeException(method, url, requestHeaders, responseHeaders, responseBody);
+                throw createCurlLikeException(method, url, requestHeaders, responseHeaders, responseBody, null);
             } else {
                 return responseBody;
             }
         }
     }
 
-    static IOException createCurlLikeException(
+    private static IOException createCurlLikeException(
             String method,
             URL url,
             Map<String, List<String>> requestHeaders,
             Map<String, List<String>> responseHeaders,
-            String responseBody
+            String responseBody,
+            Exception e
     ) {
         return new IOException(String.format(
             "%s:\n> %s %s%s%s%s",
@@ -139,7 +152,7 @@ class UrlOutputStream extends OutputStream {
             url,
             headersToString("> ", requestHeaders),
             headersToString("< ", responseHeaders),
-            responseBody));
+            responseBody), e);
     }
 
     private static String headersToString(String prefix, Map<String, List<String>> headers) {

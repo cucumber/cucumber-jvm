@@ -8,14 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+* [Core] Support multiple doc strings types with same content type ([#2421](https://github.com/cucumber/cucumber-jvm/pull/2421) Postelnicu George)
+  - When transforming doc strings in addition to the content type Cucumber will
+    also look at the type used in the step definition to disambiguate between
+    doc string types.    
+* [Guice] Automatically detect `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) Postelnicu George)
 
 ### Changed
+* [Core] Replaced `create-meta` dependency with `ci-environment` ([#2438](https://github.com/cucumber/cucumber-jvm/pull/2438) M.P. Korstanje)
 
 ### Deprecated
+* [Guice] Deprecated `guice.injector-source` in favour of discovering `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) M.P. Korstanje)
 
 ### Removed
 
 ### Fixed
+* [JUnit Platform] Delay plugin creation until test execution ([#2442](https://github.com/cucumber/cucumber-jvm/pull/2442) M.P. Korstanje)
+* [Core] Display curl-like error message for more url output stream problems ([#2451](https://github.com/cucumber/cucumber-jvm/pull/2451) M.P. Korstanje)
 
 ## [7.1.0] (2021-11-28)
 

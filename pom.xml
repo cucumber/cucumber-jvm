@@ -6,7 +6,7 @@
         <version>2.1.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.1.1-SNAPSHOT</version>
+    <version>7.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -402,6 +402,7 @@
                                 <path>${main.basedir}/.revapi/api-changes.json</path>
                                 <roots>
                                     <root>7.0.0</root>
+                                    <root>7.2.0</root>
                                     <root>internal</root>
                                     <root>testng</root>
                                 </roots>

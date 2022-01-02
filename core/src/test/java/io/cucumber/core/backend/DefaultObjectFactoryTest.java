@@ -47,7 +47,7 @@ class DefaultObjectFactoryTest {
                 " * cucumber-picocontainer\n" +
                 " * cucumber-spring\n" +
                 " * cucumber-jakarta-cdi\n" +
-                " * ...ect\n"));
+                " * ...etc\n"));
     }
 
     public static class StepDefinition {

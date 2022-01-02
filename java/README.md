@@ -455,10 +455,25 @@ Using `@DocStringType` annotation, it is possible to define transformations to o
 ```gherkin
 Given some more information
   """json
-  { 
-     "produce": "Cucumbers",
-     "weight": "5 Kilo", 
-     "price": "1€/Kilo"
+  [
+      { 
+         "produce": "Cucumbers",
+         "weight": "5 Kilo", 
+         "price": "1€/Kilo"
+      },
+      {
+         "produce": "Gherkins",
+         "weight": "1 Kilo", 
+         "price": "5€/Kilo"
+      }
+  ]
+  """
+Then some conclusion is drawn
+  """json
+  {
+    "size" : "XL",
+    "taste": "delicious",
+    "type" : "cucumber salad"
   }
   """
 ```
@@ -466,22 +481,40 @@ Given some more information
 ```java
 package com.example;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.cucumber.java.DocStringType;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+
+import java.io.IOException;
+import java.util.List;
 
 public class StepDefinitions {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @DocStringType
-    public JsonNode json(String docString) throws IOException {
-        return objectMapper.readTree(docString);
+    public List<Grocery> json(String docString) throws IOException {
+        return objectMapper.readValue(docString, new TypeReference<List<Grocery>>() {
+        });
     }
-        
+
+    @DocStringType(contentType = "json")
+    public FoodItem convertFoodItem(String docString) throws IOException {
+        return objectMapper.readValue(docString, new TypeReference<FoodItem>() {
+        });
+    }
+
     @Given("some more information")
-    public void some_more_information(JsonNode json){
-    
+    public void some_more_information(List<Grocery> groceries) {
+
+    }
+
+    @Then("some conclusion is drawn")
+    public void some_conclusion_is_drawn(FoodItem foodItem) {
+
     }
 }
 ```

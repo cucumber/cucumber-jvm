@@ -4,6 +4,8 @@ import io.cucumber.docstring.DocString.DocStringConverter;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
@@ -23,26 +25,38 @@ public final class DocStringTypeRegistryDocStringConverter implements DocStringC
             return (T) docString;
         }
 
-        DocStringType docStringType = docStringTypeRegistry.lookupByContentType(docString.getContentType());
-        if (docStringType != null) {
-            return (T) docStringType.transform(docString.getContent());
-        }
+        List<DocStringType> docStringTypes = docStringTypeRegistry.lookup(docString.getContentType(), targetType);
 
-        docStringType = docStringTypeRegistry.lookupByType(targetType);
-        if (docStringType != null) {
-            return (T) docStringType.transform(docString.getContent());
-        }
-
-        if (docString.getContentType() == null) {
+        if (docStringTypes.isEmpty()) {
+            if (docString.getContentType() == null) {
+                throw new CucumberDocStringException(format(
+                    "It appears you did not register docstring type for %s",
+                    targetType.getTypeName()));
+            }
             throw new CucumberDocStringException(format(
-                "It appears you did not register docstring type for %s",
+                "It appears you did not register docstring type for '%s' or %s",
+                docString.getContentType(),
                 targetType.getTypeName()));
         }
+        if (docStringTypes.size() > 1) {
+            throw new CucumberDocStringException(format(
+                "Multiple converters found for type %s, add one of the following content types to your docstring %s",
+                targetType.getTypeName(),
+                suggestedContentTypes(docStringTypes)));
+        }
 
-        throw new CucumberDocStringException(format(
-            "It appears you did not register docstring type for '%s' or %s",
-            docString.getContentType(),
-            targetType.getTypeName()));
+        return (T) docStringTypes.get(0).transform(docString.getContent());
+    }
+
+    private List<String> suggestedContentTypes(List<DocStringType> docStringTypes) {
+        return docStringTypes.stream()
+                .map(DocStringType::getContentType)
+                // Can't use the anonymous content type to resolve
+                // the ambiguity.
+                .filter(contentType -> !contentType.isEmpty())
+                .sorted()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 }
