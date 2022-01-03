@@ -75,10 +75,10 @@ class CucumberEngineOptions implements
         if (plugin.isPresent()) {
             return plugin;
         }
-        return getPublishQuitePlugin();
+        return getPublishQuietPlugin();
     }
 
-    private Optional<PluginOption> getPublishQuitePlugin() {
+    private Optional<PluginOption> getPublishQuietPlugin() {
         Optional<PluginOption> noPublishOption = Optional.of(PluginOption.forClass(NoPublishFormatter.class));
         Optional<PluginOption> quiteOption = Optional.empty();
         return configurationParameters
