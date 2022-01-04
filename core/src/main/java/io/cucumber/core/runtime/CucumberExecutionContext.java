@@ -74,19 +74,19 @@ public final class CucumberExecutionContext {
             return null;
         }
 
-        CiEnvironment.Git ciEnvironmentGit = ciEnvironment.getGit();
-        Git git = ciEnvironmentGit != null ? new Git(
-                ciEnvironmentGit.getRemote(),
-                ciEnvironmentGit.getRevision(),
-                ciEnvironmentGit.getBranch(),
-                ciEnvironmentGit.getTag()) : null;
-
         return new Ci(
                 ciEnvironment.getName(),
                 ciEnvironment.getUrl(),
                 ciEnvironment.getBuildNumber(),
-                git
+                createGit(ciEnvironment.getGit())
         );
+    }
+
+    private Git createGit(CiEnvironment.Git ciGit) {
+        if (ciGit == null) {
+            return null;
+        }
+        return new Git(ciGit.getRemote(), ciGit.getRevision(), ciGit.getBranch(), ciGit.getTag());
     }
 
     private void emitTestRunStarted() {
