@@ -75,11 +75,10 @@ public final class CucumberExecutionContext {
         }
 
         return new Ci(
-                ciEnvironment.getName(),
-                ciEnvironment.getUrl(),
-                ciEnvironment.getBuildNumber(),
-                createGit(ciEnvironment.getGit())
-        );
+            ciEnvironment.getName(),
+            ciEnvironment.getUrl(),
+            ciEnvironment.getBuildNumber(),
+            createGit(ciEnvironment.getGit()));
     }
 
     private Git createGit(CiEnvironment.Git ciGit) {

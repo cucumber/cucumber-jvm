@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [7.2.1] (2022-01-04)
+
+### Fixed
 * [Core] Fix NPE if git is not detected ([#2455](https://github.com/cucumber/cucumber-jvm/pull/2455) Aslak Hellesøy)
 
 ## [7.2.0] (2022-01-03)
@@ -1726,7 +1730,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.2.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.2.1...main
+[7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0-RC1...v7.2.1
 [7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0-RC1...v7.2.0
 [7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.1.0
 [7.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
