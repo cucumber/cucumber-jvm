@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [7.2.0] (2022-01-03)
+
+### Added
 * [Core] Support multiple doc strings types with same content type ([#2421](https://github.com/cucumber/cucumber-jvm/pull/2421) Postelnicu George)
   - When transforming doc strings in addition to the content type Cucumber will
     also look at the type used in the step definition to disambiguate between
@@ -25,8 +37,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Deprecated
 * [Guice] Deprecated `guice.injector-source` in favour of discovering `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) M.P. Korstanje)
-
-### Removed
 
 ### Fixed
 * [JUnit Platform] Delay plugin creation until test execution ([#2442](https://github.com/cucumber/cucumber-jvm/pull/2442) M.P. Korstanje)
@@ -1715,7 +1725,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.2.0...main
+[7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0-RC1...v7.2.0
 [7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.1.0
 [7.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
 [7.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
