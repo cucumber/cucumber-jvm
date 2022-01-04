@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [Core] Fix NPE if git is not detected ([#2455](https://github.com/cucumber/cucumber-jvm/pull/2455) Aslak Hellesøy)
 
 ## [7.2.0] (2022-01-03)
 
