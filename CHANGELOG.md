@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [Core] Look up docstring converter by type as fallback ([#2459](https://github.com/cucumber/cucumber-jvm/pull/2459) M.P. Korstanje)
 
 ## [7.2.1] (2022-01-04)
 

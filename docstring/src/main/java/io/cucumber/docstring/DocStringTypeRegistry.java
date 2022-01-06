@@ -51,15 +51,16 @@ public final class DocStringTypeRegistry {
     }
 
     List<DocStringType> lookup(String contentType, Type type) {
-        if (contentType == null) {
-            return lookUpByType(type);
+        DocStringType docStringType = lookupByContentTypeAndType(orDefault(contentType), type);
+        if (docStringType != null) {
+            return Collections.singletonList(docStringType);
         }
 
-        DocStringType docStringType = lookupByContentTypeAndType(contentType, type);
-        if (docStringType == null) {
-            return Collections.emptyList();
-        }
-        return Collections.singletonList(docStringType);
+        return lookUpByType(type);
+    }
+
+    private String orDefault(String contentType) {
+        return contentType == null ? DEFAULT_CONTENT_TYPE : contentType;
     }
 
     private List<DocStringType> lookUpByType(Type type) {

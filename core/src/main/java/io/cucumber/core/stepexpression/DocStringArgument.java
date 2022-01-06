@@ -2,6 +2,8 @@ package io.cucumber.core.stepexpression;
 
 import io.cucumber.docstring.DocString;
 
+import static java.util.Objects.requireNonNull;
+
 public final class DocStringArgument implements Argument {
 
     private final DocStringTransformer<?> docStringType;
@@ -9,8 +11,8 @@ public final class DocStringArgument implements Argument {
     private final String contentType;
 
     DocStringArgument(DocStringTransformer<?> docStringType, String content, String contentType) {
-        this.docStringType = docStringType;
-        this.content = content;
+        this.docStringType = requireNonNull(docStringType);
+        this.content = requireNonNull(content);
         this.contentType = contentType;
     }
 
