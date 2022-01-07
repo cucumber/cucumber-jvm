@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [7.2.2] (2022-01-07)
+
+### Fixed
 * [Core] Look up docstring converter by type as fallback ([#2459](https://github.com/cucumber/cucumber-jvm/pull/2459) M.P. Korstanje)
 
 ## [7.2.1] (2022-01-04)
@@ -1731,7 +1735,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.2.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.2.2...main
+[7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1-RC1...v7.2.2
 [7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0-RC1...v7.2.1
 [7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0-RC1...v7.2.0
 [7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.1.0
