@@ -8,19 +8,45 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [7.2.2] (2022-01-07)
+
+### Fixed
+* [Core] Look up docstring converter by type as fallback ([#2459](https://github.com/cucumber/cucumber-jvm/pull/2459) M.P. Korstanje)
+
+## [7.2.1] (2022-01-04)
+
+### Fixed
+* [Core] Fix NPE if git is not detected ([#2455](https://github.com/cucumber/cucumber-jvm/pull/2455) Aslak Hellesøy)
+
+## [7.2.0] (2022-01-03)
+
+### Added
 * [Core] Support multiple doc strings types with same content type ([#2421](https://github.com/cucumber/cucumber-jvm/pull/2421) Postelnicu George)
   - When transforming doc strings in addition to the content type Cucumber will
     also look at the type used in the step definition to disambiguate between
     doc string types.    
-* [Guice] Automatically detect `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) Postelnicu George)
+* [Guice] Automatically detect `InjectorSource` ([#2432](https://github.com/cucumber/cucumber-jvm/pull/2432) Postelnicu George)
+* [Core] Support proxy for publish plugin ([#2452](https://github.com/cucumber/cucumber-jvm/pull/2452) M.P. Korstanje)
+    ```
+    cucumber.publish.proxy=https://proxy.example.com:3129
+    ```
+    Note: The publish-plugin only reads properties from the `cucumber.properties`, the environment, system properties. And
+    not `junit-platform.properties`. 
 
 ### Changed
 * [Core] Replaced `create-meta` dependency with `ci-environment` ([#2438](https://github.com/cucumber/cucumber-jvm/pull/2438) M.P. Korstanje)
 
 ### Deprecated
 * [Guice] Deprecated `guice.injector-source` in favour of discovering `InjectorSource` ([#2432 ](https://github.com/cucumber/cucumber-jvm/pull/2432) M.P. Korstanje)
-
-### Removed
 
 ### Fixed
 * [JUnit Platform] Delay plugin creation until test execution ([#2442](https://github.com/cucumber/cucumber-jvm/pull/2442) M.P. Korstanje)
@@ -1709,7 +1735,10 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.2.2...main
+[7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1-RC1...v7.2.2
+[7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0-RC1...v7.2.1
+[7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0-RC1...v7.2.0
 [7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.1.0
 [7.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
 [7.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1

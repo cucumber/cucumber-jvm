@@ -6,6 +6,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 public final class StepExpression {
 
     private final Expression expression;
@@ -13,9 +15,9 @@ public final class StepExpression {
     private final RawTableTransformer<?> tableType;
 
     StepExpression(Expression expression, DocStringTransformer<?> docStringType, RawTableTransformer<?> tableType) {
-        this.expression = expression;
-        this.docStringType = docStringType;
-        this.tableType = tableType;
+        this.expression = requireNonNull(expression);
+        this.docStringType = requireNonNull(docStringType);
+        this.tableType = requireNonNull(tableType);
     }
 
     public Class<? extends Expression> getExpressionType() {

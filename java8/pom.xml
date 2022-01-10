@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.2.0-SNAPSHOT</version>
+        <version>7.2.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-java8</artifactId>
@@ -89,20 +89,18 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>generate-i18n-sources</id>
                         <goals>
-                            <goal>run</goal>
+                            <goal>execute</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <target>
-                                <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpathref="maven.plugin.classpath" />
-                                <groovy src="src/main/groovy/generate-interfaces.groovy" />
-                            </target>
+                            <source>${basedir}/src/main/groovy/generate-interfaces.groovy</source>
+                            <classpathScope>compile</classpathScope>
                         </configuration>
                     </execution>
                 </executions>

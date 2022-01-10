@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,7 +62,7 @@ class UrlOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOutputStream.close();
-        sendRequest(option.getUri().toURL(), option.getMethod(), true)
+        sendRequest(option.getProxy(), option.getUri().toURL(), option.getMethod(), true)
                 .ifPresent(redirectResponse -> {
                     if (urlReporter != null) {
                         urlReporter.report(redirectResponse);
@@ -69,8 +70,9 @@ class UrlOutputStream extends OutputStream {
                 });
     }
 
-    private Optional<String> sendRequest(URL url, HttpMethod method, boolean setHeaders) throws IOException {
-        HttpURLConnection urlConnection = openConnection(url, method);
+    private Optional<String> sendRequest(Proxy proxy, URL url, HttpMethod method, boolean setHeaders)
+            throws IOException {
+        HttpURLConnection urlConnection = openConnection(proxy, url, method);
         if (setHeaders) {
             for (Entry<String, String> header : option.getHeaders()) {
                 urlConnection.setRequestProperty(header.getKey(), header.getValue());
@@ -85,7 +87,7 @@ class UrlOutputStream extends OutputStream {
             redirectMessage = getResponseBody(urlConnection, requestHeaders);
             String location = urlConnection.getHeaderField("Location");
             if (urlConnection.getResponseCode() == 202 && location != null) {
-                sendRequest(new URL(location), CurlOption.HttpMethod.PUT, false);
+                sendRequest(option.getProxy(), new URL(location), CurlOption.HttpMethod.PUT, false);
             }
         } else {
             urlConnection.setDoOutput(true);
@@ -95,9 +97,9 @@ class UrlOutputStream extends OutputStream {
         return Optional.ofNullable(redirectMessage);
     }
 
-    private static HttpURLConnection openConnection(URL url, HttpMethod method) throws IOException {
+    private static HttpURLConnection openConnection(Proxy proxy, URL url, HttpMethod method) throws IOException {
         try {
-            return (HttpURLConnection) url.openConnection();
+            return (HttpURLConnection) url.openConnection(proxy);
         } catch (IOException e) {
             throw createCurlLikeException(method.name(), url, Collections.emptyMap(), Collections.emptyMap(), "", e);
         }
