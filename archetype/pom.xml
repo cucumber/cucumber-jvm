@@ -58,6 +58,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <escapeString>\</escapeString>
+                    <propertiesEncoding>UTF-8</propertiesEncoding>
                 </configuration>
             </plugin>
         </plugins>
