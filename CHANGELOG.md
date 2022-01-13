@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [Core] Uncaught TypeError: e.git is undefined ([#2466](https://github.com/cucumber/cucumber-jvm/pull/2466) M.P. Korstanje)
 
 ## [7.2.2] (2022-01-07)
 
