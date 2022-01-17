@@ -36,8 +36,9 @@ public @interface CucumberOptions {
     String[] features() default {};
 
     /**
-     * Package to load glue code (step definitions, hooks and plugins) from.
-     * E.g: {@code com.example.app}
+     * Packages or classes to load glue code (step definitions, hooks and
+     * plugins) from. E.g:
+     * {@code com.example.app, com.example.app.features.SomeFeatureSteps}
      * <p>
      * When no glue is provided, Cucumber will use the package of the annotated
      * class. For example, if the annotated class is

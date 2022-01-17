@@ -29,7 +29,7 @@ final class SpringBackend implements Backend {
         gluePaths.stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
-                .map(classFinder::scanForClassesInPackage)
+                .map(classFinder::getClasses)
                 .flatMap(Collection::stream)
                 .filter((Class clazz) -> clazz.getAnnotation(CucumberContextConfiguration.class) != null)
                 .forEach(container::addClass);

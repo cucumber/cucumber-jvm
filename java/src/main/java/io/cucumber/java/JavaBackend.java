@@ -35,7 +35,7 @@ final class JavaBackend implements Backend {
         gluePaths.stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
-                .map(classFinder::scanForClassesInPackage)
+                .map(classFinder::getClasses)
                 .flatMap(Collection::stream)
                 .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
                     container.addClass(method.getDeclaringClass());

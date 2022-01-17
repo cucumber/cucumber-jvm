@@ -2,6 +2,7 @@ package io.cucumber.java8;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.java8.individualclasssteps.StepsTwo;
 import io.cucumber.java8.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import static java.lang.Thread.currentThread;
-import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith({ MockitoExtension.class })
@@ -33,9 +34,11 @@ class Java8BackendTest {
 
     @Test
     void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java8/steps")));
+        backend.loadGlue(glue, Arrays.asList(URI.create("classpath:io/cucumber/java8/steps"),
+            URI.create("classpath:io/cucumber/java8/individualclasssteps/StepsTwo")));
         backend.buildWorld();
         verify(factory).addClass(Steps.class);
+        verify(factory).addClass(StepsTwo.class);
     }
 
 }

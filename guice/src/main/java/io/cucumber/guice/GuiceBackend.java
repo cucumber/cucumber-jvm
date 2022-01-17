@@ -29,7 +29,7 @@ final class GuiceBackend implements Backend {
         gluePaths.stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
-                .map(classFinder::scanForClassesInPackage)
+                .map(classFinder::getClasses)
                 .flatMap(Collection::stream)
                 .filter(InjectorSource.class::isAssignableFrom)
                 .forEach(container::addClass);
