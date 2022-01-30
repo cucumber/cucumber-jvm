@@ -1,6 +1,5 @@
 package io.cucumber.core.runtime;
 
-import io.cucumber.cienvironment.CiEnvironment;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.logging.Logger;
@@ -65,27 +64,17 @@ public final class CucumberExecutionContext {
             new Product(System.getProperty("java.vm.name"), System.getProperty("java.vm.version")),
             new Product(System.getProperty("os.name"), null),
             new Product(System.getProperty("os.arch"), null),
-            createCi());
-    }
-
-    private Ci createCi() {
-        CiEnvironment ciEnvironment = detectCiEnvironment(System.getenv());
-        if (ciEnvironment == null) {
-            return null;
-        }
-
-        return new Ci(
-            ciEnvironment.getName(),
-            ciEnvironment.getUrl(),
-            ciEnvironment.getBuildNumber(),
-            createGit(ciEnvironment.getGit()));
-    }
-
-    private Git createGit(CiEnvironment.Git ciGit) {
-        if (ciGit == null) {
-            return null;
-        }
-        return new Git(ciGit.getRemote(), ciGit.getRevision(), ciGit.getBranch(), ciGit.getTag());
+            detectCiEnvironment(System.getenv()).map(ci -> new Ci(
+                ci.getName(),
+                ci.getUrl(),
+                ci.getBuildNumber().orElse(null),
+                ci.getGit().map(git -> new Git(
+                    git.getRemote(),
+                    git.getRevision(),
+                    git.getBranch().orElse(null),
+                    git.getTag().orElse(null)))
+                        .orElse(null)))
+                    .orElse(null));
     }
 
     private void emitTestRunStarted() {
