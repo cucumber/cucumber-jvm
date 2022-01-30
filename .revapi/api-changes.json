@@ -160,7 +160,6 @@
             "new": "missing-class com.google.inject.Stage",
             "justification": "Guice is an optional TestNG dependency"
           },
-
           {
             "ignore": true,
             "code": "java.method.removed",
@@ -233,6 +232,33 @@
             "code": "java.method.removed",
             "old": "method org.testng.xml.XmlSuite.ParallelMode org.testng.xml.XmlSuite.ParallelMode::skipDeprecatedValues(org.testng.xml.XmlSuite.ParallelMode)",
             "justification": "Third party api chage"
+          }
+        ]
+      }
+    }
+  ],
+  "guice": [
+    {
+      "extension": "revapi.differences",
+      "id": "guice-api-issues",
+      "ignore": true,
+      "configuration": {
+        "differences": [
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "class com.google.inject.Key<T>",
+            "new": "class com.google.inject.Key<T>",
+            "annotation": "@com.google.errorprone.annotations.CheckReturnValue",
+            "justification": "It's Google."
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": "java.field.enumConstantOrderChanged",
+            "old": "field com\\.google\\.inject\\.internal\\.ErrorId\\..*",
+            "new": "field com\\.google\\.inject\\.internal\\.ErrorId\\..*",
+            "justification": "It's Google."
           }
         ]
       }

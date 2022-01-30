@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Update dependency io.cucumber:ci-environment to v9 ([#2475](https://github.com/cucumber/cucumber-jvm/pull/2475) M.P. Korstanje)
 * Update dependency io.cucumber:html-formatter to v18 ([#2476](https://github.com/cucumber/cucumber-jvm/pull/2476) M.P. Korstanje)
   - Removed work around for 'Uncaught TypeError: e.git is undefined'    
+* Update dependency com.google.inject:guice to v5.1.0 ([#2473](https://github.com/cucumber/cucumber-jvm/pull/2473) M.P. Korstanje)
+* Update dependency org.testng:testng to v7.5 ([#2457](https://github.com/cucumber/cucumber-jvm/pull/2457) M.P. Korstanje)
 
 ### Deprecated
 

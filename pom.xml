@@ -376,6 +376,9 @@
                             <revapi.differences id="testng-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
+                            <revapi.differences id="guice-api-issues">
+                                <ignore>true</ignore>
+                            </revapi.differences>
                         </analysisConfiguration>
                         <analysisConfigurationFiles>
                             <configurationFile>
@@ -385,6 +388,7 @@
                                     <root>7.2.0</root>
                                     <root>internal</root>
                                     <root>testng</root>
+                                    <root>guice</root>
                                 </roots>
                             </configurationFile>
                         </analysisConfigurationFiles>
