@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+* Update dependency io.cucumber:html-formatter to v18 ([#2476](https://github.com/cucumber/cucumber-jvm/pull/2476) M.P. Korstanje)
+  - Removed work around for 'Uncaught TypeError: e.git is undefined'    
 
 ### Deprecated
 
