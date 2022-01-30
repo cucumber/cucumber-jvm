@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [OpenEJB] Remove spurious  dependencies ([#2477](https://github.com/cucumber/cucumber-jvm/pull/2477) M.P. Korstanje)
+  - Removed spurious dependencies: 
+    - `javax.activation:activation`
+    - `org.glassfish.jaxb:jaxb-runtime`
 
 ## [7.2.3] (2022-01-13)
 
