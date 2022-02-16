@@ -1,4 +1,4 @@
-Feature: A feature containg 3 scenarios
+Feature: A feature containing 3 scenarios
 
   Scenario: SC1
     Given foo
