@@ -12,7 +12,7 @@ final class FeatureWrapperImpl implements FeatureWrapper {
 
     @Override
     public String toString() {
-        return "\"" + feature.getName() + "\"";
+        return "\"" + feature.getName().orElse("Unknown") + "\"";
     }
 
 }

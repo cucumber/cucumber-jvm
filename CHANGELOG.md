@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Removed spurious dependencies: 
     - `javax.activation:activation`
     - `org.glassfish.jaxb:jaxb-runtime`
+- [TestNG] Remove spurious Optional\[<Feature Name>] from test name ([#2488](https://github.com/cucumber/cucumber-jvm/pull/2488) M.P. Korstanje)
 
 ## [7.2.3] (2022-01-13)
 
