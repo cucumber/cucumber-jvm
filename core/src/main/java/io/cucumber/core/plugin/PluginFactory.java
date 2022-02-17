@@ -234,7 +234,7 @@ public final class PluginFactory {
         }
 
         try {
-            return new FileOutputStream(file);
+            return new FileOutputStream(canonicalFile);
         } catch (FileNotFoundException e) {
             // See: https://github.com/cucumber/cucumber-jvm/issues/2108
             throw new IllegalArgumentException(String.format("" +
