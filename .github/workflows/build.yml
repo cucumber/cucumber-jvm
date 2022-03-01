@@ -15,7 +15,7 @@ jobs:
     name: 'Build'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
@@ -38,7 +38,7 @@ jobs:
     name: 'Javadoc'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
@@ -59,7 +59,7 @@ jobs:
     name: 'Coverage'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
@@ -85,7 +85,7 @@ jobs:
     name: 'Semver'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
