@@ -2,6 +2,7 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
+import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.Logger;
@@ -54,7 +55,7 @@ final class FeatureResolver {
         this.namingStrategy = new CucumberEngineOptions(parameters).namingStrategy();
     }
 
-    static FeatureResolver createFeatureResolver(
+    static FeatureResolver create(
             ConfigurationParameters parameters, CucumberEngineDescriptor engineDescriptor,
             Predicate<String> packageFilter
     ) {
@@ -228,6 +229,14 @@ final class FeatureResolver {
 
     void resolveUri(UriSelector selector) {
         resolveUri(stripQuery(selector.getUri()))
+                .forEach(featureDescriptor -> {
+                    featureDescriptor.prune(TestDescriptorOnLine.from(selector));
+                    engineDescriptor.mergeFeature(featureDescriptor);
+                });
+    }
+
+    void resolveFeatureWithLines(FeatureWithLines selector) {
+        resolveUri(selector.uri())
                 .forEach(featureDescriptor -> {
                     featureDescriptor.prune(TestDescriptorOnLine.from(selector));
                     engineDescriptor.mergeFeature(featureDescriptor);

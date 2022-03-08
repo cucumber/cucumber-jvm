@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 
+import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static java.util.Collections.singleton;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
@@ -181,6 +182,34 @@ class DiscoverySelectorResolverTest {
         URI uri = URI.create("classpath:/io/cucumber/junit/platform/engine/feature-with-outline.feature?line=20");
         DiscoverySelector resource = selectUri(uri);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
+                .filter(TestDescriptor::isTest)
+                .collect(Collectors.toList());
+        assertEquals(1, tests.size());
+    }
+
+    @Test
+    void resolveRequestWithUriSelectorThroughProperty() {
+        URI uri = URI.create("classpath:/io/cucumber/junit/platform/engine/feature-with-outline.feature:19:20");
+        ConfigurationParameters parameters = new MapConfigurationParameters(FEATURES_PROPERTY_NAME, uri.toString());
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(parameters);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
+                .filter(TestDescriptor::isTest)
+                .collect(Collectors.toList());
+        assertEquals(2, tests.size());
+    }
+
+    @Test
+    void resolveRequestWithUriSelectorThroughPropertyIgnoresOtherSelectors() {
+        URI uri1 = URI.create("classpath:/io/cucumber/junit/platform/engine/feature-with-outline.feature:19");
+        ConfigurationParameters parameters = new MapConfigurationParameters(FEATURES_PROPERTY_NAME, uri1.toString());
+
+        URI uri2 = URI.create("classpath:/io/cucumber/junit/platform/engine/feature-with-outline.feature?line=20");
+        DiscoverySelector resource = selectUri(uri2);
+
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(parameters, resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         List<? extends TestDescriptor> tests = testDescriptor.getDescendants().stream()
                 .filter(TestDescriptor::isTest)
@@ -387,12 +416,22 @@ class DiscoverySelectorResolverTest {
     private static class SelectorRequest implements EngineDiscoveryRequest {
 
         private final Map<Class<?>, List<DiscoverySelector>> resources = new HashMap<>();
+        private final ConfigurationParameters parameters;
+
+        SelectorRequest(ConfigurationParameters parameters, DiscoverySelector... selectors) {
+            this(parameters, Arrays.asList(selectors));
+        }
 
         SelectorRequest(DiscoverySelector... selectors) {
-            this(Arrays.asList(selectors));
+            this(new EmptyConfigurationParameters(), Arrays.asList(selectors));
         }
 
         SelectorRequest(List<DiscoverySelector> selectors) {
+            this(new EmptyConfigurationParameters(), selectors);
+        }
+
+        SelectorRequest(ConfigurationParameters parameters, List<DiscoverySelector> selectors) {
+            this.parameters = parameters;
             for (DiscoverySelector discoverySelector : selectors) {
                 resources.putIfAbsent(discoverySelector.getClass(), new ArrayList<>());
                 resources.get(discoverySelector.getClass()).add(discoverySelector);
@@ -416,7 +455,7 @@ class DiscoverySelectorResolverTest {
 
         @Override
         public ConfigurationParameters getConfigurationParameters() {
-            return new EmptyConfigurationParameters();
+            return parameters;
         }
 
     }
