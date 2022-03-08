@@ -17,7 +17,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <project.Automatic-Module-Name>io.cucumber.guice</project.Automatic-Module-Name>
-        <mockito.version>4.3.1</mockito.version>
+        <mockito.version>4.4.0</mockito.version>
     </properties>
 
     <dependencyManagement>
