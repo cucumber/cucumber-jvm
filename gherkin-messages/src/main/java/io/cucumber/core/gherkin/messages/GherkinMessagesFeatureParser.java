@@ -41,7 +41,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
 
         if (!errors.isEmpty()) {
             throw new FeatureParserException(
-                    "Failed to parse resource at: " + path + "\n" + String.join("\n", errors));
+                "Failed to parse resource at: " + path + "\n" + String.join("\n", errors));
         }
 
         return envelopes.stream()
@@ -70,11 +70,11 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                             .collect(toList());
 
                     return new GherkinMessagesFeature(
-                            feature,
-                            path,
-                            source,
-                            pickles,
-                            envelopes);
+                        feature,
+                        path,
+                        source,
+                        pickles,
+                        envelopes);
                 });
     }
 

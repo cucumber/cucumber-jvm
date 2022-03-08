@@ -3,7 +3,6 @@ package io.cucumber.core.gherkin.messages;
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
-import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Step;
