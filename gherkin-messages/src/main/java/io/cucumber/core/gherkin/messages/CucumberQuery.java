@@ -2,10 +2,9 @@ package io.cucumber.core.gherkin.messages;
 
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Examples;
-import io.cucumber.messages.types.FeatureChild;
+import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.Location;
-import io.cucumber.messages.types.RuleChild;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.TableRow;
@@ -22,43 +21,22 @@ final class CucumberQuery {
     private final Map<String, Scenario> gherkinScenarioById = new HashMap<>();
     private final Map<String, Location> locationBySourceId = new HashMap<>();
 
-    void update(GherkinDocument gherkinDocument) {
-        for (FeatureChild featureChild : gherkinDocument.getFeature().getChildren()) {
-            if (featureChild.getBackground() != null) {
-                this.updateBackground(
-                    featureChild.getBackground(),
-                    gherkinDocument.getUri());
-            }
-
-            if (featureChild.getScenario() != null) {
-                this.updateScenario(
-                    featureChild.getScenario(),
-                    gherkinDocument.getUri());
-            }
-
-            if (featureChild.getRule() != null) {
-                for (RuleChild ruleChild : featureChild.getRule().getChildren()) {
-                    if (ruleChild.getBackground() != null) {
-                        this.updateBackground(
-                            ruleChild.getBackground(),
-                            gherkinDocument.getUri());
-                    }
-
-                    if (ruleChild.getScenario() != null) {
-                        this.updateScenario(
-                            ruleChild.getScenario(),
-                            gherkinDocument.getUri());
-                    }
-                }
-            }
-        }
+    void update(Feature feature) {
+        feature.getChildren().forEach(featureChild -> {
+            featureChild.getBackground().ifPresent(this::updateBackground);
+            featureChild.getScenario().ifPresent(this::updateScenario);
+            featureChild.getRule().ifPresent(rule -> rule.getChildren().forEach(ruleChild -> {
+                ruleChild.getBackground().ifPresent(this::updateBackground);
+                ruleChild.getScenario().ifPresent(this::updateScenario);
+            }));
+        });
     }
 
-    private void updateBackground(Background background, String uri) {
+    private void updateBackground(Background background) {
         updateStep(background.getSteps());
     }
 
-    private void updateScenario(Scenario scenario, String uri) {
+    private void updateScenario(Scenario scenario) {
         gherkinScenarioById.put(requireNonNull(scenario.getId()), scenario);
         locationBySourceId.put(requireNonNull(scenario.getId()), scenario.getLocation());
         updateStep(scenario.getSteps());

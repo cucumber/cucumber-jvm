@@ -10,6 +10,8 @@ import io.cucumber.messages.types.PickleStepArgument;
 import io.cucumber.messages.types.PickleTable;
 import io.cucumber.plugin.event.Location;
 
+import java.util.Optional;
+
 final class GherkinMessagesStep implements Step {
 
     private final PickleStep pickleStep;
@@ -35,20 +37,19 @@ final class GherkinMessagesStep implements Step {
     }
 
     private static Argument extractArgument(PickleStep pickleStep, Location location) {
-        PickleStepArgument argument = pickleStep.getArgument();
-        if (pickleStep.getArgument() == null) {
-            return null;
-        }
-        if (argument.getDocString() != null) {
-            PickleDocString docString = argument.getDocString();
-            // TODO: Fix this work around
-            return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
-        }
-        if (argument.getDataTable() != null) {
-            PickleTable table = argument.getDataTable();
-            return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
-        }
-        return null;
+        return pickleStep.getArgument()
+                .map(argument -> {
+                    if (argument.getDocString().isPresent()) {
+                        PickleDocString docString = argument.getDocString().get();
+                        // TODO: Fix this work around
+                        return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
+                    }
+                    if (argument.getDataTable().isPresent()) {
+                        PickleTable table = argument.getDataTable().get();
+                        return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
+                    }
+                    return null;
+                }).orElse(null);
     }
 
     private static StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
