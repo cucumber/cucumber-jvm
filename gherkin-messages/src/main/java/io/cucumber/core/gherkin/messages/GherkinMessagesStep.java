@@ -6,11 +6,8 @@ import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.messages.types.PickleDocString;
 import io.cucumber.messages.types.PickleStep;
-import io.cucumber.messages.types.PickleStepArgument;
 import io.cucumber.messages.types.PickleTable;
 import io.cucumber.plugin.event.Location;
-
-import java.util.Optional;
 
 final class GherkinMessagesStep implements Step {
 
