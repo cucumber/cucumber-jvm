@@ -21,7 +21,7 @@
 
     <dependencyManagement>
         <dependencies>
-
+            <!-- Modules in the cucumber org -->
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>tag-expressions</artifactId>
@@ -44,6 +44,27 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>ci-environment</artifactId>
+                <version>${ci-environment.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>gherkin</artifactId>
+                <version>${gherkin.version}</version>
+            </dependency>
+            <!-- Modules in cucumber-jvm -->
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-cdi2</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-core</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>datatable</artifactId>
                 <version>7.3.0-SNAPSHOT</version>
             </dependency>
@@ -54,58 +75,12 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>ci-environment</artifactId>
-                <version>${ci-environment.version}</version>
+                <artifactId>cucumber-deltaspike</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
             </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>gherkin</artifactId>
-                <version>${gherkin.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>docstring</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-plugin</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-core</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java8</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-spring</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-junit</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-testng</artifactId>
-                <version>7.3.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-picocontainer</artifactId>
                 <version>7.3.0-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -120,7 +95,57 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-guice</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-jakarta-cdi</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java8</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-junit</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit-platform-engine</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-openejb</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-picocontainer</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-plugin</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-spring</artifactId>
+                <version>7.3.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-testng</artifactId>
                 <version>7.3.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
