@@ -1,5 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.feature.FeatureWithLines;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
 import org.junit.platform.engine.discovery.FileSelector;
@@ -35,6 +36,19 @@ class TestDescriptorOnLine {
 
     private static boolean anyTestDescriptor(TestDescriptor testDescriptor) {
         return true;
+    }
+
+    private static Predicate<TestDescriptor> eitherTestDescriptor(
+            Predicate<TestDescriptor> a, Predicate<TestDescriptor> b
+    ) {
+        return a.or(b);
+    }
+
+    static Predicate<TestDescriptor> from(FeatureWithLines selector) {
+        return selector.lines().stream()
+                .map(TestDescriptorOnLine::testDescriptorOnLine)
+                .reduce(TestDescriptorOnLine::eitherTestDescriptor)
+                .orElse(TestDescriptorOnLine::anyTestDescriptor);
     }
 
     static Predicate<TestDescriptor> from(UriSelector selector) {

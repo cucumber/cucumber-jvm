@@ -288,6 +288,11 @@ cucumber.filter.name=                                         # a regular expres
                                                               # JUnit 5 prefer using JUnit 5s discovery request filters
                                                               # or JUnit 5 tag expressions instead.
 
+cucumber.features=                                            # comma separated paths to feature files. 
+                                                              # example: path/to/example.feature, path/to/other.feature
+                                                              # note: When used any discovery selectors from the JUnit
+                                                              # Platform will be ignored. Use with caution and care.
+
 cucumber.filter.tags=                                         # a cucumber tag expression.
                                                               # only scenarios with matching tags are executed.
                                                               # example: @Cucumber and not (@Gherkin or @Zucchini)

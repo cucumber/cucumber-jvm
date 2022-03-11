@@ -121,7 +121,7 @@ cucumber.execution.wip=         # true or false. default: false.
                                 # Fails if there any passing scenarios
                                 # CLI only.
 
-cucumber.features=              # command separated paths to feature files.
+cucumber.features=              # comma separated paths to feature files.
                                 # example: path/to/example.feature, path/to/other.feature
 
 cucumber.filter.name=           # a regular expression

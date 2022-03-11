@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+*  [JUnit Platform] Support `cucumber.features` property ([#2498](https://github.com/cucumber/cucumber-jvm/pull/2498) M.P. Korstanje)
 
 ### Changed
 * Update dependency io.cucumber:ci-environment to v9 ([#2475](https://github.com/cucumber/cucumber-jvm/pull/2475) M.P. Korstanje)

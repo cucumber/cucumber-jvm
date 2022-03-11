@@ -1,5 +1,9 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;
@@ -13,12 +17,30 @@ import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
 
+import java.util.List;
 import java.util.function.Predicate;
 
-import static io.cucumber.junit.platform.engine.FeatureResolver.createFeatureResolver;
+import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.FeatureResolver.create;
 import static org.junit.platform.engine.Filter.composeFilters;
 
 class DiscoverySelectorResolver {
+
+    private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
+
+    private static boolean warnedWhenCucumberFeaturesPropertyIsUsed = false;
+
+    private static void warnWhenCucumberFeaturesPropertyIsUsed() {
+        if (warnedWhenCucumberFeaturesPropertyIsUsed) {
+            return;
+        }
+        warnedWhenCucumberFeaturesPropertyIsUsed = true;
+        log.warn(
+            () -> "Discovering tests using the " + FEATURES_PROPERTY_NAME
+                    + " property. Other discovery selectors are ignored!\n" +
+                    "Please request/upvote/sponsor/ect better support for JUnit 5 discovery selectors.\n" +
+                    "See: https://github.com/cucumber/cucumber-jvm/pull/2498");
+    }
 
     void resolveSelectors(EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor) {
         Predicate<String> packageFilter = buildPackageFilter(request);
@@ -35,10 +57,19 @@ class DiscoverySelectorResolver {
     private void resolve(
             EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor, Predicate<String> packageFilter
     ) {
-        FeatureResolver featureResolver = createFeatureResolver(
-            request.getConfigurationParameters(),
+        ConfigurationParameters configuration = request.getConfigurationParameters();
+        FeatureResolver featureResolver = create(
+            configuration,
             engineDescriptor,
             packageFilter);
+
+        CucumberEngineOptions options = new CucumberEngineOptions(configuration);
+        List<FeatureWithLines> featureWithLines = options.featuresWithLines();
+        if (!featureWithLines.isEmpty()) {
+            warnWhenCucumberFeaturesPropertyIsUsed();
+            featureWithLines.forEach(featureResolver::resolveFeatureWithLines);
+            return;
+        }
 
         request.getSelectorsByType(ClasspathRootSelector.class).forEach(featureResolver::resolveClasspathRoot);
         request.getSelectorsByType(ClasspathResourceSelector.class).forEach(featureResolver::resolveClasspathResource);
