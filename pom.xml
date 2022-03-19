@@ -93,6 +93,17 @@
         </profile>
 
         <profile>
+            <!-- Modules are not included by default when building in CI.
+                 Releases are also made from CI, and we do not want to release
+                 these modules. -->
+            <id>include-extra-modules</id>
+            <modules>
+                <module>examples</module>
+                <module>compatibility</module>
+            </modules>
+        </profile>
+
+        <profile>
             <id>build-in-ci</id>
             <activation>
                 <property>
@@ -100,10 +111,6 @@
                     <value>true</value>
                 </property>
             </activation>
-            <modules>
-                <module>examples</module>
-                <module>compatibility</module>
-            </modules>
             <build>
                 <pluginManagement>
                     <plugins>

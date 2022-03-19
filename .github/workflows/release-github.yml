@@ -1,0 +1,25 @@
+name: Release on github
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+
+  pre-release-check:
+    uses: cucumber/cucumber-jvm/.github/workflows/prerelease-checks.yml@main
+
+  create-github-release:
+    name: Create GitHub Release and Git tag
+    needs: [pre-release-check]
+    runs-on: ubuntu-latest
+    environment: Release
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cucumber/action-create-github-release@v1.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,37 @@
+name: Release maven package
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+
+  pre-release-check:
+    uses: cucumber/cucumber-jvm/.github/workflows/prerelease-checks.yml@main
+
+  test-java:
+    uses: cucumber/cucumber-jvm/.github/workflows/test-java.yml@main
+
+  publish-mvn:
+    name: Publish Maven Package
+    needs: [pre-release-check, test-java]
+    runs-on: ubuntu-latest
+    environment: Release
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+
+      - uses: cucumber/action-publish-mvn@v2.0.0
+        with:
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          nexus-username: cukebot
+          nexus-password: ${{ secrets.SONATYPE_PASSWORD }}
+          working-directory: java

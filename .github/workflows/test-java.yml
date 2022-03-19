@@ -1,9 +1,10 @@
-name: Cucumber CI
+name: Test Java
 
 on:
   pull_request:
     branches:
       - '**'
+  workflow_call:
   push:
     branches:
       - main
@@ -31,9 +32,9 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B --show-version
+        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B --show-version
       - name: Test
-        run: mvn verify
+        run: mvn verify -Pinclude-extra-modules
         env:
           CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
@@ -75,9 +76,9 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
+        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
       - name: Test (Coverage)
-        run: mvn jacoco:prepare-agent verify jacoco:report
+        run: mvn jacoco:prepare-agent verify jacoco:report -Pinclude-extra-modules
       - uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
