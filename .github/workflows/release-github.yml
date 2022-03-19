@@ -1,0 +1,9 @@
+name: Release on GitHub
+
+on:
+  push:
+    branches: [release/*]
+
+jobs:
+  pre-release-check:
+    uses: cucumber/.github/.github/workflows/prerelease-checks.yml@main

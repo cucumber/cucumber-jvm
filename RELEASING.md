@@ -43,27 +43,25 @@ Check if branch name and version are as expected. To change version run:
 mvn versions:set -DnewVersion=X.Y.Z-SNAPSHOT
 ```
 
-## Secrets ##
-
-Secrets are required to make releases. Members of the core team can install
-keybase and join the `cucumberbdd` team to access these secrets.
-
-During the release process, secrets are fetched from keybase and used to sign
-and upload the maven artifacts.
-
 ## Make the release ##
 
-Check if branch name and version are as expected:
+Only people with permission to push to `release/*` branches can make releases.
+
+1. Check if branch name and version are as expected:
 
 ```
 make version
 ```
 
-Do the release:
+2. Do the release:
 
 ```
 make release
 ``` 
+
+3. Wait until the `release-*` workflows have passed for the new release branch:
+  * [![Release maven package](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml)
+  * [![Release on GitHub](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-github.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-github.yml)
 
 ## Last bits ##
 
@@ -74,3 +72,5 @@ Update the cucumber-jvm version in the documentation project:
 The cucumber-jvm version for the docs is specified in the docs [versions.yaml](https://github.com/cucumber/docs.cucumber.io/blob/master/data/versions.yaml)
 
 All done! Hurray!
+
+[changelog]: https://github.com/cucumber/changelog#installation
