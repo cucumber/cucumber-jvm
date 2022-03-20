@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [7.3.0] (2022-03-20)
+
+### Added
 *  [JUnit Platform] Support `cucumber.features` property ([#2498](https://github.com/cucumber/cucumber-jvm/pull/2498) M.P. Korstanje)
 
 ### Changed
@@ -16,10 +28,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Removed work around for 'Uncaught TypeError: e.git is undefined'    
 * Update dependency com.google.inject:guice to v5.1.0 ([#2473](https://github.com/cucumber/cucumber-jvm/pull/2473) M.P. Korstanje)
 * Update dependency org.testng:testng to v7.5 ([#2457](https://github.com/cucumber/cucumber-jvm/pull/2457) M.P. Korstanje)
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 * [OpenEJB] Remove spurious  dependencies ([#2477](https://github.com/cucumber/cucumber-jvm/pull/2477) M.P. Korstanje)
@@ -1752,7 +1760,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.2.3...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.0...main
+[7.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.3-RC1...v7.3.0
 [7.2.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.2-RC1...v7.2.3
 [7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1-RC1...v7.2.2
 [7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0-RC1...v7.2.1
