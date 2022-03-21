@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: build-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: javadoc-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -61,7 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: coverage-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -87,7 +87,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: semver-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
