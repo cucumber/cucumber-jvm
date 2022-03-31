@@ -87,11 +87,9 @@ public final class StepExpressionFactory {
         try {
             expression = expressionFactory.createExpression(expressionString);
         } catch (UndefinedParameterTypeException e) {
-            Envelope envelope = new Envelope();
-            envelope.setUndefinedParameterType(new UndefinedParameterType(
-                expressionString,
-                e.getUndefinedParameterTypeName()));
-            bus.send(envelope);
+            bus.send(Envelope.of(new UndefinedParameterType(
+                    expressionString,
+                    e.getUndefinedParameterTypeName())));
             throw registerTypeInConfiguration(expressionString, e);
         }
         return expression;

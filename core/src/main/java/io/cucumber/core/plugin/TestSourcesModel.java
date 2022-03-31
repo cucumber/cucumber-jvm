@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.gherkin.Gherkin;
+import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Examples;
@@ -9,6 +10,8 @@ import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.RuleChild;
 import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.Source;
+import io.cucumber.messages.types.SourceMediaType;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.TableRow;
 import io.cucumber.plugin.event.TestSourceRead;
@@ -22,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static io.cucumber.gherkin.Gherkin.makeSourceEnvelope;
 import static java.util.Collections.singletonList;
@@ -107,19 +111,15 @@ final class TestSourcesModel {
         }
         String source = pathToReadEventMap.get(path).getSource();
 
-        List<Envelope> sources = singletonList(
-            makeSourceEnvelope(source, path.toString()));
+        GherkinParser parser = GherkinParser.builder()
+                .build();
 
-        List<Envelope> envelopes = Gherkin.fromSources(
-            sources,
-            true,
-            true,
-            true,
-            () -> String.valueOf(UUID.randomUUID())).collect(toList());
+        Stream<Envelope> envelopes = parser.parse(Envelope.of(new Source(path.toString(), source, SourceMediaType.TEXT_X_CUCUMBER_GHERKIN_PLAIN)));
 
-        GherkinDocument gherkinDocument = envelopes.stream()
+        GherkinDocument gherkinDocument = envelopes
                 .map(Envelope::getGherkinDocument)
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .findFirst()
                 .orElse(null);
 
@@ -219,7 +219,8 @@ final class TestSourcesModel {
         return feature.getChildren()
                 .stream()
                 .map(FeatureChild::getBackground)
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .findFirst();
     }
 

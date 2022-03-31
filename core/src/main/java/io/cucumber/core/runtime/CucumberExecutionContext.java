@@ -52,9 +52,7 @@ public final class CucumberExecutionContext {
     }
 
     private void emitMeta() {
-        Envelope envelope = new Envelope();
-        envelope.setMeta(createMeta());
-        bus.send(envelope);
+        bus.send(Envelope.of(createMeta()));
     }
 
     private Meta createMeta() {
@@ -81,9 +79,7 @@ public final class CucumberExecutionContext {
         log.debug(() -> "Sending run test started event");
         start = bus.getInstant();
         bus.send(new TestRunStarted(start));
-        Envelope envelope = new Envelope();
-        envelope.setTestRunStarted(new io.cucumber.messages.types.TestRunStarted(javaInstantToTimestamp(start)));
-        bus.send(envelope);
+        bus.send(Envelope.of(new io.cucumber.messages.types.TestRunStarted(javaInstantToTimestamp(start))));
     }
 
     public void runBeforeAllHooks() {
@@ -118,9 +114,7 @@ public final class CucumberExecutionContext {
             exception != null ? printStackTrace(exception) : null,
             exception == null && exitStatus.isSuccess(),
             javaInstantToTimestamp(instant));
-        Envelope envelope = new Envelope();
-        envelope.setTestRunFinished(testRunFinished);
-        bus.send(envelope);
+        bus.send(Envelope.of(testRunFinished));
     }
 
     public void beforeFeature(Feature feature) {
