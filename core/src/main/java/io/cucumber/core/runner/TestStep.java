@@ -72,11 +72,10 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private void emitTestStepStarted(TestCase testCase, EventBus bus, UUID textExecutionId, Instant startTime) {
         bus.send(new TestStepStarted(startTime, testCase, this));
-        Envelope envelope = new Envelope();
-        envelope.setTestStepStarted(new io.cucumber.messages.types.TestStepStarted(
-            textExecutionId.toString(),
-            id.toString(),
-            javaInstantToTimestamp(startTime)));
+        Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepStarted(
+                textExecutionId.toString(),
+                id.toString(),
+                javaInstantToTimestamp(startTime)));
         bus.send(envelope);
     }
 
@@ -117,19 +116,17 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     ) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
 
-        TestStepResult testStepResult = new TestStepResult();
-        if (result.getError() != null) {
-            testStepResult.setMessage(extractStackTrace(result.getError()));
-        }
-        testStepResult.setStatus(from(result.getStatus()));
-        testStepResult.setDuration(javaDurationToDuration(duration));
+        TestStepResult testStepResult = new TestStepResult(
+                javaDurationToDuration(duration),
+                result.getError() != null ? extractStackTrace(result.getError()) : null,
+                from(result.getStatus())
+        );
 
-        Envelope envelope = new Envelope();
-        envelope.setTestStepFinished(new io.cucumber.messages.types.TestStepFinished(
-            textExecutionId.toString(),
-            id.toString(),
-            testStepResult,
-            javaInstantToTimestamp(stopTime)));
+        Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepFinished(
+                textExecutionId.toString(),
+                id.toString(),
+                testStepResult,
+                javaInstantToTimestamp(stopTime)));
         bus.send(envelope);
     }
 
