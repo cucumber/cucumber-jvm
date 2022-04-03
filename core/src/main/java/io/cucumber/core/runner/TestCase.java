@@ -65,12 +65,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             group.getValue());
     }
 
-    private static String toString(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        error.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
-    }
-
     void run(EventBus bus) {
         ExecutionMode nextExecutionMode = this.executionMode;
         emitTestCaseMessage(bus);
@@ -174,26 +168,30 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     private io.cucumber.messages.types.TestStep createTestStep(TestStep pluginTestStep) {
-        io.cucumber.messages.types.TestStep messagesTestStep = new io.cucumber.messages.types.TestStep();
-        messagesTestStep.setId(pluginTestStep.getId().toString());
+        // public TestStep(String hookId, String id, String pickleStepId, List<String> stepDefinitionIds, List<StepMatchArgumentsList> stepMatchArgumentsLists) {
+        String id = pluginTestStep.getId().toString();
+        String hookId = null;
+        String pickleStepId = null;
+        List<StepMatchArgumentsList> stepMatchArgumentsLists = null;
+        List<String> stepDefinitionIds = null;
 
         if (pluginTestStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) pluginTestStep;
             HookDefinitionMatch definitionMatch = hookTestStep.getDefinitionMatch();
             CoreHookDefinition hookDefinition = definitionMatch.getHookDefinition();
-            messagesTestStep.setHookId(hookDefinition.getId().toString());
+            hookId = hookDefinition.getId().toString();
         } else if (pluginTestStep instanceof PickleStepTestStep) {
             PickleStepTestStep pickleStep = (PickleStepTestStep) pluginTestStep;
-            messagesTestStep.setPickleStepId(pickleStep.getStep().getId());
-            messagesTestStep.setStepMatchArgumentsLists(singletonList(getStepMatchArguments(pickleStep)));
+            pickleStepId = pickleStep.getStep().getId();
+            stepMatchArgumentsLists = singletonList(getStepMatchArguments(pickleStep));
             StepDefinition stepDefinition = pickleStep.getDefinitionMatch().getStepDefinition();
             if (stepDefinition instanceof CoreStepDefinition) {
                 CoreStepDefinition coreStepDefinition = (CoreStepDefinition) stepDefinition;
-                messagesTestStep.setStepDefinitionIds(singletonList(coreStepDefinition.getId().toString()));
+                stepDefinitionIds = singletonList(coreStepDefinition.getId().toString());
             }
         }
 
-        return messagesTestStep;
+        return new io.cucumber.messages.types.TestStep(hookId, id, pickleStepId, stepDefinitionIds, stepMatchArgumentsLists);
     }
 
     public StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
