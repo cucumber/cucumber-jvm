@@ -128,7 +128,8 @@ class TestCaseStateTest {
         assertThat(envelope.getAttachment().get().getMediaType(), is("text/plain"));
         assertThat(envelope.getAttachment().get().getFileName().get(), is("hello.txt"));
         assertThat(envelope.getAttachment().get().getTestStepId().get(), is(activeTestStep.toString()));
-        assertThat(envelope.getAttachment().get().getTestCaseStartedId().get(), is(state.getTestExecutionId().toString()));
+        assertThat(envelope.getAttachment().get().getTestCaseStartedId().get(),
+            is(state.getTestExecutionId().toString()));
     }
 
     @Test
@@ -159,7 +160,8 @@ class TestCaseStateTest {
         assertThat(envelope.getAttachment().get().getMediaType(), is("text/plain"));
         assertThat(envelope.getAttachment().get().getFileName().get(), is("hello.txt"));
         assertThat(envelope.getAttachment().get().getTestStepId().get(), is(activeTestStep.toString()));
-        assertThat(envelope.getAttachment().get().getTestCaseStartedId().get(), is(state.getTestExecutionId().toString()));
+        assertThat(envelope.getAttachment().get().getTestCaseStartedId().get(),
+            is(state.getTestExecutionId().toString()));
     }
 
     @Test

@@ -14,7 +14,7 @@ public final class HtmlFormatter implements ConcurrentEventListener {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public HtmlFormatter(OutputStream out) throws IOException {
-        this.writer = new MessagesToHtmlWriter(new UTF8OutputStreamWriter(out));
+        this.writer = new MessagesToHtmlWriter(out, Jackson.OBJECT_MAPPER::writeValue);
     }
 
     @Override

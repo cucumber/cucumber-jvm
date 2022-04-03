@@ -192,7 +192,6 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    @Disabled("TODO: Fix the html formatter")
     void inherit_plugin_from_baseclass() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithFormatter.class).build();
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);

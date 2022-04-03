@@ -92,7 +92,6 @@ class PluginFactoryTest {
     }
 
     @Test
-    @Disabled("TODO: Fix the html formatter")
     void cant_create_plugin_when_parent_directory_is_a_file() throws IOException {
         Path htmlReport = tmp.resolve("target/cucumber/reports");
         PluginOption htmlOption = parse("html:" + htmlReport);

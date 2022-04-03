@@ -191,7 +191,6 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    @Disabled("TODO: Fix the html formatter")
     void creates_html_formatter() {
         RuntimeOptions options = parser
                 .parse("--plugin", "html:target/deeply/nested.html", "--glue", "somewhere")
