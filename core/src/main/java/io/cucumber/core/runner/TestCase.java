@@ -166,7 +166,9 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     private io.cucumber.messages.types.TestStep createTestStep(TestStep pluginTestStep) {
-        // public TestStep(String hookId, String id, String pickleStepId, List<String> stepDefinitionIds, List<StepMatchArgumentsList> stepMatchArgumentsLists) {
+        // public TestStep(String hookId, String id, String pickleStepId,
+        // List<String> stepDefinitionIds, List<StepMatchArgumentsList>
+        // stepMatchArgumentsLists) {
         String id = pluginTestStep.getId().toString();
         String hookId = null;
         String pickleStepId = null;
@@ -189,7 +191,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             }
         }
 
-        return new io.cucumber.messages.types.TestStep(hookId, id, pickleStepId, stepDefinitionIds, stepMatchArgumentsLists);
+        return new io.cucumber.messages.types.TestStep(hookId, id, pickleStepId, stepDefinitionIds,
+            stepMatchArgumentsLists);
     }
 
     public StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {

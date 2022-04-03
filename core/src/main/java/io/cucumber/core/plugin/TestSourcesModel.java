@@ -107,8 +107,9 @@ final class TestSourcesModel {
                 .build();
 
         Stream<Envelope> envelopes = parser.parse(
-                Envelope.of(new Source(path.toString(), source, SourceMediaType.TEXT_X_CUCUMBER_GHERKIN_PLAIN)));
+            Envelope.of(new Source(path.toString(), source, SourceMediaType.TEXT_X_CUCUMBER_GHERKIN_PLAIN)));
 
+        // TODO: What about empty gherkin docs?
         GherkinDocument gherkinDocument = envelopes
                 .map(Envelope::getGherkinDocument)
                 .filter(Optional::isPresent)
@@ -118,9 +119,10 @@ final class TestSourcesModel {
 
         pathToAstMap.put(path, gherkinDocument);
         Map<Long, AstNode> nodeMap = new HashMap<>();
-        //TODO: What about empty gherkin docs?
-        AstNode currentParent = new AstNode(gherkinDocument.getFeature(), null);
-        for (FeatureChild child : gherkinDocument.getFeature().get().getChildren()) {
+        // TODO: What about gherkin docs with no features?
+        Feature feature = gherkinDocument.getFeature().get();
+        AstNode currentParent = new AstNode(feature, null);
+        for (FeatureChild child : feature.getChildren()) {
             processFeatureDefinition(nodeMap, child, currentParent);
         }
         pathToNodeMap.put(path, nodeMap);
@@ -131,11 +133,10 @@ final class TestSourcesModel {
         child.getBackground().ifPresent(background -> processBackgroundDefinition(nodeMap, background, currentParent));
         child.getScenario().ifPresent(scenario -> processScenarioDefinition(nodeMap, scenario, currentParent));
         child.getRule().ifPresent(rule -> {
-                    AstNode childNode = new AstNode(rule, currentParent);
-                    nodeMap.put(rule.getLocation().getLine(), childNode);
-                    rule.getChildren().forEach(ruleChild -> processRuleDefinition(nodeMap, ruleChild, childNode));
-                }
-        );
+            AstNode childNode = new AstNode(rule, currentParent);
+            nodeMap.put(rule.getLocation().getLine(), childNode);
+            rule.getChildren().forEach(ruleChild -> processRuleDefinition(nodeMap, ruleChild, childNode));
+        });
     }
 
     private void processBackgroundDefinition(

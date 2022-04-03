@@ -25,7 +25,8 @@ public final class HtmlFormatter implements ConcurrentEventListener {
     private void write(Envelope event) {
         // Workaround to reduce the size of the report
         // See: https://github.com/cucumber/cucumber/issues/1232
-        if (event.getStepDefinition() != null || event.getHook() != null || event.getParameterType() != null) {
+        if (event.getStepDefinition().isPresent() || event.getHook().isPresent()
+                || event.getParameterType().isPresent()) {
             return;
         }
 
@@ -37,7 +38,7 @@ public final class HtmlFormatter implements ConcurrentEventListener {
 
         // TODO: Plugins should implement the closable interface
         // and be closed by Cucumber
-        if (event.getTestRunFinished() != null) {
+        if (event.getTestRunFinished().isPresent()) {
             try {
                 writer.close();
             } catch (IOException e) {

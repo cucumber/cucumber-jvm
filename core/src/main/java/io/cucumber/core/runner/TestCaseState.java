@@ -73,15 +73,14 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
         bus.send(Envelope.of(new Attachment(
-                Base64.getEncoder().encodeToString(data),
-                AttachmentContentEncoding.BASE64,
-                name,
-                mediaType,
-                null,
-                testExecutionId.toString(),
-                currentTestStepId.toString(),
-                null
-        )));
+            Base64.getEncoder().encodeToString(data),
+            AttachmentContentEncoding.BASE64,
+            name,
+            mediaType,
+            null,
+            testExecutionId.toString(),
+            currentTestStepId.toString(),
+            null)));
     }
 
     @Override
@@ -92,15 +91,14 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
         bus.send(Envelope.of(new Attachment(
-                data,
-                AttachmentContentEncoding.IDENTITY,
-                name,
-                mediaType,
-                null,
-                testExecutionId.toString(),
-                currentTestStepId.toString(),
-                null
-        )));
+            data,
+            AttachmentContentEncoding.IDENTITY,
+            name,
+            mediaType,
+            null,
+            testExecutionId.toString(),
+            currentTestStepId.toString(),
+            null)));
     }
 
     @Override
@@ -108,15 +106,14 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         requireActiveTestStep();
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
         bus.send(Envelope.of(new Attachment(
-                text,
-                AttachmentContentEncoding.IDENTITY,
-                null,
-                "text/x.cucumber.log+plain",
-                null,
-                testExecutionId.toString(),
-                currentTestStepId.toString(),
-                null
-        )));
+            text,
+            AttachmentContentEncoding.IDENTITY,
+            null,
+            "text/x.cucumber.log+plain",
+            null,
+            testExecutionId.toString(),
+            currentTestStepId.toString(),
+            null)));
     }
 
     @Override

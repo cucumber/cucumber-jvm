@@ -459,10 +459,11 @@ class RuntimeTest {
                 .build()
                 .run();
 
-        Meta meta = messages.get(0).getMeta();
+        Meta meta = messages.get(0).getMeta().get();
         assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
-        assertThat(meta.getImplementation().getVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
+        assertThat(meta.getImplementation().getVersion().get(),
+            matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getOs().getName(), matchesPattern(".+"));
         assertThat(meta.getCpu().getName(), matchesPattern(".+"));
     }

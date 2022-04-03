@@ -4,7 +4,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.messages.types.Attachment.ContentEncoding;
+import io.cucumber.messages.types.AttachmentContentEncoding;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.event.EmbedEvent;
 import org.junit.jupiter.api.Test;
@@ -122,13 +122,13 @@ class TestCaseStateTest {
         assertThat(embedEvent.getName(), is("hello.txt"));
 
         Envelope envelope = envelopes.get(0);
-        assertThat(envelope.getAttachment().getBody(),
+        assertThat(envelope.getAttachment().get().getBody(),
             is(Base64.getEncoder().encodeToString("Hello World".getBytes(UTF_8))));
-        assertThat(envelope.getAttachment().getContentEncoding(), is(ContentEncoding.BASE_64));
-        assertThat(envelope.getAttachment().getMediaType(), is("text/plain"));
-        assertThat(envelope.getAttachment().getFileName(), is("hello.txt"));
-        assertThat(envelope.getAttachment().getTestStepId(), is(activeTestStep.toString()));
-        assertThat(envelope.getAttachment().getTestCaseStartedId(), is(state.getTestExecutionId().toString()));
+        assertThat(envelope.getAttachment().get().getContentEncoding(), is(AttachmentContentEncoding.BASE64));
+        assertThat(envelope.getAttachment().get().getMediaType(), is("text/plain"));
+        assertThat(envelope.getAttachment().get().getFileName().get(), is("hello.txt"));
+        assertThat(envelope.getAttachment().get().getTestStepId().get(), is(activeTestStep.toString()));
+        assertThat(envelope.getAttachment().get().getTestCaseStartedId().get(), is(state.getTestExecutionId().toString()));
     }
 
     @Test
@@ -154,12 +154,12 @@ class TestCaseStateTest {
         assertThat(embedEvent.getName(), is("hello.txt"));
 
         Envelope envelope = envelopes.get(0);
-        assertThat(envelope.getAttachment().getBody(), is("Hello World"));
-        assertThat(envelope.getAttachment().getContentEncoding(), is(ContentEncoding.IDENTITY));
-        assertThat(envelope.getAttachment().getMediaType(), is("text/plain"));
-        assertThat(envelope.getAttachment().getFileName(), is("hello.txt"));
-        assertThat(envelope.getAttachment().getTestStepId(), is(activeTestStep.toString()));
-        assertThat(envelope.getAttachment().getTestCaseStartedId(), is(state.getTestExecutionId().toString()));
+        assertThat(envelope.getAttachment().get().getBody(), is("Hello World"));
+        assertThat(envelope.getAttachment().get().getContentEncoding(), is(AttachmentContentEncoding.IDENTITY));
+        assertThat(envelope.getAttachment().get().getMediaType(), is("text/plain"));
+        assertThat(envelope.getAttachment().get().getFileName().get(), is("hello.txt"));
+        assertThat(envelope.getAttachment().get().getTestStepId().get(), is(activeTestStep.toString()));
+        assertThat(envelope.getAttachment().get().getTestCaseStartedId().get(), is(state.getTestExecutionId().toString()));
     }
 
     @Test

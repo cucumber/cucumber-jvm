@@ -26,7 +26,7 @@ public final class MessageFormatter implements ConcurrentEventListener {
             Jackson.OBJECT_MAPPER.writeValue(writer, envelope);
             writer.write("\n");
             writer.flush();
-            if (envelope.getTestRunFinished() != null) {
+            if (envelope.getTestRunFinished().isPresent()) {
                 writer.close();
             }
         } catch (IOException e) {
