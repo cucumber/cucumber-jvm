@@ -42,6 +42,28 @@ public final class Constants {
     public static final String EXECUTION_EXCLUSIVE_RESOURCES_TAG_TEMPLATE_VARIABLE = "<tag-name>";
 
     /**
+     * Property name used to set feature location: {@value}
+     * <p>
+     * A comma separated list of:
+     * <ul>
+     * <li>{@code path/to/dir} - Load the files with the extension ".feature"
+     * for the directory {@code path} and its sub directories.
+     * <li>{@code path/name.feature} - Load the feature file
+     * {@code path/name.feature} from the file system.</li>
+     * <li>{@code classpath:path/name.feature} - Load the feature file
+     * {@code path/name.feature} from the classpath.</li>
+     * <li>{@code path/name.feature:3:9} - Load the scenarios on line 3 and line
+     * 9 in the file {@code path/name.feature}.</li>
+     * </ul>
+     * <p>
+     * NOTE: When used any discovery selectors from the JUnit Platform will be
+     * ignored. Use with caution and care.
+     *
+     * @see io.cucumber.core.feature.FeatureWithLines
+     */
+    public static final String FEATURES_PROPERTY_NAME = io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
+
+    /**
      * Property name used to set name filter: {@value}
      * <p>
      * Filter scenarios by name based on the provided regex pattern e.g:

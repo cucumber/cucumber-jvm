@@ -18,7 +18,6 @@ import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RE
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
-import static io.cucumber.junit.platform.engine.FeatureResolver.createFeatureResolver;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
@@ -51,7 +50,7 @@ class FeatureResolverTest {
     }
 
     private TestDescriptor getFeature() {
-        FeatureResolver featureResolver = createFeatureResolver(configurationParameters, engineDescriptor,
+        FeatureResolver featureResolver = FeatureResolver.create(configurationParameters, engineDescriptor,
             aPackage -> true);
         featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
         Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
