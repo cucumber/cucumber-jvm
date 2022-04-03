@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.JSON;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -24,7 +23,7 @@ public final class MessageFormatter implements ConcurrentEventListener {
 
     private void writeMessage(Envelope envelope) {
         try {
-            JSON.writeValue(writer, envelope);
+            Jackson.OBJECT_MAPPER.writeValue(writer, envelope);
             writer.write("\n");
             writer.flush();
             if (envelope.getTestRunFinished() != null) {

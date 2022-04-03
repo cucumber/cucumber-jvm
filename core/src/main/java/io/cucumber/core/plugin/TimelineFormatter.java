@@ -1,10 +1,10 @@
 package io.cucumber.core.plugin;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.messages.internal.com.fasterxml.jackson.annotation.JsonInclude.Include;
-import io.cucumber.messages.internal.com.fasterxml.jackson.core.JsonGenerator.Feature;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.SerializationFeature;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.Location;
