@@ -4,6 +4,7 @@ import org.apiguardian.api.API;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @API(status = API.Status.STABLE)
@@ -31,8 +32,8 @@ public final class CucumberTestContext {
         sessionId = sessionCounter.incrementAndGet();
     }
 
-    String getId() {
-        return "cucumber_test_context_" + sessionId;
+    Optional<Integer> getId() {
+        return Optional.ofNullable(sessionId);
     }
 
     void stop() {

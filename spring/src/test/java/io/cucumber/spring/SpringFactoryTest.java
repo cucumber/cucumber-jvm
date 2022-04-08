@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,6 +34,8 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,6 +61,27 @@ class SpringFactoryTest {
             () -> assertThat(o2, is(notNullValue())),
             () -> assertThat(o1, is(not(equalTo(o2)))),
             () -> assertThat(o2, is(not(equalTo(o1)))));
+    }
+
+    @Test
+    void shouldStartOneCucumberContextForEachScenario() {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(BellyStepDefinitions.class);
+
+        // Scenario 1
+        assertTrue(CucumberTestContext.getInstance().getId().isEmpty());
+        factory.start();
+        Optional<Integer> testContextId1 = CucumberTestContext.getInstance().getId();
+        factory.stop();
+
+        // Scenario 2
+        assertTrue(CucumberTestContext.getInstance().getId().isEmpty());
+        factory.start();
+        Optional<Integer> testContextId2 = CucumberTestContext.getInstance().getId();
+        factory.stop();
+        assertTrue(CucumberTestContext.getInstance().getId().isEmpty());
+
+        assertEquals(testContextId1.get() + 1, testContextId2.get());
     }
 
     @Test
