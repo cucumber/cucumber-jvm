@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -52,6 +53,10 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>gherkin</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-gherkin</artifactId>
@@ -206,7 +211,7 @@
                         <id>enforce-dependency-convergence</id>
                         <configuration>
                             <rules>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                             </rules>
                         </configuration>
                         <goals>
@@ -248,10 +253,11 @@
                                 </includes>
                             </artifactSet>
                             <relocations>
-                                <relocation>
-                                    <pattern>gherkin</pattern>
-                                    <shadedPattern>io.cucumber.core.internal.gherkin</shadedPattern>
-                                </relocation>
+                            <!-- Do not enable relocation. Stuck with it until the next major. -->
+                            <!-- <relocation>-->
+                            <!--    <pattern>io.cucumber.gherkin</pattern>-->
+                            <!--    <shadedPattern>io.cucumber.core.internal.gherkin</shadedPattern>-->
+                            <!--</relocation>-->
                                 <relocation>
                                     <pattern>com.fasterxml</pattern>
                                     <shadedPattern>io.cucumber.core.internal.com.fasterxml</shadedPattern>

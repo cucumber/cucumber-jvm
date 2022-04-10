@@ -57,6 +57,15 @@
 
     <build>
         <plugins>
+            <!-- Not quite compatible with the transition to Maven 3.8.3 #2518 -->
+            <plugin>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
