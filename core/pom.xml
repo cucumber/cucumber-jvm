@@ -270,7 +270,7 @@
                                     <include>io.cucumber:gherkin</include>
                                 </includes>
                             </artifactSet>
-                            <!-- Do not enable relocation. Was miss configured by mistake. -->
+                            <!-- Do not enable relocation. Stuck with it until the next major. -->
                             <!--<relocations>-->
                             <!--    <relocation>-->
                             <!--        <pattern>io.cucumber.gherkin</pattern>-->
