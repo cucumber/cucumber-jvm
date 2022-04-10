@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -45,6 +46,10 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>gherkin</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-gherkin</artifactId>
@@ -228,7 +233,7 @@
                         <id>enforce-dependency-convergence</id>
                         <configuration>
                             <rules>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                             </rules>
                         </configuration>
                         <goals>
@@ -265,12 +270,13 @@
                                     <include>io.cucumber:gherkin</include>
                                 </includes>
                             </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>gherkin</pattern>
-                                    <shadedPattern>io.cucumber.core.internal.gherkin</shadedPattern>
-                                </relocation>
-                            </relocations>
+                            <!-- Do not enable relocation. Was miss configured by mistake. -->
+                            <!--<relocations>-->
+                            <!--    <relocation>-->
+                            <!--        <pattern>io.cucumber.gherkin</pattern>-->
+                            <!--        <shadedPattern>io.cucumber.core.internal.gherkin</shadedPattern>-->
+                            <!--    </relocation>-->
+                            <!--</relocations>-->
                             <filters>
                                 <filter>
                                     <artifact>io.cucumber:gherkin</artifact>
