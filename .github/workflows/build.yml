@@ -1,6 +1,16 @@
 name: Cucumber CI
 
-on: push
+on:
+  pull_request:
+    branches:
+      - *
+  push:
+    branches:
+      - main
+      - v4.x.x
+      - v5.x.x
+      - v6.x.x
+      - v7.x.x
 
 jobs:
   build:
