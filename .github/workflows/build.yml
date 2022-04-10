@@ -1,8 +1,10 @@
 name: Cucumber CI
 
 on:
-  push:
   pull_request:
+    branches:
+      - '**'
+  push:
     branches:
       - main
       - v4.x.x
@@ -30,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B --show-version --toolchains .github/workflows/.toolchains.xml
       - name: Test
-        run: mvn verify -P-spotless-apply --toolchains .github/workflows/.toolchains.xml
+        run: mvn verify --toolchains .github/workflows/.toolchains.xml
         env:
           CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 

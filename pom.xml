@@ -82,7 +82,9 @@
         <profile>
             <id>spotless-apply</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!CI</name>
+                </property>
             </activation>
             <build>
                 <pluginManagement>
