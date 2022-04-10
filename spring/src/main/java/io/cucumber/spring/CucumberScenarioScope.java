@@ -37,7 +37,9 @@ class CucumberScenarioScope implements Scope {
     @Override
     public String getConversationId() {
         CucumberTestContext context = CucumberTestContext.getInstance();
-        return context.getId();
+        return context.getId()
+                .map(id -> "cucumber_test_context_" + id)
+                .orElse(null);
     }
 
 }

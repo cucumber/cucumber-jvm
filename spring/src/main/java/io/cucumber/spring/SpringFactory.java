@@ -21,8 +21,6 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
-import static io.cucumber.spring.TestContextAdaptor.createTestContextManagerAdaptor;
-
 /**
  * Spring based implementation of ObjectFactory.
  * <p>
@@ -151,7 +149,7 @@ public final class SpringFactory implements ObjectFactory {
         // a singleton and reused between scenarios and shared between
         // threads.
         TestContextManager testContextManager = new TestContextManager(withCucumberContextConfiguration);
-        testContextAdaptor = createTestContextManagerAdaptor(testContextManager, stepClasses);
+        testContextAdaptor = new TestContextAdaptor(testContextManager, stepClasses);
         testContextAdaptor.start();
     }
 
