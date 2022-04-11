@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - [TestNG] Remove spurious Optional\[<Feature Name>] from test name ([#2488](https://github.com/cucumber/cucumber-jvm/pull/2488) M.P. Korstanje)
 * [BOM] Add missing dependencies to bill of materials ([#2496](https://github.com/cucumber/cucumber-jvm/pull/2496) M.P. Korstanje)
 * [Spring] Start and stop test context once per scenario ([#2517](https://github.com/cucumber/cucumber-jvm/pull/2517) M.P. Korstanje)
+* [JUnit Platform] Feature files with space in filename generate Illegal Character ([#2521](https://github.com/cucumber/cucumber-jvm/pull/2521) G. Fernandez)
 
 ## [7.2.3] (2022-01-13)
 
