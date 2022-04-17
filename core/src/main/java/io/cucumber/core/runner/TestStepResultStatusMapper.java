@@ -7,7 +7,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.cucumber.messages.types.TestStepResultStatus.*;
+import static io.cucumber.messages.types.TestStepResultStatus.AMBIGUOUS;
+import static io.cucumber.messages.types.TestStepResultStatus.FAILED;
+import static io.cucumber.messages.types.TestStepResultStatus.PASSED;
+import static io.cucumber.messages.types.TestStepResultStatus.PENDING;
+import static io.cucumber.messages.types.TestStepResultStatus.SKIPPED;
+import static io.cucumber.messages.types.TestStepResultStatus.UNDEFINED;
+import static io.cucumber.messages.types.TestStepResultStatus.UNKNOWN;
 
 class TestStepResultStatusMapper {
 
