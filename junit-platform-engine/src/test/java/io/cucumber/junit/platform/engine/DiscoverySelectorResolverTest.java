@@ -79,6 +79,14 @@ class DiscoverySelectorResolverTest {
     }
 
     @Test
+    void resolveRequestWithClasspathResourceSelectorAndWithSpaceInFilename() {
+        DiscoverySelector resource = selectClasspathResource("io/cucumber/junit/platform/engine/with space.feature");
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+        assertEquals(1, testDescriptor.getChildren().size());
+    }
+
+    @Test
     void resolveRequestWithClasspathResourceSelectorAndFilePosition() {
         String feature = "io/cucumber/junit/platform/engine/rule.feature";
         FilePosition line = FilePosition.from(5);
@@ -120,7 +128,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectClasspathRoots(singleton(classpathRoot)).get(0);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(6, testDescriptor.getChildren().size());
+        assertEquals(7, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -256,7 +264,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectDirectory("src/test/resources/io/cucumber/junit/platform/engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(5, testDescriptor.getChildren().size());
+        assertEquals(6, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -264,7 +272,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectPackage("io.cucumber.junit.platform.engine");
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(5, testDescriptor.getChildren().size());
+        assertEquals(6, testDescriptor.getChildren().size());
     }
 
     @Test
@@ -397,7 +405,7 @@ class DiscoverySelectorResolverTest {
         DiscoverySelector resource = selectClass(RunCucumberTest.class);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
-        assertEquals(5, testDescriptor.getChildren().size());
+        assertEquals(6, testDescriptor.getChildren().size());
     }
 
     @Test
