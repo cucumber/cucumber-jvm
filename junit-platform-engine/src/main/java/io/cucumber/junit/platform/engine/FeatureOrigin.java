@@ -31,7 +31,7 @@ abstract class FeatureOrigin {
             if (!uri.getSchemeSpecificPart().startsWith("/")) {
                 // ClasspathResourceSource.from expects all resources to start
                 // with a forward slash
-                uri = URI.create(CLASSPATH_SCHEME_PREFIX + "/" + uri.getSchemeSpecificPart());
+                uri = URI.create(CLASSPATH_SCHEME_PREFIX + "/" + uri.getRawSchemeSpecificPart());
             }
             ClasspathResourceSource source = ClasspathResourceSource.from(uri);
             return new ClasspathFeatureOrigin(source);
