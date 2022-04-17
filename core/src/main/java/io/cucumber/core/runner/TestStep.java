@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runner.ExecutionMode.SKIP;
 import static io.cucumber.core.runner.TestAbortedExceptions.createIsTestAbortedExceptionPredicate;
-import static io.cucumber.core.runner.TestStepResultStatus.from;
+import static io.cucumber.core.runner.TestStepResultStatusMapper.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
