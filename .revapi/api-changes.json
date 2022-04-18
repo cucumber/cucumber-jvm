@@ -139,6 +139,30 @@
             "code": "java.class.removed",
             "old": ".* io\\.cucumber\\.messages\\..*",
             "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": ".* io\\.cucumber\\.core\\.gherkin\\.messages\\.internal\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": ".* io\\.cucumber\\.gherkin\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": ".* io\\.cucumber\\.gherkin\\.internal\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.nonPublicPartOfAPI",
+            "new": ".* io\\.cucumber\\.core\\.internal\\..*",
+            "justification": "Internal API"
           }
         ]
       }

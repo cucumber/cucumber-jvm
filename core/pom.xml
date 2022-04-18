@@ -55,10 +55,6 @@
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>gherkin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-gherkin</artifactId>
         </dependency>
         <dependency>
@@ -245,7 +241,6 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>io.cucumber:gherkin</include>
                                     <include>com.fasterxml.jackson.core:jackson-databind</include>
                                     <include>com.fasterxml.jackson.core:jackson-core</include>
                                     <include>com.fasterxml.jackson.core:jackson-annotations</include>
@@ -253,23 +248,12 @@
                                 </includes>
                             </artifactSet>
                             <relocations>
-                            <!-- Do not enable relocation. Stuck with it until the next major. -->
-                            <!-- <relocation>-->
-                            <!--    <pattern>io.cucumber.gherkin</pattern>-->
-                            <!--    <shadedPattern>io.cucumber.core.internal.gherkin</shadedPattern>-->
-                            <!--</relocation>-->
                                 <relocation>
                                     <pattern>com.fasterxml</pattern>
                                     <shadedPattern>io.cucumber.core.internal.com.fasterxml</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
-                                <filter>
-                                    <artifact>io.cucumber:gherkin</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                    </excludes>
-                                </filter>
                                 <filter>
                                     <artifact>com.fasterxml.jackson.core:jackson-databind</artifact>
                                     <excludes>
