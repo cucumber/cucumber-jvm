@@ -11,9 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 *  [JUnit Platform] Support `cucumber.features` property ([#2498](https://github.com/cucumber/cucumber-jvm/pull/2498) M.P. Korstanje)
 
 ### Changed
+* [Core] Use null-safe messages ([#2497](https://github.com/cucumber/cucumber-jvm/pull/2497) M.P. Korstanje)
+  * Update dependency io.cucumber:html-formatter to v19.1
+      - Removed work around for 'Uncaught TypeError: e.git is undefined'
+  * Update dependency io.cucumber:messages to v18
+  * Update dependency io.cucumber:gherkin to v23
+  * Moved shaded jackson from `messages` to `core`. 
+  
 * Update dependency io.cucumber:ci-environment to v9 ([#2475](https://github.com/cucumber/cucumber-jvm/pull/2475) M.P. Korstanje)
-* Update dependency io.cucumber:html-formatter to v18 ([#2476](https://github.com/cucumber/cucumber-jvm/pull/2476) M.P. Korstanje)
-  - Removed work around for 'Uncaught TypeError: e.git is undefined'    
 * Update dependency com.google.inject:guice to v5.1.0 ([#2473](https://github.com/cucumber/cucumber-jvm/pull/2473) M.P. Korstanje)
 * Update dependency org.testng:testng to v7.5 ([#2457](https://github.com/cucumber/cucumber-jvm/pull/2457) M.P. Korstanje)
 
