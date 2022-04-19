@@ -114,6 +114,7 @@ class CommandlineOptionsParserTest {
         parser.parse("--help");
         assertThat(output(), startsWith("Usage"));
     }
+
     @Test
     void prints_supported_languages() {
         parser.parse("--i18n", "help");
