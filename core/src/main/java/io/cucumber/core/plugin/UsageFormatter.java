@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.JSON;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
@@ -63,7 +62,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         }
 
         try {
-            JSON.writeValue(out, stepDefContainers);
+            Jackson.OBJECT_MAPPER.writeValue(out, stepDefContainers);
             out.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

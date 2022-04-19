@@ -33,6 +33,7 @@ import io.cucumber.messages.types.JavaStackTraceElement;
 import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.SourceReference;
 import io.cucumber.messages.types.StepDefinitionPattern;
+import io.cucumber.messages.types.StepDefinitionPatternType;
 import io.cucumber.plugin.event.StepDefinedEvent;
 
 import java.net.URI;
@@ -285,28 +286,24 @@ final class CachingGlue implements Glue {
     }
 
     private void emitParameterTypeDefined(ParameterType<?> parameterType) {
-        io.cucumber.messages.types.ParameterType messagesParameterType = new io.cucumber.messages.types.ParameterType();
-        messagesParameterType.setId(bus.generateId().toString());
-        messagesParameterType.setName(parameterType.getName());
-        messagesParameterType.setRegularExpressions(parameterType.getRegexps());
-        messagesParameterType.setPreferForRegularExpressionMatch(parameterType.preferForRegexpMatch());
-        messagesParameterType.setUseForSnippets(parameterType.useForSnippets());
-
-        Envelope envelope = new Envelope();
-        envelope.setParameterType(messagesParameterType);
-        bus.send(envelope);
+        io.cucumber.messages.types.ParameterType messagesParameterType = new io.cucumber.messages.types.ParameterType(
+            parameterType.getName(),
+            parameterType.getRegexps(),
+            parameterType.preferForRegexpMatch(),
+            parameterType.useForSnippets(),
+            bus.generateId().toString());
+        bus.send(Envelope.of(messagesParameterType));
     }
 
     private void emitHook(CoreHookDefinition coreHook) {
-        Hook messagesHook = new Hook();
-        messagesHook.setId(coreHook.getId().toString());
-        messagesHook.setTagExpression(coreHook.getTagExpression());
-        coreHook.getDefinitionLocation()
-                .ifPresent(reference -> messagesHook.setSourceReference(createSourceReference(reference)));
-
-        Envelope envelope = new Envelope();
-        envelope.setHook(messagesHook);
-        bus.send(envelope);
+        Hook messagesHook = new Hook(
+            coreHook.getId().toString(),
+            null,
+            coreHook.getDefinitionLocation()
+                    .map(this::createSourceReference)
+                    .orElseGet(this::emptySourceReference),
+            coreHook.getTagExpression());
+        bus.send(Envelope.of(messagesHook));
     }
 
     private void emitStepDefined(CoreStepDefinition coreStepDefinition) {
@@ -316,24 +313,21 @@ final class CachingGlue implements Glue {
                 coreStepDefinition.getStepDefinition().getLocation(),
                 coreStepDefinition.getExpression().getSource())));
 
-        io.cucumber.messages.types.StepDefinition messagesStepDefinition = new io.cucumber.messages.types.StepDefinition();
-        messagesStepDefinition.setId(coreStepDefinition.getId().toString());
-        messagesStepDefinition.setPattern(new StepDefinitionPattern(
-            coreStepDefinition.getExpression().getSource(),
-            getExpressionType(coreStepDefinition)));
-        coreStepDefinition.getDefinitionLocation()
-                .ifPresent(reference -> messagesStepDefinition.setSourceReference(createSourceReference(reference)));
-
-        Envelope envelope = new Envelope();
-        envelope.setStepDefinition(messagesStepDefinition);
-        bus.send(envelope);
+        io.cucumber.messages.types.StepDefinition messagesStepDefinition = new io.cucumber.messages.types.StepDefinition(
+            coreStepDefinition.getId().toString(),
+            new StepDefinitionPattern(
+                coreStepDefinition.getExpression().getSource(),
+                getExpressionType(coreStepDefinition)),
+            coreStepDefinition.getDefinitionLocation()
+                    .map(this::createSourceReference)
+                    .orElseGet(this::emptySourceReference));
+        bus.send(Envelope.of(messagesStepDefinition));
     }
 
     private SourceReference createSourceReference(io.cucumber.core.backend.SourceReference reference) {
-        SourceReference sourceReference = new SourceReference();
         if (reference instanceof JavaMethodReference) {
             JavaMethodReference methodReference = (JavaMethodReference) reference;
-            sourceReference.setJavaMethod(new JavaMethod(
+            return SourceReference.of(new JavaMethod(
                 methodReference.className(),
                 methodReference.methodName(),
                 methodReference.methodParameterTypes()));
@@ -341,22 +335,28 @@ final class CachingGlue implements Glue {
 
         if (reference instanceof StackTraceElementReference) {
             StackTraceElementReference stackReference = (StackTraceElementReference) reference;
-            JavaStackTraceElement stackTraceElementBuilder = new JavaStackTraceElement();
-            stackTraceElementBuilder.setClassName(stackReference.className());
-            stackTraceElementBuilder.setMethodName(stackReference.methodName());
-            stackReference.fileName().ifPresent(stackTraceElementBuilder::setFileName);
-            sourceReference.setJavaStackTraceElement(stackTraceElementBuilder);
-            sourceReference.setLocation(new Location(Long.valueOf(stackReference.lineNumber()), null));
+            JavaStackTraceElement stackTraceElement = new JavaStackTraceElement(
+                stackReference.className(),
+                // TODO: Fix json schema. Stacktrace elements need not have a
+                // source file
+                stackReference.fileName().orElse("Unknown"),
+                stackReference.methodName());
+            Location location = new Location((long) stackReference.lineNumber(), null);
+            return new SourceReference(null, null, stackTraceElement, location);
         }
-        return sourceReference;
+        return emptySourceReference();
     }
 
-    private StepDefinitionPattern.Type getExpressionType(CoreStepDefinition stepDefinition) {
+    private SourceReference emptySourceReference() {
+        return new SourceReference(null, null, null, null);
+    }
+
+    private StepDefinitionPatternType getExpressionType(CoreStepDefinition stepDefinition) {
         Class<? extends Expression> expressionType = stepDefinition.getExpression().getExpressionType();
         if (expressionType.isAssignableFrom(RegularExpression.class)) {
-            return StepDefinitionPattern.Type.REGULAR_EXPRESSION;
+            return StepDefinitionPatternType.REGULAR_EXPRESSION;
         } else if (expressionType.isAssignableFrom(CucumberExpression.class)) {
-            return StepDefinitionPattern.Type.CUCUMBER_EXPRESSION;
+            return StepDefinitionPatternType.CUCUMBER_EXPRESSION;
         } else {
             throw new IllegalArgumentException(expressionType.getName());
         }

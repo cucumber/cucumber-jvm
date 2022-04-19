@@ -6,7 +6,6 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.StepMatchArgument;
 import io.cucumber.messages.types.StepMatchArgumentsList;
-import io.cucumber.messages.types.TestStepResult;
 import io.cucumber.plugin.event.Group;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Result;
@@ -15,8 +14,6 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStep;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
@@ -27,8 +24,6 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.runner.ExecutionMode.DRY_RUN;
 import static io.cucumber.core.runner.ExecutionMode.RUN;
-import static io.cucumber.core.runner.TestStepResultStatus.from;
-import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -68,12 +63,6 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             group.getValue());
     }
 
-    private static String toString(Throwable error) {
-        StringWriter stringWriter = new StringWriter();
-        error.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
-    }
-
     void run(EventBus bus) {
         ExecutionMode nextExecutionMode = this.executionMode;
         emitTestCaseMessage(bus);
@@ -106,7 +95,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         Duration duration = Duration.between(start, stop);
         Status status = Status.valueOf(state.getStatus().name());
         Result result = new Result(status, duration, state.getError());
-        emitTestCaseFinished(bus, executionId, stop, duration, status, result);
+        emitTestCaseFinished(bus, executionId, stop, result);
     }
 
     @Override
@@ -166,8 +155,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     private void emitTestCaseMessage(EventBus bus) {
-        Envelope envelope = new Envelope();
-        envelope.setTestCase(new io.cucumber.messages.types.TestCase(
+        Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestCase(
             id.toString(),
             pickle.getId(),
             getTestSteps()
@@ -178,26 +166,33 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     private io.cucumber.messages.types.TestStep createTestStep(TestStep pluginTestStep) {
-        io.cucumber.messages.types.TestStep messagesTestStep = new io.cucumber.messages.types.TestStep();
-        messagesTestStep.setId(pluginTestStep.getId().toString());
+        // public TestStep(String hookId, String id, String pickleStepId,
+        // List<String> stepDefinitionIds, List<StepMatchArgumentsList>
+        // stepMatchArgumentsLists) {
+        String id = pluginTestStep.getId().toString();
+        String hookId = null;
+        String pickleStepId = null;
+        List<StepMatchArgumentsList> stepMatchArgumentsLists = null;
+        List<String> stepDefinitionIds = null;
 
         if (pluginTestStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) pluginTestStep;
             HookDefinitionMatch definitionMatch = hookTestStep.getDefinitionMatch();
             CoreHookDefinition hookDefinition = definitionMatch.getHookDefinition();
-            messagesTestStep.setHookId(hookDefinition.getId().toString());
+            hookId = hookDefinition.getId().toString();
         } else if (pluginTestStep instanceof PickleStepTestStep) {
             PickleStepTestStep pickleStep = (PickleStepTestStep) pluginTestStep;
-            messagesTestStep.setPickleStepId(pickleStep.getStep().getId());
-            messagesTestStep.setStepMatchArgumentsLists(singletonList(getStepMatchArguments(pickleStep)));
+            pickleStepId = pickleStep.getStep().getId();
+            stepMatchArgumentsLists = singletonList(getStepMatchArguments(pickleStep));
             StepDefinition stepDefinition = pickleStep.getDefinitionMatch().getStepDefinition();
             if (stepDefinition instanceof CoreStepDefinition) {
                 CoreStepDefinition coreStepDefinition = (CoreStepDefinition) stepDefinition;
-                messagesTestStep.setStepDefinitionIds(singletonList(coreStepDefinition.getId().toString()));
+                stepDefinitionIds = singletonList(coreStepDefinition.getId().toString());
             }
         }
 
-        return messagesTestStep;
+        return new io.cucumber.messages.types.TestStep(hookId, id, pickleStepId, stepDefinitionIds,
+            stepMatchArgumentsLists);
     }
 
     public StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
@@ -209,8 +204,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
         bus.send(new TestCaseStarted(start, this));
-        Envelope envelope = new Envelope();
-        envelope.setTestCaseStarted(new io.cucumber.messages.types.TestCaseStarted(
+        Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestCaseStarted(
             0L,
             executionId.toString(),
             id.toString(),
@@ -219,18 +213,10 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     private void emitTestCaseFinished(
-            EventBus bus, UUID executionId, Instant stop, Duration duration, Status status, Result result
+            EventBus bus, UUID executionId, Instant stop, Result result
     ) {
         bus.send(new TestCaseFinished(stop, this, result));
-        TestStepResult testStepResult = new TestStepResult();
-        testStepResult.setStatus(from(status));
-        testStepResult.setDuration(javaDurationToDuration(duration));
-        if (result.getError() != null) {
-            testStepResult.setMessage(toString(result.getError()));
-        }
-
-        Envelope envelope = new Envelope();
-        envelope.setTestCaseFinished(new io.cucumber.messages.types.TestCaseFinished(executionId.toString(),
+        Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestCaseFinished(executionId.toString(),
             javaInstantToTimestamp(stop), false));
         bus.send(envelope);
     }

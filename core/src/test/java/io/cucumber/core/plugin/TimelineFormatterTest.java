@@ -1,5 +1,10 @@
 package io.cucumber.core.plugin;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
@@ -11,11 +16,6 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.messages.internal.com.fasterxml.jackson.annotation.JsonInclude.Include;
-import io.cucumber.messages.internal.com.fasterxml.jackson.core.JsonGenerator;
-import io.cucumber.messages.internal.com.fasterxml.jackson.core.JsonProcessingException;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

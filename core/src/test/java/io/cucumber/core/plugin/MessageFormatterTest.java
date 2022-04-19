@@ -25,22 +25,16 @@ public class MessageFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        TestRunStarted testRunStarted = new TestRunStarted();
-        testRunStarted.setTimestamp(new Timestamp(10L, 0L));
-        Envelope testRunStartedEnvelope = new Envelope();
-        testRunStartedEnvelope.setTestRunStarted(testRunStarted);
-        bus.send(testRunStartedEnvelope);
+        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
+        bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished();
-        testRunFinished.setTimestamp(new Timestamp(15L, 0L));
-        Envelope testRunFinishedEnvelope = new Envelope();
-        testRunFinishedEnvelope.setTestRunFinished(testRunFinished);
-        bus.send(testRunFinishedEnvelope);
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L));
+        bus.send(Envelope.of(testRunFinished));
 
         String ndjson = new String(bytes.toByteArray(), UTF_8);
         assertThat(ndjson, containsString("" +
                 "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}\n" +
-                "{\"testRunFinished\":{\"timestamp\":{\"seconds\":15,\"nanos\":0}}}\n"));
+                "{\"testRunFinished\":{\"success\":true,\"timestamp\":{\"seconds\":15,\"nanos\":0}}}\n"));
     }
 
 }

@@ -6,9 +6,9 @@ import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
-import io.cucumber.gherkin.IGherkinDialectProvider;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.io.BufferedReader;
@@ -198,7 +198,7 @@ public final class CommandlineOptionsParser {
     }
 
     private byte printI18n(String language) {
-        IGherkinDialectProvider dialectProvider = new GherkinDialectProvider();
+        GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
         List<String> languages = dialectProvider.getLanguages();
 
         if (language.equalsIgnoreCase("help")) {
@@ -233,7 +233,7 @@ public final class CommandlineOptionsParser {
                 BufferedReader br = new BufferedReader(new InputStreamReader(usageResourceStream, UTF_8))) {
             return br.lines().collect(joining(System.lineSeparator()));
         } catch (Exception e) {
-            return "Could not load usage text: " + e.toString();
+            return "Could not load usage text: " + e;
         }
     }
 
@@ -271,8 +271,11 @@ public final class CommandlineOptionsParser {
         addCodeKeywordRow(table, "then", dialect.getThenKeywords());
         addCodeKeywordRow(table, "and", dialect.getAndKeywords());
         addCodeKeywordRow(table, "but", dialect.getButKeywords());
-        DataTable.create(table).print(builder);
-        out.println(builder.toString());
+        DataTableFormatter.builder()
+                .prefixRow("      ")
+                .build()
+                .formatTo(DataTable.create(table), builder);
+        out.println(builder);
         return 0x0;
     }
 

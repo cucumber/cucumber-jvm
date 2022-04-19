@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runner.ExecutionMode.SKIP;
 import static io.cucumber.core.runner.TestAbortedExceptions.createIsTestAbortedExceptionPredicate;
-import static io.cucumber.core.runner.TestStepResultStatus.from;
+import static io.cucumber.core.runner.TestStepResultStatusMapper.from;
 import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
 import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
 import static java.time.Duration.ZERO;
@@ -72,8 +72,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
 
     private void emitTestStepStarted(TestCase testCase, EventBus bus, UUID textExecutionId, Instant startTime) {
         bus.send(new TestStepStarted(startTime, testCase, this));
-        Envelope envelope = new Envelope();
-        envelope.setTestStepStarted(new io.cucumber.messages.types.TestStepStarted(
+        Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepStarted(
             textExecutionId.toString(),
             id.toString(),
             javaInstantToTimestamp(startTime)));
@@ -117,15 +116,12 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     ) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
 
-        TestStepResult testStepResult = new TestStepResult();
-        if (result.getError() != null) {
-            testStepResult.setMessage(extractStackTrace(result.getError()));
-        }
-        testStepResult.setStatus(from(result.getStatus()));
-        testStepResult.setDuration(javaDurationToDuration(duration));
+        TestStepResult testStepResult = new TestStepResult(
+            javaDurationToDuration(duration),
+            result.getError() != null ? extractStackTrace(result.getError()) : null,
+            from(result.getStatus()));
 
-        Envelope envelope = new Envelope();
-        envelope.setTestStepFinished(new io.cucumber.messages.types.TestStepFinished(
+        Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepFinished(
             textExecutionId.toString(),
             id.toString(),
             testStepResult,

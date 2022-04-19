@@ -3,7 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.types.Attachment;
-import io.cucumber.messages.types.Attachment.ContentEncoding;
+import io.cucumber.messages.types.AttachmentContentEncoding;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
@@ -72,14 +72,15 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
-        Attachment attachment = createAttachment();
-        attachment.setBody(Base64.getEncoder().encodeToString(data));
-        attachment.setContentEncoding(ContentEncoding.BASE_64);
-        attachment.setMediaType(mediaType);
-        if (name != null) {
-            attachment.setFileName(name);
-        }
-        bus.send(createEnvelope(attachment));
+        bus.send(Envelope.of(new Attachment(
+            Base64.getEncoder().encodeToString(data),
+            AttachmentContentEncoding.BASE64,
+            name,
+            mediaType,
+            null,
+            testExecutionId.toString(),
+            currentTestStepId.toString(),
+            null)));
     }
 
     @Override
@@ -89,38 +90,30 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
         requireActiveTestStep();
         bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
-        Attachment attachment = createAttachment();
-        attachment.setBody(data);
-        attachment.setContentEncoding(ContentEncoding.IDENTITY);
-        attachment.setMediaType(mediaType);
-        if (name != null) {
-            attachment.setFileName(name);
-        }
-        bus.send(createEnvelope(attachment));
+        bus.send(Envelope.of(new Attachment(
+            data,
+            AttachmentContentEncoding.IDENTITY,
+            name,
+            mediaType,
+            null,
+            testExecutionId.toString(),
+            currentTestStepId.toString(),
+            null)));
     }
 
     @Override
     public void log(String text) {
         requireActiveTestStep();
         bus.send(new WriteEvent(bus.getInstant(), testCase, text));
-        Attachment attachment = createAttachment();
-        attachment.setBody(text);
-        attachment.setContentEncoding(ContentEncoding.IDENTITY);
-        attachment.setMediaType("text/x.cucumber.log+plain");
-        bus.send(createEnvelope(attachment));
-    }
-
-    private Envelope createEnvelope(Attachment attachment) {
-        Envelope envelope = new Envelope();
-        envelope.setAttachment(attachment);
-        return envelope;
-    }
-
-    private Attachment createAttachment() {
-        Attachment attachment = new Attachment();
-        attachment.setTestCaseStartedId(testExecutionId.toString());
-        attachment.setTestStepId(currentTestStepId.toString());
-        return attachment;
+        bus.send(Envelope.of(new Attachment(
+            text,
+            AttachmentContentEncoding.IDENTITY,
+            null,
+            "text/x.cucumber.log+plain",
+            null,
+            testExecutionId.toString(),
+            currentTestStepId.toString(),
+            null)));
     }
 
     @Override

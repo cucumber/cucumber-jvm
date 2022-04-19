@@ -21,6 +21,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -111,8 +112,18 @@ class CommandlineOptionsParserTest {
     @Test
     void prints_usage_for_help() {
         parser.parse("--help");
-
         assertThat(output(), startsWith("Usage"));
+    }
+    @Test
+    void prints_supported_languages() {
+        parser.parse("--i18n", "help");
+        assertThat(output(), startsWith("af              Afrikaans                 Afrikaans"));
+    }
+
+    @Test
+    void prints_supported_keywords() {
+        parser.parse("--i18n", "en");
+        assertThat(output(), startsWith("      | feature          | \"Feature\", \"Business Need\", \"Ability\"   |"));
     }
 
     @Test

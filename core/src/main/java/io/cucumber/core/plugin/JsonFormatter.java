@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.messages.JSON;
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.Scenario;
@@ -145,7 +144,7 @@ public final class JsonFormatter implements EventListener {
         }
 
         try {
-            JSON.writeValue(writer, featureMaps);
+            Jackson.OBJECT_MAPPER.writeValue(writer, featureMaps);
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -106,6 +106,63 @@
             "old": "class io.cucumber.gherkin.internal.com.eclipsesource.json.JsonWriter",
             "new": "class io.cucumber.gherkin.internal.com.eclipsesource.json.JsonWriter",
             "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.method.returnTypeChanged",
+            "old": ".* io\\.cucumber\\.messages\\..*",
+            "new": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.method.removed",
+            "old": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.nowFinal",
+            "old": ".* io\\.cucumber\\.messages\\..*",
+            "new": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.method.numberOfParametersChanged",
+            "old": ".* io\\.cucumber\\.messages\\..*",
+            "new": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": ".* io\\.cucumber\\.messages\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": ".* io\\.cucumber\\.core\\.gherkin\\.messages\\.internal\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": ".* io\\.cucumber\\.gherkin\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.removed",
+            "old": ".* io\\.cucumber\\.gherkin\\.internal\\..*",
+            "justification": "Internal API"
+          },
+          {
+            "regex": true,
+            "code": "java.class.nonPublicPartOfAPI",
+            "new": ".* io\\.cucumber\\.core\\.internal\\..*",
+            "justification": "Internal API"
           }
         ]
       }

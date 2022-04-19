@@ -45,11 +45,11 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     private Node mapRuleOrScenario(FeatureChild featureChild) {
-        if (featureChild.getRule() != null) {
-            return new GherkinMessagesRule(this, featureChild.getRule());
+        if (featureChild.getRule().isPresent()) {
+            return new GherkinMessagesRule(this, featureChild.getRule().get());
         }
 
-        io.cucumber.messages.types.Scenario scenario = featureChild.getScenario();
+        io.cucumber.messages.types.Scenario scenario = featureChild.getScenario().get();
         if (!scenario.getExamples().isEmpty()) {
             return new GherkinMessagesScenarioOutline(this, scenario);
         }
@@ -57,7 +57,7 @@ final class GherkinMessagesFeature implements Feature {
     }
 
     private boolean hasRuleOrScenario(FeatureChild featureChild) {
-        return featureChild.getRule() != null || featureChild.getScenario() != null;
+        return featureChild.getRule().isPresent() || featureChild.getScenario().isPresent();
     }
 
     @Override
