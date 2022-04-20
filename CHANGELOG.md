@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ - [Core] Removed usage of since Java 10 `Collectors.toUnmodifiableList()` method ([#2531](https://github.com/cucumber/cucumber-jvm/pull/2531) M.P. Korstanje) 
 
 ## [7.3.0] (2022-04-19)
 

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static io.cucumber.messages.types.SourceMediaType.TEXT_X_CUCUMBER_GHERKIN_PLAIN;
 import static java.util.stream.Collectors.toList;
@@ -30,7 +29,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                 .idGenerator(() -> idGenerator.get().toString())
                 .build()
                 .parse(Envelope.of(new Source(path.toString(), source, TEXT_X_CUCUMBER_GHERKIN_PLAIN)))
-                .collect(Collectors.toUnmodifiableList());
+                .collect(toList());
 
         List<String> errors = envelopes.stream()
                 .map(Envelope::getParseError)
