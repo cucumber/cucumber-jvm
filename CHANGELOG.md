@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [7.3.1] (2022-04-20)
+
+### Fixed
  - [Core] Removed usage of since Java 10 `Collectors.toUnmodifiableList()` method ([#2531](https://github.com/cucumber/cucumber-jvm/pull/2531) M.P. Korstanje) 
 
 ## [7.3.0] (2022-04-19)
@@ -1768,7 +1772,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.1...main
+[7.3.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.0-RC1...v7.3.1
 [7.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.3-RC1...v7.3.0
 [7.2.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.2-RC1...v7.2.3
 [7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1-RC1...v7.2.2
