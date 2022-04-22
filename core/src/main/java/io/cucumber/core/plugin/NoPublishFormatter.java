@@ -35,12 +35,12 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
     }
 
     private void writeMessage(Envelope envelope) {
-        if (envelope.getTestRunFinished() != null) {
+        if (envelope.getTestRunFinished().isPresent()) {
             printBanner();
         }
     }
 
-    void printBanner() {
+    private void printBanner() {
         Banner banner = new Banner(out, monochrome);
         banner.print(
             asList(

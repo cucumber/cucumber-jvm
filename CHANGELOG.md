@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+- [Core] Fix cucumber report spam `Collectors.toUnmodifiableList()` ([#2533](https://github.com/cucumber/cucumber-jvm/pull/2533) M.P. Korstanje)
 
 ## [7.3.1] (2022-04-20)
 
