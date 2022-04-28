@@ -65,23 +65,31 @@ public final class DataTableFormatter {
             }
         }
 
+        // Buffer the output with a StringBuilder, to avoid excess calls to
+        // flush() from the NiceAppender used by PrettyFormatter.
+        // Gradle adds a newline for every call to flush() unless the most
+        // recent character written was already a newline. That leads
+        // to some VERY difficult to read tables on the console.
+        StringBuilder buffer = new StringBuilder();
+
         // print the rendered cells with padding
         for (int rowIndex = 0; rowIndex < height; rowIndex++) {
-            printRowPrefix(appendable, rowIndex);
-            appendable.append("| ");
+            printRowPrefix(buffer, rowIndex);
+            buffer.append("| ");
             for (int colIndex = 0; colIndex < width; colIndex++) {
                 String cellText = renderedCells[rowIndex][colIndex];
-                appendable.append(cellText);
+                buffer.append(cellText);
                 int padding = longestCellInColumnLength[colIndex] - cellText.length();
-                padSpace(appendable, padding);
+                padSpace(buffer, padding);
                 if (colIndex < width - 1) {
-                    appendable.append(" | ");
+                    buffer.append(" | ");
                 } else {
-                    appendable.append(" |");
+                    buffer.append(" |");
                 }
             }
-            appendable.append("\n");
+            buffer.append("\n");
         }
+        appendable.append(buffer);
     }
 
     void printRowPrefix(Appendable buffer, int rowIndex) throws IOException {

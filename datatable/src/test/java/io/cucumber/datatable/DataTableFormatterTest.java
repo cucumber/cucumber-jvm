@@ -9,6 +9,10 @@ import static io.cucumber.datatable.DataTableFormatter.builder;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class DataTableFormatterTest {
 
@@ -108,6 +112,15 @@ class DataTableFormatterTest {
                 .escapeDelimiters(false)
                 .build();
         assertEquals("| | |\n", formatter.format(table));
+    }
+
+    @Test
+    void should_limit_calls_to_append() throws IOException {
+        DataTable table = tableOf("hello");
+        Appendable appendable = spy(Appendable.class);
+        formatter.formatTo(table, appendable);
+        verify(appendable, times(1))
+                .append(any(CharSequence.class));
     }
 
     private DataTable tableOf(String hello) {
