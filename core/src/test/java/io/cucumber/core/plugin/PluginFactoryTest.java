@@ -356,7 +356,7 @@ class PluginFactoryTest {
         public final NiceAppendable arg;
 
         public WantsAppendable(Appendable arg) {
-            this.arg = new NiceAppendable(Objects.requireNonNull(arg));
+            this.arg = new NiceAppendable(Objects.requireNonNull(arg), false);
         }
 
         public void writeAndClose(String s) {

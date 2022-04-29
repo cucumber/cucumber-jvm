@@ -27,7 +27,7 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
     private Formats formats = ansi();
 
     public UnusedStepsSummaryPrinter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out), false);
     }
 
     @Override
@@ -68,6 +68,8 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
             String pattern = entry.getValue();
             out.println(format.text(location) + " # " + pattern);
         }
+
+        out.close();
     }
 
     @Override

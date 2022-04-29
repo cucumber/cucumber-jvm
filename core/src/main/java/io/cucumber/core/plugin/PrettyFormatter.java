@@ -49,7 +49,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private Formats formats = ansi();
 
     public PrettyFormatter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out), false);
     }
 
     @Override

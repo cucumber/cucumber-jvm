@@ -39,7 +39,7 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     private boolean monochrome = false;
 
     public ProgressFormatter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out), true);
     }
 
     @Override
