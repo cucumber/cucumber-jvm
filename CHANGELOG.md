@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [Core] Pretty print plugin performance issues; incorrect DataTable format in Gradle console ([#2541](https://github.com/cucumber/cucumber-jvm/pull/2541) Scott Davis)
 
 ## [7.3.2] (2022-04-22)
 
