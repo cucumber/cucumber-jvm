@@ -27,7 +27,7 @@ public final class RerunFormatter implements ConcurrentEventListener {
     private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new HashMap<>();
 
     public RerunFormatter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out), false);
+        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
     }
 
     @Override

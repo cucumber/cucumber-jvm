@@ -36,7 +36,7 @@ class NiceAppendableTest {
     public void should_not_flush_unless_configured() throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         OutputStreamWriter writer = spy(new OutputStreamWriter(out));
-        NiceAppendable appendable = new NiceAppendable(writer, false);
+        NiceAppendable appendable = new NiceAppendable(writer);
 
         appendable
                 .append("First String,")

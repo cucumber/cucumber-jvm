@@ -39,6 +39,8 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     private boolean monochrome = false;
 
     public ProgressFormatter(OutputStream out) {
+        // Configure the NiceAppendable to flush on every append, since the
+        // point of this formatter is to display a progress bar.
         this.out = new NiceAppendable(new UTF8OutputStreamWriter(out), true);
     }
 

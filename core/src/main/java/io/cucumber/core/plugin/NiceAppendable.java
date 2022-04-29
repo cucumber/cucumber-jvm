@@ -13,6 +13,10 @@ final class NiceAppendable implements Appendable {
     private final Appendable out;
     private final boolean flushEveryWrite;
 
+    public NiceAppendable(Appendable out) {
+        this(out, false);
+    }
+
     public NiceAppendable(Appendable out, boolean flushEveryWrite) {
         this.out = out;
         this.flushEveryWrite = flushEveryWrite;
