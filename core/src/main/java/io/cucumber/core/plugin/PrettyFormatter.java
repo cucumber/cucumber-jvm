@@ -140,11 +140,9 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                         .escapeDelimiters(false)
                         .build();
                 DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
-                try {
-                    tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
-                } catch (IOException e) {
-                    throw new CucumberException(e);
-                }
+                StringBuilder buffer = new StringBuilder();
+                tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), buffer);
+                out.append(buffer);
             }
         }
     }
