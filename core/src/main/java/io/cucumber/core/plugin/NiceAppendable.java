@@ -57,7 +57,11 @@ final class NiceAppendable implements Appendable {
     }
 
     private void tryFlush() {
-        if (!(out instanceof Flushable && flushEveryWrite)) {
+        if (!(out instanceof Flushable)) {
+            return;
+        }
+
+        if (!flushEveryWrite) {
             return;
         }
 
