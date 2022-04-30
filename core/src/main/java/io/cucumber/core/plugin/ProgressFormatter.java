@@ -52,7 +52,7 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> handleTestRunFinished());
+        publisher.registerHandlerFor(TestRunFinished.class, this::handleTestRunFinished);
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
@@ -66,14 +66,14 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         if (!monochrome) {
             ANSI_ESCAPES.get(event.getResult().getStatus()).appendTo(buffer);
         }
-        out.append(CHARS.get(event.getResult().getStatus()));
+        buffer.append(CHARS.get(event.getResult().getStatus()));
         if (!monochrome) {
             AnsiEscapes.RESET.appendTo(buffer);
         }
         out.append(buffer);
     }
 
-    private void handleTestRunFinished() {
+    private void handleTestRunFinished(TestRunFinished testRunFinished) {
         out.println();
         out.close();
     }
