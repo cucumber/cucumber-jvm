@@ -181,14 +181,17 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     }
 
     private void printText(WriteEvent event) {
+        // Prevent interleaving when multiple threads write to System.out
+        StringBuilder builder = new StringBuilder();
         try (BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
             String line;
             while ((line = lines.readLine()) != null) {
-                out.println(STEP_SCENARIO_INDENT + line);
+                builder.append(String.format(STEP_SCENARIO_INDENT + line + "%n"));
             }
         } catch (IOException e) {
             throw new CucumberException(e);
         }
+        out.append(builder);
     }
 
     private void printEmbedding(EmbedEvent event) {
@@ -230,7 +233,6 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         if (padding < 0) {
             return " ";
         }
-
         StringBuilder builder = new StringBuilder(padding);
         for (int i = 0; i < padding; i++) {
             builder.append(" ");
