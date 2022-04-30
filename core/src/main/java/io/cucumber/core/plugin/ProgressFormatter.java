@@ -56,15 +56,21 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (event.getTestStep() instanceof PickleStepTestStep || event.getResult().getStatus().is(Status.FAILED)) {
-            if (!monochrome) {
-                ANSI_ESCAPES.get(event.getResult().getStatus()).appendTo(out);
-            }
-            out.append(CHARS.get(event.getResult().getStatus()));
-            if (!monochrome) {
-                AnsiEscapes.RESET.appendTo(out);
-            }
+        boolean isTestStep = event.getTestStep() instanceof PickleStepTestStep;
+        boolean isFailedHookOrTestStep = event.getResult().getStatus().is(Status.FAILED);
+        if (!(isTestStep || isFailedHookOrTestStep)) {
+            return;
         }
+        // Prevent tearing in output when multiple threads write to System.out
+        StringBuilder buffer = new StringBuilder();
+        if (!monochrome) {
+            ANSI_ESCAPES.get(event.getResult().getStatus()).appendTo(buffer);
+        }
+        out.append(CHARS.get(event.getResult().getStatus()));
+        if (!monochrome) {
+            AnsiEscapes.RESET.appendTo(buffer);
+        }
+        out.append(buffer);
     }
 
     private void handleTestRunFinished() {
