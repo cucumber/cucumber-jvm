@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [7.3.3] (2022-04-30)
+
+### Fixed
 * [Core] Pretty print plugin performance issues; incorrect DataTable format in Gradle console ([#2541](https://github.com/cucumber/cucumber-jvm/pull/2541) Scott Davis)
 
 ## [7.3.2] (2022-04-22)
@@ -1778,7 +1782,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.2...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...main
+[7.3.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.2-RC1...v7.3.3
 [7.3.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.1-RC1...v7.3.2
 [7.3.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.0-RC1...v7.3.1
 [7.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.3-RC1...v7.3.0
