@@ -11,9 +11,15 @@ final class NiceAppendable implements Appendable {
 
     private static final CharSequence NL = "\n";
     private final Appendable out;
+    private final boolean flushEveryWrite;
 
     public NiceAppendable(Appendable out) {
+        this(out, false);
+    }
+
+    public NiceAppendable(Appendable out, boolean flushEveryWrite) {
         this.out = out;
+        this.flushEveryWrite = flushEveryWrite;
     }
 
     public NiceAppendable println() {
@@ -52,6 +58,10 @@ final class NiceAppendable implements Appendable {
 
     private void tryFlush() {
         if (!(out instanceof Flushable)) {
+            return;
+        }
+
+        if (!flushEveryWrite) {
             return;
         }
 

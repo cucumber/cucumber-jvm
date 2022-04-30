@@ -68,6 +68,8 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
             String pattern = entry.getValue();
             out.println(format.text(location) + " # " + pattern);
         }
+
+        out.close();
     }
 
     @Override
