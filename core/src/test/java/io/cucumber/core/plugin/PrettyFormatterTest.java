@@ -166,6 +166,34 @@ class PrettyFormatterTest {
     }
 
     @Test
+    void should_print_encoded_characters() {
+    	
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test Characters\n" +
+                "    Given first step\n" +
+                "      | URLEncoded | %71s%22i%22%3A%7B%22D |\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", "path/step_definitions.java:7", DataTable.class)))
+                .build()
+                .run();
+
+        assertThat(out, isBytesEqualTo("" +
+
+                "\n" +
+                "Scenario: Test Characters # path/test.feature:2\n" +
+                "  Given first step        # path/step_definitions.java:7\n" +
+        		"    | URLEncoded | %71s%22i%22%3A%7B%22D |\n"));
+   }
+    
+
+    @Test
     void should_print_tags() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "@feature_tag\n" +
