@@ -167,7 +167,7 @@ class PrettyFormatterTest {
 
     @Test
     void should_print_encoded_characters() {
-    	
+
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Test feature\n" +
                 "  Scenario: Test Characters\n" +
@@ -189,9 +189,8 @@ class PrettyFormatterTest {
                 "\n" +
                 "Scenario: Test Characters # path/test.feature:2\n" +
                 "  Given first step        # path/step_definitions.java:7\n" +
-        		"    | URLEncoded | %71s%22i%22%3A%7B%22D |\n"));
-   }
-    
+                "    | URLEncoded | %71s%22i%22%3A%7B%22D |\n"));
+    }
 
     @Test
     void should_print_tags() {

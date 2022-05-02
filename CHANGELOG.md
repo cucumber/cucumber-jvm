@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [7.3.4] (2022-05-02)
+
+### Fixed
 * [Core] Fix problem with PrettyFormatter printing URL encoded strings ([#2545](https://github.com/cucumber/cucumber-jvm/pull/2545) skloessel)
 
 ## [7.3.3] (2022-04-30)
@@ -1783,7 +1787,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...main
+[7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3-RC1...v7.3.4
 [7.3.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.2-RC1...v7.3.3
 [7.3.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.1-RC1...v7.3.2
 [7.3.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.0-RC1...v7.3.1
