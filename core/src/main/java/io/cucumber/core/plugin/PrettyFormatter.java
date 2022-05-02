@@ -186,7 +186,9 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         try (BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
             String line;
             while ((line = lines.readLine()) != null) {
-                builder.append(String.format(STEP_SCENARIO_INDENT + line + "%n"));
+                builder.append(STEP_SCENARIO_INDENT)
+                	.append(line)
+                	.append(System.lineSeparator()); // Add system line separator - \n won't do it!
             }
         } catch (IOException e) {
             throw new CucumberException(e);
