@@ -1,8 +1,13 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
@@ -28,6 +33,11 @@ import static java.util.Objects.requireNonNull;
  * It is recommended to always use the package name form.
  */
 public class GluePath {
+
+    private static final Logger log = LoggerFactory.getLogger(GluePath.class);
+
+    private static final Pattern FILESYSTEM_PATH_TO_PACKAGES = Pattern
+            .compile("/*src/(?:main|test)/(?:java|kotlin|scala|groovy)/(.*)");
 
     private GluePath() {
 
@@ -70,6 +80,8 @@ public class GluePath {
     private static URI parseAssumeClasspathScheme(String gluePath) {
         URI uri = URI.create(gluePath);
 
+        warnWhenFileSystemPath(gluePath);
+
         String schemeSpecificPart = uri.getSchemeSpecificPart();
         if (!isValidIdentifier(schemeSpecificPart)) {
             throw new IllegalArgumentException("The glue path contained invalid identifiers " + uri);
@@ -90,6 +102,17 @@ public class GluePath {
         }
 
         return uri;
+    }
+
+    private static void warnWhenFileSystemPath(String gluePath) {
+        Matcher matcher = FILESYSTEM_PATH_TO_PACKAGES.matcher(gluePath);
+        if (matcher.matches()) {
+            log.warn(() -> String.format(
+                "Please replace glue path '%s' with the corresponding package name ('%s') " +
+                "in order to use already compiled files.",
+                gluePath,
+                matcher.replaceAll("$1").replaceAll("/", ".")));
+        }
     }
 
     private static boolean isProbablyPackage(String gluePath) {

@@ -1,8 +1,13 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.core.resource.ClasspathSupport.RESOURCE_SEPARATOR_CHAR;
@@ -26,6 +31,10 @@ import static java.util.Objects.requireNonNull;
  * @see FeatureWithLines
  */
 public class FeaturePath {
+
+    private static final Logger log = LoggerFactory.getLogger(FeaturePath.class);
+
+    private static final Pattern FILESYSTEM_PATH_TO_RESOURCES = Pattern.compile("/*src/(?:main|test)/resources/(.*)");
 
     private FeaturePath() {
 
@@ -69,6 +78,7 @@ public class FeaturePath {
     }
 
     private static URI parseAssumeFileScheme(String featureIdentifier) {
+        warnWhenFileSystemPathToResources(featureIdentifier);
         File featureFile = new File(featureIdentifier);
         return featureFile.toURI();
     }
@@ -99,6 +109,15 @@ public class FeaturePath {
             return "";
         }
         return value.toLowerCase(Locale.US).replaceAll("[^a-z0-9]+", "");
+    }
+
+    private static void warnWhenFileSystemPathToResources(String featureIdentifier) {
+        Matcher matcher = FILESYSTEM_PATH_TO_RESOURCES.matcher(featureIdentifier);
+        if (matcher.matches()) {
+            log.warn(() -> String.format("Please replace feature path '%s' with the classpath '%s' to avoid ambiguity.",
+                featureIdentifier,
+                matcher.replaceAll("classpath:$1")));
+        }
     }
 
 }
