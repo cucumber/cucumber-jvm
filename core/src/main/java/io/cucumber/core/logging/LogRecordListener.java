@@ -17,9 +17,4 @@ public final class LogRecordListener {
         return Arrays.asList(logRecords.toArray(new LogRecord[0]));
     }
 
-    public static boolean anyRecordMessageMatch(LogRecordListener listener, String regex) {
-        return listener.getLogRecords().stream()
-                .anyMatch(r -> r.getMessage().matches(regex));
-    }
-
 }

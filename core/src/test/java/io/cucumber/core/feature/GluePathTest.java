@@ -1,17 +1,25 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.net.URI;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class GluePathTest {
 
@@ -112,6 +120,30 @@ class GluePathTest {
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "The glue path must have a classpath scheme C:/com/example/app")));
+    }
+
+    @ParameterizedTest
+    @MethodSource("GluePathAndPatternProvider")
+    void warn_when_glue_as_filesystem_path(String gluePath, String logPattern) {
+        // warn when 'src/{test,main}/{java,kotlin,scala,groovy}' is used
+
+        LogRecordListener logRecordListener = new LogRecordListener();
+        LoggerFactory.addListener(logRecordListener);
+
+        GluePath.parse(gluePath);
+
+        LoggerFactory.removeListener(logRecordListener);
+
+        assertThat(logRecordListener.getLogRecords().get(0).getMessage(),
+            matchesPattern(logPattern));
+    }
+
+    static Stream<Arguments> GluePathAndPatternProvider() {
+        return Stream.of(
+            arguments("src/main/java", ".*not a package.*"),
+            arguments("src/main/java/com/example", ".*replace.*src/main/java/com/example.*'com.example'.*"),
+            arguments("src/test/java/com/package/other_package",
+                ".*replace.*src/test/java/com/package/other_package.*'com.package.other_package'.*"));
     }
 
 }

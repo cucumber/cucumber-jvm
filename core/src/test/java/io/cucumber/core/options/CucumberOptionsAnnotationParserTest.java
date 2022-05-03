@@ -2,10 +2,6 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeaturePath;
-import io.cucumber.core.feature.GluePath;
-import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PluginFactory;
@@ -218,44 +214,6 @@ class CucumberOptionsAnnotationParserTest {
 
         assertThat(runtimeOptions.getGlue(),
             contains(uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
-    }
-
-    @Test
-    void warn_when_features_as_filesystem_path_to_resources() {
-        // warn when 'src/{test,main}/resources' is used
-
-        LogRecordListener logRecordListener = new LogRecordListener();
-        LoggerFactory.addListener(logRecordListener);
-
-        FeaturePath.parse("src/test/resources/features");
-        FeaturePath.parse("src/main/resources/features/feature1");
-
-        LoggerFactory.removeListener(logRecordListener);
-
-        assertAll(
-            () -> assertTrue(LogRecordListener.anyRecordMessageMatch(logRecordListener,
-                ".*replace.*src/test/resources/features.*'classpath:features'.*")),
-            () -> assertTrue(LogRecordListener.anyRecordMessageMatch(logRecordListener,
-                ".*replace.*src/main/resources/features/feature1.*'classpath:features/feature1'.*")));
-    }
-
-    @Test
-    void warn_when_glue_as_filesystem_path() {
-        // warn when 'src/{test,main}/{java,kotlin,scala,groovy}' is used
-
-        LogRecordListener logRecordListener = new LogRecordListener();
-        LoggerFactory.addListener(logRecordListener);
-
-        GluePath.parse("src/main/java/com/example");
-        GluePath.parse("src/test/java/com/package/other_package");
-
-        LoggerFactory.removeListener(logRecordListener);
-
-        assertAll(
-            () -> assertTrue(LogRecordListener.anyRecordMessageMatch(logRecordListener,
-                ".*replace.*src/main/java/com/example.*'com.example'.*")),
-            () -> assertTrue(LogRecordListener.anyRecordMessageMatch(logRecordListener,
-                ".*replace.*src/test/java/com/package/other_package.*'com.package.other_package'.*")));
     }
 
     @Test

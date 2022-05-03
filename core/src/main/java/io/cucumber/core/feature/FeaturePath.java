@@ -34,7 +34,7 @@ public class FeaturePath {
 
     private static final Logger log = LoggerFactory.getLogger(FeaturePath.class);
 
-    private static final Pattern FILESYSTEM_PATH_TO_RESOURCES = Pattern.compile("/*src/(?:main|test)/resources/(.*)");
+    private static final Pattern FILESYSTEM_PATH_TO_RESOURCES = Pattern.compile("src/(?:main|test)/resources/?(.*)");
 
     private FeaturePath() {
 

@@ -1,18 +1,26 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.net.URI;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.text.MatchesPattern.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class FeaturePathTest {
 
@@ -146,4 +154,27 @@ class FeaturePathTest {
             () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature")));
     }
 
+    @ParameterizedTest
+    @MethodSource("FeaturePathAndPatternProvider")
+    void warn_when_features_as_filesystem_path_to_resources(String featurePath, String logPattern) {
+        // warn when 'src/{test,main}/resources' is used
+
+        LogRecordListener logRecordListener = new LogRecordListener();
+        LoggerFactory.addListener(logRecordListener);
+
+        FeaturePath.parse(featurePath);
+
+        LoggerFactory.removeListener(logRecordListener);
+
+        assertThat(logRecordListener.getLogRecords().get(0).getMessage(),
+            matchesPattern(logPattern));
+    }
+
+    static Stream<Arguments> FeaturePathAndPatternProvider() {
+        return Stream.of(
+            arguments("src/test/resources/", ".*replace.*src/test/resources/.*'classpath:'.*"),
+            arguments("src/test/resources/features", ".*replace.*src/test/resources/features.*'classpath:features'.*"),
+            arguments("src/main/resources/features/feature1",
+                ".*replace.*src/main/resources/features/feature1.*'classpath:features/feature1'.*"));
+    }
 }
