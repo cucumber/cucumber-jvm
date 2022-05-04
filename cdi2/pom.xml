@@ -5,7 +5,7 @@
         <cdi-api.version>2.0.SP1</cdi-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <openwebbeans.version>2.0.26</openwebbeans.version>
-        <weld-se-core.version>3.1.9.Final</weld-se-core.version>
+        <weld-se-core.version>5.0.0.SP1</weld-se-core.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <hamcrest.version>2.2</hamcrest.version>
