@@ -166,15 +166,21 @@ class FeaturePathTest {
 
         LoggerFactory.removeListener(logRecordListener);
 
-        assertThat(logRecordListener.getLogRecords().get(0).getMessage(),
-            matchesPattern(logPattern));
+        String logMessage = "";
+        if (!logRecordListener.getLogRecords().isEmpty()) {
+            logMessage = logRecordListener.getLogRecords().get(0).getMessage();
+        }
+
+        assertThat(logMessage, matchesPattern(logPattern));
     }
 
     static Stream<Arguments> FeaturePathAndPatternProvider() {
         return Stream.of(
-            arguments("src/test/resources/", ".*replace.*src/test/resources/.*'classpath:'.*"),
-            arguments("src/test/resources/features", ".*replace.*src/test/resources/features.*'classpath:features'.*"),
+            arguments("src/test/resources_abcd", ""),
+            arguments("src/test/resources/", ".*replacing.*src/test/resources/.*'classpath:'.*"),
+            arguments("src/test/resources/features",
+                ".*replacing.*src/test/resources/features.*'classpath:features'.*"),
             arguments("src/main/resources/features/feature1",
-                ".*replace.*src/main/resources/features/feature1.*'classpath:features/feature1'.*"));
+                ".*replacing.*src/main/resources/features/feature1.*'classpath:features/feature1'.*"));
     }
 }

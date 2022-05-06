@@ -134,14 +134,21 @@ class GluePathTest {
 
         LoggerFactory.removeListener(logRecordListener);
 
-        assertThat(logRecordListener.getLogRecords().get(0).getMessage(),
-            matchesPattern(logPattern));
+        String logMessage = "";
+        if (!logRecordListener.getLogRecords().isEmpty()) {
+            logMessage = logRecordListener.getLogRecords().get(0).getMessage();
+        }
+
+        assertThat(logMessage, matchesPattern(logPattern));
     }
 
     static Stream<Arguments> GluePathAndPatternProvider() {
         return Stream.of(
             arguments("src/main/java", ".*not a package.*"),
-            arguments("src/main/java/com/example", ".*replace.*src/main/java/com/example.*'com.example'.*"),
+            arguments("src/main/scala_other", ""),
+            arguments("src/main/javaaaaa", ""),
+            arguments("src/main/abcd", ""),
+            arguments("src/main/groovy/com/example", ".*replace.*src/main/groovy/com/example.*'com.example'.*"),
             arguments("src/test/java/com/package/other_package",
                 ".*replace.*src/test/java/com/package/other_package.*'com.package.other_package'.*"));
     }

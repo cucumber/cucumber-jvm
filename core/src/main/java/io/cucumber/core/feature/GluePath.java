@@ -37,7 +37,7 @@ public class GluePath {
     private static final Logger log = LoggerFactory.getLogger(GluePath.class);
 
     private static final Pattern FILESYSTEM_PATH_TO_PACKAGES = Pattern
-            .compile("src/(?:main|test)/(?:java|kotlin|scala|groovy)/?(.*)");
+            .compile("src/(?:main|test)/(?:java|kotlin|scala|groovy)(/?)(.*)");
 
     private GluePath() {
 
@@ -107,11 +107,11 @@ public class GluePath {
     private static void warnWhenFileSystemPath(String gluePath) {
         Matcher matcher = FILESYSTEM_PATH_TO_PACKAGES.matcher(gluePath);
         if (matcher.matches()) {
-            String _package = matcher.replaceAll("$1").replaceAll("/", ".");
-            if (_package.isEmpty()) {
+            String _package = matcher.group(2).replaceAll("/", ".");
+            if (_package.isEmpty() || _package.equals(".")) {
                 log.warn(() -> String.format(
                     "%s is not a package. Please insert a package as glue path (e.g come.example)", gluePath));
-            } else {
+            } else if (matcher.group(1).equals("/")) {
                 log.warn(
                     () -> String.format("Please replace glue path '%s' with the corresponding package name ('%s') " +
                             "in order to use already compiled files.",
