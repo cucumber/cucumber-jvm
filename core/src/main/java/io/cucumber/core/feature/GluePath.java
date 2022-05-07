@@ -117,7 +117,7 @@ public class GluePath {
             if (classPathResource.endsWith("/")) {
                 classPathResource = classPathResource.substring(0, classPathResource.length() - 1);
             }
-            String packageName = classPathResource.replaceAll("/",".");
+            String packageName = classPathResource.replaceAll("/", ".");
             String message = "" +
                     "Cucumber was given the glue path '%s'. This path points to a source directory\n" +
                     "in your project. However cucumber looks for glue (i.e. step definitions) on the\n" +
