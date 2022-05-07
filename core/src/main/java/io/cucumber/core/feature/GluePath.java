@@ -109,16 +109,15 @@ public class GluePath {
         if (!matcher.matches()) {
             return;
         }
-        String classPathResource = matcher.group(1);
-        if (classPathResource.startsWith("/")) {
-            classPathResource = classPathResource.substring(1);
-        }
-        if (classPathResource.endsWith("/")) {
-            classPathResource = classPathResource.substring(0, classPathResource.length() - 1);
-        }
-
-        String packageName = classPathResource.replaceAll("/",".");
         log.warn(() -> {
+            String classPathResource = matcher.group(1);
+            if (classPathResource.startsWith("/")) {
+                classPathResource = classPathResource.substring(1);
+            }
+            if (classPathResource.endsWith("/")) {
+                classPathResource = classPathResource.substring(0, classPathResource.length() - 1);
+            }
+            String packageName = classPathResource.replaceAll("/",".");
             String message = "" +
                     "Cucumber was given the glue path '%s'. This path points to a source directory\n" +
                     "in your project. However cucumber looks for glue (i.e. step definitions) on the\n" +
