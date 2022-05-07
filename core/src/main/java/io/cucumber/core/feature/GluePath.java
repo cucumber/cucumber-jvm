@@ -37,7 +37,7 @@ public class GluePath {
     private static final Logger log = LoggerFactory.getLogger(GluePath.class);
 
     private static final Pattern FILESYSTEM_PATH_TO_PACKAGES = Pattern
-            .compile("src/(?:main|test)/(?:java|kotlin|scala|groovy)(/?)(.*)");
+            .compile("src/(?:main|test)/(?:java|kotlin|scala|groovy)(|/|/.+)");
 
     private GluePath() {
 
@@ -109,16 +109,24 @@ public class GluePath {
         if (!matcher.matches()) {
             return;
         }
-        String _package = matcher.group(2).replaceAll("/", ".");
-        if (_package.isEmpty() || _package.equals(".")) {
-            log.warn(() -> String.format(
-                "%s is not a package. Please insert a package as glue path (e.g come.example)", gluePath));
-        } else if (matcher.group(1).equals("/")) {
-            log.warn(
-                () -> String.format("Please replace glue path '%s' with the corresponding package name ('%s') " +
-                        "in order to use already compiled files.",
-                    gluePath, _package));
+        String classPathResource = matcher.group(1);
+        if (classPathResource.startsWith("/")) {
+            classPathResource = classPathResource.substring(1);
         }
+        if (classPathResource.endsWith("/")) {
+            classPathResource = classPathResource.substring(0, classPathResource.length() - 1);
+        }
+
+        String packageName = classPathResource.replaceAll("/",".");
+        log.warn(() -> {
+            String message = "" +
+                    "Cucumber was given the glue path '%s'. This path points to a source directory\n" +
+                    "in your project. However cucumber looks for glue (i.e. step definitions) on the\n" +
+                    "classpath.\n" +
+                    "\n" +
+                    "To avoid confusion consider using a package name instead for example: '%s'\n";
+            return String.format(message, gluePath, packageName);
+        });
     }
 
     private static boolean isProbablyPackage(String gluePath) {
