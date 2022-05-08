@@ -2,9 +2,7 @@ package io.cucumber.core.feature;
 
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.hamcrest.text.IsEmptyString;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -20,11 +18,8 @@ import java.util.stream.Stream;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.text.IsEmptyString.emptyOrNullString;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -153,18 +148,26 @@ class GluePathTest {
 
     static Stream<Arguments> GluePathAndPatternProvider() {
         return Stream.of(
-            arguments("src/main/java", containsString("for example: ''")),
-            arguments("src/main/java/", containsString("for example: ''")),
+            arguments("src/main/java/com/example/package",
+                equalTo("" +
+                        "Consider changing the glue path from " +
+                        "'src/main/java/com/example/package' to " +
+                        "'com.example.package'.\n" +
+                        "'\n" +
+                        "The current glue path points to a source " +
+                        "directory in your project. However cucumber " +
+                        "looks for glue (i.e. step definitions) on the " +
+                        "classpath. By using a package name you can " +
+                        "avoid this ambiguity.")),
+            arguments("src/main/java", containsString("to ''")),
+            arguments("src/main/java/", containsString("to ''")),
             arguments("src/main/java_other", nullValue()),
             arguments("src/main/other", nullValue()),
-            arguments("src/main/java/com", containsString("for example: 'com'")),
-            arguments("src/main/java/com/", containsString("for example: 'com'")),
-            arguments("src/main/groovy/com", containsString("for example: 'com'")),
-            arguments("src/main/java/com/example", containsString("for example: 'com.example'")),
-            arguments("src/main/java/com/example/", containsString("for example: 'com.example'")),
-            arguments("src/main/java/com/example/package", containsString("for example: 'com.example.package'"))
-
-        );
+            arguments("src/main/java/com", containsString("to 'com'")),
+            arguments("src/main/java/com/", containsString("to 'com'")),
+            arguments("src/main/groovy/com", containsString("to 'com'")),
+            arguments("src/main/java/com/example", containsString("to 'com.example'")),
+            arguments("src/main/java/com/example/", containsString("to 'com.example'")));
     }
 
 }

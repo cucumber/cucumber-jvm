@@ -36,7 +36,7 @@ public class GluePath {
 
     private static final Logger log = LoggerFactory.getLogger(GluePath.class);
 
-    private static final Pattern FILESYSTEM_PATH_TO_PACKAGES = Pattern
+    private static final Pattern WELL_KNOWN_PROJECT_SOURCE_DIRECTORIES = Pattern
             .compile("src/(?:main|test)/(?:java|kotlin|scala|groovy)(|/|/.+)");
 
     private GluePath() {
@@ -80,7 +80,7 @@ public class GluePath {
     private static URI parseAssumeClasspathScheme(String gluePath) {
         URI uri = URI.create(gluePath);
 
-        warnWhenFileSystemPath(gluePath);
+        warnWhenWellKnownProjectSourceDirectory(gluePath);
 
         String schemeSpecificPart = uri.getSchemeSpecificPart();
         if (!isValidIdentifier(schemeSpecificPart)) {
@@ -104,8 +104,8 @@ public class GluePath {
         return uri;
     }
 
-    private static void warnWhenFileSystemPath(String gluePath) {
-        Matcher matcher = FILESYSTEM_PATH_TO_PACKAGES.matcher(gluePath);
+    private static void warnWhenWellKnownProjectSourceDirectory(String gluePath) {
+        Matcher matcher = WELL_KNOWN_PROJECT_SOURCE_DIRECTORIES.matcher(gluePath);
         if (!matcher.matches()) {
             return;
         }
@@ -119,11 +119,11 @@ public class GluePath {
             }
             String packageName = classPathResource.replaceAll("/", ".");
             String message = "" +
-                    "Cucumber was given the glue path '%s'. This path points to a source directory\n" +
-                    "in your project. However cucumber looks for glue (i.e. step definitions) on the\n" +
-                    "classpath.\n" +
+                    "Consider changing the glue path from '%s' to '%s'.\n'" +
                     "\n" +
-                    "To avoid confusion consider using a package name instead for example: '%s'\n";
+                    "The current glue path points to a source directory in your project. However " +
+                    "cucumber looks for glue (i.e. step definitions) on the classpath. By using a " +
+                    "package name you can avoid this ambiguity.";
             return String.format(message, gluePath, packageName);
         });
     }
