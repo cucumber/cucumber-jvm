@@ -150,8 +150,8 @@ class GluePathTest {
         return Stream.of(
             arguments("src/main/java/com/example/package",
                 equalTo("" +
-                        "Consider changing the glue path from " +
-                        "'src/main/java/com/example/package' to " +
+                        "Consider replacing glue path " +
+                        "'src/main/java/com/example/package' with " +
                         "'com.example.package'.\n" +
                         "'\n" +
                         "The current glue path points to a source " +
@@ -159,15 +159,15 @@ class GluePathTest {
                         "looks for glue (i.e. step definitions) on the " +
                         "classpath. By using a package name you can " +
                         "avoid this ambiguity.")),
-            arguments("src/main/java", containsString("to ''")),
-            arguments("src/main/java/", containsString("to ''")),
+            arguments("src/main/java", containsString("with ''")),
+            arguments("src/main/java/", containsString("with ''")),
             arguments("src/main/java_other", nullValue()),
             arguments("src/main/other", nullValue()),
-            arguments("src/main/java/com", containsString("to 'com'")),
-            arguments("src/main/java/com/", containsString("to 'com'")),
-            arguments("src/main/groovy/com", containsString("to 'com'")),
-            arguments("src/main/java/com/example", containsString("to 'com.example'")),
-            arguments("src/main/java/com/example/", containsString("to 'com.example'")));
+            arguments("src/main/java/com", containsString("with 'com'")),
+            arguments("src/main/java/com/", containsString("with 'com'")),
+            arguments("src/main/groovy/com", containsString("with 'com'")),
+            arguments("src/main/java/com/example", containsString("with 'com.example'")),
+            arguments("src/main/java/com/example/", containsString("with 'com.example'")));
     }
 
 }

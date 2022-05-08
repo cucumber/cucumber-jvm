@@ -119,7 +119,7 @@ public class GluePath {
             }
             String packageName = classPathResource.replaceAll("/", ".");
             String message = "" +
-                    "Consider changing the glue path from '%s' to '%s'.\n'" +
+                    "Consider replacing glue path '%s' with '%s'.\n'" +
                     "\n" +
                     "The current glue path points to a source directory in your project. However " +
                     "cucumber looks for glue (i.e. step definitions) on the classpath. By using a " +
