@@ -126,8 +126,8 @@ class GluePathTest {
     }
 
     @ParameterizedTest
-    @MethodSource("GluePathAndPatternProvider")
-    void warn_when_glue_as_filesystem_path(String gluePath, Matcher<String> logPattern) {
+    @MethodSource("warn_when_glue_as_filesystem_path_examples")
+    void when_when_glue_path_is_well_known_source_directory(String gluePath, Matcher<String> logPattern) {
         // warn when 'src/{test,main}/{java,kotlin,scala,groovy}' is used
 
         LogRecordListener logRecordListener = new LogRecordListener();
@@ -146,7 +146,7 @@ class GluePathTest {
         assertThat(logMessage, logPattern);
     }
 
-    static Stream<Arguments> GluePathAndPatternProvider() {
+    static Stream<Arguments> warn_when_glue_as_filesystem_path_examples() {
         return Stream.of(
             arguments("src/main/java/com/example/package",
                 equalTo("" +
