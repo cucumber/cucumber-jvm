@@ -14,11 +14,11 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.matchesPattern;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FeaturePathFeatureSupplierTest {
@@ -44,9 +44,8 @@ class FeaturePathFeatureSupplierTest {
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         supplier.get();
-
         assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
-            matchesPattern(".*No features found at.*io/cucumber/core/options/?"));
+            equalTo("No features found at classpath:io/cucumber/core/options"));
     }
 
     @Test
