@@ -1,17 +1,28 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.net.URI;
+import java.util.logging.LogRecord;
+import java.util.stream.Stream;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class GluePathTest {
 
@@ -112,6 +123,51 @@ class GluePathTest {
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
             "The glue path must have a classpath scheme C:/com/example/app")));
+    }
+
+    @ParameterizedTest
+    @MethodSource("warn_when_glue_as_filesystem_path_examples")
+    void when_when_glue_path_is_well_known_source_directory(String gluePath, Matcher<String> logPattern) {
+        // warn when 'src/{test,main}/{java,kotlin,scala,groovy}' is used
+
+        LogRecordListener logRecordListener = new LogRecordListener();
+        LoggerFactory.addListener(logRecordListener);
+
+        GluePath.parse(gluePath);
+
+        LoggerFactory.removeListener(logRecordListener);
+
+        String logMessage = logRecordListener.getLogRecords()
+                .stream()
+                .findFirst()
+                .map(LogRecord::getMessage)
+                .orElse(null);
+
+        assertThat(logMessage, logPattern);
+    }
+
+    static Stream<Arguments> warn_when_glue_as_filesystem_path_examples() {
+        return Stream.of(
+            arguments("src/main/java/com/example/package",
+                equalTo("" +
+                        "Consider replacing glue path " +
+                        "'src/main/java/com/example/package' with " +
+                        "'com.example.package'.\n" +
+                        "'\n" +
+                        "The current glue path points to a source " +
+                        "directory in your project. However cucumber " +
+                        "looks for glue (i.e. step definitions) on the " +
+                        "classpath. By using a package name you can " +
+                        "avoid this ambiguity.")),
+            arguments("src/main/java", containsString("with ''")),
+            arguments("src/main/java/", containsString("with ''")),
+            arguments("src/main/java_other", nullValue()),
+            arguments("src/main/other", nullValue()),
+            arguments("src/main/java/com", containsString("with 'com'")),
+            arguments("src/main/java/com/", containsString("with 'com'")),
+            arguments("src/main/groovy/com", containsString("with 'com'")),
+            arguments("src/main/java/com/example", containsString("with 'com.example'")),
+            arguments("src/main/java/com/example/", containsString("with 'com.example'")));
     }
 
 }

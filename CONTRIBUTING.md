@@ -15,7 +15,7 @@ We appreciate that. Do keep the following in mind:
 To automatically format the java source code run
 
 ```
-mvn spotless:apply
+mvn initialize spotless:apply
 ```
 
 To configure Intelij IDEA/Eclipse use the configuration files in `.spotless/`.
