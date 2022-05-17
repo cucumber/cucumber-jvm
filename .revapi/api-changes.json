@@ -163,6 +163,24 @@
             "code": "java.class.nonPublicPartOfAPI",
             "new": ".* io\\.cucumber\\.core\\.internal\\..*",
             "justification": "Internal API"
+          },
+          {
+            "code": "java.method.returnTypeChangedCovariantly",
+            "old": "method java.lang.Throwable java.lang.Throwable::fillInStackTrace() @ io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.UnresolvedForwardReference",
+            "new": "method io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.UnresolvedForwardReference io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.UnresolvedForwardReference::fillInStackTrace()",
+            "justification": "Internal API"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.finalMethodAddedToNonFinalClass",
+            "new": "method java.lang.Integer io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.std.StdDeserializer<T>::_parseInteger(io.cucumber.core.internal.com.fasterxml.jackson.databind.DeserializationContext, java.lang.String) throws java.io.IOException",
+            "justification": "Internal API"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.finalMethodAddedToNonFinalClass",
+            "new": "method java.lang.Long io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.std.StdDeserializer<T>::_parseLong(io.cucumber.core.internal.com.fasterxml.jackson.databind.DeserializationContext, java.lang.String) throws java.io.IOException",
+            "justification": "Internal API"
           }
         ]
       }
