@@ -26,7 +26,11 @@
 
         <!--Maven plugins-->
         <groovy.version>2.5.15</groovy.version>
+        
+        <!--Minimum required maven version - 3.5.4 was released 2018-06-21 --> 
+        <maven.version.min>3.5.4</maven.version.min>
     </properties>
+    
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
@@ -114,6 +118,11 @@
                             <artifactId>maven-failsafe-plugin</artifactId>
                             <version>3.0.0-M6</version>
                         </plugin>
+                        <plugin>
+			                <groupId>org.apache.maven.plugins</groupId>
+			                <artifactId>maven-enforcer-plugin</artifactId>
+                            <version>3.0.0</version>
+                        </plugin>
                     </plugins>
                 </pluginManagement>
             </build>
@@ -138,10 +147,36 @@
                 </plugins>
             </build>
         </profile>
+        
     </profiles>
 
     <build>
-        <plugins>
+    	
+    	<!-- You may run a build without any goal .. just type 'mvn' -->
+    	<defaultGoal>clean install</defaultGoal>
+    	
+    	<plugins>
+    		<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+					<execution>
+						<id>enforce-maven-3-3-1-plus</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<fail>true</fail>
+							<rules>
+								<requireMavenVersion>
+									<version>${maven.version.min}</version>
+								</requireMavenVersion>                
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+    		</plugin>
+    		
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -193,7 +228,6 @@
             <plugin>
                 <groupId>org.commonjava.maven.plugins</groupId>
                 <artifactId>directory-maven-plugin</artifactId>
-                <version>1.0</version>
                 <executions>
                     <execution>
                         <id>directories</id>
