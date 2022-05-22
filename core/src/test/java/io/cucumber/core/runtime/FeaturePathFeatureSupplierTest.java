@@ -15,10 +15,10 @@ import java.util.function.Supplier;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FeaturePathFeatureSupplierTest {
@@ -40,15 +40,12 @@ class FeaturePathFeatureSupplierTest {
 
     @Test
     void logs_message_if_no_features_are_found() {
-        Options featureOptions = () -> singletonList(FeaturePath.parse("src/test/resources/io/cucumber/core/options"));
+        Options featureOptions = () -> singletonList(FeaturePath.parse("classpath:io/cucumber/core/options"));
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
         supplier.get();
-        assertAll(
-            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
-                containsString("No features found at file:")),
-            () -> assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
-                containsString("src/test/resources/io/cucumber/core/options")));
+        assertThat(logRecordListener.getLogRecords().get(1).getMessage(),
+            equalTo("No features found at classpath:io/cucumber/core/options"));
     }
 
     @Test

@@ -1,8 +1,13 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
@@ -28,6 +33,11 @@ import static java.util.Objects.requireNonNull;
  * It is recommended to always use the package name form.
  */
 public class GluePath {
+
+    private static final Logger log = LoggerFactory.getLogger(GluePath.class);
+
+    private static final Pattern WELL_KNOWN_PROJECT_SOURCE_DIRECTORIES = Pattern
+            .compile("src/(?:main|test)/(?:java|kotlin|scala|groovy)(|/|/.+)");
 
     private GluePath() {
 
@@ -70,6 +80,8 @@ public class GluePath {
     private static URI parseAssumeClasspathScheme(String gluePath) {
         URI uri = URI.create(gluePath);
 
+        warnWhenWellKnownProjectSourceDirectory(gluePath);
+
         String schemeSpecificPart = uri.getSchemeSpecificPart();
         if (!isValidIdentifier(schemeSpecificPart)) {
             throw new IllegalArgumentException("The glue path contained invalid identifiers " + uri);
@@ -90,6 +102,30 @@ public class GluePath {
         }
 
         return uri;
+    }
+
+    private static void warnWhenWellKnownProjectSourceDirectory(String gluePath) {
+        Matcher matcher = WELL_KNOWN_PROJECT_SOURCE_DIRECTORIES.matcher(gluePath);
+        if (!matcher.matches()) {
+            return;
+        }
+        log.warn(() -> {
+            String classPathResource = matcher.group(1);
+            if (classPathResource.startsWith("/")) {
+                classPathResource = classPathResource.substring(1);
+            }
+            if (classPathResource.endsWith("/")) {
+                classPathResource = classPathResource.substring(0, classPathResource.length() - 1);
+            }
+            String packageName = classPathResource.replaceAll("/", ".");
+            String message = "" +
+                    "Consider replacing glue path '%s' with '%s'.\n'" +
+                    "\n" +
+                    "The current glue path points to a source directory in your project. However " +
+                    "cucumber looks for glue (i.e. step definitions) on the classpath. By using a " +
+                    "package name you can avoid this ambiguity.";
+            return String.format(message, gluePath, packageName);
+        });
     }
 
     private static boolean isProbablyPackage(String gluePath) {

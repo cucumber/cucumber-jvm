@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [7.3.5] (2022-05-10)
+
+### Added
+* [Core] Warn when glue path is passed as file scheme instead of classpath ([#2547](https://github.com/cucumber/cucumber-jvm/pull/2547) M.P. Korstanje)
+ 
 ## [7.3.4] (2022-05-02)
 
 ### Fixed

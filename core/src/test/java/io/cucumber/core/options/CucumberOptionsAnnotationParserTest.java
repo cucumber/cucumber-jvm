@@ -2,7 +2,6 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PluginFactory;
@@ -13,7 +12,6 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.tagexpressions.TagExpressionException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
