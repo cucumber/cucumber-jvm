@@ -14,7 +14,7 @@
     <properties>
         <ci-environment.version>9.0.4</ci-environment.version>
         <cucumber-expressions.version>15.2.0</cucumber-expressions.version>
-        <html-formatter.version>19.1.0</html-formatter.version>
+        <html-formatter.version>19.2.0</html-formatter.version>
         <tag-expressions.version>4.1.0</tag-expressions.version>
     </properties>
 
