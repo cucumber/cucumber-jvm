@@ -1,31 +1,18 @@
 package io.cucumber.core.resource;
 
 import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.logging.WithLogRecordListener;
 import io.cucumber.core.resource.test.ExampleClass;
 import io.cucumber.core.resource.test.ExampleInterface;
 import io.cucumber.core.resource.test.OtherClass;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.enumeration;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,23 +23,11 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@WithLogRecordListener
 class ClasspathScannerTest {
 
     private final ClasspathScanner scanner = new ClasspathScanner(
         ClasspathScannerTest.class::getClassLoader);
-
-    private LogRecordListener logRecordListener;
-
-    @BeforeEach
-    void setup() {
-        logRecordListener = new LogRecordListener();
-        LoggerFactory.addListener(logRecordListener);
-    }
-
-    @AfterEach
-    void tearDown() {
-        LoggerFactory.removeListener(logRecordListener);
-    }
 
     @Test
     void scanForSubClassesInPackage() {
@@ -88,7 +63,7 @@ class ClasspathScannerTest {
     }
 
     @Test
-    void scanForResourcesInUnsupportedFileSystem() throws IOException {
+    void scanForResourcesInUnsupportedFileSystem(LogRecordListener logRecordListener) throws IOException {
         ClassLoader classLoader = mock(ClassLoader.class);
         ClasspathScanner scanner = new ClasspathScanner(() -> classLoader);
         URLStreamHandler handler = new URLStreamHandler() {

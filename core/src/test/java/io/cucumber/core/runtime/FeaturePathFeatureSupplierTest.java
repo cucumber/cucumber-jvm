@@ -5,6 +5,7 @@ import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.Options;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.logging.WithLogRecordListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,25 +22,14 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@WithLogRecordListener
 class FeaturePathFeatureSupplierTest {
 
     private final Supplier<ClassLoader> classLoader = FeaturePathFeatureSupplierTest.class::getClassLoader;
     private final FeatureParser parser = new FeatureParser(UUID::randomUUID);
-    private LogRecordListener logRecordListener;
-
-    @BeforeEach
-    void setup() {
-        logRecordListener = new LogRecordListener();
-        LoggerFactory.addListener(logRecordListener);
-    }
-
-    @AfterEach
-    void tearDown() {
-        LoggerFactory.removeListener(logRecordListener);
-    }
 
     @Test
-    void logs_message_if_no_features_are_found() {
+    void logs_message_if_no_features_are_found(LogRecordListener logRecordListener) {
         Options featureOptions = () -> singletonList(FeaturePath.parse("classpath:io/cucumber/core/options"));
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
@@ -49,7 +39,7 @@ class FeaturePathFeatureSupplierTest {
     }
 
     @Test
-    void logs_message_if_no_feature_paths_are_given() {
+    void logs_message_if_no_feature_paths_are_given(LogRecordListener logRecordListener) {
         Options featureOptions = Collections::emptyList;
 
         FeaturePathFeatureSupplier supplier = new FeaturePathFeatureSupplier(classLoader, featureOptions, parser);
