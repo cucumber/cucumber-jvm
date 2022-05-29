@@ -59,7 +59,8 @@ public @interface WithLogRecordListener {
         @Override
         public boolean supportsParameter(ParameterContext paramContext, ExtensionContext extContext)
                 throws ParameterResolutionException {
-            return paramContext.getParameter().getType() == LogRecordListener.class;
+            return paramContext.getParameter().getType() == LogRecordListener.class
+                    && extContext.getTestMethod().isPresent();
         }
 
         @Override
