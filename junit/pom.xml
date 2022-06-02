@@ -16,7 +16,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <junit.version>4.13.2</junit.version>
-        <mockito.version>4.6.0</mockito.version>
+        <mockito.version>4.6.1</mockito.version>
         <project.Automatic-Module-Name>io.cucumber.junit</project.Automatic-Module-Name>
     </properties>
 
