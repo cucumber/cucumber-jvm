@@ -16,7 +16,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
-        <spring.version>5.3.20</spring.version>
+        <spring.version>5.3.21</spring.version>
         <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
     </properties>
 
