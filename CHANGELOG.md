@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
+* [Core] Warn when glue path is passed as file scheme instead of classpath ([#2547](https://github.com/cucumber/cucumber-jvm/pull/2547) M.P. Korstanje)
 
 ### Changed
 
@@ -16,12 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+* [Spring] Cleanly stop after failure to start application context
 
-## [7.3.5] (2022-05-10)
-
-### Added
-* [Core] Warn when glue path is passed as file scheme instead of classpath ([#2547](https://github.com/cucumber/cucumber-jvm/pull/2547) M.P. Korstanje)
- 
 ## [7.3.4] (2022-05-02)
 
 ### Fixed
@@ -1793,16 +1790,17 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 <!-- Releases -->
 [Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...main
-[7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3-RC1...v7.3.4
-[7.3.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.2-RC1...v7.3.3
-[7.3.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.1-RC1...v7.3.2
-[7.3.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.0-RC1...v7.3.1
-[7.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.3-RC1...v7.3.0
-[7.2.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.2-RC1...v7.2.3
-[7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1-RC1...v7.2.2
-[7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0-RC1...v7.2.1
-[7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0-RC1...v7.2.0
-[7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.1.0
+[7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
+[7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
+[7.3.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.2...v7.3.3
+[7.3.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.1...v7.3.2
+[7.3.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.0...v7.3.1
+[7.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.3...v7.3.0
+[7.2.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.2...v7.2.3
+[7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1...v7.2.2
+[7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0...v7.2.1
+[7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...v7.2.0
+[7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0...v7.1.0
 [7.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
 [7.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
 [6.11.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...v6.11.0

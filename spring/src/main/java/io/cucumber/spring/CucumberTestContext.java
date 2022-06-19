@@ -66,10 +66,14 @@ public final class CucumberTestContext {
     }
 
     void requireActiveScenario() {
-        if (sessionId == null) {
+        if (!isActive()) {
             throw new IllegalStateException(
                 "Scenario scoped beans can only be created while Cucumber is executing a scenario");
         }
+    }
+
+    boolean isActive() {
+        return sessionId != null;
     }
 
 }

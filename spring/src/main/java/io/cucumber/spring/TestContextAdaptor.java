@@ -50,10 +50,10 @@ class TestContextAdaptor {
 
     private void notifyTestContextManagerAboutBeforeTestMethod() {
         try {
-            Class<?> testClass = delegate.getTestContext().getTestClass();
-            Object testContextInstance = applicationContext.getBean(testClass);
+            Class<?> delegateTestClass = delegate.getTestContext().getTestClass();
+            Object delegateTestInstance = applicationContext.getBean(delegateTestClass);
             Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
-            delegate.beforeTestMethod(testContextInstance, dummyMethod);
+            delegate.beforeTestMethod(delegateTestInstance, dummyMethod);
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }
@@ -101,8 +101,14 @@ class TestContextAdaptor {
     }
 
     public final void stop() {
-        notifyTestContextManagerAboutAfterTestMethod();
-        CucumberTestContext.getInstance().stop();
+        // Don't invoke after test method when before test class was not invoked
+        // this is implicit in the existence of an active the test context
+        // session. This is not ideal, but Cucumber only supports 1 set of
+        // before/after semantics while JUnit and Spring have 2 sets.
+        if (CucumberTestContext.getInstance().isActive()) {
+            notifyTestContextManagerAboutAfterTestMethod();
+            CucumberTestContext.getInstance().stop();
+        }
         notifyTestContextManagerAboutAfterTestClass();
     }
 
@@ -116,10 +122,9 @@ class TestContextAdaptor {
 
     private void notifyTestContextManagerAboutAfterTestMethod() {
         try {
-            Class<?> testClass = delegate.getTestContext().getTestClass();
-            Object testContextInstance = applicationContext.getBean(testClass);
+            Object delegateTestInstance = delegate.getTestContext().getTestInstance();
             Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
-            delegate.afterTestMethod(testContextInstance, dummyMethod, null);
+            delegate.afterTestMethod(delegateTestInstance, dummyMethod, null);
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }
