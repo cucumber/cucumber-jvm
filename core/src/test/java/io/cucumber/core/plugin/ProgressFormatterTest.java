@@ -37,13 +37,13 @@ class ProgressFormatterTest {
 
     @Test
     void prints_empty_line_for_empty_test_run() {
-        Result runResult = new Result(PASSED, Duration.ZERO, null);
-        bus.send(new TestRunFinished(Instant.now(), runResult));
+        Result result = new Result(PASSED, Duration.ZERO, null);
+        bus.send(new TestRunFinished(Instant.now(), result));
         assertThat(out, isBytesEqualTo("\n"));
     }
 
     @Test
-    void print_green_dot_for_passing_step() {
+    void prints_empty_line_and_green_dot_for_passing_test_run() {
         Result result = new Result(PASSED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
         bus.send(new TestRunFinished(Instant.now(), result));
@@ -51,35 +51,37 @@ class ProgressFormatterTest {
     }
 
     @Test
+    void print_green_dot_for_passing_step() {
+        Result result = new Result(PASSED, Duration.ZERO, null);
+        bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
+        assertThat(out, isBytesEqualTo(AnsiEscapes.GREEN + "." + AnsiEscapes.RESET));
+    }
+
+    @Test
     void print_yellow_U_for_undefined_step() {
         Result result = new Result(UNDEFINED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
-        bus.send(new TestRunFinished(Instant.now(), result));
-        assertThat(out, isBytesEqualTo(AnsiEscapes.YELLOW + "U" + AnsiEscapes.RESET + "\n"));
+        assertThat(out, isBytesEqualTo(AnsiEscapes.YELLOW + "U" + AnsiEscapes.RESET));
     }
 
     @Test
     void print_nothing_for_passed_hook() {
         Result result = new Result(PASSED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(HookTestStep.class), result));
-        bus.send(new TestRunFinished(Instant.now(), result));
-        assertThat(out, isBytesEqualTo("\n"));
     }
 
     @Test
     void print_red_F_for_failed_step() {
         Result result = new Result(FAILED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
-        bus.send(new TestRunFinished(Instant.now(), result));
-        assertThat(out, isBytesEqualTo(AnsiEscapes.RED + "F" + AnsiEscapes.RESET + "\n"));
+        assertThat(out, isBytesEqualTo(AnsiEscapes.RED + "F" + AnsiEscapes.RESET));
     }
 
     @Test
     void print_red_F_for_failed_hook() {
         Result result = new Result(FAILED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(HookTestStep.class), result));
-        bus.send(new TestRunFinished(Instant.now(), result));
-        assertThat(out, isBytesEqualTo(AnsiEscapes.RED + "F" + AnsiEscapes.RESET + "\n"));
+        assertThat(out, isBytesEqualTo(AnsiEscapes.RED + "F" + AnsiEscapes.RESET));
     }
 
 }

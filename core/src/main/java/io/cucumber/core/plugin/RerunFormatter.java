@@ -8,6 +8,7 @@ import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,11 +24,11 @@ import static io.cucumber.core.plugin.PrettyFormatter.relativize;
  */
 public final class RerunFormatter implements ConcurrentEventListener {
 
-    private final NiceAppendable out;
+    private final PrintWriter out;
     private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new HashMap<>();
 
     public RerunFormatter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new UTF8PrintWriter(out);
     }
 
     @Override
@@ -45,7 +46,7 @@ public final class RerunFormatter implements ConcurrentEventListener {
     private void finishReport() {
         for (Map.Entry<URI, Collection<Integer>> entry : featureAndFailedLinesMapping.entrySet()) {
             FeatureWithLines featureWithLines = create(relativize(entry.getKey()), entry.getValue());
-            out.println(featureWithLines.toString());
+            out.println(featureWithLines);
         }
 
         out.close();

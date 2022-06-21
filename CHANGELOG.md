@@ -11,13 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [Core] Warn when glue path is passed as file scheme instead of classpath ([#2547](https://github.com/cucumber/cucumber-jvm/pull/2547) M.P. Korstanje)
 
 ### Changed
+* [Core] Flush pretty output manually ([#2573](https://github.com/cucumber/cucumber-jvm/pull/2573) M.P. Korstanje)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
-* [Spring] Cleanly stop after failure to start application context
+* [Spring] Cleanly stop after failure to start application context ([#2570](https://github.com/cucumber/cucumber-jvm/pull/2570) M.P. Korstanje) 
+* [JUnit] Scenario logging does not show up in step notifications ([#2563](https://github.com/cucumber/cucumber-jvm/pull/2545) M.P. Korstanje)
 
 ## [7.3.4] (2022-05-02)
 
