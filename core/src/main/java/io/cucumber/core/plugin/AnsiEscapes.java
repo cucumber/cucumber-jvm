@@ -30,10 +30,6 @@ final class AnsiEscapes {
         return new AnsiEscapes(count + "A");
     }
 
-    void appendTo(NiceAppendable a) {
-        a.append(ESC).append(BRACKET).append(value);
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
