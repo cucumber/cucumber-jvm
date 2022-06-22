@@ -8,14 +8,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] (In Git)
 
 ### Added
-* [Core] Warn when glue path is passed as file scheme instead of classpath ([#2547](https://github.com/cucumber/cucumber-jvm/pull/2547) M.P. Korstanje)
 
 ### Changed
-* [Core] Flush pretty output manually ([#2573](https://github.com/cucumber/cucumber-jvm/pull/2573) M.P. Korstanje)
 
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+## [7.4.0] (2022-06-22)
+
+### Added
+* [Core] Warn when glue path is passed as file scheme instead of classpath ([#2547](https://github.com/cucumber/cucumber-jvm/pull/2547) M.P. Korstanje)
+
+### Changed
+* [Core] Flush pretty output manually ([#2573](https://github.com/cucumber/cucumber-jvm/pull/2573) M.P. Korstanje)
 
 ### Fixed
 * [Spring] Cleanly stop after failure to start application context ([#2570](https://github.com/cucumber/cucumber-jvm/pull/2570) M.P. Korstanje) 
@@ -1791,7 +1799,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.0...main
+[7.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...v7.4.0
 [7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
 [7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
 [7.3.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.2...v7.3.3
