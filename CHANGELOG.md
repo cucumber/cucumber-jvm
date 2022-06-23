@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ * [Core] Fix NoSuchMethodError `PrintWriter(OutputStream, boolean, Charset)` ([#2578](https://github.com/cucumber/cucumber-jvm/pull/2578) M.P. Korstanje)
 
 ## [7.4.0] (2022-06-22)
 

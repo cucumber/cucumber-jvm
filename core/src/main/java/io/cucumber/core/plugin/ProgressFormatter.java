@@ -9,7 +9,6 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStepFinished;
 
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +35,7 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         }
     };
 
-    private final PrintWriter out;
+    private final UTF8PrintWriter out;
     private boolean monochrome = false;
 
     public ProgressFormatter(OutputStream out) {
