@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,7 +51,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     private final Map<UUID, Integer> commentStartIndex = new HashMap<>();
 
-    private final PrintWriter out;
+    private final UTF8PrintWriter out;
     private Formats formats = ansi();
 
     public PrettyFormatter(OutputStream out) {

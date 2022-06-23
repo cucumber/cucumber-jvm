@@ -9,7 +9,6 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStepFinished;
 
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -24,7 +23,7 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
 
     private final Map<String, String> registeredSteps = new TreeMap<>();
     private final Set<String> usedSteps = new TreeSet<>();
-    private final PrintWriter out;
+    private final UTF8PrintWriter out;
     private Formats formats = ansi();
 
     public UnusedStepsSummaryPrinter(OutputStream out) {
