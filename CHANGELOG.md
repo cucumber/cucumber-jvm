@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+
+## [7.4.1] (2022-06-23)
+
+### Fixed
  * [Core] Fix NoSuchMethodError `PrintWriter(OutputStream, boolean, Charset)` ([#2578](https://github.com/cucumber/cucumber-jvm/pull/2578) M.P. Korstanje)
 
 ## [7.4.0] (2022-06-22)
@@ -1800,7 +1804,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...main
+[7.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.4.0...v7.4.1
 [7.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...v7.4.0
 [7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
 [7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
