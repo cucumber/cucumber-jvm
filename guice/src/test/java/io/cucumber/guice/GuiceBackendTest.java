@@ -33,9 +33,16 @@ class GuiceBackendTest {
     private ObjectFactory factory;
 
     @Test
-    void finds_injector_source_impls_by_classpath_url() {
+    void finds_injector_source_impls_by_package_classpath_url() {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
         backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/guice/integration")));
+        verify(factory).addClass(YourInjectorSource.class);
+    }
+
+    @Test
+    void finds_injector_source_impls_by_class_classpath_url() {
+        GuiceBackend backend = new GuiceBackend(factory, classLoader);
+        backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/guice/integration/YourInjectorSource")));
         verify(factory).addClass(YourInjectorSource.class);
     }
 

@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.java.individualclasssteps.StepsTwo;
 import io.cucumber.java.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,9 +49,11 @@ class JavaBackendTest {
 
     @Test
     void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java/steps")));
+        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/java/steps"),
+            URI.create("classpath:io/cucumber/java/individualclasssteps/StepsTwo")));
         backend.buildWorld();
         verify(factory).addClass(Steps.class);
+        verify(factory).addClass(StepsTwo.class);
     }
 
     @Test

@@ -5,27 +5,16 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.test.ExampleClass;
 import io.cucumber.core.resource.test.ExampleInterface;
 import io.cucumber.core.resource.test.OtherClass;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.enumeration;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -71,6 +60,38 @@ class ClasspathScannerTest {
     }
 
     @Test
+    void scanForSubClassesWhenPackage() {
+        List<Class<? extends ExampleInterface>> classes = scanner.scanForSubClasses(
+            "io.cucumber.core.resource.test",
+            ExampleInterface.class);
+
+        assertThat(classes, contains(ExampleClass.class));
+    }
+
+    @Test
+    void scanForSubClassesWhenClass() {
+        List<Class<? extends ExampleInterface>> classes = scanner.scanForSubClasses(
+            "io.cucumber.core.resource.test.ExampleClass",
+            ExampleInterface.class);
+
+        assertThat(classes, contains(ExampleClass.class));
+    }
+
+    @Test
+    void scanForSubClassesWhenNonExistingPackage() {
+        List<Class<? extends ExampleInterface>> classes = scanner
+                .scanForSubClasses("io.cucumber.core.resource.does.not.exist", ExampleInterface.class);
+        assertThat(classes, empty());
+    }
+
+    @Test
+    void scanForSubClassesWhenNonExistingClass() {
+        List<Class<? extends ExampleInterface>> classes = scanner
+                .scanForSubClasses("io.cucumber.core.resource.test.NonExistentClass", ExampleInterface.class);
+        assertThat(classes, empty());
+    }
+
+    @Test
     void scanForClassesInPackage() {
         List<Class<?>> classes = scanner.scanForClassesInPackage("io.cucumber.core.resource.test");
 
@@ -104,4 +125,34 @@ class ClasspathScannerTest {
             containsString("Failed to find resources for 'bundle-resource:com/cucumber/bundle'"));
     }
 
+    @Test
+    void getClassesWhenPackage() {
+        List<Class<?>> classes = scanner.getClasses("io.cucumber.core.resource.test");
+
+        assertThat(classes, containsInAnyOrder(
+            ExampleClass.class,
+            ExampleInterface.class,
+            OtherClass.class));
+
+    }
+
+    @Test
+    void getClassesWhenNonExistingPackage() {
+        List<Class<?>> classes = scanner.getClasses("io.cucumber.core.resource.does.not.exist");
+        assertThat(classes, empty());
+    }
+
+    @Test
+    void getClassesWhenClass() {
+        List<Class<?>> classes = scanner.getClasses("io.cucumber.core.resource.test.ExampleClass");
+
+        assertThat(classes, contains(ExampleClass.class));
+
+    }
+
+    @Test
+    void getClassesWhenNonExistingClass() {
+        List<Class<?>> classes = scanner.getClasses("io.cucumber.core.resource.test.NonExistentClass");
+        assertThat(classes, empty());
+    }
 }

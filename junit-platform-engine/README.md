@@ -300,8 +300,8 @@ cucumber.filter.tags=                                         # a cucumber tag e
                                                               # JUnit 5 prefer using JUnit 5s discovery request filters
                                                               # or JUnit 5 tag expressions instead.
 
-cucumber.glue=                                                # comma separated package names.
-                                                              # example: com.example.glue  
+cucumber.glue=                                                # comma separated package or class names.
+                                                              # example: com.example.glue,com.example.features.SomeFeature  
 
 cucumber.junit-platform.naming-strategy=                      # long or short.
                                                               # default: short

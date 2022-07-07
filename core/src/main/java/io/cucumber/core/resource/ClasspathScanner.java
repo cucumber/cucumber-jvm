@@ -6,6 +6,7 @@ import io.cucumber.core.logging.LoggerFactory;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,15 @@ public final class ClasspathScanner {
 
     public ClasspathScanner(Supplier<ClassLoader> classLoaderSupplier) {
         this.classLoaderSupplier = classLoaderSupplier;
+    }
+
+    public <T> List<Class<? extends T>> scanForSubClasses(String packageOrClassName, Class<T> parentClass) {
+        Optional<Class<?>> classFromName = safelyLoadClass(packageOrClassName, false);
+
+        return classFromName.isPresent() && !parentClass.equals(classFromName.get())
+                && parentClass.isAssignableFrom(classFromName.get())
+                        ? Arrays.asList((Class<? extends T>) classFromName.get())
+                        : scanForSubClassesInPackage(packageOrClassName, parentClass);
     }
 
     public <T> List<Class<? extends T>> scanForSubClassesInPackage(String packageName, Class<T> parentClass) {
@@ -96,23 +106,31 @@ public final class ClasspathScanner {
     ) {
         return baseDir -> classFile -> {
             String fqn = determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
-            safelyLoadClass(fqn)
+            safelyLoadClass(fqn, true)
                     .filter(classFilter)
                     .ifPresent(classConsumer);
         };
     }
 
-    private Optional<Class<?>> safelyLoadClass(String fqn) {
+    private Optional<Class<?>> safelyLoadClass(String fqn, boolean logWarning) {
         try {
             return Optional.ofNullable(getClassLoader().loadClass(fqn));
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            log.warn(e, () -> "Failed to load class '" + fqn + "'.\n" + classPathScanningExplanation());
+            if (logWarning) {
+                log.warn(e, () -> "Failed to load class '" + fqn + "'.\n" + classPathScanningExplanation());
+            }
         }
         return Optional.empty();
     }
 
     public List<Class<?>> scanForClassesInPackage(String packageName) {
         return scanForClassesInPackage(packageName, NULL_FILTER);
+    }
+
+    public List<Class<?>> getClasses(String packageOrClassName) {
+        Optional<Class<?>> classFromName = safelyLoadClass(packageOrClassName, false);
+        return classFromName.isPresent() ? Arrays.asList(classFromName.get())
+                : scanForClassesInPackage(packageOrClassName, NULL_FILTER);
     }
 
 }

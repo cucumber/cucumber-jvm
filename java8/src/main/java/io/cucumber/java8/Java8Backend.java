@@ -44,7 +44,7 @@ final class Java8Backend implements Backend {
         gluePaths.stream()
                 .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
-                .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
+                .map(basePackageName -> classFinder.scanForSubClasses(basePackageName, LambdaGlue.class))
                 .flatMap(Collection::stream)
                 .filter(glueClass -> !glueClass.isInterface())
                 .filter(glueClass -> glueClass.getConstructors().length > 0)

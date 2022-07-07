@@ -103,8 +103,9 @@ public final class Constants {
     /**
      * Property name to set the glue path: {@value}
      * <p>
-     * A comma separated list of a classpath uri or package name e.g.:
-     * {@code com.example.app.steps}.
+     * A comma separated list of a classpath uri or a package or a class name
+     * e.g.:
+     * {@code com.example.app.steps,com.example.app.features.SomeFeatureSteps}.
      *
      * @see io.cucumber.core.feature.GluePath
      */

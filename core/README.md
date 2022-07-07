@@ -43,8 +43,8 @@ cucumber.filter.tags=           # a cucumber tag expression.
                                 # only scenarios with matching tags are executed. 
                                 # example: @Cucumber and not (@Gherkin or @Zucchini)
 
-cucumber.glue=                  # comma separated package names. 
-                                # example: com.example.glue  
+cucumber.glue=                  # comma separated package or class names. 
+                                # example: com.example.glue,com.example.features.SomeFeature  
   
 cucumber.plugin=                # comma separated plugin strings. 
                                 # example: pretty, json:path/to/report.json

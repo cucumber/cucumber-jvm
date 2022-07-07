@@ -82,12 +82,30 @@ class GluePathTest {
     }
 
     @Test
+    void can_parse_absolute_path_form_class() {
+        URI uri = GluePath.parse("/com/example/app/Steps");
+
+        assertAll(
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/com/example/app/Steps")));
+    }
+
+    @Test
     void can_parse_package_form() {
         URI uri = GluePath.parse("com.example.app");
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
             () -> assertThat(uri.getSchemeSpecificPart(), is("/com/example/app")));
+    }
+
+    @Test
+    void can_parse_package_form_class() {
+        URI uri = GluePath.parse("com.example.app.Steps");
+
+        assertAll(
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is("/com/example/app/Steps")));
     }
 
     @Test
@@ -114,6 +132,16 @@ class GluePathTest {
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
             () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/com/example/app"))));
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void can_parse_windows_path_form_class() {
+        URI uri = GluePath.parse("com\\example\\app\\Steps");
+
+        assertAll(
+            () -> assertThat(uri.getScheme(), is("classpath")),
+            () -> assertThat(uri.getSchemeSpecificPart(), is(equalTo("/com/example/app/Steps"))));
     }
 
     @Test
