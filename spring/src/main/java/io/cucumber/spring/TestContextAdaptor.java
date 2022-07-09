@@ -21,6 +21,7 @@ class TestContextAdaptor {
     private final TestContextManager delegate;
     private final ConfigurableApplicationContext applicationContext;
     private final Collection<Class<?>> glueClasses;
+    private Object delegateTestInstance;
 
     TestContextAdaptor(
             TestContextManager delegate,
@@ -51,7 +52,7 @@ class TestContextAdaptor {
     private void notifyTestContextManagerAboutBeforeTestMethod() {
         try {
             Class<?> delegateTestClass = delegate.getTestContext().getTestClass();
-            Object delegateTestInstance = applicationContext.getBean(delegateTestClass);
+            delegateTestInstance = applicationContext.getBean(delegateTestClass);
             Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
             delegate.beforeTestMethod(delegateTestInstance, dummyMethod);
         } catch (Exception e) {
@@ -106,7 +107,10 @@ class TestContextAdaptor {
         // session. This is not ideal, but Cucumber only supports 1 set of
         // before/after semantics while JUnit and Spring have 2 sets.
         if (CucumberTestContext.getInstance().isActive()) {
-            notifyTestContextManagerAboutAfterTestMethod();
+            if(delegateTestInstance != null) {
+                notifyTestContextManagerAboutAfterTestMethod();
+                delegateTestInstance = null;
+            }
             CucumberTestContext.getInstance().stop();
         }
         notifyTestContextManagerAboutAfterTestClass();
