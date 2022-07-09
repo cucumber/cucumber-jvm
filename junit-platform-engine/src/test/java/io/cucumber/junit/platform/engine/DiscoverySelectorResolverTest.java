@@ -1,11 +1,9 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.junit.platform.engine.nofeatures.NoFeatures;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
@@ -51,23 +49,17 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPacka
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 
+@WithLogRecordListener
 class DiscoverySelectorResolverTest {
 
     private final DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
-    private final LogRecordListener logRecordListener = new LogRecordListener();
     private CucumberEngineDescriptor testDescriptor;
 
     @BeforeEach
     void before() {
-        LoggerFactory.addListener(logRecordListener);
         UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
         testDescriptor = new CucumberEngineDescriptor(id);
         assertEquals(0, testDescriptor.getChildren().size());
-    }
-
-    @AfterEach
-    void after() {
-        LoggerFactory.removeListener(logRecordListener);
     }
 
     @Test
@@ -409,7 +401,7 @@ class DiscoverySelectorResolverTest {
     }
 
     @Test
-    void resolveRequestWithClassSelectorShouldLogWarnIfNoFeaturesFound() {
+    void resolveRequestWithClassSelectorShouldLogWarnIfNoFeaturesFound(LogRecordListener logRecordListener) {
         DiscoverySelector resource = selectClass(NoFeatures.class);
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);

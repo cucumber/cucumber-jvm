@@ -6,6 +6,7 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.logging.WithLogRecordListener;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.runtime.TimeServiceEventBus;
@@ -63,23 +64,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@WithLogRecordListener
 class CommandlineOptionsParserTest {
 
     private final Map<String, String> properties = new HashMap<>();
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final CommandlineOptionsParser parser = new CommandlineOptionsParser(out);
-    private LogRecordListener logRecordListener;
-
-    @BeforeEach
-    void setup() {
-        logRecordListener = new LogRecordListener();
-        LoggerFactory.addListener(logRecordListener);
-    }
-
-    @AfterEach
-    void tearDown() {
-        LoggerFactory.removeListener(logRecordListener);
-    }
 
     @Test
     void testParseWithObjectFactoryArgument() {
@@ -263,7 +253,7 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void handles_null_summary_printer_backward_compatible() {
+    void handles_null_summary_printer_backward_compatible(LogRecordListener logRecordListener) {
         RuntimeOptions options = parser
                 .parse("--plugin", "null_summary", "--glue", "somewhere")
                 .build();
