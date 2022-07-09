@@ -10,12 +10,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import static java.lang.Thread.currentThread;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({ MockitoExtension.class })
+@ExtendWith(MockitoExtension.class)
 class Java8BackendTest {
 
     @Mock
@@ -36,6 +39,14 @@ class Java8BackendTest {
         backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java8/steps")));
         backend.buildWorld();
         verify(factory).addClass(Steps.class);
+    }
+
+    @Test
+    void finds_step_definitions_once_by_classpath_url() {
+        backend.loadGlue(glue,
+            asList(URI.create("classpath:io/cucumber/java8/steps"), URI.create("classpath:io/cucumber/java8/steps")));
+        backend.buildWorld();
+        verify(factory, times(1)).addClass(Steps.class);
     }
 
 }

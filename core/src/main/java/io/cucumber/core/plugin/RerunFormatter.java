@@ -23,11 +23,11 @@ import static io.cucumber.core.plugin.PrettyFormatter.relativize;
  */
 public final class RerunFormatter implements ConcurrentEventListener {
 
-    private final NiceAppendable out;
+    private final UTF8PrintWriter out;
     private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new HashMap<>();
 
     public RerunFormatter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new UTF8PrintWriter(out);
     }
 
     @Override

@@ -37,6 +37,12 @@ import static io.cucumber.core.plugin.Formats.monochrome;
 import static java.lang.Math.max;
 import static java.util.Locale.ROOT;
 
+/**
+ * Prints a pretty report of the scenario execution as it happens.
+ * <p>
+ * When scenarios are executed concurrently the output will interleave. This is
+ * to be expected.
+ */
 public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
 
     private static final String SCENARIO_INDENT = "";
@@ -45,11 +51,11 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     private final Map<UUID, Integer> commentStartIndex = new HashMap<>();
 
-    private final NiceAppendable out;
+    private final UTF8PrintWriter out;
     private Formats formats = ansi();
 
     public PrettyFormatter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new UTF8PrintWriter(out);
     }
 
     @Override
@@ -66,25 +72,27 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         preCalculateLocationIndent(event);
         printTags(event);
         printScenarioDefinition(event);
+        out.flush();
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
         printStep(event);
         printError(event);
+        out.flush();
     }
 
     private void handleWrite(WriteEvent event) {
         out.println();
         printText(event);
         out.println();
-
+        out.flush();
     }
 
     private void handleEmbed(EmbedEvent event) {
         out.println();
         printEmbedding(event);
         out.println();
-
+        out.flush();
     }
 
     private void handleTestRunFinished(TestRunFinished event) {
@@ -188,9 +196,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             while ((line = lines.readLine()) != null) {
                 builder.append(STEP_SCENARIO_INDENT)
                         .append(line)
-                        .append(System.lineSeparator()); // Add system line
-                                                         // separator - \n won't
-                                                         // do it!
+                        // Add system line separator - \n won't do it!
+                        .append(System.lineSeparator());
             }
         } catch (IOException e) {
             throw new CucumberException(e);

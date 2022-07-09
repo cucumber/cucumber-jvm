@@ -31,7 +31,8 @@ final class SpringBackend implements Backend {
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
-                .filter((Class clazz) -> clazz.getAnnotation(CucumberContextConfiguration.class) != null)
+                .filter((Class<?> clazz) -> clazz.getAnnotation(CucumberContextConfiguration.class) != null)
+                .distinct()
                 .forEach(container::addClass);
     }
 

@@ -18,10 +18,15 @@ import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefiniti
 import io.cucumber.spring.metaconfig.general.BellyMetaStepDefinitions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.TestExecutionListeners;
 
 import java.util.Optional;
 
@@ -35,7 +40,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -341,6 +345,19 @@ class SpringFactoryTest {
         assertDoesNotThrow(factory::stop);
     }
 
+    @ParameterizedTest
+    @ValueSource(classes = {
+            FailedBeforeTestClassContextConfiguration.class,
+            FailedBeforeTestMethodContextConfiguration.class,
+    })
+    void shouldBeStoppableWhenFacedWithFailedApplicationContext(Class<?> contextConfiguration) {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(contextConfiguration);
+
+        assertThrows(CucumberBackendException.class, factory::start);
+        assertDoesNotThrow(factory::stop);
+    }
+
     @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
     public static class WithSpringAnnotations {
@@ -366,7 +383,7 @@ class SpringFactoryTest {
     }
 
     @CucumberContextConfiguration
-    @ContextConfiguration()
+    @ContextConfiguration
     public static class WithEmptySpringAnnotations {
 
     }
@@ -376,4 +393,39 @@ class SpringFactoryTest {
 
     }
 
+    @CucumberContextConfiguration
+    @ContextConfiguration("classpath:cucumber.xml")
+    @TestExecutionListeners(FailedBeforeTestClassContextConfiguration.FailingListener.class)
+    public static class FailedBeforeTestClassContextConfiguration {
+
+        public static class FailingListener implements TestExecutionListener {
+
+            @Override
+            public void beforeTestClass(TestContext testContext) throws Exception {
+                throw new StubException();
+            }
+
+        }
+
+    }
+
+    @CucumberContextConfiguration
+    @ContextConfiguration("classpath:cucumber.xml")
+    @TestExecutionListeners(FailedBeforeTestMethodContextConfiguration.FailingListener.class)
+    public static class FailedBeforeTestMethodContextConfiguration {
+
+        public static class FailingListener implements TestExecutionListener {
+
+            @Override
+            public void beforeTestMethod(TestContext testContext) throws Exception {
+                throw new StubException();
+            }
+
+        }
+
+    }
+
+    public static class StubException extends Exception {
+
+    }
 }

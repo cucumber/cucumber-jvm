@@ -13,12 +13,14 @@ import java.net.URI;
 import java.util.function.Supplier;
 
 import static java.lang.Thread.currentThread;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith({ MockitoExtension.class })
@@ -37,6 +39,14 @@ class GuiceBackendTest {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
         backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/guice/integration")));
         verify(factory).addClass(YourInjectorSource.class);
+    }
+
+    @Test
+    void finds_injector_source_impls_once_by_classpath_url() {
+        GuiceBackend backend = new GuiceBackend(factory, classLoader);
+        backend.loadGlue(glue, asList(URI.create("classpath:io/cucumber/guice/integration"),
+            URI.create("classpath:io/cucumber/guice/integration")));
+        verify(factory, times(1)).addClass(YourInjectorSource.class);
     }
 
     @Test

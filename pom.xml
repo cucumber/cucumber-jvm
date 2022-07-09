@@ -6,7 +6,7 @@
         <version>3.0.0</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.4.0-SNAPSHOT</version>
+    <version>7.4.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -47,6 +47,7 @@
         <module>gherkin-messages</module>
         <module>guice</module>
         <module>jakarta-cdi</module>
+        <module>jakarta-openejb</module>
         <module>java8</module>
         <module>java</module>
         <module>junit</module>
@@ -107,12 +108,12 @@
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-surefire-plugin</artifactId>
-                            <version>3.0.0-M6</version>
+                            <version>3.0.0-M7</version>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-failsafe-plugin</artifactId>
-                            <version>3.0.0-M6</version>
+                            <version>3.0.0-M7</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>
@@ -376,12 +377,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.14.6</version>
+                    <version>0.14.7</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.26.1</version>
+                            <version>0.27.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -440,7 +441,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.2</version>
+                            <version>10.3.1</version>
                         </dependency>
                     </dependencies>
                     <configuration>

@@ -17,12 +17,12 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -208,7 +208,7 @@ class PluginFactoryTest {
     void instantiates_single_custom_appendable_plugin_with_stdout() {
         PluginOption option = parse(WantsOutputStream.class.getName());
         WantsOutputStream plugin = (WantsOutputStream) fc.create(option);
-        assertThat(plugin.printStream, is(not(nullValue())));
+        assertThat(plugin.out, is(not(nullValue())));
 
         CucumberException exception = assertThrows(CucumberException.class, () -> fc.create(option));
         assertThat(exception.getMessage(), is(equalTo(
@@ -298,10 +298,10 @@ class PluginFactoryTest {
 
     public static class WantsOutputStream extends StubFormatter {
 
-        public OutputStream printStream;
+        public OutputStream out;
 
-        public WantsOutputStream(OutputStream outputStream) {
-            this.printStream = Objects.requireNonNull(outputStream);
+        public WantsOutputStream(OutputStream out) {
+            this.out = Objects.requireNonNull(out);
         }
 
     }
@@ -353,15 +353,18 @@ class PluginFactoryTest {
 
     public static class WantsAppendable extends StubFormatter {
 
-        public final NiceAppendable arg;
+        public final Appendable out;
 
-        public WantsAppendable(Appendable arg) {
-            this.arg = new NiceAppendable(Objects.requireNonNull(arg));
+        public WantsAppendable(Appendable out) {
+            this.out = Objects.requireNonNull(out);
         }
 
-        public void writeAndClose(String s) {
-            this.arg.println(s);
-            this.arg.close();
+        public void writeAndClose(String s) throws IOException {
+            out.append(s);
+            if (out instanceof Closeable) {
+                Closeable closeable = (Closeable) out;
+                closeable.close();
+            }
         }
 
     }

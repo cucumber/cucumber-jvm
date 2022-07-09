@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+* [OpenEJB] Added new module `jakarta-openejb`, which supports the jakarta.* namespace in TomEE 9.x ([#2583](https://github.com/cucumber/cucumber-jvm/pull/2583) R. Zowalla) 
+
 ### Changed
 
 ### Deprecated
@@ -16,12 +18,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Fixed
+ - [Java] Process glue classes distinctly ([#2582](https://github.com/cucumber/cucumber-jvm/pull/2582) M.P. Korstanje)
 
-## [7.3.5] (2022-05-10)
+## [7.4.1] (2022-06-23)
+
+### Fixed
+ * [Core] Fix NoSuchMethodError `PrintWriter(OutputStream, boolean, Charset)` ([#2578](https://github.com/cucumber/cucumber-jvm/pull/2578) M.P. Korstanje)
+
+## [7.4.0] (2022-06-22)
 
 ### Added
 * [Core] Warn when glue path is passed as file scheme instead of classpath ([#2547](https://github.com/cucumber/cucumber-jvm/pull/2547) M.P. Korstanje)
- 
+
+### Changed
+* [Core] Flush pretty output manually ([#2573](https://github.com/cucumber/cucumber-jvm/pull/2573) M.P. Korstanje)
+
+### Fixed
+* [Spring] Cleanly stop after failure to start application context ([#2570](https://github.com/cucumber/cucumber-jvm/pull/2570) M.P. Korstanje) 
+* [JUnit] Scenario logging does not show up in step notifications ([#2563](https://github.com/cucumber/cucumber-jvm/pull/2545) M.P. Korstanje)
+
 ## [7.3.4] (2022-05-02)
 
 ### Fixed
@@ -1792,17 +1807,20 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...main
-[7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3-RC1...v7.3.4
-[7.3.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.2-RC1...v7.3.3
-[7.3.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.1-RC1...v7.3.2
-[7.3.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.0-RC1...v7.3.1
-[7.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.3-RC1...v7.3.0
-[7.2.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.2-RC1...v7.2.3
-[7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1-RC1...v7.2.2
-[7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0-RC1...v7.2.1
-[7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0-RC1...v7.2.0
-[7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.1.0
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...main
+[7.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.4.0...v7.4.1
+[7.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...v7.4.0
+[7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
+[7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4
+[7.3.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.2...v7.3.3
+[7.3.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.1...v7.3.2
+[7.3.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.0...v7.3.1
+[7.3.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.3...v7.3.0
+[7.2.3]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.2...v7.2.3
+[7.2.2]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.1...v7.2.2
+[7.2.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.2.0...v7.2.1
+[7.2.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...v7.2.0
+[7.1.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0...v7.1.0
 [7.0.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
 [7.0.0-RC1]:  https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
 [6.11.0]:  https://github.com/cucumber/cucumber-jvm/compare/v6.10.4...v6.11.0

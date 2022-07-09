@@ -23,11 +23,11 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
 
     private final Map<String, String> registeredSteps = new TreeMap<>();
     private final Set<String> usedSteps = new TreeSet<>();
-    private final NiceAppendable out;
+    private final UTF8PrintWriter out;
     private Formats formats = ansi();
 
     public UnusedStepsSummaryPrinter(OutputStream out) {
-        this.out = new NiceAppendable(new UTF8OutputStreamWriter(out));
+        this.out = new UTF8PrintWriter(out);
     }
 
     @Override
