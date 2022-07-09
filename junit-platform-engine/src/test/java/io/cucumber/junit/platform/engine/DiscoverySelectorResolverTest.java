@@ -1,12 +1,9 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.core.logging.LoggerFactory;
-import io.cucumber.core.logging.WithLogRecordListener;
 import io.cucumber.junit.platform.engine.nofeatures.NoFeatures;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
