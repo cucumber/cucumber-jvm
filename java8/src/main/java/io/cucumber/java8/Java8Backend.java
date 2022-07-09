@@ -48,6 +48,7 @@ final class Java8Backend implements Backend {
                 .flatMap(Collection::stream)
                 .filter(glueClass -> !glueClass.isInterface())
                 .filter(glueClass -> glueClass.getConstructors().length > 0)
+                .distinct()
                 .forEach(glueClass -> {
                     container.addClass(glueClass);
                     lambdaGlueClasses.add(glueClass);

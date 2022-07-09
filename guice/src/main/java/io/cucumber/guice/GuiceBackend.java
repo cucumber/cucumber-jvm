@@ -32,6 +32,7 @@ final class GuiceBackend implements Backend {
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
                 .filter(InjectorSource.class::isAssignableFrom)
+                .distinct()
                 .forEach(container::addClass);
     }
 
