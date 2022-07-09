@@ -4,10 +4,7 @@ import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.feature.FeaturePath;
 import io.cucumber.core.feature.Options;
 import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.logging.WithLogRecordListener;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

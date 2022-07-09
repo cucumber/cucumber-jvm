@@ -1,7 +1,7 @@
 package io.cucumber.core.feature;
 
 import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.logging.WithLogRecordListener;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+@WithLogRecordListener
 class GluePathTest {
 
     @Test
@@ -127,15 +128,10 @@ class GluePathTest {
 
     @ParameterizedTest
     @MethodSource("warn_when_glue_as_filesystem_path_examples")
-    void when_when_glue_path_is_well_known_source_directory(String gluePath, Matcher<String> logPattern) {
+    void when_when_glue_path_is_well_known_source_directory(String gluePath, Matcher<String> logPattern, LogRecordListener logRecordListener) {
         // warn when 'src/{test,main}/{java,kotlin,scala,groovy}' is used
 
-        LogRecordListener logRecordListener = new LogRecordListener();
-        LoggerFactory.addListener(logRecordListener);
-
         GluePath.parse(gluePath);
-
-        LoggerFactory.removeListener(logRecordListener);
 
         String logMessage = logRecordListener.getLogRecords()
                 .stream()
