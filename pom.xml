@@ -47,6 +47,7 @@
         <module>gherkin-messages</module>
         <module>guice</module>
         <module>jakarta-cdi</module>
+        <module>jakarta-openejb</module>
         <module>java8</module>
         <module>java</module>
         <module>junit</module>
