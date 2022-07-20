@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -77,14 +78,23 @@ public class AnsiHeuristic {
         }
 
         // terminal capability
-        // note: we may not be talking to tty but that is fine
-        if (isEnabledByTerm() || isEnabledByColorTerm()) {
+        // note: we may not be talking to tty. This is okay, we
+        if (isEnabledByTerm() || isEnabledByColorTerm() || isIntellijIdeaSnap()) {
             return true;
         }
+
         return false;
     }
 
+    private boolean isIntellijIdeaSnap() {
+        String snapName = getEnv("SNAP_NAME");
+        return snapName != null && snapName.matches("^intellij-idea.*");
+    }
+
     public static void main(String[] args) {
+        System.getProperties().forEach((o, o2) -> System.out.println(o + ": " + o2));
+        System.getenv().forEach((o, o2) -> System.out.println(o + ": " + o2));
+
         System.out.println(new AnsiHeuristic(System::getenv).isEnabled());
     }
 
