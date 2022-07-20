@@ -26,6 +26,7 @@ public class AnsiHeuristic {
         String forced = getEnv("CLICOLOR_FORCE");
         return !(forced == null || forced.equals("0"));
     }
+
     private boolean isDisabledByCliColor() {
         // https://bixense.com/clicolors/
         return "0".equals(getEnv("CLICOLOR"));
@@ -60,6 +61,15 @@ public class AnsiHeuristic {
         return null != getEnv("COLORTERM");
     }
 
+    private boolean isIntellijIdeaSnap() {
+        String snapName = getEnv("SNAP_NAME");
+        return snapName != null && snapName.matches("^intellij-idea.*");
+    }
+
+    private boolean isEclipseSnap() {
+        return "eclipse".equals(getEnv("SNAP_NAME"));
+    }
+
     boolean isEnabled() {
         // force
         if (isDisabledByNoColor()) {
@@ -78,17 +88,20 @@ public class AnsiHeuristic {
         }
 
         // terminal capability
-        // note: we may not be talking to tty. This is okay, we
-        if (isEnabledByTerm() || isEnabledByColorTerm() || isIntellijIdeaSnap()) {
+        if (isEnabledByTerm() || isEnabledByColorTerm()) {
             return true;
         }
 
-        return false;
-    }
+        // ide special cases
+        if (isIntellijIdeaSnap()) {
+            return true;
+        }
 
-    private boolean isIntellijIdeaSnap() {
-        String snapName = getEnv("SNAP_NAME");
-        return snapName != null && snapName.matches("^intellij-idea.*");
+        if (isEclipseSnap()) {
+            return false;
+        }
+
+        return false;
     }
 
     public static void main(String[] args) {
