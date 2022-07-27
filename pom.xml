@@ -402,6 +402,9 @@
                             <revapi.differences id="guice-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
+                            <revapi.differences id="junit5-api-issues">
+                                <ignore>true</ignore>
+                            </revapi.differences>
                         </analysisConfiguration>
                         <analysisConfigurationFiles>
                             <configurationFile>

@@ -338,5 +338,30 @@
         ]
       }
     }
+  ],
+  "junit5": [
+    {
+      "extension": "revapi.differences",
+      "id": "junit5-api-issues",
+      "ignore": true,
+      "configuration": {
+        "differences": [
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method java.util.Set<java.lang.String> org.junit.platform.engine.ConfigurationParameters::keySet()",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "method int org.junit.platform.engine.ConfigurationParameters::size()",
+            "new": "method int org.junit.platform.engine.ConfigurationParameters::size()",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"1.9\")",
+            "justification": "API consumed from JUnit 5"
+          }
+        ]
+      }
+    }
   ]
 }
