@@ -12,7 +12,7 @@
     <name>Cucumber-JVM: Bill of Materials</name>
 
     <properties>
-        <ci-environment.version>9.0.4</ci-environment.version>
+        <ci-environment.version>9.1.0</ci-environment.version>
         <cucumber-expressions.version>16.0.0</cucumber-expressions.version>
         <html-formatter.version>19.2.0</html-formatter.version>
         <tag-expressions.version>4.1.0</tag-expressions.version>
