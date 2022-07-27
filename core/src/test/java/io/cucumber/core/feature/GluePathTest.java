@@ -128,7 +128,9 @@ class GluePathTest {
 
     @ParameterizedTest
     @MethodSource("warn_when_glue_as_filesystem_path_examples")
-    void when_when_glue_path_is_well_known_source_directory(String gluePath, Matcher<String> logPattern, LogRecordListener logRecordListener) {
+    void when_when_glue_path_is_well_known_source_directory(
+            String gluePath, Matcher<String> logPattern, LogRecordListener logRecordListener
+    ) {
         // warn when 'src/{test,main}/{java,kotlin,scala,groovy}' is used
 
         GluePath.parse(gluePath);
