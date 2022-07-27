@@ -5,6 +5,7 @@ import org.junit.platform.engine.ConfigurationParameters;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 class MapConfigurationParameters implements ConfigurationParameters {
 
@@ -31,6 +32,11 @@ class MapConfigurationParameters implements ConfigurationParameters {
     @Override
     public int size() {
         return 0;
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return parameters.keySet();
     }
 
 }
