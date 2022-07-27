@@ -415,6 +415,7 @@
                                     <root>internal</root>
                                     <root>testng</root>
                                     <root>guice</root>
+                                    <root>junit5</root>
                                 </roots>
                             </configurationFile>
                         </analysisConfigurationFiles>
