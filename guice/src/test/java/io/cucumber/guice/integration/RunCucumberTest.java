@@ -15,8 +15,8 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
  */
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("io/cucumber/deltaspike")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.deltaspike")
+@SelectClasspathResource("io/cucumber/guice/integration")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.guice.integration")
 public class RunCucumberTest {
 
 }

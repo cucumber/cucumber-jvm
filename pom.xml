@@ -6,7 +6,7 @@
         <version>3.0.0</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.4.2-SNAPSHOT</version>
+    <version>7.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -402,6 +402,9 @@
                             <revapi.differences id="guice-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
+                            <revapi.differences id="junit5-api-issues">
+                                <ignore>true</ignore>
+                            </revapi.differences>
                         </analysisConfiguration>
                         <analysisConfigurationFiles>
                             <configurationFile>
@@ -412,6 +415,7 @@
                                     <root>internal</root>
                                     <root>testng</root>
                                     <root>guice</root>
+                                    <root>junit5</root>
                                 </roots>
                             </configurationFile>
                         </analysisConfigurationFiles>

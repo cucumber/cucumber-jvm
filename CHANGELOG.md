@@ -12,18 +12,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [OpenEJB] Added new module `jakarta-openejb`, which supports the jakarta.* namespace in TomEE 9.x ([#2583](https://github.com/cucumber/cucumber-jvm/pull/2583) R. Zowalla) 
 
 ### Changed
+* [JUnit Platform] Use JUnit Platform 1.9.0 (JUnit Jupiter 5.9.0) ([#2590](https://github.com/cucumber/cucumber-jvm/pull/2590) M.P. Korstanje)
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
- - [Java] Process glue classes distinctly ([#2582](https://github.com/cucumber/cucumber-jvm/pull/2582) M.P. Korstanje)
+* [Java] Process glue classes distinctly ([#2582](https://github.com/cucumber/cucumber-jvm/pull/2582) M.P. Korstanje)
 
 ## [7.4.1] (2022-06-23)
 
 ### Fixed
- * [Core] Fix NoSuchMethodError `PrintWriter(OutputStream, boolean, Charset)` ([#2578](https://github.com/cucumber/cucumber-jvm/pull/2578) M.P. Korstanje)
+* [Core] Fix NoSuchMethodError `PrintWriter(OutputStream, boolean, Charset)` ([#2578](https://github.com/cucumber/cucumber-jvm/pull/2578) M.P. Korstanje)
 
 ## [7.4.0] (2022-06-22)
 

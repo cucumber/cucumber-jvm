@@ -2,7 +2,9 @@ package io.cucumber.junit.platform.engine;
 
 import org.junit.platform.engine.ConfigurationParameters;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 class EmptyConfigurationParameters implements ConfigurationParameters {
 
@@ -19,6 +21,11 @@ class EmptyConfigurationParameters implements ConfigurationParameters {
     @Override
     public int size() {
         return 0;
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return Collections.emptySet();
     }
 
 }

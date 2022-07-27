@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.4.2-SNAPSHOT</version>
+        <version>7.5.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>datatable</artifactId>
@@ -19,7 +19,7 @@
         <guava.version>31.1-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson-databind.version>2.13.3</jackson-databind.version>
-        <junit-jupiter.version>5.8.2</junit-jupiter.version>
+        <junit-jupiter.version>5.9.0</junit-jupiter.version>
         <mockito.version>4.6.1</mockito.version>
     </properties>
 
