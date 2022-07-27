@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 * [Java] Process glue classes distinctly ([#2582](https://github.com/cucumber/cucumber-jvm/pull/2582) M.P. Korstanje)
+* [Spring] Do not invoke after test methods if test failed to start ([#2585](https://github.com/cucumber/cucumber-jvm/pull/2585) M.P. Korstanje)
 
 ## [7.4.1] (2022-06-23)
 

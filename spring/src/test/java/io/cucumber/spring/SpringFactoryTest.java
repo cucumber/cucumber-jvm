@@ -349,6 +349,7 @@ class SpringFactoryTest {
     @ValueSource(classes = {
             FailedBeforeTestClassContextConfiguration.class,
             FailedBeforeTestMethodContextConfiguration.class,
+            FailedTestInstanceContextConfiguration.class
     })
     void shouldBeStoppableWhenFacedWithFailedApplicationContext(Class<?> contextConfiguration) {
         final ObjectFactory factory = new SpringFactory();
@@ -423,6 +424,14 @@ class SpringFactoryTest {
 
         }
 
+    }
+    @CucumberContextConfiguration
+    @ContextConfiguration("classpath:cucumber.xml")
+    public static class FailedTestInstanceContextConfiguration {
+
+        public FailedTestInstanceContextConfiguration(){
+            throw new RuntimeException();
+        }
     }
 
     public static class StubException extends Exception {
