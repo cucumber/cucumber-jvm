@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 * [JUnit Platform] Use JUnit Platform 1.9.0 (JUnit Jupiter 5.9.0) ([#2590](https://github.com/cucumber/cucumber-jvm/pull/2590) M.P. Korstanje)
+* [TestNG] Update dependency org.testng:testng to v7.6.1
+* [Core] Update dependency io.cucumber:ci-environment to v9.1.0
 
 ### Deprecated
 
