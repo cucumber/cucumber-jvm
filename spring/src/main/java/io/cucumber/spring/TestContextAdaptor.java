@@ -107,7 +107,7 @@ class TestContextAdaptor {
         // session. This is not ideal, but Cucumber only supports 1 set of
         // before/after semantics while JUnit and Spring have 2 sets.
         if (CucumberTestContext.getInstance().isActive()) {
-            if(delegateTestInstance != null) {
+            if (delegateTestInstance != null) {
                 notifyTestContextManagerAboutAfterTestMethod();
                 delegateTestInstance = null;
             }

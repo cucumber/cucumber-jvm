@@ -9,16 +9,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## [7.5.0] (2022-07-28)
+
+### Added
+
 * [OpenEJB] Added new module `jakarta-openejb`, which supports the jakarta.* namespace in TomEE 9.x ([#2583](https://github.com/cucumber/cucumber-jvm/pull/2583) R. Zowalla) 
 
 ### Changed
 * [JUnit Platform] Use JUnit Platform 1.9.0 (JUnit Jupiter 5.9.0) ([#2590](https://github.com/cucumber/cucumber-jvm/pull/2590) M.P. Korstanje)
 * [TestNG] Update dependency org.testng:testng to v7.6.1
 * [Core] Update dependency io.cucumber:ci-environment to v9.1.0
-
-### Deprecated
-
-### Removed
 
 ### Fixed
 * [Java] Process glue classes distinctly ([#2582](https://github.com/cucumber/cucumber-jvm/pull/2582) M.P. Korstanje)
@@ -1811,7 +1819,8 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 * First proper release
 
 <!-- Releases -->
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.5.0...main
+[7.5.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...v7.5.0
 [7.4.1]:  https://github.com/cucumber/cucumber-jvm/compare/v7.4.0...v7.4.1
 [7.4.0]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...v7.4.0
 [7.3.4]:  https://github.com/cucumber/cucumber-jvm/compare/v7.3.3...v7.3.4

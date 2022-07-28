@@ -429,7 +429,7 @@ class SpringFactoryTest {
     @ContextConfiguration("classpath:cucumber.xml")
     public static class FailedTestInstanceContextConfiguration {
 
-        public FailedTestInstanceContextConfiguration(){
+        public FailedTestInstanceContextConfiguration() {
             throw new RuntimeException();
         }
     }
