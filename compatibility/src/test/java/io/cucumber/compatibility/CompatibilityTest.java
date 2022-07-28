@@ -1,14 +1,14 @@
 package io.cucumber.compatibility;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.JsonFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
-import io.cucumber.messages.internal.com.fasterxml.jackson.core.JsonProcessingException;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.DeserializationFeature;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.JsonNode;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

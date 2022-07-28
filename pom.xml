@@ -62,31 +62,14 @@
 
     <profiles>
         <profile>
-            <id>examples</id>
+            <id>build-local</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
                 <module>examples</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>compatibility</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
                 <module>compatibility</module>
             </modules>
-        </profile>
-
-        <profile>
-            <id>spotless-apply</id>
-            <activation>
-                <property>
-                    <name>!CI</name>
-                </property>
-            </activation>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -104,20 +87,24 @@
                                 </execution>
                             </executions>
                         </plugin>
-                        <!-- Need the 3.0.0 release for Junit5 + Before/After hooks -->
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-surefire-plugin</artifactId>
-                            <version>3.0.0-M7</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-failsafe-plugin</artifactId>
-                            <version>3.0.0-M7</version>
-                        </plugin>
+
                     </plugins>
                 </pluginManagement>
             </build>
+        </profile>
+
+        <profile>
+            <id>build-in-ci</id>
+            <activation>
+                <property>
+                    <name>CI</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>examples</module>
+                <module>compatibility</module>
+            </modules>
         </profile>
 
         <profile>
@@ -143,6 +130,18 @@
 
     <build>
         <plugins>
+            <!-- Need the 3.0.0+ release for Junit5 + Before/After hooks -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M7</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M7</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>

@@ -1,11 +1,11 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.JsonNode;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.ArrayNode;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.BooleanNode;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.NumericNode;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.ObjectNode;
-import io.cucumber.messages.internal.com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
