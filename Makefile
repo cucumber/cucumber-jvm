@@ -56,7 +56,7 @@ update-changelog:
 .release-in-docker: .configure-cukebot-in-docker default update-changelog .commit-and-push-changelog
 	mvn --batch-mode release:clean release:prepare -DautoVersionSubmodules=true -Darguments="-DskipTests=true -DskipITs=true -Darchetype.test.skip=true"
 	git checkout "v$(NEW_VERSION)"
-	mvn deploy -P-examples -P-compatibility -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
+	mvn deploy -P-build-in-ci -Psign-source-javadoc -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
 	git checkout $(CURRENT_BRANCH)
 	git fetch
 .PHONY: .release-in-docker
