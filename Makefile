@@ -23,10 +23,11 @@ ifndef CCK_VERSION
 	@echo -e "\033[0;31mCCK_VERSION is not defined. Can't update CCK :-(\033[0m"
 	exit 1
 endif
-	git clone --branch compatibility-kit/v$$CCK_VERSION git@github.com:cucumber/cucumber.git target/cucumber
-	rm -rf compatibility/src/test/resources/*
-	cp -r target/cucumber/compatibility-kit/javascript/features compatibility/src/test/resources
-	rm -rf target/cucumber
+	git clone --branch v$$CCK_VERSION git@github.com:cucumber/compatibility-kit.git target/compatibility-kit
+	cd target/compatibility-kit/devkit && npm install && npm run generate-ndjson
+	rm -rf compatibility/src/test/resources/features/*
+	cp -r target/compatibility-kit/devkit/samples/* compatibility/src/test/resources/features
+	rm -rf target/compatibility-kit
 .PHONY: update-cck
 
 update-dependency-versions:
