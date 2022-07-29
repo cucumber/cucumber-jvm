@@ -50,6 +50,7 @@
         <module>jakarta-openejb</module>
         <module>java8</module>
         <module>java</module>
+        <module>java-lambda</module>
         <module>junit</module>
         <module>junit-platform-engine</module>
         <module>kotlin-java8</module>
@@ -354,7 +355,7 @@
                             <group>
                                 <title>API Packages</title>
                                 <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
+                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.lambda:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
                                 </packages>
                             </group>
                             <group>
