@@ -1,7 +1,10 @@
 # Changelog
 
 All notable changes to the current version this project will be documented in
-this file. For previous versions see the [release-notes archive](release-notes). 
+this file. For previous versions see the [release-notes archive](release-notes).
+
+For migration instructions from previous major version and a long form
+explanation of noteworthy changes see the [Release Announcement](release-notes/v7.0.0.md).
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [7.5.0] - 2022-07-28
-
 ### Added
 - [OpenEJB] Added new module `jakarta-openejb`, which supports the jakarta.* namespace in TomEE 9.x ([#2583](https://github.com/cucumber/cucumber-jvm/pull/2583) R. Zowalla)
 
@@ -59,22 +61,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Core] Use null-safe messages ([#2497](https://github.com/cucumber/cucumber-jvm/pull/2497) M.P. Korstanje)
-  - Update dependency io.cucumber:html-formatter to v19.1
-    - Removed work around for 'Uncaught TypeError: e.git is undefined'
-  - Update dependency io.cucumber:messages to v18
-  - Update dependency io.cucumber:gherkin to v23
-  - Moved shaded jackson from `messages` to `core`.
-
+- Update dependency io.cucumber:messages to v18 ([#2497](https://github.com/cucumber/cucumber-jvm/pull/2497) M.P. Korstanje)
+- Update dependency io.cucumber:gherkin to v23 ([#2497](https://github.com/cucumber/cucumber-jvm/pull/2497) M.P. Korstanje)
 - Update dependency io.cucumber:ci-environment to v9 ([#2475](https://github.com/cucumber/cucumber-jvm/pull/2475) M.P. Korstanje)
 - Update dependency com.google.inject:guice to v5.1.0 ([#2473](https://github.com/cucumber/cucumber-jvm/pull/2473) M.P. Korstanje)
 - Update dependency org.testng:testng to v7.5 ([#2457](https://github.com/cucumber/cucumber-jvm/pull/2457) M.P. Korstanje)
 
 ### Fixed
-- [OpenEJB] Remove spurious  dependencies ([#2477](https://github.com/cucumber/cucumber-jvm/pull/2477) M.P. Korstanje)
-    - Removed spurious dependencies:
-        - `javax.activation:activation`
-        - `org.glassfish.jaxb:jaxb-runtime`
-- [TestNG] Remove spurious Optional\[<Feature Name>] from test name ([#2488](https://github.com/cucumber/cucumber-jvm/pull/2488) M.P. Korstanje)
+- [OpenEJB] Remove spurious dependencies ([#2477](https://github.com/cucumber/cucumber-jvm/pull/2477) M.P. Korstanje)
+- [TestNG] Remove spurious `Optional` from test name ([#2488](https://github.com/cucumber/cucumber-jvm/pull/2488) M.P. Korstanje)
 - [BOM] Add missing dependencies to bill of materials ([#2496](https://github.com/cucumber/cucumber-jvm/pull/2496) M.P. Korstanje)
 - [Spring] Start and stop test context once per scenario ([#2517](https://github.com/cucumber/cucumber-jvm/pull/2517) M.P. Korstanje)
 - [JUnit Platform] Feature files with space in filename generate Illegal Character ([#2521](https://github.com/cucumber/cucumber-jvm/pull/2521) G. Fernandez)
@@ -94,16 +89,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.2.0] - 2022-01-03
 ### Added
 - [Core] Support multiple doc strings types with same content type ([#2421](https://github.com/cucumber/cucumber-jvm/pull/2421) Postelnicu George)
-    - When transforming doc strings in addition to the content type Cucumber will
-      also look at the type used in the step definition to disambiguate between
-      doc string types.
 - [Guice] Automatically detect `InjectorSource` ([#2432](https://github.com/cucumber/cucumber-jvm/pull/2432) Postelnicu George)
 - [Core] Support proxy for publish plugin ([#2452](https://github.com/cucumber/cucumber-jvm/pull/2452) M.P. Korstanje)
-    ```
-    cucumber.publish.proxy=https://proxy.example.com:3129
-    ```
-  Note: The publish-plugin only reads properties from the `cucumber.properties`, the environment, system properties. And
-  not `junit-platform.properties`.
 
 ### Changed
 - [Core] Replaced `create-meta` dependency with `ci-environment` ([#2438](https://github.com/cucumber/cucumber-jvm/pull/2438) M.P. Korstanje)
@@ -121,58 +108,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Core] Update dependency io.cucumber:tag-expressions to v4.1.0
-    - support escape backslashes in tag expressions ([common/#1778](https://github.com/cucumber/common/pull/1778) Yusuke Noda)
+- [Core] Support escape backslashes in tag expressions ([common/#1778](https://github.com/cucumber/common/pull/1778) Yusuke Noda)
 - [JUnit Platform] Use JUnit Platform 1.8.2 (JUnit Jupiter 5.8.2)
 
 ### Deprecated
 - [Core] Deprecated forgotten `TypeRegistry`.
 
-## [7.0.0] - 2021-10-06 - [Release Announcement](release-notes/v7.0.0.md)
+## [7.0.0] - 2021-10-06
 
 ## [7.0.0-RC1] - 2021-09-11
 ### Added
 - [Java] Added `@BeforeAll` and `@AfterAll` hooks ([cucumber/#1876](https://github.com/cucumber/cucumber-jvm/pull/1876) M.P. Korstanje)
 - [JUnit Platform] Optionally use long names
-    - Adds `cucumber.junit-platform.naming-strategy=long` ([#2361](https://github.com/cucumber/cucumber-jvm/pull/2361) M.P. Korstanje)
 
 ### Changed
 - [Core] Updated `cucumber-expressions` to v11 ([cucumber/#711](https://github.com/cucumber/cucumber/pull/771) M.P. Korstanje)
-    - Fixes various ambiguities and bugs in the way Cucumber expressions are parsed and transformed into regular expressions
-    - May break Cucumber expressions that depend on these ambiguities
 - [Core] Removed incorrect ISO 639-1 code for Telugu language ([cucumber/#1238](https://github.com/cucumber/cucumber/pull/1238) Nvmkpk)
-    - Change imports of `io.cucumber.java.tl.*` to `io.cucumber.java.te.*`
-    - Change imports of `io.cucumber.java8.Tl` to `io.cucumber.java.Te`
-    - Change `# language: tl` to `# language: te`
 - [Core] Deprecated the `Summary` plugin interface for removal.
-    - Removed the `default_summary` and `null_summary` plugins
-    - The `summary` plugin is enabled default when using the CLI. Use `--no-summary` to disable.
-    - The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
+- [Core] Removed the `default_summary` and `null_summary` plugins
+- [Core] The `summary` plugin is enabled default when using the CLI. Use `--no-summary` to disable.
+- [Core] The `progress` formatter is no longer enabled by default on CLI. Use `--plugin progress` to enable.
 - [Core] Use transformer for all `DataTable.asX` methods. ([#2262](https://github.com/cucumber/cucumber-jvm/issues/2262) [cucumber/#1419](https://github.com/cucumber/cucumber/pull/1419) M.P. Korstanje)
-    - To retain the old behaviour:
-        - Replace `DataTable.asList()` with -> `DataTable.values()`
-        - Replace `DataTable.asLists()` with -> `DataTable.cells()`
-        - Replace `DataTable.asMaps()` with -> `DataTable.entries()`
 - [TestNG] Automatically pick up properties from `testng.xml` ([#2354](https://github.com/cucumber/cucumber-jvm/pull/2354) M.P. Korstanje, Gayan Sandaruwan)
 - [Core] Pretty formatter to print step DataTables ([#2330](https://github.com/cucumber/cucumber-jvm/pull/2330) Arty Sidorenko)
 - [Core] `Scenario.getId()` returns the actual scenario id ([#2366](https://github.com/cucumber/cucumber-jvm/issues/2366) M.P. Korstanje)
-    - To obtain the original `<uri>:<line-number>` identifier use `scenario.getUri() + ":" + scenario.getLine()`.
 
 ### Deprecated
 - [JUnit Platform] Deprecated `@Cucumber` in favour of `@Suite` ([#2362](https://github.com/cucumber/cucumber-jvm/pull/2362) M.P. Korstanje)
 
-### Removed
-- [Core] Removed `--strict` and `--no-strict` options ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)
-    - Cucumber executes scenarios in strict mode by default
-- [Core] Removed deprecated `TypeRegistryConfigurer` ([#2356](https://github.com/cucumber/cucumber-jvm/issues/2356) M.P. Korstanje)
-    - Use `@ParameterType` instead.
-- [Weld] Removed `cucumber-weld` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
-    - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
-- [Needle] Removed `cucumber-needled` ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
-    - Consider using `cucumber-jakarta-cdi` or `cucumber-cdi2`.
-
 ### Fixed
 - [Core] Emit step hook messages ([#2009](https://github.com/cucumber/cucumber-jvm/issues/2093) Grasshopper)
 - [Core] Synchronize event bus before use ([#2358](https://github.com/cucumber/cucumber-jvm/pull/2358)) M.P. Korstanje)
+
+### Removed
+- [Core] Removed `--strict` and `--no-strict` options ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)
+- [Core]  Cucumber executes scenarios in strict mode by default ([#1788](https://github.com/cucumber/cucumber-jvm/issues/1788) M.P. Korstanje)
+- [Core] Removed deprecated `TypeRegistryConfigurer`. Use `@ParameterType` instead. ([#2356](https://github.com/cucumber/cucumber-jvm/issues/2356) M.P. Korstanje)
+- [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
+- [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
 [Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.5.0...main
 [7.5.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...v7.5.0
