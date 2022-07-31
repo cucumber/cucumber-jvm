@@ -34,29 +34,29 @@
     </scm>
 
     <modules>
-        <module>archetype</module>
-        <module>bom</module>
-        <module>cdi2</module>
-        <module>core</module>
+        <module>cucumber-archetype</module>
+        <module>cucumber-bom</module>
+        <module>cucumber-cdi2</module>
+        <module>cucumber-core</module>
+        <module>cucumber-deltaspike</module>
+        <module>cucumber-gherkin</module>
+        <module>cucumber-gherkin-messages</module>
+        <module>cucumber-guice</module>
+        <module>cucumber-jakarta-cdi</module>
+        <module>cucumber-jakarta-openejb</module>
+        <module>cucumber-java8</module>
+        <module>cucumber-java</module>
+        <module>cucumber-junit</module>
+        <module>cucumber-junit-platform-engine</module>
+        <module>cucumber-kotlin-java8</module>
+        <module>cucumber-openejb</module>
+        <module>cucumber-picocontainer</module>
+        <module>cucumber-plugin</module>
+        <module>cucumber-spring</module>
+        <module>cucumber-testng</module>
         <module>datatable</module>
         <module>datatable-matchers</module>
-        <module>deltaspike</module>
         <module>docstring</module>
-        <module>gherkin</module>
-        <module>gherkin-messages</module>
-        <module>guice</module>
-        <module>jakarta-cdi</module>
-        <module>jakarta-openejb</module>
-        <module>java8</module>
-        <module>java</module>
-        <module>junit</module>
-        <module>junit-platform-engine</module>
-        <module>kotlin-java8</module>
-        <module>openejb</module>
-        <module>picocontainer</module>
-        <module>plugin</module>
-        <module>spring</module>
-        <module>testng</module>
     </modules>
 
     <profiles>

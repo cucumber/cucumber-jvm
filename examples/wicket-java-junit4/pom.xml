@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
-        <artifactId>cucumber-examples</artifactId>
+        <artifactId>examples</artifactId>
         <version>7.5.1-SNAPSHOT</version>
     </parent>
     <artifactId>wicket-java-junit4</artifactId>
