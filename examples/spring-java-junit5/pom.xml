@@ -3,7 +3,7 @@
 
     <parent>
         <groupId>io.cucumber</groupId>
-        <artifactId>cucumber-examples</artifactId>
+        <artifactId>examples</artifactId>
         <version>7.5.1-SNAPSHOT</version>
     </parent>
 
