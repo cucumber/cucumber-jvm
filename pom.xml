@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.cucumber</groupId>
@@ -16,8 +17,6 @@
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
-        <toolchain.vendor>openjdk</toolchain.vendor>
-        <toolchain.java.version>11</toolchain.java.version>
 
         <!-- io.cucumber dependencies -->
         <!-- Whenever messages is updated run `make update-cck` -->
@@ -105,6 +104,26 @@
                 <module>examples</module>
                 <module>compatibility</module>
             </modules>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- Check code format -->
+                        <plugin>
+                            <groupId>com.diffplug.spotless</groupId>
+                            <artifactId>spotless-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>spotless-check</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>check</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
         </profile>
 
         <profile>
@@ -115,11 +134,11 @@
                         <groupId>org.revapi</groupId>
                         <artifactId>revapi-maven-plugin</artifactId>
                         <executions>
-                             <execution>
-                               <id>check</id>
-                               <goals>
-                                 <goal>check</goal>
-                               </goals>
+                            <execution>
+                                <id>check</id>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -130,18 +149,6 @@
 
     <build>
         <plugins>
-            <!-- Need the 3.0.0+ release for Junit5 + Before/After hooks -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M7</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M7</version>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -160,6 +167,19 @@
                             </rules>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>enforce-java</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[11,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -168,26 +188,6 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>toolchain</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <toolchains>
-                        <jdk>
-                            <version>${toolchain.java.version}</version>
-                            <vendor>${toolchain.vendor}</vendor>
-                        </jdk>
-                    </toolchains>
                 </configuration>
             </plugin>
 
@@ -207,38 +207,6 @@
                     <execution>
                         <id>java11</id>
                         <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.commonjava.maven.plugins</groupId>
-                <artifactId>directory-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>directories</id>
-                        <goals>
-                            <goal>highest-basedir</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <property>main.basedir</property>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Check code format -->
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>spotless-check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -285,9 +253,6 @@
                             </goals>
                             <configuration>
                                 <release>9</release>
-                                <jdkToolchain>
-                                    <version>9</version>
-                                </jdkToolchain>
                                 <compileSourceRoots>
                                     <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
                                 </compileSourceRoots>
@@ -304,9 +269,6 @@
                             </goals>
                             <configuration>
                                 <release>10</release>
-                                <jdkToolchain>
-                                    <version>10</version>
-                                </jdkToolchain>
                                 <compileSourceRoots>
                                     <compileSourceRoot>${project.basedir}/src/main/java10</compileSourceRoot>
                                 </compileSourceRoots>
@@ -323,9 +285,6 @@
                             </goals>
                             <configuration>
                                 <release>11</release>
-                                <jdkToolchain>
-                                    <version>11</version>
-                                </jdkToolchain>
                                 <compileSourceRoots>
                                     <compileSourceRoot>${project.basedir}/src/main/java11</compileSourceRoot>
                                 </compileSourceRoots>
@@ -372,6 +331,35 @@
                     </configuration>
                 </plugin>
 
+                <!-- Need the 3.0.0+ release for Junit5 + Before/After hooks -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M7</version>
+                </plugin>
+
+                <!-- Determine project root for revapi and spotless  -->
+                <plugin>
+                    <groupId>org.commonjava.maven.plugins</groupId>
+                    <artifactId>directory-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>directories</id>
+                            <goals>
+                                <goal>highest-basedir</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                            <configuration>
+                                <property>main.basedir</property>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
                 <!-- Semantic version check  -->
                 <plugin>
                     <groupId>org.revapi</groupId>
@@ -452,24 +440,24 @@
                         <failsOnError>true</failsOnError>
                         <checkstyleRules>
                             <module name="Checker">
-                                <property name="severity" value="error" />
+                                <property name="severity" value="error"/>
                                 <module name="TreeWalker">
-                                    <module name="AvoidStarImport" />
+                                    <module name="AvoidStarImport"/>
                                     <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true" />
-                                        <property name="allowMissingReturnTag" value="true" />
+                                        <property name="allowMissingParamTags" value="true"/>
+                                        <property name="allowMissingReturnTag" value="true"/>
                                     </module>
-                                    <module name="NonEmptyAtclauseDescription" />
-                                    <module name="SuppressWarningsHolder" />
+                                    <module name="NonEmptyAtclauseDescription"/>
+                                    <module name="SuppressWarningsHolder"/>
                                     <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true" />
+                                        <property name="processJavadoc" value="true"/>
                                     </module>
                                 </module>
-                                <module name="SuppressWarningsFilter" />
+                                <module name="SuppressWarningsFilter"/>
                                 <module name="RegexpSingleline">
-                                    <property name="format" value="@author" />
-                                    <property name="message" value="Please do not use @author tags" />
-                                    <property name="fileExtensions" value="java,groovy,kt" />
+                                    <property name="format" value="@author"/>
+                                    <property name="message" value="Please do not use @author tags"/>
+                                    <property name="fileExtensions" value="java,groovy,kt"/>
                                 </module>
                             </module>
                         </checkstyleRules>

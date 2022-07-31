@@ -31,9 +31,9 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B --show-version --toolchains .github/workflows/.toolchains.xml
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B --show-version
       - name: Test
-        run: mvn verify --toolchains .github/workflows/.toolchains.xml
+        run: mvn verify
         env:
           CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
@@ -54,9 +54,9 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version --toolchains .github/workflows/.toolchains.xml
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
       - name: Javadoc
-        run: mvn javadoc:jar --toolchains .github/workflows/.toolchains.xml
+        run: mvn javadoc:jar
 
   coverage:
     name: 'Coverage'
@@ -75,9 +75,9 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version --toolchains .github/workflows/.toolchains.xml
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
       - name: Test (Coverage)
-        run: mvn jacoco:prepare-agent verify jacoco:report --toolchains .github/workflows/.toolchains.xml
+        run: mvn jacoco:prepare-agent verify jacoco:report
       - uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
@@ -101,6 +101,6 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version --toolchains .github/workflows/.toolchains.xml
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
       - name: Test (Semver check)
-        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true --toolchains .github/workflows/.toolchains.xml
+        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
