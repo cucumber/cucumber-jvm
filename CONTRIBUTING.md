@@ -12,10 +12,10 @@ We appreciate that. Do keep the following in mind:
 
 ## Formatting Java
 
-To automatically format the java source code run
+The source code is formatted automatically by spotless when running:
 
 ```
-mvn initialize spotless:apply
+mvn install
 ```
 
 To configure Intelij IDEA/Eclipse use the configuration files in `.spotless/`.
