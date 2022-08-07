@@ -16,7 +16,7 @@ def unsupported = ["em", "en_tx"] // The generated files for Emoij and Texan do 
 GherkinDialectProvider dialectProvider = new GherkinDialectProvider()
 
 dialectProvider.getLanguages().each { language ->
-    def dialect = dialectProvider.getDialect(language, null)
+    def dialect = dialectProvider.getDialect(language).get()
     def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
     if (!unsupported.contains(normalized_language)) {
         dialect.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.unique().each { kw ->

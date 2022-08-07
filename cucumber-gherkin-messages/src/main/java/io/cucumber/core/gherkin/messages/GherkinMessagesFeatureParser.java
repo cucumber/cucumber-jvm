@@ -56,7 +56,9 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                     cucumberQuery.update(feature);
                     GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
                     String language = feature.getLanguage();
-                    GherkinDialect dialect = dialectProvider.getDialect(language, null);
+                    GherkinDialect dialect = dialectProvider.getDialect(language)
+                            // Can't happen, we just parsed the feature.
+                            .orElseThrow(() -> new IllegalStateException(language + "was not a known gherkin Dialect"));
 
                     List<io.cucumber.messages.types.Pickle> pickleMessages = envelopes.stream()
                             .map(Envelope::getPickle)

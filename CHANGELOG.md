@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- [Core] Update dependency io.cucumber:messages to v19
+- [Core] Update dependency io.cucumber:gherkin to v24
+- [Core] Update dependency io.cucumber:html-formatter to v20
+
 ## [7.5.0] - 2022-07-28
 ### Added
 - [OpenEJB] Added new module `jakarta-openejb`, which supports the jakarta.* namespace in TomEE 9.x ([#2583](https://github.com/cucumber/cucumber-jvm/pull/2583) R. Zowalla)
