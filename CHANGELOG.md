@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.6.0] - 2022-08-08
 ### Changed
 - [Core] Update dependency io.cucumber:messages to v19
 - [Core] Update dependency io.cucumber:gherkin to v24
@@ -152,7 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.5.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.6.0...main
+[7.6.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.5.0...main
 [7.5.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...v7.5.0
 [7.4.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.0...v7.4.1
 [7.4.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...v7.4.0
