@@ -93,17 +93,24 @@
         </profile>
 
         <profile>
-            <id>build-in-ci</id>
-            <activation>
-                <property>
-                    <name>CI</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <!-- Modules are not included by default when building in CI.
+                 Releases are also made from CI, and we do not want to release
+                 these modules. -->
+            <id>include-extra-modules</id>
             <modules>
                 <module>examples</module>
                 <module>compatibility</module>
             </modules>
+        </profile>
+
+        <profile>
+            <id>build-in-ci</id>
+            <activation>
+                <property>
+                    <name>env.CI</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <build>
                 <pluginManagement>
                     <plugins>
