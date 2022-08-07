@@ -9,7 +9,7 @@ def unsupported = ["em", "en_tx"] // The generated files for Emoij and Texan do 
 GherkinDialectProvider dialectProvider = new GherkinDialectProvider()
 
 dialectProvider.getLanguages().each { language ->
-    def dialect = dialectProvider.getDialect(language, null)
+    def dialect = dialectProvider.getDialect(language).get()
     def normalized_language = dialect.language.replaceAll("[\\s-]", "_").toLowerCase()
     if (!unsupported.contains(normalized_language)) {
         def templateSource = new File(project.basedir, "src/main/groovy/lambda.java.gsp").getText()

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -199,15 +200,15 @@ public final class CommandlineOptionsParser {
 
     private byte printI18n(String language) {
         GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        List<String> languages = dialectProvider.getLanguages();
+        Set<String> languages = dialectProvider.getLanguages();
 
         if (language.equalsIgnoreCase("help")) {
             if (language.equalsIgnoreCase("help")) {
-                List<GherkinDialect> dialects = new ArrayList<>();
-                for (String code : languages) {
-                    GherkinDialect dialect = dialectProvider.getDialect(code, null);
-                    dialects.add(dialect);
-                }
+                List<GherkinDialect> dialects = languages.stream()
+                        .map(dialectProvider::getDialect)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
 
                 int widestLanguage = findWidest(dialects, GherkinDialect::getLanguage);
                 int widestName = findWidest(dialects, GherkinDialect::getName);
@@ -220,7 +221,8 @@ public final class CommandlineOptionsParser {
             }
         }
         if (languages.contains(language)) {
-            return printKeywordsFor(dialectProvider.getDialect(language, null));
+            dialectProvider.getDialect(language)
+                    .ifPresent(this::printKeywordsFor);
         }
 
         out.println("Unrecognised ISO language code");
