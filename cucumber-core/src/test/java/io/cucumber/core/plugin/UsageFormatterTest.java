@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
+import org.json.JSONException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,7 +28,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.number.IsCloseTo.closeTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 class UsageFormatterTest {
 
@@ -123,7 +124,7 @@ class UsageFormatterTest {
 
     @Test
     @Disabled("TODO")
-    void doneWithoutUsageStatisticStrategies() {
+    void doneWithoutUsageStatisticStrategies() throws JSONException {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
         UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
@@ -156,12 +157,12 @@ class UsageFormatterTest {
                 "  }\n" +
                 "]";
 
-        assertThat(out.toString(), sameJSONAs(json));
+        assertEquals(json, out.toString(), true);
     }
 
     @Test
     @Disabled("TODO")
-    void doneWithUsageStatisticStrategies() {
+    void doneWithUsageStatisticStrategies() throws JSONException {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
 
@@ -196,7 +197,7 @@ class UsageFormatterTest {
                 "  }\n" +
                 "]";
 
-        assertThat(out.toString(), sameJSONAs(json));
+        assertEquals(json, out.toString(), true);
     }
 
     @Test

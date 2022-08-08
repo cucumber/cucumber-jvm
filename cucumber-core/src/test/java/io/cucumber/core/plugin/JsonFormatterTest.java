@@ -13,6 +13,7 @@ import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.docstring.DocString;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -28,13 +29,12 @@ import static java.time.ZoneId.of;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 class JsonFormatterTest {
 
     @Test
-    void featureWithOutlineTest() {
+    void featureWithOutlineTest() throws JSONException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         createRuntime(out)
                 .build()
@@ -77,7 +77,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void featureWithOutlineTestParallel() {
+    void featureWithOutlineTestParallel() throws JSONException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         createRuntime(out)
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(2).build())
@@ -93,7 +93,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_an_undefined_step() {
+    void should_format_scenario_with_an_undefined_step() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -146,17 +146,17 @@ class JsonFormatterTest {
         assertJsonEquals(expected, out);
     }
 
-    private void assertJsonEquals(String expected, ByteArrayOutputStream actual) {
+    private void assertJsonEquals(String expected, ByteArrayOutputStream actual) throws JSONException {
         assertJsonEquals(expected, new String(actual.toByteArray(), UTF_8));
 
     }
 
-    private void assertJsonEquals(String expected, String actual) {
-        assertThat(actual, sameJSONAs(expected));
+    private void assertJsonEquals(String expected, String actual) throws JSONException {
+        assertEquals(expected, actual, true);
     }
 
     @Test
-    void should_format_scenario_with_a_passed_step() {
+    void should_format_scenario_with_a_passed_step() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -215,7 +215,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_failed_step() {
+    void should_format_scenario_with_a_failed_step() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -276,7 +276,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_rule() {
+    void should_format_scenario_with_a_rule() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -336,7 +336,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_rule_and_background() {
+    void should_format_scenario_with_a_rule_and_background() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -436,7 +436,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_outline_with_one_example() {
+    void should_format_scenario_outline_with_one_example() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Fruit party\n" +
                 "\n" +
@@ -498,7 +498,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_feature_with_background() {
+    void should_format_feature_with_background() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -630,7 +630,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_feature_and_scenario_with_tags() {
+    void should_format_feature_and_scenario_with_tags() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "@Party @Banana\n" +
                 "Feature: Banana party\n" +
@@ -718,7 +718,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_hooks() {
+    void should_format_scenario_with_hooks() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -801,7 +801,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_add_step_hooks_to_step() {
+    void should_add_step_hooks_to_step() throws JSONException {
         Feature feature = TestFeatureParser.parse("file:path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -943,7 +943,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_handle_write_from_a_hook() {
+    void should_handle_write_from_a_hook() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -1019,7 +1019,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_handle_embed_from_a_hook() {
+    void should_handle_embed_from_a_hook() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -1099,7 +1099,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_handle_embed_with_name_from_a_hook() {
+    void should_handle_embed_with_name_from_a_hook() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -1180,7 +1180,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_step_with_a_doc_string() {
+    void should_format_scenario_with_a_step_with_a_doc_string() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -1246,7 +1246,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() {
+    void should_format_scenario_with_a_step_with_a_doc_string_and_content_type() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -1313,7 +1313,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_format_scenario_with_a_step_with_a_data_table() {
+    void should_format_scenario_with_a_step_with_a_data_table() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +
@@ -1388,7 +1388,7 @@ class JsonFormatterTest {
     }
 
     @Test
-    void should_handle_several_features() {
+    void should_handle_several_features() throws JSONException {
         Feature feature1 = TestFeatureParser.parse("path/test1.feature", "" +
                 "Feature: Banana party\n" +
                 "\n" +

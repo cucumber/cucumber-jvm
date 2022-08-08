@@ -5,19 +5,19 @@ import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import static java.time.Duration.ZERO;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 class JsonParallelRuntimeTest {
 
     @Test
-    void testSingleFeature() {
+    void testSingleFeature() throws JSONException {
         ByteArrayOutputStream parallel = new ByteArrayOutputStream();
 
         Runtime.builder()
@@ -46,11 +46,11 @@ class JsonParallelRuntimeTest {
                 .build()
                 .run();
 
-        assertThat(parallel.toString(), sameJSONAs(serial.toString()).allowingAnyArrayOrdering());
+        assertEquals(serial.toString(), parallel.toString(), false);
     }
 
     @Test
-    void testMultipleFeatures() {
+    void testMultipleFeatures() throws JSONException {
         ByteArrayOutputStream parallel = new ByteArrayOutputStream();
 
         Runtime.builder()
@@ -83,7 +83,7 @@ class JsonParallelRuntimeTest {
                 .build()
                 .run();
 
-        assertThat(parallel.toString(), sameJSONAs(serial.toString()).allowingAnyArrayOrdering());
+        assertEquals(serial.toString(), parallel.toString(), false);
     }
 
 }
