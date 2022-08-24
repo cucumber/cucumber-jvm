@@ -12,6 +12,7 @@ import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_MODE_SCENARIOS_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
@@ -177,5 +179,12 @@ class CucumberEngineOptions implements
                     .distinct()
                     .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
+    }
+
+    ExecutionMode getExecutionModeForScenario() {
+        return configurationParameters
+                .get(PARALLEL_EXECUTION_MODE_SCENARIOS_PROPERTY_NAME,
+                    value -> ExecutionMode.valueOf(value.toUpperCase()))
+                .orElse(ExecutionMode.CONCURRENT);
     }
 }

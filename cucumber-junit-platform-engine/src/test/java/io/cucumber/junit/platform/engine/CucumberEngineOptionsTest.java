@@ -4,6 +4,7 @@ import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.net.URI;
 
@@ -150,6 +151,25 @@ class CucumberEngineOptionsTest {
             "some key", "some value");
         assertFalse(new CucumberEngineOptions(absent).isParallelExecutionEnabled());
 
+    }
+
+    @Test
+    void getExecutionModeForScenario() {
+        ConfigurationParameters concurrent = new MapConfigurationParameters(
+            Constants.PARALLEL_EXECUTION_MODE_SCENARIOS_PROPERTY_NAME,
+            "concurrent");
+        assertThat(new CucumberEngineOptions(concurrent).getExecutionModeForScenario(),
+            is(Node.ExecutionMode.CONCURRENT));
+
+        ConfigurationParameters sameThread = new MapConfigurationParameters(
+            Constants.PARALLEL_EXECUTION_MODE_SCENARIOS_PROPERTY_NAME,
+            "same_thread");
+        assertThat(new CucumberEngineOptions(sameThread).getExecutionModeForScenario(),
+            is(Node.ExecutionMode.SAME_THREAD));
+
+        ConfigurationParameters defaultValue = new MapConfigurationParameters("", "");
+        assertThat(new CucumberEngineOptions(defaultValue).getExecutionModeForScenario(),
+            is(Node.ExecutionMode.CONCURRENT));
     }
 
 }

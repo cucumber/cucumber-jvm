@@ -86,6 +86,7 @@ final class FeatureResolver {
                 feature),
             (Node.Rule node, TestDescriptor parent) -> {
                 TestDescriptor descriptor = new NodeDescriptor(
+                    parameters,
                     source.ruleSegment(parent.getUniqueId(), node),
                     namingStrategy.name(node),
                     source.nodeSource(node));
@@ -104,6 +105,7 @@ final class FeatureResolver {
             },
             (Node.ScenarioOutline node, TestDescriptor parent) -> {
                 TestDescriptor descriptor = new NodeDescriptor(
+                    parameters,
                     source.scenarioSegment(parent.getUniqueId(), node),
                     namingStrategy.name(node),
                     source.nodeSource(node));
@@ -112,6 +114,7 @@ final class FeatureResolver {
             },
             (Node.Examples node, TestDescriptor parent) -> {
                 NodeDescriptor descriptor = new NodeDescriptor(
+                    parameters,
                     source.examplesSegment(parent.getUniqueId(), node),
                     namingStrategy.name(node),
                     source.nodeSource(node));

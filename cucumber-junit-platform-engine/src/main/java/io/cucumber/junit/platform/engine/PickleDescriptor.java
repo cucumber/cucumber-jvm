@@ -31,6 +31,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
     private final Pickle pickleEvent;
     private final Set<TestTag> tags;
     private final Set<ExclusiveResource> exclusiveResources = new LinkedHashSet<>(0);
+    private final CucumberEngineOptions options;
 
     PickleDescriptor(
             ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, Pickle pickleEvent
@@ -47,6 +48,7 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
                     .map(resource -> new ExclusiveResource(resource, LockMode.READ))
                     .forEach(exclusiveResources::add);
         });
+        this.options = new CucumberEngineOptions(parameters);
     }
 
     private Set<TestTag> getTags(Pickle pickleEvent) {
@@ -126,6 +128,11 @@ class PickleDescriptor extends AbstractTestDescriptor implements Node<CucumberEn
                 .map(ClasspathResourceSource.class::cast)
                 .map(ClasspathResourceSource::getClasspathResourceName)
                 .map(ClasspathSupport::packageNameOfResource);
+    }
+
+    @Override
+    public ExecutionMode getExecutionMode() {
+        return options.getExecutionModeForScenario();
     }
 
     private static final class ExclusiveResourceOptions {

@@ -266,9 +266,39 @@ Feature: Isolated scenarios
 
 with this configuration:
 
+
 ```properties
 cucumber.execution.exclusive-resources.isolated.read-write=org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY
 ```
+### Sequential Scenario Execution With Parallel Run
+
+By default, when the configuration parameter `cucumber.execution.parallel.enabled` set to `true`, all applicable
+scenarios would be executed in parallel. setting the configuration parameter
+`cucumber.execution.execution-mode.scenario` to `same_thread` results in features executed in parallel but scenarios
+within the feature runs sequential (parallel run behaviour of junit4). 
+
+Example - consider a test suite of 2 Features
+
+```gherkin
+Feature: Sequential Scenario Execution Feature 1
+   
+   Scenario: scenario 1
+      
+   Scenario: scenario 2
+
+Feature: Sequential Scenario Execution Feature 2
+
+   Scenario: scenario 1
+
+   Scenario: scenario 2
+```
+when configuration parameter `cucumber.execution.parallel.enabled` set to `true` and
+configuration parameter `cucumber.execution.execution-mode.scenario` set to `same_thread` Then the execution would be
+
+Thread 1 -> Feature 1 -> scenario 1 -> scenario 2
+<p>Thread 2 -> Feature 2 -> scenario 1 -> scenario 2
+
+default value of configuration parameter `cucumber.execution.execution-mode.scenario` is `concurrent` 
 
 ## Configuration Options ##
 
@@ -344,6 +374,13 @@ cucumber.execution.parallel.config.dynamic.factor=            # positive double.
 
 cucumber.execution.parallel.config.custom.class=              # class name.
                                                               # example: com.example.MyCustomParallelStrategy
+
+cucumber.execution.execution-mode.scenario=                   # same_thread or concurrent
+                                                              # default: concurrent
+                                                              # same_thread - executes scenarios sequentially in the 
+                                                              # same thread as the parent feature 
+                                                              # conncurrent - executes scenarios concurrently on any
+                                                              # available thread
 
 cucumber.execution.exclusive-resources.<tag-name>.read-write= # a comma separated list of strings
                                                               # example: resource-a, resource-b.
