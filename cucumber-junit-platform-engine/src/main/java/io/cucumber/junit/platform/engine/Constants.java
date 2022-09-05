@@ -281,17 +281,20 @@ public final class Constants {
             + CONFIG_CUSTOM_CLASS_PROPERTY_NAME;
 
     /**
-     * Property name used to enable sequential execution of scenarios during parallel run: {@value}
+     * Property name used to enable sequential execution of scenarios during
+     * parallel run: {@value}
      * <p>
-     * Valid values are {@code same_thread} or {@code concurrent}.
-     * Default value is {@code concurrent}.
+     * Valid values are {@code same_thread} or {@code concurrent}. Default value
+     * is {@code concurrent}.
      * <p>
-     * By default, when parallel execution is enabled, scenarios
-     * are executed in parallel on any available thread. setting this property to {@code same_thread}
-     * executes scenarios sequentially in the same thread as the parent feature
+     * By default, when parallel execution is enabled, scenarios are executed in
+     * parallel on any available thread. setting this property to
+     * {@code same_thread} executes scenarios sequentially in the same thread as
+     * the parent feature
      * <p>
      * setting this property to {@code concurrent} yields the same result as
-     * just setting the PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME property to true
+     * just setting the PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME property to
+     * true
      * 
      * @see #PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME
      */
