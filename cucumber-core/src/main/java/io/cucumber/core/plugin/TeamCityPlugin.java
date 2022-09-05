@@ -77,6 +77,9 @@ public class TeamCityPlugin implements EventListener {
             + "[testFinished timestamp = '%s' duration = '%s' name = '%s']";
     private static final String TEMPLATE_TEST_FAILED = TEAMCITY_PREFIX
             + "[testFailed timestamp = '%s' duration = '%s' message = '%s' details = '%s' name = '%s']";
+
+    private static final String TEMPLATE_TEST_COMPARISON_FAILED = TEAMCITY_PREFIX
+            + "[testFailed timestamp = '%s' duration = '%s' message = '%s' details = '%s' expected = '%s' actual = '%s' name = '%s']";
     private static final String TEMPLATE_TEST_IGNORED = TEAMCITY_PREFIX
             + "[testIgnored timestamp = '%s' duration = '%s' message = '%s' name = '%s']";
 
@@ -100,6 +103,11 @@ public class TeamCityPlugin implements EventListener {
 
     private static final Pattern ANNOTATION_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\([^:]*\\)");
     private static final Pattern LAMBDA_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\(.*:.*\\)");
+
+    private static final Pattern[] COMPARE_PATTERNS = new Pattern[] {
+            Pattern.compile("^expected:\\s*(.*)\\s+but was:\\s*(.*)",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+    };
 
     private final PrintStream out;
     private final List<SnippetsSuggestedEvent> suggestions = new ArrayList<>();
@@ -281,13 +289,42 @@ public class TeamCityPlugin implements EventListener {
             case AMBIGUOUS:
             case FAILED: {
                 String details = printStackTrace(error);
-                print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step failed", details, name);
+                String message = error.getMessage();
+                ComparisonFailureData comparisonFailureData = message != null
+                        ? createExceptionNotification(message.trim())
+                        : null;
+                if (comparisonFailureData != null) {
+                    print(TEMPLATE_TEST_COMPARISON_FAILED, timeStamp, duration, "Step failed", details,
+                        comparisonFailureData.getExpected(), comparisonFailureData.getActual(), name);
+                } else {
+                    print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step failed", details, name);
+                }
                 break;
             }
             default:
                 break;
         }
         print(TEMPLATE_TEST_FINISHED, timeStamp, duration, name);
+    }
+
+    private static ComparisonFailureData createExceptionNotification(String message, Pattern pattern) {
+        final Matcher matcher = pattern.matcher(message);
+        if (matcher.find()) {
+            String expected = matcher.group(1);
+            String actual = matcher.group(2);
+            return new ComparisonFailureData(expected, actual);
+        }
+        return null;
+    }
+
+    private static ComparisonFailureData createExceptionNotification(String message) {
+        for (Pattern pattern : COMPARE_PATTERNS) {
+            ComparisonFailureData result = createExceptionNotification(message, pattern);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
     }
 
     private String extractName(TestStep step) {
@@ -420,4 +457,39 @@ public class TeamCityPlugin implements EventListener {
                 .replace("]", "|]");
     }
 
+    private static class ComparisonFailureData {
+        private final String expected;
+
+        private final String actual;
+
+        ComparisonFailureData(String expected, String actual) {
+            if (isWrappedWith(expected, '<', '>') && isWrappedWith(actual, '<', '>')) {
+                expected = unwrap(expected);
+                actual = unwrap(actual);
+            }
+            if (isWrappedWith(expected, '[', ']') && isWrappedWith(actual, '[', ']')) {
+                expected = unwrap(expected);
+                actual = unwrap(actual);
+            }
+            this.expected = expected;
+            this.actual = actual;
+        }
+
+        private static boolean isWrappedWith(String text, char startChar, char endChar) {
+            return !text.isEmpty() &&
+                    text.charAt(0) == startChar && text.charAt(text.length() - 1) == endChar;
+        }
+
+        private static String unwrap(String text) {
+            return text.substring(1, text.length() - 1);
+        }
+
+        public String getExpected() {
+            return expected;
+        }
+
+        public String getActual() {
+            return actual;
+        }
+    }
 }

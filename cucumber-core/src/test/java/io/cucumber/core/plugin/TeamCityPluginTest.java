@@ -342,4 +342,49 @@ class TeamCityPluginTest {
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']"));
     }
 
+    @Test
+    void should_print_comparison_failure_for_failed_assert_equal() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    singletonList(
+                        new StubStepDefinition("first step", new RuntimeException("expected: <1> but was: <2>"))),
+                    emptyList()))
+                .build()
+                .run();
+
+        assertThat(out, bytesContainsString("expected = '1' actual = '2' name = 'first step']"));
+    }
+
+    @Test
+    void should_print_comparison_failure_for_failed_assert_equal_for_strings() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
+                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    singletonList(new StubStepDefinition("first step",
+                        new RuntimeException("expected: <[one value]> but was: <[another value]>"))),
+                    emptyList()))
+                .build()
+                .run();
+
+        assertThat(out, bytesContainsString("expected = 'one value' actual = 'another value' name = 'first step']"));
+    }
 }
