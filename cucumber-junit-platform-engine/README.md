@@ -270,14 +270,14 @@ with this configuration:
 ```properties
 cucumber.execution.exclusive-resources.isolated.read-write=org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY
 ```
-### Sequential Scenario Execution With Parallel Run
+### Sequential scenario execution with parallel feature run - Junit4 behaviour
 
-By default, when the configuration parameter `cucumber.execution.parallel.enabled` set to `true`, all applicable
-scenarios would be executed in parallel. setting the configuration parameter
-`cucumber.execution.execution-mode.scenario` to `same_thread` results in features executed in parallel but scenarios
-within the feature runs sequential (parallel run behaviour of junit4). 
+When parallel execution in enabled, all applicable scenarios are executed in parallel. Setting the configuration parameter
+`cucumber.execution.execution-mode.feature` to `same_thread` results in features executed in parallel but scenarios
+within the feature runs sequential in the same thread as the parent feature. This functionality replicates the parallel
+execution behaviour of Junit4-Cucumber platform.
 
-Example - consider a test suite of 2 Features
+Example - consider a test suite of 2 features
 
 ```gherkin
 Feature: Sequential Scenario Execution Feature 1
@@ -292,13 +292,12 @@ Feature: Sequential Scenario Execution Feature 2
 
    Scenario: scenario 2
 ```
-when configuration parameter `cucumber.execution.parallel.enabled` set to `true` and
-configuration parameter `cucumber.execution.execution-mode.scenario` set to `same_thread` Then the execution would be
+When parallel execution is enabled and
+configuration parameter `cucumber.execution.execution-mode.feature` set to `same_thread`, Then the execution flow is 
+described as below
 
 Thread 1 -> Feature 1 -> scenario 1 -> scenario 2
 <p>Thread 2 -> Feature 2 -> scenario 1 -> scenario 2
-
-default value of configuration parameter `cucumber.execution.execution-mode.scenario` is `concurrent` 
 
 ## Configuration Options ##
 
@@ -375,12 +374,13 @@ cucumber.execution.parallel.config.dynamic.factor=            # positive double.
 cucumber.execution.parallel.config.custom.class=              # class name.
                                                               # example: com.example.MyCustomParallelStrategy
 
-cucumber.execution.execution-mode.scenario=                   # same_thread or concurrent
+cucumber.execution.execution-mode.feature=                    # same_thread or concurrent
                                                               # default: concurrent
                                                               # same_thread - executes scenarios sequentially in the 
                                                               # same thread as the parent feature 
                                                               # conncurrent - executes scenarios concurrently on any
                                                               # available thread
+                                                              # enables the behaviour of junit4-cucumber platform
 
 cucumber.execution.exclusive-resources.<tag-name>.read-write= # a comma separated list of strings
                                                               # example: resource-a, resource-b.

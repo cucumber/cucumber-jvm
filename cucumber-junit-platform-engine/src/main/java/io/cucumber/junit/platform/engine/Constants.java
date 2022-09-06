@@ -287,18 +287,13 @@ public final class Constants {
      * Valid values are {@code same_thread} or {@code concurrent}. Default value
      * is {@code concurrent}.
      * <p>
-     * By default, when parallel execution is enabled, scenarios are executed in
-     * parallel on any available thread. setting this property to
-     * {@code same_thread} executes scenarios sequentially in the same thread as
-     * the parent feature
-     * <p>
-     * setting this property to {@code concurrent} yields the same result as
-     * just setting the PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME property to
-     * true
+     * When parallel execution is enabled, scenarios are executed in parallel on
+     * any available thread. setting this property to {@code same_thread}
+     * executes scenarios sequentially in the same thread as the parent feature
      * 
      * @see #PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME
      */
-    public static final String PARALLEL_EXECUTION_MODE_SCENARIOS_PROPERTY_NAME = "cucumber.execution.execution-mode.scenario";
+    public static final String PARALLEL_EXECUTION_MODE_FEATURE_PROPERTY_NAME = "cucumber.execution.execution-mode.feature";
 
     private Constants() {
 
