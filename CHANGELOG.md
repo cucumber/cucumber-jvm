@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- [JUnit Platform] enable parallel execution behaviour of Junit4-Cucumber platform ([#2604](https://github.com/cucumber/cucumber-jvm/pull/2604) Sambathkumar Sekar)
+- [JUnit Platform] Enable parallel execution of features ([#2604](https://github.com/cucumber/cucumber-jvm/pull/2604) Sambathkumar Sekar)
 
 ## [7.6.0] - 2022-08-08
 ### Changed

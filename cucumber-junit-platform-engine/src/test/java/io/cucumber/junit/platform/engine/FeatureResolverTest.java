@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static java.util.Arrays.asList;
@@ -164,7 +164,7 @@ class FeatureResolverTest {
     @Test
     void parallelExecutionForFeaturesEnabled() {
         configurationParameters = new MapConfigurationParameters(
-            PARALLEL_EXECUTION_MODE_FEATURE_PROPERTY_NAME, "concurrent");
+            EXECUTION_MODE_FEATURE_PROPERTY_NAME, "concurrent");
 
         assertTrue(getNodes().size() > 0);
         assertTrue(getPickles().size() > 0);
@@ -175,7 +175,7 @@ class FeatureResolverTest {
     @Test
     void parallelExecutionForFeaturesDisabled() {
         configurationParameters = new MapConfigurationParameters(
-            PARALLEL_EXECUTION_MODE_FEATURE_PROPERTY_NAME, "same_thread");
+            EXECUTION_MODE_FEATURE_PROPERTY_NAME, "same_thread");
 
         assertTrue(getNodes().size() > 0);
         assertTrue(getPickles().size() > 0);
