@@ -12,7 +12,6 @@ import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.platform.engine.ConfigurationParameters;
-import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import java.util.stream.Stream;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -180,5 +178,4 @@ class CucumberEngineOptions implements
                     .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
     }
-
 }
