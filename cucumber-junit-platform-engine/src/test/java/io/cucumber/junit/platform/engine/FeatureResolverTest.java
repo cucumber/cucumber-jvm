@@ -1,20 +1,24 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
+import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
@@ -22,6 +26,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
 import static org.junit.platform.engine.TestDescriptor.Type.TEST;
 import static org.junit.platform.engine.TestTag.create;
@@ -157,4 +162,41 @@ class FeatureResolverTest {
         return getOutline().getChildren().iterator().next().getChildren().iterator().next();
     }
 
+    @Test
+    void parallelExecutionForFeaturesEnabled() {
+        configurationParameters = new MapConfigurationParameters(
+            EXECUTION_MODE_FEATURE_PROPERTY_NAME, "concurrent");
+
+        assertTrue(getNodes().size() > 0);
+        assertTrue(getPickles().size() > 0);
+        getNodes().forEach(node -> assertEquals(Node.ExecutionMode.CONCURRENT, node.getExecutionMode()));
+        getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.CONCURRENT, pickle.getExecutionMode()));
+    }
+
+    @Test
+    void parallelExecutionForFeaturesDisabled() {
+        configurationParameters = new MapConfigurationParameters(
+            EXECUTION_MODE_FEATURE_PROPERTY_NAME, "same_thread");
+
+        assertTrue(getNodes().size() > 0);
+        assertTrue(getPickles().size() > 0);
+        getNodes().forEach(node -> assertEquals(Node.ExecutionMode.SAME_THREAD, node.getExecutionMode()));
+        getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.SAME_THREAD, pickle.getExecutionMode()));
+    }
+
+    private Set<NodeDescriptor> getNodes() {
+        return getFeature().getChildren().stream()
+                .filter(TestDescriptor::isContainer)
+                .map(node -> (NodeDescriptor) node)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<PickleDescriptor> getPickles() {
+        return getFeature().getChildren().stream()
+                .filter(TestDescriptor::isContainer)
+                .flatMap(examplesNode -> examplesNode.getChildren().stream())
+                .flatMap(exampleNode -> exampleNode.getChildren().stream())
+                .map(example -> (PickleDescriptor) example)
+                .collect(Collectors.toSet());
+    }
 }

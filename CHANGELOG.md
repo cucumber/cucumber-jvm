@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [JUnit Platform] Enable parallel execution of features ([#2604](https://github.com/cucumber/cucumber-jvm/pull/2604) Sambathkumar Sekar)
 
 ## [7.6.0] - 2022-08-08
 ### Changed

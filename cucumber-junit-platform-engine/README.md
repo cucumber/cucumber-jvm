@@ -269,6 +269,12 @@ with this configuration:
 ```properties
 cucumber.execution.exclusive-resources.isolated.read-write=org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY
 ```
+### Executing features in parallel 
+
+By default, when parallel execution in enabled, scenarios and examples are
+executed in parallel. Due to limitations JUnit 4 could only execute features in
+parallel. This behaviour can be restored by setting the configuration parameter
+`cucumber.execution.execution-mode.feature` to `same_thread`. 
 
 ## Configuration Options ##
 
@@ -329,6 +335,13 @@ cucumber.snippet-type=                                        # underscore or ca
 
 cucumber.execution.dry-run=                                   # true or false.
                                                               # default: false
+
+cucumber.execution.execution-mode.feature=                    # same_thread or concurrent
+                                                              # default: concurrent
+                                                              # same_thread - executes scenarios sequentially in the 
+                                                              # same thread as the parent feature 
+                                                              # conncurrent - executes scenarios concurrently on any
+                                                              # available thread
 
 cucumber.execution.parallel.enabled=                          # true or false.
                                                               # default: false
