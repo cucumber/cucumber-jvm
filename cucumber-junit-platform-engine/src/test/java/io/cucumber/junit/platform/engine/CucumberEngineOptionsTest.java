@@ -153,23 +153,4 @@ class CucumberEngineOptionsTest {
 
     }
 
-    @Test
-    void getExecutionModeForScenario() {
-        ConfigurationParameters concurrent = new MapConfigurationParameters(
-            Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME,
-            "concurrent");
-        assertThat(new CucumberEngineOptions(concurrent).getExecutionModeForScenario(),
-            is(Node.ExecutionMode.CONCURRENT));
-
-        ConfigurationParameters sameThread = new MapConfigurationParameters(
-            Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME,
-            "same_thread");
-        assertThat(new CucumberEngineOptions(sameThread).getExecutionModeForScenario(),
-            is(Node.ExecutionMode.SAME_THREAD));
-
-        ConfigurationParameters defaultValue = new MapConfigurationParameters("", "");
-        assertThat(new CucumberEngineOptions(defaultValue).getExecutionModeForScenario(),
-            is(Node.ExecutionMode.CONCURRENT));
-    }
-
 }
