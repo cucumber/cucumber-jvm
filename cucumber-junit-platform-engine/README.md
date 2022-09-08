@@ -266,7 +266,6 @@ Feature: Isolated scenarios
 
 with this configuration:
 
-
 ```properties
 cucumber.execution.exclusive-resources.isolated.read-write=org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY
 ```
