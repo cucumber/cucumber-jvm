@@ -181,10 +181,4 @@ class CucumberEngineOptions implements
                 .orElse(Collections.emptyList());
     }
 
-    ExecutionMode getExecutionModeForScenario() {
-        return configurationParameters
-                .get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
-                    value -> ExecutionMode.valueOf(value.toUpperCase()))
-                .orElse(ExecutionMode.CONCURRENT);
-    }
 }
