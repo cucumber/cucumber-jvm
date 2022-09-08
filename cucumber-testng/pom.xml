@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.6.1-SNAPSHOT</version>
+        <version>7.7.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-testng</artifactId>
@@ -16,7 +16,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <testng.version>7.6.1</testng.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <mockito.version>4.7.0</mockito.version>
+        <mockito.version>4.8.0</mockito.version>
     </properties>
 
     <dependencyManagement>
