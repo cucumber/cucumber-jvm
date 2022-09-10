@@ -1,5 +1,6 @@
 package io.cucumber.core.backend;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,8 +13,8 @@ public class StubStepDefinition implements StepDefinition {
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final List<ParameterInfo> parameterInfos;
     private final String expression;
-    private final RuntimeException exception;
-    private final String location;
+    private final Throwable exception;
+    private final Located location;
 
     public StubStepDefinition(String pattern, String location, Type... types) {
         this(pattern, location, null, types);
@@ -23,14 +24,14 @@ public class StubStepDefinition implements StepDefinition {
         this(pattern, STUBBED_LOCATION_WITH_DETAILS, null, types);
     }
 
-    public StubStepDefinition(String pattern, RuntimeException exception, Type... types) {
+    public StubStepDefinition(String pattern, Throwable exception, Type... types) {
         this(pattern, STUBBED_LOCATION_WITH_DETAILS, exception, types);
     }
 
-    public StubStepDefinition(String pattern, String location, RuntimeException exception, Type... types) {
+    public StubStepDefinition(String pattern, String location, Throwable exception, Type... types) {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
-        this.location = location;
+        this.location = new StubLocation(location);
         this.exception = exception;
     }
 
@@ -41,13 +42,16 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public String getLocation() {
-        return location;
+        return location.getLocation();
     }
 
     @Override
     public void execute(Object[] args) {
         if (exception != null) {
-            throw exception;
+            if (exception instanceof CucumberBackendException) {
+                throw (CucumberBackendException) exception;
+            }
+            throw new CucumberInvocationTargetException(location, new InvocationTargetException(exception));
         }
 
         assertEquals(parameterInfos.size(), args.length);

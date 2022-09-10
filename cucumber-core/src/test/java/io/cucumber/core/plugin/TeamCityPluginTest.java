@@ -27,6 +27,7 @@ import static java.time.ZoneId.of;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.AssertionFailureBuilder.assertionFailure;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.WINDOWS)
@@ -357,7 +358,7 @@ class TeamCityPluginTest {
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
                     singletonList(
-                        new StubStepDefinition("first step", new RuntimeException("expected: <1> but was: <2>"))),
+                        new StubStepDefinition("first step", assertionFailure().expected(1).actual(2).build())),
                     emptyList()))
                 .build()
                 .run();
@@ -366,7 +367,7 @@ class TeamCityPluginTest {
     }
 
     @Test
-    void should_print_comparison_failure_for_failed_assert_equal_for_strings() {
+    void should_print_comparison_failure_for_failed_assert_equal_with_prefix() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
@@ -379,8 +380,9 @@ class TeamCityPluginTest {
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
-                    singletonList(new StubStepDefinition("first step",
-                        new RuntimeException("expected: <[one value]> but was: <[another value]>"))),
+                    singletonList(
+                        new StubStepDefinition("first step",
+                            assertionFailure().message("oops").expected("one value").actual("another value").build())),
                     emptyList()))
                 .build()
                 .run();
