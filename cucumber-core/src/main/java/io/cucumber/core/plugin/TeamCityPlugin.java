@@ -118,7 +118,7 @@ public class TeamCityPlugin implements EventListener {
             // JUnit 4 Assert.assertEquals
             Pattern.compile("expected:\\s?<(.*)> but was:\\s?<(.*)>$",
                 Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
-            // TestNG Assert.assertEquals
+            // TestNG 7 Assert.assertEquals
             Pattern.compile("expected \\[(.*)] but found \\[(.*)]\n$",
                 Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
     };
