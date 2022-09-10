@@ -106,8 +106,11 @@ public class TeamCityPlugin implements EventListener {
     private static final Pattern LAMBDA_GLUE_CODE_LOCATION_PATTERN = Pattern.compile("^(.*)\\.(.*)\\(.*:.*\\)");
 
     private static final Pattern[] COMPARE_PATTERNS = new Pattern[] {
+            // Hamcrest 2 MatcherAssert.assertThat
+            Pattern.compile("expected: (.*)(?:\r\n|\r|\n) {5}but: was (.*)$",
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
             // AssertJ 3 ShouldBeEqual.smartErrorMessage
-            Pattern.compile("(?:\r\n|\r|\n)expected: (.*)(?:\r\n|\r|\n) but was: (.*)$",
+            Pattern.compile("expected: (.*)(?:\r\n|\r|\n) but was: (.*)$",
                     Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
             // JUnit 5 AssertionFailureBuilder
             Pattern.compile("expected: <(.*)> but was: <(.*)>$",
