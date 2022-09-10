@@ -358,7 +358,7 @@ cucumber.execution.execution-mode.feature=                    # same_thread or c
                                                               # default: concurrent
                                                               # same_thread - executes scenarios sequentially in the 
                                                               # same thread as the parent feature 
-                                                              # conncurrent - executes scenarios concurrently on any
+                                                              # concurrent - executes scenarios concurrently on any
                                                               # available thread
 
 cucumber.execution.parallel.enabled=                          # true or false.
