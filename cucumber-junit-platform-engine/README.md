@@ -301,6 +301,8 @@ documentation
 [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). For 
 documentation on Cucumber properties see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
+_Note:_ The JUnit Platform gives a precedence to the parameters provided using the `@ConfigurationParameter` annotation over all other, so any option that is set with that annotation cannot be overridden from the command line or from properties file. Therefore, for options that you might want to override it is recommended to use `junit-platform.properties` file instead.
+
 ```
 cucumber.ansi-colors.disabled=                                # true or false. 
                                                               # default: false                     
