@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Support comparison of expected and actual values in IntelliJ IDEA ([#2607](https://github.com/cucumber/cucumber-jvm/issues/2607)
 - [Datatable] Support parsing Booleans in Datatables ([#2614](https://github.com/cucumber/cucumber-jvm/pull/2614) G. Jourdan-Weil)
 
+# Fixed
+- [Core] Omit filtered out pickles from html report ([react-components/#273](https://github.com/cucumber/react-components/pull/273) David J. Goss)
+
 ## [7.7.0] - 2022-09-08
 ### Added
 - [JUnit Platform] Enable parallel execution of features ([#2604](https://github.com/cucumber/cucumber-jvm/pull/2604) Sambathkumar Sekar)
