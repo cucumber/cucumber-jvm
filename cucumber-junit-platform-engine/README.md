@@ -185,14 +185,32 @@ in parallel is available as an opt-in feature. To enable parallel execution, set
 the `cucumber.execution.parallel.enabled` configuration parameter to `true`,
 e.g. in `junit-platform.properties`.
 
-Cucumber supports JUnit's `ParallelExecutionConfigurationStrategy`; see the 
-configuration options below.
+To control properties such as the desired parallelism and maximum parallelism,
+Cucumber supports JUnit 5s `ParallelExecutionConfigurationStrategy`. Cucumber
+provides two implementations: `dynamic` and `fixed` that can be set through
+`cucumber.execution.parallel.config.strategy`. You may also implement a `custom`
+strategy.
+
+* `dynamic`: Computes the desired parallelism as `<available cores>` * 
+`cucumber.execution.parallel.config.dynamic.factor`.
+
+* `fixed`: Set the desired parallelism to `cucumber.execution.parallel.config.fixed.parallelism`.
+
+* `custom`: Specify a custom `ParallelExecutionConfigurationStrategy`
+implementation through `cucumber.execution.parallel.config.custom.class`.  
+
+If no strategy is specified Cucumber will use the `dynamic` strategy with a
+factor of `1`.
+
+Note: Cucumber does not guarantee that the number of concurrently executing
+tests will not exceed the configured parallelism. The underlying `ForkJoinPool`
+used to execute scenarios may spawn additional threads. To obtain such
+guarantees us a custom parallel configuration strategy.
 
 ### Exclusive Resources ###
 
-The JUnit Platform supports parallel execution. To avoid flaky tests when
-multiple scenarios manipulate the same resource, tests can be
-[synchronized][junit5-user-guide-synchronization] on that resource.
+To avoid flaky tests when multiple scenarios manipulate the same resource, tests
+can be [synchronized][junit5-user-guide-synchronization] on that resource.
 
 [junit5-user-guide-synchronization]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization
 
@@ -269,6 +287,12 @@ with this configuration:
 ```properties
 cucumber.execution.exclusive-resources.isolated.read-write=org.junit.platform.engine.support.hierarchical.ExclusiveResource.GLOBAL_KEY
 ```
+### Executing features in parallel 
+
+By default, when parallel execution in enabled, scenarios and examples are
+executed in parallel. Due to limitations JUnit 4 could only execute features in
+parallel. This behaviour can be restored by setting the configuration parameter
+`cucumber.execution.execution-mode.feature` to `same_thread`. 
 
 ## Configuration Options ##
 
@@ -329,6 +353,13 @@ cucumber.snippet-type=                                        # underscore or ca
 
 cucumber.execution.dry-run=                                   # true or false.
                                                               # default: false
+
+cucumber.execution.execution-mode.feature=                    # same_thread or concurrent
+                                                              # default: concurrent
+                                                              # same_thread - executes scenarios sequentially in the 
+                                                              # same thread as the parent feature 
+                                                              # concurrent - executes scenarios concurrently on any
+                                                              # available thread
 
 cucumber.execution.parallel.enabled=                          # true or false.
                                                               # default: false

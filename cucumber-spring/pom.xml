@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.6.1-SNAPSHOT</version>
+        <version>7.7.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-spring</artifactId>
@@ -18,7 +18,7 @@
         <junit-jupiter.version>5.9.0</junit-jupiter.version>
         <spring.version>5.3.22</spring.version>
         <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
-        <mockito.version>4.7.0</mockito.version>
+        <mockito.version>4.8.0</mockito.version>
     </properties>
 
     <dependencyManagement>

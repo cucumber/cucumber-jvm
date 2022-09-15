@@ -9,6 +9,10 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
+import io.cucumber.junit.platform.engine.NodeDescriptor.ExamplesDescriptor;
+import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
+import io.cucumber.junit.platform.engine.NodeDescriptor.RuleDescriptor;
+import io.cucumber.junit.platform.engine.NodeDescriptor.ScenarioOutlineDescriptor;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
@@ -85,7 +89,8 @@ final class FeatureResolver {
                 source.featureSource(),
                 feature),
             (Node.Rule node, TestDescriptor parent) -> {
-                TestDescriptor descriptor = new NodeDescriptor(
+                TestDescriptor descriptor = new RuleDescriptor(
+                    parameters,
                     source.ruleSegment(parent.getUniqueId(), node),
                     namingStrategy.name(node),
                     source.nodeSource(node));
@@ -103,7 +108,8 @@ final class FeatureResolver {
                 return descriptor;
             },
             (Node.ScenarioOutline node, TestDescriptor parent) -> {
-                TestDescriptor descriptor = new NodeDescriptor(
+                TestDescriptor descriptor = new ScenarioOutlineDescriptor(
+                    parameters,
                     source.scenarioSegment(parent.getUniqueId(), node),
                     namingStrategy.name(node),
                     source.nodeSource(node));
@@ -111,7 +117,8 @@ final class FeatureResolver {
                 return descriptor;
             },
             (Node.Examples node, TestDescriptor parent) -> {
-                NodeDescriptor descriptor = new NodeDescriptor(
+                NodeDescriptor descriptor = new ExamplesDescriptor(
+                    parameters,
                     source.examplesSegment(parent.getUniqueId(), node),
                     namingStrategy.name(node),
                     source.nodeSource(node));

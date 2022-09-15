@@ -183,6 +183,21 @@ public final class Constants {
     public static final String SNIPPET_TYPE_PROPERTY_NAME = io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
     /**
+     * Property name used to set the executing thread for all scenarios and
+     * examples in a feature: {@value}
+     * <p>
+     * Valid values are {@code same_thread} or {@code concurrent}. Default value
+     * is {@code concurrent}.
+     * <p>
+     * When parallel execution is enabled, scenarios are executed in parallel on
+     * any available thread. setting this property to {@code same_thread}
+     * executes scenarios sequentially in the same thread as the parent feature.
+     *
+     * @see #PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME
+     */
+    public static final String EXECUTION_MODE_FEATURE_PROPERTY_NAME = "cucumber.execution.execution-mode.feature";
+
+    /**
      * Property name used to enable parallel test execution: {@value}
      * <p>
      * By default, tests are executed sequentially in a single thread.

@@ -4,7 +4,7 @@
     <parent>
         <artifactId>cucumber-jvm</artifactId>
         <groupId>io.cucumber</groupId>
-        <version>7.6.1-SNAPSHOT</version>
+        <version>7.7.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
 
     <properties>
         <hamcrest.version>2.2</hamcrest.version>
-        <jackson-databind.version>2.13.3</jackson-databind.version>
+        <jackson-databind.version>2.13.4</jackson-databind.version>
         <junit-jupiter.version>5.9.0</junit-jupiter.version>
     </properties>
 

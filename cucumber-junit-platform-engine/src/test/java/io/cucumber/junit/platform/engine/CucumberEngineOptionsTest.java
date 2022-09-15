@@ -4,6 +4,7 @@ import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.net.URI;
 
