@@ -9,13 +9,15 @@ explanation of noteworthy changes see the [Release Announcement](release-notes/v
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+[Core] Omit filtered out pickles from html report ([react-components/#273](https://github.com/cucumber/react-components/pull/273) David J. Goss)
+
 ## [Unreleased]
+
+## [7.8.0] - 2022-09-15
 ### Added
 - [Core] Support comparison of expected and actual values in IntelliJ IDEA ([#2607](https://github.com/cucumber/cucumber-jvm/issues/2607)
 - [Datatable] Support parsing Booleans in Datatables ([#2614](https://github.com/cucumber/cucumber-jvm/pull/2614) G. Jourdan-Weil)
-
-# Fixed
-- [Core] Omit filtered out pickles from html report ([react-components/#273](https://github.com/cucumber/react-components/pull/273) David J. Goss)
+- 
 
 ## [7.7.0] - 2022-09-08
 ### Added
@@ -163,7 +165,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.7.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.0...main
+[7.8.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.7.0...main
 [7.7.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.6.0...main
 [7.6.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.5.0...main
 [7.5.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...v7.5.0
