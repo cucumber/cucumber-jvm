@@ -62,6 +62,10 @@ public final class DataTableTypeRegistry {
         TableCellTransformer<Double> doubleTableCellTransformer = applyIfPresent(numberParser::parseDouble);
         defineDataTableType(new DataTableType(Double.class, doubleTableCellTransformer));
         defineDataTableType(new DataTableType(double.class, doubleTableCellTransformer));
+
+        TableCellTransformer<Boolean> booleanTableCellTransformer = applyIfPresent(Boolean::parseBoolean);
+        defineDataTableType(new DataTableType(Boolean.class, booleanTableCellTransformer, true));
+        defineDataTableType(new DataTableType(boolean.class, booleanTableCellTransformer, true));
     }
 
     private static <R> TableCellTransformer<R> applyIfPresent(Function<String, R> f) {
