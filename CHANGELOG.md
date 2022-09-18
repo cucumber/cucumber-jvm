@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.8.0] - 2022-09-15
 ### Added
-- [Core] Support comparison of expected and actual values in IntelliJ IDEA ([#2607](https://github.com/cucumber/cucumber-jvm/issues/2607)
+- [Core] Support comparison of expected and actual values in IntelliJ IDEA ([#2607](https://github.com/cucumber/cucumber-jvm/issues/2607) Andrey Vokin)
 - [Datatable] Support parsing Booleans in Datatables ([#2614](https://github.com/cucumber/cucumber-jvm/pull/2614) G. Jourdan-Weil)
 - 
 

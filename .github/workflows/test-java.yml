@@ -32,7 +32,7 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true -B --show-version
+        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test
         run: mvn verify -Pinclude-extra-modules
         env:
@@ -55,7 +55,7 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Javadoc
         run: mvn javadoc:jar
 
@@ -76,7 +76,7 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
+        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Coverage)
         run: mvn jacoco:prepare-agent verify jacoco:report -Pinclude-extra-modules
       - uses: codecov/codecov-action@v3
@@ -102,6 +102,6 @@ jobs:
         with:
           version: '11'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode --show-version
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Semver check)
         run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
