@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test
-        run: mvn verify -Pinclude-extra-modules
+        run: mvn verify -Pinclude-extra-modules -Dstyle.color=always
         env:
           CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Javadoc
-        run: mvn javadoc:jar
+        run: mvn javadoc:jar -Dstyle.color=always
 
   coverage:
     name: 'Coverage'
@@ -78,7 +78,7 @@ jobs:
       - name: Install dependencies
         run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Coverage)
-        run: mvn jacoco:prepare-agent verify jacoco:report -Pinclude-extra-modules
+        run: mvn jacoco:prepare-agent verify jacoco:report -Pinclude-extra-modules -Dstyle.color=always
       - uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
@@ -104,4 +104,4 @@ jobs:
       - name: Install dependencies
         run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Semver check)
-        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
+        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dstyle.color=always
