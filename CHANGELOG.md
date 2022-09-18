@@ -12,8 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Core] Omit filtered out pickles from html report ([react-components/#273](https://github.com/cucumber/react-components/pull/273) David J. Goss)
 
 ## [Unreleased]
-### Changed
-- Always color Maven output in GitHub workflows with -Dstyle.color=always ([#2616](https://github.com/cucumber/cucumber-jvm/pull/2616) Tim te Beek)
 
 ## [7.8.0] - 2022-09-15
 ### Added
