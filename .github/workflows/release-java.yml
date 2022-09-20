@@ -4,6 +4,9 @@ on:
   push:
     branches: [release/*]
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   publish-mvn:
     name: Publish Maven Package
