@@ -247,9 +247,11 @@
                                     <artifact>com.fasterxml.jackson.core:jackson-databind</artifact>
                                     <excludes>
                                         <exclude>**/module-info.class</exclude>
+                                        <exclude>**/module-info.class</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>META-INF/LICENSE</exclude>
                                         <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/services/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -259,6 +261,7 @@
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>META-INF/LICENSE</exclude>
                                         <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/services/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -275,6 +278,7 @@
                                         <exclude>**/module-info.class</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>META-INF/LICENSE</exclude>
+                                        <exclude>META-INF/services/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
