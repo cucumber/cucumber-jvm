@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.8.1] - 2022-10-03
 ### Fixed
-- [Core] Remove Jackson services from `META-INF/services` ([#2621](https://github.com/cucumber/cucumber-jvm/issues/2607) M.P. Korstanje)
+- [Core] Remove Jackson services from `META-INF/services` ([#2621](https://github.com/cucumber/cucumber-jvm/issues/2621) M.P. Korstanje)
 - [JUnit Platform] Use JUnit Platform 1.9.1 (JUnit Jupiter 5.9.1)
 
 ## [7.8.0] - 2022-09-15
