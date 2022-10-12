@@ -12,23 +12,36 @@ import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.ParseError;
 import io.cucumber.messages.types.Source;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static io.cucumber.messages.types.SourceMediaType.TEXT_X_CUCUMBER_GHERKIN_PLAIN;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
 public final class GherkinMessagesFeatureParser implements FeatureParser {
 
+    @Deprecated
     @Override
     public Optional<Feature> parse(URI path, String source, Supplier<UUID> idGenerator) {
+        try (InputStream is = new ByteArrayInputStream(source.getBytes(UTF_8))) {
+            return parse(path, is, idGenerator);
+        } catch (IOException e) {
+            throw new FeatureParserException("Failed to parse resource at: " + path, e);
+        }
+    }
+
+    @Override
+    public Optional<Feature> parse(URI path, InputStream source, Supplier<UUID> idGenerator) throws IOException {
         List<Envelope> envelopes = GherkinParser.builder()
                 .idGenerator(() -> idGenerator.get().toString())
                 .build()
-                .parse(Envelope.of(new Source(path.toString(), source, TEXT_X_CUCUMBER_GHERKIN_PLAIN)))
+                .parse(path.toString(), source)
                 .collect(toList());
 
         List<String> errors = envelopes.stream()
@@ -70,10 +83,17 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                             .map(pickle -> new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery))
                             .collect(toList());
 
+                    Source sourceMessage = envelopes.stream()
+                            .map(Envelope::getSource)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalStateException("source message was not emitted by parser"));
+
                     return new GherkinMessagesFeature(
                         feature,
                         path,
-                        source,
+                        sourceMessage.getData(),
                         pickles,
                         envelopes);
                 });
