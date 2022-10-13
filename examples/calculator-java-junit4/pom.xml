@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.calculator</project.Automatic-Module-Name>
-        <jackson-databind.version>2.13.0</jackson-databind.version>
+        <jackson.version>2.13.4.20221012</jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -22,6 +22,13 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-bom</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -42,7 +49,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

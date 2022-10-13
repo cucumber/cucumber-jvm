@@ -13,7 +13,7 @@
 
     <properties>
         <hamcrest.version>2.2</hamcrest.version>
-        <jackson-databind.version>2.13.4</jackson-databind.version>
+        <jackson.version>2.13.4.20221012</jackson.version>
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
     </properties>
 
@@ -36,7 +36,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -63,7 +63,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

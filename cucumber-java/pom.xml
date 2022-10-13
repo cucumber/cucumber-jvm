@@ -15,7 +15,7 @@
         <project.Automatic-Module-Name>io.cucumber.java</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <jackson-databind.version>2.13.4</jackson-databind.version>
+        <jackson.version>2.13.4.20221012</jackson.version>
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <mockito.version>4.8.0</mockito.version>
     </properties>
@@ -33,6 +33,13 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -74,7 +81,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
