@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:gherkin to v24.1
 - [Core] Delegate encoding and BOM handling to gherkin ([2624](https://github.com/cucumber/cucumber-jvm/issues/2624) M.P. Korstanje)
 
+### Security
+- [Core] Update dependency com.fasterxml.jackson to v2.13.4.20221012
+
+
 ## [7.8.1] - 2022-10-03
 ### Fixed
 - [Core] Remove Jackson services from `META-INF/services` ([#2621](https://github.com/cucumber/cucumber-jvm/issues/2621) M.P. Korstanje)
