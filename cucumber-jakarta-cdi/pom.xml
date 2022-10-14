@@ -5,7 +5,7 @@
         <project.Automatic-Module-Name>io.cucumber.cdi.jakarta</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <openwebbeans.version>2.0.27</openwebbeans.version>
-        <xbean.version>4.21</xbean.version>
+        <xbean.version>4.22</xbean.version>
         <jakarta.enterprise.cdi-api.version>3.0.1</jakarta.enterprise.cdi-api.version>
         <jakarta.activation-api.version>2.1.0</jakarta.activation-api.version>
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
