@@ -13,6 +13,7 @@ import io.cucumber.spring.componentannotation.WithComponentAnnotation;
 import io.cucumber.spring.componentannotation.WithControllerAnnotation;
 import io.cucumber.spring.contextconfig.BellyStepDefinitions;
 import io.cucumber.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
+import io.cucumber.spring.cucontextconfig.WithMetaAnnotation;
 import io.cucumber.spring.dirtiescontextconfig.DirtiesContextBellyStepDefinitions;
 import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefinitions;
 import io.cucumber.spring.metaconfig.general.BellyMetaStepDefinitions;
@@ -357,6 +358,17 @@ class SpringFactoryTest {
 
         assertThrows(CucumberBackendException.class, factory::start);
         assertDoesNotThrow(factory::stop);
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {
+            WithMetaAnnotation.class,
+    })
+    void shouldNotFailWithCucumberContextConfigurationMetaAnnotation(Class<?> contextConfiguration) {
+        final ObjectFactory factory = new SpringFactory();
+        factory.addClass(contextConfiguration);
+
+        assertDoesNotThrow(factory::start);
     }
 
     @CucumberContextConfiguration

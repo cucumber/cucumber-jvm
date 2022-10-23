@@ -5,6 +5,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.apiguardian.api.API;
 import org.springframework.beans.BeansException;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.BootstrapWith;
@@ -82,8 +83,10 @@ public final class SpringFactory implements ObjectFactory {
         }
     }
 
-    private static boolean hasCucumberContextConfiguration(Class<?> stepClass) {
-        return stepClass.getAnnotation(CucumberContextConfiguration.class) != null;
+    public static boolean hasCucumberContextConfiguration(Class<?> stepClass) {
+        return stepClass.getAnnotation(CucumberContextConfiguration.class) != null
+                || AnnotatedElementUtils.hasMetaAnnotationTypes(stepClass, CucumberContextConfiguration.class)
+                || AnnotatedElementUtils.getMergedAnnotation(stepClass, CucumberContextConfiguration.class) != null;
     }
 
     private void checkOnlyOneClassHasCucumberContextConfiguration(Class<?> stepClass) {
