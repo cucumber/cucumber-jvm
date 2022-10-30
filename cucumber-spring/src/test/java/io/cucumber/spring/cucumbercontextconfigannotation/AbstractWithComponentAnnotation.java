@@ -1,4 +1,4 @@
-package io.cucumber.spring.cucontextconfig;
+package io.cucumber.spring.cucumbercontextconfigannotation;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.test.context.ContextConfiguration;

@@ -3,8 +3,9 @@ package io.cucumber.spring;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.spring.annotationconfig.AnnotationContextConfiguration;
-import io.cucumber.spring.cucontextconfig.AbstractWithComponentAnnotation;
-import io.cucumber.spring.cucontextconfig.WithMetaAnnotation;
+import io.cucumber.spring.cucumbercontextconfigannotation.AbstractWithComponentAnnotation;
+import io.cucumber.spring.cucumbercontextconfigannotation.AnnotatedInterface;
+import io.cucumber.spring.cucumbercontextconfigannotation.WithMetaAnnotation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,9 +55,24 @@ class SpringBackendTest {
     @Test
     void ignoresAbstractClassWithCucumberContextConfiguration() {
         backend.loadGlue(glue, singletonList(
-            URI.create("classpath:io/cucumber/spring/cucontextconfig")));
+            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
         backend.buildWorld();
         verify(factory, times(0)).addClass(AbstractWithComponentAnnotation.class);
+    }
+
+    @Test
+    void ignoresInterfaceWithCucumberContextConfiguration() {
+        backend.loadGlue(glue, singletonList(
+                URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
+        backend.buildWorld();
+        verify(factory, times(0)).addClass(AnnotatedInterface.class);
+    }
+
+    @Test
+    void considersClassWithCucumberContextConfigurationMetaAnnotation() {
+        backend.loadGlue(glue, singletonList(
+            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
+        backend.buildWorld();
         verify(factory, times(1)).addClass(WithMetaAnnotation.class);
     }
 

@@ -83,10 +83,8 @@ public final class SpringFactory implements ObjectFactory {
         }
     }
 
-    public static boolean hasCucumberContextConfiguration(Class<?> stepClass) {
-        return stepClass.getAnnotation(CucumberContextConfiguration.class) != null
-                || AnnotatedElementUtils.hasMetaAnnotationTypes(stepClass, CucumberContextConfiguration.class)
-                || AnnotatedElementUtils.getMergedAnnotation(stepClass, CucumberContextConfiguration.class) != null;
+    static boolean hasCucumberContextConfiguration(Class<?> stepClass) {
+        return AnnotatedElementUtils.isAnnotated(stepClass, CucumberContextConfiguration.class);
     }
 
     private void checkOnlyOneClassHasCucumberContextConfiguration(Class<?> stepClass) {
