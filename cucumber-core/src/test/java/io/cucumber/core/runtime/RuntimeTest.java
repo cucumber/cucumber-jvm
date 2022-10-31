@@ -10,6 +10,7 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.FeatureParserException;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
@@ -125,6 +126,17 @@ class RuntimeTest {
         bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
+    }
+
+    @Test
+    void with_parse_error() {
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(() -> {
+                    throw new FeatureParserException("oops");
+                })
+                .build();
+
+        assertThrows(FeatureParserException.class, runtime::run);
     }
 
     @Test
