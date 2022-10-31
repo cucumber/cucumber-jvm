@@ -76,10 +76,12 @@ public final class Runtime {
     }
 
     public void run() {
+        // Parse the features early. Don't proceed when there are lexer errors
+        List<Feature> features = featureSupplier.get();
         context.startTestRun();
         execute(() -> {
             context.runBeforeAllHooks();
-            runFeatures();
+            runFeatures(features);
         });
         execute(context::runAfterAllHooks);
         execute(context::finishTestRun);
@@ -98,8 +100,7 @@ public final class Runtime {
         }
     }
 
-    private void runFeatures() {
-        List<Feature> features = featureSupplier.get();
+    private void runFeatures(List<Feature> features) {
         features.forEach(context::beforeFeature);
         List<Future<?>> executingPickles = features.stream()
                 .flatMap(feature -> feature.getPickles().stream())
