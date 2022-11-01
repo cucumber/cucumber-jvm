@@ -7,6 +7,7 @@ import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
+import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +32,8 @@ final class SpringBackend implements Backend {
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
-                .filter((Class<?> clazz) -> clazz.getAnnotation(CucumberContextConfiguration.class) != null)
+                .filter(SpringFactory::hasCucumberContextConfiguration)
+                .filter(this::checkIfOfClassTypeAndNotAbstract)
                 .distinct()
                 .forEach(container::addClass);
     }
@@ -51,4 +53,7 @@ final class SpringBackend implements Backend {
         return null;
     }
 
+    private boolean checkIfOfClassTypeAndNotAbstract(Class<?> clazz) {
+        return !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers());
+    }
 }

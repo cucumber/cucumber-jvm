@@ -2,13 +2,13 @@ package io.cucumber.spring;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.spring.annotationconfig.AnnotationContextConfiguration;
+import io.cucumber.spring.cucumbercontextconfigannotation.AbstractWithComponentAnnotation;
+import io.cucumber.spring.cucumbercontextconfigannotation.AnnotatedInterface;
+import io.cucumber.spring.cucumbercontextconfigannotation.WithMetaAnnotation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -50,6 +50,30 @@ class SpringBackendTest {
             URI.create("classpath:io/cucumber/spring/annotationconfig")));
         backend.buildWorld();
         verify(factory, times(1)).addClass(AnnotationContextConfiguration.class);
+    }
+
+    @Test
+    void ignoresAbstractClassWithCucumberContextConfiguration() {
+        backend.loadGlue(glue, singletonList(
+            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
+        backend.buildWorld();
+        verify(factory, times(0)).addClass(AbstractWithComponentAnnotation.class);
+    }
+
+    @Test
+    void ignoresInterfaceWithCucumberContextConfiguration() {
+        backend.loadGlue(glue, singletonList(
+            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
+        backend.buildWorld();
+        verify(factory, times(0)).addClass(AnnotatedInterface.class);
+    }
+
+    @Test
+    void considersClassWithCucumberContextConfigurationMetaAnnotation() {
+        backend.loadGlue(glue, singletonList(
+            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
+        backend.buildWorld();
+        verify(factory, times(1)).addClass(WithMetaAnnotation.class);
     }
 
 }
