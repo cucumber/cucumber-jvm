@@ -263,7 +263,7 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(BellyStepDefinitions.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat(actualThrown.getMessage(), startsWith(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both annotated with @CucumberContextConfiguration.\n"
+            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both (meta-)annotated with @CucumberContextConfiguration.\n"
                     +
                     "Please ensure only one class configures the spring context"));
     }
@@ -275,7 +275,7 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component annotation")));
+            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was (meta-)annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component (meta-)annotation")));
     }
 
     @Test
@@ -285,7 +285,7 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was annotated with @Controller; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Controller annotation")));
+            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was (meta-)annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component (meta-)annotation")));
     }
 
     @Test

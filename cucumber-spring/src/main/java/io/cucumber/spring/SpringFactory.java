@@ -14,13 +14,8 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -70,16 +65,14 @@ public final class SpringFactory implements ObjectFactory {
     }
 
     private static void checkNoComponentAnnotations(Class<?> type) {
-        for (Annotation annotation : type.getAnnotations()) {
-            if (hasComponentAnnotation(annotation)) {
-                throw new CucumberBackendException(String.format("" +
-                        "Glue class %1$s was annotated with @%2$s; marking it as a candidate for auto-detection by " +
-                        "Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by "
-                        +
-                        "spring may lead to duplicate bean definitions. Please remove the @%2$s annotation",
-                    type.getName(),
-                    annotation.annotationType().getSimpleName()));
-            }
+        if (AnnotatedElementUtils.isAnnotated(type, Component.class)) {
+            throw new CucumberBackendException(String.format("" +
+                    "Glue class %1$s was (meta-)annotated with @Component; marking it as a candidate for auto-detection by "
+                    +
+                    "Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by "
+                    +
+                    "spring may lead to duplicate bean definitions. Please remove the @Component (meta-)annotation",
+                type.getName()));
         }
     }
 
@@ -90,7 +83,7 @@ public final class SpringFactory implements ObjectFactory {
     private void checkOnlyOneClassHasCucumberContextConfiguration(Class<?> stepClass) {
         if (withCucumberContextConfiguration != null) {
             throw new CucumberBackendException(String.format("" +
-                    "Glue class %1$s and %2$s are both annotated with @CucumberContextConfiguration.\n" +
+                    "Glue class %1$s and %2$s are both (meta-)annotated with @CucumberContextConfiguration.\n" +
                     "Please ensure only one class configures the spring context\n" +
                     "\n" +
                     "By default Cucumber scans the entire classpath for context configuration.\n" +
@@ -99,32 +92,6 @@ public final class SpringFactory implements ObjectFactory {
                 stepClass,
                 withCucumberContextConfiguration));
         }
-    }
-
-    private static boolean hasComponentAnnotation(Annotation annotation) {
-        return hasAnnotation(annotation, Collections.singleton(Component.class));
-    }
-
-    private static boolean hasAnnotation(Annotation annotation, Collection<Class<? extends Annotation>> desired) {
-        Set<Class<? extends Annotation>> seen = new HashSet<>();
-        Deque<Class<? extends Annotation>> toCheck = new ArrayDeque<>();
-        toCheck.add(annotation.annotationType());
-
-        while (!toCheck.isEmpty()) {
-            Class<? extends Annotation> annotationType = toCheck.pop();
-            if (desired.contains(annotationType)) {
-                return true;
-            }
-
-            seen.add(annotationType);
-            for (Annotation annotationTypesAnnotations : annotationType.getAnnotations()) {
-                if (!seen.contains(annotationTypesAnnotations.annotationType())) {
-                    toCheck.add(annotationTypesAnnotations.annotationType());
-                }
-            }
-
-        }
-        return false;
     }
 
     @Override

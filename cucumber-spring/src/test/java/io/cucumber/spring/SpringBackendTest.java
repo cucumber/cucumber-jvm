@@ -63,7 +63,7 @@ class SpringBackendTest {
     @Test
     void ignoresInterfaceWithCucumberContextConfiguration() {
         backend.loadGlue(glue, singletonList(
-                URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
+            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
         backend.buildWorld();
         verify(factory, times(0)).addClass(AnnotatedInterface.class);
     }
