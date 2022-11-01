@@ -11,9 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-- [Core] Don't swallow parse errors on the CLI ([2632](https://github.com/cucumber/cucumber-jvm/issues/2632) M.P. Korstanje)
-
+## [7.9.0] - 2022-11-01
 ### Added
 - [Spring] Support @CucumberContextConfiguration as a meta-annotation ([2491](https://github.com/cucumber/cucumber-jvm/issues/2491) Michael Schlatt)
 
@@ -21,9 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:gherkin to v24.1
 - [Core] Delegate encoding and BOM handling to gherkin ([2624](https://github.com/cucumber/cucumber-jvm/issues/2624) M.P. Korstanje)
 
+### Fixed
+- [Core] Don't swallow parse errors on the CLI ([2632](https://github.com/cucumber/cucumber-jvm/issues/2632) M.P. Korstanje)
+
 ### Security
 - [Core] Update dependency com.fasterxml.jackson to v2.13.4.20221012
-
 
 ## [7.8.1] - 2022-10-03
 ### Fixed
@@ -182,7 +182,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.9.0...main
+[7.9.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.1...main
 [7.8.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.0...main
 [7.8.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.7.0...main
 [7.7.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.6.0...main
