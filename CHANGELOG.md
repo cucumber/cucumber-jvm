@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- [Core] Don't swallow parse errors on the CLI ([2632](https://github.com/cucumber/cucumber-jvm/issues/2632) M.P. Korstanje)
+
+### Added
 - [Spring] Support @CucumberContextConfiguration as a meta-annotation ([2491](https://github.com/cucumber/cucumber-jvm/issues/2491) Michael Schlatt)
 
 ### Changed
