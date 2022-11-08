@@ -27,7 +27,7 @@ public class BellyStepDefinitions {
         inTheBelly = true;
     }
 
-    @Then("there are {int} cukes in my belly")
+    @Then("There are {int} cukes in my belly")
     public void checkCukes(int n) {
         assertEquals(n, belly.getCukes());
         assertTrue(inTheBelly);
