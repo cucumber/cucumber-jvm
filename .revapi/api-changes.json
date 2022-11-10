@@ -363,5 +363,38 @@
         ]
       }
     }
+  ],
+  "jackson": [
+    {
+      "extension": "revapi.differences",
+      "id": "jackson-api-issues",
+      "ignore": true,
+      "configuration": {
+        "differences": [
+          {
+            "ignore": true,
+            "regex": true,
+            "code": ".*",
+            "old": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "new": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "justification": "Internal shaded API"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": ".*",
+            "old": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "justification": "Internal shaded API"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": ".*",
+            "new": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "justification": "Internal shaded API"
+          }
+        ]
+      }
+    }
   ]
 }
