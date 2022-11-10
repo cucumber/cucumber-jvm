@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [7.9.0] - 2022-11-01
+### Changed
+- [Core] Update dependency io.cucumber:gherkin to v25.0.2. Japanese Rule translation changed from Rule to ルール.
+
 ### Added
 - [Spring] Support @CucumberContextConfiguration as a meta-annotation ([2491](https://github.com/cucumber/cucumber-jvm/issues/2491) Michael Schlatt)
 
