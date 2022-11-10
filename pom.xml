@@ -7,7 +7,7 @@
         <version>3.0.0</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.9.1-SNAPSHOT</version>
+    <version>7.10.0</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
