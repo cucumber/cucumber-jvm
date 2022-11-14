@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>3.0.0</version>
+        <version>4.0.2</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
     <version>7.10.0</version>
@@ -26,8 +26,6 @@
 
         <!--Maven plugins-->
         <groovy.version>2.5.15</groovy.version>
-        <maven-release-plugin.version>3.0.0-M7</maven-release-plugin.version>
-        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -345,12 +343,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M7</version>
                 </plugin>
 
                 <!-- Determine project root for revapi and spotless  -->
