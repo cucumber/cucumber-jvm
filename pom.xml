@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>4.0.2</version>
+        <version>4.1.1</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
     <version>7.10.0</version>
