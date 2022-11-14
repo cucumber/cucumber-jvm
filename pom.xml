@@ -26,6 +26,8 @@
 
         <!--Maven plugins-->
         <groovy.version>2.5.15</groovy.version>
+        <maven-release-plugin.version>3.0.0-M7</maven-release-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -242,12 +244,6 @@
                     <groupId>org.codehaus.gmaven</groupId>
                     <artifactId>groovy-maven-plugin</artifactId>
                     <version>2.1.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M7</version>
                 </plugin>
 
                 <plugin>
