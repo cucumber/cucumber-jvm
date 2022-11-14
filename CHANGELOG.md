@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Enabled reproducible builds ([2641](https://github.com/cucumber/cucumber-jvm/issues/2641) Hervé Boutemy )
+
 ## [7.9.0] - 2022-11-01
 ### Changed
 - [Core] Update dependency io.cucumber:gherkin to v25.0.2. Japanese Rule translation changed from Rule to ルール.
