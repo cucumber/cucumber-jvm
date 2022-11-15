@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.order.PickleOrder;
+import io.cucumber.core.order.factory.PickleOrderFactory;
 
 import java.util.ServiceLoader;
 import java.util.regex.Matcher;
@@ -19,13 +20,13 @@ final class PickleOrderParser {
     }
 
     static PickleOrder parse(String name, String argument) {
-        ServiceLoader<PickleOrder> loader = ServiceLoader.load(PickleOrder.class,
+        ServiceLoader<PickleOrderFactory> loader = ServiceLoader.load(PickleOrderFactory.class,
             PickleOrderParser.class.getClassLoader());
-        PickleOrder pickleOrder = loader.stream().filter(it -> it.get().getName().equals(name)).findFirst()
+        // TODO: better exception, show choices, sync with tests
+        PickleOrderFactory pickleOrderFactory = loader.stream().filter(it -> it.get().getName().equals(name))
+                .findFirst()
                 .orElseThrow().get();
-        pickleOrder.setArgument(argument);
-        return pickleOrder;
-
+        return pickleOrderFactory.create(argument);
     }
 
 }

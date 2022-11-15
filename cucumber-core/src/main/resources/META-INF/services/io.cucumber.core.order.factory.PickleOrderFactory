@@ -1,0 +1,3 @@
+io.cucumber.core.order.factory.LexicalUriPickleOrderFactory
+io.cucumber.core.order.factory.ReverseLexicalUriPickleOrderFactory
+io.cucumber.core.order.factory.RandomPickleOrderFactory

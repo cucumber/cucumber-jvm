@@ -1,3 +1,0 @@
-io.cucumber.core.order.LexicalUriPickleOrder
-io.cucumber.core.order.ReverseLexicalUriPickleOrder
-io.cucumber.core.order.RandomPickleOrder
