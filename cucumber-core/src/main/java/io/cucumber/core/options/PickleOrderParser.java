@@ -1,9 +1,8 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.order.DefaultPickleOrderFactory;
 import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.order.PickleOrderFactory;
 
+import java.util.ServiceLoader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,13 +19,13 @@ final class PickleOrderParser {
     }
 
     static PickleOrder parse(String name, String argument) {
-        return getFactory().create(name, argument);
-    }
+        ServiceLoader<PickleOrder> loader = ServiceLoader.load(PickleOrder.class,
+            PickleOrderParser.class.getClassLoader());
+        PickleOrder pickleOrder = loader.stream().filter(it -> it.get().getName().equals(name)).findFirst()
+                .orElseThrow().get();
+        pickleOrder.setArgument(argument);
+        return pickleOrder;
 
-    static PickleOrderFactory getFactory() {
-        //TODO: get instance from SPI, missing configuration parameter for the factory
-        return new DefaultPickleOrderFactory();
     }
-
 
 }

@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface PickleOrder {
 
+    void setArgument(String argument);
+
+    String getName();
+
     List<Pickle> orderPickles(List<Pickle> pickles);
 
 }
