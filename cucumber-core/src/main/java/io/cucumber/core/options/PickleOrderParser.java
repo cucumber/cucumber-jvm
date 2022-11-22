@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 final class PickleOrderParser {
 
-    private static final Pattern NAME_WITH_ARGUMENT_PATTERN = Pattern.compile("([a-z_]+)(?::(.+))?");
+    private static final Pattern NAME_WITH_ARGUMENT_PATTERN = Pattern.compile("([a-z_]+)(?::(.*))?");
 
     static PickleOrder parse(String argument) {
         Matcher matcher = NAME_WITH_ARGUMENT_PATTERN.matcher(argument);
