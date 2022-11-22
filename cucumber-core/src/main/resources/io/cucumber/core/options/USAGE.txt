@@ -61,6 +61,9 @@ Options:
                                            'random'. In case of 'random' order
                                            an optional seed parameter can be
                                            added 'random:<seed>'.
+                                           Can be customized. To do that,
+                                           implement `PickleOrderFactory` and
+                                           register it for [ServiceLoader](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
 
       --count                              Number of scenarios to be executed.
                                            If not specified all scenarios are

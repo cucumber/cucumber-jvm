@@ -27,6 +27,7 @@ cucumber.execution.dry-run=     # true or false. default: false
 cucumber.execution.limit=       # number of scenarios to execute (CLI only).
   
 cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+                                # Can be customized. To do that, implement `PickleOrderFactory` and register it for [ServiceLoader](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html)
 
 cucumber.execution.wip=         # true or false. default: false.
                                 # Fails if there any passing scenarios
@@ -78,6 +79,22 @@ Backends consist of two components: a `Backend`, and an optional `ObjectFactory`
 They are  respectively responsible for discovering glue classes, registering
 step definitions, and creating instances of said glue classes. Backend and
 object factory implementations are discovered via SPI.
+
+## Order ##
+
+3 basic orders are implemented:
+ - lexical
+ - reverse
+ - random
+
+The "random" order has optional "seed" parameter.
+
+All orders can have a string argument. In that case, the order is defined as `<name>:<argument>` (for example `random:20` for random with specified seed).
+The argument is passed to `PickleOrderFactory.create`, `null` if no argument was provided.
+
+To add more, implement `PickleOrderFactory` and register it for [ServiceLoader](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html).
+The factory is creating instance of `PickleOrder`, responsible for ordering pickles.
+
 
 ## Plugin ##
 
