@@ -499,7 +499,8 @@ class CommandlineOptionsParserTest {
                 .build();
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(actualThrown.getMessage(),
-            is(equalTo("Invalid order. Must be either reverse, random or random:<long>")));
+            is(equalTo(
+                "Invalid order 'invalid'. Must be in form of <name>:<argument. Possible names are: normal, reverse, random.")));
     }
 
     @Test
