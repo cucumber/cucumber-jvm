@@ -1,9 +1,11 @@
 package io.cucumber.core.order.factory;
 
 import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.order.StandardPickleOrders;
 
-public class RandomPickleOrderFactory implements PickleOrderFactory {
+import java.util.Collections;
+import java.util.Random;
+
+public final class RandomPickleOrderFactory implements PickleOrderFactory {
 
     @Override
     public String getName() {
@@ -13,8 +15,23 @@ public class RandomPickleOrderFactory implements PickleOrderFactory {
     @Override
     public PickleOrder create(String argument) {
         if (argument == null) {
-            return StandardPickleOrders.random();
+            return random();
         }
-        return StandardPickleOrders.random(Long.parseLong(argument));
+        return random(Long.parseLong(argument));
+    }
+
+    public PickleOrder random(final long seed) {
+        return random(new Random(seed));
+    }
+
+    public PickleOrder random() {
+        return random(new Random());
+    }
+
+    public PickleOrder random(Random random) {
+        return pickles -> {
+            Collections.shuffle(pickles, random);
+            return pickles;
+        };
     }
 }
