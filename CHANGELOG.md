@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled reproducible builds ([2641](https://github.com/cucumber/cucumber-jvm/issues/2641) Hervé Boutemy )
 - [Core] Mark Allure 5 and 6 plugins as incompatible ([2652](https://github.com/cucumber/cucumber-jvm/issues/2652) M.P. Korstanje)
 
+## Fixed
+-  [Core] Emit exceptions on failure to handle test run finished events ([2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
 
 ## [7.9.0] - 2022-11-01
 ### Changed
