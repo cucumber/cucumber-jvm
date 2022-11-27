@@ -102,6 +102,9 @@ Annotate a field in your step definition class with `@Autowired`.
 ```java
 package com.example.app;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import io.cucumber.java.en.Given;
+
 public class MyStepDefinitions {
 
    @Autowired
@@ -162,6 +165,9 @@ The glue scoped component can then be autowired into a step definition:
 ```java
 package com.example.app;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import io.cucumber.java.en.Given;
+
 public class UserStepDefinitions {
 
    @Autowired
@@ -193,6 +199,65 @@ public class PurchaseStepDefinitions {
    }
 }
 ```
+
+#### Sharing state between threads
+
+By default, when using `@ScenarioScope` these beans must also be accessed on
+the  same thread as the one that is executing the scenario. If you are certain
+your scenario scoped beans can only be accessed through step definitions you
+can use `@ScenarioScope(proxyMode = ScopedProxyMode.NO)`.
+
+
+```java
+package com.example.app;
+
+import org.springframework.stereotype.Component;
+import io.cucumber.spring.ScenarioScope;
+import org.springframework.context.annotation.ScopedProxyMode;
+
+@Component
+@ScenarioScope(proxyMode = ScopedProxyMode.NO)
+public class TestUserInformation {
+
+    private User testUser;
+
+    public void setTestUser(User testUser) {
+        this.testUser = testUser;
+    }
+
+    public User getTestUser() {
+        return testUser;
+    }
+
+}
+```
+
+```java
+package com.example.app;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import io.cucumber.java.en.Given;
+import org.awaitility.Awaitility;
+
+public class UserStepDefinitions {
+
+    @Autowired
+    private TestUserInformation testUserInformation;
+
+    @Then("the test user is eventually created")
+    public void a_user_is_eventually_created() {
+        Awaitility.await()
+                .untilAsserted(() -> {
+                    // This happens on a different thread
+                    TestUser testUser = testUserInformation.getTestUser();
+                    Optional<User> user = repository.findById(testUser.getId());
+                    assertTrue(user.isPresent());
+                });
+    }
+}
+```
+
+
 
 ### Dirtying the application context
 
