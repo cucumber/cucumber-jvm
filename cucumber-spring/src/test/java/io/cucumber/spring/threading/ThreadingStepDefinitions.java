@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @CucumberContextConfiguration
-@WebAppConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
 public class ThreadingStepDefinitions {
 
