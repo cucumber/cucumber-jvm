@@ -4,10 +4,10 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>3.0.0</version>
+        <version>4.1.1</version>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.10.0</version>
+    <version>7.10.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -17,6 +17,7 @@
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
+        <project.build.outputTimestamp>1669550537</project.build.outputTimestamp>
 
         <!-- io.cucumber dependencies -->
         <!-- Whenever messages is updated run `make update-cck` -->
@@ -342,12 +343,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M7</version>
                 </plugin>
 
                 <!-- Determine project root for revapi and spotless  -->
@@ -443,7 +442,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.4</version>
+                            <version>10.5.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
