@@ -9,6 +9,10 @@ public final class LexicalUriPickleOrderFactory implements PickleOrderFactory {
 
     private static final Comparator<Pickle> pickleUriComparator = Comparator.comparing(Pickle::getUri)
             .thenComparing(pickle -> pickle.getLocation().getLine());
+    private static final PickleOrder lexicalUriOrder = pickles -> {
+        pickles.sort(pickleUriComparator);
+        return pickles;
+    };
 
     @Override
     public String getName() {
@@ -17,9 +21,6 @@ public final class LexicalUriPickleOrderFactory implements PickleOrderFactory {
 
     @Override
     public PickleOrder create(String argument) {
-        return pickles -> {
-            pickles.sort(pickleUriComparator);
-            return pickles;
-        };
+        return lexicalUriOrder;
     }
 }

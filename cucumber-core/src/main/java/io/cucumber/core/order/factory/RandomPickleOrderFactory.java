@@ -20,15 +20,15 @@ public final class RandomPickleOrderFactory implements PickleOrderFactory {
         return random(Long.parseLong(argument));
     }
 
-    public PickleOrder random(final long seed) {
+    private PickleOrder random(final long seed) {
         return random(new Random(seed));
     }
 
-    public PickleOrder random() {
+    private PickleOrder random() {
         return random(new Random());
     }
 
-    public PickleOrder random(Random random) {
+    private PickleOrder random(Random random) {
         return pickles -> {
             Collections.shuffle(pickles, random);
             return pickles;

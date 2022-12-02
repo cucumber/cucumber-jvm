@@ -2,7 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.order.StandardPickleOrders;
+import io.cucumber.core.order.factory.ReverseLexicalUriPickleOrderFactory;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class CucumberPropertiesParserTest {
     void should_parse_execution_order() {
         properties.put(Constants.EXECUTION_ORDER_PROPERTY_NAME, "reverse");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getPickleOrder(), equalTo(StandardPickleOrders.reverseLexicalUriOrder()));
+        assertThat(options.getPickleOrder(), equalTo(new ReverseLexicalUriPickleOrderFactory().create(null)));
     }
 
     @Test

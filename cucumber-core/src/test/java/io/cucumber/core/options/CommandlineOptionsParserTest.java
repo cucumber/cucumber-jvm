@@ -493,14 +493,14 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void ensure_invalid_ordertype_is_not_allowed() {
+    void ensure_invalid_order_type_is_not_allowed() {
         Executable testMethod = () -> parser
                 .parse("--order", "invalid")
                 .build();
         IllegalArgumentException actualThrown = assertThrows(IllegalArgumentException.class, testMethod);
         assertThat(actualThrown.getMessage(),
             is(equalTo(
-                "Invalid order 'invalid'. Must be in form of <name>:<argument. Possible names are: normal, reverse, random.")));
+                "Invalid order 'invalid'. Must be in form of <name>[:<argument>]. Possible names are: normal, reverse, random.")));
     }
 
     @Test

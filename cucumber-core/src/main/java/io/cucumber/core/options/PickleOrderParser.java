@@ -30,7 +30,7 @@ final class PickleOrderParser {
         if (optionalPickleOrderFactoryProvider.isEmpty()) {
             String names = loader.stream().map(it -> it.get().getName()).collect(Collectors.joining(", "));
             throw new IllegalArgumentException("Invalid order '" +
-                    name + "'. Must be in form of <name>:<argument. Possible names are: " + names + ".");
+                    name + "'. Must be in form of <name>[:<argument>]. Possible names are: " + names + ".");
         }
         return optionalPickleOrderFactoryProvider.get().get().create(argument);
     }

@@ -4,8 +4,10 @@ import io.cucumber.core.order.factory.LexicalUriPickleOrderFactory;
 import io.cucumber.core.order.factory.RandomPickleOrderFactory;
 import io.cucumber.core.order.factory.ReverseLexicalUriPickleOrderFactory;
 
-import java.util.Random;
-
+/**
+ * @deprecated Use the SPI based implementation instead.
+ */
+@Deprecated
 public final class StandardPickleOrders {
 
     private StandardPickleOrders() {
@@ -21,7 +23,7 @@ public final class StandardPickleOrders {
     }
 
     public static PickleOrder random(final long seed) {
-        return new RandomPickleOrderFactory().random(new Random(seed));
+        return new RandomPickleOrderFactory().create(String.valueOf(seed));
     }
 
 }

@@ -10,6 +10,11 @@ public final class ReverseLexicalUriPickleOrderFactory implements PickleOrderFac
     private static final Comparator<Pickle> pickleUriReversedComparator = Comparator.comparing(Pickle::getUri)
             .thenComparing(pickle -> pickle.getLocation().getLine()).reversed();
 
+    private static final PickleOrder reverseLexicalUriOrder = pickles -> {
+        pickles.sort(pickleUriReversedComparator);
+        return pickles;
+    };
+
     @Override
     public String getName() {
         return "reverse";
@@ -17,9 +22,6 @@ public final class ReverseLexicalUriPickleOrderFactory implements PickleOrderFac
 
     @Override
     public PickleOrder create(String argument) {
-        return pickles -> {
-            pickles.sort(pickleUriReversedComparator);
-            return pickles;
-        };
+        return reverseLexicalUriOrder;
     }
 }

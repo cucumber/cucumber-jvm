@@ -69,6 +69,28 @@
       }
     }
   ],
+  "7.10.0": [
+    {
+      "extension": "revapi.differences",
+      "id": "intentional-api-changes",
+      "ignore": true,
+      "configuration": {
+        "differences": [
+
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "interface io.cucumber.core.order.PickleOrder",
+            "new": "interface io.cucumber.core.order.PickleOrder",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.EXPERIMENTAL)",
+            "justification": "Made part of the public API"
+          }
+        ]
+      }
+    }
+  ],
+
+
   "internal": [
     {
       "extension": "revapi.differences",

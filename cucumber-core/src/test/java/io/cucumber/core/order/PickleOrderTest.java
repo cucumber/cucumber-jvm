@@ -1,6 +1,9 @@
 package io.cucumber.core.order;
 
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.order.factory.LexicalUriPickleOrderFactory;
+import io.cucumber.core.order.factory.RandomPickleOrderFactory;
+import io.cucumber.core.order.factory.ReverseLexicalUriPickleOrderFactory;
 import io.cucumber.plugin.event.Location;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +38,7 @@ class PickleOrderTest {
         when(secondPickle.getLocation()).thenReturn(new Location(3, -1));
         when(thirdPickle.getUri()).thenReturn(URI.create("file:com/example/b.feature"));
 
-        PickleOrder order = StandardPickleOrders.lexicalUriOrder();
+        PickleOrder order = new LexicalUriPickleOrderFactory().create(null);
         List<Pickle> pickles = order.orderPickles(Arrays.asList(thirdPickle, secondPickle, firstPickle));
         assertThat(pickles, contains(firstPickle, secondPickle, thirdPickle));
     }
@@ -48,14 +51,14 @@ class PickleOrderTest {
         when(secondPickle.getLocation()).thenReturn(new Location(3, -1));
         when(thirdPickle.getUri()).thenReturn(URI.create("file:com/example/b.feature"));
 
-        PickleOrder order = StandardPickleOrders.reverseLexicalUriOrder();
+        PickleOrder order = new ReverseLexicalUriPickleOrderFactory().create(null);
         List<Pickle> pickles = order.orderPickles(Arrays.asList(secondPickle, thirdPickle, firstPickle));
         assertThat(pickles, contains(thirdPickle, secondPickle, firstPickle));
     }
 
     @Test
     void random_order() {
-        PickleOrder order = StandardPickleOrders.random(42);
+        PickleOrder order = new RandomPickleOrderFactory().create("42");
         List<Pickle> pickles = order.orderPickles(Arrays.asList(firstPickle, secondPickle, thirdPickle));
         assertThat(pickles, contains(secondPickle, firstPickle, thirdPickle));
     }

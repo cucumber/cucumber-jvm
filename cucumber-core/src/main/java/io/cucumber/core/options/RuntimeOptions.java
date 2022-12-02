@@ -3,7 +3,7 @@ package io.cucumber.core.options;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.order.StandardPickleOrders;
+import io.cucumber.core.order.factory.LexicalUriPickleOrderFactory;
 import io.cucumber.core.plugin.DefaultSummaryPrinter;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
@@ -45,7 +45,7 @@ public final class RuntimeOptions implements
     private boolean wip = false;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
-    private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
+    private PickleOrder pickleOrder = new LexicalUriPickleOrderFactory().create(null);
     private int count = 0;
     private Class<? extends ObjectFactory> objectFactoryClass;
     private String publishToken;
