@@ -31,6 +31,7 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -364,6 +365,40 @@ class RuntimeTest {
         assertThat(actualThrown.getMessage(),
             is(equalTo("There were 3 exceptions. The details are in the stacktrace below.")));
         assertThat(actualThrown.getSuppressed(), is(arrayWithSize(3)));
+    }
+
+    @Test
+    void should_fail_on_event_listener_exception_at_test_run_started() {
+        RuntimeException expectedException = new RuntimeException("This exception is expected");
+        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestRunStarted.class,
+            (TestRunStarted event) -> {
+                throw expectedException;
+            });
+
+        Executable testMethod = () -> Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier())
+                .withAdditionalPlugins(brokenEventListener)
+                .build()
+                .run();
+        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
+        assertThat(actualThrown, equalTo(expectedException));
+    }
+
+    @Test
+    void should_fail_on_event_listener_exception_at_test_run_finished() {
+        RuntimeException expectedException = new RuntimeException("This exception is expected");
+        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestRunFinished.class,
+            (TestRunFinished event) -> {
+                throw expectedException;
+            });
+
+        Executable testMethod = () -> Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier())
+                .withAdditionalPlugins(brokenEventListener)
+                .build()
+                .run();
+        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
+        assertThat(actualThrown, equalTo(expectedException));
     }
 
     @Test
