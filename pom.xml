@@ -408,6 +408,7 @@
                                 <roots>
                                     <root>7.0.0</root>
                                     <root>7.2.0</root>
+                                    <root>7.10.0</root>
                                     <root>internal</root>
                                     <root>testng</root>
                                     <root>guice</root>
