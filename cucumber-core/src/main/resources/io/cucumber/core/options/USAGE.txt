@@ -118,7 +118,7 @@ cucumber.execution.dry-run=     # true or false. default: false
 
 cucumber.execution.limit=       # number of scenarios to execute (CLI only).
 
-cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). Implement `PickleOrderFactory` for more. Default: lexical
 
 cucumber.execution.wip=         # true or false. default: false.
                                 # Fails if there any passing scenarios

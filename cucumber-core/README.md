@@ -82,19 +82,10 @@ object factory implementations are discovered via SPI.
 
 ## Order ##
 
-3 basic orders are implemented:
- - lexical
- - reverse
- - random
+It is possible to change order of pickles. The options are 'reverse' and 'random'. In case of 'random' order
+an optional seed parameter can be added 'random:<seed>'.
 
-The "random" order has optional "seed" parameter.
-
-All orders can have a string argument. In that case, the order is defined as `<name>:<argument>` (for example `random:20` for random with specified seed).
-The argument is passed to `PickleOrderFactory.create`, `null` if no argument was provided.
-
-To add more, implement `PickleOrderFactory` and register it for [ServiceLoader](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html).
-The factory is creating instance of `PickleOrder`, responsible for ordering pickles.
-
+Custom orders can be implemented by implementing `PickleOrderFactory`
 
 ## Plugin ##
 

@@ -39,7 +39,7 @@ public final class Constants {
      * Property name used to set execution order: {@value}
      * <p>
      * Valid values are {@code lexical}, {@code reverse}, {@code random} or
-     * {@code random:[seed]}.
+     * {@code random:[seed]}. Implement {@link io.cucumber.core.order.factory.PickleOrderFactory} to customize.
      * <p>
      * By default features are executed in lexical file name order
      */
