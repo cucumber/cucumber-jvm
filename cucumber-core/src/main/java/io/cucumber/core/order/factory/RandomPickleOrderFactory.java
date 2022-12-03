@@ -1,6 +1,7 @@
 package io.cucumber.core.order.factory;
 
 import io.cucumber.core.order.PickleOrder;
+import io.cucumber.core.order.RandomPickleOrder;
 
 import java.util.Collections;
 import java.util.Random;
@@ -28,10 +29,7 @@ public final class RandomPickleOrderFactory implements PickleOrderFactory {
         return random(new Random());
     }
 
-    private PickleOrder random(Random random) {
-        return pickles -> {
-            Collections.shuffle(pickles, random);
-            return pickles;
-        };
+    public PickleOrder random(Random random) {
+        return new RandomPickleOrder(random);
     }
 }
