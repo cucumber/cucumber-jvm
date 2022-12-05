@@ -95,7 +95,7 @@ public final class CucumberExecutionContext {
     public void finishTestRun() {
         log.debug(() -> "Sending test run finished event");
         Throwable cucumberException = getThrowable();
-        collector.executeAndThrow(() -> emitTestRunFinished(cucumberException));
+        emitTestRunFinished(cucumberException);
     }
 
     public Throwable getThrowable() {
