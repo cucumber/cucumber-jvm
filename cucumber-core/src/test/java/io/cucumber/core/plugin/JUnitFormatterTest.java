@@ -38,11 +38,11 @@ class JUnitFormatterTest {
     @Test
     void should_format_passed_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -50,9 +50,9 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
@@ -73,15 +73,15 @@ class JUnitFormatterTest {
     @Test
     void should_format_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Background:\n" +
-                        "    Given first background step\n" +
-                        "    When second background step\n" +
-                        "    Then third background step\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Background:\n" +
+                    "    Given first background step\n" +
+                    "    When second background step\n" +
+                    "    Then third background step\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -89,12 +89,12 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first background step"),
-                        new StubStepDefinition("second background step"),
-                        new StubStepDefinition("third background step"),
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first background step"),
+                    new StubStepDefinition("second background step"),
+                    new StubStepDefinition("third background step"),
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -120,15 +120,15 @@ class JUnitFormatterTest {
     @Test
     void should_format_multiple_scenarios() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: First scenario\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n" +
-                        "  Scenario: Second scenario\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: First scenario\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n" +
+                    "  Scenario: Second scenario\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -136,9 +136,9 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
@@ -170,8 +170,8 @@ class JUnitFormatterTest {
     @Test
     void should_format_empty_scenario_as_passing() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -194,11 +194,11 @@ class JUnitFormatterTest {
     @Test
     void should_format_skipped_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         RuntimeException exception = new TestAbortedException("message");
 
@@ -208,9 +208,9 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", exception),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first step", exception),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
@@ -243,11 +243,11 @@ class JUnitFormatterTest {
     @Test
     void should_format_pending_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -255,9 +255,9 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", new StubPendingException()),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first step", new StubPendingException()),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
@@ -284,11 +284,11 @@ class JUnitFormatterTest {
     @Test
     void should_format_failed_scenario() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -296,17 +296,18 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step", new StubException("the message", "the stack trace"))))
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step", new StubException("the message", "the stack trace"))))
                 .build()
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"+
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
                 "  <failure><![CDATA[the stack trace]]></failure>\n" +
-                "  <system-out><![CDATA[Given first step............................................................passed\n" +
+                "  <system-out><![CDATA[Given first step............................................................passed\n"
+                +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................failed]]></system-out>\n" +
                 "</testcase>\n" +
@@ -317,11 +318,11 @@ class JUnitFormatterTest {
     @Test
     void should_handle_failure_in_before_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -329,12 +330,12 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(new StubException("the message", "the stack trace"))),
-                        Arrays.asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")),
-                        singletonList(new StubHookDefinition())))
+                    singletonList(new StubHookDefinition(new StubException("the message", "the stack trace"))),
+                    Arrays.asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    singletonList(new StubHookDefinition())))
                 .build()
                 .run();
 
@@ -359,11 +360,11 @@ class JUnitFormatterTest {
     @Test
     void should_handle_pending_in_before_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -371,12 +372,12 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(new StubPendingException())),
-                        Arrays.asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")),
-                        singletonList(new StubHookDefinition())))
+                    singletonList(new StubHookDefinition(new StubPendingException())),
+                    Arrays.asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    singletonList(new StubHookDefinition())))
                 .build()
                 .run();
 
@@ -384,7 +385,8 @@ class JUnitFormatterTest {
                 "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
                 "        <failure><![CDATA[TODO: implement me]]></failure>\n" +
-                "        <system-out><![CDATA[Given first step............................................................skipped\n" +
+                "        <system-out><![CDATA[Given first step............................................................skipped\n"
+                +
                 "When second step............................................................skipped\n" +
                 "Then third step.............................................................skipped]]>" +
                 "        </system-out>\n" +
@@ -396,12 +398,12 @@ class JUnitFormatterTest {
     @Test
     void should_handle_failure_in_before_hook_with_background() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Background: background name\n" +
-                        "    Given first step\n" +
-                        "  Scenario: scenario name\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Background: background name\n" +
+                    "    Given first step\n" +
+                    "  Scenario: scenario name\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -409,12 +411,12 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition(new StubException("the message", "the stack trace"))),
-                        Arrays.asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")),
-                        singletonList(new StubHookDefinition())))
+                    singletonList(new StubHookDefinition(new StubException("the message", "the stack trace"))),
+                    Arrays.asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    singletonList(new StubHookDefinition())))
                 .build()
                 .run();
 
@@ -438,11 +440,11 @@ class JUnitFormatterTest {
     @Test
     void should_handle_failure_in_after_hook() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    Given first step\n" +
-                        "    When second step\n" +
-                        "    Then third step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    Given first step\n" +
+                    "    When second step\n" +
+                    "    Then third step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -450,12 +452,12 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition()),
-                        Arrays.asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")),
-                        singletonList(new StubHookDefinition(new StubException("the message", "the stack trace")))))
+                    singletonList(new StubHookDefinition()),
+                    Arrays.asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    singletonList(new StubHookDefinition(new StubException("the message", "the stack trace")))))
                 .build()
                 .run();
 
@@ -479,10 +481,10 @@ class JUnitFormatterTest {
     @Test
     void should_accumulate_time_from_steps_and_hooks() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario: scenario name\n" +
-                        "    * first step\n" +
-                        "    * second step\n");
+            "Feature: feature name\n" +
+                    "  Scenario: scenario name\n" +
+                    "    * first step\n" +
+                    "    * second step\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
@@ -491,12 +493,12 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(timeService, new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        singletonList(new StubHookDefinition()),
-                        Arrays.asList(
-                                new StubStepDefinition("first step"),
-                                new StubStepDefinition("second step"),
-                                new StubStepDefinition("third step")),
-                        singletonList(new StubHookDefinition())))
+                    singletonList(new StubHookDefinition()),
+                    Arrays.asList(
+                        new StubStepDefinition("first step"),
+                        new StubStepDefinition("second step"),
+                        new StubStepDefinition("third step")),
+                    singletonList(new StubHookDefinition())))
                 .build()
                 .run();
 
@@ -516,15 +518,15 @@ class JUnitFormatterTest {
     @Test
     void should_format_scenario_outlines() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario Outline: outline_name\n" +
-                        "    Given first step \"<arg>\"\n" +
-                        "    When second step\n" +
-                        "    Then third step\n\n" +
-                        "  Examples: examples\n" +
-                        "    | arg |\n" +
-                        "    |  a  |\n" +
-                        "    |  b  |\n");
+            "Feature: feature name\n" +
+                    "  Scenario Outline: outline_name\n" +
+                    "    Given first step \"<arg>\"\n" +
+                    "    When second step\n" +
+                    "    Then third step\n\n" +
+                    "  Examples: examples\n" +
+                    "    | arg |\n" +
+                    "    |  a  |\n" +
+                    "    |  b  |\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -532,16 +534,17 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step {string}", String.class),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first step {string}", String.class),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite name=\"Cucumber\" time=\"0\" tests=\"2\" skipped=\"0\" failures=\"0\" errors=\"0\">\n"
                 +
-                "    <testcase classname=\"feature name\" name=\"outline_name - examples - Example #1.1\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline_name - examples - Example #1.1\" time=\"0\">\n"
+                +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -562,19 +565,19 @@ class JUnitFormatterTest {
     @Test
     void should_format_scenario_outlines_with_multiple_examples() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario Outline: outline name\n" +
-                        "    Given first step \"<arg>\"\n" +
-                        "    When second step\n" +
-                        "    Then third step\n\n" +
-                        "  Examples: examples 1\n" +
-                        "    | arg |\n" +
-                        "    |  a  |\n" +
-                        "    |  b  |\n\n" +
-                        "  Examples: examples 2\n" +
-                        "    | arg |\n" +
-                        "    |  c  |\n" +
-                        "    |  d  |\n");
+            "Feature: feature name\n" +
+                    "  Scenario Outline: outline name\n" +
+                    "    Given first step \"<arg>\"\n" +
+                    "    When second step\n" +
+                    "    Then third step\n\n" +
+                    "  Examples: examples 1\n" +
+                    "    | arg |\n" +
+                    "    |  a  |\n" +
+                    "    |  b  |\n\n" +
+                    "  Examples: examples 2\n" +
+                    "    | arg |\n" +
+                    "    |  c  |\n" +
+                    "    |  d  |\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -582,36 +585,40 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step {string}", String.class),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first step {string}", String.class),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite name=\"Cucumber\" time=\"0\" tests=\"4\" skipped=\"0\" failures=\"0\" errors=\"0\">\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name - examples 1 - Example #1.1\" time=\"0\">" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 1 - Example #1.1\" time=\"0\">"
+                +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name - examples 1 - Example #1.2\" time=\"0\">" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 1 - Example #1.2\" time=\"0\">"
+                +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name - examples 2 - Example #2.1\" time=\"0\">" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 2 - Example #2.1\" time=\"0\">"
+                +
                 "        <system-out><![CDATA[" +
                 "Given first step \"c\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name - examples 2 - Example #2.2\" time=\"0\">" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 2 - Example #2.2\" time=\"0\">"
+                +
                 "        <system-out><![CDATA[" +
                 "Given first step \"d\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -625,15 +632,15 @@ class JUnitFormatterTest {
     @Test
     void should_format_scenario_outlines_with_arguments_in_name() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
-                "Feature: feature name\n" +
-                        "  Scenario Outline: outline name <arg>\n" +
-                        "    Given first step \"<arg>\"\n" +
-                        "    When second step\n" +
-                        "    Then third step\n\n" +
-                        "  Examples: examples 1\n" +
-                        "    | arg |\n" +
-                        "    |  a  |\n" +
-                        "    |  b  |\n");
+            "Feature: feature name\n" +
+                    "  Scenario Outline: outline name <arg>\n" +
+                    "    Given first step \"<arg>\"\n" +
+                    "    When second step\n" +
+                    "    Then third step\n\n" +
+                    "  Examples: examples 1\n" +
+                    "    | arg |\n" +
+                    "    |  a  |\n" +
+                    "    |  b  |\n");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -641,22 +648,24 @@ class JUnitFormatterTest {
                 .withAdditionalPlugins(new JUnitFormatter(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step {string}", String.class),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")))
+                    new StubStepDefinition("first step {string}", String.class),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
                 .build()
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name &lt;arg&gt; - examples 1 - Example #1.1\" time=\"0\">" +
+                "    <testcase classname=\"feature name\" name=\"outline name &lt;arg&gt; - examples 1 - Example #1.1\" time=\"0\">"
+                +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name &lt;arg&gt; - examples 1 - Example #1.2\" time=\"0\">" +
+                "    <testcase classname=\"feature name\" name=\"outline name &lt;arg&gt; - examples 1 - Example #1.2\" time=\"0\">"
+                +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
