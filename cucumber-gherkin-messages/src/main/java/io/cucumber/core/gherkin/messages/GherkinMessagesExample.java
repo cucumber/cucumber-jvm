@@ -9,12 +9,14 @@ import java.util.Optional;
 final class GherkinMessagesExample implements Node.Example {
 
     private final TableRow tableRow;
+    private final int examplesIndex;
     private final int rowIndex;
     private final Node parent;
 
-    GherkinMessagesExample(Node parent, TableRow tableRow, int rowIndex) {
+    GherkinMessagesExample(Node parent, TableRow tableRow, int examplesIndex, int rowIndex) {
         this.parent = parent;
         this.tableRow = tableRow;
+        this.examplesIndex = examplesIndex;
         this.rowIndex = rowIndex;
     }
 
@@ -30,7 +32,7 @@ final class GherkinMessagesExample implements Node.Example {
 
     @Override
     public Optional<String> getName() {
-        return Optional.of("Example #" + rowIndex);
+        return Optional.of("Example #" + examplesIndex + "." + rowIndex);
     }
 
     @Override

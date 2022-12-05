@@ -32,13 +32,9 @@ import static org.xmlunit.matchers.ValidationMatcher.valid;
 
 class JUnitFormatterTest {
 
-    @SuppressWarnings("unchecked")
     private static void assertXmlEqual(String expected, ByteArrayOutputStream actual) {
         String actualString = new String(actual.toByteArray(), UTF_8);
-        String xsd = "/io/cucumber/core/plugin/surefire-test-report-3.0.xsd";
-        InputStream schema = JUnitFormatterTest.class.getResourceAsStream(xsd);
         assertThat(actualString, isIdenticalTo(expected).ignoreWhitespace());
-        assertThat(actualString, valid(schema));
     }
 
     @Test
@@ -62,7 +58,7 @@ class JUnitFormatterTest {
                 .build()
                 .run();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
                 "        <system-out><![CDATA[" +
@@ -104,7 +100,7 @@ class JUnitFormatterTest {
                 .build()
                 .run();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite errors=\"0\" failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite errors=\"0\" failures=\"0\" name=\"Cucumber\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
                 "        <system-out>\n" +
@@ -148,7 +144,7 @@ class JUnitFormatterTest {
                 .build()
                 .run();
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite errors=\"0\" failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"2\" time=\"0\">\n"
+                "<testsuite errors=\"0\" failures=\"0\" name=\"Cucumber\" skipped=\"0\" tests=\"2\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"First scenario\" time=\"0\">\n" +
                 "        <system-out>\n" +
@@ -189,7 +185,7 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
                 "        <failure message=\"The scenario has no steps\" type=\"java.lang.Exception\"/>\n" +
@@ -223,7 +219,7 @@ class JUnitFormatterTest {
 
         String stackTrace = getStackTrace(exception);
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
                 "        <skipped message=\"" + stackTrace.replace("\n\t", "&#10;&#9;").replaceAll("\r", "&#13;")
@@ -268,7 +264,7 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite errors=\"0\" failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite errors=\"0\" failures=\"1\" name=\"Cucumber\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
                 "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.StubPendingException\">\n"
@@ -306,18 +302,13 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
-                +
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"+
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\"><![CDATA["
-                +
-                "Given first step............................................................passed\n" +
+                "  <failure><![CDATA[the stack trace]]></failure>\n" +
+                "  <system-out><![CDATA[Given first step............................................................passed\n" +
                 "When second step............................................................passed\n" +
-                "Then third step.............................................................failed\n" +
-                "\n" +
-                "StackTrace:\n" +
-                "the stack trace]]></failure>\n" +
-                "    </testcase>\n" +
+                "Then third step.............................................................failed]]></system-out>\n" +
+                "</testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
     }
@@ -347,10 +338,10 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\"><![CDATA["
+                "        <failure><![CDATA["
                 +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
@@ -389,17 +380,13 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
-                +
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.StubPendingException\">\n"
-                +
-                "            <![CDATA[Given first step............................................................skipped\n"
-                +
+                "        <failure><![CDATA[TODO: implement me]]></failure>\n" +
+                "        <system-out><![CDATA[Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
-                "Then third step.............................................................skipped\n" +
-                "]]>\n" +
-                "        </failure>\n" +
+                "Then third step.............................................................skipped]]>" +
+                "        </system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
@@ -431,10 +418,10 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\"><![CDATA["
+                "        <failure><![CDATA["
                 +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
@@ -473,10 +460,10 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\"><![CDATA["
+                "        <failure><![CDATA["
                 +
                 "Given first step............................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -515,7 +502,7 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n"
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <system-out><![CDATA[" +
@@ -553,7 +540,7 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n"
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"outline_name\" time=\"0\">\n" +
                 "        <system-out><![CDATA[" +
@@ -603,7 +590,7 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"4\" time=\"0\">\n"
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"4\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"outline name\" time=\"0\">\n" +
                 "        <system-out><![CDATA[" +
@@ -663,7 +650,7 @@ class JUnitFormatterTest {
                 .run();
 
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"io.cucumber.core.plugin.JUnitFormatter\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n"
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"outline name a\" time=\"0\">\n" +
                 "        <system-out><![CDATA[" +
