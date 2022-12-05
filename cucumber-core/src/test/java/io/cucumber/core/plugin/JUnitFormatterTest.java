@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.TestAbortedException;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -28,7 +27,6 @@ import static java.time.ZoneId.of;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
-import static org.xmlunit.matchers.ValidationMatcher.valid;
 
 class JUnitFormatterTest {
 
@@ -99,7 +97,7 @@ class JUnitFormatterTest {
                         new StubStepDefinition("third step")))
                 .build()
                 .run();
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite errors=\"0\" failures=\"0\" name=\"Cucumber\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
@@ -170,7 +168,7 @@ class JUnitFormatterTest {
     }
 
     @Test
-    void should_format_empty_scenario() {
+    void should_format_empty_scenario_as_passing() {
         Feature feature = TestFeatureParser.parse("path/test.feature",
                 "Feature: feature name\n" +
                         "  Scenario: scenario name\n");
@@ -184,11 +182,10 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"The scenario has no steps\" type=\"java.lang.Exception\"/>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
@@ -218,19 +215,20 @@ class JUnitFormatterTest {
                 .run();
 
         String stackTrace = getStackTrace(exception);
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <skipped message=\"" + stackTrace.replace("\n\t", "&#10;&#9;").replaceAll("\r", "&#13;")
-                + "\"><![CDATA[" +
+                "        <skipped>" +
+                "<![CDATA["
+                + stackTrace +
+                "]]></skipped>\n" +
+                "       <system-out>\n" +
+                "           <![CDATA[" +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
                 "Then third step.............................................................skipped\n" +
-                "\n" +
-                "StackTrace:\n" +
-                stackTrace +
-                "]]></skipped>\n" +
+                "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
@@ -263,18 +261,21 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite errors=\"0\" failures=\"1\" name=\"Cucumber\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure message=\"The scenario has pending or undefined step(s)\" type=\"io.cucumber.core.backend.StubPendingException\">\n"
+                "        <failure>\n" +
+                "           <![CDATA[TODO: implement me]]>\n" +
+                "       </failure>\n"
                 +
+                "       <system-out>" +
                 "            <![CDATA[Given first step............................................................pending\n"
                 +
                 "When second step............................................................skipped\n" +
                 "Then third step.............................................................skipped\n" +
                 "]]>\n" +
-                "        </failure>\n" +
+                "        </system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
@@ -337,19 +338,19 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure><![CDATA["
+                "        <failure><![CDATA[the stack trace]]>\n"
                 +
+                "       </failure>\n" +
+                "       <system-out>" +
+                "           <![CDATA[" +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
                 "Then third step.............................................................skipped\n" +
-                "\n" +
-                "StackTrace:\n" +
-                "the stack trace" +
-                "]]></failure>\n" +
+                "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
@@ -417,19 +418,18 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
-                +
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure><![CDATA["
-                +
+                "        <failure>\n" +
+                "           <![CDATA[the stack trace]]>\n" +
+                "       </failure>\n" +
+                "       <system-out>\n" +
+                "           <![CDATA[" +
                 "Given first step............................................................skipped\n" +
                 "When second step............................................................skipped\n" +
                 "Then third step.............................................................skipped\n" +
-                "\n" +
-                "StackTrace:\n" +
-                "the stack trace" +
-                "]]></failure>\n" +
+                "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
@@ -459,19 +459,18 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite name=\"Cucumber\" time=\"0\" tests=\"1\" skipped=\"0\" failures=\"1\" errors=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure><![CDATA["
-                +
-                "Given first step............................................................passed\n" +
+                "        <failure>\n" +
+                "           <![CDATA[the stack trace]]>\n" +
+                "       </failure>\n" +
+                "       <system-out>\n" +
+                "       <![CDATA[Given first step............................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
-                "\n" +
-                "StackTrace:\n" +
-                "the stack trace" +
-                "]]></failure>\n" +
+                "]]></system-out>\n" +
                 "    </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
@@ -501,8 +500,8 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0.004\">\n"
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite name=\"Cucumber\" time=\"0.004\" tests=\"1\" skipped=\"0\" failures=\"0\" errors=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0.004\">\n" +
                 "        <system-out><![CDATA[" +
@@ -539,17 +538,17 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n"
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite name=\"Cucumber\" time=\"0\" tests=\"2\" skipped=\"0\" failures=\"0\" errors=\"0\">\n"
                 +
-                "    <testcase classname=\"feature name\" name=\"outline_name\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline_name - examples - Example #1.1\" time=\"0\">\n" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline_name_2\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline_name - examples - Example #1.2\" time=\"0\">" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -589,31 +588,30 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"4\" time=\"0\">\n"
-                +
-                "    <testcase classname=\"feature name\" name=\"outline name\" time=\"0\">\n" +
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite name=\"Cucumber\" time=\"0\" tests=\"4\" skipped=\"0\" failures=\"0\" errors=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 1 - Example #1.1\" time=\"0\">" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name 2\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 1 - Example #1.2\" time=\"0\">" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name 3\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 2 - Example #2.1\" time=\"0\">" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"c\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name 4\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name - examples 2 - Example #2.2\" time=\"0\">" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"d\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
@@ -649,17 +647,16 @@ class JUnitFormatterTest {
                 .build()
                 .run();
 
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n"
-                +
-                "    <testcase classname=\"feature name\" name=\"outline name a\" time=\"0\">\n" +
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"2\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name &lt;arg&gt; - examples 1 - Example #1.1\" time=\"0\">" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"a\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
                 "Then third step.............................................................passed\n" +
                 "]]></system-out>\n" +
                 "    </testcase>\n" +
-                "    <testcase classname=\"feature name\" name=\"outline name b\" time=\"0\">\n" +
+                "    <testcase classname=\"feature name\" name=\"outline name &lt;arg&gt; - examples 1 - Example #1.2\" time=\"0\">" +
                 "        <system-out><![CDATA[" +
                 "Given first step \"b\"........................................................passed\n" +
                 "When second step............................................................passed\n" +
