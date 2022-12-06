@@ -84,8 +84,7 @@ Where **dataproviderthreadcount** is the default number of threads to use for da
 
 ### Configure cucumber options via testNG xml
 
-If you need different [cucumber options](../core/src/main/java/io/cucumber/core/options/Constants.java) 
-for each test suite, add the cucumber options as parameters to the relevant suite. Add the common options inside the
+If you need different [cucumber options](../cucumber-core) for each test suite, add the cucumber options as parameters to the relevant suite. Add the common options inside the
 suite.
 
 ```xml
