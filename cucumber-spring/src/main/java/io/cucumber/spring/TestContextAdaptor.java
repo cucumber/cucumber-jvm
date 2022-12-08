@@ -53,6 +53,7 @@ class TestContextAdaptor {
         try {
             Class<?> delegateTestClass = delegate.getTestContext().getTestClass();
             delegateTestInstance = applicationContext.getBean(delegateTestClass);
+            delegate.prepareTestInstance(delegateTestInstance);
             Method dummyMethod = TestContextAdaptor.class.getMethod("cucumberDoesNotHaveASingleTestMethod");
             delegate.beforeTestMethod(delegateTestInstance, dummyMethod);
         } catch (Exception e) {

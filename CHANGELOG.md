@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 -  [Core] Emit exceptions on failure to handle test run finished events ([2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
+- [Spring] @MockBean annotation not working with JUnit5 ([2654](https://github.com/cucumber/cucumber-jvm/pull/2655) Alexander Kirilov, M.P. Korstanje)
 
 ## [7.9.0] - 2022-11-01
 ### Changed
