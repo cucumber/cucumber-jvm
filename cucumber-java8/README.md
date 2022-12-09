@@ -240,7 +240,7 @@ public class StepDefinitions implements En {
     public StepDefinitions() {
         DataTableType((Map<String, String> entry) -> new User(
             entry.get("firstname"),
-            entry.get("lastname")
+            entry.get("lastname"),
             entry.get("nationality")
         ));
     

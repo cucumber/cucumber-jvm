@@ -1,7 +1,7 @@
 Cucumber JUnit 
 ==============
 
-Use JUnit to execute cucumber scenarios. To use add the `cucumber-junit`
+Use JUnit to execute Cucumber scenarios. To use add the `cucumber-junit`
 dependency to your pom.xml:
 
 ```xml
@@ -45,8 +45,8 @@ annotations. These will be executed before and
 after all scenarios. Using these is not recommended as it limits portability
 between different runners; they may not
 execute correctly when using the command line, [IntelliJ IDEA](https://www.jetbrains.com/help/idea/cucumber.html), or
-[Cucumber-Eclipse](https://github.com/cucumber/cucumber-eclipse). Instead it is
-recommended to [use Cucumber's hooks](../java#beforeall--afterall).
+[Cucumber-Eclipse](https://github.com/cucumber/cucumber-eclipse). Instead, it is
+recommended to [use Cucumber's hooks](../cucumber-java#beforeall--afterall).
 
 ## Using other JUnit features ##
 
@@ -54,7 +54,7 @@ The Cucumber runner acts like a suite of a JUnit tests. As such other JUnit
 features like custom JUnit
 Listeners and Reporters can all be expected to work.
 
-For more information on JUnit, see the [JUnit web site](http://www.junit.org).
+For more information on JUnit, see the [JUnit website](http://www.junit.org).
 
 ## Assume ## 
 

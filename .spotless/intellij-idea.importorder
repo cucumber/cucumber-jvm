@@ -1,4 +1,4 @@
-# Organize import order using Intelij IDEA defaults
+# Organize import order using IntelliJ IDEA defaults
 # Escaped hashes sort static methods last: https://github.com/diffplug/spotless/issues/306
 1=
 2=javax
