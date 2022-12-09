@@ -1,4 +1,4 @@
-wCucumber Java8
+Cucumber Java8
 ==============
 
 Provides lambda based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
