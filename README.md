@@ -37,7 +37,7 @@ Please ask on
 ## Bugs and Feature requests
 
 You can register bugs and feature requests in the
-[Github Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues).
+[GitHub Issue Tracker](https://github.com/cucumber/cucumber-jvm/issues).
 
 Please bear in mind that this project is almost entirely developed by
 volunteers. If you do not provide the implementation yourself (or pay someone
