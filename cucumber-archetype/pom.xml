@@ -46,6 +46,13 @@
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-bom</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <scope>test</scope>
         </dependency>
