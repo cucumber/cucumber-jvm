@@ -18,7 +18,7 @@ The source code is formatted automatically by spotless when running:
 mvn install
 ```
 
-To configure Intelij IDEA/Eclipse use the configuration files in `.spotless/`.
+To configure IntelliJ IDEA/Eclipse use the configuration files in `.spotless/`.
 
 ## Formatting XML, Gherkin, ect
 
