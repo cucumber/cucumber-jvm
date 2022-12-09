@@ -1,7 +1,7 @@
 Cucumber TestNG 
 ==============
 
-Use TestNG to execute cucumber scenarios. To use add the `cucumber-testng` dependency to your pom.
+Use TestNG to execute Cucumber scenarios. To use add the `cucumber-testng` dependency to your pom.
 
 ```xml
 <dependencies>

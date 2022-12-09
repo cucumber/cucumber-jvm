@@ -7,7 +7,7 @@ We appreciate that. Do keep the following in mind:
 * When you send a [pull requests](https://help.github.com/articles/using-pull-requests), 
   please include tests to go along with it.
 * Want to paste some code or output? Put \`\`\` on a line above and below your 
-  code/output. See [Github Flavored Markdown](https://help.github.com/articles/github-flavored-markdown)'s 
+  code/output. See [GitHub Flavored Markdown](https://help.github.com/articles/github-flavored-markdown)'s 
   *Fenced Code Blocks* for details.
 
 ## Formatting Java

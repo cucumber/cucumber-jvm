@@ -429,7 +429,7 @@
                                 <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
                             </eclipse>
                             <importOrder>
-                                <file>${main.basedir}/.spotless/intelij-idea.importorder</file>
+                                <file>${main.basedir}/.spotless/intellij-idea.importorder</file>
                             </importOrder>
                         </java>
                     </configuration>

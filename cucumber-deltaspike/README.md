@@ -25,12 +25,13 @@ public class BellyStepdefs {
     private Belly belly;
 
     //normal step code ...
+}
 ```
 
 This ObjectFactory doesn't start or stop any [Scopes](https://docs.oracle.com/javaee/6/tutorial/doc/gjbbk.html), so all beans live inside the default scope (Dependent). Now cucumber requested a instance of your stepdefinitions for every step, which means cdi create a new instance for every step and for all injected fields. This behaviour makes it impossible to share a state inside a szenario.
 
 To bybass this, you must annotate your class(es) with `@javax.inject.Singleton`:
-1. on stepdefintions: now the ojectfactory will creates only one instance include injected fields per scenario and both injected fields and stepdefinitions can be used to share state inside a scenario.
+1. on stepdefintions: now the ojectfactory will create only one instance include injected fields per scenario and both injected fields and stepdefinitions can be used to share state inside a scenario.
 2. on any other class: now the objectfactory will create a new instance of your stepdefinitions per step and stepdefinitions can not be used to share state inside a scenario, only the annotated classes can be used to share state inside a scenario
 
 you can also combine both approaches.
@@ -43,10 +44,11 @@ public class BellyStepdefs {
     private Belly belly;
 
     //normal step code ...
+}
 ```
 It is not possible to use any other scope than Dependent this means alsoi it is not possible to share a state over two or more scenarios, every scenario start with a clean environment.
 
-To enable this objectfactory add the folling dependency to your classpath:
+To enable this objectfactory add the following dependency to your classpath:
 ```xml
 <dependency>
     <groupId>io.cucumber</groupId>

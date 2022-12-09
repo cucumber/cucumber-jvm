@@ -1,4 +1,4 @@
-Cucumber Java8
+wCucumber Java8
 ==============
 
 Provides lambda based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
@@ -240,7 +240,7 @@ public class StepDefinitions implements En {
     public StepDefinitions() {
         DataTableType((Map<String, String> entry) -> new User(
             entry.get("firstname"),
-            entry.get("lastname")
+            entry.get("lastname"),
             entry.get("nationality")
         ));
     
