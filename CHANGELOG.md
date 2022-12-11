@@ -10,17 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
 ### Added
 - Enabled reproducible builds ([#2641](https://github.com/cucumber/cucumber-jvm/issues/2641) Hervé Boutemy )
 - [Core] Mark Allure 5 and 6 plugins as incompatible ([#2652](https://github.com/cucumber/cucumber-jvm/issues/2652) M.P. Korstanje)
 - [Spring] Invoke all `TestContextManager` methods ([#2661](https://github.com/cucumber/cucumber-jvm/pull/2661) M.P. Korstanje)
 
-## Fixed
+### Fixed
 - [Core] Emit exceptions on failure to handle test run finished events ([#2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
 - [Spring] @MockBean annotation not working with JUnit5 ([#2654](https://github.com/cucumber/cucumber-jvm/pull/2654) Alexander Kirilov, M.P. Korstanje)
+- [Core] Improve expression creation performance ([cucumber-expressions/#187](https://github.com/cucumber/cucumber-expressions/pull/187), [cucumber-expressions/#189](https://github.com/cucumber/cucumber-expressions/pull/189), jkrongegg)
 
-## Deprecated 
+### Changed
+- [TestNG] Update dependency org.testng:testng to v7.7.0
+
+### Deprecated 
 - [DeltaSpike] Deprecated Deltaspike - does not work on Java 17.
 
 ## [7.9.0] - 2022-11-01
