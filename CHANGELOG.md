@@ -12,11 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Enabled reproducible builds ([2641](https://github.com/cucumber/cucumber-jvm/issues/2641) Hervé Boutemy )
-- [Core] Mark Allure 5 and 6 plugins as incompatible ([2652](https://github.com/cucumber/cucumber-jvm/issues/2652) M.P. Korstanje)
+- Enabled reproducible builds ([#2641](https://github.com/cucumber/cucumber-jvm/issues/2641) Hervé Boutemy )
+- [Core] Mark Allure 5 and 6 plugins as incompatible ([#2652](https://github.com/cucumber/cucumber-jvm/issues/2652) M.P. Korstanje)
+- [Spring] Invoke all `TestContextManager` methods ([#2661](https://github.com/cucumber/cucumber-jvm/pull/2661) M.P. Korstanje)
 
 ## Fixed
--  [Core] Emit exceptions on failure to handle test run finished events ([2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
+- [Core] Emit exceptions on failure to handle test run finished events ([#2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
+- [Spring] @MockBean annotation not working with JUnit5 ([#2654](https://github.com/cucumber/cucumber-jvm/pull/2654) Alexander Kirilov, M.P. Korstanje)
 
 ## Deprecated 
 - [DeltaSpike] Deprecated Deltaspike - does not work on Java 17.
@@ -26,14 +28,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:gherkin to v25.0.2. Japanese Rule translation changed from Rule to ルール.
 
 ### Added
-- [Spring] Support @CucumberContextConfiguration as a meta-annotation ([2491](https://github.com/cucumber/cucumber-jvm/issues/2491) Michael Schlatt)
+- [Spring] Support @CucumberContextConfiguration as a meta-annotation ([#2491](https://github.com/cucumber/cucumber-jvm/issues/2491) Michael Schlatt)
 
 ### Changed
 - [Core] Update dependency io.cucumber:gherkin to v24.1
-- [Core] Delegate encoding and BOM handling to gherkin ([2624](https://github.com/cucumber/cucumber-jvm/issues/2624) M.P. Korstanje)
+- [Core] Delegate encoding and BOM handling to gherkin ([#2624](https://github.com/cucumber/cucumber-jvm/issues/2624) M.P. Korstanje)
 
 ### Fixed
-- [Core] Don't swallow parse errors on the CLI ([2632](https://github.com/cucumber/cucumber-jvm/issues/2632) M.P. Korstanje)
+- [Core] Don't swallow parse errors on the CLI ([#2632](https://github.com/cucumber/cucumber-jvm/issues/2632) M.P. Korstanje)
 
 ### Security
 - [Core] Update dependency com.fasterxml.jackson to v2.13.4.20221012
