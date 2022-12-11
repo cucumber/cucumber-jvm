@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 -  [Core] Emit exceptions on failure to handle test run finished events ([2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
 
+## Deprecated 
+- [DeltaSpike] Deprecated Deltaspike - does not work on Java 17.
+
 ## [7.9.0] - 2022-11-01
 ### Changed
 - [Core] Update dependency io.cucumber:gherkin to v25.0.2. Japanese Rule translation changed from Rule to ルール.
