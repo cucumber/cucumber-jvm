@@ -3,7 +3,6 @@ package io.cucumber.core.order.factory;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.RandomPickleOrder;
 
-import java.util.Collections;
 import java.util.Random;
 
 public final class RandomPickleOrderFactory implements PickleOrderFactory {

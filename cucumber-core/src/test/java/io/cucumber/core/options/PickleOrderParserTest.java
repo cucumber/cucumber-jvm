@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PickleOrderParserTest {
 
-
     @Test
     void randomWithoutSeed() {
         assertThat(PickleOrderParser.parse("random").getClass(), is(RandomPickleOrder.class));
