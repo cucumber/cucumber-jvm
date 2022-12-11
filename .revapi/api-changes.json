@@ -239,74 +239,80 @@
             "ignore": true,
             "code": "java.method.removed",
             "old": "method void org.testng.IResultMap::addResult(org.testng.ITestResult, org.testng.ITestNGMethod)",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.returnTypeChanged",
             "old": "method org.testng.IObjectFactory org.testng.ISuite::getObjectFactory()",
             "new": "method org.testng.ITestObjectFactory org.testng.ISuite::getObjectFactory()",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method java.lang.String org.testng.ISuiteResult::getPropertyFileName()",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method void org.testng.ITestContext::addGuiceModule(com.google.inject.Module)",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method void org.testng.ITestContext::addInjector(java.util.List<com.google.inject.Module>, com.google.inject.Injector)",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method java.util.List<com.google.inject.Module> org.testng.ITestContext::getAllGuiceModules()",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method java.util.List<com.google.inject.Module> org.testng.ITestContext::getGuiceModules(java.lang.Class<? extends com.google.inject.Module>)",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method com.google.inject.Injector org.testng.ITestContext::getInjector(java.util.List<com.google.inject.Module>)",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method com.google.inject.Injector org.testng.ITestContext::getInjector(org.testng.IClass)",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.addedToInterface",
             "new": "method java.lang.String org.testng.ITestResult::id()",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.addedToInterface",
             "new": "method int org.testng.internal.IParameterInfo::getIndex()",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
             "old": "method org.testng.xml.XmlSuite.ParallelMode org.testng.xml.XmlSuite.ParallelMode::skipDeprecatedValues(org.testng.xml.XmlSuite.ParallelMode)",
-            "justification": "Third party api chage"
+            "justification": "Third party api change"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface org.testng.IRetryDataProvider",
+            "justification": "Third party api change"
           }
         ]
       }
