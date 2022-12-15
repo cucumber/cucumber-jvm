@@ -313,6 +313,24 @@
             "code": "java.class.externalClassExposedInAPI",
             "new": "interface org.testng.IRetryDataProvider",
             "justification": "Third party api change"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.defaultMethodAddedToInterface",
+            "new": "method java.lang.Class<? extends org.testng.IRetryDataProvider> org.testng.IDataProviderMethod::retryUsing()",
+            "justification": "Third party api change"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.defaultMethodAddedToInterface",
+            "new": "method java.util.Set<org.testng.ITestNGMethod> org.testng.ITestNGMethod::downstreamDependencies()",
+            "justification": "Third party api change"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.defaultMethodAddedToInterface",
+            "new": "method java.util.Set<org.testng.ITestNGMethod> org.testng.ITestNGMethod::upstreamDependencies()",
+            "justification": "Third party api change"
           }
         ]
       }
