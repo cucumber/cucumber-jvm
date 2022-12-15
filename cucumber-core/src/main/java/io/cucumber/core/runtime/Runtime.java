@@ -83,8 +83,11 @@ public final class Runtime {
             context.runBeforeAllHooks();
             runFeatures(features);
         });
-        execute(context::runAfterAllHooks);
-        execute(context::finishTestRun);
+        try {
+            execute(context::runAfterAllHooks);
+        } finally {
+            context.finishTestRun();
+        }
         Throwable exception = context.getThrowable();
         if (exception != null) {
             throwAsUncheckedException(exception);

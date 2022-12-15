@@ -1,6 +1,6 @@
 # Bill of Materials
 
-It is fairly common for one project to use more than one cucumber dependency. To
+It is fairly common for one project to use more than one Cucumber dependency. To
 keep these version in sync a Bill of Materials can be used.
 
 ## Usage

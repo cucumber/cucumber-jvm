@@ -347,15 +347,10 @@ class SpringFactoryTest {
         assertDoesNotThrow(factory::stop);
     }
 
-    @ParameterizedTest
-    @ValueSource(classes = {
-            FailedBeforeTestClassContextConfiguration.class,
-            FailedBeforeTestMethodContextConfiguration.class,
-            FailedTestInstanceContextConfiguration.class
-    })
-    void shouldBeStoppableWhenFacedWithFailedApplicationContext(Class<?> contextConfiguration) {
+    @Test
+    void shouldBeStoppableWhenFacedWithFailedApplicationContext() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(contextConfiguration);
+        factory.addClass(FailedTestInstanceCreation.class);
 
         assertThrows(CucumberBackendException.class, factory::start);
         assertDoesNotThrow(factory::stop);
@@ -414,40 +409,9 @@ class SpringFactoryTest {
 
     @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
-    @TestExecutionListeners(FailedBeforeTestClassContextConfiguration.FailingListener.class)
-    public static class FailedBeforeTestClassContextConfiguration {
+    public static class FailedTestInstanceCreation {
 
-        public static class FailingListener implements TestExecutionListener {
-
-            @Override
-            public void beforeTestClass(TestContext testContext) throws Exception {
-                throw new StubException();
-            }
-
-        }
-
-    }
-
-    @CucumberContextConfiguration
-    @ContextConfiguration("classpath:cucumber.xml")
-    @TestExecutionListeners(FailedBeforeTestMethodContextConfiguration.FailingListener.class)
-    public static class FailedBeforeTestMethodContextConfiguration {
-
-        public static class FailingListener implements TestExecutionListener {
-
-            @Override
-            public void beforeTestMethod(TestContext testContext) throws Exception {
-                throw new StubException();
-            }
-
-        }
-
-    }
-    @CucumberContextConfiguration
-    @ContextConfiguration("classpath:cucumber.xml")
-    public static class FailedTestInstanceContextConfiguration {
-
-        public FailedTestInstanceContextConfiguration() {
+        public FailedTestInstanceCreation() {
             throw new RuntimeException();
         }
     }

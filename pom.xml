@@ -5,9 +5,10 @@
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
         <version>4.1.1</version>
+        <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.10.0-SNAPSHOT</version>
+    <version>7.10.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -17,7 +18,7 @@
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
-        <project.build.outputTimestamp>1669550537</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1670774877</project.build.outputTimestamp>
 
         <!-- io.cucumber dependencies -->
         <!-- Whenever messages is updated run `make update-cck` -->
@@ -370,12 +371,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.14.7</version>
+                    <version>0.15.0</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.27.0</version>
+                            <version>0.28.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -429,7 +430,7 @@
                                 <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
                             </eclipse>
                             <importOrder>
-                                <file>${main.basedir}/.spotless/intelij-idea.importorder</file>
+                                <file>${main.basedir}/.spotless/intellij-idea.importorder</file>
                             </importOrder>
                         </java>
                     </configuration>

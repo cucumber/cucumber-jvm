@@ -156,7 +156,7 @@ Notes:
 
  1. When used in combination with Junit 5, Maven Surefire, and/or Failsafe use 
     version `3.0.0-M5` or later.
- 2. When used in combination with Junit 5 and InteliJ IDEA failures in before
+ 2. When used in combination with Junit 5 and IntelliJ IDEA failures in before
     all and after all hooks do not fail a test run.
 
 ### Before / After

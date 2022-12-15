@@ -4,7 +4,7 @@ Cucumber Core
 Provides components needed to discover, parse and execute feature files. The
 core is designed with a few extension systems and plugin points. You
 typically don't depend directly on `cucumber-core` but rather use the different
-sub modules together e.g. `cucumber-junit` and `cucumber-java`.     
+submodules together e.g. `cucumber-junit` and `cucumber-java`.     
 
 ## Properties, Environment variables, System Options ##
 
@@ -14,7 +14,7 @@ Note that the CLI arguments take precedence over all.
 
 Note that the `cucumber-junit-platform-engine` is provided with properties
 by the Junit Platform rather than Cucumber. See
-[junit-platform-engine Configuration Options](../junit-platform-engine#configuration-options)
+[junit-platform-engine Configuration Options](../cucumber-junit-platform-engine#configuration-options)
 for more information.
 
 Supported properties are:
