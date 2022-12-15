@@ -18,9 +18,6 @@
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
     </properties>
 
-    <!-- Not used by this module, but used by the integration tests of
-         created project. Declaring the dependencies keeps the project
-         in the right order in the maven reactor -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -30,7 +27,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Also not used by this module. But ensures the junit-jupiter.version
+            <!-- Not used by this module. But ensures the junit-jupiter.version
                  in the archetype template is also automatically updated by renovate
                  bot. -->
             <dependency>
@@ -44,12 +41,15 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Also not used by this module, but used by the integration tests of
+             created project. Declaring the dependencies keeps the project
+             in the right order in the maven reactor -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-bom</artifactId>
             <version>${project.version}</version>
             <type>pom</type>
-            <scope>import</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>

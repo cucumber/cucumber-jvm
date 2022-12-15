@@ -10,6 +10,19 @@ We appreciate that. Do keep the following in mind:
   code/output. See [GitHub Flavored Markdown](https://help.github.com/articles/github-flavored-markdown)'s 
   *Fenced Code Blocks* for details.
 
+## Building
+
+When building the project for the first time, run:
+
+```
+mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
+```
+
+The `cucumber-archetype` modules integration tests against `-SNAPSHOT` 
+versions of Cucumber. These must be installed first.
+
+Afterwards `mvn test` or `mvn verify` should work as expected.
+
 ## Formatting Java
 
 The source code is formatted automatically by spotless when running:
