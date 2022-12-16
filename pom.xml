@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.10.1</version>
+    <version>7.10.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -18,7 +18,7 @@
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
-        <project.build.outputTimestamp>1671198333</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1671198340</project.build.outputTimestamp>
 
         <!-- io.cucumber dependencies -->
         <!-- Whenever messages is updated run `make update-cck` -->
@@ -32,7 +32,7 @@
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>v7.10.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
