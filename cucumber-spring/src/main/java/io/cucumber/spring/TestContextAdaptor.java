@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Deque;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
-import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_NO;
+import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
 
 class TestContextAdaptor {
 
@@ -92,11 +92,25 @@ class TestContextAdaptor {
         // using their default constructor and now allow them to be injected
         // into other step definition classes.
         try {
-            Class<?> delegateTestClass = delegate.getTestContext().getTestClass();
-            Object delegateTestInstance = applicationContext.getBeanFactory().autowire(delegateTestClass, AUTOWIRE_NO,
-                false);
-            delegate.prepareTestInstance(delegateTestInstance);
-            this.delegateTestInstance = delegateTestInstance;
+            Class<?> beanClass = delegate.getTestContext().getTestClass();
+
+            ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+            // Note: By providing AUTOWIRE_CONSTRUCTOR the
+            // AbstractAutowireCapableBeanFactory does not invoke
+            // 'populateBean' and effectively creates a raw bean.
+            Object bean = beanFactory.autowire(beanClass, AUTOWIRE_CONSTRUCTOR, false);
+
+            // But it works out well for us. Because now the
+            // DependencyInjectionTestExecutionListener will invoke
+            // 'autowireBeanProperties' which will populate the bean.
+            delegate.prepareTestInstance(bean);
+
+            // Because the bean is created by a factory, it is not added to
+            // the application context yet.
+            CucumberTestContext scenarioScope = CucumberTestContext.getInstance();
+            scenarioScope.put(beanClass.getName(), bean);
+
+            this.delegateTestInstance = bean;
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }
