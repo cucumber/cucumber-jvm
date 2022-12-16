@@ -10,9 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.10.1] - 2022-12-16
 ### Fixed
 - [Spring] Inject CucumberContextConfiguration constructor dependencies ([#2664](https://github.com/cucumber/cucumber-jvm/pull/2664) M.P. Korstanje)
- 
+
 ## [7.10.0] - 2022-12-11
 ### Added
 - Enabled reproducible builds ([#2641](https://github.com/cucumber/cucumber-jvm/issues/2641) Hervé Boutemy )
@@ -202,7 +204,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.1...main
+[7.10.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...main
 [7.10.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.9.0...main
 [7.9.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.1...main
 [7.8.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.0...main
