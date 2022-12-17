@@ -22,8 +22,7 @@ import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnreco
 import static io.cucumber.core.runner.ExecutionMode.SKIP;
 import static io.cucumber.core.runner.TestAbortedExceptions.createIsTestAbortedExceptionPredicate;
 import static io.cucumber.core.runner.TestStepResultStatusMapper.from;
-import static io.cucumber.messages.TimeConversion.javaDurationToDuration;
-import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
+import static io.cucumber.messages.Convertor.toMessage;
 import static java.time.Duration.ZERO;
 
 abstract class TestStep implements io.cucumber.plugin.event.TestStep {
@@ -75,7 +74,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepStarted(
             textExecutionId.toString(),
             id.toString(),
-            javaInstantToTimestamp(startTime)));
+            toMessage(startTime)));
         bus.send(envelope);
     }
 
@@ -117,9 +116,11 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
 
         TestStepResult testStepResult = new TestStepResult(
-            javaDurationToDuration(duration),
+            toMessage(duration),
             result.getError() != null ? extractStackTrace(result.getError()) : null,
-            from(result.getStatus()));
+            from(result.getStatus()),
+            result.getError() != null ? toMessage(result.getError()) : null
+        );
 
         Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepFinished(
             textExecutionId.toString(),
