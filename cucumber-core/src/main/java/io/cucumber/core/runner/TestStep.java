@@ -119,8 +119,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
             toMessage(duration),
             result.getError() != null ? extractStackTrace(result.getError()) : null,
             from(result.getStatus()),
-            result.getError() != null ? toMessage(result.getError()) : null
-        );
+            result.getError() != null ? toMessage(result.getError()) : null);
 
         Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepFinished(
             textExecutionId.toString(),

@@ -28,7 +28,7 @@ public class MessageFormatterTest {
         TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
         bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L));
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
         bus.send(Envelope.of(testRunFinished));
 
         String ndjson = new String(bytes.toByteArray(), UTF_8);
