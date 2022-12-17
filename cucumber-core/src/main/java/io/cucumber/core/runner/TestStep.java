@@ -126,7 +126,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
             textExecutionId.toString(),
             id.toString(),
             testStepResult,
-            javaInstantToTimestamp(stopTime)));
+            toMessage(stopTime)));
         bus.send(envelope);
     }
 
