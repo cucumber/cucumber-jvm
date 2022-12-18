@@ -8,7 +8,7 @@ This intended to support:
 * automatic conversion by Cucumber
 
 This README explains the way datatables can be converted. To register converters
-see [cucumber-java/README.md](../java)
+see [cucumber-java/README.md](../cucumber-java)
 
 ## Introduction
 
@@ -473,9 +473,9 @@ Header: | firstName   |    | lastName | birthDate  |
 
 
 2a. If the first table cell is blank use the TableCellTransformer to convert the other cells in the column.  
-2b. Otherwise use the TableEntryTransformer.
+2b. Otherwise, use the TableEntryTransformer.
 
 3a. If the first table cell is blank use the TableEntryTransformer to convert the body values.  
-3b. Otherwise use the TableRowTransformer on all values.
+3b. Otherwise, use the TableRowTransformer on all values.
 
 4. Pair up the keys and values from steps 2 and 3.

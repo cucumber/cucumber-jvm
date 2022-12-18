@@ -12,7 +12,6 @@ import io.cucumber.messages.types.StepDefinitionPatternType;
 import io.cucumber.messages.types.TestRunFinished;
 import io.cucumber.messages.types.TestRunStarted;
 import io.cucumber.messages.types.Timestamp;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -36,7 +35,7 @@ class HtmlFormatterTest {
         TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
         bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L));
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
         bus.send(Envelope.of(testRunFinished));
 
         String html = new String(bytes.toByteArray(), UTF_8);
@@ -83,7 +82,8 @@ class HtmlFormatterTest {
         TestRunFinished testRunFinished = new TestRunFinished(
             null,
             true,
-            new Timestamp(15L, 0L));
+            new Timestamp(15L, 0L),
+            null);
         bus.send(Envelope.of(testRunFinished));
 
         String html = new String(bytes.toByteArray(), UTF_8);
