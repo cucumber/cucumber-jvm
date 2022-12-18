@@ -219,7 +219,7 @@ class JUnitFormatterTest {
                 "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <skipped>" +
+                "        <skipped message=\"message\" type=\"org.opentest4j.TestAbortedException\">" +
                 "<![CDATA["
                 + stackTrace +
                 "]]></skipped>\n" +
@@ -265,7 +265,7 @@ class JUnitFormatterTest {
                 "<testsuite errors=\"0\" failures=\"1\" name=\"Cucumber\" skipped=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure>\n" +
+                "        <failure message=\"TODO: implement me\" type=\"io.cucumber.core.backend.StubPendingException\">\n" +
                 "           <![CDATA[TODO: implement me]]>\n" +
                 "       </failure>\n"
                 +
@@ -305,12 +305,15 @@ class JUnitFormatterTest {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "  <failure><![CDATA[the stack trace]]></failure>\n" +
-                "  <system-out><![CDATA[Given first step............................................................passed\n"
+                "       <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\">" +
+                "           <![CDATA[the stack trace]]>" +
+                "       </failure>" +
+                "       <system-out><![CDATA[Given first step............................................................passed\n"
                 +
                 "When second step............................................................passed\n" +
-                "Then third step.............................................................failed]]></system-out>\n" +
-                "</testcase>\n" +
+                "Then third step.............................................................failed]]>" +
+                "       </system-out>\n" +
+                "   </testcase>\n" +
                 "</testsuite>\n";
         assertXmlEqual(expected, out);
     }
@@ -343,8 +346,8 @@ class JUnitFormatterTest {
                 "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure><![CDATA[the stack trace]]>\n"
-                +
+                "       <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\">" +
+                "           <![CDATA[the stack trace]]>\n" +
                 "       </failure>\n" +
                 "       <system-out>" +
                 "           <![CDATA[" +
@@ -384,7 +387,9 @@ class JUnitFormatterTest {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
                 "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure><![CDATA[TODO: implement me]]></failure>\n" +
+                "        <failure message=\"TODO: implement me\" type=\"io.cucumber.core.backend.StubPendingException\">" +
+                "           <![CDATA[TODO: implement me]]>" +
+                "        </failure>\n" +
                 "        <system-out><![CDATA[Given first step............................................................skipped\n"
                 +
                 "When second step............................................................skipped\n" +
@@ -423,7 +428,7 @@ class JUnitFormatterTest {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite failures=\"1\" name=\"Cucumber\" skipped=\"0\" errors=\"0\" tests=\"1\" time=\"0\">\n" +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure>\n" +
+                "        <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\">\n" +
                 "           <![CDATA[the stack trace]]>\n" +
                 "       </failure>\n" +
                 "       <system-out>\n" +
@@ -465,7 +470,7 @@ class JUnitFormatterTest {
                 "<testsuite name=\"Cucumber\" time=\"0\" tests=\"1\" skipped=\"0\" failures=\"1\" errors=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <failure>\n" +
+                "        <failure message=\"the message\" type=\"io.cucumber.core.plugin.StubException\">\n" +
                 "           <![CDATA[the stack trace]]>\n" +
                 "       </failure>\n" +
                 "       <system-out>\n" +
