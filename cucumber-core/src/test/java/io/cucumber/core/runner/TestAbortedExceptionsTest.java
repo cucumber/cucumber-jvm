@@ -14,7 +14,7 @@ public class TestAbortedExceptionsTest {
 
     @Test
     void testPredicate() {
-        Predicate<Throwable> isTestAbortedExceptionPredicate = TestAbortedExceptions.createIsTestAbortedExceptionPredicate6();
+        Predicate<Throwable> isTestAbortedExceptionPredicate = TestAbortedExceptions.createIsTestAbortedExceptionPredicate();
         assertFalse(isTestAbortedExceptionPredicate.test(new RuntimeException()));
         assertTrue(isTestAbortedExceptionPredicate.test(new TestAbortedException()));
         assertTrue(isTestAbortedExceptionPredicate.test(new TestAbortedExceptionSubClass()));
