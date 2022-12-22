@@ -1,15 +1,6 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base", 
-    ":disableDependencyDashboard"
-  ],
-  "labels": [":robot: dependencies"],
-  "prHourlyLimit": 0,
-  "packageRules": [
-    {
-      "updateTypes": ["minor", "patch"],
-      "automerge": true,
-      "automergeType": "branch"
-    }
+    "github>cucumber/renovate-config"
   ]
 }
