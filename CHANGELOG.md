@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [Core] Improve test step creation performance ([#2666](https://github.com/cucumber/cucumber-jvm/issues/2666), Julien Kronegg)
+- [Core] Replace groovy script with FreeMarker template engine ([#2648](https://github.com/cucumber/cucumber-jvm/issues/2648), Marit van Dijk)
 
 ## [7.10.1] - 2022-12-16
 ### Fixed
