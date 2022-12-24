@@ -66,8 +66,6 @@ public class CodeGenerationJava8 {
             });
     }
 
-    // TODO: repeat for arity
-
     // Extract sorted keywords from the dialect, and normalize them
     private static List extractKeywords(GherkinDialect dialect) {
         List<String> keywords = new ArrayList<>();
