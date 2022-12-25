@@ -48,10 +48,7 @@ public class CodeGenerationJava {
         GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
         dialectProvider.getLanguages().forEach(
             language -> {
-                GherkinDialect dialect = dialectProvider.getDialect(language).get(); // TODO:
-                                                                                     // Optional.isPresent()
-                                                                                     // check
-                                                                                     // (?)
+                GherkinDialect dialect = dialectProvider.getDialect(language).get();
                 String normalizedLanguage = dialect.getLanguage().replaceAll("[\\s-]", "_").toLowerCase();
                 if (!unsupported.contains(normalizedLanguage)) {
                     dialect.getStepKeywords().stream()

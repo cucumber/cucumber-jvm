@@ -19,6 +19,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
+/* This class generates the cucumber-java8 Interfaces based on
+ * the languages and keywords from the GherkinDialectProvider
+ * using the FreeMarker template engine and provided template.
+ */
 public class CodeGenerationJava8 {
 
     public static void main(String[] args) throws IOException {
@@ -42,10 +46,7 @@ public class CodeGenerationJava8 {
         GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
         dialectProvider.getLanguages().forEach(
             language -> {
-                GherkinDialect dialect = dialectProvider.getDialect(language).get(); // TODO:
-                // Optional.isPresent()
-                // check
-                // (?)
+                GherkinDialect dialect = dialectProvider.getDialect(language).get();
                 String normalizedLanguage = dialect.getLanguage().replaceAll("[\\s-]", "_").toLowerCase();
                 if (!unsupported.contains(normalizedLanguage)) {
                     String className = capitalize(normalizedLanguage);
@@ -54,7 +55,6 @@ public class CodeGenerationJava8 {
                     LinkedHashMap<String, Object> binding = new LinkedHashMap<>();
                     binding.put("language_name", name);
                     binding.put("className", className);
-                    // binding.put("kw", keyword(dialect));
                     binding.put("keywords", extractKeywords(dialect));
                     try {
                         createInterfaces(templateSource, className, binding);
@@ -67,7 +67,7 @@ public class CodeGenerationJava8 {
     }
 
     // Extract sorted keywords from the dialect, and normalize them
-    private static List extractKeywords(GherkinDialect dialect) {
+    private static List<String> extractKeywords(GherkinDialect dialect) {
         List<String> keywords = new ArrayList<>();
         dialect.getStepKeywords().stream().sorted()
                 .filter(it -> !it.contains(String.valueOf('*')))
