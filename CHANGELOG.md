@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Core] Improve test step creation performance ([#2666](https://github.com/cucumber/cucumber-jvm/issues/2666), Julien Kronegg)
 
 ## [7.10.1] - 2022-12-16
 ### Fixed
@@ -30,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Emit exceptions on failure to handle test run finished events ([#2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
 - [Spring] @MockBean annotation not working with JUnit5 ([#2654](https://github.com/cucumber/cucumber-jvm/pull/2654) Alexander Kirilov, M.P. Korstanje)
-- [Core] Improve expression creation performance ([cucumber-expressions/#187](https://github.com/cucumber/cucumber-expressions/pull/187), [cucumber-expressions/#189](https://github.com/cucumber/cucumber-expressions/pull/189), jkrongegg)
+- [Core] Improve expression creation performance ([cucumber-expressions/#187](https://github.com/cucumber/cucumber-expressions/pull/187), [cucumber-expressions/#189](https://github.com/cucumber/cucumber-expressions/pull/189), Julien Kronegg)
 
 ## [7.9.0] - 2022-11-01
 ### Added
