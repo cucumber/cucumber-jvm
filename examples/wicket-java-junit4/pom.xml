@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>examples</artifactId>
-        <version>7.10.2-SNAPSHOT</version>
+        <version>7.11.0-SNAPSHOT</version>
     </parent>
     <artifactId>wicket-java-junit4</artifactId>
     <packaging>pom</packaging>
