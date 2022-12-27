@@ -43,11 +43,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>2.3.23</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -98,6 +93,7 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.31</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -136,7 +132,7 @@
                         <id>generate-code</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>testCompile</goal>
                         </goals>
                         <configuration>
                             <compileSourceRoots>${project.basedir}/src/codegen/java</compileSourceRoots>
@@ -160,10 +156,14 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <classpathScope>test</classpathScope>
                     <addOutputToClasspath>false</addOutputToClasspath>
                     <addResourcesToClasspath>false</addResourcesToClasspath>
                     <additionalClasspathElements>${project.build.directory}/codegen-classes</additionalClasspathElements>
                     <mainClass>CodeGenerationJava</mainClass>
+                    <arguments>
+                        <argument>${project.build.directory}/generated-sources/i18n/java</argument>
+                    </arguments>
                 </configuration>
             </plugin>
             <plugin>
