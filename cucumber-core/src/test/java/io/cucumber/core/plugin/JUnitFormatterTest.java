@@ -6,7 +6,6 @@ import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.TestRunFinished;
 import io.cucumber.messages.types.TestRunStarted;
 import io.cucumber.messages.types.Timestamp;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -14,9 +13,7 @@ import java.time.Clock;
 import java.util.UUID;
 
 import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
 
 class JUnitFormatterTest {
 
@@ -33,11 +30,10 @@ class JUnitFormatterTest {
         TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
         bus.send(Envelope.of(testRunFinished));
 
-        assertThat(bytes, isBytesEqualTo(
+        assertThat(bytes, isBytesEqualTo("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<testsuite name=\"Cucumber\" time=\"5\" tests=\"0\" skipped=\"0\" failures=\"0\" errors=\"0\">\n" +
-                        "</testsuite>\n"
-        ));
+                "<testsuite name=\"Cucumber\" time=\"5\" tests=\"0\" skipped=\"0\" failures=\"0\" errors=\"0\">\n" +
+                "</testsuite>\n"));
     }
 
 }
