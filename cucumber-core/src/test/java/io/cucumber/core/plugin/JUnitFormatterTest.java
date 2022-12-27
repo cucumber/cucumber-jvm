@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.TestAbortedException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -27,12 +28,16 @@ import static java.time.ZoneId.of;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
+import static org.xmlunit.matchers.ValidationMatcher.valid;
 
 class JUnitFormatterTest {
 
     private static void assertXmlEqual(String expected, ByteArrayOutputStream actual) {
         String actualString = new String(actual.toByteArray(), UTF_8);
+        String xsd = "/io/cucumber/core/plugin/surefire-test-report-3.0.xsd";
+        InputStream schema = JUnitFormatterTest.class.getResourceAsStream(xsd);
         assertThat(actualString, isIdenticalTo(expected).ignoreWhitespace());
+        assertThat(actualString, valid(schema));
     }
 
     @Test
@@ -219,7 +224,7 @@ class JUnitFormatterTest {
                 "<testsuite failures=\"0\" name=\"Cucumber\" skipped=\"1\" errors=\"0\" tests=\"1\" time=\"0\">\n"
                 +
                 "    <testcase classname=\"feature name\" name=\"scenario name\" time=\"0\">\n" +
-                "        <skipped message=\"message\" type=\"org.opentest4j.TestAbortedException\">" +
+                "        <skipped message=\"message\">" +
                 "<![CDATA["
                 + stackTrace +
                 "]]></skipped>\n" +
