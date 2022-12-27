@@ -86,7 +86,7 @@ public class CodeGenerationJava {
         String fileName = "target/generated-sources/i18n/java/io/cucumber/java/" + normalizedLanguage
                 + "/" + normalizedKeyword + ".java";
         Path path = Paths.get(fileName);
-        if (Files.exists(path)) {
+        if (!Files.exists(path)) {
             // Haitian has two translations that only differ by case - Sipozeke
             // and SipozeKe
             // Some file systems are unable to distinguish between them and
