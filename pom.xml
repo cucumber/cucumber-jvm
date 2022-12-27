@@ -23,7 +23,7 @@
         <!-- io.cucumber dependencies -->
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>21.0.1</messages.version>
-        <gherkin.version>26.0.1</gherkin.version>
+        <gherkin.version>26.0.2</gherkin.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.15</groovy.version>
