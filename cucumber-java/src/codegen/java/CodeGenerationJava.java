@@ -1,5 +1,3 @@
-package codegen;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -7,12 +5,12 @@ import freemarker.template.TemplateExceptionHandler;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialectProvider;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -87,16 +85,15 @@ public class CodeGenerationJava {
     ) throws IOException, TemplateException {
         String fileName = "target/generated-sources/i18n/java/io/cucumber/java/" + normalizedLanguage
                 + "/" + normalizedKeyword + ".java";
-        File basedir = new File(Paths.get("cucumber-java").toAbsolutePath().toString());
-        File file = new File(basedir, fileName);
-        if (!file.exists()) {
+        Path path = Paths.get(fileName);
+        if (Files.exists(path)) {
             // Haitian has two translations that only differ by case - Sipozeke
             // and SipozeKe
             // Some file systems are unable to distinguish between them and
             // overwrite the other one :-(
-            Files.createDirectories(file.getParentFile().toPath());
-            Writer fileWriter = new FileWriter(file);
-            templateSource.process(binding, fileWriter);
+            Files.createDirectories(path.getParent());
+            BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
+            templateSource.process(binding, writer);
         }
     }
 
@@ -105,10 +102,10 @@ public class CodeGenerationJava {
     ) throws IOException, TemplateException {
         String fileName = "target/generated-sources/i18n/java/io/cucumber/java/" + normalizedLanguage
                 + "/package-info.java";
-        File basedir = new File(Paths.get("cucumber-java").toAbsolutePath().toString());
-        File file = new File(basedir, fileName);
-        Writer fileWriter = new FileWriter(file);
-        packageInfoSource.process(binding, fileWriter);
+        Path path = Paths.get(fileName);
+        Files.createDirectories(path.getParent());
+        BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
+        packageInfoSource.process(binding, writer);
     }
 
     static String normalize(CharSequence s) {

@@ -115,11 +115,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <outputDirectory>${build.directory}/codegen-classes</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
+                                    <directory>${project.basedir}/src/codegen/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -139,6 +138,10 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <compileSourceRoots>${project.basedir}/src/codegen/java</compileSourceRoots>
+                            <outputDirectory>${build.directory}/codegen-classes</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -157,7 +160,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>codegen.CodeGenerationJava</mainClass>
+                    <addOutputToClasspath>false</addOutputToClasspath>
+                    <addResourcesToClasspath>false</addResourcesToClasspath>
+                    <additionalClasspathElements>${build.directory}/codegen-classes</additionalClasspathElements>
+                    <mainClass>CodeGenerationJava</mainClass>
                 </configuration>
             </plugin>
             <plugin>
