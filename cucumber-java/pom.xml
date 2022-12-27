@@ -163,6 +163,7 @@
                     <mainClass>CodeGenerationJava</mainClass>
                     <arguments>
                         <argument>${project.build.directory}/generated-sources/i18n/java</argument>
+                        <argument>io/cucumber/java</argument>
                     </arguments>
                 </configuration>
             </plugin>

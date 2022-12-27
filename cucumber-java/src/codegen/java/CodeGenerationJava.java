@@ -23,7 +23,15 @@ import java.util.Locale;
  */
 public class CodeGenerationJava {
 
+    private static String baseDirectory;
+    private static String packagePath;
+
     public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
+            throw new IllegalArgumentException("Usage: <baseDirectory> <packagePath>");
+        }
+        baseDirectory = args[0];
+        packagePath = args[1];
 
         // 1. Configure template engine
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_21);
@@ -83,9 +91,7 @@ public class CodeGenerationJava {
             Template templateSource, String normalizedLanguage, String normalizedKeyword,
             LinkedHashMap<String, String> binding
     ) throws IOException, TemplateException {
-        String fileName = "target/generated-sources/i18n/java/io/cucumber/java/" + normalizedLanguage
-                + "/" + normalizedKeyword + ".java";
-        Path path = Paths.get(fileName);
+        Path path = Paths.get(baseDirectory, packagePath, normalizedLanguage, normalizedKeyword + ".java");
         if (!Files.exists(path)) {
             // Haitian has two translations that only differ by case - Sipozeke
             // and SipozeKe
@@ -100,9 +106,7 @@ public class CodeGenerationJava {
     private static void createPackageInfo(
             Template packageInfoSource, String normalizedLanguage, LinkedHashMap<String, String> binding
     ) throws IOException, TemplateException {
-        String fileName = "target/generated-sources/i18n/java/io/cucumber/java/" + normalizedLanguage
-                + "/package-info.java";
-        Path path = Paths.get(fileName);
+        Path path = Paths.get(baseDirectory, packagePath, normalizedLanguage, "package-info.java");
         Files.createDirectories(path.getParent());
         BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
         packageInfoSource.process(binding, writer);
