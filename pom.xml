@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
-    <url>http://cucumber.io/</url>
+    <url>https://cucumber.io/</url>
 
     <properties>
         <!-- Tool chains, ect -->
