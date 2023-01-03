@@ -16,7 +16,7 @@
         <cucumber-expressions.version>16.1.1</cucumber-expressions.version>
         <html-formatter.version>20.2.1</html-formatter.version>
         <junit-xml-formatter.version>0.1.0</junit-xml-formatter.version>
-        <tag-expressions.version>4.1.0</tag-expressions.version>
+        <tag-expressions.version>5.0.1</tag-expressions.version>
     </properties>
 
     <dependencyManagement>
