@@ -14,7 +14,6 @@
     <properties>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <junit-jupiter.version>5.9.1</junit-jupiter.version>
         <spring.version>6.0.3</spring.version>
         <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
@@ -63,25 +62,6 @@
             <groupId>org.apiguardian</groupId>
             <artifactId>apiguardian-api</artifactId>
             <version>${apiguardian-api.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet-api.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
