@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- [Spring] Upgrade to Spring Boot 3 and Spring 6 ([#2644](https://github.com/cucumber/cucumber-jvm/pull/2644) M.P. Korstanje)
+- [Spring] Support Spring Boot 3 and Spring 6 ([#2644](https://github.com/cucumber/cucumber-jvm/pull/2644) M.P. Korstanje)
 
 ### Changed
 - [Core] Use a [message based JUnit XML Formatter](https://github.com/cucumber/cucumber-junit-xml-formatter) ([#2638](https://github.com/cucumber/cucumber-jvm/pull/2638) M.P. Korstanje)
