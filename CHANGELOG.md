@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Core] Use a [message based JUnit XML Formatter](https://github.com/cucumber/cucumber-junit-xml-formatter) ([#2638](https://github.com/cucumber/cucumber-jvm/pull/2638) M.P. Korstanje)
 - [Core] Throw an exception when tag expressions are incorrectly escaped ([tag-expressions/#17](https://github.com/cucumber/tag-expressions/pull/17) Aslak Hellesøy)
+- [DeltaSpike] Un-Deprecated deltaspike - can be made to work on Java 17.
 
 ### Fixed
 - [Core] Improve test step creation performance ([#2666](https://github.com/cucumber/cucumber-jvm/issues/2666), Julien Kronegg)
+
 
 ## [7.10.1] - 2022-12-16
 ### Fixed

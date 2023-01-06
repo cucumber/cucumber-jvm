@@ -1,5 +1,8 @@
 package io.cucumber.deltaspike;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class Belly {
 
     private int cukes;
