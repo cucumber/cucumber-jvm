@@ -8,7 +8,7 @@
         <xbean.version>4.22</xbean.version>
         <jakarta.enterprise.cdi-api.version>3.0.1</jakarta.enterprise.cdi-api.version>
         <jakarta.activation-api.version>2.1.0</jakarta.activation-api.version>
-        <junit-jupiter.version>5.9.1</junit-jupiter.version>
+        <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <hamcrest.version>2.2</hamcrest.version>
         <weld.version>4.0.3.Final</weld.version>
     </properties>
