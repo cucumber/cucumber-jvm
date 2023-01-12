@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.11.0] - 2023-01-12
 ### Added
 - [Spring] Support Spring Boot 3 and Spring 6 ([#2644](https://github.com/cucumber/cucumber-jvm/pull/2644) M.P. Korstanje)
 - [JUnit Platform] Support `cucumber.execution.parallel.config.config.fixed.max-pool-size` ([#2681](https://github.com/cucumber/cucumber-jvm/pull/2681) M.P. Korstanje)
@@ -23,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Improve test step creation performance ([#2666](https://github.com/cucumber/cucumber-jvm/issues/2666), Julien Kronegg)
 - [JUnit Platform] Use JUnit Platform 1.9.2 (JUnit Jupiter 5.9.2)
-
 
 ## [7.10.1] - 2022-12-16
 ### Fixed
@@ -218,7 +218,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...main
+[7.11.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.1...main
 [7.10.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...main
 [7.10.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.9.0...main
 [7.9.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.1...main
