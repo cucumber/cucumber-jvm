@@ -194,7 +194,9 @@ strategy.
 * `dynamic`: Computes the desired parallelism as `<available cores>` * 
 `cucumber.execution.parallel.config.dynamic.factor`.
 
-* `fixed`: Set the desired parallelism to `cucumber.execution.parallel.config.fixed.parallelism`.
+* `fixed`: Set `cucumber.execution.parallel.config.fixed.parallelism` to the
+  desired parallelism and `cucumber.execution.parallel.config.config.fixed.max-pool-size`
+  to the maximum pool size of the underlying ForkJoin pool.
 
 * `custom`: Specify a custom `ParallelExecutionConfigurationStrategy`
 implementation through `cucumber.execution.parallel.config.custom.class`.  
@@ -202,10 +204,10 @@ implementation through `cucumber.execution.parallel.config.custom.class`.
 If no strategy is specified Cucumber will use the `dynamic` strategy with a
 factor of `1`.
 
-Note: Cucumber does not guarantee that the number of concurrently executing
-tests will not exceed the configured parallelism. The underlying `ForkJoinPool`
-used to execute scenarios may spawn additional threads. To obtain such
-guarantees us a custom parallel configuration strategy.
+Note: While `.fixed.max-pool-size` effectively limits the maximum number of
+concurrent threads, Cucumber does not guarantee that the number of concurrently
+executing scenarios will not exceed this. See (junit5/#3108)[https://github.com/junit-team/junit5/issues/3108]
+for details.
 
 ### Exclusive Resources ###
 
@@ -302,86 +304,88 @@ documentation
 documentation on Cucumber properties see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
-cucumber.ansi-colors.disabled=                                # true or false. 
-                                                              # default: false                     
-      
-cucumber.filter.name=                                         # a regular expression.
-                                                              # only scenarios with matching names are executed.
-                                                              # example: ^Hello (World|Cucumber)$
-                                                              # note: To ensure consistent reports between Cucumber and
-                                                              # JUnit 5 prefer using JUnit 5s discovery request filters
-                                                              # or JUnit 5 tag expressions instead.
+cucumber.ansi-colors.disabled=                                 # true or false. 
+                                                               # default: false                     
+       
+cucumber.filter.name=                                          # a regular expression.
+                                                               # only scenarios with matching names are executed.
+                                                               # example: ^Hello (World|Cucumber)$
+                                                               # note: To ensure consistent reports between Cucumber and
+                                                               # JUnit 5 prefer using JUnit 5s discovery request filters
+                                                               # or JUnit 5 tag expressions instead.
 
-cucumber.features=                                            # comma separated paths to feature files. 
-                                                              # example: path/to/example.feature, path/to/other.feature
-                                                              # note: When used any discovery selectors from the JUnit
-                                                              # Platform will be ignored. Use with caution and care.
+cucumber.features=                                             # comma separated paths to feature files. 
+                                                               # example: path/to/example.feature, path/to/other.feature
+                                                               # note: When used any discovery selectors from the JUnit
+                                                               # Platform will be ignored. Use with caution and care.
 
-cucumber.filter.tags=                                         # a cucumber tag expression.
-                                                              # only scenarios with matching tags are executed.
-                                                              # example: @Cucumber and not (@Gherkin or @Zucchini)
-                                                              # note: To ensure consistent reports between Cucumber and
-                                                              # JUnit 5 prefer using JUnit 5s discovery request filters
-                                                              # or JUnit 5 tag expressions instead.
+cucumber.filter.tags=                                          # a cucumber tag expression.
+                                                               # only scenarios with matching tags are executed.
+                                                               # example: @Cucumber and not (@Gherkin or @Zucchini)
+                                                               # note: To ensure consistent reports between Cucumber and
+                                                               # JUnit 5 prefer using JUnit 5s discovery request filters
+                                                               # or JUnit 5 tag expressions instead.
 
-cucumber.glue=                                                # comma separated package names.
-                                                              # example: com.example.glue  
+cucumber.glue=                                                 # comma separated package names.
+                                                               # example: com.example.glue  
 
-cucumber.junit-platform.naming-strategy=                      # long or short.
-                                                              # default: short
-                                                              # include parent descriptor name in test descriptor.
+cucumber.junit-platform.naming-strategy=                       # long or short.
+                                                               # default: short
+                                                               # include parent descriptor name in test descriptor.
 
-cucumber.plugin=                                              # comma separated plugin strings.
-                                                              # example: pretty, json:path/to/report.json
+cucumber.plugin=                                               # comma separated plugin strings.
+                                                               # example: pretty, json:path/to/report.json
+ 
+cucumber.object-factory=                                       # object factory class name.
+                                                               # example: com.example.MyObjectFactory
 
-cucumber.object-factory=                                      # object factory class name.
-                                                              # example: com.example.MyObjectFactory
+cucumber.publish.enabled                                       # true or false. 
+                                                               # default: false
+                                                               # enable publishing of test results
 
-cucumber.publish.enabled                                      # true or false. 
-                                                              # default: false
-                                                              # enable publishing of test results
+cucumber.publish.quiet                                         # true or false. 
+                                                               # default: false
+                                                               # suppress publish banner after test execution.
 
-cucumber.publish.quiet                                        # true or false. 
-                                                              # default: false
-                                                              # suppress publish banner after test execution.
+cucumber.publish.token                                         # any string value.
+                                                               # publish authenticated test results.
 
-cucumber.publish.token                                        # any string value.
-                                                              # publish authenticated test results.
+cucumber.snippet-type=                                         # underscore or camelcase.
+                                                               # default: underscore
 
-cucumber.snippet-type=                                        # underscore or camelcase.
-                                                              # default: underscore
+cucumber.execution.dry-run=                                    # true or false.
+                                                               # default: false
 
-cucumber.execution.dry-run=                                   # true or false.
-                                                              # default: false
+cucumber.execution.execution-mode.feature=                     # same_thread or concurrent
+                                                               # default: concurrent
+                                                               # same_thread - executes scenarios sequentially in the 
+                                                               # same thread as the parent feature 
+                                                               # concurrent - executes scenarios concurrently on any
+                                                               # available thread
 
-cucumber.execution.execution-mode.feature=                    # same_thread or concurrent
-                                                              # default: concurrent
-                                                              # same_thread - executes scenarios sequentially in the 
-                                                              # same thread as the parent feature 
-                                                              # concurrent - executes scenarios concurrently on any
-                                                              # available thread
+cucumber.execution.parallel.enabled=                           # true or false.
+                                                               # default: false
 
-cucumber.execution.parallel.enabled=                          # true or false.
-                                                              # default: false
+cucumber.execution.parallel.config.strategy=                   # dynamic, fixed or custom.
+                                                               # default: dynamic
 
-cucumber.execution.parallel.config.strategy=                  # dynamic, fixed or custom.
-                                                              # default: dynamic
+cucumber.execution.parallel.config.fixed.parallelism=          # positive integer.
+                                                               # example: 4
 
-cucumber.execution.parallel.config.fixed.parallelism=         # positive integer.
-                                                              # example: 4
+cucumber.execution.parallel.config.config.fixed.max-pool-size= # positive integer.
+                                                               # example: 4
 
-cucumber.execution.parallel.config.dynamic.factor=            # positive double.
-                                                              # default: 1.0
+cucumber.execution.parallel.config.dynamic.factor=             # positive double.
+                                                               # default: 1.0
 
-cucumber.execution.parallel.config.custom.class=              # class name.
-                                                              # example: com.example.MyCustomParallelStrategy
+cucumber.execution.parallel.config.custom.class=               # class name.
+                                                               # example: com.example.MyCustomParallelStrategy
 
-cucumber.execution.exclusive-resources.<tag-name>.read-write= # a comma separated list of strings
-                                                              # example: resource-a, resource-b.
+cucumber.execution.exclusive-resources.<tag-name>.read-write=  # a comma separated list of strings
+                                                               # example: resource-a, resource-b.
 
-cucumber.execution.exclusive-resources.<tag-name>.read=       # a comma separated list of strings
-                                                              # example: resource-a, resource-b
-
+cucumber.execution.exclusive-resources.<tag-name>.read=        # a comma separated list of strings
+                                                               # example: resource-a, resource-b
 ```
 
 ## Supported Discovery Selectors and Filters ## 
