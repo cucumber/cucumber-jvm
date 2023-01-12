@@ -69,6 +69,9 @@ public final class CucumberPropertiesParser {
             builder::addFeature);
 
         parseAll(properties,
+            // For historical reasons rerun files are also provided through the
+            // feature property. They are differentiated by prefixing the uri
+            // name with an `@` symbol.
             FEATURES_PROPERTY_NAME,
             splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFile),
             builder::addRerun);
