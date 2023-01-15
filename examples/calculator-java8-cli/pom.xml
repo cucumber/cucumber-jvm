@@ -12,7 +12,6 @@
     <name>Examples: Calculator - Lambda - CLI</name>
 
     <properties>
-        <hamcrest.version>2.2</hamcrest.version>
         <project.Automatic-Module-Name>io.cucumber.examples.calculator</project.Automatic-Module-Name>
     </properties>
 
@@ -37,7 +36,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
