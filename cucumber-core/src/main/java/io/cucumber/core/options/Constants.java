@@ -119,6 +119,13 @@ public final class Constants {
     public static final String OBJECT_FACTORY_PROPERTY_NAME = "cucumber.object-factory";
 
     /**
+     * Property name formerly used to pass command line options to Cucumber:
+     * {@value} This property is no longer read by Cucumber. Please use any of
+     * the
+     */
+    static final String OPTIONS_PROPERTY_NAME = "cucumber.options";
+
+    /**
      * Property name to enable plugins: {@value}
      * <p>
      * A comma separated list of {@code [PLUGIN[:PATH_OR_URL]]} e.g:
