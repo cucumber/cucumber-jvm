@@ -2,6 +2,8 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.WithLogRecordListener;
 import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.TagExpressionParser;
@@ -30,6 +32,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@WithLogRecordListener
 class CucumberPropertiesParserTest {
 
     private final CucumberPropertiesParser cucumberPropertiesParser = new CucumberPropertiesParser();
@@ -136,6 +139,16 @@ class CucumberPropertiesParserTest {
         properties.put(Constants.OBJECT_FACTORY_PROPERTY_NAME, CustomObjectFactory.class.getName());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getObjectFactoryClass(), equalTo(CustomObjectFactory.class));
+    }
+
+    @Test
+    void should_warn_about_cucumber_options(LogRecordListener logRecordListener) {
+        properties.put(Constants.OPTIONS_PROPERTY_NAME, "--help");
+        cucumberPropertiesParser.parse(properties).build();
+        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), equalTo("" +
+                "Passing commandline options via the property 'cucumber.options' is no longer supported. " +
+                "Please use individual properties instead. " +
+                "See the java doc on io.cucumber.core.options.Constants for details."));
     }
 
     @Test
