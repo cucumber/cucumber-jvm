@@ -36,11 +36,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>2.3.23</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -94,6 +89,7 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.31</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -105,17 +101,16 @@
                 <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>generate-code</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <outputDirectory>${project.build.directory}/codegen-classes</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
+                                    <directory>${project.basedir}/src/codegen/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -130,11 +125,15 @@
                 <version>3.10.1</version>
                 <executions>
                     <execution>
-                        <id>compile</id>
+                        <id>generate-code</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>testCompile</goal>
                         </goals>
+                        <configuration>
+                            <compileSourceRoots>${project.basedir}/src/codegen/java</compileSourceRoots>
+                            <outputDirectory>${project.build.directory}/codegen-classes</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -153,7 +152,15 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>codegen.CodeGenerationJava8</mainClass>
+                    <classpathScope>test</classpathScope>
+                    <addOutputToClasspath>false</addOutputToClasspath>
+                    <addResourcesToClasspath>false</addResourcesToClasspath>
+                    <additionalClasspathElements>${project.build.directory}/codegen-classes</additionalClasspathElements>
+                    <mainClass>GenerateCode</mainClass>
+                    <arguments>
+                        <argument>${project.build.directory}/generated-sources/i18n</argument>
+                        <argument>io/cucumber/java8</argument>
+                    </arguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -161,14 +168,14 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-source</id>
+                        <id>generate-code</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/generated-sources/i18n/java</source>
+                                <source>${project.build.directory}/generated-sources/i18n</source>
                             </sources>
                         </configuration>
                     </execution>

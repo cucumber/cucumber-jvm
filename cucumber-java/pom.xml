@@ -160,9 +160,9 @@
                     <addOutputToClasspath>false</addOutputToClasspath>
                     <addResourcesToClasspath>false</addResourcesToClasspath>
                     <additionalClasspathElements>${project.build.directory}/codegen-classes</additionalClasspathElements>
-                    <mainClass>CodeGenerationJava</mainClass>
+                    <mainClass>GenerateCode</mainClass>
                     <arguments>
-                        <argument>${project.build.directory}/generated-sources/i18n/java</argument>
+                        <argument>${project.build.directory}/generated-sources/i18n</argument>
                         <argument>io/cucumber/java</argument>
                     </arguments>
                 </configuration>
@@ -179,7 +179,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/i18n/java</source>
+                                <source>${project.build.directory}/generated-sources/i18n</source>
                             </sources>
                         </configuration>
                     </execution>
