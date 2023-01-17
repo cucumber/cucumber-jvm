@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.10.2-SNAPSHOT</version>
+        <version>7.11.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -16,11 +16,11 @@
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <jackson.version>2.14.1</jackson.version>
         <jsoup.version>1.15.3</jsoup.version>
-        <junit-jupiter.version>5.9.1</junit-jupiter.version>
-        <xmlunit.version>2.9.0</xmlunit.version>
+        <junit-jupiter.version>5.9.2</junit-jupiter.version>
+        <xmlunit.version>2.9.1</xmlunit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
-        <mockito.version>4.10.0</mockito.version>
+        <mockito.version>4.11.0</mockito.version>
         <vertx.version>4.3.7</vertx.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
     </properties>
@@ -87,6 +87,10 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>html-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>junit-xml-formatter</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>

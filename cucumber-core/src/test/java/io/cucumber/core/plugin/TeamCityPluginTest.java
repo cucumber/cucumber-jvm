@@ -71,7 +71,7 @@ class TeamCityPluginTest {
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
                 + "path/test.feature:5' name = 'examples name']\n" +
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
-                + "path/test.feature:7' name = 'Example #1']\n" +
+                + "path/test.feature:7' name = 'Example #1.1']\n" +
                 "##teamcity[customProgressStatus type = 'testStarted' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
                 + "path/test.feature:3' captureStandardOutput = 'true' name = 'first step']\n" +
@@ -82,9 +82,9 @@ class TeamCityPluginTest {
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' name = 'second step']\n"
                 +
                 "##teamcity[customProgressStatus type = 'testFinished' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
-                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Example #1']\n" +
+                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Example #1.1']\n" +
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
-                + "path/test.feature:8' name = 'Example #2']\n" +
+                + "path/test.feature:8' name = 'Example #1.2']\n" +
                 "##teamcity[customProgressStatus type = 'testStarted' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
                 + "path/test.feature:3' captureStandardOutput = 'true' name = 'first step']\n" +
@@ -95,7 +95,7 @@ class TeamCityPluginTest {
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' name = 'third step']\n"
                 +
                 "##teamcity[customProgressStatus type = 'testFinished' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
-                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Example #2']\n" +
+                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Example #1.2']\n" +
                 "##teamcity[customProgressStatus testsCategory = '' count = '0' timestamp = '1970-01-01T12:00:00.000+0000']\n"
                 +
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'examples name']\n" +

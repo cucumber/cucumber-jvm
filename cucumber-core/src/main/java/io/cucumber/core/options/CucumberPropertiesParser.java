@@ -3,6 +3,8 @@ package io.cucumber.core.options;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.nio.file.Path;
@@ -24,6 +26,7 @@ import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
@@ -32,9 +35,12 @@ import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
 import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.util.Arrays.stream;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 
 public final class CucumberPropertiesParser {
+
+    private static final Logger log = LoggerFactory.getLogger(CucumberPropertiesParser.class);
 
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
         return parse(properties::get);
@@ -69,6 +75,9 @@ public final class CucumberPropertiesParser {
             builder::addFeature);
 
         parseAll(properties,
+            // For historical reasons rerun files are also provided through the
+            // feature property. They are differentiated by prefixing the uri
+            // name with an `@` symbol.
             FEATURES_PROPERTY_NAME,
             splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFile),
             builder::addRerun);
@@ -93,14 +102,19 @@ public final class CucumberPropertiesParser {
             ObjectFactoryParser::parseObjectFactory,
             builder::setObjectFactoryClass);
 
+        parse(properties,
+            OPTIONS_PROPERTY_NAME,
+            identity(),
+            warnWhenCucumberOptionsIsUsed());
+
         parseAll(properties,
             PLUGIN_PROPERTY_NAME,
-            splitAndMap(Function.identity()),
+            splitAndMap(identity()),
             builder::addPluginName);
 
         parse(properties,
             PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
-            s -> s, // No validation - validated on server
+            identity(), // No validation - validated on server
             builder::setPublishToken);
 
         parse(properties,
@@ -124,6 +138,16 @@ public final class CucumberPropertiesParser {
             builder::setWip);
 
         return builder;
+    }
+
+    private static Consumer<String> warnWhenCucumberOptionsIsUsed() {
+        // Quite a few old blogs still recommend the use of cucumber.options
+        // This should take care of recurring question involving this property.
+        return commandLineOptions -> log.warn(() -> String.format("" +
+                "Passing commandline options via the property '%s' is no longer supported. " +
+                "Please use individual properties instead. " +
+                "See the java doc on %s for details.",
+            OPTIONS_PROPERTY_NAME, Constants.class.getName()));
     }
 
     private <T> void parse(

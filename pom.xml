@@ -8,22 +8,22 @@
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.10.2-SNAPSHOT</version>
+    <version>7.11.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
-    <url>http://cucumber.io/</url>
+    <url>https://cucumber.io/</url>
 
     <properties>
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
-        <project.build.outputTimestamp>1671198340</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1673541639</project.build.outputTimestamp>
 
         <!-- io.cucumber dependencies -->
         <!-- Whenever messages is updated run `make update-cck` -->
         <messages.version>21.0.1</messages.version>
-        <gherkin.version>26.0.1</gherkin.version>
+        <gherkin.version>26.0.3</gherkin.version>
 
         <!--Maven plugins-->
         <groovy.version>2.5.15</groovy.version>
@@ -443,7 +443,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.5.0</version>
+                            <version>10.6.0</version>
                         </dependency>
                     </dependencies>
                     <configuration>

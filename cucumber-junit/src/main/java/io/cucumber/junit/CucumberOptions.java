@@ -61,7 +61,8 @@ public @interface CucumberOptions {
     String[] extraGlue() default {};
 
     /**
-     * Only run scenarios tagged with tags matching {@code TAG_EXPRESSION}.
+     * Only run scenarios tagged with tags matching
+     * <a href="https://github.com/cucumber/tag-expressions">Tag Expression</a>.
      * <p>
      * For example {@code "@smoke and not @fast"}.
      *
