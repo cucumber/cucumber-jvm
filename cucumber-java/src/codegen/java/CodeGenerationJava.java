@@ -44,7 +44,7 @@ public class CodeGenerationJava {
                 .map(dialectProvider::getDialect)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .filter(gherkinDialect -> !unsupported.contains(gherkinDialect.getLanguage()))
+                .filter(dialect -> !unsupported.contains(dialect.getLanguage()))
                 .forEach(dialectWriter::writeDialect);
     }
 
