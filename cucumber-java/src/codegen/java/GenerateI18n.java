@@ -25,7 +25,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  * based on the languages and keywords from the GherkinDialectProvider
  * using the FreeMarker template engine and provided templates.
  */
-public class GenerateCode {
+public class GenerateI18n {
 
     // The generated files for and Emoij do not compile :(
     private static final List<String> unsupported = Arrays.asList("em", "en-tx");
@@ -59,7 +59,7 @@ public class GenerateCode {
             this.packagePath = packagePath;
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_21);
-            cfg.setClassForTemplateLoading(GenerateCode.class, "templates");
+            cfg.setClassForTemplateLoading(GenerateI18n.class, "templates");
             cfg.setDefaultEncoding("UTF-8");
             cfg.setLocale(Locale.US);
             cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
