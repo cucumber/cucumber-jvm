@@ -10,19 +10,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+
+import static java.nio.file.Files.newBufferedWriter;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /* This class generates the cucumber-java Interfaces and package-info
  * based on the languages and keywords from the GherkinDialectProvider
  * using the FreeMarker template engine and provided templates.
  */
 public class CodeGenerationJava {
+
+    // The generated files for Emoij and Texan do  not compile.
+    private static final List<String> unsupported = Arrays.asList("em", "en-tx");
 
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
@@ -31,10 +37,7 @@ public class CodeGenerationJava {
 
         DialectWriter dialectWriter = new DialectWriter(args[0], args[1]);
 
-        // The generated files for Emoij and Texan do  not compile.
-        List<String> unsupported = Arrays.asList("em", "en_tx");
-
-        // Get languages and keywords from GherkinDialectProvider
+        // Generate annotation files for each dialect
         GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
         dialectProvider.getLanguages()
                 .stream()
@@ -46,12 +49,9 @@ public class CodeGenerationJava {
     }
 
     static class DialectWriter {
-
         private final Template templateSource;
         private final Template packageInfoSource;
-
         private final String baseDirectory;
-
         private final String packagePath;
 
         DialectWriter(String baseDirectory, String packagePath) throws IOException {
@@ -83,19 +83,23 @@ public class CodeGenerationJava {
         private void writeKeyWordAnnotation(GherkinDialect dialect, String keyword) {
             String normalizedLanguage = getNormalizedLanguage(dialect);
             String normalizedKeyword = getNormalizedKeyWord(keyword);
-            LinkedHashMap<String, String> binding = new LinkedHashMap<>();
+
+            Map<String, String> binding = new LinkedHashMap<>();
             binding.put("lang", normalizedLanguage);
             binding.put("kw", normalizedKeyword);
+
+            Path path = Paths.get(baseDirectory, packagePath, normalizedLanguage, normalizedKeyword + ".java");
+
+            if (Files.exists(path)) {
+                // Haitian has two translations that only differ by case - Sipozeke and SipozeKe
+                // Some file systems are unable to distinguish between them and
+                // overwrite the other one :-(
+                return;
+            }
+
             try {
-                Path path = Paths.get(baseDirectory, packagePath, normalizedLanguage, normalizedKeyword + ".java");
-                if (!Files.exists(path)) {
-                    // Haitian has two translations that only differ by case - Sipozeke and SipozeKe
-                    // Some file systems are unable to distinguish between them and
-                    // overwrite the other one :-(
-                    Files.createDirectories(path.getParent());
-                    BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
-                    templateSource.process(binding, writer);
-                }
+                Files.createDirectories(path.getParent());
+                templateSource.process(binding, newBufferedWriter(path, TRUNCATE_EXISTING));
             } catch (IOException | TemplateException e) {
                 throw new RuntimeException(e);
             }
@@ -115,14 +119,16 @@ public class CodeGenerationJava {
             if (!dialect.getName().equals(dialect.getNativeName())) {
                 languageName += " - " + dialect.getNativeName();
             }
-            LinkedHashMap<String, String> binding = new LinkedHashMap<>();
+
+            Map<String, String> binding = new LinkedHashMap<>();
             binding.put("normalized_language", normalizedLanguage);
             binding.put("language_name", languageName);
+
+            Path path = Paths.get(baseDirectory, packagePath, normalizedLanguage, "package-info.java");
+
             try {
-                Path path = Paths.get(baseDirectory, packagePath, normalizedLanguage, "package-info.java");
                 Files.createDirectories(path.getParent());
-                BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
-                packageInfoSource.process(binding, writer);
+                packageInfoSource.process(binding, newBufferedWriter(path, TRUNCATE_EXISTING));
             } catch (IOException | TemplateException e) {
                 throw new RuntimeException(e);
             }
