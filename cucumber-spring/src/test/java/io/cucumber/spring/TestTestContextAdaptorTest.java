@@ -66,10 +66,11 @@ public class TestTestContextAdaptorTest {
         TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
             singletonList(SomeContextConfiguration.class));
 
-        doThrow(new RuntimeException()).when(listener).beforeTestClass(any());
+
 
         assertThrows(CucumberBackendException.class, adaptor::start);
         adaptor.getDelegate().registerTestExecutionListeners(listener);
+        doThrow(new RuntimeException()).when(listener).beforeTestClass(any());
         InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
 
@@ -82,10 +83,11 @@ public class TestTestContextAdaptorTest {
         TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
             singletonList(SomeContextConfiguration.class));
 
-        doThrow(new RuntimeException()).when(listener).prepareTestInstance(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
         adaptor.getDelegate().registerTestExecutionListeners(listener);
+        doThrow(new RuntimeException()).when(listener).prepareTestInstance(any());
+
         InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
 
@@ -98,10 +100,10 @@ public class TestTestContextAdaptorTest {
         TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
             singletonList(SomeContextConfiguration.class));
 
-        doThrow(new RuntimeException()).when(listener).beforeTestMethod(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
         adaptor.getDelegate().registerTestExecutionListeners(listener);
+        doThrow(new RuntimeException()).when(listener).beforeTestMethod(any());
         InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
         inOrder.verify(listener).prepareTestInstance(any());
@@ -136,12 +138,11 @@ public class TestTestContextAdaptorTest {
     void invokesAfterTestMethodIfAfterTestExecutionThrows() throws Exception {
         TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
             singletonList(SomeContextConfiguration.class));
-        adaptor.getDelegate().registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
 
         adaptor.start();
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
+        doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
+        InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
         inOrder.verify(listener).prepareTestInstance(any());
         inOrder.verify(listener).beforeTestMethod(any());
@@ -157,12 +158,11 @@ public class TestTestContextAdaptorTest {
     void invokesAfterTesClassIfAfterTestMethodThrows() throws Exception {
         TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
             singletonList(SomeContextConfiguration.class));
-        adaptor.getDelegate().registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).afterTestMethod(any());
 
         adaptor.start();
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
+        doThrow(new RuntimeException()).when(listener).afterTestMethod(any());
+        InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
         inOrder.verify(listener).prepareTestInstance(any());
         inOrder.verify(listener).beforeTestMethod(any());
@@ -178,12 +178,14 @@ public class TestTestContextAdaptorTest {
     void invokesAllMethodsPriorIfAfterTestClassThrows() throws Exception {
         TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
             singletonList(SomeContextConfiguration.class));
-        adaptor.getDelegate().registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
 
-        doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
+
+
 
         adaptor.start();
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
+        doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
+        InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
         inOrder.verify(listener).prepareTestInstance(any());
         inOrder.verify(listener).beforeTestMethod(any());
