@@ -21,22 +21,30 @@ class TestContextAdaptor {
 
     private static final Object monitor = new Object();
 
-    private final TestContextManager delegate;
-    private final ConfigurableApplicationContext applicationContext;
+    private TestContextManager delegate;
+
+    private final Class<?> withCucumberContextConfiguration;
+    private ConfigurableApplicationContext applicationContext;
     private final Collection<Class<?>> glueClasses;
     private final Deque<Runnable> stopInvocations = new ArrayDeque<>();
     private Object delegateTestInstance;
 
     TestContextAdaptor(
-            TestContextManager delegate,
+            Class<?> withCucumberContextConfigurationClass,
             Collection<Class<?>> glueClasses
     ) {
-        TestContext testContext = delegate.getTestContext();
-        ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) testContext
-                .getApplicationContext();
-        this.delegate = delegate;
-        this.applicationContext = applicationContext;
+        this.withCucumberContextConfiguration = withCucumberContextConfigurationClass;
         this.glueClasses = glueClasses;
+    }
+
+    private void registerTestContextManager() {
+        this.delegate = new TestContextManager(this.withCucumberContextConfiguration);
+        TestContext testContext = this.delegate.getTestContext();
+        this.applicationContext = (ConfigurableApplicationContext) testContext.getApplicationContext();
+    }
+
+    public TestContextManager getDelegate() {
+        return delegate;
     }
 
     public final void start() {
@@ -45,6 +53,7 @@ class TestContextAdaptor {
         // application context. To avoid concurrent modification issues (#1823,
         // #1153, #1148, #1106) we do this serially.
         synchronized (monitor) {
+            registerTestContextManager();
             registerGlueCodeScope(applicationContext);
             registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
         }

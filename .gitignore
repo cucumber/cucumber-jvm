@@ -6,6 +6,7 @@
 .settings
 .project
 .classpath
+lib/
 
 
 # Build directories

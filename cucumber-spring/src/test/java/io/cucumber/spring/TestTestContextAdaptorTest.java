@@ -43,12 +43,13 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAllLiveCycleHooks() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
 
         adaptor.start();
+
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
+        InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
         inOrder.verify(listener).prepareTestInstance(any());
         inOrder.verify(listener).beforeTestMethod(any());
@@ -62,14 +63,14 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAfterClassIfBeforeClassFailed() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
 
         doThrow(new RuntimeException()).when(listener).beforeTestClass(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
+        InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
 
         adaptor.stop();
@@ -78,14 +79,14 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAfterClassIfPrepareTestInstanceFailed() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
 
         doThrow(new RuntimeException()).when(listener).prepareTestInstance(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
+        InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
 
         adaptor.stop();
@@ -94,14 +95,14 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAfterMethodIfBeforeMethodThrows() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
 
         doThrow(new RuntimeException()).when(listener).beforeTestMethod(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
+        InOrder inOrder = inOrder(listener);
         inOrder.verify(listener).beforeTestClass(any());
         inOrder.verify(listener).prepareTestInstance(any());
         inOrder.verify(listener).beforeTestMethod(any());
@@ -113,9 +114,9 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAfterTestExecutionIfBeforeTestExecutionThrows() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
         doThrow(new RuntimeException()).when(listener).beforeTestExecution(any());
@@ -133,9 +134,9 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAfterTestMethodIfAfterTestExecutionThrows() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
         doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
@@ -154,9 +155,9 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAfterTesClassIfAfterTestMethodThrows() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
         doThrow(new RuntimeException()).when(listener).afterTestMethod(any());
@@ -175,9 +176,9 @@ public class TestTestContextAdaptorTest {
 
     @Test
     void invokesAllMethodsPriorIfAfterTestClassThrows() throws Exception {
-        TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(SomeContextConfiguration.class));
-        manager.registerTestExecutionListeners(listener);
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
+        adaptor.getDelegate().registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
         doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
@@ -197,13 +198,12 @@ public class TestTestContextAdaptorTest {
     @ParameterizedTest
     @ValueSource(classes = { WithAutowiredDependency.class, WithConstructorDependency.class })
     void autowireAndPostProcessesOnlyOnce(Class<? extends Spy> testClass) {
-        TestContextManager manager = new TestContextManager(testClass);
-        TestContextAdaptor adaptor = new TestContextAdaptor(manager, singletonList(testClass));
-
+        TestContextAdaptor adaptor = new TestContextAdaptor(SomeContextConfiguration.class,
+            singletonList(SomeContextConfiguration.class));
         assertAll(
             () -> assertDoesNotThrow(adaptor::start),
-            () -> assertNotNull(manager.getTestContext().getTestInstance()),
-            () -> assertSame(manager.getTestContext().getTestInstance(), adaptor.getInstance(testClass)),
+            () -> assertNotNull(adaptor.getDelegate().getTestContext().getTestInstance()),
+            () -> assertSame(adaptor.getDelegate().getTestContext().getTestInstance(), adaptor.getInstance(testClass)),
             () -> assertEquals(1, adaptor.getInstance(testClass).autowiredCount()),
             () -> assertEquals(1, adaptor.getInstance(testClass).postProcessedCount()),
             () -> assertNotNull(adaptor.getInstance(testClass).getBelly()),
