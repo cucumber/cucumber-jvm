@@ -6,6 +6,7 @@
 .settings
 .project
 .classpath
+lib/
 
 
 # Build directories
@@ -18,7 +19,7 @@ out/
 # Build & test droppings
 pom.xml.releaseBackup
 pom.xml.versionsBackup
-release.properties
+release.propertiesF
 *.ser
 dependency-reduced-pom.xml
 *~
