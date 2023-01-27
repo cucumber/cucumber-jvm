@@ -10,11 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Spring] Instantiate `TestContextManager` synchronously ([#2686](https://github.com/cucumber/cucumber-jvm/pull/2686), [#2687](https://github.com/cucumber/cucumber-jvm/pull/2687) Thai Nguyen, M.P. Korstanje)
 
+## [7.11.1] - 2023-01-27
 ### Added
 - [Core] Warn when `cucumber.options` is used ([#2685](https://github.com/cucumber/cucumber-jvm/pull/2685) M.P. Korstanje)
+
+### Fixed
+- [Spring] Instantiate `TestContextManager` synchronously ([#2686](https://github.com/cucumber/cucumber-jvm/pull/2686), [#2687](https://github.com/cucumber/cucumber-jvm/pull/2687) Thai Nguyen, M.P. Korstanje)
 
 ## [7.11.0] - 2023-01-12
 ### Added
@@ -223,7 +225,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...main
+[7.11.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...main
 [7.11.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.1...v7.11.0
 [7.10.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...v7.10.1
 [7.10.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.9.0...v7.10.0
