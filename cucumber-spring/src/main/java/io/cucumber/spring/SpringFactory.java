@@ -118,7 +118,8 @@ public final class SpringFactory implements ObjectFactory {
         // threads.
 
         // passing this to testContextAdaptor to resolve the racing condition
-        testContextAdaptor = new TestContextAdaptor(withCucumberContextConfiguration, stepClasses);
+        testContextAdaptor = new TestContextAdaptor(() -> new TestContextManager(withCucumberContextConfiguration),
+            stepClasses);
         testContextAdaptor.start();
     }
 

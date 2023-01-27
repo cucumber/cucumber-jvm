@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.function.Supplier;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
@@ -21,30 +22,25 @@ class TestContextAdaptor {
 
     private static final Object monitor = new Object();
 
-    private TestContextManager delegate;
-
-    private final Class<?> withCucumberContextConfiguration;
-    private ConfigurableApplicationContext applicationContext;
+    private final TestContextManager delegate;
+    private final Supplier<TestContextManager> testContextManagerSupplier;
+    private final ConfigurableApplicationContext applicationContext;
     private final Collection<Class<?>> glueClasses;
     private final Deque<Runnable> stopInvocations = new ArrayDeque<>();
     private Object delegateTestInstance;
 
     TestContextAdaptor(
-            Class<?> withCucumberContextConfigurationClass,
+            Supplier<TestContextManager> testContextManagerSupplier,
             Collection<Class<?>> glueClasses
     ) {
-        this.withCucumberContextConfiguration = withCucumberContextConfigurationClass;
-        this.glueClasses = glueClasses;
-    }
+        synchronized (monitor) {
+            this.testContextManagerSupplier = testContextManagerSupplier;
+            this.delegate = testContextManagerSupplier.get();
+            TestContext testContext = this.delegate.getTestContext();
+            this.applicationContext = (ConfigurableApplicationContext) testContext.getApplicationContext();
+            this.glueClasses = glueClasses;
+        }
 
-    private void registerTestContextManager() {
-        this.delegate = new TestContextManager(this.withCucumberContextConfiguration);
-        TestContext testContext = this.delegate.getTestContext();
-        this.applicationContext = (ConfigurableApplicationContext) testContext.getApplicationContext();
-    }
-
-    public TestContextManager getDelegate() {
-        return delegate;
     }
 
     public final void start() {
@@ -53,7 +49,6 @@ class TestContextAdaptor {
         // application context. To avoid concurrent modification issues (#1823,
         // #1153, #1148, #1106) we do this serially.
         synchronized (monitor) {
-            registerTestContextManager();
             registerGlueCodeScope(applicationContext);
             registerStepClassBeanDefinitions(applicationContext.getBeanFactory());
         }
