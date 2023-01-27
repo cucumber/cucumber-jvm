@@ -382,6 +382,11 @@ class CucumberOptionsAnnotationParserTest {
         }
 
         @Override
+        public String[] featuresAsString() {
+            return annotation.featuresAsString();
+        }
+
+        @Override
         public String[] glue() {
             return annotation.glue();
         }

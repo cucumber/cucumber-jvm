@@ -44,6 +44,7 @@ public final class CucumberOptionsAnnotationParser {
                 addSnippets(options, args);
                 addGlue(options, args);
                 addFeatures(options, args);
+                addFeaturesStrings(options, args);
                 addObjectFactory(options, args);
             }
         }
@@ -143,6 +144,15 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
+    private void addFeaturesStrings(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options != null && options.featuresAsString().length != 0) {
+            for (String feature : options.featuresAsString()) {
+                args.addFeatureString(feature);
+            }
+            featuresSpecified = true;
+        }
+    }
+
     private void addObjectFactory(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options.objectFactory() != null) {
             args.setObjectFactoryClass(options.objectFactory());
@@ -189,6 +199,8 @@ public final class CucumberOptionsAnnotationParser {
         boolean dryRun();
 
         String[] features();
+
+        String[] featuresAsString();
 
         String[] glue();
 

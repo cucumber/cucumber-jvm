@@ -54,6 +54,14 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
         return features;
     }
 
+    public List<Feature> get(List<String> featureStrings) {
+        List<Feature> features = new ArrayList<>();
+        if (!featureStrings.isEmpty()) {
+            featureStrings.forEach(feature -> features.add(TestFeatureParser.parse(feature)));
+        }
+        return features;
+    }
+
     private List<Feature> loadFeatures(List<URI> featurePaths) {
         log.debug(() -> "Loading features from " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
         final FeatureBuilder builder = new FeatureBuilder();
@@ -64,6 +72,26 @@ public final class FeaturePathFeatureSupplier implements FeatureSupplier {
                 throw new IllegalArgumentException("Feature not found: " + featurePath);
             }
             found.forEach(builder::addUnique);
+        }
+
+        return builder.build();
+    }
+
+    private List<Feature> loadFeatures(List<URI> featurePaths, List<String> featureStrings) {
+        log.debug(
+            () -> "Loading features from Paths " + featurePaths.stream().map(URI::toString).collect(joining(", ")));
+        log.debug(() -> "Loading features from Strings " + featureStrings.stream().collect(joining(", ")));
+        final FeatureBuilder builder = new FeatureBuilder();
+
+        for (URI featurePath : featurePaths) {
+            List<Feature> found = featureScanner.scanForResourcesUri(featurePath);
+            if (found.isEmpty() && isFeature(featurePath)) {
+                throw new IllegalArgumentException("Feature not found: " + featurePath);
+            }
+            found.forEach(builder::addUnique);
+        }
+        for (String feature : featureStrings) {
+
         }
 
         return builder.build();

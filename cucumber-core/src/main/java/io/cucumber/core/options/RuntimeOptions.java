@@ -39,6 +39,7 @@ public final class RuntimeOptions implements
     private final List<Expression> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
+    private final List<String> featureStrings = new ArrayList<>();
     private final Set<Plugin> plugins = new LinkedHashSet<>();
     private boolean dryRun;
     private boolean monochrome = false;
@@ -178,6 +179,15 @@ public final class RuntimeOptions implements
                 .sorted()
                 .distinct()
                 .collect(Collectors.toList()));
+    }
+
+    public List<String> getFeatureStrings() {
+        return featureStrings;
+    }
+
+    void setFeatureStrings(List<String> featureStrings) {
+        this.featureStrings.clear();
+        this.featureStrings.addAll(featureStrings);
     }
 
     void setFeaturePaths(List<FeatureWithLines> featurePaths) {

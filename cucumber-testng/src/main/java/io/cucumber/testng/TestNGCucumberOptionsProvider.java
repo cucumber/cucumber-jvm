@@ -51,6 +51,11 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
         }
 
         @Override
+        public String[] featuresAsString() {
+            return annotation.featuresAsString();
+        }
+
+        @Override
         public String[] glue() {
             return annotation.glue();
         }

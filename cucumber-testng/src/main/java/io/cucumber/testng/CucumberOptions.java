@@ -35,6 +35,8 @@ public @interface CucumberOptions {
      */
     String[] features() default {};
 
+    String[] featuresAsString() default {};
+
     /**
      * Package to load glue code (step definitions, hooks and plugins) from.
      * E.g: {@code com.example.app}

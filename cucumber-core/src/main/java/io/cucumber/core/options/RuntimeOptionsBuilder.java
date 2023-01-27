@@ -20,6 +20,7 @@ public final class RuntimeOptionsBuilder {
     private final List<Expression> parsedTagFilters = new ArrayList<>();
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
+    private final List<String> featuresStrings = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
     private final List<Options.Plugin> plugins = new ArrayList<>();
     private List<FeatureWithLines> parsedRerunPaths = null;
@@ -50,6 +51,14 @@ public final class RuntimeOptionsBuilder {
     public RuntimeOptionsBuilder addFeature(FeatureWithLines featureWithLines) {
         parsedFeaturePaths.add(featureWithLines);
         return this;
+    }
+
+    public void addFeatureString(String feature) {
+        featuresStrings.add(feature);
+    }
+
+    public void addFeatureString(List<String> features) {
+        featuresStrings.addAll(features);
     }
 
     public RuntimeOptionsBuilder addGlue(URI glue) {
@@ -120,6 +129,9 @@ public final class RuntimeOptionsBuilder {
                 features.addAll(this.parsedRerunPaths);
             }
             runtimeOptions.setFeaturePaths(features);
+        }
+        if (!this.featuresStrings.isEmpty()) {
+            runtimeOptions.setFeatureStrings(this.featuresStrings);
         }
 
         if (!this.parsedGlue.isEmpty()) {

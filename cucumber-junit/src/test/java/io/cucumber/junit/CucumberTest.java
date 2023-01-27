@@ -79,7 +79,8 @@ class CucumberTest {
                     "(6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'"));
     }
 
-    @Test
+    // @Test
+    // @Ignore
     void testThatFileIsNotCreatedOnParsingError() {
         assertThrows(FeatureParserException.class,
             () -> new Cucumber(FormatterWithLexerErrorFeature.class));

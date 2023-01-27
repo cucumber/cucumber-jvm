@@ -35,6 +35,7 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -153,8 +154,83 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
             parser);
-        List<Feature> features = featureSupplier.get();
+        List<Feature> features = new ArrayList<>();
+        if (annotationOptions.getFeatureStrings() == null || annotationOptions.getFeatureStrings().isEmpty()) {
+            features.addAll(featureSupplier.get());
+        } else {
+            features.addAll(featureSupplier.get(annotationOptions.getFeatureStrings()));
+        }
 
+        // Create plugins after feature parsing to avoid the creation of empty
+        // files on lexer errors.
+        this.plugins = new Plugins(new PluginFactory(), runtimeOptions);
+        ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+        this.plugins.addPlugin(exitStatus);
+
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+            runtimeOptions);
+        ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
+        BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
+        ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
+            objectFactorySupplier);
+        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
+        Predicate<Pickle> filters = new Filters(runtimeOptions);
+
+        Map<Optional<String>, List<Feature>> groupedByName = features.stream()
+                .collect(groupingBy(Feature::getName));
+        this.children = features.stream()
+                .map(feature -> {
+                    Integer uniqueSuffix = uniqueSuffix(groupedByName, feature, Feature::getName);
+                    return FeatureRunner.create(feature, uniqueSuffix, filters, context, junitOptions);
+                })
+                .filter(runner -> !runner.isEmpty())
+                .collect(toList());
+    }
+
+    public Cucumber(Class<?> clazz, List<Feature> features) throws InitializationError {
+        super(clazz);
+        Assertions.assertNoCucumberAnnotatedMethods(clazz);
+
+        // Parse the options early to provide fast feedback about invalid
+        // options
+        RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
+                .parse(CucumberProperties.fromPropertiesFile())
+                .build();
+
+        RuntimeOptions annotationOptions = new CucumberOptionsAnnotationParser()
+                .withOptionsProvider(new JUnitCucumberOptionsProvider())
+                .parse(clazz)
+                .build(propertiesFileOptions);
+
+        RuntimeOptions environmentOptions = new CucumberPropertiesParser()
+                .parse(CucumberProperties.fromEnvironment())
+                .build(annotationOptions);
+
+        RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
+                .parse(CucumberProperties.fromSystemProperties())
+                .enablePublishPlugin()
+                .build(environmentOptions);
+
+        // Next parse the junit options
+        JUnitOptions junitPropertiesFileOptions = new JUnitOptionsParser()
+                .parse(CucumberProperties.fromPropertiesFile())
+                .build();
+
+        JUnitOptions junitAnnotationOptions = new JUnitOptionsParser()
+                .parse(clazz)
+                .build(junitPropertiesFileOptions);
+
+        JUnitOptions junitEnvironmentOptions = new JUnitOptionsParser()
+                .parse(CucumberProperties.fromEnvironment())
+                .build(junitAnnotationOptions);
+
+        JUnitOptions junitOptions = new JUnitOptionsParser()
+                .parse(CucumberProperties.fromSystemProperties())
+                .build(junitEnvironmentOptions);
+
+        this.bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
+
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         // Create plugins after feature parsing to avoid the creation of empty
         // files on lexer errors.
         this.plugins = new Plugins(new PluginFactory(), runtimeOptions);

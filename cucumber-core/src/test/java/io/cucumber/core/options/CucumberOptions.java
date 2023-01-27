@@ -15,6 +15,8 @@ public @interface CucumberOptions {
 
     String[] features() default {};
 
+    String[] featuresAsString() default {};
+
     String[] glue() default {};
 
     String[] extraGlue() default {};
