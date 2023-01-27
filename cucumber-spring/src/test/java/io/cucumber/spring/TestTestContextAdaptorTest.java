@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;
 
+import static io.cucumber.spring.TestContextAdaptor.create;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -44,8 +45,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAllLiveCycleHooks() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -64,8 +64,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterClassIfBeforeClassFailed() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -81,8 +80,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterClassIfPrepareTestInstanceFailed() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -98,8 +96,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterMethodIfBeforeMethodThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -118,8 +115,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterTestExecutionIfBeforeTestExecutionThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -139,8 +135,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterTestMethodIfAfterTestExecutionThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -161,8 +156,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterTesClassIfAfterTestMethodThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -183,8 +177,7 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAllMethodsPriorIfAfterTestClassThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager,
-            singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -206,7 +199,7 @@ public class TestTestContextAdaptorTest {
     @ValueSource(classes = { WithAutowiredDependency.class, WithConstructorDependency.class })
     void autowireAndPostProcessesOnlyOnce(Class<? extends Spy> testClass) {
         TestContextManager manager = new TestContextManager(testClass);
-        TestContextAdaptor adaptor = new TestContextAdaptor(() -> manager, singletonList(testClass));
+        TestContextAdaptor adaptor = create(() -> manager, singletonList(testClass));
 
         assertAll(
             () -> assertDoesNotThrow(adaptor::start),

@@ -17,6 +17,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static io.cucumber.spring.TestContextAdaptor.create;
+
 /**
  * Spring based implementation of ObjectFactory.
  * <p>
@@ -116,10 +118,7 @@ public final class SpringFactory implements ObjectFactory {
         // The application context created by the TestContextManager is
         // a singleton and reused between scenarios and shared between
         // threads.
-
-        // passing this to testContextAdaptor to resolve the racing condition
-        testContextAdaptor = new TestContextAdaptor(() -> new TestContextManager(withCucumberContextConfiguration),
-            stepClasses);
+        testContextAdaptor = create(() -> new TestContextManager(withCucumberContextConfiguration), stepClasses);
         testContextAdaptor.start();
     }
 
