@@ -32,9 +32,9 @@ class TestContextAdaptor {
     ) {
         synchronized (monitor) {
             // While under construction, the TestContextManager delegate will
-            // build a cache using the testClass as key. When using
-            // Spring Boot 3 with AOT this operation is no longer idempotent
-            // (#2687). So we must synchronize on the creation.
+            // build a cached version of the application context configuration.
+            // Since Spring Boot 3 and in combination with AOT building this
+            // configuration is not idempotent (#2686).
             TestContextManager delegate = testContextManagerSupplier.get();
 
             TestContext testContext = delegate.getTestContext();
@@ -43,10 +43,8 @@ class TestContextAdaptor {
 
             // The TestContextManager delegate makes the application context
             // available to other threads. Registering the glue however modifies
-            // the
-            // application context. To avoid concurrent modification issues
-            // (#1823,
-            // #1153, #1148, #1106) we do this serially.
+            // the application context. To avoid concurrent modification issues
+            // (#1823, #1153, #1148, #1106) we do this serially.
             registerGlueCodeScope(applicationContext);
             registerStepClassBeanDefinitions(applicationContext.getBeanFactory(), glueClasses);
 
