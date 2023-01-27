@@ -33,36 +33,52 @@ import org.apiguardian.api.API;
  * <p>
  * The type of the data table or doc string argument is determined
  * by the argument name value. When none is provided cucumber will
- * attempt to transform the data table or doc string to the the
+ * attempt to transform the data table or doc string to the
  * type of last argument.
  */
 @API(status = API.Status.STABLE)
 public interface ${className} extends LambdaGlue {
-<% i18n.stepKeywords.findAll { !it.contains('*') && !it.matches("^\\d.*") }.sort().unique().each { kw -> %>
+    <#list keywords as kw>
+
     /**
      * Creates a new step definition.
      *
      * @param expression the cucumber expression
      * @param body       a lambda expression with no parameters
      */
-    default void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, A0 body) {
+    default void ${kw}(String expression, A0 body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, A0.class, body));
     }
 
-    <% (1..9).each { arity ->
-      def ts = (1..arity).collect { n -> "T"+n }
-      def genericSignature = ts.join(",") %>
+    /**
+     * Creates a new step definition.
+     *
+     * @param expression the cucumber expression
+     * @param body       a lambda expression with 1 parameter
+     *
+     * @param <T1> type of argument 1
+     */
+    default <T1> void ${kw}(String expression, A1<T1> body) {
+        LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, A1.class, body));
+    }
+
+    <#list 2..9 as arity>
+<#-- TODO: use function or macro for genericSignature ? -->
+    <#assign repeat = arity -1>
     /**
      * Creates a new step definition.
      *
      * @param expression the cucumber expression
      * @param body       a lambda expression with ${arity} parameters
-     * <% (1..arity).each { i -> %>
-     * @param <T${i}> type of argument ${i} <% } %>
+     *
+     <#list 1..arity as i>
+     * @param <T${i}> type of argument ${i}
+     </#list>
      */
-    default <${genericSignature}> void ${java.text.Normalizer.normalize(kw.replaceAll("[\\s',!]", ""), java.text.Normalizer.Form.NFC)}(String expression, A${arity}<${genericSignature}> body) {
+    default <<#list 1..repeat as i>T${i},</#list>T${arity}> void ${kw}(String expression, A${arity}<<#list 1..repeat as i>T${i},</#list>T${arity}> body) {
         LambdaGlueRegistry.INSTANCE.get().addStepDefinition(Java8StepDefinition.create(expression, A${arity}.class, body));
     }
-    <% } %>
-<% } %>
+
+    </#list>
+    </#list>
 }

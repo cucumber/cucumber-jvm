@@ -19,14 +19,6 @@
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
         <project.build.outputTimestamp>1674814830</project.build.outputTimestamp>
-
-        <!-- io.cucumber dependencies -->
-        <!-- Whenever messages is updated run `make update-cck` -->
-        <messages.version>21.0.1</messages.version>
-        <gherkin.version>26.0.3</gherkin.version>
-
-        <!--Maven plugins-->
-        <groovy.version>2.5.15</groovy.version>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
