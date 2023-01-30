@@ -206,7 +206,7 @@ factor of `1`.
 
 Note: While `.fixed.max-pool-size` effectively limits the maximum number of
 concurrent threads, Cucumber does not guarantee that the number of concurrently
-executing scenarios will not exceed this. See (junit5/#3108)[https://github.com/junit-team/junit5/issues/3108]
+executing scenarios will not exceed this. See [junit5/#3108](https://github.com/junit-team/junit5/issues/3108)
 for details.
 
 ### Exclusive Resources ###
