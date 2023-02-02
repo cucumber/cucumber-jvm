@@ -372,7 +372,7 @@ cucumber.execution.parallel.config.strategy=                   # dynamic, fixed 
 cucumber.execution.parallel.config.fixed.parallelism=          # positive integer.
                                                                # example: 4
 
-cucumber.execution.parallel.config.config.fixed.max-pool-size= # positive integer.
+cucumber.execution.parallel.config.fixed.max-pool-size=        # positive integer.
                                                                # example: 4
 
 cucumber.execution.parallel.config.dynamic.factor=             # positive double.
