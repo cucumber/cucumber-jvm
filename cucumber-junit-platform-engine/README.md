@@ -158,7 +158,9 @@ different configurations. Add the `junit-platform-suite` dependency:
 </dependency>
 ```
 
-Then define suites as needed:
+Then define suites as needed using the annotation from the
+[`org.junit.platform.suite.api`](https://junit.org/junit5/docs/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/package-summary.html)
+package:
 
 ```java
 package com.example;
