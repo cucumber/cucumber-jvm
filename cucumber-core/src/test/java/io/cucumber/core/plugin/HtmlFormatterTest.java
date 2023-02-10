@@ -12,7 +12,6 @@ import io.cucumber.messages.types.StepDefinitionPatternType;
 import io.cucumber.messages.types.TestRunFinished;
 import io.cucumber.messages.types.TestRunStarted;
 import io.cucumber.messages.types.Timestamp;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -20,8 +19,7 @@ import java.time.Clock;
 import java.util.Collections;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.containsString;
+import static io.cucumber.core.plugin.BytesContainsString.bytesContainsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class HtmlFormatterTest {
@@ -36,11 +34,10 @@ class HtmlFormatterTest {
         TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
         bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L));
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
         bus.send(Envelope.of(testRunFinished));
 
-        String html = new String(bytes.toByteArray(), UTF_8);
-        assertThat(html, containsString("" +
+        assertThat(bytes, bytesContainsString("" +
                 "window.CUCUMBER_MESSAGES = [" +
                 "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}," +
                 "{\"testRunFinished\":{\"success\":true,\"timestamp\":{\"seconds\":15,\"nanos\":0}}}" +
@@ -83,11 +80,11 @@ class HtmlFormatterTest {
         TestRunFinished testRunFinished = new TestRunFinished(
             null,
             true,
-            new Timestamp(15L, 0L));
+            new Timestamp(15L, 0L),
+            null);
         bus.send(Envelope.of(testRunFinished));
 
-        String html = new String(bytes.toByteArray(), UTF_8);
-        assertThat(html, containsString("" +
+        assertThat(bytes, bytesContainsString("" +
                 "window.CUCUMBER_MESSAGES = [" +
                 "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}," +
                 "{\"testRunFinished\":{\"success\":true,\"timestamp\":{\"seconds\":15,\"nanos\":0}}}" +

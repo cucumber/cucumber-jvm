@@ -16,13 +16,13 @@ final class GherkinMessagesExamples implements Node.Examples {
     private final Location location;
     private final Node parent;
 
-    GherkinMessagesExamples(Node parent, io.cucumber.messages.types.Examples examples) {
+    GherkinMessagesExamples(Node parent, io.cucumber.messages.types.Examples examples, int examplesIndex) {
         this.parent = parent;
         this.examples = examples;
         this.location = GherkinMessagesLocation.from(examples.getLocation());
         AtomicInteger row = new AtomicInteger(1);
         this.children = examples.getTableBody().stream()
-                .map(tableRow -> new GherkinMessagesExample(this, tableRow, row.getAndIncrement()))
+                .map(tableRow -> new GherkinMessagesExample(this, tableRow, examplesIndex, row.getAndIncrement()))
                 .collect(Collectors.toList());
     }
 

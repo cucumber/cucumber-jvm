@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 
 import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
-import static io.cucumber.messages.TimeConversion.javaInstantToTimestamp;
+import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.singletonList;
 
 public final class CucumberExecutionContext {
@@ -79,7 +79,7 @@ public final class CucumberExecutionContext {
         log.debug(() -> "Sending run test started event");
         start = bus.getInstant();
         bus.send(new TestRunStarted(start));
-        bus.send(Envelope.of(new io.cucumber.messages.types.TestRunStarted(javaInstantToTimestamp(start))));
+        bus.send(Envelope.of(new io.cucumber.messages.types.TestRunStarted(toMessage(start))));
     }
 
     public void runBeforeAllHooks() {
@@ -113,7 +113,8 @@ public final class CucumberExecutionContext {
         io.cucumber.messages.types.TestRunFinished testRunFinished = new io.cucumber.messages.types.TestRunFinished(
             exception != null ? printStackTrace(exception) : null,
             exception == null && exitStatus.isSuccess(),
-            javaInstantToTimestamp(instant));
+            toMessage(instant),
+            exception == null ? null : toMessage(exception));
         bus.send(Envelope.of(testRunFinished));
     }
 

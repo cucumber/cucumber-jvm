@@ -11,6 +11,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.11.1] - 2023-01-27
+### Added
+- [Core] Warn when `cucumber.options` is used ([#2685](https://github.com/cucumber/cucumber-jvm/pull/2685) M.P. Korstanje)
+
+### Fixed
+- [Spring] Instantiate `TestContextManager` synchronously ([#2686](https://github.com/cucumber/cucumber-jvm/pull/2686), [#2687](https://github.com/cucumber/cucumber-jvm/pull/2687) Thai Nguyen, M.P. Korstanje)
+
+## [7.11.0] - 2023-01-12
+### Added
+- [Spring] Support Spring Boot 3 and Spring 6 ([#2644](https://github.com/cucumber/cucumber-jvm/pull/2644) M.P. Korstanje)
+- [JUnit Platform] Support `cucumber.execution.parallel.config.config.fixed.max-pool-size` ([#2681](https://github.com/cucumber/cucumber-jvm/pull/2681) M.P. Korstanje)
+
+### Changed
+- [Core] Use a [message based JUnit XML Formatter](https://github.com/cucumber/cucumber-junit-xml-formatter) ([#2638](https://github.com/cucumber/cucumber-jvm/pull/2638) M.P. Korstanje)
+- [Core] Throw an exception when tag expressions are incorrectly escaped ([tag-expressions/#17](https://github.com/cucumber/tag-expressions/pull/17) Aslak Hellesøy)
+- [DeltaSpike] Un-Deprecated deltaspike - can be made to work on Java 17 ([#2674](https://github.com/cucumber/cucumber-jvm/pull/2674) M.P. Korstanje)
+
+### Fixed
+- [Core] Improve test step creation performance ([#2666](https://github.com/cucumber/cucumber-jvm/issues/2666), Julien Kronegg)
+- [JUnit Platform] Use JUnit Platform 1.9.2 (JUnit Jupiter 5.9.2)
+
+## [7.10.1] - 2022-12-16
+### Fixed
+- [Spring] Inject CucumberContextConfiguration constructor dependencies ([#2664](https://github.com/cucumber/cucumber-jvm/pull/2664) M.P. Korstanje)
+
 ## [7.10.0] - 2022-12-11
 ### Added
 - Enabled reproducible builds ([#2641](https://github.com/cucumber/cucumber-jvm/issues/2641) Hervé Boutemy )
@@ -26,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Emit exceptions on failure to handle test run finished events ([#2651](https://github.com/cucumber/cucumber-jvm/issues/2651) M.P. Korstanje)
 - [Spring] @MockBean annotation not working with JUnit5 ([#2654](https://github.com/cucumber/cucumber-jvm/pull/2654) Alexander Kirilov, M.P. Korstanje)
-- [Core] Improve expression creation performance ([cucumber-expressions/#187](https://github.com/cucumber/cucumber-expressions/pull/187), [cucumber-expressions/#189](https://github.com/cucumber/cucumber-expressions/pull/189), jkrongegg)
+- [Core] Improve expression creation performance ([cucumber-expressions/#187](https://github.com/cucumber/cucumber-expressions/pull/187), [cucumber-expressions/#189](https://github.com/cucumber/cucumber-expressions/pull/189), Julien Kronegg)
 
 ## [7.9.0] - 2022-11-01
 ### Added
@@ -200,13 +225,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...main
-[7.10.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.9.0...main
-[7.9.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.1...main
-[7.8.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.0...main
-[7.8.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.7.0...main
-[7.7.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.6.0...main
-[7.6.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.5.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...main
+[7.11.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...main
+[7.11.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.1...v7.11.0
+[7.10.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...v7.10.1
+[7.10.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.9.0...v7.10.0
+[7.9.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.1...v7.9.0
+[7.8.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.8.0...7.8.1
+[7.8.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.7.0...v7.8.0
+[7.7.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.6.0...v7.7.0
+[7.6.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.5.0...v7.6.0
 [7.5.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.1...v7.5.0
 [7.4.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.4.0...v7.4.1
 [7.4.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.3.4...v7.4.0

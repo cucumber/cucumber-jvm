@@ -83,7 +83,7 @@ class FeatureParserTest {
             Node.Example example = examples.elements().iterator().next();
 
             // Example is the exception.
-            assertEquals(Optional.of("Example #1"), example.getName());
+            assertEquals(Optional.of("Example #1.1"), example.getName());
             assertEquals(Optional.empty(), example.getKeyword());
         }
     }

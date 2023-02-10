@@ -33,7 +33,7 @@ class NoPublishFormatterTest {
         noPublishFormatter.setEventPublisher(bus);
 
         bus.send(Envelope.of(new TestRunStarted(new Timestamp(0L, 0L))));
-        bus.send(Envelope.of(new TestRunFinished(null, true, new Timestamp(0L, 0L))));
+        bus.send(Envelope.of(new TestRunFinished(null, true, new Timestamp(0L, 0L), null)));
 
         assertThat(bytes, isBytesEqualTo("" +
                 "┌───────────────────────────────────────────────────────────────────────────────────┐\n" +

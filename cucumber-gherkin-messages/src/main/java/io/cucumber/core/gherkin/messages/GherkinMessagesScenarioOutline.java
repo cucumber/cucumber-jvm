@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.Node;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
@@ -17,8 +18,9 @@ final class GherkinMessagesScenarioOutline implements Node.ScenarioOutline {
     GherkinMessagesScenarioOutline(Node parent, io.cucumber.messages.types.Scenario scenario) {
         this.parent = parent;
         this.scenario = scenario;
+        AtomicInteger examplesIndex = new AtomicInteger(1);
         this.children = scenario.getExamples().stream()
-                .map(examples -> new GherkinMessagesExamples(this, examples))
+                .map(examples -> new GherkinMessagesExamples(this, examples, examplesIndex.getAndIncrement()))
                 .collect(Collectors.toList());
     }
 
