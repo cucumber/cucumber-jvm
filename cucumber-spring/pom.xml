@@ -15,7 +15,7 @@
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>2.2</hamcrest.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
-        <spring.version>6.0.4</spring.version>
+        <spring.version>6.0.5</spring.version>
         <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
         <mockito.version>4.11.0</mockito.version>
     </properties>
