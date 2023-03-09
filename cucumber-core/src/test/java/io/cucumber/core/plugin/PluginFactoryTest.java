@@ -5,6 +5,7 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.runner.ClockStub;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventHandler;
@@ -30,13 +31,14 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
+import static io.cucumber.messages.Convertor.toMessage;
 import static java.nio.file.Files.readAllLines;
 import static java.time.Duration.ZERO;
+import static java.time.Instant.now;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -383,6 +385,7 @@ class PluginFactoryTest {
     private static class FakeTestRunEventsPublisher implements EventPublisher {
         private EventHandler<TestRunStarted> startHandler;
         private EventHandler<TestRunFinished> finishedHandler;
+        private EventHandler<Envelope> envelopeHandler;
 
         @Override
         public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
@@ -392,6 +395,9 @@ class PluginFactoryTest {
             if (eventType == TestRunFinished.class) {
                 finishedHandler = ((EventHandler<TestRunFinished>) handler);
             }
+            if (eventType == Envelope.class) {
+                envelopeHandler = ((EventHandler<Envelope>) handler);
+            }
         }
 
         @Override
@@ -400,10 +406,14 @@ class PluginFactoryTest {
 
         public void fakeTestRunEvents() {
             if (startHandler != null) {
-                startHandler.receive(new TestRunStarted(Instant.now()));
+                startHandler.receive(new TestRunStarted(now()));
             }
             if (finishedHandler != null) {
-                finishedHandler.receive(new TestRunFinished(Instant.now(), new Result(Status.PASSED, ZERO, null)));
+                finishedHandler.receive(new TestRunFinished(now(), new Result(Status.PASSED, ZERO, null)));
+            }
+            if (envelopeHandler != null) {
+                envelopeHandler.receive(
+                    Envelope.of(new io.cucumber.messages.types.TestRunFinished("done", false, toMessage(now()), null)));
             }
         }
 

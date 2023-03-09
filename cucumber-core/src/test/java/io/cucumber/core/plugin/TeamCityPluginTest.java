@@ -20,12 +20,13 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.UUID;
 
-import static io.cucumber.core.plugin.BytesContainsString.bytesContainsString;
+import static io.cucumber.core.plugin.Bytes.bytes;
 import static java.time.Clock.fixed;
 import static java.time.Instant.EPOCH;
 import static java.time.ZoneId.of;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.AssertionFailureBuilder.assertionFailure;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -103,7 +104,7 @@ class TeamCityPluginTest {
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'feature name']\n" +
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Cucumber']\n";
 
-        assertThat(out, bytesContainsString(expected));
+        assertThat(out, bytes(containsString(expected)));
     }
 
     @Test
@@ -126,8 +127,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[message text='Embed event: |[text/plain 9 bytes|]|n' status='NORMAL']\n"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[message text='Embed event: |[text/plain 9 bytes|]|n' status='NORMAL']\n")));
     }
 
     @Test
@@ -149,8 +150,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[message text='Write event:|nA message|n' status='NORMAL']\n"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[message text='Write event:|nA message|n' status='NORMAL']\n")));
     }
 
     @Test
@@ -173,8 +174,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[message text='Embed event: message.txt |[text/plain 9 bytes|]|n' status='NORMAL']\n"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[message text='Embed event: message.txt |[text/plain 9 bytes|]|n' status='NORMAL']\n")));
     }
 
     @Test
@@ -194,8 +195,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'first step']\n"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'first step']\n")));
     }
 
     @Test
@@ -215,8 +216,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement this step and 1 other step(s) using the snippet(s) below:|n|ntest snippet 0|ntest snippet 1|n' name = 'first step']"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step undefined' details = 'You can implement this step and 1 other step(s) using the snippet(s) below:|n|ntest snippet 0|ntest snippet 1|n' name = 'first step']")));
     }
 
     @Test
@@ -237,8 +238,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step pending' details = 'TODO: implement me' name = 'first step']"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step pending' details = 'TODO: implement me' name = 'first step']")));
     }
 
     @Test
@@ -260,10 +261,10 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(containsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '{stubbed location with details}' captureStandardOutput = 'true' name = 'Before']\n"
                 +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'Before']"));
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'Before']")));
     }
 
     @Test
@@ -285,8 +286,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n")));
     }
 
     @Test
@@ -308,8 +309,8 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/HookDefinition' captureStandardOutput = 'true' name = 'Before']\n"));
+        assertThat(out, bytes(containsString("" +
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/HookDefinition' captureStandardOutput = 'true' name = 'Before']\n")));
     }
 
     @Test
@@ -336,11 +337,11 @@ class TeamCityPluginTest {
                 .build()
                 .run());
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(containsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']\n" +
                 "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/After All failed' details = 'the stack trace' name = 'Before All/After All']\n"
                 +
-                "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']"));
+                "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']")));
     }
 
     @Test
@@ -363,7 +364,7 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("expected = '1' actual = '2' name = 'first step']"));
+        assertThat(out, bytes(containsString("expected = '1' actual = '2' name = 'first step']")));
     }
 
     @Test
@@ -387,6 +388,7 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("expected = 'one value' actual = 'another value' name = 'first step']"));
+        assertThat(out,
+            bytes(containsString("expected = 'one value' actual = 'another value' name = 'first step']")));
     }
 }

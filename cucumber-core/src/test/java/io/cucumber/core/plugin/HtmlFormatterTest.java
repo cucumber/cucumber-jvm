@@ -19,7 +19,8 @@ import java.time.Clock;
 import java.util.Collections;
 import java.util.UUID;
 
-import static io.cucumber.core.plugin.BytesContainsString.bytesContainsString;
+import static io.cucumber.core.plugin.Bytes.bytes;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class HtmlFormatterTest {
@@ -37,11 +38,11 @@ class HtmlFormatterTest {
         TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
         bus.send(Envelope.of(testRunFinished));
 
-        assertThat(bytes, bytesContainsString("" +
+        assertThat(bytes, bytes(containsString("" +
                 "window.CUCUMBER_MESSAGES = [" +
                 "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}," +
                 "{\"testRunFinished\":{\"success\":true,\"timestamp\":{\"seconds\":15,\"nanos\":0}}}" +
-                "];\n"));
+                "];\n")));
     }
 
     @Test
@@ -84,11 +85,11 @@ class HtmlFormatterTest {
             null);
         bus.send(Envelope.of(testRunFinished));
 
-        assertThat(bytes, bytesContainsString("" +
+        assertThat(bytes, bytes(containsString("" +
                 "window.CUCUMBER_MESSAGES = [" +
                 "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}," +
                 "{\"testRunFinished\":{\"success\":true,\"timestamp\":{\"seconds\":15,\"nanos\":0}}}" +
-                "];\n"));
+                "];\n")));
     }
 
 }
