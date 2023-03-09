@@ -7,9 +7,9 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
-import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
+import static io.cucumber.core.plugin.Bytes.bytes;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class BannerTest {
@@ -28,12 +28,12 @@ class BannerTest {
                 new Banner.Span("Bla", AnsiEscapes.RED)),
             new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
-        assertThat(bytes, isBytesEqualTo("" +
+        assertThat(bytes, bytes(equalTo("" +
                 "\u001B[36m┌─────────────┐\u001B[0m\n" +
                 "\u001B[36m│\u001B[0m Bla         \u001B[36m│\u001B[0m\n" +
                 "\u001B[36m│\u001B[0m Bla \u001B[34mBla\u001B[0m \u001B[31mBla\u001B[0m \u001B[36m│\u001B[0m\n" +
                 "\u001B[36m│\u001B[0m Bla Bla     \u001B[36m│\u001B[0m\n" +
-                "\u001B[36m└─────────────┘\u001B[0m\n"));
+                "\u001B[36m└─────────────┘\u001B[0m\n")));
     }
 
     @Test
@@ -50,12 +50,12 @@ class BannerTest {
                 new Banner.Span("Bla", AnsiEscapes.RED)),
             new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
-        assertThat(bytes, isBytesEqualTo("" +
+        assertThat(bytes, bytes(equalTo("" +
                 "┌─────────────┐\n" +
                 "│ Bla         │\n" +
                 "│ Bla Bla Bla │\n" +
                 "│ Bla Bla     │\n" +
-                "└─────────────┘\n"));
+                "└─────────────┘\n")));
     }
 
 }

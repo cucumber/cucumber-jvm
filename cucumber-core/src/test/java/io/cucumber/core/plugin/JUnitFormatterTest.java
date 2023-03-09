@@ -12,7 +12,8 @@ import java.io.ByteArrayOutputStream;
 import java.time.Clock;
 import java.util.UUID;
 
-import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
+import static io.cucumber.core.plugin.Bytes.bytes;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class JUnitFormatterTest {
@@ -30,10 +31,10 @@ class JUnitFormatterTest {
         TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
         bus.send(Envelope.of(testRunFinished));
 
-        assertThat(bytes, isBytesEqualTo("" +
+        assertThat(bytes, bytes(equalTo("" +
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<testsuite name=\"Cucumber\" time=\"5\" tests=\"0\" skipped=\"0\" failures=\"0\" errors=\"0\">\n" +
-                "</testsuite>\n"));
+                "</testsuite>\n")));
     }
 
 }

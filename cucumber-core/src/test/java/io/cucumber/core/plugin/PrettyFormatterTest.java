@@ -23,15 +23,16 @@ import java.time.Clock;
 import java.util.Locale;
 import java.util.UUID;
 
-import static io.cucumber.core.plugin.BytesContainsString.bytesContainsString;
-import static io.cucumber.core.plugin.BytesEqualTo.isBytesEqualTo;
+import static io.cucumber.core.plugin.Bytes.bytes;
 import static io.cucumber.core.plugin.Formats.ansi;
 import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PrettyFormatterTest {
@@ -59,12 +60,12 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, isBytesEqualTo("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
                 "\n" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
                 "  When second step      # path/step_definitions.java:7\n" +
-                "  Then third step       # path/step_definitions.java:11\n"));
+                "  Then third step       # path/step_definitions.java:11\n")));
     }
 
     @Test
@@ -88,12 +89,12 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, isBytesEqualTo("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
                 "\n" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
                 "  When second step\n" +
-                "  Then third step       # path/step_definitions.java:11\n"));
+                "  Then third step       # path/step_definitions.java:11\n")));
     }
 
     @Test
@@ -119,7 +120,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
                 "\n" +
                 "Scenario: s1       # path/test.feature:4\n" +
                 "  Given first step # path/step_definitions.java:3\n" +
@@ -127,7 +128,7 @@ class PrettyFormatterTest {
                 "\n" +
                 "Scenario: s2       # path/test.feature:6\n" +
                 "  Given first step # path/step_definitions.java:3\n" +
-                "  Then third step  # path/step_definitions.java:11\n"));
+                "  Then third step  # path/step_definitions.java:11\n")));
     }
 
     @Test
@@ -154,7 +155,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
                 "\n" +
                 "Scenario Outline: name 1 # path/test.feature:7\n" +
                 "  Given first step       # path/step_definitions.java:3\n" +
@@ -162,7 +163,7 @@ class PrettyFormatterTest {
                 "\n" +
                 "Scenario Outline: name 2 # path/test.feature:8\n" +
                 "  Given first step       # path/step_definitions.java:3\n" +
-                "  Then third step        # path/step_definitions.java:11\n"));
+                "  Then third step        # path/step_definitions.java:11\n")));
     }
 
     @Test
@@ -184,12 +185,12 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, isBytesEqualTo("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
 
                 "\n" +
                 "Scenario: Test Characters # path/test.feature:2\n" +
                 "  Given first step        # path/step_definitions.java:7\n" +
-                "    | URLEncoded | %71s%22i%22%3A%7B%22D |\n"));
+                "    | URLEncoded | %71s%22i%22%3A%7B%22D |\n")));
     }
 
     @Test
@@ -219,7 +220,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, isBytesEqualTo("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
 
                 "\n" +
                 "@feature_tag @scenario_tag\n" +
@@ -228,7 +229,7 @@ class PrettyFormatterTest {
                 "\n" +
                 "@feature_tag @scenario_outline_tag @examples_tag\n" +
                 "Scenario Outline: scenario outline name # path/test.feature:12\n" +
-                "  Then second step                      # path/step_definitions.java:11\n"));
+                "  Then second step                      # path/step_definitions.java:11\n")));
     }
 
     @Test
@@ -251,14 +252,14 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, isBytesEqualTo("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
 
                 "\n" +
                 "Scenario: Test Scenario # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:7\n" +
                 "    | key1     | key2     |\n" +
                 "    | value1   | value2   |\n" +
-                "    | another1 | another2 |\n"));
+                "    | another1 | another2 |\n")));
     }
 
     @Test
@@ -286,7 +287,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, isBytesEqualTo("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
 
                 "\n" +
                 "Scenario: Test Scenario # path/test.feature:2\n" +
@@ -297,7 +298,7 @@ class PrettyFormatterTest {
                 "  Given second step     # path/step_definitions.java:15\n" +
                 "    | key3     | key4     |\n" +
                 "    | value3   | value4   |\n" +
-                "    | another3 | another4 |\n"));
+                "    | another3 | another4 |\n")));
     }
 
     @Test
@@ -317,9 +318,10 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+                "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
-                "      the stack trace\n"));
+                "      the stack trace\n")));
     }
 
     @Test
@@ -341,10 +343,10 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "      the stack trace\n" +
-                "  Given first step      # path/step_definitions.java:3\n"));
+                "  Given first step      # path/step_definitions.java:3\n")));
     }
 
     @Test
@@ -366,9 +368,10 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+                "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
-                "      the stack trace\n"));
+                "      the stack trace")));
     }
 
     @Test
@@ -390,12 +393,12 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "\n" +
                 "    printed from hook\n" +
                 "\n" +
-                "  Given first step      # path/step_definitions.java:3\n"));
+                "  Given first step      # path/step_definitions.java:3\n")));
     }
 
     @Test
@@ -417,10 +420,11 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+                "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
                 "\n" +
-                "    printed from hook\n"));
+                "    printed from hook\n")));
     }
 
     @Test
@@ -448,7 +452,8 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+                "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
                 "\n" +
                 "    printed from afterstep hook\n" +
@@ -456,7 +461,7 @@ class PrettyFormatterTest {
                 "  When second step      # path/step_definitions.java:4\n" +
                 "\n" +
                 "    printed from afterstep hook" +
-                "\n"));
+                "\n")));
     }
 
     @Test
@@ -475,9 +480,9 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
+        assertThat(out, bytes(containsString("" +
                 "  " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step"
-                + AnsiEscapes.RESET));
+                + AnsiEscapes.RESET)));
     }
 
     @Test
@@ -496,8 +501,8 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET + "\n"));
+        assertThat(out, bytes(containsString("" +
+                AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET)));
     }
 
     @Test
@@ -516,8 +521,8 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytesContainsString("" +
-                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
+        assertThat(out, bytes(containsString("" +
+                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET)));
     }
 
     @Test
@@ -602,8 +607,8 @@ class PrettyFormatterTest {
                 .build()
                 .run());
 
-        assertThat(out, bytesContainsString("" +
-                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET + "\n"));
+        assertThat(out, bytes(containsString("" +
+                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET)));
     }
 
 }

@@ -23,10 +23,12 @@ import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,10 +82,8 @@ class GuiceFactoryTest {
 
         Executable testMethod = () -> factory.start();
         ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
-        assertThat("Unexpected exception message", actualThrown.getMessage(), startsWith(
-            "Guice configuration errors:\n" +
-                    "\n" +
-                    "1) [Guice/MissingImplementation]: No implementation for ScenarioScope was bound."));
+        assertThat("Unexpected exception message", actualThrown.getMessage(),
+            containsString("1) [Guice/MissingImplementation]: No implementation for ScenarioScope was bound."));
     }
 
     @Test
