@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- [Core] Improved event bus performance using UUID generator selectable through SPI ([#2703](https://github.com/cucumber/cucumber-jvm/pull/2703) Julien Kronegg)
+
 ## [7.11.1] - 2023-01-27
 ### Added
 - [Core] Warn when `cucumber.options` is used ([#2685](https://github.com/cucumber/cucumber-jvm/pull/2685) M.P. Korstanje)

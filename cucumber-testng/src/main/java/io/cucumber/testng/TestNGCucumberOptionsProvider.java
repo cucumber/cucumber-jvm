@@ -1,6 +1,7 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
@@ -102,6 +103,10 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
 
+        @Override
+        public Class<? extends UuidGenerator> uuidGenerator() {
+            return (annotation.uuidGenerator() == NoUuidGenerator.class) ? null : annotation.uuidGenerator();
+        }
     }
 
 }

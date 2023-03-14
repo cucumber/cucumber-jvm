@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
+import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 
 public final class Constants {
 
@@ -117,6 +118,14 @@ public final class Constants {
      * @see ObjectFactoryServiceLoader
      */
     public static final String OBJECT_FACTORY_PROPERTY_NAME = "cucumber.object-factory";
+
+    /**
+     * Property name used to select a specific UUID generator implementation:
+     * {@value}
+     *
+     * @see UuidGeneratorServiceLoader
+     */
+    public static final String UUID_GENERATOR_PROPERTY_NAME = "cucumber.uuid-generator";
 
     /**
      * Property name formerly used to pass command line options to Cucumber:
