@@ -66,6 +66,8 @@ public final class CommandlineOptions {
 
     public static final String OBJECT_FACTORY = "--object-factory";
 
+    public static final String UUID_GENERATOR = "--uuid-generator";
+
     private CommandlineOptions() {
     }
 }

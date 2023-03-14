@@ -16,7 +16,14 @@ class CucumberPropertiesTest {
 
     @Test
     void looks_up_value_from_environment() {
-        assertThat(CucumberProperties.fromEnvironment().get("PATH"), is(notNullValue()));
+        Map<String, String> properties = CucumberProperties.fromEnvironment();
+        String path = properties.get("PATH");
+        if (path == null) {
+            // on some Windows flavors, the PATH environment variable is named
+            // "Path"
+            path = properties.get("Path");
+        }
+        assertThat(path, is(notNullValue()));
     }
 
     @Test

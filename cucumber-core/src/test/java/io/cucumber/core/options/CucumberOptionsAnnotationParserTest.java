@@ -1,6 +1,8 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.IncrementingUuidGenerator;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.HtmlFormatter;
 import io.cucumber.core.plugin.NoPublishFormatter;
@@ -252,6 +254,13 @@ class CucumberOptionsAnnotationParserTest {
             is(equalTo("glue and extraGlue cannot be specified at the same time")));
     }
 
+    @Test
+    void uuid_generator() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithUuidGenerator.class).build();
+
+        assertThat(runtimeOptions.getUuidGeneratorClass(), is(IncrementingUuidGenerator.class));
+    }
+
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
     private static class Snippets {
         // empty
@@ -363,6 +372,11 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
+    @CucumberOptions(uuidGenerator = IncrementingUuidGenerator.class)
+    private static class ClassWithUuidGenerator extends ClassWithGlue {
+        // empty
+    }
+
     private static class CoreCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
 
         private final CucumberOptions annotation;
@@ -426,6 +440,10 @@ class CucumberOptionsAnnotationParserTest {
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
 
+        @Override
+        public Class<? extends UuidGenerator> uuidGenerator() {
+            return (annotation.uuidGenerator() == NoUuidGenerator.class) ? null : annotation.uuidGenerator();
+        }
     }
 
     private static class CoreCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {

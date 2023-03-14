@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.11.2-SNAPSHOT</version>
+    <version>7.12.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -18,7 +18,7 @@
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
-        <project.build.outputTimestamp>1674814830</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1678784521</project.build.outputTimestamp>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>

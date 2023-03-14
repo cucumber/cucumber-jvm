@@ -181,6 +181,18 @@
             "code": "java.method.finalMethodAddedToNonFinalClass",
             "new": "method java.lang.Long io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.std.StdDeserializer<T>::_parseLong(io.cucumber.core.internal.com.fasterxml.jackson.databind.DeserializationContext, java.lang.String) throws java.io.IOException",
             "justification": "Internal API"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method java.lang.Class<? extends io.cucumber.core.eventbus.UuidGenerator> io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::uuidGenerator()",
+            "justification": "Internal API"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method java.lang.Class<? extends io.cucumber.core.eventbus.UuidGenerator> io.cucumber.core.runner.Options::getUuidGeneratorClass()",
+            "justification": "Internal API"
           }
         ]
       }
@@ -331,6 +343,12 @@
             "code": "java.method.defaultMethodAddedToInterface",
             "new": "method java.util.Set<org.testng.ITestNGMethod> org.testng.ITestNGMethod::upstreamDependencies()",
             "justification": "Third party api change"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.eventbus.UuidGenerator",
+            "justification": "Part of cucumber API"
           }
         ]
       }
@@ -383,6 +401,12 @@
             "new": "method int org.junit.platform.engine.ConfigurationParameters::size()",
             "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"1.9\")",
             "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.eventbus.UuidGenerator",
+            "justification": "Part of cucumber API"
           }
         ]
       }

@@ -1,6 +1,7 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -21,6 +22,7 @@ final class TestNGCucumberOptionsProviderTest {
     void testObjectFactoryWhenNotSpecified() {
         io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
                 .getOptions(ClassWithDefault.class);
+        assertNotNull(options);
         assertNull(options.objectFactory());
     }
 
@@ -28,8 +30,24 @@ final class TestNGCucumberOptionsProviderTest {
     void testObjectFactory() {
         io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
                 .getOptions(ClassWithCustomObjectFactory.class);
-        assertNotNull(options.objectFactory());
+        assertNotNull(options);
         assertEquals(TestObjectFactory.class, options.objectFactory());
+    }
+
+    @Test
+    void testUuidGeneratorWhenNotSpecified() {
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithDefault.class);
+        assertNotNull(options);
+        assertNull(options.uuidGenerator());
+    }
+
+    @Test
+    void testUuidGenerator() {
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithCustomUuidGenerator.class);
+        assertNotNull(options);
+        assertEquals(IncrementingUuidGenerator.class, options.uuidGenerator());
     }
 
     @CucumberOptions()
@@ -39,6 +57,11 @@ final class TestNGCucumberOptionsProviderTest {
 
     @CucumberOptions(objectFactory = TestObjectFactory.class)
     private static final class ClassWithCustomObjectFactory {
+
+    }
+
+    @CucumberOptions(uuidGenerator = IncrementingUuidGenerator.class)
+    private static final class ClassWithCustomUuidGenerator {
 
     }
 

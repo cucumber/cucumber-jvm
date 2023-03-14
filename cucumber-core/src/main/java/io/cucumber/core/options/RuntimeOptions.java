@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
@@ -33,7 +34,8 @@ public final class RuntimeOptions implements
         io.cucumber.core.runner.Options,
         io.cucumber.core.plugin.Options,
         io.cucumber.core.filter.Options,
-        io.cucumber.core.backend.Options {
+        io.cucumber.core.backend.Options,
+        io.cucumber.core.eventbus.Options {
 
     private final List<URI> glue = new ArrayList<>();
     private final List<Expression> tagExpressions = new ArrayList<>();
@@ -48,6 +50,7 @@ public final class RuntimeOptions implements
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
     private Class<? extends ObjectFactory> objectFactoryClass;
+    private Class<? extends UuidGenerator> uuidGeneratorClass;
     private String publishToken;
     private boolean publish;
     private boolean publishQuiet;
@@ -156,6 +159,15 @@ public final class RuntimeOptions implements
 
     void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.objectFactoryClass = objectFactoryClass;
+    }
+
+    @Override
+    public Class<? extends UuidGenerator> getUuidGeneratorClass() {
+        return uuidGeneratorClass;
+    }
+
+    void setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {
+        this.uuidGeneratorClass = uuidGeneratorClass;
     }
 
     void setSnippetType(SnippetType snippetType) {
