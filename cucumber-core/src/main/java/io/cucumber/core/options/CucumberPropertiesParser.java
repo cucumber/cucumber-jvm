@@ -203,8 +203,8 @@ public final class CucumberPropertiesParser {
             if (filePath.isDirectory()) { // path is a directory
                 if (filePath.list() != null && filePath.list().length > 0) {
                     // parse rerun files here
-
-                } else {
+                    // see there's a class PathScanner that uses walkFileTree, but not public, would I need another class???
+                } else { // do I need this else??
                     return Stream.empty(); // no files in folder
                 }
             } else { // path is a file
