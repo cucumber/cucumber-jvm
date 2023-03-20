@@ -7,6 +7,7 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -193,6 +194,24 @@ public final class CucumberPropertiesParser {
                 .filter(part -> !part.isEmpty())
                 .map(parse)
                 .collect(toList());
+    }
+
+    private Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) {
+        if (property.startsWith("@")) {
+            String pathStr = property.substring(1);
+            File filePath = new File(pathStr);
+            if (filePath.isDirectory()) { // path is a directory
+                if (filePath.list() != null && filePath.list().length > 0) {
+                    return Stream.empty(); // do something here
+                } else {
+                    return Stream.empty(); // no files in folder
+                }
+            } else { // path is a file
+                return Stream.of(parseFeatureWithLinesFile(Paths.get(pathStr))); // parse
+                // file
+            }
+        }
+        return Stream.empty();
     }
 
     private static Stream<Collection<FeatureWithLines>> parseRerunFile(String property) {
