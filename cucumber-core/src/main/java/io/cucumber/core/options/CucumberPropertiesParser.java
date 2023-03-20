@@ -202,7 +202,8 @@ public final class CucumberPropertiesParser {
             File filePath = new File(pathStr);
             if (filePath.isDirectory()) { // path is a directory
                 if (filePath.list() != null && filePath.list().length > 0) {
-                    return Stream.empty(); // do something here
+                    // parse rerun files here
+
                 } else {
                     return Stream.empty(); // no files in folder
                 }
