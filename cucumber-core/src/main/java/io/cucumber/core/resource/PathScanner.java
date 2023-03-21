@@ -56,7 +56,7 @@ class PathScanner {
             throw new RuntimeException(e);
         }
     }
-    
+
     static class ResourceFileVisitor extends SimpleFileVisitor<Path> {
 
         private static final Logger logger = LoggerFactory.getLogger(ResourceFileVisitor.class);
