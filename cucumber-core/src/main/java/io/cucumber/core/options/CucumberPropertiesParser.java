@@ -8,11 +8,10 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -80,7 +79,8 @@ public final class CucumberPropertiesParser {
             // feature property. They are differentiated by prefixing the uri
             // name with an `@` symbol.
             FEATURES_PROPERTY_NAME,
-            splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFile),
+            // ??? don't know how to handle unhandled IOException error
+            splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFiles),
             builder::addRerun);
 
         parse(properties,
@@ -196,25 +196,35 @@ public final class CucumberPropertiesParser {
                 .collect(toList());
     }
 
-    private Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) {
+    private static Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) throws IOException {
+        Set<String> fileList = new HashSet<>();
+
         if (property.startsWith("@")) {
             String pathStr = property.substring(1);
             File filePath = new File(pathStr);
             if (filePath.isDirectory()) { // path is a directory
-                if (filePath.list() != null && filePath.list().length > 0) {
-                    // parse rerun files here
-                    // see there's a class PathScanner that uses walkFileTree, but not public, would I need another class???
-                } else { // do I need this else??
-                    return Stream.empty(); // no files in folder
-                }
-            } else { // path is a file
+                    Files.walkFileTree(Paths.get(pathStr), new SimpleFileVisitor<>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            if (!Files.isDirectory(file)) {
+                                // ??? 
+                                fileList.add(file.getFileName().toString());
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+
+                    // ??? don't know how to return a stream here or how to do this
+                    Stream<String> stream = fileList.stream();
+                    stream.filter(data -> Stream.of(parseFeatureWithLinesFile(Paths.get(pathStr))).isParallel());
+            } else {
                 return Stream.of(parseFeatureWithLinesFile(Paths.get(pathStr))); // parse
-                // file
             }
         }
         return Stream.empty();
     }
 
+/*
     private static Stream<Collection<FeatureWithLines>> parseRerunFile(String property) {
         if (property.startsWith("@")) {
             Path rerunFile = Paths.get(property.substring(1));
@@ -222,5 +232,7 @@ public final class CucumberPropertiesParser {
         }
         return Stream.empty();
     }
+
+ */
 
 }
