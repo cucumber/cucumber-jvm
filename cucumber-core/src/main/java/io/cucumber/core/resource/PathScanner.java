@@ -21,7 +21,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.walkFileTree;
 
- class PathScanner {
+class PathScanner {
 
     private static final Logger log = LoggerFactory.getLogger(PathScanner.class);
 
