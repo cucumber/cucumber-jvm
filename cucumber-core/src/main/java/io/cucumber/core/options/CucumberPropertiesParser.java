@@ -7,11 +7,18 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -79,7 +86,6 @@ public final class CucumberPropertiesParser {
             // feature property. They are differentiated by prefixing the uri
             // name with an `@` symbol.
             FEATURES_PROPERTY_NAME,
-            // ??? don't know how to handle unhandled IOException error
             splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFiles),
             builder::addRerun);
 
@@ -196,43 +202,40 @@ public final class CucumberPropertiesParser {
                 .collect(toList());
     }
 
-    private static Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) throws IOException {
+    private static Set<String> listFilesUsingFileWalkAndVisitor(String path) {
         Set<String> fileList = new HashSet<>();
+        try {
+            Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (!Files.isDirectory(file)) {
+                        fileList.add(file.getFileName().toString());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            return fileList;
+        } catch (IOException ioe) {
+            throw new RuntimeException("Runtime exception", ioe);
+        }
+    }
+
+    private static Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) {
 
         if (property.startsWith("@")) {
             String pathStr = property.substring(1);
-            File filePath = new File(pathStr);
-            if (filePath.isDirectory()) { // path is a directory
-                    Files.walkFileTree(Paths.get(pathStr), new SimpleFileVisitor<>() {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                            if (!Files.isDirectory(file)) {
-                                // ??? 
-                                fileList.add(file.getFileName().toString());
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
-
-                    // ??? don't know how to return a stream here or how to do this
-                    Stream<String> stream = fileList.stream();
-                    stream.filter(data -> Stream.of(parseFeatureWithLinesFile(Paths.get(pathStr))).isParallel());
-            } else {
-                return Stream.of(parseFeatureWithLinesFile(Paths.get(pathStr))); // parse
-            }
+            return listFilesUsingFileWalkAndVisitor(pathStr).stream()
+                    .map(file -> parseFeatureWithLinesFile(Paths.get(pathStr)));
         }
         return Stream.empty();
     }
 
-/*
-    private static Stream<Collection<FeatureWithLines>> parseRerunFile(String property) {
-        if (property.startsWith("@")) {
-            Path rerunFile = Paths.get(property.substring(1));
-            return Stream.of(parseFeatureWithLinesFile(rerunFile));
-        }
-        return Stream.empty();
-    }
-
- */
+    /*
+     * private static Stream<Collection<FeatureWithLines>> parseRerunFile(String
+     * property) { if (property.startsWith("@")) { Path rerunFile =
+     * Paths.get(property.substring(1)); return
+     * Stream.of(parseFeatureWithLinesFile(rerunFile)); } return Stream.empty();
+     * }
+     */
 
 }
