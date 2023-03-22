@@ -7,6 +7,7 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -202,14 +203,14 @@ public final class CucumberPropertiesParser {
                 .collect(toList());
     }
 
-    private static Set<String> listFilesUsingFileWalkAndVisitor(String path) {
+    private static Set<String> listRerunFiles(String path) {
         Set<String> fileList = new HashSet<>();
         try {
             Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     if (!Files.isDirectory(file)) {
-                        fileList.add(file.getFileName().toString());
+                        fileList.add(path + "/" + file.getFileName().toString());
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -221,21 +222,12 @@ public final class CucumberPropertiesParser {
     }
 
     private static Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) {
-
         if (property.startsWith("@")) {
             String pathStr = property.substring(1);
-            return listFilesUsingFileWalkAndVisitor(pathStr).stream()
+            return listRerunFiles(pathStr).stream()
                     .map(file -> parseFeatureWithLinesFile(Paths.get(pathStr)));
         }
         return Stream.empty();
     }
-
-    /*
-     * private static Stream<Collection<FeatureWithLines>> parseRerunFile(String
-     * property) { if (property.startsWith("@")) { Path rerunFile =
-     * Paths.get(property.substring(1)); return
-     * Stream.of(parseFeatureWithLinesFile(rerunFile)); } return Stream.empty();
-     * }
-     */
 
 }
