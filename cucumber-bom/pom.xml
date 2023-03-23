@@ -14,7 +14,7 @@
     <properties>
         <ci-environment.version>9.1.0</ci-environment.version>
         <cucumber-expressions.version>16.1.2</cucumber-expressions.version>
-        <gherkin.version>26.0.3</gherkin.version>
+        <gherkin.version>26.1.0</gherkin.version>
         <html-formatter.version>20.2.1</html-formatter.version>
         <junit-xml-formatter.version>0.1.0</junit-xml-formatter.version>
         <messages.version>21.0.1</messages.version>
