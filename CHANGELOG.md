@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [JUnit Platform Engine] Add constant for fixed.max-pool-size property ([#2713](https://github.com/cucumber/cucumber-jvm/pull/2713) M.P. Korstanje)
 
 ## [7.11.2] - 2023-03-23
 ### Fixed
