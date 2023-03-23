@@ -16,6 +16,8 @@
 
     <properties>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -97,6 +99,22 @@
                     <configuration>
                         <ignoreEOLStyle>true</ignoreEOLStyle>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <!-- Duplicate declaration. But ensures the version
+                         in the archetype template is also automatically
+                          updated by renovate bot. -->
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <!-- Duplicate declaration. But ensures the version
+                         in the archetype template is also automatically
+                         updated by renovate bot. -->
+                    <version>${maven-surefire-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

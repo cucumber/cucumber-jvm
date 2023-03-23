@@ -20,6 +20,10 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         this.feature = feature;
     }
 
+    Feature getFeature() {
+        return feature;
+    }
+
     private static void pruneRecursively(TestDescriptor descriptor, Predicate<TestDescriptor> toKeep) {
         if (!toKeep.test(descriptor)) {
             if (descriptor.isTest()) {
