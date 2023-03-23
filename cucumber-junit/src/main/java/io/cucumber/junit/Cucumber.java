@@ -27,6 +27,7 @@ import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.function.ThrowingRunnable;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -42,6 +43,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
@@ -199,13 +201,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     @Override
     protected Statement childrenInvoker(RunNotifier notifier) {
         Statement statement = super.childrenInvoker(notifier);
-
-        statement = new RunBeforeAllHooks(statement);
-        statement = new RunAfterAllHooks(statement);
-
-        statement = new StartTestRun(statement);
-        statement = new FinishTestRun(statement);
-
+        statement = new StartAndFinishTestRun(statement);
         return statement;
     }
 
@@ -215,10 +211,10 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         multiThreadingAssumed = true;
     }
 
-    private class StartTestRun extends Statement {
+    private class StartAndFinishTestRun extends Statement {
         private final Statement next;
 
-        public StartTestRun(Statement next) {
+        public StartAndFinishTestRun(Statement next) {
             this.next = next;
         }
 
@@ -230,60 +226,29 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
             context.startTestRun();
-            next.evaluate();
-        }
-
-    }
-
-    private class FinishTestRun extends Statement {
-        private final Statement next;
-
-        public FinishTestRun(Statement next) {
-            this.next = next;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            try {
+            execute(() -> {
+                context.runBeforeAllHooks();
                 next.evaluate();
+            });
+            try {
+                execute(context::runAfterAllHooks);
             } finally {
                 context.finishTestRun();
             }
-        }
-
-    }
-
-    private class RunBeforeAllHooks extends Statement {
-        private final Statement next;
-
-        public RunBeforeAllHooks(Statement next) {
-            this.next = next;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            context.runBeforeAllHooks();
-            next.evaluate();
-        }
-
-    }
-
-    private class RunAfterAllHooks extends Statement {
-        private final Statement next;
-
-        public RunAfterAllHooks(Statement next) {
-            this.next = next;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            try {
-                next.evaluate();
-            } finally {
-                context.runAfterAllHooks();
+            Throwable throwable = context.getThrowable();
+            if (throwable != null) {
+                throw throwable;
             }
         }
 
+        private void execute(ThrowingRunnable runnable) {
+            try {
+                runnable.run();
+            } catch (Throwable t) {
+                // Collected in CucumberExecutionContext
+                rethrowIfUnrecoverable(t);
+            }
+        }
     }
 
 }
