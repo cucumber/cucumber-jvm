@@ -145,9 +145,9 @@ class IncrementingUuidGeneratorTest {
 
         // all UUIDs are ordered
         assertEquals(uuids.stream()
-                    .map(IncrementingUuidGeneratorTest::removeClassloaderId)
-                    .collect(Collectors.toList()),
-                uuids.stream()
+                .map(IncrementingUuidGeneratorTest::removeClassloaderId)
+                .collect(Collectors.toList()),
+            uuids.stream()
                     .map(IncrementingUuidGeneratorTest::removeClassloaderId)
                     .sorted()
                     .collect(Collectors.toList()));
