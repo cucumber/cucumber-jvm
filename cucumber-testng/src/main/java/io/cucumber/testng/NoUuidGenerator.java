@@ -14,7 +14,7 @@ final class NoUuidGenerator implements UuidGenerator {
     }
 
     @Override
-    public UUID get() {
+    public UUID generateId() {
         return null;
     }
 }

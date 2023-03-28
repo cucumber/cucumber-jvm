@@ -11,10 +11,10 @@ class RandomUuidGeneratorTest {
     void generates_different_non_null_uuids() {
         // Given
         UuidGenerator generator = new RandomUuidGenerator();
-        UUID uuid1 = generator.get();
+        UUID uuid1 = generator.generateId();
 
         // When
-        UUID uuid2 = generator.get();
+        UUID uuid2 = generator.generateId();
 
         // Then
         assertNotNull(uuid1);

@@ -8,6 +8,11 @@ import java.util.function.Supplier;
 /**
  * SPI (Service Provider Interface) to generate UUIDs.
  */
-@API(status = API.Status.STABLE)
+@API(status = API.Status.EXPERIMENTAL)
 public interface UuidGenerator extends Supplier<UUID> {
+    UUID generateId();
+
+    default UUID get() {
+        return generateId();
+    }
 }

@@ -253,14 +253,14 @@ class UuidGeneratorServiceLoaderTest {
 
     public static class OtherGenerator implements UuidGenerator {
         @Override
-        public UUID get() {
+        public UUID generateId() {
             return null;
         }
     }
 
     public static class YetAnotherGenerator implements UuidGenerator {
         @Override
-        public UUID get() {
+        public UUID generateId() {
             return null;
         }
     }
