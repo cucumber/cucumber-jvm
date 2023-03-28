@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * - thread-safe
  * - collision-free in the same classloader
  * - almost collision-free in different classloaders / JVMs
- * - UUIDs generator using a given instance are sortable
+ * - UUIDs generated using the instances from the same classloader are sortable
  *
  * UUID version 8 (custom) <a href=
  * "https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html#name-uuid-version-8">...</a>

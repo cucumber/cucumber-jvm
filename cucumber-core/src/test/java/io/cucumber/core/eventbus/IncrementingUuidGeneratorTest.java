@@ -144,7 +144,20 @@ class IncrementingUuidGeneratorTest {
         assertEquals(uuids.size(), uuids.stream().distinct().count());
 
         // all UUIDs are ordered
-        assertEquals(uuids, uuids.stream().sorted().collect(Collectors.toList()));
+        assertEquals(uuids.stream()
+                    .map(IncrementingUuidGeneratorTest::removeClassloaderId)
+                    .collect(Collectors.toList()),
+                uuids.stream()
+                    .map(IncrementingUuidGeneratorTest::removeClassloaderId)
+                    .sorted()
+                    .collect(Collectors.toList()));
+    }
+
+    /**
+     * Create a copy of the UUID without the random part to allow comparison.
+     */
+    private static UUID removeClassloaderId(UUID uuid) {
+        return new UUID(uuid.getMostSignificantBits() & 0xfffffffffffff000L, uuid.getLeastSignificantBits());
     }
 
     private static UuidGenerator getUuidGeneratorFromOtherClassloader() {
