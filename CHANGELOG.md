@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [Core] Improved event bus performance using UUID generator selectable through SPI ([#2703](https://github.com/cucumber/cucumber-jvm/pull/2703) Julien Kronegg)
 
+## [7.11.2] - 2023-03-23
+### Fixed
+- [JUnit Platform Engine] Corrupted junit-xml report when using `surefire.rerunFailingTestsCount` parameter ([#2709](https://github.com/cucumber/cucumber-jvm/pull/2709) M.P. Korstanje)
+
 ## [7.11.1] - 2023-01-27
 ### Added
 - [Core] Warn when `cucumber.options` is used ([#2685](https://github.com/cucumber/cucumber-jvm/pull/2685) M.P. Korstanje)
@@ -228,7 +232,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.2...main
+[7.11.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...main
 [7.11.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...main
 [7.11.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.1...v7.11.0
 [7.10.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...v7.10.1

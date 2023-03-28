@@ -1,5 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
 import io.cucumber.junit.platform.engine.nofeatures.NoFeatures;
@@ -23,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +36,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static java.util.Collections.singleton;
@@ -382,15 +386,54 @@ class DiscoverySelectorResolverTest {
                     .collect(toSet()));
     }
 
+    @Test
+    void resolveRequestWithMultipleUniqueIdSelectorFromTheSameFeature() {
+        Set<UniqueId> selectors = new HashSet<>();
+
+        DiscoverySelector resource = selectDirectory(
+            "src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
+        selectAllPickles(resource).forEach(selectors::add);
+
+        EngineDiscoveryRequest discoveryRequest = new SelectorRequest(
+            selectors.stream()
+                    .map(DiscoverySelectors::selectUniqueId)
+                    .collect(Collectors.toList()));
+
+        resolver.resolveSelectors(discoveryRequest, testDescriptor);
+
+        Set<String> pickleIdsFromFeature = testDescriptor.getDescendants()
+                .stream()
+                .filter(FeatureDescriptor.class::isInstance)
+                .map(FeatureDescriptor.class::cast)
+                .map(FeatureDescriptor::getFeature)
+                .map(Feature::getPickles)
+                .flatMap(Collection::stream)
+                .map(Pickle::getId)
+                .collect(toSet());
+
+        Set<String> pickleIdsFromPickles = testDescriptor.getDescendants()
+                .stream()
+                .filter(PickleDescriptor.class::isInstance)
+                .map(PickleDescriptor.class::cast)
+                .map(PickleDescriptor::getPickle)
+                .map(Pickle::getId)
+                .collect(toSet());
+
+        assertEquals(pickleIdsFromFeature, pickleIdsFromPickles);
+    }
+
     private Optional<UniqueId> selectSomePickle(DiscoverySelector resource) {
+        return selectAllPickles(resource).findFirst();
+    }
+
+    private Stream<UniqueId> selectAllPickles(DiscoverySelector resource) {
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(resource);
         resolver.resolveSelectors(discoveryRequest, testDescriptor);
         Set<? extends TestDescriptor> descendants = testDescriptor.getDescendants();
         resetTestDescriptor();
         return descendants.stream()
                 .filter(PickleDescriptor.class::isInstance)
-                .map(TestDescriptor::getUniqueId)
-                .findFirst();
+                .map(TestDescriptor::getUniqueId);
     }
 
     @Test

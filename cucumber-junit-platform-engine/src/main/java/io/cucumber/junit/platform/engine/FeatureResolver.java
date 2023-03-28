@@ -38,7 +38,7 @@ final class FeatureResolver {
 
     private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
 
-    private final FeatureParser featureParser = new FeatureParser(UUID::randomUUID);
+    private final CachingFeatureParser featureParser = new CachingFeatureParser(new FeatureParser(UUID::randomUUID));
     private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
         ClassLoaders::getDefaultClassLoader,
         FeatureIdentifier::isFeature,
