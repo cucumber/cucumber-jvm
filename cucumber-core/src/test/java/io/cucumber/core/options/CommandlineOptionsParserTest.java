@@ -95,7 +95,7 @@ class CommandlineOptionsParserTest {
     }
 
     private String output() {
-        return out.toString(StandardCharsets.UTF_8);
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
     @Test
