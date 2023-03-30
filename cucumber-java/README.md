@@ -66,8 +66,12 @@ Depending on the table shape, it can also be accessed as one of the following co
  * `Map<String, String> table`
  * `Map<String, List<String>> table`
  * `Map<String, Map<String, String>> table`
+ * `List<Class> table`
  
-For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/cucumber-java#data-tables)
+
+
+#### Tables as collections of Strings 
 
 ```java
 package com.example.app;
@@ -96,6 +100,41 @@ public class StepDefinitions {
 
 Note: In addition to collections of `String`, `Integer`, `Float`, `BigInteger` and `BigDecimal`, `Byte`, `Short`, `Long`
 and `Double` are also supported. Numbers are parsed using the language of the feature file.
+
+#### Data tables as lists of objects 
+
+Data Tables can also be passed as List\<Class\> where the class can be defined in the step defs.   Using default transformations makes this simple.  See [cucumber/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/cucumber-java#data-tables) for details. 
+
+For example:
+  
+```java
+  Given the following users exist:
+  | Name   | Email              | Twitter         |
+  | Aslak  | aslak@cucumber.io  | @aslak_hellesoy |
+  | Julien | julien@cucumber.io | @jbpros         |
+  | Matt   | matt@cucumber.io   | @mattwynne      |
+```
+This can be passed as a List\<User\>.  In the example, UserName is a class that has a constructor that takes a string.  
+  
+```java
+class User
+{
+    public UserName name = new UserName("default");
+    public String  email = "defaultEmail";
+    public String twitter = "defaultTwitter";
+}
+
+@Given("the following users exist:")
+public void the_following_users_exist(List<User> dataTable) {
+    for (User user: dataTable)
+    {
+    System.out.println(user.name + user.email + user.twitter);
+    }
+ ```
+  
+
+For more information see: [cucumber/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/cucumber-java#data-tables)
+
 
 ### Doc strings
 
