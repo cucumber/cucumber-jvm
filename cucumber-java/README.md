@@ -66,8 +66,11 @@ Depending on the table shape, it can also be accessed as one of the following co
  * `Map<String, String> table`
  * `Map<String, List<String>> table`
  * `Map<String, Map<String, String>> table`
+ * `List<Class> table`
  
 For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+
+#### Data collections with String 
 
 ```java
 package com.example.app;
@@ -96,6 +99,73 @@ public class StepDefinitions {
 
 Note: In addition to collections of `String`, `Integer`, `Float`, `BigInteger` and `BigDecimal`, `Byte`, `Short`, `Long`
 and `Double` are also supported. Numbers are parsed using the language of the feature file.
+
+#### Data tables as lists of objects
+
+Data tables can be converted into Lists of objects.  For example: 
+
+```ghekhin 
+  Given the following users exist:
+  | Name   | Email              | Twitter         |
+  | Aslak  | aslak@cucumber.io  | @aslak_hellesoy |
+  | Julien | julien@cucumber.io | @jbpros         |
+  | Matt   | matt@cucumber.io   | @mattwynne      |
+```
+This can be passed as a List\<User\>.  The class of each attribute must have a constructor that takes as String, such as UserName in this example 
+  
+```java
+class User
+{
+    public UserName name = new UserName("default");
+    public String  email = "defaultEmail";
+    public String twitter = "defaultTwitter";
+}
+
+@Given("the following users exist:")
+public void the_following_users_exist(List<User> dataTable) {
+    for (User user: dataTable)
+    {
+    System.out.println(user.name + user.email + user.twitter);
+    }
+ ```
+If you include the default table transformation code below,  many of the details of the conversion are handled.   The names of the object's attributes must match the camel case of the column headers.      If a column header does not match an attribute, an error occurs.   If there is no column header that matches an attribute, the value of the attribute is set to the default value.
+
+For this example,  email will be set to defaultEmail and twitter will be set to defaultTwitter.  
+```ghekhin 
+  Given the following users exist:
+  | Name   | 
+  | Aslak  | 
+  | Julien | 
+  | Matt   | 
+```
+
+This is an example of the default table transformation that needs to be somewhere in the step definitions.  
+
+ ```java
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.DefaultDataTableCellTransformer;
+import io.cucumber.java.DefaultDataTableEntryTransformer;
+import io.cucumber.java.DefaultParameterTransformer;
+
+import java.lang.reflect.Type;
+import java.util.Objects;
+
+public class DefaultTableTransformation {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    @DefaultParameterTransformer
+    @DefaultDataTableEntryTransformer
+    @DefaultDataTableCellTransformer
+
+    public Object transformer(Object fromValue, Type toValueType) {
+        return objectMapper.convertValue(fromValue, objectMapper.constructType(toValueType));
+    }
+
+}
+ ```
+ If you need more control over the transformations, you can use @DataTableTypes (see below). 
+ 
+
 
 ### Doc strings
 
