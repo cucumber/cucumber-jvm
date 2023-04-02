@@ -94,8 +94,9 @@ public class StepDefinitions {
 }
 ```
 
-Note: In addition to collections of `String`, `Integer`, `Float`, `BigInteger` and `BigDecimal`, `Byte`, `Short`, `Long`
-and `Double` are also supported. Numbers are parsed using the language of the feature file.
+Note: In addition to collections of `String` collections of `Integer`, `Float`, `BigInteger` and `BigDecimal`, `Byte`, `Short`, `Long`
+and `Double` are also supported. Numbers are parsed using the language of the feature file. To use custom types you can use the
+annotations discussed in "Data Table Type" further down this page.
 
 ### Doc strings
 
