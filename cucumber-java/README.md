@@ -57,6 +57,40 @@ public class CalculatorStepDefinitions {
 }
 ```
 
+
+    
+## Transformers 
+
+Cucumber expression parameters, data tables and docs strings can be transformed
+into arbitrary java objects.
+
+### Parameter Type
+
+Parameter types used by Cucumber expressions can be declared by using
+`@ParameterType`. The name of the annotated method will be used as the parameter
+name.
+
+```java
+package com.example.app;
+
+import io.cucumber.java.ParameterType;
+import io.cucumber.java.en.Given;
+
+import java.time.LocalDate;
+
+public class StepDefinitions {
+
+    @ParameterType("([0-9]{4})-([0-9]{2})-([0-9]{2})")
+    public LocalDate iso8601Date(String year, String month, String day) {
+        return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
+    }
+
+    @Given("today is {iso8601Date}")
+    public void today_is(LocalDate date) {
+
+    }
+}
+``` 
 ### Data tables
 
 Data tables from Gherkin can be accessed by using the `DataTable` object as the last parameter in a step definition.
@@ -128,9 +162,9 @@ public void the_following_users_exist(List<User> dataTable) {
     System.out.println(user.name + user.email + user.twitter);
     }
  ```
-If you include the default table transformation code below,  many of the details of the conversion are handled.   The names of the object's attributes must match the camel case of the column headers.      If a column header does not match an attribute, an error occurs.   If there is no column header that matches an attribute, the value of the attribute is set to the default value.
+If you include the default table transformation code shown in "Default Transformers" (below) many of the details of the conversion are handled. The names of the object's attributes must match the camel case of the column headers. If a column header does not match an attribute, an error occurs. If there is no column header that matches an attribute, the value of the attribute is set to the default value.
 
-For this example,  email will be set to defaultEmail and twitter will be set to defaultTwitter.  
+For this example,  email will be set to defaultEmail and twitter will be set to defaultTwitter.
 ```ghekhin 
   Given the following users exist:
   | Name   | 
@@ -138,183 +172,7 @@ For this example,  email will be set to defaultEmail and twitter will be set to 
   | Julien | 
   | Matt   | 
 ```
-
-This is an example of the default table transformation that needs to be somewhere in the step definitions.  
-
- ```java
-import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.java.DataTableType;
-import io.cucumber.java.DefaultDataTableCellTransformer;
-import io.cucumber.java.DefaultDataTableEntryTransformer;
-import io.cucumber.java.DefaultParameterTransformer;
-
-import java.lang.reflect.Type;
-import java.util.Objects;
-
-public class DefaultTableTransformation {
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    @DefaultParameterTransformer
-    @DefaultDataTableEntryTransformer
-    @DefaultDataTableCellTransformer
-
-    public Object transformer(Object fromValue, Type toValueType) {
-        return objectMapper.convertValue(fromValue, objectMapper.constructType(toValueType));
-    }
-
-}
- ```
- If you need more control over the transformations, you can use @DataTableTypes (see below). 
- 
-
-
-### Doc strings
-
-Doc strings from Gherkin can be accessed by using the `DocString` object as a
-parameter.
-
-```java
-package com.example.app;
-
-import io.cucumber.docstring.DocString;
-import io.cucumber.java.en.Given;
-
-public class StepDefinitions {
-    
-    @Given("a docstring:")
-    public void a_data_table(DocString docString){
-        
-    }
-}
-```
-
-## Hooks
-
-Hooks are executed before or after all scenarios/each scenario/each step. A hook
-is declared by annotating a method. 
-
-Hooks are global, all hooks declared in any step definition class will be 
-executed. The order in which hooks are executed is not defined. An explicit
-order can be provided by using the `order` property in the annotation. 
-
-### BeforeAll / AfterAll
-
-`BeforeAll` and `AfterAll` hooks are executed before all scenarios are executed and
-after all scenarios have been executed. A hook is declared by annotating a method.
-This methods must be static and do not take any arguments.
-
-```java
-package io.cucumber.example;
-
-import io.cucumber.java.AfterAll;
-import io.cucumber.java.BeforeAll;
-
-public class StepDefinitions {
-
-    @BeforeAll
-    public static void beforeAll() {
-        // Runs before all scenarios
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        // Runs after all scenarios
-    }
-}
-```
-
-Notes:
-
- 1. When used in combination with Junit 5, Maven Surefire, and/or Failsafe use 
-    version `3.0.0-M5` or later.
- 2. When used in combination with Junit 5 and IntelliJ IDEA failures in before
-    all and after all hooks do not fail a test run.
-
-### Before / After
-
-`Before` and `After` hooks are executed before and after each scenario is executed.
-A hook is declared by annotating a method. This method may take an argument of
-`io.cucumber.java.Scenario`. A tag-expression can be used to execute a hook
-conditionally.
-
-```java
-package io.cucumber.example;
-
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-
-public class StepDefinitions {
-
-    @Before("not @zukini")
-    public void before(Scenario scenario) {
-        scenario.log("Runs before each scenarios *not* tagged with @zukini");
-    }
-
-    @After
-    public void after(Scenario scenario) {
-        scenario.log("Runs after each scenarios");
-    }
-}
-```
-
-### BeforeStep / AfterStep
-
-`BeforeStep` and `AfterStep` hooks are executed before and after each step is
-executed. A hook is declared by annotating a method. This method may take an
-argument of `io.cucumber.java.Scenario`. A tag-expression can be used to execute
-a hook  conditionally.
-
-```java
-package io.cucumber.example;
-
-import io.cucumber.java.AfterStep;
-import io.cucumber.java.BeforeStep;
-
-public class StepDefinitions {
-
-    @BeforeStep("not @zukini")
-    public void before(Scenario scenario) {
-        scenario.log("Runs before each step in scenarios *not* tagged with @zukini");
-    }
-
-    @AfterStep
-    public void after(Scenario scenario) {
-        scenario.log("Runs after each step");
-    }
-}
-```
-    
-## Transformers 
-
-Cucumber expression parameters, data tables and docs strings can be transformed
-into arbitrary java objects.
-
-### Parameter Type
-
-Parameter types used by Cucumber expressions can be declared by using
-`@ParameterType`. The name of the annotated method will be used as the parameter
-name.
-
-```java
-package com.example.app;
-
-import io.cucumber.java.ParameterType;
-import io.cucumber.java.en.Given;
-
-import java.time.LocalDate;
-
-public class StepDefinitions {
-
-    @ParameterType("([0-9]{4})-([0-9]{2})-([0-9]{2})")
-    public LocalDate iso8601Date(String year, String month, String day) {
-        return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
-    }
-
-    @Given("today is {iso8601Date}")
-    public void today_is(LocalDate date) {
-
-    }
-}
-``` 
+If you need more control over the transformations, you can use @DataTableType
 
 ### Data Table Type
 
@@ -518,6 +376,25 @@ public class DataTableStepDefinitions {
 }
 ```
 
+### Doc strings
+
+Doc strings from Gherkin can be accessed by using the `DocString` object as a
+parameter.
+
+```java
+package com.example.app;
+
+import io.cucumber.docstring.DocString;
+import io.cucumber.java.en.Given;
+
+public class StepDefinitions {
+    
+    @Given("a docstring:")
+    public void a_data_table(DocString docString){
+        
+    }
+}
+```
 ## DocString type
 
 Using `@DocStringType` annotation, it is possible to define transformations to other object types.
@@ -585,6 +462,103 @@ public class StepDefinitions {
     @Then("some conclusion is drawn")
     public void some_conclusion_is_drawn(FoodItem foodItem) {
 
+    }
+}
+```
+
+
+## Hooks
+
+Hooks are executed before or after all scenarios/each scenario/each step. A hook
+is declared by annotating a method. 
+
+Hooks are global, all hooks declared in any step definition class will be 
+executed. The order in which hooks are executed is not defined. An explicit
+order can be provided by using the `order` property in the annotation. 
+
+### BeforeAll / AfterAll
+
+`BeforeAll` and `AfterAll` hooks are executed before all scenarios are executed and
+after all scenarios have been executed. A hook is declared by annotating a method.
+This methods must be static and do not take any arguments.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.AfterAll;
+import io.cucumber.java.BeforeAll;
+
+public class StepDefinitions {
+
+    @BeforeAll
+    public static void beforeAll() {
+        // Runs before all scenarios
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        // Runs after all scenarios
+    }
+}
+```
+
+Notes:
+
+ 1. When used in combination with Junit 5, Maven Surefire, and/or Failsafe use 
+    version `3.0.0-M5` or later.
+ 2. When used in combination with Junit 5 and IntelliJ IDEA failures in before
+    all and after all hooks do not fail a test run.
+
+### Before / After
+
+`Before` and `After` hooks are executed before and after each scenario is executed.
+A hook is declared by annotating a method. This method may take an argument of
+`io.cucumber.java.Scenario`. A tag-expression can be used to execute a hook
+conditionally.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+
+public class StepDefinitions {
+
+    @Before("not @zukini")
+    public void before(Scenario scenario) {
+        scenario.log("Runs before each scenarios *not* tagged with @zukini");
+    }
+
+    @After
+    public void after(Scenario scenario) {
+        scenario.log("Runs after each scenarios");
+    }
+}
+```
+
+### BeforeStep / AfterStep
+
+`BeforeStep` and `AfterStep` hooks are executed before and after each step is
+executed. A hook is declared by annotating a method. This method may take an
+argument of `io.cucumber.java.Scenario`. A tag-expression can be used to execute
+a hook  conditionally.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.AfterStep;
+import io.cucumber.java.BeforeStep;
+
+public class StepDefinitions {
+
+    @BeforeStep("not @zukini")
+    public void before(Scenario scenario) {
+        scenario.log("Runs before each step in scenarios *not* tagged with @zukini");
+    }
+
+    @AfterStep
+    public void after(Scenario scenario) {
+        scenario.log("Runs after each step");
     }
 }
 ```
