@@ -197,7 +197,7 @@ strategy.
 `cucumber.execution.parallel.config.dynamic.factor`.
 
 * `fixed`: Set `cucumber.execution.parallel.config.fixed.parallelism` to the
-  desired parallelism and `cucumber.execution.parallel.config.config.fixed.max-pool-size`
+  desired parallelism and `cucumber.execution.parallel.config.fixed.max-pool-size`
   to the maximum pool size of the underlying ForkJoin pool.
 
 * `custom`: Specify a custom `ParallelExecutionConfigurationStrategy`

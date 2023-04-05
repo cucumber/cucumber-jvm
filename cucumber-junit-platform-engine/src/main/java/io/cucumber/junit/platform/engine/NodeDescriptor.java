@@ -89,17 +89,17 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
     static final class PickleDescriptor extends NodeDescriptor {
 
-        private final Pickle pickleEvent;
+        private final Pickle pickle;
         private final Set<TestTag> tags;
         private final Set<ExclusiveResource> exclusiveResources = new LinkedHashSet<>(0);
 
         PickleDescriptor(
                 ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source,
-                Pickle pickleEvent
+                Pickle pickle
         ) {
             super(parameters, uniqueId, name, source);
-            this.pickleEvent = pickleEvent;
-            this.tags = getTags(pickleEvent);
+            this.pickle = pickle;
+            this.tags = getTags(pickle);
             this.tags.forEach(tag -> {
                 ExclusiveResourceOptions exclusiveResourceOptions = new ExclusiveResourceOptions(parameters, tag);
                 exclusiveResourceOptions.exclusiveReadWriteResource()
@@ -109,6 +109,10 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
                         .map(resource -> new ExclusiveResource(resource, LockMode.READ))
                         .forEach(exclusiveResources::add);
             });
+        }
+
+        Pickle getPickle() {
+            return pickle;
         }
 
         private Set<TestTag> getTags(Pickle pickleEvent) {
@@ -136,7 +140,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
         private Optional<SkipResult> shouldBeSkippedByTagFilter(CucumberEngineExecutionContext context) {
             return context.getOptions().tagFilter().map(expression -> {
-                if (expression.evaluate(pickleEvent.getTags())) {
+                if (expression.evaluate(pickle.getTags())) {
                     return SkipResult.doNotSkip();
                 }
                 return SkipResult
@@ -148,7 +152,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
         private Optional<SkipResult> shouldBeSkippedByNameFilter(CucumberEngineExecutionContext context) {
             return context.getOptions().nameFilter().map(pattern -> {
-                if (pattern.matcher(pickleEvent.getName()).matches()) {
+                if (pattern.matcher(pickle.getName()).matches()) {
                     return SkipResult.doNotSkip();
                 }
                 return SkipResult
@@ -161,7 +165,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
         public CucumberEngineExecutionContext execute(
                 CucumberEngineExecutionContext context, DynamicTestExecutor dynamicTestExecutor
         ) {
-            context.runTestCase(pickleEvent);
+            context.runTestCase(pickle);
             return context;
         }
 

@@ -27,7 +27,7 @@ import static org.junit.platform.engine.Filter.composeFilters;
 
 class DiscoverySelectorResolver {
 
-    private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
+    private static final Logger log = LoggerFactory.getLogger(DiscoverySelectorResolver.class);
 
     private static boolean warnedWhenCucumberFeaturesPropertyIsUsed = false;
 
