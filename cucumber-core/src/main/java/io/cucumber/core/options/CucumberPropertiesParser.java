@@ -202,8 +202,8 @@ public final class CucumberPropertiesParser {
 
     private static Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) {
         if (property.startsWith("@")) {
-            Path path = Path.of(property.substring(1));
-            return listRerunFiles(path).stream()
+            Path rerunFileOrDirectory = Path.of(property.substring(1));
+            return listRerunFiles(rerunFileOrDirectory).stream()
                     .map(OptionsFileParser::parseFeatureWithLinesFile);
         }
         return Stream.empty();
@@ -211,11 +211,11 @@ public final class CucumberPropertiesParser {
 
     private static Set<Path> listRerunFiles(Path path) {
         class FileCollector extends SimpleFileVisitor<Path> {
-            final Set<Path> files = new HashSet<>();
+            final Set<Path> paths = new HashSet<>();
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 if (!Files.isDirectory(file)) {
-                    files.add(file);
+                    paths.add(file);
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -224,7 +224,7 @@ public final class CucumberPropertiesParser {
         try {
             FileCollector collector = new FileCollector();
             Files.walkFileTree(path, collector);
-            return collector.files;
+            return collector.paths;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
