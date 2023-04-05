@@ -228,6 +228,15 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
+    void should_parse_rerun_files() throws IOException {
+        mockFileResource("classpath:path/to.feature");
+        mockFileResource("classpath:path/to/other.feature");
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + temp.toString());
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("classpath:path/to.feature"), URI.create("classpath:path/to/other.feature")));
+    }
+
+    @Test
     void should_parse_rerun_file_and_remove_existing_tag_filters() throws IOException {
         RuntimeOptions existing = RuntimeOptions.defaultOptions();
         existing.setTagExpressions(Collections.singletonList(TagExpressionParser.parse("@example")));

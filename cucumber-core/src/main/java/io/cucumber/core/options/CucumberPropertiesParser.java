@@ -7,12 +7,10 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
@@ -41,7 +39,6 @@ import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_N
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
-import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.util.Arrays.stream;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
@@ -203,31 +200,33 @@ public final class CucumberPropertiesParser {
                 .collect(toList());
     }
 
-    private static Set<String> listRerunFiles(String path) {
-        Set<String> fileList = new HashSet<>();
-        try {
-            Files.walkFileTree(Paths.get(path), new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (!Files.isDirectory(file)) {
-                        fileList.add(path + "/" + file.getFileName().toString());
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-            return fileList;
-        } catch (IOException ioe) {
-            throw new RuntimeException("Runtime exception", ioe);
-        }
-    }
-
     private static Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) {
         if (property.startsWith("@")) {
-            String pathStr = property.substring(1);
-            return listRerunFiles(pathStr).stream()
-                    .map(file -> parseFeatureWithLinesFile(Paths.get(pathStr)));
+            Path path = Path.of(property.substring(1));
+            return listRerunFiles(path).stream()
+                    .map(OptionsFileParser::parseFeatureWithLinesFile);
         }
         return Stream.empty();
     }
 
+    private static Set<Path> listRerunFiles(Path path) {
+        class FileCollector extends SimpleFileVisitor<Path> {
+            final Set<Path> files = new HashSet<>();
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                if (!Files.isDirectory(file)) {
+                    files.add(file);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        }
+
+        try {
+            FileCollector collector = new FileCollector();
+            Files.walkFileTree(path, collector);
+            return collector.files;
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
 }
