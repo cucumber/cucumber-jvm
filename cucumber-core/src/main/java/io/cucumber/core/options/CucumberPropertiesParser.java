@@ -1,27 +1,17 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
@@ -76,16 +66,11 @@ public final class CucumberPropertiesParser {
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
-            splitAndThenFlatMap(CucumberPropertiesParser::parseFeatureFile),
-            builder::addFeature);
-
-        parseAll(properties,
-            // For historical reasons rerun files are also provided through the
-            // feature property. They are differentiated by prefixing the uri
-            // name with an `@` symbol.
-            FEATURES_PROPERTY_NAME,
-            splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFiles),
-            builder::addRerun);
+            splitAndMap(FeatureWithLinesOrRerunPath::parse),
+            parsed -> {
+                parsed.getFeaturesToRerun().ifPresent(builder::addRerun);
+                parsed.getFeatureWithLines().ifPresent(builder::addFeature);
+            });
 
         parse(properties,
             FILTER_NAME_PROPERTY_NAME,
@@ -177,21 +162,6 @@ public final class CucumberPropertiesParser {
         }
     }
 
-    private static <T> Function<String, Collection<T>> splitAndThenFlatMap(Function<String, Stream<T>> parse) {
-        return combined -> stream(combined.split(","))
-                .map(String::trim)
-                .filter(part -> !part.isEmpty())
-                .flatMap(parse)
-                .collect(toList());
-    }
-
-    private static Stream<FeatureWithLines> parseFeatureFile(String property) {
-        if (property.startsWith("@")) {
-            return Stream.empty();
-        }
-        return Stream.of(FeatureWithLines.parse(property));
-    }
-
     private static <T> Function<String, Collection<T>> splitAndMap(Function<String, T> parse) {
         return combined -> stream(combined.split(","))
                 .map(String::trim)
@@ -200,33 +170,4 @@ public final class CucumberPropertiesParser {
                 .collect(toList());
     }
 
-    private static Stream<Collection<FeatureWithLines>> parseRerunFiles(String property) {
-        if (property.startsWith("@")) {
-            Path rerunFileOrDirectory = Path.of(property.substring(1));
-            return listRerunFiles(rerunFileOrDirectory).stream()
-                    .map(OptionsFileParser::parseFeatureWithLinesFile);
-        }
-        return Stream.empty();
-    }
-
-    private static Set<Path> listRerunFiles(Path path) {
-        class FileCollector extends SimpleFileVisitor<Path> {
-            final Set<Path> paths = new HashSet<>();
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                if (!Files.isDirectory(file)) {
-                    paths.add(file);
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        }
-
-        try {
-            FileCollector collector = new FileCollector();
-            Files.walkFileTree(path, collector);
-            return collector.paths;
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
-    }
 }
