@@ -233,7 +233,8 @@ class CucumberPropertiesParserTest {
         mockFileResource("classpath:path/to/other.feature");
         properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + temp.toString());
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getFeaturePaths(), containsInAnyOrder(URI.create("classpath:path/to.feature"), URI.create("classpath:path/to/other.feature")));
+        assertThat(options.getFeaturePaths(),
+            containsInAnyOrder(URI.create("classpath:path/to.feature"), URI.create("classpath:path/to/other.feature")));
     }
 
     @Test

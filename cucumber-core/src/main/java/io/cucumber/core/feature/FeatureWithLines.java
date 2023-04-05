@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
  * Identifies either a directory containing feature files, a specific feature or
  * specific scenarios and examples (pickles) in a feature.
  * <p>
- * The syntax of a feature with lines defined as either a {@link FeaturePath}
- * or a {@link FeatureIdentifier} followed by a sequence of line numbers each
+ * The syntax of a feature with lines defined as either a {@link FeaturePath} or
+ * a {@link FeatureIdentifier} followed by a sequence of line numbers each
  * preceded by a colon.
  */
 public class FeatureWithLines implements Serializable {
