@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import org.apiguardian.api.API;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
+import org.picocontainer.behaviors.Cached;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -14,7 +15,14 @@ import java.util.Set;
 public final class PicoFactory implements ObjectFactory {
 
     private final Set<Class<?>> classes = new HashSet<>();
-    private MutablePicoContainer pico;
+    private final MutablePicoContainer pico  = new PicoBuilder()
+            .withCaching()
+            .withLifecycle()
+            .build();
+
+    public PicoFactory() {
+        this.pico.start();
+    }
 
     private static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
@@ -23,24 +31,18 @@ public final class PicoFactory implements ObjectFactory {
     }
 
     public void start() {
-        pico = new PicoBuilder()
-                .withCaching()
-                .withLifecycle()
-                .build();
-        for (Class<?> clazz : classes) {
-            pico.addComponent(clazz);
-        }
-        pico.start();
+        // do nothing (was already started in constructor)
     }
 
     public void stop() {
-        pico.stop();
-        pico.dispose();
+        pico.getComponentAdapters()
+                .forEach(cached->((Cached<?>) cached).flush());
     }
 
     public boolean addClass(Class<?> clazz) {
         if (isInstantiable(clazz) && classes.add(clazz)) {
             addConstructorDependencies(clazz);
+            this.pico.addComponent(clazz);
         }
         return true;
     }
