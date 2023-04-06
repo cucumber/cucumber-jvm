@@ -1,10 +1,11 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.backend.DefaultObjectFactory;
+import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
-import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.net.URI;
 
@@ -150,7 +151,25 @@ class CucumberEngineOptionsTest {
         ConfigurationParameters absent = new MapConfigurationParameters(
             "some key", "some value");
         assertFalse(new CucumberEngineOptions(absent).isParallelExecutionEnabled());
-
     }
 
+    @Test
+    void objectFactory() {
+        ConfigurationParameters configurationParameters = new MapConfigurationParameters(
+            Constants.OBJECT_FACTORY_PROPERTY_NAME,
+            DefaultObjectFactory.class.getName());
+
+        assertThat(new CucumberEngineOptions(configurationParameters).getObjectFactoryClass(),
+            is(DefaultObjectFactory.class));
+    }
+
+    @Test
+    void uuidGenerator() {
+        ConfigurationParameters configurationParameters = new MapConfigurationParameters(
+            Constants.UUID_GENERATOR_PROPERTY_NAME,
+            IncrementingUuidGenerator.class.getName());
+
+        assertThat(new CucumberEngineOptions(configurationParameters).getUuidGeneratorClass(),
+            is(IncrementingUuidGenerator.class));
+    }
 }

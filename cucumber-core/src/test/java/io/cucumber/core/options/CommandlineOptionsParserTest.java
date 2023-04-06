@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
@@ -74,6 +75,16 @@ class CommandlineOptionsParserTest {
         RuntimeOptions options = optionsBuilder.build();
         assertNotNull(options);
         assertThat(options.getObjectFactoryClass(), Is.is(equalTo(TestObjectFactory.class)));
+    }
+
+    @Test
+    void testParseWithUuidGeneratorArgument() {
+        RuntimeOptionsBuilder optionsBuilder = parser.parse("--uuid-generator",
+            IncrementingUuidGenerator.class.getName());
+        assertNotNull(optionsBuilder);
+        RuntimeOptions options = optionsBuilder.build();
+        assertNotNull(options);
+        assertThat(options.getUuidGeneratorClass(), Is.is(equalTo(IncrementingUuidGenerator.class)));
     }
 
     @Test

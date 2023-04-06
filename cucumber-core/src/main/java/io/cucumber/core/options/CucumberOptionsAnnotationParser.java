@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
@@ -45,6 +46,7 @@ public final class CucumberOptionsAnnotationParser {
                 addGlue(options, args);
                 addFeatures(options, args);
                 addObjectFactory(options, args);
+                addUuidGenerator(options, args);
             }
         }
 
@@ -149,6 +151,12 @@ public final class CucumberOptionsAnnotationParser {
         }
     }
 
+    private void addUuidGenerator(CucumberOptions options, RuntimeOptionsBuilder args) {
+        if (options.uuidGenerator() != null) {
+            args.setUuidGeneratorClass(options.uuidGenerator());
+        }
+    }
+
     private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(RuntimeOptionsBuilder args, Class<?> clazz) {
         if (!featuresSpecified) {
             String packageName = packagePath(clazz);
@@ -207,6 +215,8 @@ public final class CucumberOptionsAnnotationParser {
         SnippetType snippets();
 
         Class<? extends ObjectFactory> objectFactory();
+
+        Class<? extends UuidGenerator> uuidGenerator();
 
     }
 
