@@ -11,7 +11,7 @@ public class StepDefinitionsWithTransitiveDependencies {
     }
 
     @Given("step definitions with transitive dependencies")
-    public void stepDefinitionsWithTransitiveDependencies(){
+    public void stepDefinitionsWithTransitiveDependencies() {
 
     }
 

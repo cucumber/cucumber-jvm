@@ -30,8 +30,7 @@ class PicoFactoryTest {
 
         assertAll(
             () -> assertNotNull(o1),
-            () -> assertNotSame(o1, o2)
-        );
+            () -> assertNotSame(o1, o2));
     }
 
     @Test
@@ -41,19 +40,19 @@ class PicoFactoryTest {
 
         // Scenario 1
         factory.start();
-        StepDefinitionsWithTransitiveDependencies o1 = factory.getInstance(StepDefinitionsWithTransitiveDependencies.class);
+        StepDefinitionsWithTransitiveDependencies o1 = factory
+                .getInstance(StepDefinitionsWithTransitiveDependencies.class);
         factory.stop();
 
         // Scenario 2
         factory.start();
-        StepDefinitionsWithTransitiveDependencies o2 = factory.getInstance(StepDefinitionsWithTransitiveDependencies.class);
+        StepDefinitionsWithTransitiveDependencies o2 = factory
+                .getInstance(StepDefinitionsWithTransitiveDependencies.class);
         factory.stop();
 
-
         assertAll(
-                () -> assertNotSame(o1.firstDependency, o2.firstDependency),
-                () -> assertNotSame(o1.firstDependency.secondDependency, o2.firstDependency.secondDependency)
-        );
+            () -> assertNotSame(o1.firstDependency, o2.firstDependency),
+            () -> assertNotSame(o1.firstDependency.secondDependency, o2.firstDependency.secondDependency));
     }
 
     @Test
