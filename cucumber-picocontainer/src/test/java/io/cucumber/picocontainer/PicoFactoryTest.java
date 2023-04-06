@@ -56,7 +56,7 @@ class PicoFactoryTest {
     }
 
     @Test
-    void shouldDisposeOnStop() {
+    void shouldInvokeLifeCycleMethods() {
         // Given
         ObjectFactory factory = new PicoFactory();
         factory.addClass(StepDefinitions.class);
@@ -66,12 +66,16 @@ class PicoFactoryTest {
         StepDefinitions steps = factory.getInstance(StepDefinitions.class);
 
         // Then
+        assertTrue(steps.getBelly().wasStarted());
+        assertFalse(steps.getBelly().wasStopped());
         assertFalse(steps.getBelly().isDisposed());
 
         // When
         factory.stop();
 
         // Then
+        assertTrue(steps.getBelly().wasStarted());
+        assertTrue(steps.getBelly().wasStopped());
         assertTrue(steps.getBelly().isDisposed());
     }
 
