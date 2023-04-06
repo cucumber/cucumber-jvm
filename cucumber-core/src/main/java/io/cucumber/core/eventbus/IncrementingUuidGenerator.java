@@ -9,9 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Thread-safe and collision-free UUID generator for single JVM. This is a
  * sequence generator and each instance has its own counter. This generator is
- * about 100 times faster than #RandomUuidGenerator. If you use Cucumber in
- * multi-JVM setup, you should use #RandomUuidGenerator instead. Note that the
- * UUID version and variant is not guaranteed to be stable.
+ * about 100 times faster than #RandomUuidGenerator.
  *
  * Properties:
  * - thread-safe
@@ -19,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * - almost collision-free in different classloaders / JVMs
  * - UUIDs generated using the instances from the same classloader are sortable
  *
- * UUID version 8 (custom) <a href=
+ * UUID version 8 (custom) / variant 2 <a href=
  * "https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html#name-uuid-version-8">...</a>
  * <!-- @formatter:off -->
  * |       40 bits      |      8 bits    |  4 bits |    12 bits    |  2 bits | 62 bits |
@@ -31,7 +29,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
     /**
      * 40 bits mask for the epoch-time part (MSB).
      */
-    public static final long MAX_EPOCH_TIME = 0x0ffffffffffL;
+    private static final long MAX_EPOCH_TIME = 0x0ffffffffffL;
 
     /**
      * 8 bits mask for the session identifier (MSB). Package-private for testing
