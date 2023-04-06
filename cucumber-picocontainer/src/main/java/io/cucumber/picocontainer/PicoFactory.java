@@ -15,7 +15,7 @@ import java.util.Set;
 public final class PicoFactory implements ObjectFactory {
 
     private final Set<Class<?>> classes = new HashSet<>();
-    private final MutablePicoContainer pico  = new PicoBuilder()
+    private final MutablePicoContainer pico = new PicoBuilder()
             .withCaching()
             .withLifecycle()
             .build();
@@ -36,7 +36,7 @@ public final class PicoFactory implements ObjectFactory {
 
     public void stop() {
         pico.getComponentAdapters()
-                .forEach(cached->((Cached<?>) cached).flush());
+                .forEach(cached -> ((Cached<?>) cached).flush());
     }
 
     public boolean addClass(Class<?> clazz) {
