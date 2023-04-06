@@ -33,6 +33,8 @@ public @interface CucumberOptions {
 
     Class<? extends io.cucumber.core.backend.ObjectFactory> objectFactory() default NoObjectFactory.class;
 
+    Class<? extends io.cucumber.core.eventbus.UuidGenerator> uuidGenerator() default NoUuidGenerator.class;
+
     String[] junit() default {};
 
 }

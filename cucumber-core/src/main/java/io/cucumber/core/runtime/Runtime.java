@@ -18,7 +18,6 @@ import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -138,7 +137,7 @@ public final class Runtime {
 
     public static class Builder {
 
-        private EventBus eventBus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        private EventBus eventBus;
         private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
@@ -197,6 +196,13 @@ public final class Runtime {
             final ExitStatus exitStatus = new ExitStatus(runtimeOptions);
             plugins.addPlugin(exitStatus);
 
+            if (this.eventBus == null) {
+                final UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(
+                    classLoader,
+                    runtimeOptions);
+                this.eventBus = new TimeServiceEventBus(Clock.systemUTC(),
+                    uuidGeneratorServiceLoader.loadUuidGenerator());
+            }
             final EventBus eventBus = synchronize(this.eventBus);
 
             if (runtimeOptions.isMultiThreaded()) {
