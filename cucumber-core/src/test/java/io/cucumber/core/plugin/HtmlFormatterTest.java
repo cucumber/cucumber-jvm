@@ -75,7 +75,8 @@ class HtmlFormatterTest {
             Collections.emptyList(),
             true,
             false,
-            "");
+            "",
+            null);
         bus.send(Envelope.of(parameterType));
 
         TestRunFinished testRunFinished = new TestRunFinished(
