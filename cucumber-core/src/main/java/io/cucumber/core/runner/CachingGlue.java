@@ -291,7 +291,8 @@ final class CachingGlue implements Glue {
             parameterType.getRegexps(),
             parameterType.preferForRegexpMatch(),
             parameterType.useForSnippets(),
-            bus.generateId().toString());
+            bus.generateId().toString(),
+            null);
         bus.send(Envelope.of(messagesParameterType));
     }
 
