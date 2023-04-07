@@ -34,19 +34,22 @@ public final class PicoFactory implements ObjectFactory {
         // do nothing (was already started in constructor)
     }
 
+    @Override
     public void stop() {
         pico.getComponentAdapters()
                 .forEach(cached -> ((Cached<?>) cached).flush());
     }
 
+    @Override
     public boolean addClass(Class<?> clazz) {
         if (isInstantiable(clazz) && classes.add(clazz)) {
+            pico.addComponent(clazz);
             addConstructorDependencies(clazz);
-            this.pico.addComponent(clazz);
         }
         return true;
     }
 
+    @Override
     public <T> T getInstance(Class<T> type) {
         return pico.getComponent(type);
     }
