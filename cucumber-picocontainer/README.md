@@ -45,7 +45,7 @@ public class Belly {
         this.contents = contents;
     }
     
-    public List<String getContents(){
+    public List<String> getContents(){
         return contents;
     }
 }
