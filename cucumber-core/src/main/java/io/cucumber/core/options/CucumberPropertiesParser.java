@@ -1,21 +1,17 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
@@ -34,7 +30,6 @@ import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_N
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.UUID_GENERATOR_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
-import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static java.util.Arrays.stream;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
@@ -72,16 +67,11 @@ public final class CucumberPropertiesParser {
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
-            splitAndThenFlatMap(CucumberPropertiesParser::parseFeatureFile),
-            builder::addFeature);
-
-        parseAll(properties,
-            // For historical reasons rerun files are also provided through the
-            // feature property. They are differentiated by prefixing the uri
-            // name with an `@` symbol.
-            FEATURES_PROPERTY_NAME,
-            splitAndThenFlatMap(CucumberPropertiesParser::parseRerunFile),
-            builder::addRerun);
+            splitAndMap(FeatureWithLinesOrRerunPath::parse),
+            parsed -> {
+                parsed.getFeaturesToRerun().ifPresent(builder::addRerun);
+                parsed.getFeatureWithLines().ifPresent(builder::addFeature);
+            });
 
         parse(properties,
             FILTER_NAME_PROPERTY_NAME,
@@ -178,35 +168,12 @@ public final class CucumberPropertiesParser {
         }
     }
 
-    private static <T> Function<String, Collection<T>> splitAndThenFlatMap(Function<String, Stream<T>> parse) {
-        return combined -> stream(combined.split(","))
-                .map(String::trim)
-                .filter(part -> !part.isEmpty())
-                .flatMap(parse)
-                .collect(toList());
-    }
-
-    private static Stream<FeatureWithLines> parseFeatureFile(String property) {
-        if (property.startsWith("@")) {
-            return Stream.empty();
-        }
-        return Stream.of(FeatureWithLines.parse(property));
-    }
-
     private static <T> Function<String, Collection<T>> splitAndMap(Function<String, T> parse) {
         return combined -> stream(combined.split(","))
                 .map(String::trim)
                 .filter(part -> !part.isEmpty())
                 .map(parse)
                 .collect(toList());
-    }
-
-    private static Stream<Collection<FeatureWithLines>> parseRerunFile(String property) {
-        if (property.startsWith("@")) {
-            Path rerunFile = Paths.get(property.substring(1));
-            return Stream.of(parseFeatureWithLinesFile(rerunFile));
-        }
-        return Stream.empty();
     }
 
 }

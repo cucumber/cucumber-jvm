@@ -32,8 +32,9 @@ cucumber.execution.wip=         # true or false. default: false.
                                 # Fails if there any passing scenarios
                                 # CLI only.   
 
-cucumber.features=              # comma separated paths to feature files. 
-                                # example: path/to/example.feature, path/to/other.feature
+cucumber.features=              # comma separated list of feature paths.
+                                # format: [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] | @PATH ]
+                                # example: path/to/features, classpath:com/example/features, path/to/example.feature:42, @path/to/rerun.txt
   
 cucumber.filter.name=           # a regular expression
                                 # only scenarios with matching names are executed. 

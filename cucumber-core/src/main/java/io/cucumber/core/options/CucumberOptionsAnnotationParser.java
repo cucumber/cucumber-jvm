@@ -9,11 +9,8 @@ import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.options.OptionsFileParser.parseFeatureWithLinesFile;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static java.util.Objects.requireNonNull;
 
@@ -133,13 +130,9 @@ public final class CucumberOptionsAnnotationParser {
     private void addFeatures(CucumberOptions options, RuntimeOptionsBuilder args) {
         if (options != null && options.features().length != 0) {
             for (String feature : options.features()) {
-                if (feature.startsWith("@")) {
-                    Path rerunFile = Paths.get(feature.substring(1));
-                    args.addRerun(parseFeatureWithLinesFile(rerunFile));
-                } else {
-                    FeatureWithLines featureWithLines = FeatureWithLines.parse(feature);
-                    args.addFeature(featureWithLines);
-                }
+                FeatureWithLinesOrRerunPath parsed = FeatureWithLinesOrRerunPath.parse(feature);
+                parsed.getFeaturesToRerun().ifPresent(args::addRerun);
+                parsed.getFeatureWithLines().ifPresent(args::addFeature);
             }
             featuresSpecified = true;
         }
