@@ -12,23 +12,27 @@ We appreciate that. Do keep the following in mind:
 
 ## Building
 
+Cucumber-JVM is built with [Maven](http://maven.apache.org/) and includes a
+[Maven Wrapper](https://maven.apache.org/wrapper) that will automatically
+download a correct version of Maven.
+
 When building the project for the first time, run:
 
 ```
-mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
+./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
 ```
 
 The `cucumber-archetype` modules integration tests against `-SNAPSHOT` 
 versions of Cucumber. These must be installed first.
 
-Afterwards `mvn test` or `mvn verify` should work as expected.
+Afterwards `./mvnw test` or `./mvnw verify` should work as expected.
 
 ## Formatting Java
 
 The source code is formatted automatically by spotless when running:
 
 ```
-mvn install
+./mvnw install
 ```
 
 To configure IntelliJ IDEA/Eclipse use the configuration files in `.spotless/`.
@@ -46,33 +50,4 @@ To configure IntelliJ IDEA/Eclipse use the configuration files in `.spotless/`.
 `+` These are set automatically if you use an editor/IDE that supports 
 [EditorConfig](http://editorconfig.org/#download).
 
-## Building Cucumber-JVM
 
-Cucumber-JVM is built with [Maven](http://maven.apache.org/).
-
-```
-mvn clean install
-```
-
-## IDE Setup
-
-### IntelliJ IDEA
-
-```
-File -> Open Project -> path/to/cucumber-jvm/pom.xml
-```
-
-Your `.feature` files must be in a folder that IDEA recognises as *source* or 
-*test*. You must also tell IDEA to copy your `.feature` files to your output 
-directory:
-
-```
-Preferences -> Compiler -> Resource Patterns -> Add `;?*.feature`
-```
-
-If you are writing step definitions in a scripting language you must also add 
-the appropriate file extension for that language as well.
-
-### Eclipse
-
-Just load the root `pom.xml`
