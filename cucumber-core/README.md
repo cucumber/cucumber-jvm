@@ -53,6 +53,9 @@ cucumber.plugin=                # comma separated plugin strings.
 cucumber.object-factory=        # object factory class name.
                                 # example: com.example.MyObjectFactory
 
+cucumber.uuid-generator=        # UUID generator class name.
+                                # example: com.example.MyUuidGenerator
+
 cucumber.publish.enabled        # true or false. default: false
                                 # enable publishing of test results 
 
@@ -79,6 +82,23 @@ Backends consist of two components: a `Backend`, and an optional `ObjectFactory`
 They are  respectively responsible for discovering glue classes, registering
 step definitions, and creating instances of said glue classes. Backend and
 object factory implementations are discovered via SPI.
+
+## Event bus ##
+
+Cucumber emits events on an event bus in many cases:
+- during the feature file parsing
+- when the test scenarios are executed
+
+An event has a UUID. The UUID generator can be configured using the `cucumber.uuid-generator` property:
+
+| UUID generator                                      | Features                                | Performance [Millions UUID/second] | Typical usage example                                                                                                                                                                                                                                                          | 
+|-----------------------------------------------------|-----------------------------------------|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| io.cucumber.core.eventbus.RandomUuidGenerator       | Thread-safe, collision-free, multi-jvm  | ~1                                 | Reports may be generated on different JVMs at the same time. A typical example would be one suite that tests against Firefox and another against Safari. The exact browser is configured through a property. These are then executed concurrently on different Gitlab runners. |
+| io.cucumber.core.eventbus.IncrementingUuidGenerator | Thread-safe, collision-free, single-jvm | ~130                               | Reports are generated on a single JVM                                                                                                                                                                                                                                          |
+
+The performance gain on real project depend on the feature size.
+
+When not specified, the `RandomUuidGenerator` is used.
 
 ## Plugin ##
 

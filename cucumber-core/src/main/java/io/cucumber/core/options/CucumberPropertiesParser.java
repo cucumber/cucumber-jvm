@@ -28,6 +28,7 @@ import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.UUID_GENERATOR_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.WIP_PROPERTY_NAME;
 import static java.util.Arrays.stream;
 import static java.util.function.Function.identity;
@@ -91,6 +92,11 @@ public final class CucumberPropertiesParser {
             OBJECT_FACTORY_PROPERTY_NAME,
             ObjectFactoryParser::parseObjectFactory,
             builder::setObjectFactoryClass);
+
+        parse(properties,
+            UUID_GENERATOR_PROPERTY_NAME,
+            UuidGeneratorParser::parseUuidGenerator,
+            builder::setUuidGeneratorClass);
 
         parse(properties,
             OPTIONS_PROPERTY_NAME,

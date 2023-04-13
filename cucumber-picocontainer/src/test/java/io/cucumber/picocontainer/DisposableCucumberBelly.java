@@ -1,6 +1,7 @@
 package io.cucumber.picocontainer;
 
 import org.picocontainer.Disposable;
+import org.picocontainer.Startable;
 
 import java.util.List;
 
@@ -11,10 +12,12 @@ import java.util.List;
  * In a real app, this could be a database connector or similar.
  */
 public class DisposableCucumberBelly
-        implements Disposable {
+        implements Disposable, Startable {
 
     private List<String> contents;
     private boolean isDisposed = false;
+    private boolean wasStarted = false;
+    private boolean wasStopped = false;
 
     public List<String> getContents() {
         assert !isDisposed;
@@ -40,4 +43,21 @@ public class DisposableCucumberBelly
         return isDisposed;
     }
 
+    @Override
+    public void start() {
+        wasStarted = true;
+    }
+
+    public boolean wasStarted() {
+        return wasStarted;
+    }
+
+    @Override
+    public void stop() {
+        wasStopped = true;
+    }
+
+    public boolean wasStopped() {
+        return wasStopped;
+    }
 }

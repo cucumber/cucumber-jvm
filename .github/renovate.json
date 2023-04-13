@@ -2,5 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>cucumber/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["io.cucumber:(messages|gherkin|html-formatter|junit-xml-formatter)"],
+      "groupName": "Messages and dependants"
+    }
   ]
 }

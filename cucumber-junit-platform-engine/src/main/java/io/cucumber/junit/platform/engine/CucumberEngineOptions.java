@@ -1,11 +1,13 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.SnippetTypeParser;
+import io.cucumber.core.options.UuidGeneratorParser;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
@@ -39,11 +41,13 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_ENABLED
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
 
 class CucumberEngineOptions implements
         io.cucumber.core.plugin.Options,
         io.cucumber.core.runner.Options,
-        io.cucumber.core.backend.Options {
+        io.cucumber.core.backend.Options,
+        io.cucumber.core.eventbus.Options {
 
     private final ConfigurationParameters configurationParameters;
 
@@ -153,6 +157,13 @@ class CucumberEngineOptions implements
     public Class<? extends ObjectFactory> getObjectFactoryClass() {
         return configurationParameters
                 .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
+                .orElse(null);
+    }
+
+    @Override
+    public Class<? extends UuidGenerator> getUuidGeneratorClass() {
+        return configurationParameters
+                .get(UUID_GENERATOR_PROPERTY_NAME, UuidGeneratorParser::parseUuidGenerator)
                 .orElse(null);
     }
 

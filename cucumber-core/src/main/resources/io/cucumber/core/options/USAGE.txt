@@ -73,6 +73,13 @@ Options:
                                            be specified in:
                                            META-INF/services/io.cucumber.core.backend.ObjectFactory
 
+      --uuid-generator CLASSNAME           Uses the class specified by CLASSNAME
+                                           as UUID generator. Be aware that the
+                                           class is loaded through a service
+                                           loader and therefore also needs to
+                                           be specified in:
+                                           META-INF/services/io.cucumber.core.eventbus.UuidGenerator
+
 Feature path examples:
                                            When no feature path is provided
                                            cucumber will scan the classpath root

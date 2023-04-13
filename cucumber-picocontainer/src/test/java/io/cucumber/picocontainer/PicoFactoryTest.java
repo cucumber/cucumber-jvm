@@ -4,13 +4,11 @@ import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PicoFactoryTest {
@@ -31,13 +29,34 @@ class PicoFactoryTest {
         factory.stop();
 
         assertAll(
-            () -> assertThat(o1, is(notNullValue())),
-            () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1)))));
+            () -> assertNotNull(o1),
+            () -> assertNotSame(o1, o2));
     }
 
     @Test
-    void shouldDisposeOnStop() {
+    void shouldCreateNewTransitiveDependencies() {
+        ObjectFactory factory = new PicoFactory();
+        factory.addClass(StepDefinitionsWithTransitiveDependencies.class);
+
+        // Scenario 1
+        factory.start();
+        StepDefinitionsWithTransitiveDependencies o1 = factory
+                .getInstance(StepDefinitionsWithTransitiveDependencies.class);
+        factory.stop();
+
+        // Scenario 2
+        factory.start();
+        StepDefinitionsWithTransitiveDependencies o2 = factory
+                .getInstance(StepDefinitionsWithTransitiveDependencies.class);
+        factory.stop();
+
+        assertAll(
+            () -> assertNotSame(o1.firstDependency, o2.firstDependency),
+            () -> assertNotSame(o1.firstDependency.secondDependency, o2.firstDependency.secondDependency));
+    }
+
+    @Test
+    void shouldInvokeLifeCycleMethods() {
         // Given
         ObjectFactory factory = new PicoFactory();
         factory.addClass(StepDefinitions.class);
@@ -47,12 +66,16 @@ class PicoFactoryTest {
         StepDefinitions steps = factory.getInstance(StepDefinitions.class);
 
         // Then
+        assertTrue(steps.getBelly().wasStarted());
+        assertFalse(steps.getBelly().wasStopped());
         assertFalse(steps.getBelly().isDisposed());
 
         // When
         factory.stop();
 
         // Then
+        assertTrue(steps.getBelly().wasStarted());
+        assertTrue(steps.getBelly().wasStopped());
         assertTrue(steps.getBelly().isDisposed());
     }
 

@@ -182,6 +182,16 @@ public final class Constants {
     public static final String OBJECT_FACTORY_PROPERTY_NAME = io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 
     /**
+     * Property name to select custom UUID generator implementation: {@value}
+     * <p>
+     * By default, if a single UUID generator is available on the class path
+     * that object factory will be used, or more than one UUID generator and the
+     * #RandomUuidGenerator are available on the classpath, the
+     * #RandomUuidGenerator will be used.
+     */
+    public static final String UUID_GENERATOR_PROPERTY_NAME = io.cucumber.core.options.Constants.UUID_GENERATOR_PROPERTY_NAME;
+
+    /**
      * Property name to control naming convention for generated snippets:
      * {@value}
      * <p>

@@ -50,11 +50,13 @@ import static io.cucumber.core.cli.CommandlineOptions.SNIPPETS;
 import static io.cucumber.core.cli.CommandlineOptions.TAGS;
 import static io.cucumber.core.cli.CommandlineOptions.TAGS_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.THREADS;
+import static io.cucumber.core.cli.CommandlineOptions.UUID_GENERATOR;
 import static io.cucumber.core.cli.CommandlineOptions.VERSION;
 import static io.cucumber.core.cli.CommandlineOptions.VERSION_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.WIP;
 import static io.cucumber.core.cli.CommandlineOptions.WIP_SHORT;
 import static io.cucumber.core.options.ObjectFactoryParser.parseObjectFactory;
+import static io.cucumber.core.options.UuidGeneratorParser.parseUuidGenerator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
@@ -163,6 +165,9 @@ public final class CommandlineOptionsParser {
             } else if (arg.equals(OBJECT_FACTORY)) {
                 String objectFactoryClassName = removeArgFor(arg, args);
                 parsedOptions.setObjectFactoryClass(parseObjectFactory(objectFactoryClassName));
+            } else if (arg.equals(UUID_GENERATOR)) {
+                String uuidGeneratorClassName = removeArgFor(arg, args);
+                parsedOptions.setUuidGeneratorClass(parseUuidGenerator(uuidGeneratorClassName));
             } else if (arg.startsWith("-")) {
                 out.println("Unknown option: " + arg);
                 printUsage();

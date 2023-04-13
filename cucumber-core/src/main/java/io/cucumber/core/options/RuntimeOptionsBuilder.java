@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
@@ -31,6 +32,7 @@ public final class RuntimeOptionsBuilder {
     private PickleOrder parsedPickleOrder = null;
     private Integer parsedCount = null;
     private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
+    private Class<? extends UuidGenerator> parsedUuidGeneratorClass = null;
     private Boolean addDefaultSummaryPrinter = null;
     private boolean addDefaultGlueIfAbsent;
     private boolean addDefaultFeaturePathIfAbsent;
@@ -130,6 +132,10 @@ public final class RuntimeOptionsBuilder {
 
         if (parsedObjectFactoryClass != null) {
             runtimeOptions.setObjectFactoryClass(parsedObjectFactoryClass);
+        }
+
+        if (parsedUuidGeneratorClass != null) {
+            runtimeOptions.setUuidGeneratorClass(parsedUuidGeneratorClass);
         }
 
         if (addDefaultSummaryPrinter != null && addDefaultSummaryPrinter) {
@@ -236,6 +242,11 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.parsedObjectFactoryClass = objectFactoryClass;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {
+        this.parsedUuidGeneratorClass = uuidGeneratorClass;
         return this;
     }
 
