@@ -22,8 +22,27 @@ public @interface CucumberOptions {
     boolean dryRun() default false;
 
     /**
-     * Either a URI or path to a directory of features or a URI or path to a
-     * single feature optionally followed by a colon and line numbers.
+     * A list of features paths.
+     * <p>
+     * A feature path is constructed as
+     * {@code  [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] | @PATH ] }
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>{@code src/test/resources/features} -- All features in the
+     * {@code src/test/resources/features} directory</li>
+     * <li>{@code classpath:com/example/application} -- All features in the
+     * {@code com.example.application} package</li>
+     * <li>{@code in-memory:/features} -- All features in the {@code /features}
+     * directory on an in memory file system supported by
+     * {@link java.nio.file.FileSystems}</li>
+     * <li>{@code src/test/resources/features/example.feature:42} -- The
+     * scenario or example at line 42 in the example feature file</li>
+     * <li>{@code @target/rerun} -- All the scenarios in the files in the rerun
+     * directory</li>
+     * <li>{@code @target/rerun/RunCucumber.txt} -- All the scenarios in
+     * RunCucumber.txt file</li>
+     * </ul>
      * <p>
      * When no feature path is provided, Cucumber will use the package of the
      * annotated class. For example, if the annotated class is

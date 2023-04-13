@@ -56,22 +56,26 @@ public final class Constants {
     public static final String WIP_PROPERTY_NAME = "cucumber.execution.wip";
 
     /**
-     * Property name used to set feature location: {@value}
+     * Property name used to select features: {@value}
      * <p>
-     * A comma separated list of:
+     * A comma separated list of feature paths. A feature path is constructed as
+     * {@code  [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] | @PATH ] }
+     * <p>
+     * Examples:
      * <ul>
-     * <li>{@code path/to/dir} - Load the files with the extension ".feature"
-     * for the directory {@code path} and its sub directories.
-     * <li>{@code path/name.feature} - Load the feature file
-     * {@code path/name.feature} from the file system.</li>
-     * <li>{@code classpath:path/name.feature} - Load the feature file
-     * {@code path/name.feature} from the classpath.</li>
-     * <li>{@code path/name.feature:3:9} - Load the scenarios on line 3 and line
-     * 9 in the file {@code path/name.feature}.</li>
-     * <li>{@code @path/file} - Load {@code path/file} from the file system and
-     * parse feature paths.</li>
-     * <li>{@code @classpath:path/file} - Load {@code path/file} from the
-     * classpath and parse feature paths.</li>
+     * <li>{@code src/test/resources/features} -- All features in the
+     * {@code src/test/resources/features} directory</li>
+     * <li>{@code classpath:com/example/application} -- All features in the
+     * {@code com.example.application} package</li>
+     * <li>{@code in-memory:/features} -- All features in the {@code /features}
+     * directory on an in memory file system supported by
+     * {@link java.nio.file.FileSystems}</li>
+     * <li>{@code src/test/resources/features/example.feature:42} -- The
+     * scenario or example at line 42 in the example feature file</li>
+     * <li>{@code @target/rerun} -- All the scenarios in the files in the rerun
+     * directory</li>
+     * <li>{@code @target/rerun/RunCucumber.txt} -- All the scenarios in
+     * RunCucumber.txt file</li>
      * </ul>
      *
      * @see io.cucumber.core.feature.FeatureWithLines
