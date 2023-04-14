@@ -134,7 +134,7 @@ public final class Constants {
     /**
      * Property name formerly used to pass command line options to Cucumber:
      * {@value} This property is no longer read by Cucumber. Please use any of
-     * the
+     * the individual properties instead.
      */
     static final String OPTIONS_PROPERTY_NAME = "cucumber.options";
 
