@@ -12,6 +12,8 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.spring.application</project.Automatic-Module-Name>
+        <spring-boot.version>3.0.5</spring-boot.version>
+        <junit.version>5.9.1</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -19,14 +21,14 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.9.1</version>
+                <version>${junit.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.0.1</version>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
