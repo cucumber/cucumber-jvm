@@ -3,6 +3,7 @@
 *.ipr
 *.iml
 .idea/
+.vscode/
 .settings
 .project
 .classpath
