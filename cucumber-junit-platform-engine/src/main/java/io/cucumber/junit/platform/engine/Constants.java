@@ -46,7 +46,7 @@ public final class Constants {
      * Property name used to select features: {@value}
      * <p>
      * A comma separated list of feature paths. A feature path is constructed as
-     * {@code  [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] | @PATH ] }
+     * {@code  [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] }
      * <p>
      * Examples:
      * <ul>
@@ -59,10 +59,6 @@ public final class Constants {
      * {@link java.nio.file.FileSystems}</li>
      * <li>{@code src/test/resources/features/example.feature:42} -- The
      * scenario or example at line 42 in the example feature file</li>
-     * <li>{@code @target/rerun} -- All the scenarios in the files in the rerun
-     * directory</li>
-     * <li>{@code @target/rerun/RunCucumber.txt} -- All the scenarios in
-     * RunCucumber.txt file</li>
      * </ul>
      * <p>
      * NOTE: When used any discovery selectors from the JUnit Platform will be
