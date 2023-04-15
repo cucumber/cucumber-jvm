@@ -8,7 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Configure an application context class that Cucumber should use
+ * Annotation to mark a class as the context configuration to make the Cucumber
+ * aware of the test configuration.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
