@@ -1,7 +1,7 @@
 Cucumber JUnit Platform Engine
 ==============================
 
-Use JUnit Platform to execute Cucumber scenarios.
+Use the JUnit (5) Platform to execute Cucumber scenarios.
 
 Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 

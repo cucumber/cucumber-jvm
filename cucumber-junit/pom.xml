@@ -9,7 +9,7 @@
 
     <artifactId>cucumber-junit</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: JUnit</name>
+    <name>Cucumber-JVM: JUnit 4</name>
 
     <properties>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>

@@ -9,7 +9,7 @@
 
     <artifactId>cucumber-junit-platform-engine</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: JUnit Platform Engine</name>
+    <name>Cucumber-JVM: JUnit 5 - JUnit Platform Engine</name>
 
     <properties>
         <hamcrest.version>2.2</hamcrest.version>
