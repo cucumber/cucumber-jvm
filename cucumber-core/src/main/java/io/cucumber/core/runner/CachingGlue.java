@@ -235,7 +235,7 @@ final class CachingGlue implements Glue {
         parameterTypeDefinitions.forEach(ptd -> {
             ParameterType<?> parameterType = ptd.parameterType();
             stepTypeRegistry.defineParameterType(parameterType);
-            emitParameterTypeDefined(parameterType);
+            emitParameterTypeDefined(ptd);
         });
         dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
         docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
@@ -285,14 +285,17 @@ final class CachingGlue implements Glue {
         afterHooks.forEach(this::emitHook);
     }
 
-    private void emitParameterTypeDefined(ParameterType<?> parameterType) {
+    private void emitParameterTypeDefined(ParameterTypeDefinition parameterTypeDefinition) {
+        ParameterType<?> parameterType = parameterTypeDefinition.parameterType();
         io.cucumber.messages.types.ParameterType messagesParameterType = new io.cucumber.messages.types.ParameterType(
             parameterType.getName(),
             parameterType.getRegexps(),
             parameterType.preferForRegexpMatch(),
             parameterType.useForSnippets(),
             bus.generateId().toString(),
-            null);
+            parameterTypeDefinition.getSourceReference()
+                    .map(this::createSourceReference)
+                    .orElseGet(this::emptySourceReference));
         bus.send(Envelope.of(messagesParameterType));
     }
 
