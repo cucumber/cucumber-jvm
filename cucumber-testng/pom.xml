@@ -16,7 +16,6 @@
         <hamcrest.version>2.2</hamcrest.version>
         <testng.version>7.7.1</testng.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <mockito.version>5.3.1</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -46,12 +45,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
