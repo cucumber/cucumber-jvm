@@ -2,21 +2,14 @@ package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.plugin.event.Location;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.SnippetsSuggestedEvent;
+import io.cucumber.plugin.event.*;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.Step;
-import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.plugin.event.TestStepFinished;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.time.Clock;
+import java.util.List;
 import java.util.UUID;
 
 import static io.cucumber.plugin.event.Status.AMBIGUOUS;
@@ -31,8 +24,6 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.expectThrows;
 
@@ -43,16 +34,11 @@ public class TestCaseResultObserverTest {
     private final URI uri = URI.create("file:path/to.feature");
     private final Location location = new Location(0, -1);
     private final Exception error = new Exception();
-    private final TestCase testCase = mock(TestCase.class);
+    private final TestCase testCase = new MockTestCase();
     private final PickleStepTestStep step = createPickleStepTestStep();
 
     private PickleStepTestStep createPickleStepTestStep() {
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        Step step = mock(Step.class);
-        when(step.getLocation()).thenReturn(location);
-        when(testStep.getStep()).thenReturn(step);
-        when(testStep.getUri()).thenReturn(uri);
-        return testStep;
+        return new MockPickleStepTestStep(new MockStep(location), uri);
     }
 
     @Test
@@ -200,4 +186,138 @@ public class TestCaseResultObserverTest {
         assertThat(exception.getCause(), instanceOf(SkipException.class));
     }
 
+    private static final class MockStep implements Step {
+        Location location;
+        public MockStep(Location location) {
+            this.location = location;
+        }
+
+        @Override
+        public StepArgument getArgument() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getText() {
+            return null;
+        }
+
+        @Override
+        public int getLine() {
+            return 0;
+        }
+
+        @Override
+        public Location getLocation() {
+            return location;
+        }
+    }
+
+    private static class MockPickleStepTestStep implements PickleStepTestStep {
+        private final Step step;
+        private final URI uri;
+
+        public MockPickleStepTestStep(Step step, URI uri) {
+            this.step = step;
+            this.uri = uri;
+        }
+
+        @Override
+        public String getPattern() {
+            return null;
+        }
+
+        @Override
+        public Step getStep() {
+            return step;
+        }
+
+        @Override
+        public List<Argument> getDefinitionArgument() {
+            return null;
+        }
+
+        @Override
+        public StepArgument getStepArgument() {
+            return null;
+        }
+
+        @Override
+        public int getStepLine() {
+            return 0;
+        }
+
+        @Override
+        public URI getUri() {
+            return uri;
+        }
+
+        @Override
+        public String getStepText() {
+            return null;
+        }
+
+        @Override
+        public String getCodeLocation() {
+            return null;
+        }
+
+        @Override
+        public UUID getId() {
+            return null;
+        }
+    }
+
+    private static class MockTestCase implements TestCase {
+
+        @Override
+        public Integer getLine() {
+            return null;
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getScenarioDesignation() {
+            return null;
+        }
+
+        @Override
+        public List<String> getTags() {
+            return null;
+        }
+
+        @Override
+        public List<TestStep> getTestSteps() {
+            return null;
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
+        public UUID getId() {
+            return null;
+        }
+    }
 }

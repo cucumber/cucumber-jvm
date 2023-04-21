@@ -17,7 +17,6 @@
         <hamcrest.version>2.2</hamcrest.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <project.Automatic-Module-Name>io.cucumber.guice</project.Automatic-Module-Name>
-        <mockito.version>4.11.0</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -74,12 +73,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
