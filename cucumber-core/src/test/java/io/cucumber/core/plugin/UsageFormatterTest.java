@@ -1,23 +1,19 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestStep;
-import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.*;
 import org.json.JSONException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -26,8 +22,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.number.IsCloseTo.closeTo;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 class UsageFormatterTest {
@@ -38,11 +32,11 @@ class UsageFormatterTest {
     void resultWithPassedStep() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        TestStep testStep = mockTestStep();
+        TestStep testStep = new MockPickleStepTestStep();
         Result result = new Result(Status.PASSED, Duration.ofMillis(12345L), null);
 
         usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new MockTestCase(), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -53,26 +47,19 @@ class UsageFormatterTest {
         assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(closeTo(12.345, EPSILON)));
     }
 
-    private PickleStepTestStep mockTestStep() {
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class, Mockito.RETURNS_MOCKS);
-        when(testStep.getPattern()).thenReturn("stepDef");
-        when(testStep.getStepText()).thenReturn("step");
-        return testStep;
-    }
-
     @Test
     void resultWithPassedAndFailedStep() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        TestStep testStep = mockTestStep();
+        TestStep testStep = new MockPickleStepTestStep();
 
         Result passed = new Result(Status.PASSED, Duration.ofSeconds(12345L), null);
         usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, passed));
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new MockTestCase(), testStep, passed));
 
         Result failed = new Result(Status.FAILED, Duration.ZERO, null);
         usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, failed));
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new MockTestCase(), testStep, failed));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -87,11 +74,11 @@ class UsageFormatterTest {
     void resultWithZeroDuration() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        TestStep testStep = mockTestStep();
+        TestStep testStep = new MockPickleStepTestStep();
         Result result = new Result(Status.PASSED, Duration.ZERO, null);
 
         usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new MockTestCase(), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -107,11 +94,11 @@ class UsageFormatterTest {
     void resultWithNullDuration() {
         OutputStream out = new ByteArrayOutputStream();
         UsageFormatter usageFormatter = new UsageFormatter(out);
-        PickleStepTestStep testStep = mockTestStep();
+        PickleStepTestStep testStep = new MockPickleStepTestStep();
         Result result = new Result(Status.PASSED, Duration.ZERO, null);
 
         usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, mock(TestCase.class), testStep, result));
+                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new MockTestCase(), testStep, result));
 
         Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
         assertThat(usageMap.size(), is(equalTo(1)));
@@ -259,4 +246,98 @@ class UsageFormatterTest {
         assertThat(result, is(equalTo(0.0)));
     }
 
+    private static class MockPickleStepTestStep implements PickleStepTestStep {
+        @Override
+        public String getCodeLocation() {
+            return null;
+        }
+
+        @Override
+        public UUID getId() {
+            return null;
+        }
+
+        @Override
+        public String getPattern() {
+            return "stepDef";
+        }
+
+        @Override
+        public Step getStep() {
+            return null;
+        }
+
+        @Override
+        public List<Argument> getDefinitionArgument() {
+            return null;
+        }
+
+        @Override
+        public StepArgument getStepArgument() {
+            return null;
+        }
+
+        @Override
+        public int getStepLine() {
+            return 0;
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
+        public String getStepText() {
+            return "step";
+        }
+    }
+
+    private static class MockTestCase implements TestCase {
+
+        @Override
+        public Integer getLine() {
+            return null;
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getScenarioDesignation() {
+            return null;
+        }
+
+        @Override
+        public List<String> getTags() {
+            return null;
+        }
+
+        @Override
+        public List<TestStep> getTestSteps() {
+            return null;
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
+        public UUID getId() {
+            return null;
+        }
+    }
 }

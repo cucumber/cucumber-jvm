@@ -1,24 +1,31 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.*;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
+import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static io.cucumber.plugin.event.HookType.AFTER_STEP;
 import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -27,16 +34,21 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 class TestCaseTest {
-
     private final Feature feature = TestFeatureParser.parse("" +
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n" +
             "     And I have 4 cucumber on my plate\n");
 
-    private final EventBus bus = mock(EventBus.class);
+    private EventBus bus;
 
-    private final PickleStepDefinitionMatch definitionMatch1 = mock(PickleStepDefinitionMatch.class);
+    private final PickleStepDefinitionMatch definitionMatch1 = mock(PickleStepDefinitionMatch.class); // new
+                                                                                                      // PickleStepDefinitionMatch(new
+                                                                                                      // ArrayList<>(),
+                                                                                                      // new
+                                                                                                      // MockStepDefinition(),
+                                                                                                      // null,
+                                                                                                      // null);
     private final CoreHookDefinition beforeStep1HookDefinition1 = mock(CoreHookDefinition.class);
     private final CoreHookDefinition afterStep1HookDefinition1 = mock(CoreHookDefinition.class);
 
@@ -65,9 +77,7 @@ class TestCaseTest {
 
     @BeforeEach
     void init() {
-        when(bus.getInstant()).thenReturn(Instant.now());
-        when(bus.generateId()).thenReturn(UUID.randomUUID());
-
+        bus = new MockEventBus();
         when(beforeStep1HookDefinition1.getId()).thenReturn(UUID.randomUUID());
         when(beforeStep1HookDefinition2.getId()).thenReturn(UUID.randomUUID());
         when(afterStep1HookDefinition1.getId()).thenReturn(UUID.randomUUID());
@@ -76,14 +86,15 @@ class TestCaseTest {
 
     @Test
     void run_wraps_execute_in_test_case_started_and_finished_events() throws Throwable {
+        MockEventBus bus = new MockEventBus();
         doThrow(new UndefinedStepDefinitionException()).when(definitionMatch1).runStep(isA(TestCaseState.class));
 
         createTestCase(testStep1).run(bus);
 
-        InOrder order = inOrder(bus, definitionMatch1);
-        order.verify(bus).send(isA(TestCaseStarted.class));
-        order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
-        order.verify(bus).send(isA(TestCaseFinished.class));
+        assertTrue(bus.areEventsInOrder(List.of(
+            TestCaseStarted.class,
+            TestStepFinished.class,
+            TestCaseFinished.class)));
     }
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
@@ -149,4 +160,83 @@ class TestCaseTest {
         order.verify(definitionMatch2, never()).runStep(isA(TestCaseState.class));
     }
 
+    private static class MockEventBus implements EventBus {
+        List<Object> events = new ArrayList<>();
+
+        public boolean areEventsInOrder(List<Class<?>> eventClasses) {
+            int expectedIndex = 0;
+
+            for (Object event : events) {
+                int indexOfClass = eventClasses.indexOf(event.getClass());
+                // when -1, the class is not checked
+                // when equal to expected index,
+                if (indexOfClass >= 0) {
+                    if (indexOfClass == expectedIndex) {
+                        expectedIndex++;
+                    } else if (indexOfClass > expectedIndex) {
+                        throw new IllegalArgumentException("too early: expected " + event.getClass()
+                                + " to be at position " + expectedIndex + " but is at position " + indexOfClass);
+                    }
+                }
+            }
+            return expectedIndex == eventClasses.size();
+        }
+
+        @Override
+        public Instant getInstant() {
+            return Instant.now();
+        }
+
+        @Override
+        public UUID generateId() {
+            return UUID.randomUUID();
+        }
+
+        @Override
+        public <T> void send(T event) {
+            events.add(event);
+        }
+
+        @Override
+        public <T> void sendAll(Iterable<T> queue) {
+
+        }
+
+        @Override
+        public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+
+        }
+
+        @Override
+        public <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+
+        }
+    }
+
+    private class MockStepDefinition implements StepDefinition {
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return null;
+        }
+
+        @Override
+        public void execute(Object[] args) throws CucumberBackendException, CucumberInvocationTargetException {
+
+        }
+
+        @Override
+        public List<ParameterInfo> parameterInfos() {
+            return null;
+        }
+
+        @Override
+        public String getPattern() {
+            return null;
+        }
+    }
 }
