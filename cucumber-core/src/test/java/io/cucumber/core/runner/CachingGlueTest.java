@@ -43,9 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -464,7 +462,7 @@ class CachingGlueTest {
     }
 
     @Test
-    public void emits_hook_messages_to_bus() {
+    void emits_hook_messages_to_bus() {
 
         List<Envelope> events = new ArrayList<>();
         EventHandler<Envelope> messageEventHandler = e -> events.add(e);
@@ -480,6 +478,50 @@ class CachingGlueTest {
 
         glue.prepareGlue(stepTypeRegistry);
         assertThat(events.size(), is(4));
+    }
+
+    @Test
+    void parameterTypeDefinition_without_source_reference_emits_parameterType_with_empty_source_reference() {
+        // Given
+        List<Envelope> events = new ArrayList<>();
+        EventHandler<Envelope> messageEventHandler = events::add;
+
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        bus.registerHandlerFor(Envelope.class, messageEventHandler);
+        CachingGlue glue = new CachingGlue(bus);
+
+        glue.addParameterType(new MockedParameterTypeDefinition());
+
+        // When
+        glue.prepareGlue(stepTypeRegistry);
+
+        // Then
+        assertThat(events.size(), is(1));
+        io.cucumber.messages.types.SourceReference sourceReference = events.get(0).getParameterType().get()
+                .getSourceReference().get();
+        assertEquals(new io.cucumber.messages.types.SourceReference(null, null, null, null), sourceReference);
+    }
+
+    @Test
+    void parameterTypeDefinition_with_source_reference_emits_parameterType_with_non_empty_source_reference() {
+        // Given
+        List<Envelope> events = new ArrayList<>();
+        EventHandler<Envelope> messageEventHandler = events::add;
+
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        bus.registerHandlerFor(Envelope.class, messageEventHandler);
+        CachingGlue glue = new CachingGlue(bus);
+
+        glue.addParameterType(new MockedParameterTypeDefinitionWithSourceReference());
+
+        // When
+        glue.prepareGlue(stepTypeRegistry);
+
+        // Then
+        assertThat(events.size(), is(1));
+        io.cucumber.messages.types.SourceReference sourceReference = events.get(0).getParameterType().get()
+                .getSourceReference().get();
+        assertNotNull(sourceReference.getJavaStackTraceElement());
     }
 
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
@@ -562,6 +604,17 @@ class CachingGlueTest {
             return disposed;
         }
 
+    }
+
+    private static class MockedParameterTypeDefinitionWithSourceReference extends MockedParameterTypeDefinition {
+        @Override
+        public Optional<SourceReference> getSourceReference() {
+            return Optional.of(SourceReference.fromStackTraceElement(new StackTraceElement(
+                "MockedParameterTypeDefinition",
+                "getSourceReference",
+                "CachingGlueTest.java",
+                593)));
+        }
     }
 
     private static class MockedHookDefinition implements HookDefinition {

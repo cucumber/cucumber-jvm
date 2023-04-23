@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [JUnit Platform Engine] Add constant for fixed.max-pool-size property ([#2713](https://github.com/cucumber/cucumber-jvm/pull/2713) M.P. Korstanje)
 - [Core] Support directories containing exclusively rerun files using the `@path/to/rerun` syntax ([#2710](https://github.com/cucumber/cucumber-jvm/pull/2710) Daniel Whitney, M.P. Korstanje)
 - [Core] Improved event bus performance using UUID generator selectable through SPI ([#2703](https://github.com/cucumber/cucumber-jvm/pull/2703) Julien Kronegg)
+- [Core] Added source reference in parameter type messages ([#2719](https://github.com/cucumber/cucumber-jvm/issues/2719) Julien Kronegg) 
 
 ### Fixed
 - [Pico] Improve performance ([#2724](https://github.com/cucumber/cucumber-jvm/issues/2724) Julien Kronegg)
