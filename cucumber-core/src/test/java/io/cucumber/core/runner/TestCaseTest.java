@@ -108,7 +108,7 @@ class TestCaseTest {
     }
 
     @Test
-    void run_hooks_after_the_first_non_passed_result_for_gherkin_step() throws Throwable {
+    void run_hooks_after_the_first_non_passed_result_for_gherkin_step() {
         // Given
         MockEventBus bus = new MockEventBus();
         TestCase testCase = createTestCase(testStepUndefined, testStep2);
