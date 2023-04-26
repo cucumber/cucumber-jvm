@@ -1,10 +1,13 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -13,8 +16,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class AmbiguousStepDefinitionsExceptionTest {
 
@@ -27,13 +28,13 @@ class AmbiguousStepDefinitionsExceptionTest {
 
         Step mockPickleStep = feature.getPickles().get(0).getSteps().get(0);
 
-        PickleStepDefinitionMatch mockPickleStepDefinitionMatchOne = mock(PickleStepDefinitionMatch.class);
-        when(mockPickleStepDefinitionMatchOne.getPattern()).thenReturn("PickleStepDefinitionMatchOne_Pattern");
-        when(mockPickleStepDefinitionMatchOne.getLocation()).thenReturn("PickleStepDefinitionMatchOne_Location");
+        PickleStepDefinitionMatch mockPickleStepDefinitionMatchOne = new PickleStepDefinitionMatch(new ArrayList<>(),
+            new StubStepDefinition("PickleStepDefinitionMatchOne_Pattern", "PickleStepDefinitionMatchOne_Location"),
+            null, null);
 
-        PickleStepDefinitionMatch mockPickleStepDefinitionMatchTwo = mock(PickleStepDefinitionMatch.class);
-        when(mockPickleStepDefinitionMatchTwo.getPattern()).thenReturn("PickleStepDefinitionMatchTwo_Pattern");
-        when(mockPickleStepDefinitionMatchTwo.getLocation()).thenReturn("PickleStepDefinitionMatchTwo_Location");
+        PickleStepDefinitionMatch mockPickleStepDefinitionMatchTwo = new PickleStepDefinitionMatch(new ArrayList<>(),
+            new StubStepDefinition("PickleStepDefinitionMatchTwo_Pattern", "PickleStepDefinitionMatchTwo_Location"),
+            null, null);
 
         List<PickleStepDefinitionMatch> matches = asList(mockPickleStepDefinitionMatchOne,
             mockPickleStepDefinitionMatchTwo);

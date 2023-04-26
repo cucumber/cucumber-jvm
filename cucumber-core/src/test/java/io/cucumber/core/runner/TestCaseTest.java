@@ -34,13 +34,13 @@ class TestCaseTest {
 
     private final PickleStepTestStep testStep1 = createPickleStepTestStep(0,
         new PickleStepDefinitionMatch(Collections.emptyList(),
-                new MockStepDefinition(),
+            new MockStepDefinition(),
             null,
             null));
 
     private final PickleStepTestStep testStep2 = createPickleStepTestStep(1,
         new PickleStepDefinitionMatch(Collections.emptyList(),
-                new MockStepDefinition(),
+            new MockStepDefinition(),
             null,
             null));
 
