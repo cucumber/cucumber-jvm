@@ -8,15 +8,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.event.EventHandler;
-import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.plugin.event.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -28,9 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -48,7 +42,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 class PluginFactoryTest {
 
@@ -196,8 +189,8 @@ class PluginFactoryTest {
             EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID);
             plugin.setEventPublisher(bus);
             Result result = new Result(Status.PASSED, ZERO, null);
-            TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class),
-                mock(PickleStepTestStep.class), result);
+            TestStepFinished event = new TestStepFinished(bus.getInstant(), new MockTestCase(),
+                new MockPickleStepTestStep(), result);
             bus.send(event);
 
             assertThat(mockSystemOut.toString(), is(not(equalTo(""))));
@@ -430,4 +423,98 @@ class PluginFactoryTest {
         }
     }
 
+    private class MockTestCase implements TestCase {
+        @Override
+        public Integer getLine() {
+            return null;
+        }
+
+        @Override
+        public Location getLocation() {
+            return null;
+        }
+
+        @Override
+        public String getKeyword() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getScenarioDesignation() {
+            return null;
+        }
+
+        @Override
+        public List<String> getTags() {
+            return null;
+        }
+
+        @Override
+        public List<TestStep> getTestSteps() {
+            return null;
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
+        public UUID getId() {
+            return null;
+        }
+    }
+
+    private class MockPickleStepTestStep implements PickleStepTestStep {
+
+        @Override
+        public String getPattern() {
+            return null;
+        }
+
+        @Override
+        public Step getStep() {
+            return null;
+        }
+
+        @Override
+        public List<Argument> getDefinitionArgument() {
+            return null;
+        }
+
+        @Override
+        public StepArgument getStepArgument() {
+            return null;
+        }
+
+        @Override
+        public int getStepLine() {
+            return 0;
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
+        public String getStepText() {
+            return null;
+        }
+
+        @Override
+        public String getCodeLocation() {
+            return null;
+        }
+
+        @Override
+        public UUID getId() {
+            return null;
+        }
+    }
 }
