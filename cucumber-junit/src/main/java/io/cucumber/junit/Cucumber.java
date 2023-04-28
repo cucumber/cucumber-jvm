@@ -27,7 +27,6 @@ import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.function.ThrowingRunnable;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -43,7 +42,6 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
@@ -219,35 +217,13 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         }
 
         @Override
-        public void evaluate() throws Throwable {
+        public void evaluate() {
             if (multiThreadingAssumed) {
                 plugins.setSerialEventBusOnEventListenerPlugins(bus);
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
-            context.startTestRun();
-            execute(() -> {
-                context.runBeforeAllHooks();
-                next.evaluate();
-            });
-            try {
-                execute(context::runAfterAllHooks);
-            } finally {
-                context.finishTestRun();
-            }
-            Throwable throwable = context.getThrowable();
-            if (throwable != null) {
-                throw throwable;
-            }
-        }
-
-        private void execute(ThrowingRunnable runnable) {
-            try {
-                runnable.run();
-            } catch (Throwable t) {
-                // Collected in CucumberExecutionContext
-                rethrowIfUnrecoverable(t);
-            }
+            context.runInContext(next::evaluate);
         }
     }
 
