@@ -223,7 +223,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
-            context.runInContext(next::evaluate);
+            context.runFeatures(next::evaluate);
         }
     }
 

@@ -53,32 +53,6 @@ public final class CucumberExecutionContext {
         void run() throws Throwable;
     }
 
-    public void runInContext(ThrowingRunnable inContextExecution) {
-        startTestRun();
-        execute(() -> {
-            runBeforeAllHooks();
-            inContextExecution.run();
-        });
-        try {
-            execute(this::runAfterAllHooks);
-        } finally {
-            finishTestRun();
-        }
-        Throwable throwable = getThrowable();
-        if (throwable != null) {
-            throwAsUncheckedException(throwable);
-        }
-    }
-
-    private void execute(ThrowingRunnable runnable) {
-        try {
-            runnable.run();
-        } catch (Throwable t) {
-            // Collected in CucumberExecutionContext
-            rethrowIfUnrecoverable(t);
-        }
-    }
-
     public void startTestRun() {
         emitMeta();
         emitTestRunStarted();
@@ -165,6 +139,32 @@ public final class CucumberExecutionContext {
 
     private Runner getRunner() {
         return collector.executeAndThrow(runnerSupplier::get);
+    }
+
+    public void runFeatures(ThrowingRunnable executeFeatures) {
+        startTestRun();
+        execute(() -> {
+            runBeforeAllHooks();
+            executeFeatures.run();
+        });
+        try {
+            execute(this::runAfterAllHooks);
+        } finally {
+            finishTestRun();
+        }
+        Throwable throwable = getThrowable();
+        if (throwable != null) {
+            throwAsUncheckedException(throwable);
+        }
+    }
+
+    private void execute(ThrowingRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Throwable t) {
+            // Collected in CucumberExecutionContext
+            rethrowIfUnrecoverable(t);
+        }
     }
 
 }

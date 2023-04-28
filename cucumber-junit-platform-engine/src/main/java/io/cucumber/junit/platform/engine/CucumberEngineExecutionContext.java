@@ -76,7 +76,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         // Problem: The JUnit Platform will always execute all engines that
         // participated in discovery. In combination with the JUnit Platform
         // Suite Engine this may result in CucumberEngine being executed
-        // twice.
+        // multiple times.
         //
         // One of these instances may not have discovered any tests and would
         // write empty reports. Therefor we do not invoke 'startTestRun' if

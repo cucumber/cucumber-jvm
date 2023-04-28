@@ -75,7 +75,7 @@ public final class Runtime {
     public void run() {
         // Parse the features early. Don't proceed when there are lexer errors
         List<Feature> features = featureSupplier.get();
-        context.runInContext(() -> runFeatures(features));
+        context.runFeatures(() -> runFeatures(features));
     }
 
     private void runFeatures(List<Feature> features) {
