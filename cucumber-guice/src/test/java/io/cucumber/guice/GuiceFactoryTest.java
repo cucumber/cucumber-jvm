@@ -26,9 +26,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,9 +50,8 @@ class GuiceFactoryTest {
     void tearDown() {
         // If factory is left in start state it can cause cascading failures due
         // to scope being left open
-        try {
+        if (factory != null) {
             factory.stop();
-        } catch (Exception ignored) {
         }
     }
 
@@ -80,8 +77,7 @@ class GuiceFactoryTest {
     void factoryStartFailsIfScenarioScopeIsNotBound() {
         initFactory(Guice.createInjector());
 
-        Executable testMethod = () -> factory.start();
-        ConfigurationException actualThrown = assertThrows(ConfigurationException.class, testMethod);
+        ConfigurationException actualThrown = assertThrows(ConfigurationException.class, () -> factory.start());
         assertThat("Unexpected exception message", actualThrown.getMessage(),
             containsString("1) [Guice/MissingImplementation]: No implementation for ScenarioScope was bound."));
     }

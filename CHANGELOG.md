@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Pico] Improve performance ([#2724](https://github.com/cucumber/cucumber-jvm/issues/2724) Julien Kronegg)
 - [JUnit 4] Fix swallowed exception ([#2714](https://github.com/cucumber/cucumber-jvm/issues/2714) M.P. Korstanje)
+- [Guice] Fix NPE in Guice when configured incorrectly ([#2716](https://github.com/cucumber/cucumber-jvm/issues/2716) M.P. Korstanje)
 
 ## [7.11.2] - 2023-03-23
 ### Fixed

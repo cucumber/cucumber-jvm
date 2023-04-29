@@ -24,10 +24,11 @@ public final class GuiceFactory implements ObjectFactory {
 
     private final Collection<Class<?>> stepClasses = new HashSet<>();
     private final Class<?> injectorSourceFromProperty;
-    private Class<?> withInjectorSource = null;
+    private Class<?> withInjectorSource;
+    private ScenarioScope scenarioScope;
 
     public GuiceFactory() {
-        injectorSourceFromProperty = loadInjectorSourceFromProperties(CucumberProperties.create());
+        this.injectorSourceFromProperty = loadInjectorSourceFromProperties(CucumberProperties.create());
     }
 
     @Override
@@ -72,11 +73,15 @@ public final class GuiceFactory implements ObjectFactory {
             injector = new InjectorSourceFactory(withInjectorSource).create()
                     .getInjector();
         }
-        injector.getInstance(ScenarioScope.class).enterScope();
+        scenarioScope = injector.getInstance(ScenarioScope.class);
+        scenarioScope.enterScope();
     }
 
     public void stop() {
-        injector.getInstance(ScenarioScope.class).exitScope();
+        if (scenarioScope != null) {
+            scenarioScope.exitScope();
+            scenarioScope = null;
+        }
     }
 
     public <T> T getInstance(Class<T> clazz) {
