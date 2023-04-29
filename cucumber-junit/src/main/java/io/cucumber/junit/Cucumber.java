@@ -199,13 +199,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     @Override
     protected Statement childrenInvoker(RunNotifier notifier) {
         Statement statement = super.childrenInvoker(notifier);
-
-        statement = new RunBeforeAllHooks(statement);
-        statement = new RunAfterAllHooks(statement);
-
-        statement = new StartTestRun(statement);
-        statement = new FinishTestRun(statement);
-
+        statement = new StartAndFinishTestRun(statement);
         return statement;
     }
 
@@ -215,75 +209,22 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         multiThreadingAssumed = true;
     }
 
-    private class StartTestRun extends Statement {
+    private class StartAndFinishTestRun extends Statement {
         private final Statement next;
 
-        public StartTestRun(Statement next) {
+        public StartAndFinishTestRun(Statement next) {
             this.next = next;
         }
 
         @Override
-        public void evaluate() throws Throwable {
+        public void evaluate() {
             if (multiThreadingAssumed) {
                 plugins.setSerialEventBusOnEventListenerPlugins(bus);
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
-            context.startTestRun();
-            next.evaluate();
+            context.runFeatures(next::evaluate);
         }
-
-    }
-
-    private class FinishTestRun extends Statement {
-        private final Statement next;
-
-        public FinishTestRun(Statement next) {
-            this.next = next;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            try {
-                next.evaluate();
-            } finally {
-                context.finishTestRun();
-            }
-        }
-
-    }
-
-    private class RunBeforeAllHooks extends Statement {
-        private final Statement next;
-
-        public RunBeforeAllHooks(Statement next) {
-            this.next = next;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            context.runBeforeAllHooks();
-            next.evaluate();
-        }
-
-    }
-
-    private class RunAfterAllHooks extends Statement {
-        private final Statement next;
-
-        public RunAfterAllHooks(Statement next) {
-            this.next = next;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            try {
-                next.evaluate();
-            } finally {
-                context.runAfterAllHooks();
-            }
-        }
-
     }
 
 }

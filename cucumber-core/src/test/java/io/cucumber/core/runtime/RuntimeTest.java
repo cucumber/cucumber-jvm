@@ -1,13 +1,16 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
+import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.FeatureParserException;
@@ -31,7 +34,6 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -402,6 +404,30 @@ class RuntimeTest {
     }
 
     @Test
+    void should_fail_on_exception_invoking_after_all_hook() {
+        RuntimeException expectedException = new RuntimeException("This exception is expected");
+        CucumberBackendException backendException = new CucumberBackendException("failed", expectedException);
+        MockedStaticHookDefinition mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
+            throw backendException;
+        });
+
+        BackendSupplier backendSupplier = new TestBackendSupplier() {
+            @Override
+            public void loadGlue(Glue glue, List<URI> gluePaths) {
+                glue.addAfterAllHook(mockedStaticHookDefinition);
+            }
+        };
+
+        Executable testMethod = () -> Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier())
+                .withBackendSupplier(backendSupplier)
+                .build()
+                .run();
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat(actualThrown.getCause(), equalTo(backendException));
+    }
+
+    @Test
     void should_interrupt_waiting_plugins() throws InterruptedException {
         final Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name 1\n" +
@@ -572,6 +598,35 @@ class RuntimeTest {
             return "mocked scenario scoped step definition";
         }
 
+    }
+
+    private static class MockedStaticHookDefinition implements StaticHookDefinition {
+
+        private final Runnable runnable;
+
+        private MockedStaticHookDefinition(Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        @Override
+        public void execute() {
+            runnable.run();
+        }
+
+        @Override
+        public int getOrder() {
+            return 0;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return "mocked hook definition definition";
+        }
     }
 
     private static class FormatterSpy implements EventListener {

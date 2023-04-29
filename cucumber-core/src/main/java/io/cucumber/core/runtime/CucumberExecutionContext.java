@@ -25,6 +25,8 @@ import java.util.function.Consumer;
 
 import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
 import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
+import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.singletonList;
 
@@ -44,6 +46,11 @@ public final class CucumberExecutionContext {
         this.bus = bus;
         this.exitStatus = exitStatus;
         this.runnerSupplier = runnerSupplier;
+    }
+
+    @FunctionalInterface
+    public interface ThrowingRunnable {
+        void run() throws Throwable;
     }
 
     public void startTestRun() {
@@ -132,6 +139,32 @@ public final class CucumberExecutionContext {
 
     private Runner getRunner() {
         return collector.executeAndThrow(runnerSupplier::get);
+    }
+
+    public void runFeatures(ThrowingRunnable executeFeatures) {
+        startTestRun();
+        execute(() -> {
+            runBeforeAllHooks();
+            executeFeatures.run();
+        });
+        try {
+            execute(this::runAfterAllHooks);
+        } finally {
+            finishTestRun();
+        }
+        Throwable throwable = getThrowable();
+        if (throwable != null) {
+            throwAsUncheckedException(throwable);
+        }
+    }
+
+    private void execute(ThrowingRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Throwable t) {
+            // Collected in CucumberExecutionContext
+            rethrowIfUnrecoverable(t);
+        }
     }
 
 }
