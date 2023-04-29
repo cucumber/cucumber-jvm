@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Support directories containing exclusively rerun files using the `@path/to/rerun` syntax ([#2710](https://github.com/cucumber/cucumber-jvm/pull/2710) Daniel Whitney, M.P. Korstanje)
 - [Core] Improved event bus performance using UUID generator selectable through SPI ([#2703](https://github.com/cucumber/cucumber-jvm/pull/2703) Julien Kronegg)
 - [Core] Added source reference in parameter type messages ([#2719](https://github.com/cucumber/cucumber-jvm/issues/2719) Julien Kronegg) 
+- [Core] Support for JetBrains Space ([ci-environment/#205](https://github.com/cucumber/ci-environment/pull/205) Viktor) 
 
 ### Fixed
 - [Pico] Improve performance ([#2724](https://github.com/cucumber/cucumber-jvm/issues/2724) Julien Kronegg)
