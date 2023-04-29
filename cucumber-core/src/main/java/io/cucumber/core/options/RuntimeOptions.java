@@ -53,7 +53,7 @@ public final class RuntimeOptions implements
     private Class<? extends UuidGenerator> uuidGeneratorClass;
     private String publishToken;
     private boolean publish;
-    private boolean publishQuiet;
+    private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
 
     private RuntimeOptions() {

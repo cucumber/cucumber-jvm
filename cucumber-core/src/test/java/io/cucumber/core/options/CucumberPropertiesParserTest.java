@@ -160,12 +160,12 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
-    void should_have_no_publish_plugin_enabled_by_default() {
+    void should_have_publish_plugin_disabled_by_default() {
         RuntimeOptions options = cucumberPropertiesParser
                 .parse(properties)
                 .enablePublishPlugin()
                 .build();
-        assertThat(options.plugins().get(0).pluginString(), equalTo("io.cucumber.core.plugin.NoPublishFormatter"));
+        assertThat(options.plugins(), empty());
     }
 
     @Test

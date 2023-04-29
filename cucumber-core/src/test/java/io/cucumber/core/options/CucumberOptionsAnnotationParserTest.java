@@ -5,7 +5,6 @@ import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.plugin.HtmlFormatter;
-import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.plugin.PrettyFormatter;
@@ -169,13 +168,12 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
-    void should_set_no_publish_formatter_when_plugin_option_false() {
+    void should_not_set_no_publish_formatter_when_plugin_option_false() {
         RuntimeOptions runtimeOptions = parser()
                 .parse(WithoutOptions.class)
                 .enablePublishPlugin()
                 .build();
-        assertThat(runtimeOptions.plugins(), hasSize(1));
-        assertThat(runtimeOptions.plugins().get(0).pluginClass(), equalTo(NoPublishFormatter.class));
+        assertThat(runtimeOptions.plugins(), empty());
     }
 
     @Test
