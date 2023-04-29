@@ -1,5 +1,6 @@
 package io.cucumber.core.runtime;
 
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
@@ -9,6 +10,7 @@ import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.FeatureParserException;
@@ -402,10 +404,11 @@ class RuntimeTest {
     }
 
     @Test
-    void should_fail_on_exception_in_after_all_hook() {
+    void should_fail_on_exception_invoking_after_all_hook() {
         RuntimeException expectedException = new RuntimeException("This exception is expected");
+        CucumberBackendException backendException = new CucumberBackendException("failed", expectedException);
         MockedStaticHookDefinition mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
-            throw expectedException;
+            throw backendException;
         });
 
         BackendSupplier backendSupplier = new TestBackendSupplier() {
@@ -420,8 +423,8 @@ class RuntimeTest {
                 .withBackendSupplier(backendSupplier)
                 .build()
                 .run();
-        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
-        assertThat(actualThrown, equalTo(expectedException));
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat(actualThrown.getCause(), equalTo(backendException));
     }
 
     @Test
