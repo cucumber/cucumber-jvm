@@ -186,6 +186,17 @@ class CucumberPropertiesParserTest {
     }
 
     @Test
+    void should_parse_plugin_publish_disabled_and_publish_token() {
+        properties.put(Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "false");
+        properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/value");
+        RuntimeOptions options = cucumberPropertiesParser
+                .parse(properties)
+                .enablePublishPlugin()
+                .build();
+        assertThat(options.plugins(), empty());
+    }
+
+    @Test
     void should_parse_plugin_publish_token() {
         properties.put(Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/value");
         RuntimeOptions options = cucumberPropertiesParser

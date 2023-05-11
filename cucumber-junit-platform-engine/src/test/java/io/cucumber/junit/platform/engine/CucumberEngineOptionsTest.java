@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 
 import java.net.URI;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
@@ -60,7 +61,7 @@ class CucumberEngineOptionsTest {
         assertThat(new CucumberEngineOptions(config).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
-            hasItem("io.cucumber.core.plugin.NoPublishFormatter"));
+            empty());
     }
 
     @Test
@@ -83,6 +84,18 @@ class CucumberEngineOptionsTest {
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             hasItem("io.cucumber.core.plugin.PublishFormatter"));
+    }
+
+    @Test
+    void getPluginNamesWithPublishDisabledAndPublishToken() {
+        ConfigurationParameters config = new MapConfigurationParameters(Map.of(
+            Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "false",
+            Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/token"));
+
+        assertThat(new CucumberEngineOptions(config).plugins().stream()
+                .map(Options.Plugin::pluginString)
+                .collect(toList()),
+            empty());
     }
 
     @Test
