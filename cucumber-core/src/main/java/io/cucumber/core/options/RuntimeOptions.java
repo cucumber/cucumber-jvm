@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -52,7 +54,12 @@ public final class RuntimeOptions implements
     private Class<? extends ObjectFactory> objectFactoryClass;
     private Class<? extends UuidGenerator> uuidGeneratorClass;
     private String publishToken;
-    private boolean publish;
+    private Boolean publish;
+    // Disable the banner advertising the hosted cucumber reports by default
+    // until the uncertainty around the projects future is resolved. It would
+    // not be proper to advertise a service that may be discontinued to new
+    // users.
+    // For context see: https://mattwynne.net/new-beginning
     private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
 
@@ -108,10 +115,11 @@ public final class RuntimeOptions implements
         if (!enablePublishPlugin) {
             return emptyList();
         }
-        if (publishToken != null) {
+        // Implicitly enabled by the token if not explicitly disabled
+        if (!FALSE.equals(publish) && publishToken != null) {
             return singletonList(PluginOption.forClass(PublishFormatter.class, publishToken));
         }
-        if (publish) {
+        if (TRUE.equals(publish)) {
             return singletonList(PluginOption.forClass(PublishFormatter.class));
         }
         if (publishQuiet) {
@@ -257,7 +265,7 @@ public final class RuntimeOptions implements
         this.publishToken = token;
     }
 
-    void setPublish(boolean publish) {
+    void setPublish(Boolean publish) {
         this.publish = publish;
     }
 
