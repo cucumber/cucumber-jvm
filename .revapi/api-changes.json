@@ -376,6 +376,94 @@
             "old": "field com\\.google\\.inject\\.internal\\.ErrorId\\..*",
             "new": "field com\\.google\\.inject\\.internal\\.ErrorId\\..*",
             "justification": "It's Google."
+          },
+
+          {
+            "ignore": true,
+            "code": "java.class.noLongerImplementsInterface",
+            "old": "interface com.google.inject.Provider<T>",
+            "new": "interface com.google.inject.Provider<T>",
+            "interface": "javax.inject.Provider<T>",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowImplementsInterface",
+            "old": "interface com.google.inject.Provider<T>",
+            "new": "interface com.google.inject.Provider<T>",
+            "interface": "jakarta.inject.Provider<T>",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeParameterChanged",
+            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.Key<? extends javax.inject.Provider<? extends T>>===)",
+            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.Key<? extends jakarta.inject.Provider<? extends T>>===)",
+            "parameterIndex": "0",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeParameterChanged",
+            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.TypeLiteral<? extends javax.inject.Provider<? extends T>>===)",
+            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.TypeLiteral<? extends jakarta.inject.Provider<? extends T>>===)",
+            "parameterIndex": "0",
+            "justification": "Guice v7 uses Jakarta"
+
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeParameterChanged",
+            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===java.lang.Class<? extends javax.inject.Provider<? extends T>>===)",
+            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===java.lang.Class<? extends jakarta.inject.Provider<? extends T>>===)",
+            "parameterIndex": "0",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeChanged",
+            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===javax.inject.Provider<? extends T>===)",
+            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===jakarta.inject.Provider<? extends T>===)",
+            "parameterIndex": "0",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.field.addedStaticField",
+            "new": "field com.google.inject.internal.ErrorId.REQUEST_INJECTION_WITH_DIFFERENT_TYPES",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.returnTypeChanged",
+            "old": "method javax.inject.Provider<? extends T> com.google.inject.spi.ProviderInstanceBinding<T>::getUserSuppliedProvider()",
+            "new": "method jakarta.inject.Provider<? extends T> com.google.inject.spi.ProviderInstanceBinding<T>::getUserSuppliedProvider()",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.returnTypeTypeParametersChanged",
+            "old": "method com.google.inject.Key<? extends javax.inject.Provider<? extends T>> com.google.inject.spi.ProviderKeyBinding<T>::getProviderKey()",
+            "new": "method com.google.inject.Key<? extends jakarta.inject.Provider<? extends T>> com.google.inject.spi.ProviderKeyBinding<T>::getProviderKey()",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.added",
+            "new": "method <T> void com.google.inject.AbstractModule::requestInjection(com.google.inject.TypeLiteral<T>, T) @ io.cucumber.guice.ScenarioModule",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface jakarta.inject.Provider<T>",
+            "justification": "Guice v7 uses Jakarta"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassNoLongerExposedInAPI",
+            "old": "interface javax.inject.Provider<T>",
+            "justification": "Guice v7 uses Jakarta"
           }
         ]
       }
