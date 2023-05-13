@@ -14,11 +14,10 @@ import io.cucumber.guice.factory.SecondInjectorSource;
 import io.cucumber.guice.integration.YourInjectorSource;
 import io.cucumber.guice.matcher.ElementsAreAllEqualMatcher;
 import io.cucumber.guice.matcher.ElementsAreAllUniqueMatcher;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import javax.inject.Singleton;
 
 import java.util.Arrays;
 import java.util.List;
