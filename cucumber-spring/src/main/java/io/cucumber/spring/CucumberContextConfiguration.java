@@ -15,13 +15,11 @@ import java.lang.annotation.Target;
  * annotated as follows:
  * <p>
  * <pre>{@code
- * &#064;CucumberContextConfiguration
- * &#064;SpringBootTest(classes = TestConfig.class)
+ * @CucumberContextConfiguration
+ * @SpringBootTest(classes = TestConfig.class)
  * public class CucumberSpringConfiguration {
- * <p>
  * }
  * }</pre>
- *
  * Notes:
  * <ul>
  * <li>Only one glue class should be annotated with
