@@ -8,6 +8,7 @@ import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
+import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -39,8 +40,10 @@ final class JavaBackend implements Backend {
                 .flatMap(Collection::stream)
                 .distinct()
                 .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
-                    container.addClass(method.getDeclaringClass());
-                    glueAdaptor.addDefinition(method, annotation);
+                    if (!Modifier.isVolatile(method.getModifiers())) {
+                        container.addClass(method.getDeclaringClass());
+                        glueAdaptor.addDefinition(method, annotation);
+                    }
                 }));
     }
 

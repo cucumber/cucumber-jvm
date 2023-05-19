@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Fixed `cucumber.publish.enabled=false` ([#2747](https://github.com/cucumber/cucumber-jvm/pull/2747) M.P. Korstanje)
 - [JUnit Platform Engine] Fixed `cucumber.publish.enabled=false` ([#2747](https://github.com/cucumber/cucumber-jvm/pull/2747) M.P. Korstanje)
 
+### Added 
+- [Java] Added support for step definition classes with interfaces ([#2757](https://github.com/cucumber/cucumber-jvm/issues/2757) Julien Kronegg) 
+
 ## [7.12.0] - 2023-04-29
 ### Added
 - [JUnit Platform Engine] Add constant for fixed.max-pool-size property ([#2713](https://github.com/cucumber/cucumber-jvm/pull/2713) M.P. Korstanje)
