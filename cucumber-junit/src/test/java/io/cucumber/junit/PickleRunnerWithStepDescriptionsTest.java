@@ -5,6 +5,7 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.plugin.Options;
+import io.cucumber.core.runner.Runner;
 import io.cucumber.core.runtime.CucumberExecutionContext;
 import io.cucumber.core.runtime.ExitStatus;
 import io.cucumber.core.runtime.RunnerSupplier;
@@ -22,13 +23,12 @@ import java.util.UUID;
 import static io.cucumber.junit.TestPickleBuilder.picklesFromFeature;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.mock;
 
 class PickleRunnerWithStepDescriptionsTest {
 
     final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     final Options options = RuntimeOptions.defaultOptions();
-    final RunnerSupplier runnerSupplier = mock(RunnerSupplier.class);
+    final RunnerSupplier runnerSupplier = new MockRunnerSupplier();
     final CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
 
     @Test
@@ -175,4 +175,10 @@ class PickleRunnerWithStepDescriptionsTest {
         return new JUnitOptionsBuilder().setFilenameCompatibleNames(true).build();
     }
 
+    private static class MockRunnerSupplier implements RunnerSupplier {
+        @Override
+        public Runner get() {
+            return null;
+        }
+    }
 }
