@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.java.steps.Steps;
+import io.cucumber.java.stepswithinterface.StepsWithInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Thread.currentThread;
@@ -52,6 +52,13 @@ class JavaBackendTest {
         backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java/steps")));
         backend.buildWorld();
         verify(factory).addClass(Steps.class);
+    }
+
+    @Test
+    void finds_step_definitions_by_classpath_url_with_interface() {
+        backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java/stepswithinterface")));
+        backend.buildWorld();
+        verify(factory).addClass(StepsWithInterface.class);
     }
 
     @Test
