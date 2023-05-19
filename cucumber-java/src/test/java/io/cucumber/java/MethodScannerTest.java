@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import io.cucumber.java.stepswithinterface.StepsWithInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +40,13 @@ class MethodScannerTest {
     void scan_ignores_object() {
         MethodScanner.scan(Object.class, backend);
         assertThat(scanResult, empty());
+    }
+
+    @Test
+    void scan_ignores_volatile_methods() throws NoSuchMethodException {
+        Method method = StepsWithInterface.class.getMethod("test");
+        MethodScanner.scan(StepsWithInterface.class, backend);
+        assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
     }
 
     @Test

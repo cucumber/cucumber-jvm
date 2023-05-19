@@ -55,13 +55,6 @@ class JavaBackendTest {
     }
 
     @Test
-    void finds_step_definitions_by_classpath_url_with_interface() {
-        backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java/stepswithinterface")));
-        backend.buildWorld();
-        verify(factory).addClass(StepsWithInterface.class);
-    }
-
-    @Test
     void finds_step_definitions_once_by_classpath_url() {
         backend.loadGlue(glue,
             asList(URI.create("classpath:io/cucumber/java/steps"), URI.create("classpath:io/cucumber/java/steps")));

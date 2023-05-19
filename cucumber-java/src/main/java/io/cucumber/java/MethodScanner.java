@@ -5,6 +5,7 @@ import io.cucumber.core.logging.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.function.BiConsumer;
 
 import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
@@ -51,8 +52,13 @@ final class MethodScanner {
     }
 
     private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {
-        // prevent unnecessary checking of Object methods
-        if (Object.class.equals(method.getDeclaringClass())) {
+        // prevent unnecessary checking of Object methods and volatile methods
+        // Note on volatile: when a class implements a method from the interface
+        // but specializes the return type, two Method will be generated (one
+        // with the return type of the interface and one with the specialized
+        // return type). The one with the return type of the interface is a
+        // volatile one.
+        if (Object.class.equals(method.getDeclaringClass()) || Modifier.isVolatile(method.getModifiers())) {
             return;
         }
         scan(consumer, aClass, method, method.getAnnotations());
