@@ -51,15 +51,21 @@ final class MethodScanner {
     }
 
     private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {
-        // prevent unnecessary checking of Object methods and generated methods
-        // Note on generated methods: when a class implements a method from the
-        // interface but specializes the return type, two Method will be
-        // generated (one with the return type of the interface and one with
-        // the specialized return type). The one with the return type of the
-        // interface is a synthetic one.
-        if (Object.class.equals(method.getDeclaringClass()) || method.isSynthetic()) {
+        // prevent unnecessary checking of Object methods
+        if (Object.class.equals(method.getDeclaringClass())) {
             return;
         }
+
+        // prevent scan of generated methods: when a class implements a method
+        // from the interface but specializes the return type, two Method will
+        // be generated (one with the return type of the interface and one
+        // with the specialized return type). The one with the return type of
+        // the interface is a synthetic one. Depending on the JVM, the
+        // method annotations is also applied to the synthetic methods.
+        if (method.isSynthetic()) {
+            return;
+        }
+
         scan(consumer, aClass, method, method.getAnnotations());
     }
 
