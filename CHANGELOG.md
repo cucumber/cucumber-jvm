@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Fixed `cucumber.publish.enabled=false` ([#2747](https://github.com/cucumber/cucumber-jvm/pull/2747) M.P. Korstanje)
 - [JUnit Platform Engine] Fixed `cucumber.publish.enabled=false` ([#2747](https://github.com/cucumber/cucumber-jvm/pull/2747) M.P. Korstanje)
+- [Pico] Fixed unsatisfiable dependency with disposables ([#2762](https://github.com/cucumber/cucumber-jvm/issues/2762) Julien Kronegg)
 
 ## [7.12.0] - 2023-04-29
 ### Added
