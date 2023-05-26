@@ -55,6 +55,17 @@ final class MethodScanner {
         if (Object.class.equals(method.getDeclaringClass())) {
             return;
         }
+
+        // exclude bridge methods: when a class implements a method
+        // from the interface but specializes the return type, two methods will
+        // be generated. One with the return type of the interface and one
+        // with the specialized return type. The former is a bridge method.
+        // Depending on the JVM, the method annotations are also applied to
+        // the bridge method.
+        if (method.isBridge()) {
+            return;
+        }
+
         scan(consumer, aClass, method, method.getAnnotations());
     }
 

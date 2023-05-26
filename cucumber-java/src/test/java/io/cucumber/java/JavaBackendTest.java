@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Thread.currentThread;
