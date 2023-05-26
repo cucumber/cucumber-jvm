@@ -4,7 +4,6 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.java.steps.Steps;
-import io.cucumber.java.stepswithinterface.StepsWithInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

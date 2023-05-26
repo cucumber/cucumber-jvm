@@ -56,13 +56,13 @@ final class MethodScanner {
             return;
         }
 
-        // prevent scan of generated methods: when a class implements a method
-        // from the interface but specializes the return type, two Method will
-        // be generated (one with the return type of the interface and one
-        // with the specialized return type). The one with the return type of
-        // the interface is a synthetic one. Depending on the JVM, the
-        // method annotations is also applied to the synthetic methods.
-        if (method.isSynthetic()) {
+        // exclude bridge methods: when a class implements a method
+        // from the interface but specializes the return type, two methods will
+        // be generated. One with the return type of the interface and one
+        // with the specialized return type. The former is a bridge method.
+        // Depending on the JVM, the method annotations are also applied to
+        // the bridge method.
+        if (method.isBridge()) {
             return;
         }
 

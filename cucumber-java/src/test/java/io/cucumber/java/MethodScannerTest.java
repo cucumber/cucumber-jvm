@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import io.cucumber.java.stepswithinterface.StepsWithInterface;
+import io.cucumber.java.en.Given;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,9 +43,9 @@ class MethodScannerTest {
     }
 
     @Test
-    void scan_ignores_volatile_methods() throws NoSuchMethodException {
-        Method method = StepsWithInterface.class.getMethod("test");
-        MethodScanner.scan(StepsWithInterface.class, backend);
+    void scan_ignores_bridge_methods() throws NoSuchMethodException {
+        Method method = SpecializedReturnType.class.getMethod("test");
+        MethodScanner.scan(SpecializedReturnType.class, backend);
         assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
     }
 
@@ -89,4 +89,17 @@ class MethodScannerTest {
 
     }
 
+    public interface GenericReturnType {
+        Number test();
+
+    }
+
+    public static class SpecializedReturnType implements GenericReturnType {
+
+        @Given("test")
+        public Integer test() {
+            return 1;
+        }
+
+    }
 }
