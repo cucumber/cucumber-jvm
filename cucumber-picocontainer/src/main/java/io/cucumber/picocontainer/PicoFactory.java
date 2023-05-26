@@ -43,8 +43,8 @@ public final class PicoFactory implements ObjectFactory {
     @Override
     public boolean addClass(Class<?> clazz) {
         if (isInstantiable(clazz) && classes.add(clazz)) {
-            pico.addComponent(clazz);
             addConstructorDependencies(clazz);
+            pico.addComponent(clazz);
         }
         return true;
     }
