@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [TestNG] Update dependency org.testng:testng to v7.8.0
 
 ## [7.12.1] - 2023-06-02
 ### Fixed
