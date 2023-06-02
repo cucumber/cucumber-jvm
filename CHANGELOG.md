@@ -10,11 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.12.1] - 2023-06-02
 ### Fixed
 - [Core] Set html report viewport width to device width ([html-formatter/#238](https://github.com/cucumber/html-formatter/pull/238)  Tim Yao )
 - [Core] Fixed `cucumber.publish.enabled=false` ([#2747](https://github.com/cucumber/cucumber-jvm/pull/2747) M.P. Korstanje)
 - [JUnit Platform Engine] Fixed `cucumber.publish.enabled=false` ([#2747](https://github.com/cucumber/cucumber-jvm/pull/2747) M.P. Korstanje)
-- [Java] Fixed duplicate step definition for classes with interfaces ([#2757](https://github.com/cucumber/cucumber-jvm/issues/2757) Julien Kronegg) 
+- [Java] Fixed duplicate step definition for classes with interfaces ([#2757](https://github.com/cucumber/cucumber-jvm/issues/2757) Julien Kronegg)
 - [Pico] Fixed unsatisfiable dependency with disposables ([#2762](https://github.com/cucumber/cucumber-jvm/issues/2762) Julien Kronegg)
 
 ## [7.12.0] - 2023-04-29
@@ -248,7 +250,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...main
+[7.12.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.0...main
 [7.12.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.2...main
 [7.11.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...main
 [7.11.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...main
