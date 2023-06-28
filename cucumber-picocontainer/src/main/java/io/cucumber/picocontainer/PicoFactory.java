@@ -5,6 +5,7 @@ import org.apiguardian.api.API;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 import org.picocontainer.behaviors.Cached;
+import org.picocontainer.lifecycle.DefaultLifecycleState;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -15,14 +16,7 @@ import java.util.Set;
 public final class PicoFactory implements ObjectFactory {
 
     private final Set<Class<?>> classes = new HashSet<>();
-    private final MutablePicoContainer pico = new PicoBuilder()
-            .withCaching()
-            .withLifecycle()
-            .build();
-
-    public PicoFactory() {
-        this.pico.start();
-    }
+    private MutablePicoContainer pico;
 
     private static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
@@ -30,21 +24,37 @@ public final class PicoFactory implements ObjectFactory {
                 && !isNonStaticInnerClass;
     }
 
+    @Override
     public void start() {
-        // do nothing (was already started in constructor)
+        if (pico == null) {
+            pico = new PicoBuilder()
+                    .withCaching()
+                    .withLifecycle()
+                    .build();
+            for (Class<?> clazz : classes) {
+                pico.addComponent(clazz);
+            }
+        } else {
+            // we already get a pico container which is in "disposed" lifecycle,
+            // so recycle it by defining a new lifecycle and removing all
+            // instances
+            pico.setLifecycleState(new DefaultLifecycleState());
+            pico.getComponentAdapters()
+                    .forEach(cached -> ((Cached<?>) cached).flush());
+        }
+        pico.start();
     }
 
     @Override
     public void stop() {
-        pico.getComponentAdapters()
-                .forEach(cached -> ((Cached<?>) cached).flush());
+        pico.stop();
+        pico.dispose();
     }
 
     @Override
     public boolean addClass(Class<?> clazz) {
         if (isInstantiable(clazz) && classes.add(clazz)) {
             addConstructorDependencies(clazz);
-            pico.addComponent(clazz);
         }
         return true;
     }
