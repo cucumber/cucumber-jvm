@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.13.0] - 2023-07-02
 ### Changed
 - [TestNG] Update dependency org.testng:testng to v7.8.0
 
@@ -255,7 +257,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...main
+[7.13.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...main
 [7.12.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.0...main
 [7.12.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.2...main
 [7.11.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...main
