@@ -3,7 +3,10 @@ package io.cucumber.picocontainer;
 import org.picocontainer.Disposable;
 import org.picocontainer.Startable;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * A test helper class which simulates a class that holds system resources which
@@ -13,6 +16,7 @@ import java.util.List;
  */
 public class DisposableCucumberBelly
         implements Disposable, Startable {
+    static final List<String> events = new ArrayList<>();
 
     private List<String> contents;
     private boolean isDisposed = false;
@@ -20,12 +24,12 @@ public class DisposableCucumberBelly
     private boolean wasStopped = false;
 
     public List<String> getContents() {
-        assert !isDisposed;
+        assertFalse(isDisposed);
         return contents;
     }
 
     public void setContents(List<String> contents) {
-        assert !isDisposed;
+        assertFalse(isDisposed);
         this.contents = contents;
     }
 
@@ -36,6 +40,7 @@ public class DisposableCucumberBelly
      */
     @Override
     public void dispose() {
+        events.add("Disposed");
         isDisposed = true;
     }
 
@@ -45,6 +50,7 @@ public class DisposableCucumberBelly
 
     @Override
     public void start() {
+        events.add("Started");
         wasStarted = true;
     }
 
@@ -54,6 +60,7 @@ public class DisposableCucumberBelly
 
     @Override
     public void stop() {
+        events.add("Stopped");
         wasStopped = true;
     }
 

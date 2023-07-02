@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [TestNG] Update dependency org.testng:testng to v7.8.0
 
+### Fixed
+- [Pico] Fixed missing calls to start, stop and dispose handles ([#2772](https://github.com/cucumber/cucumber-jvm/pull/2772) Julien Kronegg)
+
 ## [7.12.1] - 2023-06-02
 ### Fixed
 - [Core] Set html report viewport width to device width ([html-formatter/#238](https://github.com/cucumber/html-formatter/pull/238)  Tim Yao )
