@@ -13,7 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.kotlin.java8</project.Automatic-Module-Name>
-        <kotlin.version>1.8.22</kotlin.version>
+        <kotlin.version>1.9.0</kotlin.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
     </properties>
 
