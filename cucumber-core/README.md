@@ -4,7 +4,7 @@ Cucumber Core
 Provides components needed to discover, parse and execute feature files. The
 core is designed with a few extension systems and plugin points. You
 typically don't depend directly on `cucumber-core` but rather use the different
-submodules together e.g. `cucumber-junit` and `cucumber-java`.     
+submodules together e.g. `cucumber-junit` and `cucumber-java`.
 
 ## Properties, Environment variables, System Options ##
 
@@ -79,7 +79,7 @@ Each property also has an `UPPER_CASE` and `snake_case` variant. For example
 ## Backend ##
 
 Backends consist of two components: a `Backend`, and an optional `ObjectFactory`.
-They are  respectively responsible for discovering glue classes, registering
+They are respectively responsible for discovering glue classes, registering
 step definitions, and creating instances of said glue classes. Backend and
 object factory implementations are discovered via SPI.
 
