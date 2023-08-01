@@ -15,7 +15,7 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.datatable.matchers</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <guava.version>32.1.1-jre</guava.version>
+        <guava.version>32.1.2-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
     </properties>
