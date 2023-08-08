@@ -3,7 +3,9 @@ package io.cucumber.core.runner;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.TestAbortedException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ThrowableCollectorTest {
 

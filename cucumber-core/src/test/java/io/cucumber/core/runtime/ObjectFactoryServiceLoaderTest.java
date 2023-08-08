@@ -3,12 +3,7 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.backend.DefaultObjectFactory;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.Options;
-import io.cucumber.core.eventbus.IncrementingUuidGenerator;
-import io.cucumber.core.eventbus.RandomUuidGenerator;
-import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.exception.CucumberException;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Supplier;
@@ -21,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Testcases for `ObjectFactoryServiceLoader`
- *
+ * <p>
  * <!-- @formatter:off -->
  * | # | object-factory property | Available services                                    | Result                                                                           |
  * |---|-------------------------|-------------------------------------------------------|----------------------------------------------------------------------------------|
@@ -35,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * | 8 | OtherFactory            | DefaultObjectFactory                                  | exception, class not found through SPI                                           |
  * | 9 | undefined               | OtherFactory                                          | OtherFactory used                                                                |
  * <!-- @formatter:on -->
- *
+ * <p>
  * Essentially this means that
  * * (2) Cucumber works by default
  * * (4) When adding a custom implementation to the class path it is used automatically

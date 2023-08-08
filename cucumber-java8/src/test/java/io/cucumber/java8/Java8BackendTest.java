@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
-import java.util.Arrays;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;

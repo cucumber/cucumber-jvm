@@ -8,16 +8,16 @@ import io.cucumber.core.exception.CucumberException;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * # Testcases for `UuidGeneratorServiceLoader`
- *
+ * <p>
  * <!-- @formatter:off -->
  * | #   | uuid-generator property   | Available services                                                                  | Result                                                                           |
  * |-----|---------------------------|-------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|

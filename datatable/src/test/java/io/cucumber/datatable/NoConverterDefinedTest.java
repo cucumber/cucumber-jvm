@@ -1,7 +1,6 @@
 package io.cucumber.datatable;
 
 import io.cucumber.datatable.DataTable.TableConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.singletonList;

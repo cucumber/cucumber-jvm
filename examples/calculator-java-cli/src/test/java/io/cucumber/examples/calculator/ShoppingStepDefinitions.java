@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.cucumber.examples.calculator.ShoppingStepDefinitions.Price.*;
+import static io.cucumber.examples.calculator.ShoppingStepDefinitions.Price.fromString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 

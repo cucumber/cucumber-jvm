@@ -441,6 +441,7 @@
                     <configuration>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
                         <checkstyleRules>
                             <module name="Checker">
                                 <property name="severity" value="error"/>
