@@ -3,7 +3,7 @@ package io.cucumber.core.options;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RuntimeOptionsBuilderTest {
 
