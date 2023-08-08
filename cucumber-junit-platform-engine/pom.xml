@@ -13,7 +13,7 @@
 
     <properties>
         <hamcrest.version>2.2</hamcrest.version>
-        <junit-jupiter.version>5.9.3</junit-jupiter.version>
+        <junit-jupiter.version>5.10.0</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
