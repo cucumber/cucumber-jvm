@@ -495,6 +495,160 @@
             "code": "java.class.externalClassExposedInAPI",
             "new": "interface io.cucumber.core.eventbus.UuidGenerator",
             "justification": "Part of cucumber API"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.support.hierarchical.ThrowableCollector.Factory org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine<C extends org.junit.platform.engine.support.hierarchical.EngineExecutionContext>::createThrowableCollectorFactory(org.junit.platform.engine.ExecutionRequest) @ io.cucumber.junit.platform.engine.CucumberTestEngine",
+            "new": "method org.junit.platform.engine.support.hierarchical.ThrowableCollector.Factory org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine<C extends org.junit.platform.engine.support.hierarchical.EngineExecutionContext>::createThrowableCollectorFactory(org.junit.platform.engine.ExecutionRequest) @ io.cucumber.junit.platform.engine.CucumberTestEngine",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.STABLE",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.support.hierarchical.ThrowableCollector.Factory org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine<C extends org.junit.platform.engine.support.hierarchical.EngineExecutionContext>::createThrowableCollectorFactory(org.junit.platform.engine.ExecutionRequest) @ io.cucumber.junit.platform.engine.CucumberTestEngine",
+            "new": "method org.junit.platform.engine.support.hierarchical.ThrowableCollector.Factory org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine<C extends org.junit.platform.engine.support.hierarchical.EngineExecutionContext>::createThrowableCollectorFactory(org.junit.platform.engine.ExecutionRequest) @ io.cucumber.junit.platform.engine.CucumberTestEngine",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.3\"",
+            "newValue": "\"1.10\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.EngineDiscoveryListener",
+            "new": "interface org.junit.platform.engine.EngineDiscoveryListener",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.STABLE",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.EngineDiscoveryListener",
+            "new": "interface org.junit.platform.engine.EngineDiscoveryListener",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.6\"",
+            "newValue": "\"1.10\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.EngineDiscoveryListener org.junit.platform.engine.EngineDiscoveryRequest::getDiscoveryListener()",
+            "new": "method org.junit.platform.engine.EngineDiscoveryListener org.junit.platform.engine.EngineDiscoveryRequest::getDiscoveryListener()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.STABLE",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.EngineDiscoveryListener org.junit.platform.engine.EngineDiscoveryRequest::getDiscoveryListener()",
+            "new": "method org.junit.platform.engine.EngineDiscoveryListener org.junit.platform.engine.EngineDiscoveryRequest::getDiscoveryListener()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.6\"",
+            "newValue": "\"1.10\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.SelectorResolutionResult",
+            "new": "class org.junit.platform.engine.SelectorResolutionResult",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.STABLE",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.SelectorResolutionResult",
+            "new": "class org.junit.platform.engine.SelectorResolutionResult",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.6\"",
+            "newValue": "\"1.10\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.UniqueId org.junit.platform.engine.UniqueId::appendEngine(java.lang.String)",
+            "new": "method org.junit.platform.engine.UniqueId org.junit.platform.engine.UniqueId::appendEngine(java.lang.String)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.STABLE",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.UniqueId org.junit.platform.engine.UniqueId::appendEngine(java.lang.String)",
+            "new": "method org.junit.platform.engine.UniqueId org.junit.platform.engine.UniqueId::appendEngine(java.lang.String)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.8\"",
+            "newValue": "\"1.10\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "enum org.junit.platform.engine.support.hierarchical.Node.ExecutionMode",
+            "new": "enum org.junit.platform.engine.support.hierarchical.Node.ExecutionMode",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.STABLE",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "enum org.junit.platform.engine.support.hierarchical.Node.ExecutionMode",
+            "new": "enum org.junit.platform.engine.support.hierarchical.Node.ExecutionMode",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.3\"",
+            "newValue": "\"1.10\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.support.hierarchical.ResourceLock",
+            "new": "interface org.junit.platform.engine.support.hierarchical.ResourceLock",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.STABLE",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.support.hierarchical.ResourceLock",
+            "new": "interface org.junit.platform.engine.support.hierarchical.ResourceLock",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.3\"",
+            "newValue": "\"1.10\"",
+            "justification": "API consumed from JUnit 5"
           }
         ]
       }
