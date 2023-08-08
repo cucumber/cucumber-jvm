@@ -73,7 +73,7 @@ public class ServiceLoaderTestClassLoader extends URLClassLoader {
                 }
             });
 
-            return new Enumeration<>() {
+            return new Enumeration<URL>() {
                 boolean hasNext = true;
 
                 @Override
