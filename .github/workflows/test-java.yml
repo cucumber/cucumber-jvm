@@ -30,9 +30,9 @@ jobs:
           java-version: ${{ matrix.version }}
           cache: 'maven'
       - name: Install dependencies
-        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -D"archetype.test.skip=true" -D"maven.javadoc.skip=true" --batch-mode -D"style.color=always" --show-version
+        run: ./mvnw install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -D"archetype.test.skip=true" -D"maven.javadoc.skip=true" --batch-mode -D"style.color=always" --show-version
       - name: Test
-        run: mvn verify -Pinclude-extra-modules -D"style.color=always"
+        run: ./mvnw verify -Pinclude-extra-modules -D"style.color=always"
         env:
           CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
@@ -47,9 +47,9 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Javadoc
-        run: mvn javadoc:jar -Dstyle.color=always
+        run: ./mvnw javadoc:jar -Dstyle.color=always
 
   coverage:
     name: 'Coverage'
@@ -62,9 +62,9 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Install dependencies
-        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
+        run: ./mvnw install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Coverage)
-        run: mvn jacoco:prepare-agent verify jacoco:report -Pinclude-extra-modules -Dstyle.color=always
+        run: ./mvnw jacoco:prepare-agent verify jacoco:report -Pinclude-extra-modules -Dstyle.color=always
       - uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
@@ -82,6 +82,6 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Install dependencies
-        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
+        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Semver check)
-        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dstyle.color=always
+        run: ./mvnw verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dstyle.color=always
