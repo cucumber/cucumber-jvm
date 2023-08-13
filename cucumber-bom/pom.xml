@@ -18,7 +18,7 @@
         <html-formatter.version>20.4.0</html-formatter.version>
         <junit-xml-formatter.version>0.2.0</junit-xml-formatter.version>
         <messages.version>22.0.0</messages.version>
-        <tag-expressions.version>5.0.5</tag-expressions.version>
+        <tag-expressions.version>5.0.6</tag-expressions.version>
     </properties>
 
     <dependencyManagement>
