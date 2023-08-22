@@ -51,7 +51,6 @@ public class Belly {
 }
 ```
 
-
 ```java
 package com.example.app;
 
@@ -88,7 +87,7 @@ All step classes and their dependencies will be recreated for each
 scenario, even if the scenario in question does not use any steps from
 that particular class.
 
-To improve performance it is recommended to lazily create expensive
+To improve performance, it is recommended to lazily create expensive
 resources.
 
 ```java
@@ -120,7 +119,7 @@ These hooks will run after any Cucumber after hooks.
 ## Customizing PicoContainer
 
 Cucumber `PicoFactory` is intentionally not open for extension or
-customization. If you want to customize your dependency injection context
+customization. If you want to customize your dependency injection context,
 it is recommended to provide your own implementation of 
 `io.cucumber.core.backend.ObjectFactory` and make it available through
 SPI.

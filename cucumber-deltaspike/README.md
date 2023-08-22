@@ -4,7 +4,7 @@ Cucumber DeltaSpike
 This module relies on [DeltaSpike Container Control](https://deltaspike.apache.org/documentation/container-control.html) to start/stop supported CDI container.
 
 ## Setup
-Enable cdi support for your steps by adding a (empty) beans.xml into your classpath (src/main/resource/META-INF for normal classes or src/test/resources/META-INF for test classes):
+Enable cdi support for your steps by adding an (empty) beans.xml into your classpath (src/main/resource/META-INF for normal classes or src/test/resources/META-INF for test classes):
 
 ```xml
 <beans xmlns="http://java.sun.com/xml/ns/javaee"
@@ -16,7 +16,7 @@ Enable cdi support for your steps by adding a (empty) beans.xml into your classp
 </beans>
 ```
 
-To use DependencyInjection add `@Inject` to any field which should be managed by CDI, for more information see [JSR330](https://www.jcp.org/en/jsr/detail?id=330).
+To use dependency injection, add `@Inject` to any field which should be managed by CDI. For more information, see [JSR330](https://www.jcp.org/en/jsr/detail?id=330).
 
 ```java
 public class BellyStepdefs {
@@ -28,13 +28,13 @@ public class BellyStepdefs {
 }
 ```
 
-This ObjectFactory doesn't start or stop any [Scopes](https://docs.oracle.com/javaee/6/tutorial/doc/gjbbk.html), so all beans live inside the default scope (Dependent). Now cucumber requested a instance of your stepdefinitions for every step, which means cdi create a new instance for every step and for all injected fields. This behaviour makes it impossible to share a state inside a szenario.
+This object factory doesn't start or stop any [Scopes](https://docs.oracle.com/javaee/6/tutorial/doc/gjbbk.html), so all beans live inside the default scope (Dependent). Now Cucumber requested an instance of your step definitions for every step, which means cdi create a new instance for every step and for all injected fields. This behaviour makes it impossible to share a state inside a scenario.
 
-To bybass this, you must annotate your class(es) with `@javax.inject.Singleton`:
-1. on stepdefintions: now the ojectfactory will create only one instance include injected fields per scenario and both injected fields and stepdefinitions can be used to share state inside a scenario.
-2. on any other class: now the objectfactory will create a new instance of your stepdefinitions per step and stepdefinitions can not be used to share state inside a scenario, only the annotated classes can be used to share state inside a scenario
+To bypass this, you must annotate your class(es) with `@javax.inject.Singleton`:
+1. on destinations: now the object factory will create only one instance include injected fields per scenario, and both injected fields and step definitions can be used to share state inside a scenario.
+2. on any other class: now the object factory will create a new instance of your step definitions per step and step definitions can not be used to share state inside a scenario, only the annotated classes can be used to share state inside a scenario
 
-you can also combine both approaches.
+You can also combine both approaches.
 
 ```java
 @Singleton
@@ -46,9 +46,9 @@ public class BellyStepdefs {
     //normal step code ...
 }
 ```
-It is not possible to use any other scope than Dependent this means alsoi it is not possible to share a state over two or more scenarios, every scenario start with a clean environment.
+It is not possible to use any other scope than Dependent. This means also it is not possible to share a state over two or more scenarios; every scenario starts with a clean environment.
 
-To enable this objectfactory add the following dependency to your classpath:
+To enable this object factory, add the following dependency to your classpath:
 ```xml
 <dependency>
     <groupId>io.cucumber</groupId>
@@ -60,7 +60,7 @@ To enable this objectfactory add the following dependency to your classpath:
 
 and one of the supported cdi-containers.
 
-to use it with Weld:
+To use it with Weld:
 
 ```xml
 <dependency>
@@ -77,7 +77,7 @@ to use it with Weld:
 </dependency>
 ```
 
-or to use it with OpenEJB:
+To use it with OpenEJB:
 
 ```xml
 <dependency>
@@ -106,7 +106,8 @@ or to use it with OpenEJB:
 </dependency>
 ```
 
-or to use it with OpenWebBeans:
+To use it with OpenWebBeans:
+
 ```xml
 <dependency>
     <groupId>org.apache.deltaspike.cdictrl</groupId>
@@ -128,4 +129,4 @@ or to use it with OpenWebBeans:
 </dependency>
 ```
 
-Some containers need that you provide a CDI-API in a given version, but if you develop CDI and use one of the above containers it should already on your path.
+Some containers need you to provide a CDI-API in a given version, but if you develop CDI and use one of the above containers, it should already be on your path.
