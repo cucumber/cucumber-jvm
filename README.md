@@ -22,7 +22,7 @@ Cucumber-JVM also integrates with all the popular
 
 ## Upgrading?
 
-Migration instructions from previous major version and a long form
+Migration instructions from previous major versions and a long form
 explanation of noteworthy changes can be found in the [release-notes archive](release-notes)
 
 The changes for the current major version can be found in the [CHANGELOG.md](CHANGELOG.md).
