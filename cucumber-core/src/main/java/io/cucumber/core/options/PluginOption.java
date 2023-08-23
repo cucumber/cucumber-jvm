@@ -125,7 +125,7 @@ public class PluginOption implements Options.Plugin {
             throw createPluginIsNotCompatible(pluginSpecification);
         }
 
-        // Replace IDEA plugin with TeamCity
+        // Replace IntelliJ IDEA plugin with TeamCity
         if (INCOMPATIBLE_INTELLIJ_IDEA_PLUGIN_CLASSES.contains(pluginName)) {
             log.debug(() -> "Incompatible IntelliJ IDEA Plugin detected. Falling back to teamcity plugin");
             return TeamCityPlugin.class;

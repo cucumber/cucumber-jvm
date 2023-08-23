@@ -131,7 +131,7 @@ public class TeamCityPlugin implements EventListener {
 
     @SuppressWarnings("unused") // Used by PluginFactory
     public TeamCityPlugin() {
-        // This plugin prints markers for Team City and IDEA that allows them
+        // This plugin prints markers for Team City and IntelliJ IDEA that allows them
         // to associate the output to specific test cases. Printing to system
         // out - and potentially mixing with other formatters - is intentional.
         this(System.out);
