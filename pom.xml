@@ -44,6 +44,7 @@
         <module>cucumber-junit-platform-engine</module>
         <module>cucumber-kotlin-java8</module>
         <module>cucumber-openejb</module>
+        <module>cucumber-opentelemetry</module>
         <module>cucumber-picocontainer</module>
         <module>cucumber-plugin</module>
         <module>cucumber-spring</module>

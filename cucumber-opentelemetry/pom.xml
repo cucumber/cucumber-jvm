@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-jvm</artifactId>
+        <version>7.14.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cucumber-opentelemetry</artifactId>
+    <packaging>jar</packaging>
+    <name>Cucumber-JVM: OpenTelemetry</name>
+
+    <properties>
+        <opentelemetry.version>1.25.0</opentelemetry.version>
+        <project.Automatic-Module-Name>io.cucumber.opentelemetry</project.Automatic-Module-Name>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>${opentelemetry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+            <version>${opentelemetry.version}-alpha</version>
+        </dependency>
+    </dependencies>
+</project>
