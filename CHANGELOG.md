@@ -11,12 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-- [Core] Exclude Multi-Release files from Jackson while shading ([#2786](https://github.com/cucumber/cucumber-jvm/pull/2786) M.P. Korstanje)
-
+## [7.14.0] - 2023-09-09
 ### Changed
 - [Core] Update dependency io.cucumber:html-formatter to v20.4.0
 - [Core] Download attachments that are not video, image or text from the html report ([react-components/#333](https://github.com/cucumber/react-components/pull/333) David J. Goss)
+
+### Fixed
+- [Core] Exclude Multi-Release files from Jackson while shading ([#2786](https://github.com/cucumber/cucumber-jvm/pull/2786) M.P. Korstanje)
 
 ## [7.13.0] - 2023-07-02
 ### Changed
@@ -264,7 +265,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.0...main
+[7.14.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...main
 [7.13.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...main
 [7.12.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.0...main
 [7.12.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.2...main
