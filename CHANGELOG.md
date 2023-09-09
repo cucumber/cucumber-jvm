@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- [Core] Exclude Multi-Release files from Jackson while shading ([#2786](https://github.com/cucumber/cucumber-jvm/pull/2786) M.P. Korstanje)
+
 ## [7.13.0] - 2023-07-02
 ### Changed
 - [TestNG] Update dependency org.testng:testng to v7.8.0
