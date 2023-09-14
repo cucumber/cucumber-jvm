@@ -65,7 +65,7 @@ jobs:
         run: ./mvnw install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Coverage)
         run: ./mvnw jacoco:prepare-agent verify jacoco:report -Pinclude-extra-modules -Dstyle.color=always
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
           verbose: true
