@@ -34,7 +34,7 @@ final class InjectorSourceFactory {
         try {
             return (InjectorSource) injectorSourceClass.getConstructor().newInstance();
         } catch (Exception e) {
-            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your" +
+            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your " +
                     "InjectorSource implementation is accessible and has a public zero args constructor.",
                 injectorSourceClass.getName());
             throw new InjectorSourceInstantiationFailed(message, e);

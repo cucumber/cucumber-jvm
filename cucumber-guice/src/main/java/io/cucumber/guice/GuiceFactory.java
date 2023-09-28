@@ -29,6 +29,10 @@ public final class GuiceFactory implements ObjectFactory {
 
     public GuiceFactory() {
         this.injectorSourceFromProperty = loadInjectorSourceFromProperties(CucumberProperties.create());
+        // Eager init to allow for static binding prior to before all hooks
+        if (this.injectorSourceFromProperty != null) {
+            injector = createInjector(this.injectorSourceFromProperty);
+        }
     }
 
     @Override
@@ -40,6 +44,9 @@ public final class GuiceFactory implements ObjectFactory {
             if (hasInjectorSource(stepClass)) {
                 checkOnlyOneClassHasInjectorSource(stepClass);
                 withInjectorSource = stepClass;
+                // Eager init to allow for static binding prior to before all
+                // hooks
+                injector = createInjector(withInjectorSource);
             }
         }
         stepClasses.add(stepClass);
@@ -69,9 +76,10 @@ public final class GuiceFactory implements ObjectFactory {
     }
 
     public void start() {
+        // Last minute init. Neither properties not annotations provided an
+        // injector source.
         if (injector == null) {
-            injector = new InjectorSourceFactory(withInjectorSource).create()
-                    .getInjector();
+            injector = createInjector(null);
         }
         scenarioScope = injector.getInstance(ScenarioScope.class);
         scenarioScope.enterScope();
@@ -88,4 +96,9 @@ public final class GuiceFactory implements ObjectFactory {
         return injector.getInstance(clazz);
     }
 
+    private static Injector createInjector(Class<?> injectorSourceClass) {
+        InjectorSourceFactory injectorSourceFactory = new InjectorSourceFactory(injectorSourceClass);
+        InjectorSource injectorSource = injectorSourceFactory.create();
+        return injectorSource.getInjector();
+    }
 }
