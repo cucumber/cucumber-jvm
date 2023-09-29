@@ -417,7 +417,7 @@ DataTable programmatically. Here are some pointers:
 ### Transformation in detail.
 
 As described earlier, there are four primitive table types. These can be used to transform a table into a
-list of lists, a list of maps, a map a list or a single object. These transformations follow a number of
+list of lists, a list of maps, a map of string to lists, or a single object. These transformations follow a number of
 simple algorithms.
 
 **TableCellTransformer => list of lists of objects**
