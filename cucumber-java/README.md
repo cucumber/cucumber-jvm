@@ -1,7 +1,7 @@
 Cucumber Java
 =============
 
-Provides annotation based step definitions. To use, add the `cucumber-java` dependency to your pom.xml:
+Provides annotation-based step definitions. To use, add the `cucumber-java` dependency to your pom.xml:
 
 ```xml
 <dependencies>
@@ -18,7 +18,7 @@ Provides annotation based step definitions. To use, add the `cucumber-java` depe
 
 ## Step Definitions
 
-Declare a step definition by annotating a method. It is possible use the same
+Declare a step definition by annotating a method. It is possible to use the same
 method for multiple steps by repeating the annotation. For localized annotations
 import the annotations from `io.cucumber.java.<ISO2 Language Code>.*`
 
@@ -95,8 +95,8 @@ public class StepDefinitions {
 ```
 
 Note: In addition to collections of `String` collections of `Integer`, `Float`, `BigInteger` and `BigDecimal`, `Byte`, `Short`, `Long`
-and `Double` are also supported. Numbers are parsed using the language of the feature file. To use custom types you can use the
-annotations discussed in "Data Table Type" further down this page.
+and `Double` are also supported. Numbers are parsed using the language of the feature file. To use custom types, you can use the
+annotations discussed in the [Data Table Type](#data-table-type) section below.
 
 ### Doc strings
 
@@ -131,7 +131,7 @@ order can be provided by using the `order` property in the annotation.
 
 `BeforeAll` and `AfterAll` hooks are executed before all scenarios are executed and
 after all scenarios have been executed. A hook is declared by annotating a method.
-This methods must be static and do not take any arguments.
+These methods must be static and do not take any arguments.
 
 ```java
 package io.cucumber.example;
@@ -157,14 +157,14 @@ Notes:
 
  1. When used in combination with Junit 5, Maven Surefire, and/or Failsafe use 
     version `3.0.0-M5` or later.
- 2. When used in combination with Junit 5 and IntelliJ IDEA failures in before
+ 2. When used in combination with Junit 5 and IntelliJ IDEA, failures in before
     all and after all hooks do not fail a test run.
 
 ### Before / After
 
 `Before` and `After` hooks are executed before and after each scenario is executed.
 A hook is declared by annotating a method. This method may take an argument of
-`io.cucumber.java.Scenario`. A tag-expression can be used to execute a hook
+`io.cucumber.java.Scenario`. A [tag-expression](https://github.com/cucumber/tag-expressions) can be used to execute a hook
 conditionally.
 
 ```java
@@ -191,8 +191,8 @@ public class StepDefinitions {
 
 `BeforeStep` and `AfterStep` hooks are executed before and after each step is
 executed. A hook is declared by annotating a method. This method may take an
-argument of `io.cucumber.java.Scenario`. A tag-expression can be used to execute
-a hook  conditionally.
+argument of `io.cucumber.java.Scenario`. A [tag-expression](https://github.com/cucumber/tag-expressions) can be used to execute
+a hook conditionally.
 
 ```java
 package io.cucumber.example;
@@ -216,8 +216,8 @@ public class StepDefinitions {
     
 ## Transformers 
 
-Cucumber expression parameters, data tables and docs strings can be transformed
-into arbitrary java objects.
+Cucumber expression parameters, data tables, and doc strings can be transformed
+into arbitrary Java objects.
 
 ### Parameter Type
 
@@ -288,13 +288,13 @@ public class StepDefinitions {
 ```
 
 Data table types can be declared by annotating a method with `@DataTableType`. 
-Depending on the parameter type this will be either a: 
+Depending on the parameter type, this will be one of the following: 
  * `String` -> `io.cucumber.datatable.TableCellTranformer`
  * `Map<String,String>` -> `io.cucumber.datatable.TableEntryTransformer`
  * `List<String` -> `io.cucumber.datatable.TableRowTranformer`
  * `DataTable` -> `io.cucumber.datatable.TableTransformer`
 
-For a full list of transformations that can be achieved with data table types
+For a full list of transformations that can be achieved with data table types, 
 see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
 
 ### Default Transformers
@@ -334,7 +334,7 @@ public class DataTableStepDefinitions {
 Data tables in Gherkin cannot represent null or an empty string unambiguously. Cucumber will interpret empty cells as
 `null`.
 
-The empty string can be represented using a replacement. For example `[empty]`.
+The empty string can be represented using a replacement, for example `[blank]`.
 The replacement can be configured by setting the `replaceWithEmptyString`
 property of `DataTableType`, `DefaultDataTableCellTransformer` and 
 `DefaultDataTableEntryTransformer`. By default, no replacement is configured. 
@@ -399,7 +399,7 @@ public class DataTableStepDefinitions {
         return cell;
     }
 
-    @Given("A blank value")
+    @Given("a blank value")
     public void given_a_blank_value(Map<String, String> map){
         // map contains { "key":"a", "value": ""}
     }
@@ -437,14 +437,14 @@ public class DataTableStepDefinitions {
     public User convert(Map<String, String> entry){
       return new User(
          entry.get("firstname"),
-         entry.get("lastname")
+         entry.get("lastname"),
          entry.get("nationality")
       );
     }
     
     @Given("the user is")
     public void the_user_is(@Transpose User user){
-      // user  = [User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
+      // user = [User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
     }
 }
 ```

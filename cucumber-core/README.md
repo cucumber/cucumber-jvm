@@ -4,7 +4,7 @@ Cucumber Core
 Provides components needed to discover, parse and execute feature files. The
 core is designed with a few extension systems and plugin points. You
 typically don't depend directly on `cucumber-core` but rather use the different
-submodules together e.g. `cucumber-junit` and `cucumber-java`.     
+submodules together e.g. `cucumber-junit` and `cucumber-java`.
 
 ## Properties, Environment variables, System Options ##
 
@@ -79,7 +79,7 @@ Each property also has an `UPPER_CASE` and `snake_case` variant. For example
 ## Backend ##
 
 Backends consist of two components: a `Backend`, and an optional `ObjectFactory`.
-They are  respectively responsible for discovering glue classes, registering
+They are respectively responsible for discovering glue classes, registering
 step definitions, and creating instances of said glue classes. Backend and
 object factory implementations are discovered via SPI.
 
@@ -96,13 +96,13 @@ An event has a UUID. The UUID generator can be configured using the `cucumber.uu
 | io.cucumber.core.eventbus.RandomUuidGenerator       | Thread-safe, collision-free, multi-jvm  | ~1                                 | Reports may be generated on different JVMs at the same time. A typical example would be one suite that tests against Firefox and another against Safari. The exact browser is configured through a property. These are then executed concurrently on different Gitlab runners. |
 | io.cucumber.core.eventbus.IncrementingUuidGenerator | Thread-safe, collision-free, single-jvm | ~130                               | Reports are generated on a single JVM                                                                                                                                                                                                                                          |
 
-The performance gain on real project depend on the feature size.
+The performance gain on real projects depends on the feature size.
 
 When not specified, the `RandomUuidGenerator` is used.
 
 ## Plugin ##
 
-By implementing the Plugin interface classes can listen to execution events
+By implementing the Plugin interface, classes can listen to execution events 
 inside Cucumber JVM. Consider using a Plugin when creating test execution reports.
 
 ## FileSystem ##

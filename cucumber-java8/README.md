@@ -1,7 +1,7 @@
 Cucumber Java8
 ==============
 
-Provides lambda based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
+Provides lambda-based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
 
 ```xml
 <dependencies>
@@ -97,11 +97,14 @@ public class StepDefinitions implements En {
 ### Data Table Type
 
 Data table types can be declared by calling `DataTableType` in the constructor.
-Depending on the lambda type this will be either a: 
+Depending on the lambda type, this will be one of the following: 
  * `String` -> `io.cucumber.datatable.TableCellTranformer`
  * `Map<String,String>` -> `io.cucumber.datatable.TableEntry`
  * `List<String>` -> `io.cucumber.datatable.TableRow`
  * `DataTable` -> `io.cucumber.datatable.TableTransformer`
+
+For a full list of transformations that can be achieved with data table types,
+see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
 
 ```java
 package com.example.app;
@@ -125,17 +128,14 @@ public class StepDefinitions implements En {
 
 ### Default Transformers
 
-Default transformers allow you to specific a transformer that will be used when
-there is no transform defined. This can be combined with an object mapper like
-Jackson to quickly transform well known string representations to Java objects.
+Default transformers allow you to specify a transformer that will be used when
+there is no transformer defined. This can be combined with an object mapper like
+Jackson to quickly transform well-known string representations to Java objects.
 
  * `DefaultParameterTransformer`
  * `DefaultDataTableEntryTransformer`
  * `DefaultDataTableCellTransformer`
- 
-For a full list of transformations that can be achieved with data table types
-see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
- 
+
 ```java
 package com.example.app;
 
@@ -160,10 +160,10 @@ public class StepDefinitions implements En {
 Data tables in Gherkin can not represent null or the empty string unambiguously.
 Cucumber will interpret empty cells as `null`.
 
-Empty string be represented using a replacement. For example `[empty]`.
+Empty string be represented using a replacement, for example `[blank]`.
 The replacement can be configured providing the `replaceWithEmptyString`
 argument of `DataTableType`, `DefaultDataTableCellTransformer` and 
-`DefaultDataTableEntryTransformer`. By default no replacement is configured. 
+`DefaultDataTableEntryTransformer`. By default, no replacement is configured. 
 
 ```gherkin
 Given some authors
@@ -208,7 +208,9 @@ public class StepDefinitions implements En {
 # Transposing Tables
 
 A data table can be transposed by calling `.transpose()`. This means the keys
-will be in the first column rather then the first row.
+will be in the first column rather than the first row.
+
+For example, a table with the fields for a User and a data table type to create a User:
 
 ```gherkin
  Given the user is
@@ -216,8 +218,6 @@ will be in the first column rather then the first row.
     | lastname	    | Lo Giacco |
     | nationality	| Italian	|
  ```
-
-And a data table type to create a User
 
 ```java 
 package com.example.app;
@@ -246,7 +246,7 @@ public class StepDefinitions implements En {
     
         Given("the user is",  (DataTable authorsTable) -> {
             User user = authorsTable.transpose().asList(User.class);
-            // user  = User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
+            // user = User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
         });
     }
 }

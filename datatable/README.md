@@ -3,7 +3,7 @@
 DataTable is a simple data structure that allows the use and transformation
 of Gherkin data tables in Cucumber.
 
-This intended to support:
+This is intended to support:
 * manual conversion in step definitions
 * automatic conversion by Cucumber
 
@@ -38,8 +38,8 @@ list of strings.
 ]
 ```  
 
-This representation is not very useful. The fields are no longer labeled and
-the first row has to be discarded. So instead we can convert this table
+This representation is not very useful. The fields are no longer labeled, and
+the first row has to be discarded. So instead, we can convert this table
 into a list of maps.
 
 `java type: List<Map<String, String>>`
@@ -73,10 +73,10 @@ We can convert the table into a single map.
 }
 ```
 
-In the previous example the table only had a single column value for each key. A
+In the previous example, the table only had a single column value for each key. A
 table might have multiple column values per key.
 
-For example a table of airport codes and their coordinates expressed in
+For example, a table of airport codes and their coordinates expressed in
 latitude and longitude.
 
 ```gherkin
@@ -125,8 +125,8 @@ map's keys should be created from the first column rather than the header.
 
 ## Table Types
 
-So far we have transformed a table to various collections of strings. As a
-string representation for a number is not very useful. A data table can
+So far, we have transformed a table to various collections of strings. As a
+string representation for a number is not very useful, a data table can
 transform individual cells to a different type.
 
 `java type: Map<String, Map<String, Double>>`
@@ -171,7 +171,7 @@ registry.defineDataTableType(DataTableType#entry(Class))
 registry.defineDataTableType(DataTableType#cell(Class))
 ```
 
-In cases where these two reflection based helpers are insufficient,
+In cases where these two reflection-based helpers are insufficient,
 a custom table type can be registered as follows:
 
 ```java
@@ -203,12 +203,12 @@ There are four ways to transform a table:
 4. Transform the table. The table as a whole is transformed into a single
    object.
 
-When combined these four transforms are sufficient to convert a table to any
+When combined, these four transforms are sufficient to convert a table to any
 other reasonable type.
 
 #### Example
 
-Previously we transformed the geolocation of airports to a map of Doubles. The
+Previously, we transformed the geolocation of airports to a map of Doubles. The
 domain however uses a `Geolocation(latitude:Double, longitude:Double)` object to
 represent geolocations. Airports are represented by `Airport(code:String)`.
 
@@ -273,7 +273,7 @@ The table can be transformed to a map of airports to geolocations.
 ```
 
 If the table does not include a header row, then a `TableRowTransformer` must be used.
-As both the the table row and entry transformer create a list of `Geolocation`
+As both the table row and entry transformer create a list of `Geolocation`,
 it is recommended that you pick one representation only.
 
 ```gherkin
@@ -330,9 +330,9 @@ registry.defineDataTableType(new DataTableType(
 
 ### Default Table Types
 
-So far all examples required transforms to be written manually. This is quite burdensome. By defining and registering
+So far, all examples required transforms to be written manually. This is quite burdensome. By defining and registering
 a `TableEntryByTypeTransformer` and `TableCellByTypeTransformer` it is possible to transform all table entries and cells
-with a custom object mapper (e.g. Jackson Databind).
+with a custom object mapper (e.g., Jackson Databind).
 
 
 ```java
@@ -354,7 +354,7 @@ private class JacksonDataTableTransformer implements TableEntryByTypeTransformer
 
 The`TableEntryByTypeTransformer` and `TableCellByTypeTransformer` are used when there is no table entry or table cell
 defined for a given type. Note that when installing both `TableEntryByTypeTransformer` and `TableCellByTypeTransformer`
-it becomes impossible to disambiguate between table entries and table cells. By default table entries are assumed over
+it becomes impossible to disambiguate between table entries and table cells. By default, table entries are assumed over
 table cells. This ambiguity can be resolved by adding a header.
 
 ## Diffing
@@ -378,10 +378,10 @@ assertThat(actualTable, hasTheSameRowsAs(expectedTable));
 ## DataTable object
 
 An m-by-n immutable table of string values. A table is either empty or contains
-one or more cells. As such if a table has zero height it must have zero width and
+one or more cells. As such, if a table has zero height, it must have zero width and
 vice versa.
 
-The first row of the the table may be referred to as the table header. The
+The first row of the table may be referred to as the table header. The
 remaining cells as the table body.
 
 A table provides the following operations:
@@ -402,10 +402,10 @@ A table provides the following operations:
 * `subTable(fromRow, fromColumn, toRow, toColumn)` returns a tablw containing the
   cells between `fromRow` and `fromColumn` (inclusive) to `toRow` and `toColumn` (exclusive).
 
-Additionally it provides methods to conveniently convert the table into
-other data structures using the the transformers from the previous section.
+Additionally, it provides methods to conveniently convert the table into
+other data structures using the transformers from the previous section.
 
-* `asList|Lists(type)` converts a table to list or list of a given type.
+* `asList|Lists(type)` converts a table to a list or lists of a given type.
 * `asMap|Maps(keyType, valueType)` converts a table to map of key to value types.
 * `convert(type)` converts a table to an object of an arbitrary type.
 
@@ -416,14 +416,14 @@ DataTable programmatically. Here are some pointers:
 
 ### Transformation in detail.
 
-As described earlier there are four primitive table types. These can be used to transform a table into a
-list of lists, a list of maps, a map a list or a single object. These transformations follow a number of
+As described earlier, there are four primitive table types. These can be used to transform a table into a
+list of lists, a list of maps, a map of string to lists, or a single object. These transformations follow a number of
 simple algorithms.
 
 **TableCellTransformer => list of lists of objects**
 
-1. Determine the type the object.
-2. If no type could be determined assume it to be string.
+1. Determine the type of the object.
+2. If no type could be determined, assume it to be string.
 3. Lookup the TableCellTransformer for that type.
 4. Apply the transformer to each cell.
 
@@ -445,18 +445,18 @@ Header: | firstName   | lastName | birthDate  |
 
 **TableRowTransformer => a list of objects**
 
-1. Determine the type the object.
-2. If no type could be determined assume it to be string.
+1. Determine the type of the object.
+2. If no type could be determined, assume it to be string.
 3. Lookup the TableRowTransformer for that type.
 4. Apply the transformer to each row.
 
 **TableTransformer => an object**
 
-1. Determine the type the object.
+1. Determine the type of the object.
 2. Lookup the TableTransformer for that type.
 4. Apply the transformer to the table.
 
-**Combined  => a map of keys and values**
+**Combined => a map of keys and values**
 
 Maps can be created combining the previous transformers.
 
@@ -472,10 +472,10 @@ Header: | firstName   |    | lastName | birthDate  |
 ```
 
 
-2a. If the first table cell is blank use the TableCellTransformer to convert the other cells in the column.  
+2a. If the first table cell is blank, use the TableCellTransformer to convert the other cells in the column.  
 2b. Otherwise, use the TableEntryTransformer.
 
-3a. If the first table cell is blank use the TableEntryTransformer to convert the body values.  
+3a. If the first table cell is blank, use the TableEntryTransformer to convert the body values.  
 3b. Otherwise, use the TableRowTransformer on all values.
 
 4. Pair up the keys and values from steps 2 and 3.

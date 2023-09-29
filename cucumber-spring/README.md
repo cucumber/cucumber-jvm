@@ -21,7 +21,7 @@ Add the `cucumber-spring` dependency to your `pom.xml`:
 
 ## Configuring the Test Application Context
 
-To make Cucumber aware of your test configuration you can annotate a
+To make Cucumber aware of your test configuration, you can annotate a
 configuration class on your glue path with `@CucumberContextConfiguration` and with one of the
 following annotations: `@ContextConfiguration`, `@ContextHierarchy` or
 `@BootstrapWith`. If you are using SpringBoot, you can annotate configuration
@@ -43,7 +43,7 @@ public class CucumberSpringConfiguration {
 ```
 
 Note: Cucumber Spring uses Spring's `TestContextManager` framework internally.
-As a result a single Cucumber scenario will mostly behave like a JUnit test.
+As a result, a single Cucumber scenario will mostly behave like a JUnit test.
 
 For more information configuring Spring tests see:
  - [Spring Framework Documentation - Testing](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/testing.html)
@@ -52,7 +52,7 @@ For more information configuring Spring tests see:
 ### Configuring multiple Test Application Contexts
 
 Per execution Cucumber can only launch a single Test Application Contexts. To
-use multiple different application contexts Cucumber must be executed multiple
+use multiple different application contexts, Cucumber must be executed multiple
 times.
 
 #### JUnit 4 / TestNG
@@ -121,13 +121,13 @@ public class MyStepDefinitions {
 
 Cucumber Spring creates an application context and uses Spring's
 `TestContextManager` framework internally. All scenarios as well as all other
-tests (e.g. JUnit) that use the same context configuration will share one
+tests (e.g., JUnit) that use the same context configuration will share one
 instance of the Spring application. This avoids an expensive startup time.
 
 ### Sharing state between steps
 
 To prevent sharing test state between scenarios, beans containing glue code
-(i.e. step definitions, hooks, ect) are bound to the `cucumber-glue` scope.
+(i.e., step definitions, hooks, ect) are bound to the `cucumber-glue` scope.
 
 The `cucumber-glue` scope starts prior to a scenario and ends after a scenario.
 All beans in this scope will be created before a scenario execution and
@@ -203,7 +203,7 @@ public class PurchaseStepDefinitions {
 #### Sharing state between threads
 
 By default, when using `@ScenarioScope` these beans must also be accessed on
-the  same thread as the one that is executing the scenario. If you are certain
+the same thread as the one that is executing the scenario. If you are certain
 your scenario scoped beans can only be accessed through step definitions you
 can use `@ScenarioScope(proxyMode = ScopedProxyMode.NO)`.
 
@@ -257,11 +257,9 @@ public class UserStepDefinitions {
 }
 ```
 
-
-
 ### Dirtying the application context
 
-If your tests do dirty the application context you can add `@DirtiesContext` to 
+If your tests do dirty the application context, you can add `@DirtiesContext` to 
 your test configuration. 
 
 ```java
@@ -286,7 +284,7 @@ package com.example.app;
 public class MyStepDefinitions {
 
    @Autowired
-   private MyService myService;  // Each scenario have a new instance of MyService
+   private MyService myService;  // Each scenario will have a new instance of MyService
 
 }
 ```

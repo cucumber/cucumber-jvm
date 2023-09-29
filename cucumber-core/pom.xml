@@ -194,8 +194,8 @@
                 <executions>
                     <execution>
                         <!-- the cucumber-* dependencies of cucumber-core are
-                             non-trivial. This ensures that we not forget to
-                             update all intermediate dependencies. For instance
+                             non-trivial. This ensures that we do not forget to
+                             update all intermediate dependencies. For instance,
                              when updating messages -->
                         <id>enforce-dependency-convergence</id>
                         <configuration>

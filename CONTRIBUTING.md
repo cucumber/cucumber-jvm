@@ -2,7 +2,7 @@
 
 We appreciate that. Do keep the following in mind: 
 
-* Before making significant contribution consider discussing the outline of 
+* Before making a significant contribution, consider discussing the outline of 
   your solution first. This may avoid a duplication of efforts.
 * When you send a [pull requests](https://help.github.com/articles/using-pull-requests), 
   please include tests to go along with it.
@@ -25,7 +25,7 @@ When building the project for the first time, run:
 The `cucumber-archetype` modules integration tests against `-SNAPSHOT` 
 versions of Cucumber. These must be installed first.
 
-Afterwards `./mvnw test` or `./mvnw verify` should work as expected.
+Afterward `./mvnw test` or `./mvnw verify` should work as expected.
 
 ## Formatting Java
 

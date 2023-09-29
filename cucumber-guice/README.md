@@ -32,7 +32,7 @@ singleton and 'no scope'.
 
 ### Version 1.1.8 onwards
 A Guice injector is created once before any tests are run and is destroyed
-after the last test has run. Before each test scenario a new scenario scope
+after the last test has run. Before each test scenario, a new scenario scope
 is created. At the end of the test scenario the scenario scope is destroyed.
 Singleton scope exists throughout all test scenarios.
 
@@ -48,7 +48,7 @@ their singleton bindings updated. All bindings in
 By including the `cucumber-guice` jar on your
 `CLASSPATH` your Step Definitions will be instantiated by Guice.
 There are two main modes of using the module: with [scope annotations](#scoping-your-step-definitions) and with
-[module bindings](#using-module-bindings). The two modes can also be mixed. When mixing modes it is
+[module bindings](#using-module-bindings). The two modes can also be mixed. When mixing modes, it is
 important to realise that binding a class in a scope in a module takes
 precedence if the same class is also bound using a scope annotation.
 
@@ -78,7 +78,7 @@ be absolutely sure that a state change in one scenario could not possibly
 influence the success or failure of a subsequent scenario. As an example of
 when you might use a singleton, imagine you have an http client that is
 expensive to create. By holding a reference to the client in a class bound in
-singleton scope you can reuse the client in multiple scenarios.
+singleton scope, you can reuse the client in multiple scenarios.
 
 #### Using scope annotations
 This is the easy route if you're new to Guice. To bind a class in scenario
@@ -107,7 +107,7 @@ public class ScenarioScopedSteps {
 To bind a class in singleton scope add the
 `javax.inject.Singleton` annotation to the class definition. One
 strategy for using stateless step definitions is to use providers to share
-stateful scenario scoped instances between stateless singleton step
+stateful scenario-scoped instances between stateless singleton step
 definition instances. For example:
 
 ```java
@@ -136,7 +136,7 @@ There is an alternative explanation of using [providers for mixing scopes](https
 ### Using module bindings
 As an alternative to using annotations you may prefer to declare Guice
 bindings in a class that implements `com.google.inject.Module`. To
-do this you should create a class that implements
+do this, you should create a class that implements
 `io.cucumber.guice.api.InjectorSource`. This gives you complete
 control over how you obtain a Guice injector and it's Guice modules. The
 injector must provide a binding for

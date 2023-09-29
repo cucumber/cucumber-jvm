@@ -1,8 +1,8 @@
 Cucumber CDI 2
 ==============
 
-Use CDI Standalone Edition (CDI SE) API to provide dependency injection in to
-steps definitions
+Use CDI Standalone Edition (CDI SE) API to provide dependency injection into
+steps definitions.
 
 Add the `cucumber-cdi2` dependency to your pom.xml:
 
@@ -48,7 +48,7 @@ And for Weld it is:
 
 ## Usage
 
-For each scenario a new CDI container is started. If not present in the
+For each scenario, a new CDI container is started. If not present in the
 container, step definitions are added as unmanaged beans and dependencies are
 injected.
 

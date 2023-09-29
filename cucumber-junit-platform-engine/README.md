@@ -19,10 +19,10 @@ and execute Cucumber scenarios.
 
 ## Surefire and Gradle workarounds
 
-Maven Surefire and Gradle do not yet support discovery of non-class based tests
+Maven, Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
 [SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
-workaround you can either use the
+ workaround, you can either use the
 [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine) 
 or the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher).
 
@@ -32,11 +32,11 @@ The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
 for a brief how to.
 
-Because Surefire and Gradle reports the results in  a `<Class Name> - <Method Name>`
-format only scenario names or example numbers are reported. This
+Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
+format, only scenario names or example numbers are reported. This
 can make for hard to read reports. To improve the readability of the reports
 provide the `cucumber.junit-platform.naming-strategy=long` configuration
-parameter. This will include the feature name as part of the tests name. 
+parameter. This will include the feature name as part of the test name. 
 
 #### Maven
 
@@ -182,10 +182,10 @@ public class RunCucumberTest {
 
 ## Parallel execution ## 
 
-By default, Cucumber runs tests sequentially in a single thread. Running  tests
+By default, Cucumber runs tests sequentially in a single thread. Running tests
 in parallel is available as an opt-in feature. To enable parallel execution, set
 the `cucumber.execution.parallel.enabled` configuration parameter to `true`,
-e.g. in `junit-platform.properties`.
+e.g., in `junit-platform.properties`.
 
 To control properties such as the desired parallelism and maximum parallelism,
 Cucumber supports JUnit 5s `ParallelExecutionConfigurationStrategy`. Cucumber
@@ -293,8 +293,8 @@ cucumber.execution.exclusive-resources.isolated.read-write=org.junit.platform.en
 ```
 ### Executing features in parallel 
 
-By default, when parallel execution in enabled, scenarios and examples are
-executed in parallel. Due to limitations JUnit 4 could only execute features in
+By default, when parallel execution is enabled, scenarios and examples are
+executed in parallel. Due to limitations, JUnit 4 could only execute features in
 parallel. This behaviour can be restored by setting the configuration parameter
 `cucumber.execution.execution-mode.feature` to `same_thread`. 
 
@@ -303,7 +303,7 @@ parallel. This behaviour can be restored by setting the configuration parameter
 Cucumber receives its configuration from the JUnit Platform. To see how these can be supplied; see the JUnit
 documentation
 [4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). For 
-documentation on Cucumber properties see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
+documentation on Cucumber properties, see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
 cucumber.ansi-colors.disabled=                                 # true or false. 
@@ -471,7 +471,7 @@ for more information.
 ## Aborting Tests
 
 Cucumber supports [OpenTest4Js](https://github.com/ota4j-team/opentest4j)
-`TestAbortedException`. This makes it possible to use JUnit Jupiters
+`TestAbortedException`. This makes it possible to use JUnit Jupiter's
 `Assumptions` to abort rather than fail a scenario.
 
 ```java
@@ -548,7 +548,6 @@ public class RunCucumber {
 
       TestExecutionSummary rerunSummary = listener.getSummary();
       // Do something with rerunSummary
-
    }
 
 }

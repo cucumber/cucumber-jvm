@@ -374,7 +374,7 @@ in `cucumber.api` stable from now on, with proper deprecation warnings in case s
 
 ## [1.0.6] (2012-05-03)
 
-* [JUnit] Scenarios with skipped, pending or undefined steps show up as yellow in IDEA and Eclipse (They used to be green while the steps were yellow). (Aslak Hellesøy)
+* [JUnit] Scenarios with skipped, pending or undefined steps show up as yellow in IntelliJ IDEA and Eclipse (They used to be green while the steps were yellow). (Aslak Hellesøy)
 * [Core] Loading features and glue code from the `CLASSPATH` can be done with `classpath:my/path` ([#312](https://github.com/cucumber/cucumber-jvm/issues/312) Aslak Hellesøy)
 * [Clojure] Clojure example can't find cuke_steps.clj ([#291](https://github.com/cucumber/cucumber-jvm/issues/291), [#309](https://github.com/cucumber/cucumber-jvm/pull/309) Nils Wloka)
 

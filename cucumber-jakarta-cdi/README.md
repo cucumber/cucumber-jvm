@@ -95,7 +95,7 @@ or Apache OpenWebBeans.
 
 ## Usage
 
-For each scenario a new CDI container is started. If not present in the
+For each scenario, a new CDI container is started. If not present in the
 container, step definitions are added as unmanaged beans and dependencies are
 injected.
 
