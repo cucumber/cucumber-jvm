@@ -23,7 +23,7 @@ method for multiple steps by repeating the annotation. For localized annotations
 import the annotations from `io.cucumber.java.<ISO2 Language Code>.*`
 
 Step definitions can take either a
-[Cucumber Expression](https://github.com/cucumber/cucumber/tree/master/cucumber-expressions) or a regular
+[Cucumber Expression](https://github.com/cucumber/cucumber-expressions) or a regular
 expression.
 
 ```java
