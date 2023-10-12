@@ -265,13 +265,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.0...main
-[7.14.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...main
-[7.13.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...main
-[7.12.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.0...main
-[7.12.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.2...main
-[7.11.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...main
-[7.11.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...main
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.0...HEAD
+[7.14.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...v7.14.0
+[7.13.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...v7.13.0
+[7.12.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.0...v7.12.1
+[7.12.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.2...v7.12.0
+[7.11.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.1...v7.11.2
+[7.11.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.11.0...v7.11.1
 [7.11.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.1...v7.11.0
 [7.10.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.10.0...v7.10.1
 [7.10.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.9.0...v7.10.0
