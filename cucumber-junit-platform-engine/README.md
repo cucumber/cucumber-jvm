@@ -146,7 +146,7 @@ tasks {
 
 ### Running a single scenario or feature from the CLI
 
-To select a single scenario or feature he `cucumber.features` property can be
+To select a single scenario or feature the `cucumber.features` property can be
 used. Because this property will cause Cucumber to ignore any other selectors
 from JUnit, it is prudent to execute only the Cucumber engine.
 
