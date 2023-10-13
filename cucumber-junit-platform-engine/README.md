@@ -144,6 +144,27 @@ tasks {
 }
 ```
 
+### Running a single scenario or feature from the CLI
+
+To select a single scenario or feature the `cucumber.features` property can be
+used. Because this property will cause Cucumber to ignore any other selectors
+from JUnit, it is prudent to execute only the Cucumber engine.
+
+#### Maven
+
+To select the scenario on line 10 of the `example.feature` file use:
+
+```shell
+mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcucumber.features=path/to/example.feature:10 
+```
+
+Note: Add `-Dcucumber.plugin=pretty` to get test reports. Maven will not
+report on tests without a class.
+
+#### Gradle
+
+TODO: (Feel free to send a pull request. ;))
+
 ## Suites with different configurations
 
 The JUnit Platform Suite Engine can be used to run Cucumber multiple times with
