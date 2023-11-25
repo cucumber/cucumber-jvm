@@ -12,29 +12,16 @@ import static java.lang.String.format;
 final class InjectorSourceFactory {
     private static final Logger log = LoggerFactory.getLogger(GuiceFactory.class);
     static final String GUICE_INJECTOR_SOURCE_KEY = "guice.injector-source";
-    private final Class<?> injectorSourceClass;
 
-    InjectorSourceFactory(Class<?> injectorSourceClass) {
-        this.injectorSourceClass = injectorSourceClass;
-    }
-
-    InjectorSource create() {
-        if (injectorSourceClass == null) {
-            return createDefaultScenarioModuleInjectorSource();
-        } else {
-            return instantiateUserSpecifiedInjectorSource(injectorSourceClass);
-        }
-    }
-
-    private InjectorSource createDefaultScenarioModuleInjectorSource() {
+    static InjectorSource createDefaultScenarioModuleInjectorSource() {
         return () -> Guice.createInjector(Stage.PRODUCTION, CucumberModules.createScenarioModule());
     }
 
-    private InjectorSource instantiateUserSpecifiedInjectorSource(Class<?> injectorSourceClass) {
+    static InjectorSource instantiateUserSpecifiedInjectorSource(Class<?> injectorSourceClass) {
         try {
             return (InjectorSource) injectorSourceClass.getConstructor().newInstance();
         } catch (Exception e) {
-            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your" +
+            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your " +
                     "InjectorSource implementation is accessible and has a public zero args constructor.",
                 injectorSourceClass.getName());
             throw new InjectorSourceInstantiationFailed(message, e);
@@ -57,7 +44,7 @@ final class InjectorSourceFactory {
         try {
             return Class.forName(injectorSourceClassName, true, Thread.currentThread().getContextClassLoader());
         } catch (Exception e) {
-            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your" +
+            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your " +
                     "InjectorSource implementation is accessible and has a public zero args constructor.",
                 injectorSourceClassName);
             throw new InjectorSourceInstantiationFailed(message, e);
