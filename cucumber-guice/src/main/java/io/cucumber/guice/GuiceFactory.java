@@ -10,6 +10,8 @@ import org.apiguardian.api.API;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static io.cucumber.guice.InjectorSourceFactory.createDefaultScenarioModuleInjectorSource;
+import static io.cucumber.guice.InjectorSourceFactory.instantiateUserSpecifiedInjectorSource;
 import static io.cucumber.guice.InjectorSourceFactory.loadInjectorSourceFromProperties;
 import static java.lang.String.format;
 
@@ -31,7 +33,7 @@ public final class GuiceFactory implements ObjectFactory {
         this.injectorSourceFromProperty = loadInjectorSourceFromProperties(CucumberProperties.create());
         // Eager init to allow for static binding prior to before all hooks
         if (this.injectorSourceFromProperty != null) {
-            injector = createInjector(this.injectorSourceFromProperty);
+            injector = instantiateUserSpecifiedInjectorSource(this.injectorSourceFromProperty).getInjector();
         }
     }
 
@@ -46,7 +48,7 @@ public final class GuiceFactory implements ObjectFactory {
                 withInjectorSource = stepClass;
                 // Eager init to allow for static binding prior to before all
                 // hooks
-                injector = createInjector(withInjectorSource);
+                injector = instantiateUserSpecifiedInjectorSource(withInjectorSource).getInjector();
             }
         }
         stepClasses.add(stepClass);
@@ -79,7 +81,7 @@ public final class GuiceFactory implements ObjectFactory {
         // Last minute init. Neither properties not annotations provided an
         // injector source.
         if (injector == null) {
-            injector = createInjector(null);
+            injector = createDefaultScenarioModuleInjectorSource().getInjector();
         }
         scenarioScope = injector.getInstance(ScenarioScope.class);
         scenarioScope.enterScope();
@@ -96,9 +98,4 @@ public final class GuiceFactory implements ObjectFactory {
         return injector.getInstance(clazz);
     }
 
-    private static Injector createInjector(Class<?> injectorSourceClass) {
-        InjectorSourceFactory injectorSourceFactory = new InjectorSourceFactory(injectorSourceClass);
-        InjectorSource injectorSource = injectorSourceFactory.create();
-        return injectorSource.getInjector();
-    }
 }

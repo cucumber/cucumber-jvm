@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.cucumber.guice.InjectorSourceFactory.GUICE_INJECTOR_SOURCE_KEY;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static io.cucumber.guice.InjectorSourceFactory.instantiateUserSpecifiedInjectorSource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
@@ -17,12 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InjectorSourceFactoryTest {
-
-    @Test
-    void createsDefaultInjectorSourceWhenGuiceModulePropertyIsNotSet() {
-        InjectorSourceFactory injectorSourceFactory = new InjectorSourceFactory(null);
-        assertThat(injectorSourceFactory.create(), is(instanceOf(InjectorSource.class)));
-    }
 
     @Test
     void instantiatesInjectorSourceByFullyQualifiedName() {
@@ -49,9 +43,7 @@ class InjectorSourceFactoryTest {
 
     @Test
     void failsToInstantiateClassNotImplementingInjectorSource() {
-        InjectorSourceFactory injectorSourceFactory = new InjectorSourceFactory(String.class);
-
-        Executable testMethod = injectorSourceFactory::create;
+        Executable testMethod = () -> instantiateUserSpecifiedInjectorSource(String.class);
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
             testMethod);
         assertAll(
@@ -63,9 +55,7 @@ class InjectorSourceFactoryTest {
 
     @Test
     void failsToInstantiateClassWithPrivateConstructor() {
-        InjectorSourceFactory injectorSourceFactory = new InjectorSourceFactory(PrivateConstructor.class);
-
-        Executable testMethod = injectorSourceFactory::create;
+        Executable testMethod = () -> instantiateUserSpecifiedInjectorSource(PrivateConstructor.class);
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
             testMethod);
         assertAll(
@@ -77,9 +67,7 @@ class InjectorSourceFactoryTest {
 
     @Test
     void failsToInstantiateClassWithNoDefaultConstructor() {
-        InjectorSourceFactory injectorSourceFactory = new InjectorSourceFactory(NoDefaultConstructor.class);
-
-        Executable testMethod = injectorSourceFactory::create;
+        Executable testMethod = () -> instantiateUserSpecifiedInjectorSource(NoDefaultConstructor.class);
         InjectorSourceInstantiationFailed actualThrown = assertThrows(InjectorSourceInstantiationFailed.class,
             testMethod);
         assertAll(
