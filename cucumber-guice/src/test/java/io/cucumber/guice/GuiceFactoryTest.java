@@ -244,6 +244,7 @@ class GuiceFactoryTest {
             YourInjectorSource.class);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(exceptionMessage));
     }
+
     @Test
     void shouldInjectStaticBeforeStart() {
         factory = new GuiceFactory();
@@ -299,6 +300,5 @@ class GuiceFactoryTest {
             });
         }
     }
-
 
 }

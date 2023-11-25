@@ -42,7 +42,7 @@ class InjectorSourceFactoryTest {
             () -> InjectorSourceFactory.loadInjectorSourceFromProperties(properties));
         assertAll(
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-                "Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+                "Instantiation of 'some.bogus.Class' failed. Check the caused by exception and ensure your InjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
                 isA(ClassNotFoundException.class)));
     }
@@ -56,7 +56,7 @@ class InjectorSourceFactoryTest {
             testMethod);
         assertAll(
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-                "Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+                "Instantiation of 'java.lang.String' failed. Check the caused by exception and ensure your InjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
                 isA(ClassCastException.class)));
     }
@@ -70,7 +70,7 @@ class InjectorSourceFactoryTest {
             testMethod);
         assertAll(
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-                "Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+                "Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$PrivateConstructor' failed. Check the caused by exception and ensure your InjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
                 isA(NoSuchMethodException.class)));
     }
@@ -84,7 +84,7 @@ class InjectorSourceFactoryTest {
             testMethod);
         assertAll(
             () -> assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-                "Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure yourInjectorSource implementation is accessible and has a public zero args constructor."))),
+                "Instantiation of 'io.cucumber.guice.InjectorSourceFactoryTest$NoDefaultConstructor' failed. Check the caused by exception and ensure your InjectorSource implementation is accessible and has a public zero args constructor."))),
             () -> assertThat("Unexpected exception cause class", actualThrown.getCause(),
                 isA(NoSuchMethodException.class)));
     }
