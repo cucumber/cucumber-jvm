@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.14.1] - 2023-11-25
 ### Fixed
 - [Guice] Inject static fields prior to before all hooks ([#2803](https://github.com/cucumber/cucumber-jvm/pull/2803) M.P. Korstanje)
 
@@ -267,7 +269,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.1...HEAD
+[7.14.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.0...v7.14.1
 [7.14.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...v7.14.0
 [7.13.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...v7.13.0
 [7.12.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.0...v7.12.1
