@@ -30,7 +30,7 @@ or the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/u
 
 The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
-for a brief how to.
+for a brief how to. You can also check out the [Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle/Maven which help in automatically applying this workaround.
 
 Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
