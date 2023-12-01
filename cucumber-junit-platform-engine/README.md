@@ -31,7 +31,7 @@ Maven, Surefire and Gradle do not yet support discovery of non-class based tests
 
 The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
-for a brief how to. 
+for a brief how to.
 
 Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
