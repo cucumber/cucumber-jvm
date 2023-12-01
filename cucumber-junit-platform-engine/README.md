@@ -22,15 +22,16 @@ and execute Cucumber scenarios.
 Maven, Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
 [SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
- workaround, you can either use the
-[JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine) 
-or the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher).
+ workaround, you can either use:
+ * the [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine);
+ * the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher) or;
+ * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
 
 ### Use the JUnit Platform Suite Engine
 
 The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
-for a brief how to. You can also check out the [Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle/Maven which help in automatically applying this workaround.
+for a brief how to. 
 
 Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
