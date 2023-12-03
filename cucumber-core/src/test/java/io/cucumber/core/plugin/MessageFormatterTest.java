@@ -8,14 +8,16 @@ import io.cucumber.messages.types.TestRunStarted;
 import io.cucumber.messages.types.Timestamp;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Clock;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
 public class MessageFormatterTest {
 
@@ -33,13 +35,14 @@ public class MessageFormatterTest {
         bus.send(Envelope.of(testRunFinished));
 
         String ndjson = new String(bytes.toByteArray(), UTF_8);
-        String[] ndjsonArray = ndjson.split("\\n");
-        String[] expectedArray = {
+        String[] actual = ndjson.split("\\n");
+        String[] expected = {
                 "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}",
                 "{\"testRunFinished\":{\"success\":true,\"timestamp\":{\"seconds\":15,\"nanos\":0}}}"
         };
-        for (int i = 0; i < ndjsonArray.length; i++) {
-            JSONAssert.assertEquals(expectedArray[i], ndjsonArray[i], JSONCompareMode.LENIENT);
+        assertThat(actual.length, equalTo(expected.length));
+        for (int i = 0; i < actual.length; i++) {
+            assertEquals(expected[i], actual[i], STRICT);
         }
     }
 
