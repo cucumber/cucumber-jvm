@@ -14,10 +14,10 @@
     <properties>
         <ci-environment.version>10.0.0</ci-environment.version>
         <cucumber-expressions.version>17.0.1</cucumber-expressions.version>
-        <gherkin.version>26.2.0</gherkin.version>
-        <html-formatter.version>20.4.0</html-formatter.version>
+        <gherkin.version>27.0.0</gherkin.version>
+        <html-formatter.version>21.0.0</html-formatter.version>
         <junit-xml-formatter.version>0.2.0</junit-xml-formatter.version>
-        <messages.version>22.0.0</messages.version>
+        <messages.version>24.0.0</messages.version>
         <tag-expressions.version>6.0.0</tag-expressions.version>
     </properties>
 
