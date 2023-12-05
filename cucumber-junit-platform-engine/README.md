@@ -26,6 +26,7 @@ Maven, Surefire and Gradle do not yet support discovery of non-class based tests
  * the [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine);
  * the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher) or;
  * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
+ * the [Cucable](https://github.com/trivago/cucable-plugin) plugin for Maven.
 
 ### Use the JUnit Platform Suite Engine
 
