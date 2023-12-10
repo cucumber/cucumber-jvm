@@ -167,7 +167,8 @@ public final class ClasspathSupport {
                 "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
                 "Cucumber currently doesn't support classpath scanning in nested jars.\n" +
                 "\n" +
-                "You can avoid this error by unpacking your application before executing.\n" +
+                "You can avoid this error by unpacking your application before executing or upgrading to Spring Boot 3.2 or higher.\n"
+                +
                 "\n" +
                 "Alternatively you can restrict which packages cucumber scans configuring the glue path such that " +
                 "Cucumber only scans un-nested jars.\n" +

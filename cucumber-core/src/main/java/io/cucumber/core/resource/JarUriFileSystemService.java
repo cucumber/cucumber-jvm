@@ -22,7 +22,7 @@ class JarUriFileSystemService {
     private static final String JAR_URI_SCHEME = "jar";
     private static final String JAR_URI_SCHEME_PREFIX = JAR_URI_SCHEME + ":";
     private static final String JAR_FILE_SUFFIX = ".jar";
-    private static final String JAR_URI_SEPARATOR = "!";
+    private static final String JAR_URI_SEPARATOR = "!/";
 
     private static final Map<URI, FileSystem> openFiles = new HashMap<>();
     private static final Map<URI, AtomicInteger> referenceCount = new HashMap<>();
@@ -67,13 +67,14 @@ class JarUriFileSystemService {
     }
 
     static CloseablePath open(URI uri) throws URISyntaxException, IOException {
-        if (hasJarUriScheme(uri)) {
-            return handleJarUriScheme(uri);
-        }
+        assert supports(uri);
         if (hasFileUriSchemeWithJarExtension(uri)) {
             return handleFileUriSchemeWithJarExtension(uri);
         }
-        throw new IllegalArgumentException("Unsupported uri " + uri.toString());
+        if (isSpringBoot31OrLower(uri)) {
+            return handleSpringBoot31JarUri(uri);
+        }
+        return handleJarUriScheme(uri);
     }
 
     private static CloseablePath handleFileUriSchemeWithJarExtension(URI uri) throws IOException, URISyntaxException {
@@ -82,22 +83,44 @@ class JarUriFileSystemService {
     }
 
     private static CloseablePath handleJarUriScheme(URI uri) throws IOException, URISyntaxException {
-        String[] parts = uri.toString().split(JAR_URI_SEPARATOR);
-        // Regular jar schemes
-        if (parts.length <= 2) {
-            String jarUri = parts[0];
-            String jarPath = parts.length == 2 ? parts[1] : "/";
-            return open(new URI(jarUri), fileSystem -> fileSystem.getPath(jarPath));
+        // Regular Jar Uris
+        // Format: jar:<url>!/[<entry>]
+        String uriString = uri.toString();
+        int lastJarUriSeparator = uriString.lastIndexOf(JAR_URI_SEPARATOR);
+        if (lastJarUriSeparator < 0) {
+            throw new IllegalArgumentException(String.format("jar uri '%s' must contain '%s'", uri, JAR_URI_SEPARATOR));
         }
+        String url = uriString.substring(0, lastJarUriSeparator);
+        String entry = uriString.substring(lastJarUriSeparator + 1);
+        return open(new URI(url), fileSystem -> fileSystem.getPath(entry));
+    }
 
-        // Spring boot jar scheme
+    private static boolean isSpringBoot31OrLower(URI uri) {
+        // Starting Spring Boot 3.2 the nested scheme is used. This works with
+        // regular jar file handling and doesn't need a workaround.
+        // Example 3.2:
+        // jar:nested:/dir/myjar.jar/!/BOOT-INF/lib/nested.jar!/com/example/MyClass.class
+        // Example 3.1:
+        // jar:file:/dir/myjar.jar/!/BOOT-INF/lib/nested.jar!/com/example/MyClass.class
+        String schemeSpecificPart = uri.getSchemeSpecificPart();
+        return schemeSpecificPart.startsWith("file:") && schemeSpecificPart.contains("!/BOOT-INF");
+    }
+
+    private static CloseablePath handleSpringBoot31JarUri(URI uri) throws IOException, URISyntaxException {
+        // Spring boot 3.1 jar scheme
+        // Examples:
+        // jar:file:/home/user/application.jar!/BOOT-INF/lib/dependency.jar!/com/example/dependency/resource.txt
+        // jar:file:/home/user/application.jar!/BOOT-INF/classes!/com/example/package/resource.txt
+        String[] parts = uri.toString().split("!");
         String jarUri = parts[0];
         String jarEntry = parts[1];
         String subEntry = parts[2];
         if (jarEntry.endsWith(JAR_FILE_SUFFIX)) {
             throw new CucumberException(nestedJarEntriesExplanation(uri));
         }
+        // We're looking directly at the files in the jar, so we construct the
+        // file path by concatenating the jarEntry and subEntry without the jar
+        // uri separator.
         return open(new URI(jarUri), fileSystem -> fileSystem.getPath(jarEntry + subEntry));
     }
-
 }
