@@ -82,6 +82,16 @@ class JarUriFileSystemService {
     }
 
     private static CloseablePath handleJarUriScheme(URI uri) throws IOException, URISyntaxException {
+        String uriAsString = uri.toString();
+
+        // Spring Boot jar scheme since 3.2.0
+        if (uriAsString.startsWith("jar:nested")) {
+            int indexOfLastSeparator = uriAsString.lastIndexOf(JAR_URI_SEPARATOR);
+            String jarUri = uriAsString.substring(0, indexOfLastSeparator);
+            String jarPath = uriAsString.substring(indexOfLastSeparator + 1);
+            return open(new URI(jarUri), fileSystem -> fileSystem.getPath(jarPath));
+        }
+
         String[] parts = uri.toString().split(JAR_URI_SEPARATOR);
         // Regular jar schemes
         if (parts.length <= 2) {
@@ -90,7 +100,7 @@ class JarUriFileSystemService {
             return open(new URI(jarUri), fileSystem -> fileSystem.getPath(jarPath));
         }
 
-        // Spring boot jar scheme
+        // Spring boot jar scheme before 3.2.0
         String jarUri = parts[0];
         String jarEntry = parts[1];
         String subEntry = parts[2];
