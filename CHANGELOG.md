@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Guice] Inject static fields prior to before all hooks ([#2803](https://github.com/cucumber/cucumber-jvm/pull/2803) M.P. Korstanje)
 
+### Changed
+- [Core] Upgrade `vis-timeline` to v7.7.3
+
 ### Added
 - [Core] Support nested jar file systems (i.e. Spring Boot 3.2) ([#2830](https://github.com/cucumber/cucumber-jvm/pull/2830) M.P. Korstanje)
 
