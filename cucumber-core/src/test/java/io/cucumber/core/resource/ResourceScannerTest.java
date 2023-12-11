@@ -160,6 +160,29 @@ class ResourceScannerTest {
     }
 
     @Test
+    void scanForResourcesJarUriMalformed() {
+        URI jarFileUri = new File("src/test/resources/io/cucumber/core/resource/test/jar-resource.jar").toURI();
+        URI resourceUri = URI
+                .create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "/com/example/package-jar-resource.txt");
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> resourceScanner.scanForResourcesUri(resourceUri));
+        assertThat(exception.getMessage(),
+            containsString("jar uri '" + resourceUri + "' must contain '!/'"));
+    }
+
+    @Test
+    void scanForResourcesJarUriMissingEntry() {
+        URI jarFileUri = new File("src/test/resources/io/cucumber/core/resource/test/jar-resource.jar").toURI();
+        URI resourceUri = URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart() + "");
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> resourceScanner.scanForResourcesUri(resourceUri));
+        assertThat(exception.getMessage(),
+            containsString("jar uri '" + resourceUri + "' must contain '!/'"));
+    }
+
+    @Test
     void scanForResourcesNestedJarUri() {
         URI jarFileUri = new File("src/test/resources/io/cucumber/core/resource/test/spring-resource.jar").toURI();
         URI resourceUri = URI.create("jar:file://" + jarFileUri.getSchemeSpecificPart()
