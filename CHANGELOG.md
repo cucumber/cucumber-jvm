@@ -11,15 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.15.0] - 2023-12-11
+
 ## [7.14.1] - 2023-11-25
-### Fixed
-- [Guice] Inject static fields prior to before all hooks ([#2803](https://github.com/cucumber/cucumber-jvm/pull/2803) M.P. Korstanje)
+### Added
+- [Core] Support nested jar file systems (i.e. Spring Boot 3.2) ([#2830](https://github.com/cucumber/cucumber-jvm/pull/2830) M.P. Korstanje)
 
 ### Changed
 - [Core] Upgrade `vis-timeline` to v7.7.3
 
-### Added
-- [Core] Support nested jar file systems (i.e. Spring Boot 3.2) ([#2830](https://github.com/cucumber/cucumber-jvm/pull/2830) M.P. Korstanje)
+### Fixed
+- [Guice] Inject static fields prior to before all hooks ([#2803](https://github.com/cucumber/cucumber-jvm/pull/2803) M.P. Korstanje)
 
 ## [7.14.0] - 2023-09-09
 ### Changed
@@ -275,7 +277,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.1...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.15.0...HEAD
+[7.15.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.1...v7.15.0
 [7.14.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.0...v7.14.1
 [7.14.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...v7.14.0
 [7.13.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.12.1...v7.13.0
