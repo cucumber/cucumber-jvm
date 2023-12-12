@@ -160,9 +160,6 @@ To select the scenario on line 10 of the `example.feature` file use:
 mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcucumber.features=path/to/example.feature:10 
 ```
 
-Note: Add `-Dcucumber.plugin=pretty` to get test reports. Maven will not
-report on tests without a class.
-
 #### Gradle
 
 TODO: (Feel free to send a pull request. ;))
@@ -342,7 +339,13 @@ cucumber.filter.name=                                          # a regular expre
 cucumber.features=                                             # comma separated paths to feature files. 
                                                                # example: path/to/example.feature, path/to/other.feature
                                                                # note: When used any discovery selectors from the JUnit
-                                                               # Platform will be ignored. Use with caution and care.
+                                                               # Platform will be ignored. This may lead to multiple
+                                                               # executions of Cucumber. For example when used in
+                                                               # combination with the JUnit Platform Suite Engine.
+                                                               # When using cucumber through the JUnit Platform
+                                                               # Launcher API or the JUnit Platform Suite Engine, it is
+                                                               # recommended to respectively use JUnits
+                                                               # DiscoverySelectors or equivalent annotations.
 
 cucumber.filter.tags=                                          # a cucumber tag expression.
                                                                # only scenarios with matching tags are executed.

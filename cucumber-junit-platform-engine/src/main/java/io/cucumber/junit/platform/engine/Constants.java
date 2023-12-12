@@ -61,8 +61,19 @@ public final class Constants {
      * scenario or example at line 42 in the example feature file</li>
      * </ul>
      * <p>
-     * NOTE: When used any discovery selectors from the JUnit Platform will be
-     * ignored. Use with caution and care.
+     * Note: When used any discovery selectors from the JUnit Platform will be
+     * ignored. This may lead to multiple executions of Cucumber. For example
+     * when used in combination with the JUnit Platform Suite Engine.
+     * <p>
+     * When using cucumber through the JUnit Platform Launcher API or the JUnit
+     * Platform Suite Engine, it is recommended to respectively use the
+     * {@link org.junit.platform.engine.discovery.DiscoverySelectors} or
+     * equivalent annotations.
+     * <p>
+     * Additionally, when this property is used, to work around limitations in
+     * Maven Surefire and Gradle, the Cucumber Engine will report its
+     * {@link org.junit.platform.engine.TestSource} as
+     * {@link CucumberTestEngine}.
      *
      * @see io.cucumber.core.feature.FeatureWithLines
      */
