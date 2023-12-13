@@ -61,7 +61,7 @@ public final class Constants {
      * scenario or example at line 42 in the example feature file</li>
      * </ul>
      * <p>
-     * Note: When used any discovery selectors from the JUnit Platform will be
+     * Note: When used, any discovery selectors from the JUnit Platform will be
      * ignored. This may lead to multiple executions of Cucumber. For example
      * when used in combination with the JUnit Platform Suite Engine.
      * <p>
