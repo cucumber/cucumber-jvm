@@ -65,7 +65,7 @@ public final class Constants {
      * ignored. This may lead to multiple executions of Cucumber. For example
      * when used in combination with the JUnit Platform Suite Engine.
      * <p>
-     * When using cucumber through the JUnit Platform Launcher API or the JUnit
+     * When using Cucumber through the JUnit Platform Launcher API or the JUnit
      * Platform Suite Engine, it is recommended to respectively use the
      * {@link org.junit.platform.engine.discovery.DiscoverySelectors} or
      * equivalent annotations.

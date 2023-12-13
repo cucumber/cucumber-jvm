@@ -342,9 +342,9 @@ cucumber.features=                                             # comma separated
                                                                # Platform will be ignored. This may lead to multiple
                                                                # executions of Cucumber. For example when used in
                                                                # combination with the JUnit Platform Suite Engine.
-                                                               # When using cucumber through the JUnit Platform
+                                                               # When using Cucumber through the JUnit Platform
                                                                # Launcher API or the JUnit Platform Suite Engine, it is
-                                                               # recommended to respectively use JUnits
+                                                               # recommended to respectively use JUnit's
                                                                # DiscoverySelectors or equivalent annotations.
 
 cucumber.filter.tags=                                          # a cucumber tag expression.
