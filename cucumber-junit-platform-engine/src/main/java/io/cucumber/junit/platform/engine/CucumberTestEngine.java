@@ -53,6 +53,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
         // Maven does not count tests that do not have a ClassSource somewhere
         // in the test descriptor tree.
         // Gradle will report all tests as coming from an "Unknown Class"
+        // See: https://github.com/cucumber/cucumber-jvm/pull/2498
         ConfigurationParameters configuration = discoveryRequest.getConfigurationParameters();
         if (configuration.get(FEATURES_PROPERTY_NAME).isPresent()) {
             return ClassSource.from(CucumberTestEngine.class);
