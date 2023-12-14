@@ -1,16 +1,23 @@
 package io.cucumber.junit.platform.engine;
 
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.testkit.engine.EngineTestKit;
+import org.junit.platform.testkit.engine.Event;
+import org.junit.platform.testkit.engine.EventConditions;
 
 import java.util.Optional;
 
+import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
@@ -71,6 +78,31 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void selectAndExecuteSingleScenarioThroughFeaturesProperty() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
+                .configurationParameter(FEATURES_PROPERTY_NAME,
+                    "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(2, event(engine(source(ClassSource.from(CucumberTestEngine.class)))))
+                .haveExactly(1, event(test(finishedSuccessfully())));
+    }
+
+    @Test
+    void selectAndExecuteSingleScenarioWithoutFeaturesProperty() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(2, event(engine(emptySource())))
+                .haveExactly(1, event(test(finishedSuccessfully())));
+    }
+
+    @Test
     void selectAndSkipDisabledScenarioByTags() {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
@@ -96,6 +128,19 @@ class CucumberTestEngineTest {
                 .haveExactly(1, event(test()))
                 .haveExactly(1,
                     event(skippedWithReason("'cucumber.filter.name=^Nothing$' did not match this scenario")));
+    }
+
+    private static Condition<Event> engine(Condition<Event> condition) {
+        return Assertions.allOf(EventConditions.engine(), condition);
+    }
+
+    private static Condition<Event> source(TestSource testSource) {
+        return new Condition<>(event -> event.getTestDescriptor().getSource().filter(testSource::equals).isPresent(),
+            "test engine with test source '%s'", testSource);
+    }
+
+    private static Condition<Event> emptySource() {
+        return new Condition<>(event -> !event.getTestDescriptor().getSource().isPresent(), "without a test source");
     }
 
 }

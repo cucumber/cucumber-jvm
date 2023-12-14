@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
@@ -11,9 +12,20 @@ import java.util.function.Consumer;
 class CucumberEngineDescriptor extends EngineDescriptor implements Node<CucumberEngineExecutionContext> {
 
     static final String ENGINE_ID = "cucumber";
+    private final TestSource source;
 
     CucumberEngineDescriptor(UniqueId uniqueId) {
+        this(uniqueId, null);
+    }
+
+    CucumberEngineDescriptor(UniqueId uniqueId, TestSource source) {
         super(uniqueId, "Cucumber");
+        this.source = source;
+    }
+
+    @Override
+    public Optional<TestSource> getSource() {
+        return Optional.ofNullable(this.source);
     }
 
     @Override
