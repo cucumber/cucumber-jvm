@@ -10,7 +10,6 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
-import org.junit.platform.engine.DiscoveryFilter;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -24,13 +23,9 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -455,53 +450,6 @@ class DiscoverySelectorResolverTest {
         assertEquals(Level.WARNING, logRecord.getLevel());
         assertEquals("No features found in package 'io.cucumber.junit.platform.engine.nofeatures'",
             logRecord.getMessage());
-    }
-
-    private static class SelectorRequest implements EngineDiscoveryRequest {
-
-        private final Map<Class<?>, List<DiscoverySelector>> resources = new HashMap<>();
-        private final ConfigurationParameters parameters;
-
-        SelectorRequest(ConfigurationParameters parameters, DiscoverySelector... selectors) {
-            this(parameters, Arrays.asList(selectors));
-        }
-
-        SelectorRequest(DiscoverySelector... selectors) {
-            this(new EmptyConfigurationParameters(), Arrays.asList(selectors));
-        }
-
-        SelectorRequest(List<DiscoverySelector> selectors) {
-            this(new EmptyConfigurationParameters(), selectors);
-        }
-
-        SelectorRequest(ConfigurationParameters parameters, List<DiscoverySelector> selectors) {
-            this.parameters = parameters;
-            for (DiscoverySelector discoverySelector : selectors) {
-                resources.putIfAbsent(discoverySelector.getClass(), new ArrayList<>());
-                resources.get(discoverySelector.getClass()).add(discoverySelector);
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <T extends DiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
-            if (resources.containsKey(selectorType)) {
-                return (List<T>) resources.get(selectorType);
-            }
-
-            return Collections.emptyList();
-        }
-
-        @Override
-        public <T extends DiscoveryFilter<?>> List<T> getFiltersByType(Class<T> filterType) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public ConfigurationParameters getConfigurationParameters() {
-            return parameters;
-        }
-
     }
 
 }
