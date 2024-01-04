@@ -254,7 +254,7 @@ final class FeatureResolver implements SelectorResolver {
                     source.nodeSource(node),
                     feature.getPickleAt(node)));
             }
-            return Optional.empty();
+            throw new IllegalStateException("Got a " + node.getClass() + " but didn't have a case to handle it");
         };
     }
 
