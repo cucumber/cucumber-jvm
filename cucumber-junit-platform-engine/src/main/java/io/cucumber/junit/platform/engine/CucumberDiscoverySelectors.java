@@ -47,7 +47,7 @@ class CucumberDiscoverySelectors {
                     .collect(Collectors.toSet());
         }
 
-        public static FeatureWithLinesSelector from(URI uri) {
+        static FeatureWithLinesSelector from(URI uri) {
             Set<FilePosition> positions = FilePosition.fromQuery(uri.getQuery())
                     .map(Collections::singleton)
                     .orElseGet(Collections::emptySet);
