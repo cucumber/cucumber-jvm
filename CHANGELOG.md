@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [TestNG] Update dependency org.testng:testng to v7.9.0
+
 ### Added
 - [JUnit Platform Engine] Improve Maven and Gradle compatibility ([#2832](https://github.com/cucumber/cucumber-jvm/pull/2832) M.P. Korstanje)
 
