@@ -19,7 +19,7 @@
         <guava.version>33.0.0-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jackson.version>2.16.1</jackson.version>
-        <junit-jupiter.version>5.10.1</junit-jupiter.version>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <mockito.version>5.10.0</mockito.version>
     </properties>
 
