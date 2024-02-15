@@ -14,12 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [TestNG] Update dependency org.testng:testng to v7.9.0
 - [Core] Update dependency io.cucumber:tag-expressions to v6.1.0
 - [Core] Update Messages and dependants ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [Core] Update dependency io.cucumber:gherkin to v27.0.0 
 - [Core] Added Malayalam localization ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
-- [Core] Added 'ed' to Italian ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [Core] Added 'ed' to Italian ([#31](https://github.com/cucumber/gherkin/issues/160))
 - [Core] Added Danish translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
 - [Core] Added Dutch translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
 - [Core] Added Esperanto translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
 - [JUnit Platform] Use JUnit Platform 1.10.2 (JUnit Jupiter 5.10.2)
+- [Core] Added Vietnamese translation of "Rule" ([#204](https://github.com/cucumber/gherkin/pull/204))
+- [Core] Added Irish translation of "Rule" ([#216](https://github.com/cucumber/gherkin/pull/216))
 
 ### Fixed
 - [Core] Missing execution steps statuses ([#24](https://github.com/cucumber/cucumber-junit-xml-formatter/pull/24) F. Ahadi)
