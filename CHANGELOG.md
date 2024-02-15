@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Added Danish translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
 - [Core] Added Dutch translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
 - [Core] Added Esperanto translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [JUnit Platform] Use JUnit Platform 1.10.2 (JUnit Jupiter 5.10.2)
 
 ### Fixed
 - [Core] Missing execution steps statuses ([#24](https://github.com/cucumber/cucumber-junit-xml-formatter/pull/24) F. Ahadi)
