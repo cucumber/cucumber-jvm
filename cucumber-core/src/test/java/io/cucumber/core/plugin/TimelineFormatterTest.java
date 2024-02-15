@@ -327,8 +327,8 @@ class TimelineFormatterTest {
                     " \"content\": \"groupName\"\n" +
                     " }\n" +
                     "]")
-                            .replaceAll("groupId", groupId.toString())
-                            .replaceAll("groupName", groupName),
+                    .replaceAll("groupId", groupId.toString())
+                    .replaceAll("groupName", groupName),
             GroupData[].class);
 
         ActualReportOutput actualOutput = readReport();
