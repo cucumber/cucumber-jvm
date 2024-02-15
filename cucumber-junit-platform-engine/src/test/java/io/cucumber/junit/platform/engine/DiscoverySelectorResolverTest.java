@@ -3,7 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.LogRecordListener;
-import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
 import io.cucumber.junit.platform.engine.nofeatures.NoFeatures;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;

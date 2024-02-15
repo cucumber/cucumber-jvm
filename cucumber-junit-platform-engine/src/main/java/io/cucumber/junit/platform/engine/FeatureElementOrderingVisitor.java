@@ -11,7 +11,7 @@ final class FeatureElementOrderingVisitor implements TestDescriptor.Visitor {
 
     @Override
     public void visit(TestDescriptor descriptor) {
-        if (descriptor instanceof FeatureDescriptor || descriptor instanceof NodeDescriptor) {
+        if (descriptor instanceof FeatureDescriptor || descriptor instanceof FeatureElementDescriptor) {
             List<? extends TestDescriptor> sortedChildren = descriptor.getChildren().stream()
                     // TODO: Use file location instead. Problem. UriSource
                     // doesn't have one.

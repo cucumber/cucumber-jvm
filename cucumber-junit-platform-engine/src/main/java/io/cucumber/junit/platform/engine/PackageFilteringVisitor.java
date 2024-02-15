@@ -14,8 +14,8 @@ class PackageFilteringVisitor implements TestDescriptor.Visitor {
 
     @Override
     public void visit(TestDescriptor descriptor) {
-        if (descriptor instanceof NodeDescriptor.PickleDescriptor) {
-            NodeDescriptor.PickleDescriptor pickleDescriptor = (NodeDescriptor.PickleDescriptor) descriptor;
+        if (descriptor instanceof FeatureElementDescriptor.PickleDescriptor) {
+            FeatureElementDescriptor.PickleDescriptor pickleDescriptor = (FeatureElementDescriptor.PickleDescriptor) descriptor;
             boolean include = pickleDescriptor.getPackage()
                     .map(filter::test)
                     .orElse(true);

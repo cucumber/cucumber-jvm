@@ -9,10 +9,10 @@ import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
-import io.cucumber.junit.platform.engine.NodeDescriptor.ExamplesDescriptor;
-import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
-import io.cucumber.junit.platform.engine.NodeDescriptor.RuleDescriptor;
-import io.cucumber.junit.platform.engine.NodeDescriptor.ScenarioOutlineDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ExamplesDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.RuleDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ScenarioOutlineDescriptor;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoverySelector;
@@ -207,7 +207,7 @@ final class FeatureResolver implements SelectorResolver {
             FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
             if (node instanceof Node.Feature) {
                 return Optional.of(new FeatureDescriptor(
-                    source.featureSegment(parent.getUniqueId(), feature),
+                    parent.getUniqueId().append(FeatureOrigin.FEATURE_SEGMENT_TYPE, feature.getUri().toString()),
                     namingStrategy.name(node),
                     source.featureSource(),
                     feature));
@@ -216,7 +216,7 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Rule) {
                 return Optional.of(new RuleDescriptor(
                     parameters,
-                    source.ruleSegment(parent.getUniqueId(), node),
+                    parent.getUniqueId().append(FeatureOrigin.RULE_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node)));
             }
@@ -224,7 +224,7 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Scenario) {
                 return Optional.of(new PickleDescriptor(
                     parameters,
-                    source.scenarioSegment(parent.getUniqueId(), node),
+                    parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node),
                     feature.getPickleAt(node)));
@@ -233,7 +233,7 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.ScenarioOutline) {
                 return Optional.of(new ScenarioOutlineDescriptor(
                     parameters,
-                    source.scenarioSegment(parent.getUniqueId(), node),
+                    parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node)));
             }
@@ -241,7 +241,7 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Examples) {
                 return Optional.of(new ExamplesDescriptor(
                     parameters,
-                    source.examplesSegment(parent.getUniqueId(), node),
+                    parent.getUniqueId().append(FeatureOrigin.EXAMPLES_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node)));
             }
@@ -249,7 +249,7 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Example) {
                 return Optional.of(new PickleDescriptor(
                     parameters,
-                    source.exampleSegment(parent.getUniqueId(), node),
+                    parent.getUniqueId().append(FeatureOrigin.EXAMPLE_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node),
                     feature.getPickleAt(node)));

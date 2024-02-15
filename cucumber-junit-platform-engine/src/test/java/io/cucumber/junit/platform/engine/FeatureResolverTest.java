@@ -1,6 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
@@ -188,10 +188,10 @@ class FeatureResolverTest {
         getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.SAME_THREAD, pickle.getExecutionMode()));
     }
 
-    private Set<NodeDescriptor> getNodes() {
+    private Set<FeatureElementDescriptor> getNodes() {
         return getFeature().getChildren().stream()
                 .filter(TestDescriptor::isContainer)
-                .map(node -> (NodeDescriptor) node)
+                .map(node -> (FeatureElementDescriptor) node)
                 .collect(Collectors.toSet());
     }
 
