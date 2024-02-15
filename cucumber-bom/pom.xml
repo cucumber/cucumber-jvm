@@ -16,7 +16,7 @@
         <cucumber-expressions.version>17.0.1</cucumber-expressions.version>
         <gherkin.version>27.0.0</gherkin.version>
         <html-formatter.version>21.2.0</html-formatter.version>
-        <junit-xml-formatter.version>0.2.0</junit-xml-formatter.version>
+        <junit-xml-formatter.version>0.2.1</junit-xml-formatter.version>
         <messages.version>24.0.1</messages.version>
         <tag-expressions.version>6.1.0</tag-expressions.version>
     </properties>
