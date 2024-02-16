@@ -214,16 +214,20 @@ final class FeatureResolver {
         Predicate<TestDescriptor> keepTestWithSelectedId = testDescriptor -> uniqueId
                 .equals(testDescriptor.getUniqueId());
 
+        List<UniqueId.Segment> resolvedSegments = engineDescriptor.getUniqueId().getSegments();
+
         uniqueId.getSegments()
                 .stream()
+                .skip(resolvedSegments.size())
+                .findFirst()
                 .filter(FeatureOrigin::isFeatureSegment)
                 .map(UniqueId.Segment::getValue)
                 .map(URI::create)
-                .flatMap(this::resolveUri)
-                .forEach(featureDescriptor -> {
+                .map(this::resolveUri)
+                .ifPresent(featureDescriptors -> featureDescriptors.forEach(featureDescriptor -> {
                     featureDescriptor.prune(keepTestWithSelectedId);
                     engineDescriptor.mergeFeature(featureDescriptor);
-                });
+                }));
     }
 
     private Stream<FeatureDescriptor> resolveUri(URI uri) {
