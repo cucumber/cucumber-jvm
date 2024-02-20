@@ -3,7 +3,7 @@
 All notable changes to the current version this project will be documented in
 this file. For previous versions see the [release-notes archive](release-notes).
 
-For migration instructions from previous major version and a long form
+For migration instructions from previous major version and a long formF
 explanation of noteworthy changes see the [Release Announcement](release-notes/v7.0.0.md).
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [TestNG] Update dependency org.testng:testng to v7.9.0
+- [Core] Update dependency io.cucumber:tag-expressions to v6.1.0
+- [Core] Update Messages and dependants ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [Core] Update dependency io.cucumber:gherkin to v27.0.0 
+- [Core] Added Malayalam localization ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [Core] Added 'ed' to Italian ([#31](https://github.com/cucumber/gherkin/issues/160))
+- [Core] Added Danish translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [Core] Added Dutch translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [Core] Added Esperanto translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
+- [JUnit Platform] Use JUnit Platform 1.10.2 (JUnit Jupiter 5.10.2)
+- [Core] Added Vietnamese translation of "Rule" ([#204](https://github.com/cucumber/gherkin/pull/204))
+- [Core] Added Irish translation of "Rule" ([#216](https://github.com/cucumber/gherkin/pull/216))
+
+### Fixed
+- [Core] Missing execution steps statuses ([#24](https://github.com/cucumber/cucumber-junit-xml-formatter/pull/24) F. Ahadi)
 
 ### Added
 - [JUnit Platform Engine] Improve Maven and Gradle compatibility ([#2832](https://github.com/cucumber/cucumber-jvm/pull/2832) M.P. Korstanje)
