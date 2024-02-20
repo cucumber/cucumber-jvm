@@ -15,11 +15,11 @@ import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX
 
 abstract class FeatureOrigin {
 
-   static final String RULE_SEGMENT_TYPE = "rule";
-   static final String FEATURE_SEGMENT_TYPE = "feature";
-   static final String SCENARIO_SEGMENT_TYPE = "scenario";
-   static final String EXAMPLES_SEGMENT_TYPE = "examples";
-   static final String EXAMPLE_SEGMENT_TYPE = "example";
+    static final String RULE_SEGMENT_TYPE = "rule";
+    static final String FEATURE_SEGMENT_TYPE = "feature";
+    static final String SCENARIO_SEGMENT_TYPE = "scenario";
+    static final String EXAMPLES_SEGMENT_TYPE = "examples";
+    static final String EXAMPLE_SEGMENT_TYPE = "example";
 
     private static FilePosition createFilePosition(Location location) {
         return FilePosition.from(location.getLine(), location.getColumn());

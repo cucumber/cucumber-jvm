@@ -216,7 +216,8 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Rule) {
                 return Optional.of(new RuleDescriptor(
                     parameters,
-                    parent.getUniqueId().append(FeatureOrigin.RULE_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
+                    parent.getUniqueId().append(FeatureOrigin.RULE_SEGMENT_TYPE,
+                        String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node)));
             }
@@ -224,7 +225,8 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Scenario) {
                 return Optional.of(new PickleDescriptor(
                     parameters,
-                    parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
+                    parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE,
+                        String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node),
                     feature.getPickleAt(node)));
@@ -233,7 +235,8 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.ScenarioOutline) {
                 return Optional.of(new ScenarioOutlineDescriptor(
                     parameters,
-                    parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
+                    parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE,
+                        String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node)));
             }
@@ -241,7 +244,8 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Examples) {
                 return Optional.of(new ExamplesDescriptor(
                     parameters,
-                    parent.getUniqueId().append(FeatureOrigin.EXAMPLES_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
+                    parent.getUniqueId().append(FeatureOrigin.EXAMPLES_SEGMENT_TYPE,
+                        String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node)));
             }
@@ -249,7 +253,8 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Example) {
                 return Optional.of(new PickleDescriptor(
                     parameters,
-                    parent.getUniqueId().append(FeatureOrigin.EXAMPLE_SEGMENT_TYPE, String.valueOf(node.getLocation().getLine())),
+                    parent.getUniqueId().append(FeatureOrigin.EXAMPLE_SEGMENT_TYPE,
+                        String.valueOf(node.getLocation().getLine())),
                     namingStrategy.name(node),
                     source.nodeSource(node),
                     feature.getPickleAt(node)));
