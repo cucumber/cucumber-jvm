@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- [Core] Improved support for multiple classloaders in IncrementingUuidGenerator ([#2853](https://github.com/cucumber/cucumber-jvm/pull/2853) J. Kronegg)
 ### Changed
 - [TestNG] Update dependency org.testng:testng to v7.9.0
 - [Core] Update dependency io.cucumber:tag-expressions to v6.1.0
