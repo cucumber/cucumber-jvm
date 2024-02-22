@@ -28,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IncrementingUuidGeneratorTest {
 
+    public static final String CLASSLOADER_ID_FIELD_NAME = "classloaderId";
+
     /**
      * Example of generated values (same epochTime, same sessionId, same
      * classloaderId, different counter value):
@@ -188,7 +190,7 @@ class IncrementingUuidGeneratorTest {
         Set<Long> classloaderIds = new HashSet<>();
         List<Integer> stats = new ArrayList<>();
         while (stats.size() < 100) {
-            if (!classloaderIds.add(getStaticFieldValue(getUuidGeneratorFromOtherClassloader(null), "classloaderId"))) {
+            if (!classloaderIds.add(getStaticFieldValue(getUuidGeneratorFromOtherClassloader(null), CLASSLOADER_ID_FIELD_NAME))) {
                 stats.add(classloaderIds.size() + 1);
                 classloaderIds.clear();
             }
@@ -227,6 +229,24 @@ class IncrementingUuidGeneratorTest {
 
         // Then the UUID are the same
         assertNotEquals(removeEpochTime(uuid1), removeEpochTime(uuid2));
+    }
+
+    @Test
+    void setClassloaderId_keeps_only_12_bits() throws NoSuchFieldException, IllegalAccessException {
+        // When the classloaderId is defined with a value higher than 0xfff (12 bits)
+        IncrementingUuidGenerator.setClassloaderId(0xfffffABC);
+
+        // Then the classloaderId is truncated to 12 bits
+        assertEquals(0x0ABC, getStaticFieldValue(new IncrementingUuidGenerator(), CLASSLOADER_ID_FIELD_NAME));
+    }
+
+    @Test
+    void setClassloaderId_keeps_values_under_12_bits_unmodified() throws NoSuchFieldException, IllegalAccessException {
+        // When the classloaderId is defined with a value lower than 0xfff (12 bits)
+        IncrementingUuidGenerator.setClassloaderId(0x0123);
+
+        // Then the classloaderId value is left unmodified
+        assertEquals(0x0123, getStaticFieldValue(new IncrementingUuidGenerator(), CLASSLOADER_ID_FIELD_NAME));
     }
 
     private Long getStaticFieldValue(UuidGenerator generator, String fieldName)
