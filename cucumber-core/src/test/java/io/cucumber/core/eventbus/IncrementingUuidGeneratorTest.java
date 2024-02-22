@@ -168,32 +168,36 @@ class IncrementingUuidGeneratorTest {
     }
 
     /**
-     * Create a copy of the UUID without the epoch-time part to allow comparison.
+     * Create a copy of the UUID without the epoch-time part to allow
+     * comparison.
      */
     private static UUID removeEpochTime(UUID uuid) {
         return new UUID(uuid.getMostSignificantBits() & 0x0ffffffL, uuid.getLeastSignificantBits());
     }
 
     /**
-     * Check that classloaderId collision rate is lower than a given threshold when using multiple classloaders.
-     * This should not be mistaken with the UUID collision rate.
-     * Note: this test takes about 20 seconds.
+     * Check that classloaderId collision rate is lower than a given threshold
+     * when using multiple classloaders. This should not be mistaken with the
+     * UUID collision rate. Note: this test takes about 20 seconds.
      */
     @Test
-    void classloaderid_collision_rate_lower_than_two_percents_with_ten_classloaders() throws NoSuchFieldException, IllegalAccessException {
-        // When I compute the classloaderId collision rate with multiple classloaders
+    void classloaderid_collision_rate_lower_than_two_percents_with_ten_classloaders()
+            throws NoSuchFieldException, IllegalAccessException {
+        // When I compute the classloaderId collision rate with multiple
+        // classloaders
         Set<Long> classloaderIds = new HashSet<>();
         List<Integer> stats = new ArrayList<>();
-        while (stats.size()<100) {
+        while (stats.size() < 100) {
             if (!classloaderIds.add(getStaticFieldValue(getUuidGeneratorFromOtherClassloader(null), "classloaderId"))) {
-                stats.add(classloaderIds.size()+1);
+                stats.add(classloaderIds.size() + 1);
                 classloaderIds.clear();
             }
         }
 
-        // Then the classloaderId collision rate for 10 classloaders is less than 2%
+        // Then the classloaderId collision rate for 10 classloaders is less
+        // than 2%
         double collisionRateWhenUsingTenClassloaders = stats.stream()
-                .filter(x -> x<10).count() * 100 / (double) stats.size();
+                .filter(x -> x < 10).count() * 100 / (double) stats.size();
         assertTrue(collisionRateWhenUsingTenClassloaders <= 2);
     }
 
@@ -246,13 +250,16 @@ class IncrementingUuidGeneratorTest {
     }
 
     /**
-     * Create a fresh new IncrementingUuidGenerator from a fresh new classloader, and return a new instance.
-     * @param classloaderId the classloader unique identifier, or null if the default classloader id generator must be used
-     * @return a new IncrementingUuidGenerator instance
+     * Create a fresh new IncrementingUuidGenerator from a fresh new
+     * classloader, and return a new instance.
+     * 
+     * @param  classloaderId the classloader unique identifier, or null if the
+     *                       default classloader id generator must be used
+     * @return               a new IncrementingUuidGenerator instance
      */
     private static UuidGenerator getUuidGeneratorFromOtherClassloader(Integer classloaderId) {
         try {
-            Class<?> aClass =  new NonCachingClassLoader().findClass(IncrementingUuidGenerator.class.getName());
+            Class<?> aClass = new NonCachingClassLoader().findClass(IncrementingUuidGenerator.class.getName());
             if (classloaderId != null) {
                 setClassloaderId(aClass, classloaderId);
             }
