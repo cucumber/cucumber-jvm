@@ -44,10 +44,25 @@ public class IncrementingUuidGenerator implements UuidGenerator {
 
     /**
      * Classloader identifier (MSB). The identifier is a pseudo-random number on
-     * 12 bits. Note: there is no need to save the Random because it's static.
+     * 12 bits.
+     *
+     * Since we use a random value (and cut it to 12 bits), there is a small
+     * probability that two classloaders generate the same 12 bits random
+     * number. This could lead to UUID collisions if the UUID parts (epoch-time,
+     * session counter and counter) are the same.
+     *
+     * The default `classloaderId` (random number cut to 12 bits) has a
+     * collision rate of less than 1% when using 10 classloaders (which leads
+     * to a much smaller UUID probability thanks to the other dynamic parts
+     * of the UUID like epoch-time and counters).
+     * If you use multiple classloaders and want to ensure a collision-free UUID
+     * generation, you need to provide the `classloaderId` by yourself. You
+     * can do so using the {@link #setClassloaderId(int)} method.
+     *
+     * Note: there is no need to save the Random because it's static.
      */
     @SuppressWarnings("java:S2119")
-    static final long CLASSLOADER_ID = new Random().nextInt() & 0x0fff;
+    static long classloaderId = new Random().nextInt() & 0x0fff;
 
     /**
      * Session counter to differentiate instances created within a given
@@ -65,6 +80,26 @@ public class IncrementingUuidGenerator implements UuidGenerator {
      */
     final AtomicLong counter = new AtomicLong(-1);
 
+
+    /**
+     * Defines a new classloaderId for the class.
+     * This only affects instances created after the call (the
+     * instances created before the call keep their classloaderId).
+     *
+     * This method should be called to specify a classloaderId if
+     * you are using more than one class loader, and you want to
+     * guarantee a collision-free UUID generation (instead of
+     * the default random classloaderId which produces about
+     * 1% collision rate on the classloaderId, and thus can have
+     * UUID collision if the epoch-time, session counter and
+     * counter have the same values).
+     * @param classloaderId the new classloaderId (only the least significant 12 bits are used)
+     * @see IncrementingUuidGenerator#classloaderId
+     */
+    public static void setClassloaderId(int classloaderId) {
+        IncrementingUuidGenerator.classloaderId = classloaderId & 0xfff;
+    }
+
     public IncrementingUuidGenerator() {
         long sessionId = sessionCounter.incrementAndGet();
         if (sessionId == MAX_SESSION_ID) {
@@ -75,7 +110,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
         }
         long epochTime = System.currentTimeMillis();
         // msb = epochTime | sessionId | version | classloaderId
-        msb = ((epochTime & MAX_EPOCH_TIME) << 24) | (sessionId << 16) | (8 << 12) | CLASSLOADER_ID;
+        msb = ((epochTime & MAX_EPOCH_TIME) << 24) | (sessionId << 16) | (8 << 12) | classloaderId;
     }
 
     /**
