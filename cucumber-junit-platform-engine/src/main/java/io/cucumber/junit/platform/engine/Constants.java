@@ -66,9 +66,9 @@ public final class Constants {
      * when used in combination with the JUnit Platform Suite Engine.
      * <p>
      * When using Cucumber through the JUnit Platform Launcher API or the JUnit
-     * Platform Suite Engine, it is recommended to respectively use the
+     * Platform Suite Engine, it is recommended to either use the
      * {@link org.junit.platform.engine.discovery.DiscoverySelectors} or
-     * equivalent annotations.
+     * annotations from {@link org.junit.platform.suite.api} respectively.
      * <p>
      * Additionally, when this property is used, to work around limitations in
      * Maven Surefire and Gradle, the Cucumber Engine will report its

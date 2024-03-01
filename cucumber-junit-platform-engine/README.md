@@ -344,8 +344,8 @@ cucumber.features=                                             # comma separated
                                                                # combination with the JUnit Platform Suite Engine.
                                                                # When using Cucumber through the JUnit Platform
                                                                # Launcher API or the JUnit Platform Suite Engine, it is
-                                                               # recommended to respectively use JUnit's
-                                                               # DiscoverySelectors or equivalent annotations.
+                                                               # recommended to use JUnit's DiscoverySelectors or 
+                                                               # Junit Platform Suite annotations.
 
 cucumber.filter.tags=                                          # a cucumber tag expression.
                                                                # only scenarios with matching tags are executed.
