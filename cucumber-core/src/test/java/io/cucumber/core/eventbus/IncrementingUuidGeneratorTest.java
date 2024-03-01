@@ -5,21 +5,30 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IncrementingUuidGeneratorTest {
+
+    public static final String CLASSLOADER_ID_FIELD_NAME = "classloaderId";
 
     /**
      * Example of generated values (same epochTime, same sessionId, same
@@ -92,7 +101,7 @@ class IncrementingUuidGeneratorTest {
     void different_classloaders_generators() {
         // Given/When
         List<UUID> uuids = IntStream.rangeClosed(1, 10)
-                .mapToObj(i -> getUuidGeneratorFromOtherClassloader().generateId())
+                .mapToObj(i -> getUuidGeneratorFromOtherClassloader(i).generateId())
                 .collect(Collectors.toList());
 
         // Then
@@ -160,12 +169,131 @@ class IncrementingUuidGeneratorTest {
         return new UUID(uuid.getMostSignificantBits() & 0xfffffffffffff000L, uuid.getLeastSignificantBits());
     }
 
-    private static UuidGenerator getUuidGeneratorFromOtherClassloader() {
+    /**
+     * Create a copy of the UUID without the epoch-time part to allow
+     * comparison.
+     */
+    private static UUID removeEpochTime(UUID uuid) {
+        return new UUID(uuid.getMostSignificantBits() & 0x0ffffffL, uuid.getLeastSignificantBits());
+    }
+
+    /**
+     * Check that classloaderId collision rate is lower than a given threshold
+     * when using multiple classloaders. This should not be mistaken with the
+     * UUID collision rate. Note: this test takes about 20 seconds.
+     */
+    @Test
+    void classloaderid_collision_rate_lower_than_two_percents_with_ten_classloaders()
+            throws NoSuchFieldException, IllegalAccessException {
+        double collisionRateWhenUsingTenClassloaders;
+        List<Double> collisionRatesWhenUsingTenClassloaders = new ArrayList<>();
+        do {
+            // When I compute the classloaderId collision rate with multiple
+            // classloaders
+            Set<Long> classloaderIds = new HashSet<>();
+            List<Integer> stats = new ArrayList<>();
+            while (stats.size() < 100) {
+                if (!classloaderIds
+                        .add(getStaticFieldValue(getUuidGeneratorFromOtherClassloader(null),
+                            CLASSLOADER_ID_FIELD_NAME))) {
+                    stats.add(classloaderIds.size() + 1);
+                    classloaderIds.clear();
+                }
+            }
+
+            // Then the classloaderId collision rate for 10 classloaders is less
+            // than 2%
+            collisionRateWhenUsingTenClassloaders = stats.stream()
+                    .filter(x -> x < 10).count() * 100 / (double) stats.size();
+            collisionRatesWhenUsingTenClassloaders.add(collisionRateWhenUsingTenClassloaders);
+        } while (collisionRateWhenUsingTenClassloaders > 2 && collisionRatesWhenUsingTenClassloaders.size() < 10);
+        assertTrue(collisionRateWhenUsingTenClassloaders <= 2,
+            "all retries exceed the expected collision rate : " + collisionRatesWhenUsingTenClassloaders);
+    }
+
+    @Test
+    void same_classloaderId_leads_to_same_uuid_when_ignoring_epoch_time() {
+        // Given the two generator have the same classloaderId
+        UuidGenerator generator1 = getUuidGeneratorFromOtherClassloader(255);
+        UuidGenerator generator2 = getUuidGeneratorFromOtherClassloader(255);
+
+        // When the UUID are generated
+        UUID uuid1 = generator1.generateId();
+        UUID uuid2 = generator2.generateId();
+
+        // Then the UUID are the same
+        assertEquals(removeEpochTime(uuid1), removeEpochTime(uuid2));
+    }
+
+    @Test
+    void different_classloaderId_leads_to_different_uuid_when_ignoring_epoch_time() {
+        // Given the two generator have the different classloaderId
+        UuidGenerator generator1 = getUuidGeneratorFromOtherClassloader(1);
+        UuidGenerator generator2 = getUuidGeneratorFromOtherClassloader(2);
+
+        // When the UUID are generated
+        UUID uuid1 = generator1.generateId();
+        UUID uuid2 = generator2.generateId();
+
+        // Then the UUID are the same
+        assertNotEquals(removeEpochTime(uuid1), removeEpochTime(uuid2));
+    }
+
+    @Test
+    void setClassloaderId_keeps_only_12_bits() throws NoSuchFieldException, IllegalAccessException {
+        // When the classloaderId is defined with a value higher than 0xfff (12
+        // bits)
+        IncrementingUuidGenerator.setClassloaderId(0xfffffABC);
+
+        // Then the classloaderId is truncated to 12 bits
+        assertEquals(0x0ABC, getStaticFieldValue(new IncrementingUuidGenerator(), CLASSLOADER_ID_FIELD_NAME));
+    }
+
+    @Test
+    void setClassloaderId_keeps_values_under_12_bits_unmodified() throws NoSuchFieldException, IllegalAccessException {
+        // When the classloaderId is defined with a value lower than 0xfff (12
+        // bits)
+        IncrementingUuidGenerator.setClassloaderId(0x0123);
+
+        // Then the classloaderId value is left unmodified
+        assertEquals(0x0123, getStaticFieldValue(new IncrementingUuidGenerator(), CLASSLOADER_ID_FIELD_NAME));
+    }
+
+    private Long getStaticFieldValue(UuidGenerator generator, String fieldName)
+            throws NoSuchFieldException, IllegalAccessException {
+        // The Field cannot be cached because the IncrementingUuidGenerator
+        // class is different at each call (because it was loaded by a
+        // different classloader).
+        Field declaredField = generator.getClass().getDeclaredField(fieldName);
+        declaredField.setAccessible(true);
+        return (Long) declaredField.get(null);
+    }
+
+    private static void setClassloaderId(Class<?> generatorClass, int value)
+            throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        // The Method cannot be cached because the IncrementingUuidGenerator
+        // class is different at each call (because it was loaded by a
+        // different classloader).
+        Method method = generatorClass.getDeclaredMethod("setClassloaderId", int.class);
+        method.setAccessible(true);
+        method.invoke(null, value);
+    }
+
+    /**
+     * Create a fresh new IncrementingUuidGenerator from a fresh new
+     * classloader, and return a new instance.
+     * 
+     * @param  classloaderId the classloader unique identifier, or null if the
+     *                       default classloader id generator must be used
+     * @return               a new IncrementingUuidGenerator instance
+     */
+    private static UuidGenerator getUuidGeneratorFromOtherClassloader(Integer classloaderId) {
         try {
-            return (UuidGenerator) (new NonCachingClassLoader()
-                    .findClass(IncrementingUuidGenerator.class.getName())
-                    .getConstructor()
-                    .newInstance());
+            Class<?> aClass = new NonCachingClassLoader().findClass(IncrementingUuidGenerator.class.getName());
+            if (classloaderId != null) {
+                setClassloaderId(aClass, classloaderId);
+            }
+            return (UuidGenerator) aClass.getConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException("could not instantiate " + IncrementingUuidGenerator.class.getSimpleName(), e);
         }
