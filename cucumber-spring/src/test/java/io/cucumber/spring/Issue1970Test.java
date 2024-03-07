@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class Issue1970Test {
 
     @Test
-    public void issue1970() {
+    void issue1970() {
         ObjectFactory factory = new SpringFactory();
         factory.addClass(GlueClass.class); // Add glue with Spring configuration
         factory.start();

@@ -1,11 +1,14 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.CucumberBackendException;
+import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.SourceReference;
@@ -32,6 +35,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Clock;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,8 +52,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CachingGlueTest {
 
@@ -58,14 +60,10 @@ class CachingGlueTest {
 
     @Test
     void throws_duplicate_error_on_dupe_stepdefs() {
-        StepDefinition a = mock(StepDefinition.class);
-        when(a.getPattern()).thenReturn("hello");
-        when(a.getLocation()).thenReturn("foo.bf:10");
+        StepDefinition a = new StubStepDefinitionWithPatternAndLocation("hello", "foo.bf:10");
         glue.addStepDefinition(a);
 
-        StepDefinition b = mock(StepDefinition.class);
-        when(b.getPattern()).thenReturn("hello");
-        when(b.getLocation()).thenReturn("bar.bf:90");
+        StepDefinition b = new StubStepDefinitionWithPatternAndLocation("hello", "bar.bf:90");
         glue.addStepDefinition(b);
 
         DuplicateStepDefinitionException exception = assertThrows(
@@ -852,5 +850,40 @@ class CachingGlueTest {
             return disposed;
         }
 
+    }
+
+    private static class StubStepDefinitionWithPatternAndLocation implements StepDefinition {
+        private final String pattern;
+        private final String location;
+
+        public StubStepDefinitionWithPatternAndLocation(String pattern, String location) {
+            this.pattern = pattern;
+            this.location = location;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return location;
+        }
+
+        @Override
+        public void execute(Object[] args) throws CucumberBackendException, CucumberInvocationTargetException {
+
+        }
+
+        @Override
+        public List<ParameterInfo> parameterInfos() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public String getPattern() {
+            return pattern;
+        }
     }
 }
