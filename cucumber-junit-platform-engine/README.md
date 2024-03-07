@@ -46,7 +46,7 @@ parameter. This will include the feature name as part of the test name.
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.0.0-M5</version>
+    <version>3.2.5</version>
     <configuration>
         <properties>
             <configurationParameters>
@@ -521,7 +521,61 @@ public class RpnCalculatorSteps {
 ## Rerunning Failed Scenarios ##
 
 When using `cucumber-junit-platform-engine` rerun files are not supported.
-However, the JUnit Platform allows you to rerun failed tests through its API.
+Use either Maven, Gradle or the JUnit Platform Launcher API.
+
+### Using Maven
+
+When running Cucumber through the [JUnit Platform Suite Engine](use-the-jUnit-platform-suite-engine)
+use [`rerunFailingTestsCount`](https://maven.apache.org/surefire/maven-surefire-plugin/examples/rerun-failing-tests.html).
+
+Note: any files written by Cucumber will be overwritten during the rerun.
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.2.5</version>
+    <configuration>
+        <rerunFailingTestsCount>2</rerunFailingTestsCount>
+        <properties>
+            <!-- Work around. Surefire does not include enough
+                 information to disambiguate between different
+                 examples and scenarios. -->
+            <configurationParameters>
+                cucumber.junit-platform.naming-strategy=long
+            </configurationParameters>
+        </properties>
+    </configuration>
+</plugin>
+```
+
+### Using Gradle.
+
+When running Cucumber through the [JUnit Platform Suite Engine](use-the-jUnit-platform-suite-engine)
+use the [`test-retry`](https://github.com/gradle/test-retry-gradle-plugin) plugin to rerun tests.
+
+Note: any files written by Cucumber will be overwritten during the rerun.
+
+```kotlin
+plugins {
+    java
+    id("org.gradle.test-retry") version "1.5.8"
+}
+    ...
+tasks.withType<Test> {
+    useJUnitPlatform()
+    // Work around. Gradle does not include enough information to disambiguate
+    // between different examples and scenarios.
+    systemProperty("cucumber.junit-platform.naming-strategy", "long")
+
+    retry {
+        maxRetries.set(2)
+    }
+
+}
+```
+
+### Using the JUnit Platform Launcher API
 
 ```java
 package com.example;
