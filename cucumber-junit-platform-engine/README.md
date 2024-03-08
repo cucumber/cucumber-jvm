@@ -162,7 +162,7 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-TODO: (Feel free to send a pull request. ;))
+TODO: (I don't know how. Feel free to send a pull request. ;))
 
 ## Suites with different configurations
 
@@ -551,29 +551,14 @@ Note: any files written by Cucumber will be overwritten during the rerun.
 
 ### Using Gradle.
 
-When running Cucumber through the [JUnit Platform Suite Engine](use-the-jUnit-platform-suite-engine)
-use the [`test-retry`](https://github.com/gradle/test-retry-gradle-plugin) plugin to rerun tests.
+Gradle support for JUnit 5 is rather limited 
+[gradle#4773](https://github.com/gradle/gradle/issues/4773), 
+[junit5#2849](https://github.com/junit-team/junit5/issues/2849).
+As a workaround you can the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion)
+plugin in combination with [Gradle Test Retry](https://github.com/gradle/test-retry-gradle-plugin)
+plugin.
 
-Note: any files written by Cucumber will be overwritten during the rerun.
-
-```kotlin
-plugins {
-    java
-    id("org.gradle.test-retry") version "1.5.8"
-}
-    ...
-tasks.withType<Test> {
-    useJUnitPlatform()
-    // Work around. Gradle does not include enough information to disambiguate
-    // between different examples and scenarios.
-    systemProperty("cucumber.junit-platform.naming-strategy", "long")
-
-    retry {
-        maxRetries.set(2)
-    }
-
-}
-```
+Note: any files written by Cucumber will be overwritten retrying.
 
 ### Using the JUnit Platform Launcher API
 
