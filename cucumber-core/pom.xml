@@ -14,7 +14,7 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <jackson.version>2.16.2</jackson.version>
+        <jackson.version>2.17.0</jackson.version>
         <jsoup.version>1.17.2</jsoup.version>
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <xmlunit.version>2.9.1</xmlunit.version>
