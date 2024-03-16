@@ -12,6 +12,7 @@ import org.junit.platform.engine.support.hierarchical.Node;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,7 +20,9 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static java.util.Arrays.asList;
@@ -156,6 +159,36 @@ class FeatureResolverTest {
         TestDescriptor example = getExample();
         assertEquals("A feature with scenario outlines - A scenario outline - With some text - Example #1.1",
             example.getDisplayName());
+    }
+
+    @Test
+    void longNamesWithPickleNames() {
+        configurationParameters = new MapConfigurationParameters(Map.of(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long",
+            JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME, "pickle-name"));
+
+        TestDescriptor example = getExample();
+        assertEquals("A feature with scenario outlines - A scenario outline - With some text - A scenario outline",
+            example.getDisplayName());
+    }
+
+    @Test
+    void shortNamesWithExampleNumbers() {
+        configurationParameters = new MapConfigurationParameters(
+            JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME, "example-number");
+
+        TestDescriptor example = getExample();
+        assertEquals("Example #1.1", example.getDisplayName());
+    }
+
+    @Test
+    void shortNamesWithPickleNames() {
+        configurationParameters = new MapConfigurationParameters(Map.of(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short",
+            JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME, "pickle-name"));
+
+        TestDescriptor example = getExample();
+        assertEquals("A scenario outline", example.getDisplayName());
     }
 
     private TestDescriptor getExample() {
