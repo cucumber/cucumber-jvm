@@ -10,7 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
 - [Core] Improved support for multiple classloaders in IncrementingUuidGenerator ([#2853](https://github.com/cucumber/cucumber-jvm/pull/2853) J. Kronegg)
+- [Java] Assume numbers use either a comma or period for the thousands separator instead of non-breaking spaces. ([#290](https://github.com/cucumber/cucumber-expressions/pull/290))
+- [JUnit Platform Engine] Improve the cucumber.features warning ([#2856](https://github.com/cucumber/cucumber-expressions/pull/2856) M.P. Korstanje)
+
 ### Changed
 - [TestNG] Update dependency org.testng:testng to v7.9.0
 - [Core] Update dependency io.cucumber:tag-expressions to v6.1.0
@@ -21,12 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Added Danish translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
 - [Core] Added Dutch translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
 - [Core] Added Esperanto translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
-- [JUnit Platform] Use JUnit Platform 1.10.2 (JUnit Jupiter 5.10.2)
+- [JUnit Platform Engine] Use JUnit Platform 1.10.2 (JUnit Jupiter 5.10.2)
 - [Core] Added Vietnamese translation of "Rule" ([#204](https://github.com/cucumber/gherkin/pull/204))
 - [Core] Added Irish translation of "Rule" ([#216](https://github.com/cucumber/gherkin/pull/216))
 
 ### Fixed
 - [Core] Missing execution steps statuses ([#24](https://github.com/cucumber/cucumber-junit-xml-formatter/pull/24) F. Ahadi)
+- [Java] Parse negative numbers in Norwegian (and 59 other languages) ([#290](https://github.com/cucumber/cucumber-expressions/pull/290))
 
 ### Added
 - [JUnit Platform Engine] Improve Maven and Gradle compatibility ([#2832](https://github.com/cucumber/cucumber-jvm/pull/2832) M.P. Korstanje)
