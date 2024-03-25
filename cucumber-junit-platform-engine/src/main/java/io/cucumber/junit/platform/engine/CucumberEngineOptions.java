@@ -11,6 +11,7 @@ import io.cucumber.core.options.UuidGeneratorParser;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.platform.engine.ConfigurationParameters;
@@ -19,9 +20,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_P
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
+import static java.util.Objects.requireNonNull;
 
 class CucumberEngineOptions implements
         io.cucumber.core.plugin.Options,
@@ -51,7 +53,7 @@ class CucumberEngineOptions implements
     private final ConfigurationParameters configurationParameters;
 
     CucumberEngineOptions(ConfigurationParameters configurationParameters) {
-        this.configurationParameters = configurationParameters;
+        this.configurationParameters = requireNonNull(configurationParameters);
     }
 
     @Override
@@ -176,14 +178,13 @@ class CucumberEngineOptions implements
                 .orElse(DefaultNamingStrategy.SHORT);
     }
 
-    List<FeatureWithLines> featuresWithLines() {
+    Set<FeatureWithLinesSelector> featuresWithLines() {
         return configurationParameters.get(FEATURES_PROPERTY_NAME,
             s -> Arrays.stream(s.split(","))
                     .map(String::trim)
                     .map(FeatureWithLines::parse)
-                    .sorted(Comparator.comparing(FeatureWithLines::uri))
-                    .distinct()
-                    .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
+                    .map(FeatureWithLinesSelector::from)
+                    .collect(Collectors.toSet()))
+                .orElse(Collections.emptySet());
     }
 }

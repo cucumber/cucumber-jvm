@@ -1,10 +1,11 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
 import org.junit.platform.engine.support.hierarchical.Node;
@@ -55,9 +56,12 @@ class FeatureResolverTest {
     }
 
     private TestDescriptor getFeature() {
-        FeatureResolver featureResolver = FeatureResolver.create(configurationParameters, engineDescriptor,
-            aPackage -> true);
-        featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
+        EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
+                .<CucumberEngineDescriptor> builder()
+                .addSelectorResolver(context -> new FeatureResolver(configurationParameters, aPackage -> true))
+                .addTestDescriptorVisitor(context -> new FeatureElementOrderingVisitor())
+                .build();
+        resolver.resolve(new SelectorRequest(selectClasspathResource(featurePath)), engineDescriptor);
         Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
         return features.iterator().next();
     }
@@ -184,10 +188,10 @@ class FeatureResolverTest {
         getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.SAME_THREAD, pickle.getExecutionMode()));
     }
 
-    private Set<NodeDescriptor> getNodes() {
+    private Set<FeatureElementDescriptor> getNodes() {
         return getFeature().getChildren().stream()
                 .filter(TestDescriptor::isContainer)
-                .map(node -> (NodeDescriptor) node)
+                .map(node -> (FeatureElementDescriptor) node)
                 .collect(Collectors.toSet());
     }
 

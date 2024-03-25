@@ -1,6 +1,5 @@
 package io.cucumber.junit.platform.engine;
 
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
@@ -65,18 +64,4 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
         return context;
     }
 
-    void mergeFeature(FeatureDescriptor descriptor) {
-        recursivelyMerge(descriptor, this);
-    }
-
-    private static void recursivelyMerge(TestDescriptor descriptor, TestDescriptor parent) {
-        Optional<? extends TestDescriptor> byUniqueId = parent.findByUniqueId(descriptor.getUniqueId());
-        if (!byUniqueId.isPresent()) {
-            parent.addChild(descriptor);
-        } else {
-            byUniqueId.ifPresent(
-                existingParent -> descriptor.getChildren()
-                        .forEach(child -> recursivelyMerge(child, existingParent)));
-        }
-    }
 }

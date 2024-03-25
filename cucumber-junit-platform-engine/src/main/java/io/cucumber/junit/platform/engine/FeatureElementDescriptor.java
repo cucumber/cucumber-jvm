@@ -28,11 +28,11 @@ import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
-abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+abstract class FeatureElementDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
     private final ExecutionMode executionMode;
 
-    NodeDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
+    FeatureElementDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
         super(uniqueId, name, source);
         this.executionMode = parameters
                 .get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
@@ -45,7 +45,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
         return executionMode;
     }
 
-    static final class ExamplesDescriptor extends NodeDescriptor {
+    static final class ExamplesDescriptor extends FeatureElementDescriptor {
 
         ExamplesDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
             super(parameters, uniqueId, name, source);
@@ -58,7 +58,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
     }
 
-    static final class RuleDescriptor extends NodeDescriptor {
+    static final class RuleDescriptor extends FeatureElementDescriptor {
 
         RuleDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
             super(parameters, uniqueId, name, source);
@@ -71,7 +71,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
     }
 
-    static final class ScenarioOutlineDescriptor extends NodeDescriptor {
+    static final class ScenarioOutlineDescriptor extends FeatureElementDescriptor {
 
         ScenarioOutlineDescriptor(
                 ConfigurationParameters parameters, UniqueId uniqueId, String name,
@@ -87,7 +87,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
     }
 
-    static final class PickleDescriptor extends NodeDescriptor {
+    static final class PickleDescriptor extends FeatureElementDescriptor {
 
         private final Pickle pickle;
         private final Set<TestTag> tags;
