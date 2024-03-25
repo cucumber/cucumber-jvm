@@ -70,6 +70,19 @@ class Query {
     private TestRunStarted testRunStarted;
     private TestRunFinished testRunFinished;
 
+    public Map<TestStepResultStatus, Long> countMostSevereTestStepResultStatus() {
+        return findAllTestCaseStarted().stream()
+                .map(this::findMostSevereTestStepResulBy)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(TestStepResult::getStatus)
+                .collect(groupingBy(identity(), counting()));
+    }
+
+    int countTestCasesStarted() {
+        return findAllTestCaseStarted().size();
+    }
+
     public List<TestCaseStarted> findAllTestCaseStarted() {
         // Concurrency
         return new ArrayList<>(testCaseStarted);
@@ -93,15 +106,6 @@ class Query {
                 .stream()
                 .map(TestStepFinished::getTestStepResult)
                 .max(testStepResultComparator);
-    }
-
-    public Map<TestStepResultStatus, Long> findMostSevereTestStepResultStatusCount() {
-        return findAllTestCaseStarted().stream()
-                .map(this::findMostSevereTestStepResulBy)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(TestStepResult::getStatus)
-                .collect(groupingBy(identity(), counting()));
     }
 
     public Optional<Pickle> findPickleBy(TestCaseStarted testCaseStarted) {
@@ -271,4 +275,5 @@ class Query {
             return list;
         };
     }
+
 }

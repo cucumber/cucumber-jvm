@@ -56,11 +56,11 @@ class XmlReportData {
     }
 
     Map<TestStepResultStatus, Long> getTestCaseStatusCounts() {
-        return query.findMostSevereTestStepResultStatusCount();
+        return query.countMostSevereTestStepResultStatus();
     }
 
     int getTestCaseCount() {
-        return query.findAllTestCaseStarted().size();
+        return query.countTestCasesStarted();
     }
 
     String getPickleName(TestCaseStarted testCaseStarted) {
@@ -72,21 +72,22 @@ class XmlReportData {
                 .orElse(pickle.getName());
     }
 
-    private static String getPickleName(GherkinAstNodes elements) {
+    private static String getPickleName(GherkinAstNodes nodes) {
+        // TODO: Extract this to a naming strategy.
         List<String> pieces = new ArrayList<>();
 
-        elements.rule().map(Rule::getName).ifPresent(pieces::add);
+        nodes.rule().map(Rule::getName).ifPresent(pieces::add);
 
-        pieces.add(elements.scenario().getName());
+        pieces.add(nodes.scenario().getName());
 
-        elements.examples().map(Examples::getName).ifPresent(pieces::add);
+        nodes.examples().map(Examples::getName).ifPresent(pieces::add);
 
-        String examplesPrefix = elements.examplesIndex()
+        String examplesPrefix = nodes.examplesIndex()
                 .map(examplesIndex -> examplesIndex + 1)
                 .map(examplesIndex -> examplesIndex + ".")
                 .orElse("");
 
-        elements.exampleIndex()
+        nodes.exampleIndex()
                 .map(exampleIndex -> exampleIndex + 1)
                 .map(exampleSuffix -> "Example #" + examplesPrefix + exampleSuffix)
                 .ifPresent(pieces::add);
