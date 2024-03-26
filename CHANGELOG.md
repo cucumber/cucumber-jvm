@@ -10,37 +10,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+ - [JUnit Platform Engine] Support for parameters `cucumber.junit-platform.naming-strategy.short.example-name` and `cucumber.junit-platform.naming-strategy.long.example-name` ([#2743](https://github.com/cucumber/cucumber-jvm/issues/2743) V.V. Belov)
+
+## [7.16.1] - 2024-03-23
+### Fixed
+- [Core] Include stack traces in html report ([#2862](https://github.com/cucumber/cucumber-jvm/pull/2862) M.P. Korstanje)
+
+## [7.16.0] - 2024-03-21
+### Added
 - [Core] Improved support for multiple classloaders in IncrementingUuidGenerator ([#2853](https://github.com/cucumber/cucumber-jvm/pull/2853) J. Kronegg)
+- [Core] Assume numbers use either a comma or period for the thousands separator instead of non-breaking spaces. ([cucumber-expressions/#290](https://github.com/cucumber/cucumber-expressions/pull/290))
+- [JUnit Platform Engine] Improve the cucumber.features warning ([#2856](https://github.com/cucumber/cucumber-expressions/pull/2856) M.P. Korstanje)
+- [JUnit Platform Engine] Improve Maven and Gradle compatibility ([#2832](https://github.com/cucumber/cucumber-jvm/pull/2832) M.P. Korstanje)
+
 ### Changed
 - [TestNG] Update dependency org.testng:testng to v7.9.0
 - [Core] Update dependency io.cucumber:tag-expressions to v6.1.0
-- [Core] Update Messages and dependants ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
-- [Core] Update dependency io.cucumber:gherkin to v27.0.0 
-- [Core] Added Malayalam localization ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
-- [Core] Added 'ed' to Italian ([#31](https://github.com/cucumber/gherkin/issues/160))
-- [Core] Added Danish translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
-- [Core] Added Dutch translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
-- [Core] Added Esperanto translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826)
-- [JUnit Platform] Use JUnit Platform 1.10.2 (JUnit Jupiter 5.10.2)
-- [Core] Added Vietnamese translation of "Rule" ([#204](https://github.com/cucumber/gherkin/pull/204))
-- [Core] Added Irish translation of "Rule" ([#216](https://github.com/cucumber/gherkin/pull/216))
+- [Core] Update Messages and dependants ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826))
+- [Core] Update dependency io.cucumber:gherkin to v27.0.0
+- [Core] Added Malayalam localization ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826))
+- [Core] Added 'ed' to Italian ([gherkin/#31](https://github.com/cucumber/gherkin/issues/160))
+- [Core] Added Danish translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826))
+- [Core] Added Dutch translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826))
+- [Core] Added Esperanto translation of "Rule" ([#2826](https://github.com/cucumber/cucumber-jvm/pull/2826))
+- [JUnit Platform Engine] Use JUnit Platform 1.10.2 (JUnit Jupiter 5.10.2)
+- [Core] Added Vietnamese translation of "Rule" ([gherkin/#204](https://github.com/cucumber/gherkin/pull/204))
+- [Core] Added Irish translation of "Rule" ([gherkin/#216](https://github.com/cucumber/gherkin/pull/216))
 
 ### Fixed
-- [Core] Missing execution steps statuses ([#24](https://github.com/cucumber/cucumber-junit-xml-formatter/pull/24) F. Ahadi)
-
-### Added
-- [JUnit Platform Engine] Improve Maven and Gradle compatibility ([#2832](https://github.com/cucumber/cucumber-jvm/pull/2832) M.P. Korstanje)
-- [JUnit Platform Engine] Support for parameters `cucumber.junit-platform.naming-strategy.short.example-name` and `cucumber.junit-platform.naming-strategy.long.example-name` ([#2743](https://github.com/cucumber/cucumber-jvm/issues/2743) V.V. Belov)
+- [Core] Missing execution steps statuses ([cucumber-junit-xml-formatter/#24](https://github.com/cucumber/cucumber-junit-xml-formatter/pull/24) F. Ahadi)
+- [Core] Parse negative numbers in Norwegian (and 59 other languages) ([cucumber-expressions/#290](https://github.com/cucumber/cucumber-expressions/pull/290))
 
 ## [7.15.0] - 2023-12-11
-### Changed
-- [Core] Upgrade `vis-timeline` to v7.7.3
-
 ### Added
 - [Core] Support nested jar file systems (i.e. Spring Boot 3.2) ([#2830](https://github.com/cucumber/cucumber-jvm/pull/2830) M.P. Korstanje)
 
-## [7.14.1] - 2023-11-25
+### Changed
+- [Core] Upgrade `vis-timeline` to v7.7.3
 
+## [7.14.1] - 2023-11-25
 ### Fixed
 - [Guice] Inject static fields prior to before all hooks ([#2803](https://github.com/cucumber/cucumber-jvm/pull/2803) M.P. Korstanje)
 
@@ -298,7 +306,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.15.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.16.1...HEAD
+[7.16.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.16.0...v7.16.1
+[7.16.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.15.0...v7.16.0
 [7.15.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.1...v7.15.0
 [7.14.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.0...v7.14.1
 [7.14.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.13.0...v7.14.0
