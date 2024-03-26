@@ -152,7 +152,7 @@ public final class Constants {
      * {@code Adding 10 and 20}. This is useful in case of parametrised scenario
      * names.
      */
-    @API(status = Status.EXPERIMENTAL, since = "7.16.0")
+    @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.short.example-name";
 
     /**
@@ -165,7 +165,7 @@ public final class Constants {
      * {@code Feature Name - Rule Name - Adding <a> and <b> - Examples Name - Adding 10 and 20}.
      * This is useful in case of parametrised scenario names.
      */
-    @API(status = Status.EXPERIMENTAL, since = "7.16.0")
+    @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";
 
     /**

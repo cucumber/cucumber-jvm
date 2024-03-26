@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
  - [JUnit Platform Engine] Support for parameters `cucumber.junit-platform.naming-strategy.short.example-name` and `cucumber.junit-platform.naming-strategy.long.example-name` ([#2743](https://github.com/cucumber/cucumber-jvm/issues/2743) V.V. Belov)
 
 ## [7.16.1] - 2024-03-23
