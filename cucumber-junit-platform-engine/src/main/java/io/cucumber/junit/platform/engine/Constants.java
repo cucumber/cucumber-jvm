@@ -153,20 +153,20 @@ public final class Constants {
      * names.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.0")
-    public static final String JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME = "cucumber.junit-platform.naming-strategy.short.example-name";
+    public static final String JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.short.example-name";
 
     /**
      * Property name used to configure the naming strategy of examples in case
      * of long naming strategy: {@value}
      * <p>
-     * Same as {@code JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME} except
+     * Same as {@code JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME} except
      * for scenario name {@code Adding <a> and <b>} and example with params
      * {@code a = 10} and {@code b = 20} the following name would be produced:
      * {@code Feature Name - Rule Name - Adding <a> and <b> - Examples Name - Adding 10 and 20}.
      * This is useful in case of parametrised scenario names.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.0")
-    public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";
+    public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";
 
     /**
      * Property name to enable plugins: {@value}
