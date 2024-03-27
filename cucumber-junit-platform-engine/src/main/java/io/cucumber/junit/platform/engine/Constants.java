@@ -159,9 +159,11 @@ public final class Constants {
      * Property name used to configure the naming strategy of examples in case
      * of long naming strategy: {@value}
      * <p>
-     * Same as {@code JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME} except
-     * for scenario name {@code Adding <a> and <b>} and example with params
-     * {@code a = 10} and {@code b = 20} the following name would be produced:
+     * Same as
+     * {@code JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME}
+     * except for scenario name {@code Adding <a> and <b>} and example with
+     * params {@code a = 10} and {@code b = 20} the following name would be
+     * produced:
      * {@code Feature Name - Rule Name - Adding <a> and <b> - Examples Name - Adding 10 and 20}.
      * This is useful in case of parametrised scenario names.
      */

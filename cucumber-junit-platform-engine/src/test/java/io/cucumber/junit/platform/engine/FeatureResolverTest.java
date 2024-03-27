@@ -165,7 +165,7 @@ class FeatureResolverTest {
     void longNamesWithPickleNames() {
         configurationParameters = new MapConfigurationParameters(Map.of(
             JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long",
-                JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "pickle-name"));
+            JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "pickle-name"));
 
         TestDescriptor example = getExample();
         assertEquals("A feature with scenario outlines - A scenario outline - With some text - A scenario outline",
@@ -175,7 +175,7 @@ class FeatureResolverTest {
     @Test
     void shortNamesWithExampleNumbers() {
         configurationParameters = new MapConfigurationParameters(
-                JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "example-number");
+            JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "example-number");
 
         TestDescriptor example = getExample();
         assertEquals("Example #1.1", example.getDisplayName());
@@ -185,7 +185,7 @@ class FeatureResolverTest {
     void shortNamesWithPickleNames() {
         configurationParameters = new MapConfigurationParameters(Map.of(
             JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short",
-                JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "pickle-name"));
+            JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "pickle-name"));
 
         TestDescriptor example = getExample();
         assertEquals("A scenario outline", example.getDisplayName());

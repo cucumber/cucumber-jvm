@@ -16,23 +16,20 @@ enum DefaultNamingStrategyProvider {
     LONG {
         @Override
         NamingStrategy create(ConfigurationParameters configuration) {
-            String exampleStrategy = configuration.get(JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME).orElse("example-number");
-            return createNamingStrategy(exampleStrategy,
-                    node -> longStrategy(node, nameOrKeyword(node)),
-                    (node, pickle) -> longStrategy(node, nameOrKeyword(node)),
-                    (node, pickle) -> longStrategy(node, pickle.getName()));
+            return configuration.get(JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME)
+                    .map(DefaultNamingStrategyProvider::parseStrategy)
+                    .orElse(DefaultNamingStrategyProvider::exampleNumberStrategy)
+                    .apply(DefaultNamingStrategyProvider::longStrategy);
         }
     },
 
     SHORT {
         @Override
         NamingStrategy create(ConfigurationParameters configuration) {
-            String exampleStrategy = configuration.get(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME).orElse("example-number");
-            return createNamingStrategy(exampleStrategy,
-                    DefaultNamingStrategyProvider::nameOrKeyword,
-                    (node, pickle) -> nameOrKeyword(node),
-                    (node, pickle) -> pickle.getName()
-            );
+            return configuration.get(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME)
+                    .map(DefaultNamingStrategyProvider::parseStrategy)
+                    .orElse(DefaultNamingStrategyProvider::exampleNumberStrategy)
+                    .apply(DefaultNamingStrategyProvider::shortStrategy);
         }
     };
 
@@ -42,31 +39,41 @@ enum DefaultNamingStrategyProvider {
         return valueOf(name.toUpperCase(Locale.ROOT));
     }
 
-    private static NamingStrategy createNamingStrategy(String exampleStrategy,
-                                                       Function<Node, String> name,
-                                                       BiFunction<Node, Pickle, String> exampleNameByNumber,
-                                                       BiFunction<Node, Pickle, String> exampleNameByPickle) {
-        BiFunction<Node, Pickle, String> exampleName;
+    private static Function<BiFunction<Node, String, String>, NamingStrategy> parseStrategy(String exampleStrategy) {
         switch (exampleStrategy) {
             case "example-number":
-                exampleName = exampleNameByNumber;
-                break;
+                return DefaultNamingStrategyProvider::exampleNumberStrategy;
             case "pickle-name":
-                exampleName = exampleNameByPickle;
-                break;
+                return DefaultNamingStrategyProvider::pickleNameStrategy;
             default:
-                throw new IllegalArgumentException("Unrecognized example NamingStrategy " + exampleStrategy);
+                throw new IllegalArgumentException("Unrecognized example naming strategy " + exampleStrategy);
         }
+    }
 
+    private static NamingStrategy exampleNumberStrategy(BiFunction<Node, String, String> baseStrategy) {
+        return createNamingStrategy(
+            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+            (node, pickle) -> baseStrategy.apply(node, nameOrKeyword(node)));
+    }
+
+    private static NamingStrategy pickleNameStrategy(BiFunction<Node, String, String> baseStrategy) {
+        return createNamingStrategy(
+            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+            (node, pickle) -> baseStrategy.apply(node, pickle.getName()));
+    }
+
+    private static NamingStrategy createNamingStrategy(
+            Function<Node, String> nameFunction, BiFunction<Node, Pickle, String> exampleNameFunction
+    ) {
         return new NamingStrategy() {
             @Override
             public String name(Node node) {
-                return name.apply(node);
+                return nameFunction.apply(node);
             }
 
             @Override
             public String nameExample(Node.Example node, Pickle pickle) {
-                return exampleName.apply(node, pickle);
+                return exampleNameFunction.apply(node, pickle);
             }
         };
     }
@@ -74,6 +81,10 @@ enum DefaultNamingStrategyProvider {
     private static String nameOrKeyword(Node node) {
         Supplier<String> keyword = () -> node.getKeyword().orElse("Unknown");
         return node.getName().orElseGet(keyword);
+    }
+
+    private static String shortStrategy(Node node, String currentNodeName) {
+        return currentNodeName;
     }
 
     private static String longStrategy(Node node, String currentNodeName) {
