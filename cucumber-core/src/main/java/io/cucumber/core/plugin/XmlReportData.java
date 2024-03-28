@@ -2,11 +2,9 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Envelope;
-import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.Pickle;
 import io.cucumber.messages.types.PickleStep;
-import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.TestCaseFinished;
 import io.cucumber.messages.types.TestCaseStarted;
@@ -19,25 +17,20 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static io.cucumber.messages.types.TestStepResultStatus.PASSED;
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.nullsFirst;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 class XmlReportData {
 
-    private final Query query = new Query();
+    final Query query = new Query();
+
+    private final NamingStrategy namingStrategy = DefaultNamingStrategy.builder().build();
 
     void collect(Envelope envelope) {
         query.update(envelope);
@@ -67,44 +60,17 @@ class XmlReportData {
         Pickle pickle = query.findPickleBy(testCaseStarted)
                 .orElseThrow(() -> new IllegalStateException("No pickle for " + testCaseStarted.getId()));
 
-        return query.findGherkinAstNodesBy(pickle)
-                .map(XmlReportData::getPickleName)
-                .orElse(pickle.getName());
-    }
-
-    private static String getPickleName(GherkinAstNodes nodes) {
-        // TODO: Extract this to a naming strategy.
-        List<String> pieces = new ArrayList<>();
-
-        nodes.rule().map(Rule::getName).ifPresent(pieces::add);
-
-        pieces.add(nodes.scenario().getName());
-
-        nodes.examples().map(Examples::getName).ifPresent(pieces::add);
-
-        String examplesPrefix = nodes.examplesIndex()
-                .map(examplesIndex -> examplesIndex + 1)
-                .map(examplesIndex -> examplesIndex + ".")
-                .orElse("");
-
-        nodes.exampleIndex()
-                .map(exampleIndex -> exampleIndex + 1)
-                .map(exampleSuffix -> "Example #" + examplesPrefix + exampleSuffix)
-                .ifPresent(pieces::add);
-
-        return pieces.stream()
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.joining(" - "));
+        return query.findNameOf(pickle, namingStrategy);
     }
 
     List<Entry<String, String>> getStepsAndResult(TestCaseStarted testCaseStarted) {
-        return query.findTestStepAndTestStepFinishedBy(testCaseStarted)
+        return query.findTestStepFinishedAndTestStepBy(testCaseStarted)
                 .stream()
                 // Exclude hooks
-                .filter(entry -> entry.getKey().getPickleStepId().isPresent())
+                .filter(entry -> entry.getValue().getPickleStepId().isPresent())
                 .map(testStep -> {
-                    String key = renderTestStepText(testStep.getKey());
-                    String value = renderTestStepResult(testStep.getValue());
+                    String key = renderTestStepText(testStep.getValue());
+                    String value = renderTestStepResult(testStep.getKey());
                     return new SimpleEntry<>(key, value);
                 })
                 .collect(toList());
@@ -134,22 +100,7 @@ class XmlReportData {
     }
 
     Map<Optional<Feature>, List<TestCaseStarted>> getAllTestCaseStartedGroupedByFeature() {
-        return query.findAllTestCaseStarted()
-                .stream()
-                .map(testCaseStarted -> {
-                    Optional<GherkinAstNodes> astNodes = query.findGherkinAstNodesBy(testCaseStarted);
-                    return new SimpleEntry<>(astNodes, testCaseStarted);
-                })
-                // Sort by URI for consistent ordering
-                .sorted(
-                        nullsFirst(comparing(entry -> entry.getKey()
-                                .flatMap(nodes -> nodes.document().getUri())
-                                .orElse(null))))
-                .map(entry -> new SimpleEntry<>(entry.getKey().map(GherkinAstNodes::feature), entry.getValue()))
-                .collect(groupingBy(SimpleEntry::getKey, LinkedHashMap::new,
-                        collectingAndThen(Collectors.toList(), entries -> entries.stream()
-                                .map(SimpleEntry::getValue)
-                                .collect(toList()))));
+        return query.findAllTestCaseStartedGroupedByFeature();
     }
 
     private static final io.cucumber.messages.types.Duration ZERO_DURATION =

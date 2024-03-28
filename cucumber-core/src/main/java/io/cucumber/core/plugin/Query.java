@@ -27,6 +27,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +41,7 @@ import static java.util.Comparator.nullsFirst;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -88,14 +90,36 @@ class Query {
         return new ArrayList<>(testCaseStarted);
     }
 
-    public Optional<GherkinAstNodes> findGherkinAstNodesBy(Pickle pickle) {
+    public Map<Optional<Feature>, List<TestCaseStarted>> findAllTestCaseStartedGroupedByFeature() {
+        return findAllTestCaseStarted()
+                .stream()
+                .map(testCaseStarted -> {
+                    Optional<GherkinAstNodes> astNodes = findGherkinAstNodesBy(testCaseStarted);
+                    return new SimpleEntry<>(astNodes, testCaseStarted);
+                })
+                // Sort entries by gherkin document URI for consistent ordering
+                .sorted(nullsFirst(comparing(entry -> entry.getKey()
+                        .flatMap(nodes -> nodes.document().getUri())
+                        .orElse(null))))
+                .map(entry -> {
+                    // Unpack the now sorted entries
+                    Optional<Feature> feature = entry.getKey().flatMap(GherkinAstNodes::feature);
+                    TestCaseStarted testcaseStarted = entry.getValue();
+                    return new SimpleEntry<>(feature, testcaseStarted);
+                })
+                // Group into a linked hashmap to preserve order
+                .collect(groupingBy(SimpleEntry::getKey, LinkedHashMap::new, collectingAndThen(toList(),
+                        entries -> entries.stream().map(SimpleEntry::getValue).collect(toList()))));
+    }
+
+    private Optional<GherkinAstNodes> findGherkinAstNodesBy(Pickle pickle) {
         requireNonNull(pickle);
         List<String> astNodeIds = pickle.getAstNodeIds();
         String pickleAstNodeId = astNodeIds.get(astNodeIds.size() - 1);
         return Optional.ofNullable(gherkinAstNodesById.get(pickleAstNodeId));
     }
 
-    public Optional<GherkinAstNodes> findGherkinAstNodesBy(TestCaseStarted testCaseStarted) {
+    private Optional<GherkinAstNodes> findGherkinAstNodesBy(TestCaseStarted testCaseStarted) {
         return findPickleBy(testCaseStarted)
                 .flatMap(this::findGherkinAstNodesBy);
     }
@@ -106,6 +130,15 @@ class Query {
                 .stream()
                 .map(TestStepFinished::getTestStepResult)
                 .max(testStepResultComparator);
+    }
+
+    public String findNameOf(Pickle pickle, NamingStrategy namingStrategy) {
+        requireNonNull(pickle);
+        requireNonNull(namingStrategy);
+
+        return findGherkinAstNodesBy(pickle)
+                .map(gherkinAstNodes -> namingStrategy.name(gherkinAstNodes, pickle))
+                .orElse(pickle.getName());
     }
 
     public Optional<Pickle> findPickleBy(TestCaseStarted testCaseStarted) {
@@ -167,14 +200,6 @@ class Query {
         return ofNullable(testRunStarted);
     }
 
-    public List<SimpleEntry<TestStep, TestStepFinished>> findTestStepAndTestStepFinishedBy(TestCaseStarted testCaseStarted) {
-        return findTestStepsFinishedBy(testCaseStarted).stream()
-                .map(testStepFinished -> findTestStepBy(testStepFinished).map(testStep -> new SimpleEntry<>(testStep, testStepFinished)))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toList());
-    }
-
     public Optional<TestStep> findTestStepBy(TestStepFinished testStepFinished) {
         requireNonNull(testStepFinished);
         return ofNullable(testStepById.get(testStepFinished.getTestStepId()));
@@ -186,6 +211,14 @@ class Query {
                 getOrDefault(testCaseStarted.getId(), emptyList());
         // Concurrency
         return new ArrayList<>(testStepsFinished);
+    }
+
+    public List<SimpleEntry<TestStepFinished, TestStep>> findTestStepFinishedAndTestStepBy(TestCaseStarted testCaseStarted) {
+        return findTestStepsFinishedBy(testCaseStarted).stream()
+                .map(testStepFinished -> findTestStepBy(testStepFinished).map(testStep -> new SimpleEntry<>(testStepFinished, testStep)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
     }
 
     public void update(Envelope envelope) {
@@ -275,5 +308,4 @@ class Query {
             return list;
         };
     }
-
 }

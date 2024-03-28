@@ -9,6 +9,7 @@ import io.cucumber.messages.types.TableRow;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
@@ -22,50 +23,50 @@ class GherkinAstNodes {
     private final Integer examplesIndex;
     private final Integer exampleIndex;
 
-    public GherkinAstNodes(GherkinDocument document, Feature feature, Rule rule, Scenario scenario) {
+    GherkinAstNodes(GherkinDocument document, Feature feature, Rule rule, Scenario scenario) {
         this(document, feature, rule, scenario, null, null, null, null);
     }
 
-    public GherkinAstNodes(GherkinDocument document, Feature feature, Rule rule, Scenario scenario, Integer examplesIndex, Examples examples, Integer exampleIndex, TableRow example) {
+    GherkinAstNodes(GherkinDocument document, Feature feature, Rule rule, Scenario scenario, Integer examplesIndex, Examples examples, Integer exampleIndex, TableRow example) {
         this.document = requireNonNull(document);
-        this.feature = requireNonNull(feature);
+        this.feature = feature;
         this.rule = rule;
-        this.scenario = requireNonNull(scenario);
+        this.scenario = scenario;
         this.examplesIndex = examplesIndex;
         this.examples = examples;
         this.exampleIndex = exampleIndex;
         this.example = example;
     }
 
-    public GherkinDocument document() {
+    GherkinDocument document() {
         return document;
     }
 
-    public Feature feature() {
-        return feature;
+    Optional<Feature> feature() {
+        return Optional.ofNullable(feature);
     }
 
-    public Optional<Rule> rule() {
+    Optional<Rule> rule() {
         return Optional.ofNullable(rule);
     }
 
-    public Scenario scenario() {
-        return scenario;
+    Optional<Scenario> scenario() {
+        return Optional.ofNullable(scenario);
     }
 
-    public Optional<Examples> examples() {
+    Optional<Examples> examples() {
         return Optional.ofNullable(examples);
     }
 
-    public Optional<TableRow> example() {
+    Optional<TableRow> example() {
         return Optional.ofNullable(example);
     }
 
-    public Optional<Integer> examplesIndex() {
+    Optional<Integer> examplesIndex() {
         return Optional.ofNullable(examplesIndex);
     }
 
-    public Optional<Integer> exampleIndex() {
+    Optional<Integer> exampleIndex() {
         return Optional.ofNullable(exampleIndex);
     }
 
