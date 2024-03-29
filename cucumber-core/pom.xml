@@ -66,6 +66,10 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
+            <artifactId>query</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
             <artifactId>tag-expressions</artifactId>
         </dependency>
         <dependency>

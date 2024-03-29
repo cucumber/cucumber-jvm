@@ -19,6 +19,7 @@
         <junit-xml-formatter.version>0.3.0</junit-xml-formatter.version>
         <messages.version>24.1.0</messages.version>
         <tag-expressions.version>6.1.0</tag-expressions.version>
+        <query.version>0.0.1-SNAPSHOT</query.version>
     </properties>
 
     <dependencyManagement>
@@ -58,6 +59,11 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>gherkin</artifactId>
                 <version>${gherkin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>query</artifactId>
+                <version>${query.version}</version>
             </dependency>
             <!-- Modules in cucumber-jvm -->
             <dependency>

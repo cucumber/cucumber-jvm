@@ -12,6 +12,8 @@ import io.cucumber.messages.types.TestStep;
 import io.cucumber.messages.types.TestStepFinished;
 import io.cucumber.messages.types.TestStepResult;
 import io.cucumber.messages.types.TestStepResultStatus;
+import io.cucumber.query.NamingStrategy;
+import io.cucumber.query.Query;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -22,15 +24,21 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 
 import static io.cucumber.messages.types.TestStepResultStatus.PASSED;
+import static io.cucumber.query.NamingStrategy.FeatureName.EXCLUDE;
+import static io.cucumber.query.NamingStrategy.Strategy.LONG;
 import static java.util.stream.Collectors.toList;
 
 class XmlReportData {
 
     final Query query = new Query();
 
-    private final NamingStrategy namingStrategy = DefaultNamingStrategy.builder().build();
+    private final NamingStrategy namingStrategy = NamingStrategy
+            .strategy(LONG)
+            .featureName(EXCLUDE)
+            .build();
 
     void collect(Envelope envelope) {
         query.update(envelope);
@@ -99,8 +107,8 @@ class XmlReportData {
         return stepKeyWord + stepText;
     }
 
-    Map<Optional<Feature>, List<TestCaseStarted>> getAllTestCaseStartedGroupedByFeature() {
-        return query.findAllTestCaseStartedGroupedByFeature();
+    Set<Entry<Optional<Feature>, List<TestCaseStarted>>> getAllTestCaseStartedGroupedByFeature() {
+        return query.findAllTestCaseStartedGroupedByFeature().entrySet();
     }
 
     private static final io.cucumber.messages.types.Duration ZERO_DURATION =
