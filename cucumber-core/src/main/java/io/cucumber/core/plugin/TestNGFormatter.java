@@ -3,6 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.testngxmlformatter.MessagesToTestngXmlWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;

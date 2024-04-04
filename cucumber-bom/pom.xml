@@ -16,10 +16,10 @@
         <cucumber-expressions.version>17.1.0</cucumber-expressions.version>
         <gherkin.version>28.0.0</gherkin.version>
         <html-formatter.version>21.3.0</html-formatter.version>
-        <junit-xml-formatter.version>0.3.0</junit-xml-formatter.version>
+        <junit-xml-formatter.version>0.3.1-SNAPSHOT</junit-xml-formatter.version>
+        <testng-xml-formatter.version>0.0.1-SNAPSHOT</testng-xml-formatter.version>
         <messages.version>24.1.0</messages.version>
         <tag-expressions.version>6.1.0</tag-expressions.version>
-        <query.version>0.0.1-SNAPSHOT</query.version>
     </properties>
 
     <dependencyManagement>
@@ -62,8 +62,8 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>query</artifactId>
-                <version>${query.version}</version>
+                <artifactId>testng-xml-formatter</artifactId>
+                <version>${testng-xml-formatter.version}</version>
             </dependency>
             <!-- Modules in cucumber-jvm -->
             <dependency>
