@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [Core] Use a [message based TestNG XML Formatter](https://github.com/cucumber/testng-xml-formatter) ([#2863](https://github.com/cucumber/cucumber-jvm/pull/2863) M.P. Korstanje)
+
 ### Added
  - [JUnit Platform Engine] Support for parameters `cucumber.junit-platform.naming-strategy.short.example-name` and `cucumber.junit-platform.naming-strategy.long.example-name` ([#2743](https://github.com/cucumber/cucumber-jvm/issues/2743) V.V. Belov)
 
@@ -39,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Added Irish translation of "Rule" ([gherkin/#216](https://github.com/cucumber/gherkin/pull/216))
 
 ### Fixed
-- [Core] Missing execution steps statuses ([cucumber-junit-xml-formatter/#24](https://github.com/cucumber/cucumber-junit-xml-formatter/pull/24) F. Ahadi)
+- [Core] Missing execution steps statuses ([junit-xml-formatter/#24](https://github.com/cucumber/junit-xml-formatter/pull/24) F. Ahadi)
 - [Core] Parse negative numbers in Norwegian (and 59 other languages) ([cucumber-expressions/#290](https://github.com/cucumber/cucumber-expressions/pull/290))
 
 ## [7.15.0] - 2023-12-11
@@ -106,7 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [JUnit Platform] Support `cucumber.execution.parallel.config.config.fixed.max-pool-size` ([#2681](https://github.com/cucumber/cucumber-jvm/pull/2681) M.P. Korstanje)
 
 ### Changed
-- [Core] Use a [message based JUnit XML Formatter](https://github.com/cucumber/cucumber-junit-xml-formatter) ([#2638](https://github.com/cucumber/cucumber-jvm/pull/2638) M.P. Korstanje)
+- [Core] Use a [message based JUnit XML Formatter](https://github.com/cucumber/junit-xml-formatter) ([#2638](https://github.com/cucumber/cucumber-jvm/pull/2638) M.P. Korstanje)
 - [Core] Throw an exception when tag expressions are incorrectly escaped ([tag-expressions/#17](https://github.com/cucumber/tag-expressions/pull/17) Aslak Hellesøy)
 - [DeltaSpike] Un-Deprecated deltaspike - can be made to work on Java 17 ([#2674](https://github.com/cucumber/cucumber-jvm/pull/2674) M.P. Korstanje)
 

@@ -21,7 +21,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
         <mockito.version>5.11.0</mockito.version>
-        <vertx.version>4.5.6</vertx.version>
+        <vertx.version>4.5.7</vertx.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
     </properties>
 
@@ -63,6 +63,10 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>messages</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>testng-xml-formatter</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
