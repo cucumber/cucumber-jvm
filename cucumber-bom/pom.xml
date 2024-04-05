@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>cucumber-jvm</artifactId>
         <groupId>io.cucumber</groupId>
@@ -17,9 +18,10 @@
         <gherkin.version>28.0.0</gherkin.version>
         <html-formatter.version>21.3.0</html-formatter.version>
         <junit-xml-formatter.version>0.3.1-SNAPSHOT</junit-xml-formatter.version>
-        <testng-xml-formatter.version>0.0.1-SNAPSHOT</testng-xml-formatter.version>
         <messages.version>24.1.0</messages.version>
+        <query.version>0.0.1-SNAPSHOT</query.version>
         <tag-expressions.version>6.1.0</tag-expressions.version>
+        <testng-xml-formatter.version>0.0.1-SNAPSHOT</testng-xml-formatter.version>
     </properties>
 
     <dependencyManagement>
@@ -27,18 +29,18 @@
             <!-- Modules in the cucumber org -->
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>tag-expressions</artifactId>
-                <version>${tag-expressions.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>messages</artifactId>
-                <version>${messages.version}</version>
+                <artifactId>ci-environment</artifactId>
+                <version>${ci-environment.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-expressions</artifactId>
                 <version>${cucumber-expressions.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>gherkin</artifactId>
+                <version>${gherkin.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -52,19 +54,25 @@
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>ci-environment</artifactId>
-                <version>${ci-environment.version}</version>
+                <artifactId>messages</artifactId>
+                <version>${messages.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>gherkin</artifactId>
-                <version>${gherkin.version}</version>
+                <artifactId>query</artifactId>
+                <version>${query.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>tag-expressions</artifactId>
+                <version>${tag-expressions.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>testng-xml-formatter</artifactId>
                 <version>${testng-xml-formatter.version}</version>
             </dependency>
+
             <!-- Modules in cucumber-jvm -->
             <dependency>
                 <groupId>io.cucumber</groupId>
