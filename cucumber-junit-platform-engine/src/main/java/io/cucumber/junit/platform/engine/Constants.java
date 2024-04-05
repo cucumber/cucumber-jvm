@@ -143,14 +143,17 @@ public final class Constants {
      * Property name used to configure the naming strategy of examples in case
      * of short naming strategy: {@value}
      * <p>
-     * Value must be one of {@code example-number} or {@code pickle-name}. By
-     * default, example-numbers are used.
+     * Value must be one of {@code number} or {@code pickle}. By default,
+     * numbers are used.
      * <p>
-     * When set to pickle-name the parent scenario name is used. So for scenario
-     * name {@code Adding <a> and <b>} and example with params {@code a = 10}
-     * and {@code b = 20} the following name would be produced:
-     * {@code Adding 10 and 20}. This is useful in case of parametrised scenario
-     * names.
+     * When set to {@code pickle} the pickle name is used. So for scenario name
+     * {@code Adding <a> and <b>} and example with params {@code a = 10} and
+     * {@code b = 20} the following name would be produced:
+     * {@code Adding 10 and 20}.
+     * <p>
+     * Using example numbers works well in all scenarios, but if parameterized
+     * scenario names are used consistently, the pickle name provides more
+     * clarity.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.short.example-name";
@@ -159,13 +162,17 @@ public final class Constants {
      * Property name used to configure the naming strategy of examples in case
      * of long naming strategy: {@value}
      * <p>
-     * Same as
-     * {@code JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME}
-     * except for scenario name {@code Adding <a> and <b>} and example with
-     * params {@code a = 10} and {@code b = 20} the following name would be
-     * produced:
+     * Value must be one of {@code number} or {@code pickle}. By default,
+     * numbers are used.
+     * <p>
+     * When set to {@code pickle} the pickle name is used. So for scenario name
+     * {@code Adding <a> and <b>} and example with params {@code a = 10} and
+     * {@code b = 20} the following name would be produced:
      * {@code Feature Name - Rule Name - Adding <a> and <b> - Examples Name - Adding 10 and 20}.
-     * This is useful in case of parametrised scenario names.
+     * <p>
+     * Using example numbers works well in all scenarios, but if parameterized
+     * scenario names are used consistently, the pickle name provides more
+     * clarity.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";
@@ -272,14 +279,14 @@ public final class Constants {
      * This maps a tag to a resource with a read-write lock.
      * <p>
      * For example given these properties:
-     * 
+     *
      * <pre>
      *  {@code
      * cucumber.execution.exclusive-resources.my-tag-ab-rw.read-write=resource-a,resource-b
      * cucumber.execution.exclusive-resources.my-tag-a-r.read=resource-a
      * }
      * </pre>
-     * 
+     * <p>
      * A scenario tagged with {@code @my-tag-ab-rw} will lock resource {@code a}
      * and {@code b} for reading and writing and will not be concurrently
      * executed with other scenarios tagged with {@code @my-tag-ab-rw} as well

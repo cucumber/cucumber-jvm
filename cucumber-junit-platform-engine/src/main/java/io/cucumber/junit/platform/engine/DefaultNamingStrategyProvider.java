@@ -41,9 +41,9 @@ enum DefaultNamingStrategyProvider {
 
     private static Function<BiFunction<Node, String, String>, NamingStrategy> parseStrategy(String exampleStrategy) {
         switch (exampleStrategy) {
-            case "example-number":
+            case "number":
                 return DefaultNamingStrategyProvider::exampleNumberStrategy;
-            case "pickle-name":
+            case "pickle":
                 return DefaultNamingStrategyProvider::pickleNameStrategy;
             default:
                 throw new IllegalArgumentException("Unrecognized example naming strategy " + exampleStrategy);
