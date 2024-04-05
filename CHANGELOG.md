@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Core] Use a [message based TestNG XML Formatter](https://github.com/cucumber/testng-xml-formatter) ([#2863](https://github.com/cucumber/cucumber-jvm/pull/2863) M.P. Korstanje)
 
+### Added
+ - [JUnit Platform Engine] Support for parameters `cucumber.junit-platform.naming-strategy.short.example-name` and `cucumber.junit-platform.naming-strategy.long.example-name` ([#2743](https://github.com/cucumber/cucumber-jvm/issues/2743) V.V. Belov)
+
 ## [7.16.1] - 2024-03-23
 ### Fixed
 - [Core] Include stack traces in html report ([#2862](https://github.com/cucumber/cucumber-jvm/pull/2862) M.P. Korstanje)
