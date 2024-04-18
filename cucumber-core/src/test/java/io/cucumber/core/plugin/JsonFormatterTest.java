@@ -1,7 +1,9 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StubHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
@@ -168,7 +170,7 @@ class JsonFormatterTest {
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
-                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withEventBus(new TimeServiceEventBus(timeService, new IncrementingUuidGenerator()))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()")))
                 .build()
