@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- [Jakarta CDI] Update dependency jakarta.enterprise:jakarta.enterprise.cdi-api to v4.1.0
 - [TestNG] Update dependency org.testng:testng to v7.10.1
 - [Core] Use a [message based TestNG XML Formatter](https://github.com/cucumber/testng-xml-formatter) ([#2863](https://github.com/cucumber/cucumber-jvm/pull/2863) M.P. Korstanje)
 
