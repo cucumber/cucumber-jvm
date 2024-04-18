@@ -4,7 +4,6 @@ import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.DataTable;
 import io.cucumber.messages.types.DocString;
-import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.Group;
@@ -16,7 +15,6 @@ import io.cucumber.messages.types.PickleStep;
 import io.cucumber.messages.types.PickleTag;
 import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.RuleChild;
-import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.SourceReference;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.StepDefinition;
@@ -102,7 +100,7 @@ class JsonReportWriter {
     }
 
     private GherkinDocument getGherkinDocument(Entry<Optional<Feature>, List<TestCaseStarted>> entry) {
-        return entry.getValue().stream().findAny().flatMap(query::findGherkinDocumentBy).orElseThrow(() -> new IllegalArgumentException("No Gherking document"));
+        return entry.getValue().stream().findAny().flatMap(query::findGherkinDocumentBy).orElseThrow(() -> new IllegalArgumentException("No Gherkin document"));
     }
 
     private List<JvmElement> writeElementsReport(Entry<Optional<Feature>, List<TestCaseStarted>> entry) {
@@ -162,46 +160,20 @@ class JsonReportWriter {
     }
 
     private JvmElement createBackground(Background background, List<TestStepFinished> testStepsFinished) {
-        Map<String, Object> testCaseMap = new HashMap<>();
-        testCaseMap.put("name", background.getName());
-        testCaseMap.put("line", background.getLocation().getLine());
-        testCaseMap.put("type", "background");
-        testCaseMap.put("keyword", background.getKeyword());
-        testCaseMap.put("description", background.getDescription() != null ? background.getDescription() : "");
-        testCaseMap.put("steps", testStepsFinished.stream().map(this::createTestStep).collect(toList()));
-        return testCaseMap;
-    }
-
-    private class IdNamingVisitor implements NamingStrategy.NamingVisitor {
-        @Override
-        public String accept(Feature feature) {
-            return convertToId(feature.getName());
-        }
-
-        @Override
-        public String accept(Rule rule) {
-            return convertToId(rule.getName());
-        }
-
-        @Override
-        public String accept(Scenario scenario) {
-            return convertToId(scenario.getName());
-        }
-
-        @Override
-        public String accept(Examples examples) {
-            return convertToId(examples.getName());
-        }
-
-        @Override
-        public String accept(int examplesIndex, int exampleIndex) {
-            return (examplesIndex + 1) + ";" + (examplesIndex + 1);
-        }
-
-        @Override
-        public String accept(Pickle pickle) {
-            return convertToId(pickle.getName());
-        }
+        //String start_timestamp, Integer line, String id, JvmElementType type, String keyword, String name, String description, List<JvmStep> steps, List<JvmHook> before, List<JvmHook> after, List<JvmTag> tags
+        return new JvmElement(
+                null,
+                background.getLocation().getLine(),
+                null,
+                "background",
+                background.getKeyword(),
+                background.getName(),
+                background.getDescription() != null ? background.getDescription() : "",
+                testStepsFinished.stream().map(this::createTestStep).collect(toList()),
+                null,
+                null,
+                null
+        );
     }
 
 
@@ -230,37 +202,38 @@ class JsonReportWriter {
                 .collect(toList()));
 
         if (!pickle.getTags().isEmpty()) {
-            List<Map<String, Object>> tagList = new ArrayList<>();
-            for (PickleTag tag : pickle.getTags()) {
-                Map<String, Object> tagMap = new HashMap<>();
-                tagMap.put("name", tag.getName());
-                tagList.add(tagMap);
-            }
-            testCaseMap.put("tags", tagList);
+            testCaseMap.put("tags", createTags(pickle));
         }
         return testCaseMap;
     }
 
-    private Map<String, Object> createTestStep(TestStepFinished testStepFinished) {
-        Map<String, Object> stepMap = new HashMap<>();
+    private static List<Map<String, Object>> createTags(Pickle pickle) {
+        List<Map<String, Object>> tagList = new ArrayList<>();
+        for (PickleTag tag : pickle.getTags()) {
+            Map<String, Object> tagMap = new HashMap<>();
+            tagMap.put("name", tag.getName());
+            tagList.add(tagMap);
+        }
+        return tagList;
+    }
+
+    private JvmStep createTestStep(TestStepFinished testStepFinished) {
         TestStep testStep = query.findTestStepBy(testStepFinished).orElseThrow();
-        query.findPickleStepBy(testStep).ifPresent(pickleStep -> {
-            Step step = query.findStepBy(pickleStep).orElseThrow();
-            stepMap.put("name", step.getText());
-            stepMap.put("line", step.getLocation().getLine());
-
-            step.getDocString().ifPresent(docString -> {
-                stepMap.put("doc_string", createDocStringMap(docString));
-            });
-            step.getDataTable().ifPresent(dataTable -> {
-                stepMap.put("rows", createDataTableList(dataTable));
-            });
-            stepMap.put("keyword", step.getKeyword());
-            stepMap.put("match", createMatchMap(testStep, testStepFinished.getTestStepResult()));
-            stepMap.put("result", createResultMap(testStepFinished.getTestStepResult()));
-
-        });
-        return stepMap;
+        return query.findPickleStepBy(testStep)
+                .map(pickleStep -> {
+                    Step step = query.findStepBy(pickleStep).orElseThrow();
+                    //String keyword, Long line, JvmMatch match, String name, JvmResult result, JvmDocString doc_string, List<JvmDataTableRow> rows
+                    return new JvmStep(
+                            step.getKeyword(),
+                            step.getLocation().getLine(),
+                            createMatchMap(testStep, testStepFinished.getTestStepResult()),
+                            step.getText(),
+                            createResultMap(testStepFinished.getTestStepResult()),
+                            step.getDocString().map(this::createDocStringMap).orElse(null),
+                            step.getDataTable().map(this::createDataTableList).orElse(null)
+                    );
+                }).get();
+        // TODO: Hook steps
     }
 
     private Map<String, Object> createMatchMap(TestStep step, TestStepResult result) {
@@ -341,7 +314,7 @@ class JsonReportWriter {
         return resultMap;
     }
 
-    private Map<String, Object> createDocStringMap(DocString docString) {
+    private JvmDocString createDocStringMap(DocString docString) {
         Map<String, Object> docStringMap = new HashMap<>();
         docStringMap.put("value", docString.getContent());
         docStringMap.put("line", docString.getLocation().getLine());
@@ -349,7 +322,7 @@ class JsonReportWriter {
         return docStringMap;
     }
 
-    private List<Map<String, List<String>>> createDataTableList(DataTable argument) {
+    private List<JvmDataTableRow> createDataTableList(DataTable argument) {
         List<Map<String, List<String>>> rowList = new ArrayList<>();
         for (TableRow row : argument.getRows()) {
             Map<String, List<String>> rowMap = new HashMap<>();
@@ -373,9 +346,9 @@ class JsonReportWriter {
         private final String name;
         private final String description;
         private final List<JvmElement> elements;
-        private final List<JvmElement> tags;
+        private final List<JvmLocationTag> tags;
 
-        JvmFeature(String uri, String id, Long line, String keyword, String name, String description, List<JvmElement> elements, List<JvmElement> tags) {
+        JvmFeature(String uri, String id, Long line, String keyword, String name, String description, List<JvmElement> elements, List<JvmLocationTag> tags) {
             this.uri = requireNonNull(uri);
             this.id = requireNonNull(id);
             this.line = requireNonNull(line);
@@ -414,7 +387,7 @@ class JsonReportWriter {
             return elements;
         }
 
-        public List<JvmElement> getTags() {
+        public List<JvmLocationTag> getTags() {
             return tags;
         }
     }
@@ -422,9 +395,10 @@ class JsonReportWriter {
     enum JvmElementType {
         background, scenario
     }
+
     static class JvmElement {
         private final String start_timestamp;
-        private final Integer line;
+        private final Long line;
         private final String id;
         private final JvmElementType type;
         private final String keyword;
@@ -435,7 +409,7 @@ class JsonReportWriter {
         private final List<JvmHook> after;
         private final List<JvmTag> tags;
 
-        JvmElement(String start_timestamp, Integer line, String id, JvmElementType type, String keyword, String name, String description, List<JvmStep> steps, List<JvmHook> before, List<JvmHook> after, List<JvmTag> tags) {
+        JvmElement(String start_timestamp, Long line, String id, JvmElementType type, String keyword, String name, String description, List<JvmStep> steps, List<JvmHook> before, List<JvmHook> after, List<JvmTag> tags) {
             this.start_timestamp = start_timestamp;
             this.line = requireNonNull(line);
             this.id = id;
@@ -453,7 +427,7 @@ class JsonReportWriter {
             return start_timestamp;
         }
 
-        public Integer getLine() {
+        public Long getLine() {
             return line;
         }
 
@@ -496,14 +470,14 @@ class JsonReportWriter {
 
     static class JvmStep {
         private final String keyword;
-        private final Integer line;
+        private final Long line;
         private final JvmMatch match;
         private final String name;
         private final JvmResult result;
         private final JvmDocString doc_string;
         private final List<JvmDataTableRow> rows;
 
-        JvmStep(String keyword, Integer line, JvmMatch match, String name, JvmResult result, JvmDocString doc_string, List<JvmDataTableRow> rows) {
+        JvmStep(String keyword, Long line, JvmMatch match, String name, JvmResult result, JvmDocString doc_string, List<JvmDataTableRow> rows) {
             this.keyword = requireNonNull(keyword);
             this.line = requireNonNull(line);
             this.match = match;
@@ -517,7 +491,7 @@ class JsonReportWriter {
             return keyword;
         }
 
-        public Integer getLine() {
+        public Long getLine() {
             return line;
         }
 
@@ -601,6 +575,7 @@ class JsonReportWriter {
             return error_message;
         }
     }
+
     enum JvmStatus {
         passed,
         failed,
@@ -611,17 +586,17 @@ class JsonReportWriter {
 
 
     static class JvmDocString {
-        private final Integer line;
+        private final Long line;
         private final String value;
         private final String content_type;
 
-        JvmDocString(Integer line, String value, String content_type) {
+        JvmDocString(Long line, String value, String content_type) {
             this.line = requireNonNull(line);
             this.value = requireNonNull(value);
             this.content_type = content_type;
         }
 
-        public Integer getLine() {
+        public Long getLine() {
             return line;
         }
 
@@ -717,9 +692,6 @@ class JsonReportWriter {
             return column;
         }
     }
-
-
-
 
 
 }
