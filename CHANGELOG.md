@@ -10,13 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.17.0] - 2024-04-18
+### Added
+- [JUnit Platform Engine] Support for parameters `cucumber.junit-platform.naming-strategy.short.example-name` and `cucumber.junit-platform.naming-strategy.long.example-name` ([#2743](https://github.com/cucumber/cucumber-jvm/issues/2743) V.V. Belov)
+
 ### Changed
 - [Jakarta CDI] Update dependency jakarta.enterprise:jakarta.enterprise.cdi-api to v4.1.0
 - [TestNG] Update dependency org.testng:testng to v7.10.1
 - [Core] Use a [message based TestNG XML Formatter](https://github.com/cucumber/testng-xml-formatter) ([#2863](https://github.com/cucumber/cucumber-jvm/pull/2863) M.P. Korstanje)
-
-### Added
- - [JUnit Platform Engine] Support for parameters `cucumber.junit-platform.naming-strategy.short.example-name` and `cucumber.junit-platform.naming-strategy.long.example-name` ([#2743](https://github.com/cucumber/cucumber-jvm/issues/2743) V.V. Belov)
 
 ## [7.16.1] - 2024-03-23
 ### Fixed
@@ -312,7 +314,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.16.1...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.17.0...HEAD
+[7.17.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.16.1...v7.17.0
 [7.16.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.16.0...v7.16.1
 [7.16.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.15.0...v7.16.0
 [7.15.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.14.1...v7.15.0
