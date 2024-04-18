@@ -250,105 +250,68 @@
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method void org.testng.IResultMap::addResult(org.testng.ITestResult, org.testng.ITestNGMethod)",
+            "old": "method com.google.inject.Injector org.testng.IInjectorFactory::getInjector(com.google.inject.Stage, com.google.inject.Module[])",
+            "justification": "Guice is an optional TestNG dependency"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method org.testng.IObjectFactory2 org.testng.ISuite::getObjectFactory2()",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
-            "code": "java.method.returnTypeChanged",
-            "old": "method org.testng.IObjectFactory org.testng.ISuite::getObjectFactory()",
-            "new": "method org.testng.ITestObjectFactory org.testng.ISuite::getObjectFactory()",
+            "code": "java.field.removed",
+            "old": "field org.testng.xml.XmlSuite.DEFAULT_JUNIT",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method java.lang.String org.testng.ISuiteResult::getPropertyFileName()",
+            "old": "method org.testng.ITestObjectFactory org.testng.xml.XmlSuite::getObjectFactory()",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method void org.testng.ITestContext::addGuiceModule(com.google.inject.Module)",
+            "old": "method java.lang.Boolean org.testng.xml.XmlSuite::isJUnit()",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method void org.testng.ITestContext::addInjector(java.util.List<com.google.inject.Module>, com.google.inject.Injector)",
+            "old": "method void org.testng.xml.XmlSuite::setJUnit(java.lang.Boolean)",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method java.util.List<com.google.inject.Module> org.testng.ITestContext::getAllGuiceModules()",
+            "old": "method void org.testng.xml.XmlSuite::setJunit(java.lang.Boolean)",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method java.util.List<com.google.inject.Module> org.testng.ITestContext::getGuiceModules(java.lang.Class<? extends com.google.inject.Module>)",
+            "old": "method void org.testng.xml.XmlSuite::setObjectFactory(org.testng.ITestObjectFactory)",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method com.google.inject.Injector org.testng.ITestContext::getInjector(java.util.List<com.google.inject.Module>)",
+            "old": "method boolean org.testng.xml.XmlTest::isJUnit()",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method com.google.inject.Injector org.testng.ITestContext::getInjector(org.testng.IClass)",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method java.lang.String org.testng.ITestResult::id()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method int org.testng.internal.IParameterInfo::getIndex()",
+            "old": "method void org.testng.xml.XmlTest::setJUnit(boolean)",
             "justification": "Third party api change"
           },
           {
             "ignore": true,
             "code": "java.method.removed",
-            "old": "method org.testng.xml.XmlSuite.ParallelMode org.testng.xml.XmlSuite.ParallelMode::skipDeprecatedValues(org.testng.xml.XmlSuite.ParallelMode)",
+            "old": "method void org.testng.xml.XmlTest::setJunit(boolean)",
             "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "interface org.testng.IRetryDataProvider",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.defaultMethodAddedToInterface",
-            "new": "method java.lang.Class<? extends org.testng.IRetryDataProvider> org.testng.IDataProviderMethod::retryUsing()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.defaultMethodAddedToInterface",
-            "new": "method java.util.Set<org.testng.ITestNGMethod> org.testng.ITestNGMethod::downstreamDependencies()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.defaultMethodAddedToInterface",
-            "new": "method java.util.Set<org.testng.ITestNGMethod> org.testng.ITestNGMethod::upstreamDependencies()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "interface io.cucumber.core.eventbus.UuidGenerator",
-            "justification": "Part of cucumber API"
           }
         ]
       }
@@ -377,7 +340,6 @@
             "new": "field com\\.google\\.inject\\.internal\\.ErrorId\\..*",
             "justification": "It's Google."
           },
-
           {
             "ignore": true,
             "code": "java.class.noLongerImplementsInterface",
@@ -409,7 +371,6 @@
             "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.TypeLiteral<? extends jakarta.inject.Provider<? extends T>>===)",
             "parameterIndex": "0",
             "justification": "Guice v7 uses Jakarta"
-
           },
           {
             "ignore": true,
