@@ -28,6 +28,9 @@ or Apache OpenWebBeans.
 
 #### Apache OpenWebBeans
 
+Note: This example isn't up-to-date anymore. I don't know enough about
+OpenWebBeans to keep it up to date. Please do send a pull request if you know.
+
 ```xml
 <dependency>
     <groupId>org.apache.xbean</groupId>
