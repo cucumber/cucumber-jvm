@@ -55,7 +55,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -123,19 +125,43 @@ class JsonReportWriter {
     }
 
     private List<JvmElement> createTestCaseAndBackGround(TestCaseStarted testCaseStarted) {
-        return query.findTestStepFinishedAndTestStepBy(testCaseStarted)
+        // TODO: Clean up
+        Predicate<Entry<Optional<Background>, List<TestStepFinished>>> isBackGround = entry -> entry.getKey().isPresent();
+        Predicate<Entry<Optional<Background>, List<TestStepFinished>>> isTestCase = isBackGround.negate();
+        BinaryOperator<Entry<Optional<Background>, List<TestStepFinished>>> mergeSteps = (a, b) -> {
+            a.getValue().addAll(b.getValue());
+            return a;
+        };
+        Predicate<Entry<TestStepFinished, TestStep>> isPickleStep = entry -> entry.getValue().getPickleStepId().isPresent();
+
+        Map<Optional<Background>, List<TestStepFinished>> stepsByBackground = query.findTestStepFinishedAndTestStepBy(testCaseStarted)
                 .stream()
-                .filter(entry -> entry.getValue().getPickleStepId().isPresent())
-                .collect(groupByBackground(testCaseStarted))
-                .entrySet().stream()
-                .map(entry -> entry.getKey()
-                        .map(background -> createBackground(background, entry.getValue()))
-                        .orElseGet(() -> createTestCase(testCaseStarted, entry.getValue()))).collect(toList());
+                .filter(isPickleStep)
+                .collect(groupByBackground(testCaseStarted));
+
+        // There can be multiple backgrounds, but historically the json format
+        // only ever had one. So we group all other backgrounds steps with the
+        // first.
+        Optional<JvmElement> background = stepsByBackground.entrySet().stream()
+                .filter(isBackGround)
+                .reduce(mergeSteps)
+                .flatMap(entry -> entry.getKey().map(bg -> createBackground(bg, entry.getValue())));
+
+        Optional<JvmElement> testCase = stepsByBackground.entrySet().stream()
+                .filter(isTestCase)
+                .reduce(mergeSteps)
+                .map(Entry::getValue)
+                .map(testStepFinished -> createTestCase(testCaseStarted, testStepFinished));
+
+        return Stream.of(background, testCase)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
     }
 
     private Collector<Entry<TestStepFinished, TestStep>, ?, Map<Optional<Background>, List<TestStepFinished>>> groupByBackground(TestCaseStarted testCaseStarted) {
         List<Background> backgrounds = query.findFeatureBy(testCaseStarted)
-                .map(JsonReportWriter::getBackgroundForTestCase)
+                .map(this::getBackgroundsBy)
                 .orElseGet(Collections::emptyList);
 
         Function<Entry<TestStepFinished, TestStep>, Optional<Background>> grouping =
@@ -143,7 +169,8 @@ class JsonReportWriter {
                         .flatMap(pickleStep -> findBackgroundBy(backgrounds, pickleStep));
 
         Function<List<Entry<TestStepFinished, TestStep>>, List<TestStepFinished>> extractKey = entries -> entries.stream()
-                .map(Entry::getKey).collect(toList());
+                .map(Entry::getKey)
+                .collect(toList());
 
         return groupingBy(grouping, LinkedHashMap::new, collectingAndThen(toList(), extractKey));
     }
@@ -156,7 +183,7 @@ class JsonReportWriter {
                 .findFirst();
     }
 
-    static List<Background> getBackgroundForTestCase(Feature feature) {
+    private List<Background> getBackgroundsBy(Feature feature) {
         return feature.getChildren()
                 .stream()
                 .map(featureChild -> {
@@ -227,16 +254,17 @@ class JsonReportWriter {
     private Optional<JvmStep> createTestStep(TestStepFinished testStepFinished) {
         return query.findTestStepBy(testStepFinished)
                 .flatMap(testStep -> query.findPickleStepBy(testStep)
-                        .flatMap(query::findStepBy)
-                        .map(step -> new JvmStep(
-                                step.getKeyword(),
-                                step.getLocation().getLine(),
-                                createMatchMap(testStep, testStepFinished.getTestStepResult()),
-                                step.getText(),
-                                createResultMap(testStepFinished.getTestStepResult()),
-                                step.getDocString().map(this::createDocStringMap).orElse(null),
-                                step.getDataTable().map(this::createDataTableList).orElse(null)
-                        ))
+                        .flatMap(pickleStep -> query.findStepBy(pickleStep)
+                                .map(step -> new JvmStep(
+                                        step.getKeyword(),
+                                        step.getLocation().getLine(),
+                                        createMatchMap(testStep, testStepFinished.getTestStepResult()),
+                                        pickleStep.getText(),
+                                        createResultMap(testStepFinished.getTestStepResult()),
+                                        step.getDocString().map(this::createDocStringMap).orElse(null),
+                                        step.getDataTable().map(this::createDataTableList).orElse(null)
+                                ))
+                        )
                 );
     }
 
@@ -308,7 +336,7 @@ class JsonReportWriter {
     private JvmResult createResultMap(TestStepResult result) {
         Duration duration = Convertor.toDuration(result.getDuration());
         return new JvmResult(
-                duration.toNanos(),
+                duration.isZero() ? null : duration.toNanos(),
                 JvmStatus.valueOf(result.getStatus().name().toLowerCase(ROOT)),
                 result.getException().flatMap(Exception::getStackTrace).orElse(null)
         );
