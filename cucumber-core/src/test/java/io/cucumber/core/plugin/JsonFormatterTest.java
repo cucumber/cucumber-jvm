@@ -324,7 +324,7 @@ class JsonFormatterTest {
                 "        \"line\": 4,\n" +
                 "        \"name\": \"Monkey eats bananas\",\n" +
                 "        \"description\": \"\",\n" +
-                "        \"id\": \";monkey-eats-bananas\",\n" +
+                "        \"id\": \"banana-party;this-is-all-monkey-business;monkey-eats-bananas\",\n" +
                 "        \"type\": \"scenario\",\n" +
                 "        \"keyword\": \"Scenario\",\n" +
                 "        \"steps\": [\n" +

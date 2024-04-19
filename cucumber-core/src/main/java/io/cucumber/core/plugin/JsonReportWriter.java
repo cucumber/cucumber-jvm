@@ -61,6 +61,7 @@ import java.util.stream.Stream;
 
 import static io.cucumber.core.plugin.TestSourcesModel.convertToId;
 import static java.util.Locale.ROOT;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -122,24 +123,29 @@ class JsonReportWriter {
     }
 
     private List<JvmElement> createTestCaseAndBackGround(TestCaseStarted testCaseStarted) {
-        return query.findTestStepsFinishedBy(testCaseStarted)
+        return query.findTestStepFinishedAndTestStepBy(testCaseStarted)
                 .stream()
+                .filter(entry -> entry.getValue().getPickleStepId().isPresent())
                 .collect(groupByBackground(testCaseStarted))
                 .entrySet().stream()
-                .map(entry -> entry.getKey().map(background -> createBackground(background, entry.getValue()))
+                .map(entry -> entry.getKey()
+                        .map(background -> createBackground(background, entry.getValue()))
                         .orElseGet(() -> createTestCase(testCaseStarted, entry.getValue()))).collect(toList());
     }
 
-    private Collector<TestStepFinished, ?, Map<Optional<Background>, List<TestStepFinished>>> groupByBackground(TestCaseStarted testCaseStarted) {
+    private Collector<Entry<TestStepFinished, TestStep>, ?, Map<Optional<Background>, List<TestStepFinished>>> groupByBackground(TestCaseStarted testCaseStarted) {
         List<Background> backgrounds = query.findFeatureBy(testCaseStarted)
                 .map(JsonReportWriter::getBackgroundForTestCase)
                 .orElseGet(Collections::emptyList);
 
-        Function<TestStepFinished, Optional<Background>> grouping = testStepFinished -> query.findTestStepBy(testStepFinished)
-                .flatMap(query::findPickleStepBy)
-                .flatMap(pickleStep -> findBackgroundBy(backgrounds, pickleStep));
+        Function<Entry<TestStepFinished, TestStep>, Optional<Background>> grouping =
+                entry -> query.findPickleStepBy(entry.getValue())
+                        .flatMap(pickleStep -> findBackgroundBy(backgrounds, pickleStep));
 
-        return groupingBy(grouping, LinkedHashMap::new, toList());
+        Function<List<Entry<TestStepFinished, TestStep>>, List<TestStepFinished>> extractKey = entries -> entries.stream()
+                .map(Entry::getKey).collect(toList());
+
+        return groupingBy(grouping, LinkedHashMap::new, collectingAndThen(toList(), extractKey));
     }
 
     private static Optional<Background> findBackgroundBy(List<Background> backgrounds, PickleStep pickleStep) {
@@ -171,7 +177,6 @@ class JsonReportWriter {
     }
 
     private JvmElement createBackground(Background background, List<TestStepFinished> testStepsFinished) {
-        //String start_timestamp, Integer line, String id, JvmElementType type, String keyword, String name, String description, List<JvmStep> steps, List<JvmHook> before, List<JvmHook> after, List<JvmTag> tags
         return new JvmElement(
                 null,
                 background.getLocation().getLine(),
