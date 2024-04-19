@@ -1,5 +1,6 @@
 package io.cucumber.core.backend;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 public class StubLocation implements Located {
@@ -12,9 +13,9 @@ public class StubLocation implements Located {
         this.sourceReference = null;
     }
 
-    public StubLocation(SourceReference location) {
+    public StubLocation(Method method) {
         this.location = null;
-        this.sourceReference = location;
+        this.sourceReference = SourceReference.fromMethod(method);
     }
 
     @Override

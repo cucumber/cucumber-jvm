@@ -80,10 +80,8 @@ class JsonReportWriter {
     }
 
     private JvmFeature createFeatureMap(Entry<Optional<Feature>, List<TestCaseStarted>> entry) {
-        LinkedHashMap<String, Object> featureMap = new LinkedHashMap<>();
         GherkinDocument document = getGherkinDocument(entry);
         Feature feature = entry.getKey().get();
-
         return new JvmFeature(
                 TestSourcesModel.relativize(URI.create(document.getUri().get())).toString(), // TODO: Relativize, optional?, null?
                 convertToId(feature.getName()),
