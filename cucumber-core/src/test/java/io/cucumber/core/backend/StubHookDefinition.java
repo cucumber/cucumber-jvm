@@ -26,6 +26,10 @@ public class StubHookDefinition implements HookDefinition {
         this(location, null, action);
     }
 
+    public StubHookDefinition(Method location, Consumer<TestCaseState> action) {
+        this(location, null, action);
+    }
+
     public StubHookDefinition() {
         this(STUBBED_LOCATION_WITH_DETAILS, null, null);
     }

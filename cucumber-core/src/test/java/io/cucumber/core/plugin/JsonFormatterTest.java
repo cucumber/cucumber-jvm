@@ -976,7 +976,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                    singletonList(new StubHookDefinition(beforeHook1,
                         testCaseState -> testCaseState.log("printed from hook"))),
                     singletonList(new StubStepDefinition("there are bananas", thereAreBananas)),
                     emptyList()))
