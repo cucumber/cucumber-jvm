@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -251,18 +253,26 @@ public class TeamCityPlugin implements EventListener {
             PickleStepTestStep pickleStepTestStep = (PickleStepTestStep) testStep;
             return pickleStepTestStep.getUri() + ":" + pickleStepTestStep.getStep().getLine();
         }
-        return extractSourceLocation(testStep);
+        if (testStep instanceof HookTestStep) {
+            return hookStepLocationFormatter(
+                    (HookTestStep) testStep,
+                    (fqDeclaringClassName, classOrMethodName) -> String.format("java:test://%s/%s", fqDeclaringClassName, classOrMethodName),
+                    TestStep::getCodeLocation);
+        }
+        return testStep.getCodeLocation();
     }
 
-    private String extractSourceLocation(TestStep testStep) {
-
-        Matcher javaMatcher = ANNOTATION_GLUE_CODE_LOCATION_PATTERN.matcher(testStep.getCodeLocation());
+    private String hookStepLocationFormatter(
+            HookTestStep hookTestStep, BiFunction<String, String, String> hookStepCase,
+            Function<HookTestStep, String> defaultHookName
+    ) {
+        Matcher javaMatcher = ANNOTATION_GLUE_CODE_LOCATION_PATTERN.matcher(hookTestStep.getCodeLocation());
         if (javaMatcher.matches()) {
             String fqDeclaringClassName = javaMatcher.group(1);
             String methodName = javaMatcher.group(2);
-            return String.format("java:test://%s/%s", fqDeclaringClassName, methodName);
+            return hookStepCase.apply(fqDeclaringClassName, methodName);
         }
-        Matcher java8Matcher = LAMBDA_GLUE_CODE_LOCATION_PATTERN.matcher(testStep.getCodeLocation());
+        Matcher java8Matcher = LAMBDA_GLUE_CODE_LOCATION_PATTERN.matcher(hookTestStep.getCodeLocation());
         if (java8Matcher.matches()) {
             String fqDeclaringClassName = java8Matcher.group(1);
             String declaringClassName;
@@ -272,10 +282,9 @@ public class TeamCityPlugin implements EventListener {
             } else {
                 declaringClassName = fqDeclaringClassName;
             }
-            return String.format("java:test://%s/%s", fqDeclaringClassName, declaringClassName);
+            return hookStepCase.apply(fqDeclaringClassName, declaringClassName);
         }
-
-        return testStep.getCodeLocation();
+        return defaultHookName.apply(hookTestStep);
     }
 
     private void printTestStepFinished(TestStepFinished event) {
@@ -324,26 +333,33 @@ public class TeamCityPlugin implements EventListener {
         print(TEMPLATE_TEST_FINISHED, timeStamp, duration, name);
     }
 
-    private String extractName(TestStep step) {
-        if (step instanceof PickleStepTestStep) {
-            PickleStepTestStep pickleStepTestStep = (PickleStepTestStep) step;
+    private String getHookName(HookTestStep hook) {
+        HookType hookType = hook.getHookType();
+        switch (hookType) {
+            case BEFORE:
+                return "Before";
+            case AFTER:
+                return "After";
+            case BEFORE_STEP:
+                return "BeforeStep";
+            case AFTER_STEP:
+                return "AfterStep";
+            default:
+                return hookType.name().toLowerCase(Locale.US);
+        }
+    }
+
+    private String extractName(TestStep testStep) {
+        if (testStep instanceof PickleStepTestStep) {
+            PickleStepTestStep pickleStepTestStep = (PickleStepTestStep) testStep;
             return pickleStepTestStep.getStep().getText();
         }
-        if (step instanceof HookTestStep) {
-            HookTestStep hook = (HookTestStep) step;
-            HookType hookType = hook.getHookType();
-            switch (hookType) {
-                case BEFORE:
-                    return "Before";
-                case AFTER:
-                    return "After";
-                case BEFORE_STEP:
-                    return "BeforeStep";
-                case AFTER_STEP:
-                    return "AfterStep";
-                default:
-                    return hookType.name().toLowerCase(Locale.US);
-            }
+        if (testStep instanceof HookTestStep) {
+            HookTestStep hookTestStep = (HookTestStep) testStep;
+            return hookStepLocationFormatter(
+                    hookTestStep,
+                    (fqDeclaringClassName, classOrMethodName) -> String.format("%s(%s)", getHookName(hookTestStep), classOrMethodName),
+                    this::getHookName);
         }
         return "Unknown step";
     }
