@@ -255,9 +255,10 @@ public class TeamCityPlugin implements EventListener {
         }
         if (testStep instanceof HookTestStep) {
             return hookStepLocationFormatter(
-                    (HookTestStep) testStep,
-                    (fqDeclaringClassName, classOrMethodName) -> String.format("java:test://%s/%s", fqDeclaringClassName, classOrMethodName),
-                    TestStep::getCodeLocation);
+                (HookTestStep) testStep,
+                (fqDeclaringClassName, classOrMethodName) -> String.format("java:test://%s/%s", fqDeclaringClassName,
+                    classOrMethodName),
+                TestStep::getCodeLocation);
         }
         return testStep.getCodeLocation();
     }
@@ -357,9 +358,10 @@ public class TeamCityPlugin implements EventListener {
         if (testStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) testStep;
             return hookStepLocationFormatter(
-                    hookTestStep,
-                    (fqDeclaringClassName, classOrMethodName) -> String.format("%s(%s)", getHookName(hookTestStep), classOrMethodName),
-                    this::getHookName);
+                hookTestStep,
+                (fqDeclaringClassName, classOrMethodName) -> String.format("%s(%s)", getHookName(hookTestStep),
+                    classOrMethodName),
+                this::getHookName);
         }
         return "Unknown step";
     }
