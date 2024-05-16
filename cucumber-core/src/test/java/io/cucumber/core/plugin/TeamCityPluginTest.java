@@ -287,7 +287,7 @@ class TeamCityPluginTest {
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before']\n")));
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before(beforeHook)']\n")));
     }
 
     @Test
@@ -310,7 +310,7 @@ class TeamCityPluginTest {
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/HookDefinition' captureStandardOutput = 'true' name = 'Before']\n")));
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/HookDefinition' captureStandardOutput = 'true' name = 'Before(HookDefinition)']\n")));
     }
 
     @Test
