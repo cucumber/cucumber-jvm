@@ -32,8 +32,7 @@ class LinePredicateTest {
                 "       Examples: Second\n" +
                 "         | thing    | \n" +
                 "         | zukini   | \n" +
-                "         | pickle   | \n"
-    );
+                "         | pickle   | \n");
     private final Pickle firstPickle = feature.getPickles().get(0);
     private final Pickle secondPickle = feature.getPickles().get(1);
     private final Pickle thirdPickle = feature.getPickles().get(2);
@@ -130,8 +129,8 @@ class LinePredicateTest {
     @Test
     void does_not_match_example_header() {
         LinePredicate predicate = new LinePredicate(singletonMap(
-                featurePath,
-                singletonList(6)));
+            featurePath,
+            singletonList(6)));
         assertFalse(predicate.test(firstPickle));
         assertFalse(predicate.test(secondPickle));
         assertFalse(predicate.test(thirdPickle));
@@ -148,6 +147,7 @@ class LinePredicateTest {
         assertFalse(predicate.test(thirdPickle));
         assertFalse(predicate.test(fourthPickle));
     }
+
     @Test
     void Matches_second_example() {
         LinePredicate predicate = new LinePredicate(singletonMap(
@@ -180,6 +180,7 @@ class LinePredicateTest {
         assertTrue(predicate.test(thirdPickle));
         assertTrue(predicate.test(fourthPickle));
     }
+
     @Test
     void does_not_match_second_examples_header() {
         LinePredicate predicate = new LinePredicate(singletonMap(
@@ -190,6 +191,7 @@ class LinePredicateTest {
         assertFalse(predicate.test(thirdPickle));
         assertFalse(predicate.test(fourthPickle));
     }
+
     @Test
     void matches_third_example() {
         LinePredicate predicate = new LinePredicate(singletonMap(
@@ -200,6 +202,7 @@ class LinePredicateTest {
         assertTrue(predicate.test(thirdPickle));
         assertFalse(predicate.test(fourthPickle));
     }
+
     @Test
     void matches_fourth_example() {
         LinePredicate predicate = new LinePredicate(singletonMap(
