@@ -4,6 +4,9 @@ import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.Pickle;
+import io.cucumber.messages.types.PickleStep;
+import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.TableRow;
@@ -11,11 +14,15 @@ import io.cucumber.messages.types.TableRow;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
 final class CucumberQuery {
 
+    private final Map<String, Rule> ruleByScenarioId = new HashMap<>();
+    private final Map<String, Examples> examplesByExampleId = new HashMap<>();
+    private final Map<String, Feature> featureByScenarioId = new HashMap<>();
     private final Map<String, Step> gherkinStepById = new HashMap<>();
     private final Map<String, Scenario> gherkinScenarioById = new HashMap<>();
     private final Map<String, Location> locationBySourceId = new HashMap<>();
@@ -23,11 +30,13 @@ final class CucumberQuery {
     void update(Feature feature) {
         feature.getChildren().forEach(featureChild -> {
             featureChild.getBackground().ifPresent(this::updateBackground);
-            featureChild.getScenario().ifPresent(this::updateScenario);
-            featureChild.getRule().ifPresent(rule -> rule.getChildren().forEach(ruleChild -> {
-                ruleChild.getBackground().ifPresent(this::updateBackground);
-                ruleChild.getScenario().ifPresent(this::updateScenario);
-            }));
+            featureChild.getScenario().ifPresent(scenario -> updateScenario(feature, null, scenario));
+            featureChild.getRule().ifPresent(rule -> {
+                rule.getChildren().forEach(ruleChild -> {
+                    ruleChild.getBackground().ifPresent(this::updateBackground);
+                    ruleChild.getScenario().ifPresent(scenario -> updateScenario(feature, rule, scenario));
+                });
+            });
         });
     }
 
@@ -35,16 +44,23 @@ final class CucumberQuery {
         updateStep(background.getSteps());
     }
 
-    private void updateScenario(Scenario scenario) {
+    private void updateScenario(Feature feature, Rule rule, Scenario scenario) {
         gherkinScenarioById.put(requireNonNull(scenario.getId()), scenario);
         locationBySourceId.put(requireNonNull(scenario.getId()), scenario.getLocation());
         updateStep(scenario.getSteps());
 
         for (Examples examples : scenario.getExamples()) {
             for (TableRow tableRow : examples.getTableBody()) {
-                this.locationBySourceId.put(requireNonNull(tableRow.getId()), tableRow.getLocation());
+                this.examplesByExampleId.put(tableRow.getId(), examples);
+                this.locationBySourceId.put(tableRow.getId(), tableRow.getLocation());
             }
         }
+
+        if (rule != null) {
+            ruleByScenarioId.put(scenario.getId(), rule);
+        }
+
+        featureByScenarioId.put(scenario.getId(), feature);
     }
 
     private void updateStep(List<Step> stepsList) {
@@ -54,17 +70,41 @@ final class CucumberQuery {
         }
     }
 
-    Step getGherkinStep(String sourceId) {
-        return requireNonNull(gherkinStepById.get(requireNonNull(sourceId)));
+    Step getStepBy(PickleStep pickleStep) {
+        requireNonNull(pickleStep);
+        String gherkinStepId = pickleStep.getAstNodeIds().get(0);
+        return requireNonNull(gherkinStepById.get(gherkinStepId));
     }
 
-    Scenario getGherkinScenario(String sourceId) {
-        return requireNonNull(gherkinScenarioById.get(requireNonNull(sourceId)));
+    Scenario getScenarioBy(Pickle pickle) {
+        requireNonNull(pickle);
+        return requireNonNull(gherkinScenarioById.get(pickle.getAstNodeIds().get(0)));
     }
 
-    Location getLocation(String sourceId) {
-        Location location = locationBySourceId.get(requireNonNull(sourceId));
+    Optional<Rule> findRuleBy(Pickle pickle) {
+        requireNonNull(pickle);
+        Scenario scenario = getScenarioBy(pickle);
+        return Optional.ofNullable(ruleByScenarioId.get(scenario.getId()));
+    }
+
+    Location getLocationBy(Pickle pickle) {
+        requireNonNull(pickle);
+        List<String> sourceIds = pickle.getAstNodeIds();
+        String sourceId = sourceIds.get(sourceIds.size() - 1);
+        Location location = locationBySourceId.get(sourceId);
         return requireNonNull(location);
     }
 
+    Optional<Feature> findFeatureBy(Pickle pickle) {
+        requireNonNull(pickle);
+        Scenario scenario = getScenarioBy(pickle);
+        return Optional.ofNullable(featureByScenarioId.get(scenario.getId()));
+    }
+
+    Optional<Examples> findExamplesBy(Pickle pickle) {
+        requireNonNull(pickle);
+        List<String> sourceIds = pickle.getAstNodeIds();
+        String sourceId = sourceIds.get(sourceIds.size() - 1);
+        return Optional.ofNullable(examplesByExampleId.get(sourceId));
+    }
 }

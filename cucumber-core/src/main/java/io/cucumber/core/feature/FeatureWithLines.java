@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Identifies either a directory containing feature files, a specific feature or
- * specific scenarios and examples (pickles) in a feature.
+ * Identifies either a directory containing feature files, a specific feature
+ * file or a feature, rules, scenarios, and/or examples in a feature file.
  * <p>
  * The syntax of a feature with lines defined as either a {@link FeaturePath} or
  * a {@link FeatureIdentifier} followed by a sequence of line numbers each

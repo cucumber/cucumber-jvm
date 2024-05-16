@@ -21,13 +21,23 @@ class LinePredicateTest {
         featurePath,
         "" +
                 "Feature: Test feature\n" +
-                "  Scenario Outline: Test scenario\n" +
-                "     Given I have 4 <thing> in my belly\n" +
-                "     Examples:\n" +
-                "       | thing    | \n" +
-                "       | cucumber | \n" +
-                "       | gherkin  | \n");
-    private final Pickle pickle = feature.getPickles().get(0);
+                "  Rule: Test rule\n" +
+                "    Scenario Outline: Test scenario\n" +
+                "       Given I have 4 <thing> in my belly\n" +
+                "       Examples: First\n" +
+                "         | thing    | \n" +
+                "         | cucumber | \n" +
+                "         | gherkin  | \n" +
+                "\n" +
+                "       Examples: Second\n" +
+                "         | thing    | \n" +
+                "         | zukini   | \n" +
+                "         | pickle   | \n"
+    );
+    private final Pickle firstPickle = feature.getPickles().get(0);
+    private final Pickle secondPickle = feature.getPickles().get(1);
+    private final Pickle thirdPickle = feature.getPickles().get(2);
+    private final Pickle fourthPickle = feature.getPickles().get(3);
 
     @Test
     void matches_pickles_from_files_not_in_the_predicate_map() {
@@ -37,47 +47,168 @@ class LinePredicateTest {
         LinePredicate predicate = new LinePredicate(singletonMap(
             URI.create("classpath:another_path/file.feature"),
             singletonList(8)));
-        assertTrue(predicate.test(pickle));
+        assertTrue(predicate.test(firstPickle));
     }
 
     @Test
-    void does_not_matches_pickles_for_no_lines_in_predicate() {
+    void empty() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             featurePath,
             emptyList()));
-        assertFalse(predicate.test(pickle));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
     }
 
     @Test
-    void matches_pickles_for_any_line_in_predicate() {
+    void matches_at_least_one_line() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             featurePath,
-            asList(2, 4)));
-        assertTrue(predicate.test(pickle));
+            asList(3, 4)));
+        assertTrue(predicate.test(firstPickle));
+        assertTrue(predicate.test(secondPickle));
+        assertTrue(predicate.test(thirdPickle));
+        assertTrue(predicate.test(fourthPickle));
     }
 
     @Test
-    void matches_pickles_on_scenario_location_of_the_pickle() {
+    void matches_feature() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(1)));
+        assertTrue(predicate.test(firstPickle));
+        assertTrue(predicate.test(secondPickle));
+        assertTrue(predicate.test(thirdPickle));
+        assertTrue(predicate.test(fourthPickle));
+    }
+
+    @Test
+    void matches_rule() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             featurePath,
             singletonList(2)));
-        assertTrue(predicate.test(pickle));
+        assertTrue(predicate.test(firstPickle));
+        assertTrue(predicate.test(secondPickle));
+        assertTrue(predicate.test(thirdPickle));
+        assertTrue(predicate.test(fourthPickle));
     }
 
     @Test
-    void matches_pickles_on_example_location_of_the_pickle() {
+    void matches_scenario() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             featurePath,
-            singletonList(6)));
-        assertTrue(predicate.test(pickle));
+            singletonList(3)));
+        assertTrue(predicate.test(firstPickle));
+        assertTrue(predicate.test(secondPickle));
+        assertTrue(predicate.test(thirdPickle));
+        assertTrue(predicate.test(fourthPickle));
     }
 
     @Test
-    void does_not_matches_pickles_not_on_any_line_of_the_predicate() {
+    void does_not_match_step() {
         LinePredicate predicate = new LinePredicate(singletonMap(
             featurePath,
             singletonList(4)));
-        assertFalse(predicate.test(pickle));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+
+    @Test
+    void matches_first_examples() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(5)));
+        assertTrue(predicate.test(firstPickle));
+        assertTrue(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+
+    @Test
+    void does_not_match_example_header() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+                featurePath,
+                singletonList(6)));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+
+    @Test
+    void matches_first_example() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(7)));
+        assertTrue(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+    @Test
+    void Matches_second_example() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(8)));
+        assertFalse(predicate.test(firstPickle));
+        assertTrue(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+
+    @Test
+    void does_not_match_empty_line() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(9)));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+
+    @Test
+    void matches_second_examples() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(10)));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertTrue(predicate.test(thirdPickle));
+        assertTrue(predicate.test(fourthPickle));
+    }
+    @Test
+    void does_not_match_second_examples_header() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(11)));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+    @Test
+    void matches_third_example() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(12)));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertTrue(predicate.test(thirdPickle));
+        assertFalse(predicate.test(fourthPickle));
+    }
+    @Test
+    void matches_fourth_example() {
+        LinePredicate predicate = new LinePredicate(singletonMap(
+            featurePath,
+            singletonList(13)));
+        assertFalse(predicate.test(firstPickle));
+        assertFalse(predicate.test(secondPickle));
+        assertFalse(predicate.test(thirdPickle));
+        assertTrue(predicate.test(fourthPickle));
     }
 
 }
