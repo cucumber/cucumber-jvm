@@ -254,16 +254,20 @@ public class TeamCityPlugin implements EventListener {
             return pickleStepTestStep.getUri() + ":" + pickleStepTestStep.getStep().getLine();
         }
         if (testStep instanceof HookTestStep) {
-            return hookStepLocationFormatter(
+            return formatHookStepLocation(
                 (HookTestStep) testStep,
-                (fqDeclaringClassName, classOrMethodName) -> String.format("java:test://%s/%s", fqDeclaringClassName,
-                    classOrMethodName),
+                javaTestLocationUri(),
                 TestStep::getCodeLocation);
         }
         return testStep.getCodeLocation();
     }
 
-    private String hookStepLocationFormatter(
+    private static BiFunction<String, String, String> javaTestLocationUri() {
+        return (fqDeclaringClassName, classOrMethodName) -> String.format("java:test://%s/%s", fqDeclaringClassName,
+            classOrMethodName);
+    }
+
+    private String formatHookStepLocation(
             HookTestStep hookTestStep, BiFunction<String, String, String> hookStepCase,
             Function<HookTestStep, String> defaultHookName
     ) {
@@ -357,13 +361,17 @@ public class TeamCityPlugin implements EventListener {
         }
         if (testStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) testStep;
-            return hookStepLocationFormatter(
+            return formatHookStepLocation(
                 hookTestStep,
-                (fqDeclaringClassName, classOrMethodName) -> String.format("%s(%s)", getHookName(hookTestStep),
-                    classOrMethodName),
+                hookNameFormat(hookTestStep),
                 this::getHookName);
         }
         return "Unknown step";
+    }
+
+    private BiFunction<String, String, String> hookNameFormat(HookTestStep hookTestStep) {
+        return (fqDeclaringClassName, classOrMethodName) -> String.format("%s(%s)", getHookName(hookTestStep),
+            classOrMethodName);
     }
 
     private String getSnippets(TestCase testCase) {
