@@ -10,8 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
+### Added
 - [Core] The TeamCityPlugin for IntelliJ IDEA now uses the hook's method name for the name of the hook itself. ([#2798](https://github.com/cucumber/cucumber-jvm/issues/2798) V.V. Belov)
+- [Core] Allow feature with line syntax to target rules and examples. ([#2884](https://github.com/cucumber/cucumber-jvm/issues/2884) M.P. Korstanje)
 
 ## [7.17.0] - 2024-04-18
 ### Added
