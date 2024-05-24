@@ -568,7 +568,7 @@ As a workaround you can the [Gradle Cucumber-Companion](https://github.com/gradl
 plugin in combination with [Gradle Test Retry](https://github.com/gradle/test-retry-gradle-plugin)
 plugin.
 
-Note: any files written by Cucumber will be overwritten retrying.
+Note: any files written by Cucumber will be overwritten while retrying.
 
 ### Using the JUnit Platform Launcher API
 
