@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -292,10 +293,12 @@ class CucumberJvmJson {
     static class JvmHook {
         private final JvmMatch match;
         private final JvmResult result;
+        private final List<JvmEmbedding> embeddings;
 
-        JvmHook(JvmMatch match, JvmResult result) {
+        JvmHook(JvmMatch match, JvmResult result, List<JvmEmbedding> embeddings) {
             this.match = requireNonNull(match);
             this.result = requireNonNull(result);
+            this.embeddings = embeddings;
         }
 
         public JvmMatch getMatch() {
@@ -304,6 +307,34 @@ class CucumberJvmJson {
 
         public JvmResult getResult() {
             return result;
+        }
+
+        public List<JvmEmbedding> getEmbeddings() {
+            return embeddings;
+        }
+    }
+
+    static class JvmEmbedding {
+        private final String mime_type;
+        private final String data;
+        private final String name;
+
+        JvmEmbedding(String mime_type, String data, String name) {
+            this.mime_type = requireNonNull(mime_type);
+            this.data = requireNonNull(data);
+            this.name = name;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+        public String getMime_type() {
+            return mime_type;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 

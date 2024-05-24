@@ -14,6 +14,7 @@ import io.cucumber.core.plugin.CucumberJvmJson.JvmStatus;
 import io.cucumber.core.plugin.CucumberJvmJson.JvmStep;
 import io.cucumber.core.plugin.CucumberJvmJson.JvmTag;
 import io.cucumber.messages.Convertor;
+import io.cucumber.messages.types.Attachment;
 import io.cucumber.messages.types.Background;
 import io.cucumber.messages.types.DataTable;
 import io.cucumber.messages.types.DocString;
@@ -21,6 +22,8 @@ import io.cucumber.messages.types.Exception;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.Group;
+import io.cucumber.messages.types.Hook;
+import io.cucumber.messages.types.HookType;
 import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.JavaStackTraceElement;
 import io.cucumber.messages.types.Pickle;
@@ -48,9 +51,9 @@ import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +66,8 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static io.cucumber.core.plugin.TestSourcesModel.convertToId;
+import static io.cucumber.messages.types.HookType.AFTER;
+import static io.cucumber.messages.types.HookType.BEFORE;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.groupingBy;
@@ -133,11 +138,8 @@ class JsonReportWriter {
             a.getValue().addAll(b.getValue());
             return a;
         };
-        Predicate<Entry<TestStepFinished, TestStep>> isPickleStep = entry -> entry.getValue().getPickleStepId().isPresent();
-
         Map<Optional<Background>, List<TestStepFinished>> stepsByBackground = query.findTestStepFinishedAndTestStepBy(testCaseStarted)
                 .stream()
-                .filter(isPickleStep)
                 .collect(groupByBackground(testCaseStarted));
 
         // There can be multiple backgrounds, but historically the json format
@@ -225,6 +227,8 @@ class JsonReportWriter {
         Pickle pickle = query.findPickleBy(event).orElseThrow();
         Scenario scenario = query.findScenarioBy(event).orElseThrow();
         NamingStrategy idStrategy = NamingStrategy.strategy(NamingStrategy.Strategy.LONG).delimiter(";").namingVisitor(new IdNamingVisitor()).build();
+        List<CucumberJvmJson.JvmHook> beforeHooks = createHookSteps(testStepsFinished, include(BEFORE));
+        List<CucumberJvmJson.JvmHook> afterHooks = createHookSteps(testStepsFinished, include(AFTER));
         return new JvmElement(
                 getDateTimeFromTimeStamp(event.getTimestamp()),
                 query.findLocationOf(pickle).orElseThrow().getLine(),
@@ -234,10 +238,37 @@ class JsonReportWriter {
                 pickle.getName(),
                 scenario.getDescription() != null ? scenario.getDescription() : "",
                 createTestSteps(testStepsFinished),
-                null, // TODO: Hooks
-                null, // TODO: Hooks
+                beforeHooks.isEmpty() ? null : beforeHooks,
+                afterHooks.isEmpty() ? null : afterHooks,
                 pickle.getTags().isEmpty() ? null : createTags(pickle)
         );
+    }
+
+    private List<CucumberJvmJson.JvmHook> createHookSteps(List<TestStepFinished> testStepsFinished, Predicate<Hook> predicate) {
+        return testStepsFinished.stream()
+                .map(testStepFinished -> query.findTestStepBy(testStepFinished)
+                        .flatMap(testStep -> query.findHookBy(testStep)
+                                .filter(predicate)
+                                .map(hook -> new CucumberJvmJson.JvmHook(
+                                        createMatchMap(testStep, testStepFinished.getTestStepResult()),
+                                        createResultMap(testStepFinished.getTestStepResult()),
+                                        createEmbeddings(query.findAllAttachmentsBy(testStep))
+                                ))))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
+    }
+
+    private List<CucumberJvmJson.JvmEmbedding> createEmbeddings(List<Attachment> attachments) {
+        if (attachments.isEmpty()) {
+            return null;
+        }
+        return attachments.stream()
+                .map(attachment -> new CucumberJvmJson.JvmEmbedding(
+                        attachment.getMediaType(),
+                        attachment.getBody(),
+                        attachment.getFileName().orElse(null)
+                )).collect(toList());
     }
 
     private List<JvmStep> createTestSteps(List<TestStepFinished> testStepsFinished) {
@@ -267,6 +298,15 @@ class JsonReportWriter {
                                 ))
                         )
                 );
+    }
+
+    private static Predicate<Hook> include(HookType... hookTypes) {
+        List<HookType> keep = Arrays.asList(hookTypes);
+        return hook -> hook.getType().map(keep::contains).orElse(false);
+    }
+
+    private static Predicate<Hook> exclude(HookType... hookTypes) {
+        return include(hookTypes).negate();
     }
 
     private JvmMatch createMatchMap(TestStep step, TestStepResult result) {

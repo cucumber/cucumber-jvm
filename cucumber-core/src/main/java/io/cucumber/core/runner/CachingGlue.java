@@ -28,6 +28,7 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Hook;
+import io.cucumber.messages.types.HookType;
 import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.JavaStackTraceElement;
 import io.cucumber.messages.types.Location;
@@ -46,6 +47,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static io.cucumber.messages.types.HookType.AFTER;
+import static io.cucumber.messages.types.HookType.AFTER_STEP;
+import static io.cucumber.messages.types.HookType.BEFORE;
+import static io.cucumber.messages.types.HookType.BEFORE_STEP;
 
 final class CachingGlue implements Glue {
 
@@ -266,8 +272,8 @@ final class CachingGlue implements Glue {
 
         // TODO: Redefine hooks for each scenario, similar to how we're doing
         // for CoreStepDefinition
-        beforeHooks.forEach(this::emitHook);
-        beforeStepHooks.forEach(this::emitHook);
+        beforeHooks.forEach(hook -> emitHook(hook, BEFORE));
+        beforeStepHooks.forEach(hook -> emitHook(hook, BEFORE_STEP));
 
         stepDefinitions.forEach(stepDefinition -> {
             StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
@@ -281,8 +287,8 @@ final class CachingGlue implements Glue {
             emitStepDefined(coreStepDefinition);
         });
 
-        afterStepHooks.forEach(this::emitHook);
-        afterHooks.forEach(this::emitHook);
+        afterStepHooks.forEach(hook -> emitHook(hook, AFTER_STEP));
+        afterHooks.forEach(hook -> emitHook(hook, AFTER));
     }
 
     private void emitParameterTypeDefined(ParameterTypeDefinition parameterTypeDefinition) {
@@ -299,14 +305,14 @@ final class CachingGlue implements Glue {
         bus.send(Envelope.of(messagesParameterType));
     }
 
-    private void emitHook(CoreHookDefinition coreHook) {
+    private void emitHook(CoreHookDefinition coreHook, HookType type) {
         Hook messagesHook = new Hook(
             coreHook.getId().toString(),
             null,
             coreHook.getDefinitionLocation()
                     .map(this::createSourceReference)
                     .orElseGet(this::emptySourceReference),
-            coreHook.getTagExpression());
+            coreHook.getTagExpression(), type);
         bus.send(Envelope.of(messagesHook));
     }
 

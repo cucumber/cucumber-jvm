@@ -64,7 +64,7 @@ class HtmlFormatterTest {
         Hook hook = new Hook("",
             null,
             SourceReference.of("https://example.com"),
-            null);
+            null, null);
         bus.send(Envelope.of(hook));
 
         // public ParameterType(String name, List<String> regularExpressions,
