@@ -45,6 +45,13 @@ public class CucumberSpringConfiguration {
 Note: Cucumber Spring uses Spring's `TestContextManager` framework internally.
 As a result, a single Cucumber scenario will mostly behave like a JUnit test.
 
+The class annotated with `@CucumberContextConfiguration` is instantiated but not
+initialized by Spring. Instead, this instance is processed by Springs test
+execution listeners. So features that depend on a test execution listener such
+as mock beans will work on the annotated class - but not on other step definition
+classes. Features that depend on initializing beans - such as AspectJ - will not
+work on the annotated class - but will work on other step definition classes.
+
 For more information configuring Spring tests see:
  - [Spring Framework Documentation - Testing](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/testing.html)
  - [Spring Boot Features - Testing](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing)
@@ -97,7 +104,8 @@ Repeat as needed.
 ## Accessing the application context
 
 Components from the application context can be accessed by autowiring.
-Annotate a field in your step definition class with `@Autowired`. 
+
+Either annotate a field in your step definition class with `@Autowired`
 
 ```java
 package com.example.app;
@@ -114,6 +122,72 @@ public class MyStepDefinitions {
    public void feed_back_is_requested(){
       myService.requestFeedBack();
    }
+}
+```
+
+Or declare a dependency through the constructor:
+
+```java
+package com.example.app;
+
+import io.cucumber.java.en.Given;
+
+public class MyStepDefinitions {
+    
+   private final MyService myService;
+   
+   public MyStepDefinitions(MyService myService){
+       this.myService = myService;
+   }
+
+   @Given("feed back is requested from my service")
+   public void feed_back_is_requested(){
+      myService.requestFeedBack();
+   }
+}
+```
+
+## Using Mock Beans
+
+To use mock beans, declare a mock bean in the context configuration.
+
+```java
+package com.example.app;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import io.cucumber.spring.CucumberContextConfiguration;
+
+@CucumberContextConfiguration
+@SpringBootTest(classes = TestConfig.class)
+@MockBean(MyService.class)
+public class CucumberSpringConfiguration {
+   
+}
+```
+
+Then in your step definitions, use the mock as you would normally.
+
+```java
+package com.example.app;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import io.cucumber.java.en.Given;
+
+import static org.mockito.Mockito.mockingDetails;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+
+public class MyStepDefinitions {
+
+    @Autowired
+    private MyService myService;
+
+    @Given("my service is a mock")
+    public void feed_back_is_requested(){
+        assertTrue(mockingDetails(myService).isMock());
+    }
 }
 ```
 
