@@ -15,7 +15,7 @@ final class GherkinMessagesRule implements Node.Rule {
     private final io.cucumber.messages.types.Rule rule;
     private final List<Node> children;
 
-    GherkinMessagesRule(Node parent, io.cucumber.messages.types.Rule rule) {
+    GherkinMessagesRule(GherkinMessagesFeature feature, Node parent, io.cucumber.messages.types.Rule rule) {
         this.parent = parent;
         this.rule = rule;
         this.children = rule.getChildren().stream()
@@ -24,7 +24,7 @@ final class GherkinMessagesRule implements Node.Rule {
                 .map(Optional::get)
                 .map(scenario -> {
                     if (!scenario.getExamples().isEmpty()) {
-                        return new GherkinMessagesScenarioOutline(this, scenario);
+                        return new GherkinMessagesScenarioOutline(feature, this, scenario);
                     } else {
                         return new GherkinMessagesScenario(this, scenario);
                     }

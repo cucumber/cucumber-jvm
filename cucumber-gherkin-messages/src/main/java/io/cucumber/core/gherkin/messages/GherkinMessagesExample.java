@@ -8,12 +8,16 @@ import java.util.Optional;
 
 final class GherkinMessagesExample implements Node.Example {
 
+    private final GherkinMessagesFeature feature;
     private final TableRow tableRow;
     private final int examplesIndex;
     private final int rowIndex;
     private final Node parent;
 
-    GherkinMessagesExample(Node parent, TableRow tableRow, int examplesIndex, int rowIndex) {
+    GherkinMessagesExample(
+            GherkinMessagesFeature feature, Node parent, TableRow tableRow, int examplesIndex, int rowIndex
+    ) {
+        this.feature = feature;
         this.parent = parent;
         this.tableRow = tableRow;
         this.examplesIndex = examplesIndex;
@@ -32,7 +36,18 @@ final class GherkinMessagesExample implements Node.Example {
 
     @Override
     public Optional<String> getName() {
-        return Optional.of("Example #" + examplesIndex + "." + rowIndex);
+        String pickleName = feature.getPickleAt(this).getName();
+        boolean parameterized = !parent.getParent()
+                .filter(GherkinMessagesScenarioOutline.class::isInstance)
+                .flatMap(Node::getName)
+                .map(pickleName::equals)
+                .orElse(true);
+
+        StringBuilder builder = new StringBuilder("Example #" + examplesIndex + "." + rowIndex);
+        if (parameterized) {
+            builder.append(" - ").append(pickleName);
+        }
+        return Optional.of(builder.toString());
     }
 
     @Override
