@@ -43,7 +43,7 @@ final class GherkinMessagesExample implements Node.Example {
                 .map(pickleName::equals)
                 .orElse(true);
 
-        StringBuilder builder = new StringBuilder("Example #" + examplesIndex + "." + rowIndex);
+        StringBuilder builder = new StringBuilder("#" + examplesIndex + "." + rowIndex);
         if (parameterized) {
             builder.append(" - ").append(pickleName);
         }
