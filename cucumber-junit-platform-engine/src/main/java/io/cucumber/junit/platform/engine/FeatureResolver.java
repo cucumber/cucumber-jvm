@@ -3,6 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClassLoaders;
@@ -251,13 +252,14 @@ final class FeatureResolver implements SelectorResolver {
             }
 
             if (node instanceof Node.Example) {
+                Pickle pickle = feature.getPickleAt(node);
                 return Optional.of(new PickleDescriptor(
                     parameters,
                     parent.getUniqueId().append(FeatureOrigin.EXAMPLE_SEGMENT_TYPE,
                         String.valueOf(node.getLocation().getLine())),
                     namingStrategy.nameExample(node, pickle),
                     source.nodeSource(node),
-                    feature.getPickleAt(node)));
+                    pickle));
             }
             throw new IllegalStateException("Got a " + node.getClass() + " but didn't have a case to handle it");
         };
