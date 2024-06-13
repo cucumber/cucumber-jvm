@@ -174,8 +174,9 @@ class CucumberEngineOptions implements
 
     NamingStrategy namingStrategy() {
         return configurationParameters
-                .get(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, DefaultNamingStrategy::getStrategy)
-                .orElse(DefaultNamingStrategy.SHORT);
+                .get(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, DefaultNamingStrategyProvider::getStrategyProvider)
+                .orElse(DefaultNamingStrategyProvider.SHORT)
+                .create(configurationParameters);
     }
 
     Set<FeatureWithLinesSelector> featuresWithLines() {

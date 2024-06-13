@@ -4,13 +4,17 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.gherkin.StepType;
 import io.cucumber.gherkin.GherkinDialect;
+import io.cucumber.messages.types.Examples;
+import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.PickleTag;
+import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.plugin.event.Location;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -46,8 +50,7 @@ final class GherkinMessagesPickle implements Pickle {
                 .orElseThrow(() -> new IllegalStateException("No Given keyword for dialect: " + dialect.getName()));
 
         for (io.cucumber.messages.types.PickleStep pickleStep : pickle.getSteps()) {
-            String gherkinStepId = pickleStep.getAstNodeIds().get(0);
-            io.cucumber.messages.types.Step gherkinStep = cucumberQuery.getGherkinStep(gherkinStepId);
+            io.cucumber.messages.types.Step gherkinStep = cucumberQuery.getStepBy(pickleStep);
             Location location = GherkinMessagesLocation.from(gherkinStep.getLocation());
             String keyword = gherkinStep.getKeyword();
 
@@ -62,7 +65,7 @@ final class GherkinMessagesPickle implements Pickle {
 
     @Override
     public String getKeyword() {
-        return cucumberQuery.getGherkinScenario(pickle.getAstNodeIds().get(0)).getKeyword();
+        return cucumberQuery.getScenarioBy(pickle).getKeyword();
     }
 
     @Override
@@ -77,18 +80,34 @@ final class GherkinMessagesPickle implements Pickle {
 
     @Override
     public Location getLocation() {
-        List<String> sourceIds = pickle.getAstNodeIds();
-        String sourceId = sourceIds.get(sourceIds.size() - 1);
-        io.cucumber.messages.types.Location location = cucumberQuery.getLocation(sourceId);
-        return GherkinMessagesLocation.from(location);
+        return GherkinMessagesLocation.from(cucumberQuery.getLocationBy(pickle));
     }
 
     @Override
     public Location getScenarioLocation() {
-        String sourceId = pickle.getAstNodeIds().get(0);
-        Scenario scenario = cucumberQuery.getGherkinScenario(sourceId);
-        io.cucumber.messages.types.Location location = scenario.getLocation();
-        return GherkinMessagesLocation.from(location);
+        Scenario scenario = cucumberQuery.getScenarioBy(pickle);
+        return GherkinMessagesLocation.from(scenario.getLocation());
+    }
+
+    @Override
+    public Optional<Location> getRuleLocation() {
+        return cucumberQuery.findRuleBy(pickle)
+                .map(Rule::getLocation)
+                .map(GherkinMessagesLocation::from);
+    }
+
+    @Override
+    public Optional<Location> getFeatureLocation() {
+        return cucumberQuery.findFeatureBy(pickle)
+                .map(Feature::getLocation)
+                .map(GherkinMessagesLocation::from);
+    }
+
+    @Override
+    public Optional<Location> getExamplesLocation() {
+        return cucumberQuery.findExamplesBy(pickle)
+                .map(Examples::getLocation)
+                .map(GherkinMessagesLocation::from);
     }
 
     @Override

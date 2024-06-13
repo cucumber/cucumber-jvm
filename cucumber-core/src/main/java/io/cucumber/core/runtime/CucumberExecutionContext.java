@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
-import static io.cucumber.core.exception.ExceptionUtils.printStackTrace;
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.messages.Convertor.toMessage;
@@ -118,7 +117,7 @@ public final class CucumberExecutionContext {
         bus.send(new TestRunFinished(instant, result));
 
         io.cucumber.messages.types.TestRunFinished testRunFinished = new io.cucumber.messages.types.TestRunFinished(
-            exception != null ? printStackTrace(exception) : null,
+            exception != null ? exception.getMessage() : null,
             exception == null && exitStatus.isSuccess(),
             toMessage(instant),
             exception == null ? null : toMessage(exception));

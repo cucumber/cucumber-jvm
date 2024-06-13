@@ -255,7 +255,7 @@ final class FeatureResolver implements SelectorResolver {
                     parameters,
                     parent.getUniqueId().append(FeatureOrigin.EXAMPLE_SEGMENT_TYPE,
                         String.valueOf(node.getLocation().getLine())),
-                    namingStrategy.name(node),
+                    namingStrategy.nameExample(node, pickle),
                     source.nodeSource(node),
                     feature.getPickleAt(node)));
             }

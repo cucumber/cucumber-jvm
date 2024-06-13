@@ -46,7 +46,7 @@ parameter. This will include the feature name as part of the test name.
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.0.0-M5</version>
+    <version>3.2.5</version>
     <configuration>
         <properties>
             <configurationParameters>
@@ -162,7 +162,7 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-TODO: (Feel free to send a pull request. ;))
+TODO: (I don't know how. Feel free to send a pull request. ;))
 
 ## Suites with different configurations
 
@@ -187,14 +187,14 @@ package com.example;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
-import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
 
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("com/example")
+@SelectPackages("com.example")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
 public class RunCucumberTest {
 }
@@ -344,8 +344,8 @@ cucumber.features=                                             # comma separated
                                                                # combination with the JUnit Platform Suite Engine.
                                                                # When using Cucumber through the JUnit Platform
                                                                # Launcher API or the JUnit Platform Suite Engine, it is
-                                                               # recommended to respectively use JUnit's
-                                                               # DiscoverySelectors or equivalent annotations.
+                                                               # recommended to use JUnit's DiscoverySelectors or 
+                                                               # Junit Platform Suite annotations.
 
 cucumber.filter.tags=                                          # a cucumber tag expression.
                                                                # only scenarios with matching tags are executed.
@@ -360,6 +360,16 @@ cucumber.glue=                                                 # comma separated
 cucumber.junit-platform.naming-strategy=                       # long or short.
                                                                # default: short
                                                                # include parent descriptor name in test descriptor.
+
+cucumber.junit-platform.naming-strategy.short.example-name=    # number or pickle.
+                                                               # default: number
+                                                               # Use example number or pickle name for examples when
+                                                               # short naming strategy is used
+
+cucumber.junit-platform.naming-strategy.long.example-name=     # number or pickle.
+                                                               # default: number
+                                                               # Use example number or pickle name for examples when
+                                                               # long naming strategy is used
 
 cucumber.plugin=                                               # comma separated plugin strings.
                                                                # example: pretty, json:path/to/report.json
@@ -521,7 +531,46 @@ public class RpnCalculatorSteps {
 ## Rerunning Failed Scenarios ##
 
 When using `cucumber-junit-platform-engine` rerun files are not supported.
-However, the JUnit Platform allows you to rerun failed tests through its API.
+Use either Maven, Gradle or the JUnit Platform Launcher API.
+
+### Using Maven
+
+When running Cucumber through the [JUnit Platform Suite Engine](use-the-jUnit-platform-suite-engine)
+use [`rerunFailingTestsCount`](https://maven.apache.org/surefire/maven-surefire-plugin/examples/rerun-failing-tests.html).
+
+Note: any files written by Cucumber will be overwritten during the rerun.
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.2.5</version>
+    <configuration>
+        <rerunFailingTestsCount>2</rerunFailingTestsCount>
+        <properties>
+            <!-- Work around. Surefire does not include enough
+                 information to disambiguate between different
+                 examples and scenarios. -->
+            <configurationParameters>
+                cucumber.junit-platform.naming-strategy=long
+            </configurationParameters>
+        </properties>
+    </configuration>
+</plugin>
+```
+
+### Using Gradle.
+
+Gradle support for JUnit 5 is rather limited 
+[gradle#4773](https://github.com/gradle/gradle/issues/4773), 
+[junit5#2849](https://github.com/junit-team/junit5/issues/2849).
+As a workaround you can the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion)
+plugin in combination with [Gradle Test Retry](https://github.com/gradle/test-retry-gradle-plugin)
+plugin.
+
+Note: any files written by Cucumber will be overwritten while retrying.
+
+### Using the JUnit Platform Launcher API
 
 ```java
 package com.example;

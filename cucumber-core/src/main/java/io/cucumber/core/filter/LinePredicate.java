@@ -1,6 +1,7 @@
 package io.cucumber.core.filter;
 
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.plugin.event.Location;
 
 import java.net.URI;
 import java.util.Collection;
@@ -24,7 +25,10 @@ final class LinePredicate implements Predicate<Pickle> {
         }
         for (Integer line : lineFilters.get(picklePath)) {
             if (Objects.equals(line, pickle.getLocation().getLine())
-                    || Objects.equals(line, pickle.getScenarioLocation().getLine())) {
+                    || Objects.equals(line, pickle.getScenarioLocation().getLine())
+                    || pickle.getExamplesLocation().map(Location::getLine).map(line::equals).orElse(false)
+                    || pickle.getRuleLocation().map(Location::getLine).map(line::equals).orElse(false)
+                    || pickle.getFeatureLocation().map(Location::getLine).map(line::equals).orElse(false)) {
                 return true;
             }
         }

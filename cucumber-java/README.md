@@ -67,7 +67,7 @@ Depending on the table shape, it can also be accessed as one of the following co
  * `Map<String, List<String>> table`
  * `Map<String, Map<String, String>> table`
  
-For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/datatable)
 
 ```java
 package com.example.app;
