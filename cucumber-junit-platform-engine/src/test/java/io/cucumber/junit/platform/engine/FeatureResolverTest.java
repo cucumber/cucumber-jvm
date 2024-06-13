@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
 import static org.junit.platform.engine.TestDescriptor.Type.TEST;
 import static org.junit.platform.engine.TestTag.create;
@@ -196,7 +196,9 @@ class FeatureResolverTest {
     }
 
     private TestDescriptor getExample() {
-        return getOutline().getChildren().iterator().next().getChildren().iterator().next();
+        TestDescriptor outline = getOutline();
+        TestDescriptor examples = outline.getChildren().iterator().next();
+        return examples.getChildren().iterator().next();
     }
 
     @Test
@@ -204,8 +206,8 @@ class FeatureResolverTest {
         configurationParameters = new MapConfigurationParameters(
             EXECUTION_MODE_FEATURE_PROPERTY_NAME, "concurrent");
 
-        assertTrue(getNodes().size() > 0);
-        assertTrue(getPickles().size() > 0);
+        assertFalse(getNodes().isEmpty());
+        assertFalse(getPickles().isEmpty());
         getNodes().forEach(node -> assertEquals(Node.ExecutionMode.CONCURRENT, node.getExecutionMode()));
         getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.CONCURRENT, pickle.getExecutionMode()));
     }
@@ -215,8 +217,8 @@ class FeatureResolverTest {
         configurationParameters = new MapConfigurationParameters(
             EXECUTION_MODE_FEATURE_PROPERTY_NAME, "same_thread");
 
-        assertTrue(getNodes().size() > 0);
-        assertTrue(getPickles().size() > 0);
+        assertFalse(getNodes().isEmpty());
+        assertFalse(getPickles().isEmpty());
         getNodes().forEach(node -> assertEquals(Node.ExecutionMode.SAME_THREAD, node.getExecutionMode()));
         getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.SAME_THREAD, pickle.getExecutionMode()));
     }

@@ -31,13 +31,17 @@ import static java.util.stream.Collectors.toCollection;
 abstract class FeatureElementDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
     private final ExecutionMode executionMode;
+    private final int line;
 
-    FeatureElementDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
+    FeatureElementDescriptor(
+            ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+    ) {
         super(uniqueId, name, source);
         this.executionMode = parameters
                 .get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
                     value -> ExecutionMode.valueOf(value.toUpperCase(Locale.US)))
                 .orElse(ExecutionMode.CONCURRENT);
+        this.line = line;
     }
 
     @Override
@@ -45,10 +49,16 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
         return executionMode;
     }
 
+    int getLine() {
+        return line;
+    }
+
     static final class ExamplesDescriptor extends FeatureElementDescriptor {
 
-        ExamplesDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
-            super(parameters, uniqueId, name, source);
+        ExamplesDescriptor(
+                ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+        ) {
+            super(parameters, uniqueId, name, source, line);
         }
 
         @Override
@@ -60,8 +70,10 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
 
     static final class RuleDescriptor extends FeatureElementDescriptor {
 
-        RuleDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
-            super(parameters, uniqueId, name, source);
+        RuleDescriptor(
+                ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+        ) {
+            super(parameters, uniqueId, name, source, line);
         }
 
         @Override
@@ -75,9 +87,9 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
 
         ScenarioOutlineDescriptor(
                 ConfigurationParameters parameters, UniqueId uniqueId, String name,
-                TestSource source
+                TestSource source, int line
         ) {
-            super(parameters, uniqueId, name, source);
+            super(parameters, uniqueId, name, source, line);
         }
 
         @Override
@@ -95,9 +107,9 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
 
         PickleDescriptor(
                 ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source,
-                Pickle pickle
+                int line, Pickle pickle
         ) {
-            super(parameters, uniqueId, name, source);
+            super(parameters, uniqueId, name, source, line);
             this.pickle = pickle;
             this.tags = getTags(pickle);
             this.tags.forEach(tag -> {

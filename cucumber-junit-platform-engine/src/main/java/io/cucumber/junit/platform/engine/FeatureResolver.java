@@ -18,6 +18,7 @@ import io.cucumber.plugin.event.Node;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
@@ -206,30 +207,37 @@ final class FeatureResolver implements SelectorResolver {
     private Function<TestDescriptor, Optional<TestDescriptor>> createTestDescriptor(Feature feature, Node node) {
         return parent -> {
             FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
+            String name = namingStrategy.name(node);
+
             if (node instanceof Node.Feature) {
                 return Optional.of(new FeatureDescriptor(
                     parent.getUniqueId().append(FeatureOrigin.FEATURE_SEGMENT_TYPE, feature.getUri().toString()),
-                    namingStrategy.name(node),
+                    name,
                     source.featureSource(),
                     feature));
             }
+
+            TestSource testSource = source.nodeSource(node);
+            int line = node.getLocation().getLine();
 
             if (node instanceof Node.Rule) {
                 return Optional.of(new RuleDescriptor(
                     parameters,
                     parent.getUniqueId().append(FeatureOrigin.RULE_SEGMENT_TYPE,
-                        String.valueOf(node.getLocation().getLine())),
-                    namingStrategy.name(node),
-                    source.nodeSource(node)));
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line));
             }
 
             if (node instanceof Node.Scenario) {
                 return Optional.of(new PickleDescriptor(
                     parameters,
                     parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE,
-                        String.valueOf(node.getLocation().getLine())),
-                    namingStrategy.name(node),
-                    source.nodeSource(node),
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line,
                     feature.getPickleAt(node)));
             }
 
@@ -237,18 +245,20 @@ final class FeatureResolver implements SelectorResolver {
                 return Optional.of(new ScenarioOutlineDescriptor(
                     parameters,
                     parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE,
-                        String.valueOf(node.getLocation().getLine())),
-                    namingStrategy.name(node),
-                    source.nodeSource(node)));
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line));
             }
 
             if (node instanceof Node.Examples) {
                 return Optional.of(new ExamplesDescriptor(
                     parameters,
                     parent.getUniqueId().append(FeatureOrigin.EXAMPLES_SEGMENT_TYPE,
-                        String.valueOf(node.getLocation().getLine())),
-                    namingStrategy.name(node),
-                    source.nodeSource(node)));
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line));
             }
 
             if (node instanceof Node.Example) {
@@ -256,9 +266,10 @@ final class FeatureResolver implements SelectorResolver {
                 return Optional.of(new PickleDescriptor(
                     parameters,
                     parent.getUniqueId().append(FeatureOrigin.EXAMPLE_SEGMENT_TYPE,
-                        String.valueOf(node.getLocation().getLine())),
+                        String.valueOf(line)),
                     namingStrategy.nameExample(node, pickle),
-                    source.nodeSource(node),
+                    testSource,
+                    line,
                     pickle));
             }
             throw new IllegalStateException("Got a " + node.getClass() + " but didn't have a case to handle it");

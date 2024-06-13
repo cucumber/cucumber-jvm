@@ -11,15 +11,12 @@ final class FeatureElementOrderingVisitor implements TestDescriptor.Visitor {
 
     @Override
     public void visit(TestDescriptor descriptor) {
-        if (descriptor instanceof FeatureElementDescriptor) {
-            List<? extends TestDescriptor> sortedChildren = descriptor.getChildren().stream()
-                    // TODO: Use file location instead. Problem. UriSource
-                    // doesn't have one.
-                    .sorted(comparing(
-                        testDescriptor -> Integer.valueOf(testDescriptor.getUniqueId().getLastSegment().getValue())))
-                    .collect(Collectors.toList());
-            sortedChildren.forEach(descriptor::removeChild);
-            sortedChildren.forEach(descriptor::addChild);
-        }
+        List<? extends TestDescriptor> sortedChildren = descriptor.getChildren().stream()
+                .filter(FeatureElementDescriptor.class::isInstance)
+                .map(FeatureElementDescriptor.class::cast)
+                .sorted(comparing(FeatureElementDescriptor::getLine))
+                .collect(Collectors.toList());
+        sortedChildren.forEach(descriptor::removeChild);
+        sortedChildren.forEach(descriptor::addChild);
     }
 }
