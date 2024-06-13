@@ -11,6 +11,7 @@ final class FeatureElementOrderingVisitor implements TestDescriptor.Visitor {
 
     @Override
     public void visit(TestDescriptor descriptor) {
+        // TODO: Make order configurable
         List<? extends TestDescriptor> sortedChildren = descriptor.getChildren().stream()
                 .filter(FeatureElementDescriptor.class::isInstance)
                 .map(FeatureElementDescriptor.class::cast)

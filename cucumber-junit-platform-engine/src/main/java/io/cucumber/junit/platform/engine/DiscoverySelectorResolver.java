@@ -11,11 +11,11 @@ import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.engine.Filter.composeFilters;
 
@@ -87,7 +87,7 @@ class DiscoverySelectorResolver {
 
         @Override
         public <T extends DiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
-            Objects.requireNonNull(selectorType);
+            requireNonNull(selectorType);
             return this.selectors.stream().filter(selectorType::isInstance).map(selectorType::cast).collect(toList());
         }
 
