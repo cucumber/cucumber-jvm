@@ -1,21 +1,32 @@
 package io.cucumber.core.backend;
 
+import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class StubHookDefinition implements HookDefinition {
 
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
-    private final String location;
+    private final StubLocation location;
     private final RuntimeException exception;
     private final Consumer<TestCaseState> action;
 
+    public StubHookDefinition(Method location, RuntimeException exception, Consumer<TestCaseState> action) {
+        this.location = new StubLocation(location);
+        this.exception = exception;
+        this.action = action;
+    }
     public StubHookDefinition(String location, RuntimeException exception, Consumer<TestCaseState> action) {
-        this.location = location;
+        this.location = new StubLocation(location);
         this.exception = exception;
         this.action = action;
     }
 
     public StubHookDefinition(String location, Consumer<TestCaseState> action) {
+        this(location, null, action);
+    }
+
+    public StubHookDefinition(Method location, Consumer<TestCaseState> action) {
         this(location, null, action);
     }
 
@@ -32,6 +43,10 @@ public class StubHookDefinition implements HookDefinition {
     }
 
     public StubHookDefinition(String location) {
+        this(location, null, null);
+    }
+
+    public StubHookDefinition(Method location) {
         this(location, null, null);
     }
 
@@ -62,7 +77,11 @@ public class StubHookDefinition implements HookDefinition {
 
     @Override
     public String getLocation() {
-        return location;
+        return location.getLocation();
     }
 
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        return location.getSourceReference();
+    }
 }

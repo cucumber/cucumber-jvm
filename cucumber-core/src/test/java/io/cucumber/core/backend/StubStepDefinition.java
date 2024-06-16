@@ -1,8 +1,10 @@
 package io.cucumber.core.backend;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,6 +19,10 @@ public class StubStepDefinition implements StepDefinition {
     private final Located location;
 
     public StubStepDefinition(String pattern, String location, Type... types) {
+        this(pattern, location, null, types);
+    }
+
+    public StubStepDefinition(String pattern, Method location, Type... types) {
         this(pattern, location, null, types);
     }
 
@@ -35,6 +41,14 @@ public class StubStepDefinition implements StepDefinition {
         this.exception = exception;
     }
 
+
+    public StubStepDefinition(String pattern, Method location, Throwable exception, Type... types) {
+        this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
+        this.expression = pattern;
+        this.location = new StubLocation(location);
+        this.exception = exception;
+    }
+
     @Override
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return false;
@@ -43,6 +57,11 @@ public class StubStepDefinition implements StepDefinition {
     @Override
     public String getLocation() {
         return location.getLocation();
+    }
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        return location.getSourceReference();
     }
 
     @Override
