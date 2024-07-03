@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [Core] Include parameterized scenario name in JUnit and TestNG XML report
+- [Archetype] Changed JUnit 5 Assertions import to be an `import static`
 
 ## [7.18.0] - 2024-05-17
 ### Added
