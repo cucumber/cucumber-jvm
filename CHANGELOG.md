@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [Core] Include parameterized scenario name in JUnit and TestNG XML report
-- [Archetype] Changed JUnit 5 Assertions import to be an `import static`
+- [Archetype] Use `import static` for Assertions in archetype ([#2899](https://github.com/cucumber/cucumber-jvm/issues/2798) Patrick Altaie)
 
 ## [7.18.0] - 2024-05-17
 ### Added
