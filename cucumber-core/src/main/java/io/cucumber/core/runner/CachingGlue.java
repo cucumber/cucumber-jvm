@@ -45,6 +45,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -82,6 +83,7 @@ final class CachingGlue implements Glue {
     private final Map<String, CoreStepDefinition> stepDefinitionsByPattern = new TreeMap<>();
 
     private final EventBus bus;
+    private StepTypeRegistry stepTypeRegistry;
 
     CachingGlue(EventBus bus) {
         this.bus = bus;
@@ -229,7 +231,12 @@ final class CachingGlue implements Glue {
         return docStringTypeDefinitions;
     }
 
-    void prepareGlue(StepTypeRegistry stepTypeRegistry) throws DuplicateStepDefinitionException {
+    StepTypeRegistry getStepTypeRegistry() {
+        return null;
+    }
+
+    void prepareGlue(Locale locale) throws DuplicateStepDefinitionException {
+        stepTypeRegistry = new StepTypeRegistry(locale);
         StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(stepTypeRegistry, bus);
 
         // TODO: separate prepared and unprepared glue into different classes
@@ -442,7 +449,6 @@ final class CachingGlue implements Glue {
     }
 
     void removeScenarioScopedGlue() {
-        stepDefinitionsByPattern.clear();
         removeScenarioScopedGlue(beforeHooks);
         removeScenarioScopedGlue(beforeStepHooks);
         removeScenarioScopedGlue(afterHooks);
@@ -454,9 +460,13 @@ final class CachingGlue implements Glue {
         removeScenarioScopedGlue(defaultParameterTransformers);
         removeScenarioScopedGlue(defaultDataTableEntryTransformers);
         removeScenarioScopedGlue(defaultDataTableCellTransformers);
+
+        stepDefinitionsByPattern.clear();
+
     }
 
-    private void removeScenarioScopedGlue(Iterable<?> glues) {
+    private boolean removeScenarioScopedGlue(Iterable<?> glues) {
+        boolean dirty = false;
         Iterator<?> glueIterator = glues.iterator();
         while (glueIterator.hasNext()) {
             Object glue = glueIterator.next();
@@ -464,8 +474,10 @@ final class CachingGlue implements Glue {
                 ScenarioScoped scenarioScoped = (ScenarioScoped) glue;
                 scenarioScoped.dispose();
                 glueIterator.remove();
+                dirty = true;
             }
         }
+        return dirty;
     }
 
 }

@@ -31,7 +31,7 @@ final class Java8HookDefinition extends AbstractGlueDefinition implements HookDe
     @Override
     public void execute(final TestCaseState state) {
         Object[] args;
-        if (method.getParameterCount() == 0) {
+        if (getParameterCount() == 0) {
             args = new Object[0];
         } else {
             args = new Object[] { new io.cucumber.java8.Scenario(state) };
