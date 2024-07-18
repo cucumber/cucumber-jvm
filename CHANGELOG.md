@@ -10,9 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Archetype] Use `import static` for Assertions in archetype ([#2899](https://github.com/cucumber/cucumber-jvm/issues/2798) Patrick Altaie)
+- [Core] Escape json when writing html report ([#312](https://github.com/cucumber/html-formatter/pull/312] M.P. Korstanje)
+
 ### Changed
 - [Core] Include parameterized scenario name in JUnit and TestNG XML report
-- [Archetype] Use `import static` for Assertions in archetype ([#2899](https://github.com/cucumber/cucumber-jvm/issues/2798) Patrick Altaie)
 
 ## [7.18.0] - 2024-05-17
 ### Added
