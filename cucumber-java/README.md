@@ -67,7 +67,7 @@ Depending on the table shape, it can also be accessed as one of the following co
  * `Map<String, List<String>> table`
  * `Map<String, Map<String, String>> table`
  
-For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/datatable)
+For examples of each type see: [cucumber-jvm/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/datatable)
 
 ```java
 package com.example.app;
@@ -295,7 +295,7 @@ Depending on the parameter type, this will be one of the following:
  * `DataTable` -> `io.cucumber.datatable.TableTransformer`
 
 For a full list of transformations that can be achieved with data table types, 
-see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+see [cucumber-jvm/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/datatable)
 
 ### Default Transformers
 
