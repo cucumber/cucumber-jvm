@@ -23,6 +23,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
@@ -236,7 +237,7 @@ class StepDefinitionMatchTest {
     }
 
     @Test
-    void rethrows_target_invocation_exceptions_from_parameter_type() {
+    void rethrows_target_invocation_exceptions_from_parameter_type() throws URISyntaxException {
         RuntimeException userException = new RuntimeException();
 
         stepTypeRegistry.defineParameterType(new ParameterType<>(
@@ -257,11 +258,15 @@ class StepDefinitionMatchTest {
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
+            new URI("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, sameInstance(userException));
+        assertThat(
+            lastStackElement(actualThrown.getStackTrace()),
+            is(new StackTraceElement("✽", "I have some cukes in my belly", "test.feature", 3)));
     }
 
     @Test
@@ -290,7 +295,7 @@ class StepDefinitionMatchTest {
     }
 
     @Test
-    void rethrows_target_invocation_exceptions_from_data_table() {
+    void rethrows_target_invocation_exceptions_from_data_table() throws URISyntaxException {
         Feature feature = TestFeatureParser.parse("" +
                 "Feature: Test feature\n" +
                 "  Scenario: Test scenario\n" +
@@ -312,11 +317,15 @@ class StepDefinitionMatchTest {
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
+            new URI("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, sameInstance(userException));
+        assertThat(
+            lastStackElement(actualThrown.getStackTrace()),
+            is(new StackTraceElement("✽", "I have some cukes in my belly", "test.feature", 3)));
     }
 
     @Test
@@ -347,7 +356,7 @@ class StepDefinitionMatchTest {
     }
 
     @Test
-    void rethrows_target_invocation_exception_for_docstring() {
+    void rethrows_target_invocation_exception_for_docstring() throws URISyntaxException {
         RuntimeException userException = new RuntimeException();
 
         Feature feature = TestFeatureParser.parse("" +
@@ -367,11 +376,15 @@ class StepDefinitionMatchTest {
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
+            new URI("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, sameInstance(userException));
+        assertThat(
+            lastStackElement(actualThrown.getStackTrace()),
+            is(new StackTraceElement("✽", "I have some cukes in my belly", "test.feature", 3)));
     }
 
     @Test
@@ -463,6 +476,10 @@ class StepDefinitionMatchTest {
             "Could not invoke step [I have an {word} value] defined at '{stubbed location with details}'.\n" +
                     "It appears there was a problem with the step definition.\n" +
                     "The converted arguments types were (null)")));
+    }
+
+    private StackTraceElement lastStackElement(StackTraceElement[] stackTrace) {
+        return stackTrace[stackTrace.length - 1];
     }
 
     private static final class ItemQuantity {
