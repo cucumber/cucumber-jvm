@@ -23,7 +23,6 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
@@ -237,7 +236,7 @@ class StepDefinitionMatchTest {
     }
 
     @Test
-    void rethrows_target_invocation_exceptions_from_parameter_type() throws URISyntaxException {
+    void rethrows_target_invocation_exceptions_from_parameter_type() {
         RuntimeException userException = new RuntimeException();
 
         stepTypeRegistry.defineParameterType(new ParameterType<>(
@@ -259,7 +258,7 @@ class StepDefinitionMatchTest {
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
-            new URI("test.feature"), step);
+            URI.create("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
@@ -295,7 +294,7 @@ class StepDefinitionMatchTest {
     }
 
     @Test
-    void rethrows_target_invocation_exceptions_from_data_table() throws URISyntaxException {
+    void rethrows_target_invocation_exceptions_from_data_table() {
         Feature feature = TestFeatureParser.parse("" +
                 "Feature: Test feature\n" +
                 "  Scenario: Test scenario\n" +
@@ -318,7 +317,7 @@ class StepDefinitionMatchTest {
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
-            new URI("test.feature"), step);
+            URI.create("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
@@ -356,7 +355,7 @@ class StepDefinitionMatchTest {
     }
 
     @Test
-    void rethrows_target_invocation_exception_for_docstring() throws URISyntaxException {
+    void rethrows_target_invocation_exception_for_docstring() {
         RuntimeException userException = new RuntimeException();
 
         Feature feature = TestFeatureParser.parse("" +
@@ -377,7 +376,7 @@ class StepDefinitionMatchTest {
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
         StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
-            new URI("test.feature"), step);
+            URI.create("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
