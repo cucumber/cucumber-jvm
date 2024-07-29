@@ -1,10 +1,11 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
+import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
 import org.junit.platform.engine.support.hierarchical.Node;
@@ -29,7 +30,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
 import static org.junit.platform.engine.TestDescriptor.Type.TEST;
 import static org.junit.platform.engine.TestTag.create;
@@ -58,9 +59,12 @@ class FeatureResolverTest {
     }
 
     private TestDescriptor getFeature() {
-        FeatureResolver featureResolver = FeatureResolver.create(configurationParameters, engineDescriptor,
-            aPackage -> true);
-        featureResolver.resolveClasspathResource(selectClasspathResource(featurePath));
+        EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
+                .<CucumberEngineDescriptor> builder()
+                .addSelectorResolver(context -> new FeatureResolver(configurationParameters, aPackage -> true))
+                .addTestDescriptorVisitor(context -> new FeatureElementOrderingVisitor())
+                .build();
+        resolver.resolve(new SelectorRequest(selectClasspathResource(featurePath)), engineDescriptor);
         Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
         return features.iterator().next();
     }
@@ -192,7 +196,9 @@ class FeatureResolverTest {
     }
 
     private TestDescriptor getExample() {
-        return getOutline().getChildren().iterator().next().getChildren().iterator().next();
+        TestDescriptor outline = getOutline();
+        TestDescriptor examples = outline.getChildren().iterator().next();
+        return examples.getChildren().iterator().next();
     }
 
     @Test
@@ -200,8 +206,8 @@ class FeatureResolverTest {
         configurationParameters = new MapConfigurationParameters(
             EXECUTION_MODE_FEATURE_PROPERTY_NAME, "concurrent");
 
-        assertTrue(getNodes().size() > 0);
-        assertTrue(getPickles().size() > 0);
+        assertFalse(getNodes().isEmpty());
+        assertFalse(getPickles().isEmpty());
         getNodes().forEach(node -> assertEquals(Node.ExecutionMode.CONCURRENT, node.getExecutionMode()));
         getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.CONCURRENT, pickle.getExecutionMode()));
     }
@@ -211,16 +217,16 @@ class FeatureResolverTest {
         configurationParameters = new MapConfigurationParameters(
             EXECUTION_MODE_FEATURE_PROPERTY_NAME, "same_thread");
 
-        assertTrue(getNodes().size() > 0);
-        assertTrue(getPickles().size() > 0);
+        assertFalse(getNodes().isEmpty());
+        assertFalse(getPickles().isEmpty());
         getNodes().forEach(node -> assertEquals(Node.ExecutionMode.SAME_THREAD, node.getExecutionMode()));
         getPickles().forEach(pickle -> assertEquals(Node.ExecutionMode.SAME_THREAD, pickle.getExecutionMode()));
     }
 
-    private Set<NodeDescriptor> getNodes() {
+    private Set<FeatureElementDescriptor> getNodes() {
         return getFeature().getChildren().stream()
                 .filter(TestDescriptor::isContainer)
-                .map(node -> (NodeDescriptor) node)
+                .map(node -> (FeatureElementDescriptor) node)
                 .collect(Collectors.toSet());
     }
 

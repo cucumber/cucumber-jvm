@@ -28,16 +28,20 @@ import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
-abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+abstract class FeatureElementDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
     private final ExecutionMode executionMode;
+    private final int line;
 
-    NodeDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
+    FeatureElementDescriptor(
+            ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+    ) {
         super(uniqueId, name, source);
         this.executionMode = parameters
                 .get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
                     value -> ExecutionMode.valueOf(value.toUpperCase(Locale.US)))
                 .orElse(ExecutionMode.CONCURRENT);
+        this.line = line;
     }
 
     @Override
@@ -45,10 +49,16 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
         return executionMode;
     }
 
-    static final class ExamplesDescriptor extends NodeDescriptor {
+    int getLine() {
+        return line;
+    }
 
-        ExamplesDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
-            super(parameters, uniqueId, name, source);
+    static final class ExamplesDescriptor extends FeatureElementDescriptor {
+
+        ExamplesDescriptor(
+                ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+        ) {
+            super(parameters, uniqueId, name, source, line);
         }
 
         @Override
@@ -58,10 +68,12 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
     }
 
-    static final class RuleDescriptor extends NodeDescriptor {
+    static final class RuleDescriptor extends FeatureElementDescriptor {
 
-        RuleDescriptor(ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source) {
-            super(parameters, uniqueId, name, source);
+        RuleDescriptor(
+                ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+        ) {
+            super(parameters, uniqueId, name, source, line);
         }
 
         @Override
@@ -71,13 +83,13 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
     }
 
-    static final class ScenarioOutlineDescriptor extends NodeDescriptor {
+    static final class ScenarioOutlineDescriptor extends FeatureElementDescriptor {
 
         ScenarioOutlineDescriptor(
                 ConfigurationParameters parameters, UniqueId uniqueId, String name,
-                TestSource source
+                TestSource source, int line
         ) {
-            super(parameters, uniqueId, name, source);
+            super(parameters, uniqueId, name, source, line);
         }
 
         @Override
@@ -87,7 +99,7 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
     }
 
-    static final class PickleDescriptor extends NodeDescriptor {
+    static final class PickleDescriptor extends FeatureElementDescriptor {
 
         private final Pickle pickle;
         private final Set<TestTag> tags;
@@ -95,9 +107,9 @@ abstract class NodeDescriptor extends AbstractTestDescriptor implements Node<Cuc
 
         PickleDescriptor(
                 ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source,
-                Pickle pickle
+                int line, Pickle pickle
         ) {
-            super(parameters, uniqueId, name, source);
+            super(parameters, uniqueId, name, source, line);
             this.pickle = pickle;
             this.tags = getTags(pickle);
             this.tags.forEach(tag -> {
