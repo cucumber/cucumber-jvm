@@ -33,7 +33,7 @@ Please ask on
 
 * [Stack Overflow](https://stackoverflow.com/questions/tagged/cucumber-jvm).
 * [Github Discusssion](https://github.com/orgs/cucumber/discussions)
-* [CucumberBDD Slack](https://communityinviter.com/apps/cucumberbdd/docs-page) <sup>[direct link](https://cucumberbdd.slack.com/)</sup>
+* [Cucumber Discord](https://cucumber.io/docs/community/get-in-touch/#discord)
 
 ## Bugs and Feature requests
 
