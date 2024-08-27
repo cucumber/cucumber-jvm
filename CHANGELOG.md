@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Enhanced stack trace to include step location for better debugging in case of datatable conversion errors ([#2908](https://github.com/cucumber/cucumber-jvm/pull/2908) Thomas Deblock)
 
+### Changed
+- [JUnit Platform Engine] Use JUnit Platform 1.11.0 (JUnit Jupiter 5.11.0)
+
 ## [7.18.1] - 2024-07-18
 ### Changed
 - [Core] Include parameterized scenario name in JUnit and TestNG XML report
