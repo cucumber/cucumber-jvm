@@ -610,6 +610,12 @@
             "oldValue": "\"1.3\"",
             "newValue": "\"1.10\"",
             "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class org.junit.platform.engine.DiscoverySelectorIdentifier",
+            "justification": "API consumed from JUnit 5"
           }
         ]
       }

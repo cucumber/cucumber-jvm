@@ -257,11 +257,15 @@ class StepDefinitionMatchTest {
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
+            URI.create("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, sameInstance(userException));
+        assertThat(
+            lastStackElement(actualThrown.getStackTrace()),
+            is(new StackTraceElement("✽", "I have some cukes in my belly", "test.feature", 3)));
     }
 
     @Test
@@ -312,11 +316,15 @@ class StepDefinitionMatchTest {
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
+            URI.create("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, sameInstance(userException));
+        assertThat(
+            lastStackElement(actualThrown.getStackTrace()),
+            is(new StackTraceElement("✽", "I have some cukes in my belly", "test.feature", 3)));
     }
 
     @Test
@@ -367,11 +375,15 @@ class StepDefinitionMatchTest {
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
         List<Argument> arguments = coreStepDefinition.matchedArguments(step);
-        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition, null, step);
+        StepDefinitionMatch stepDefinitionMatch = new PickleStepDefinitionMatch(arguments, stepDefinition,
+            URI.create("test.feature"), step);
 
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, sameInstance(userException));
+        assertThat(
+            lastStackElement(actualThrown.getStackTrace()),
+            is(new StackTraceElement("✽", "I have some cukes in my belly", "test.feature", 3)));
     }
 
     @Test
@@ -463,6 +475,10 @@ class StepDefinitionMatchTest {
             "Could not invoke step [I have an {word} value] defined at '{stubbed location with details}'.\n" +
                     "It appears there was a problem with the step definition.\n" +
                     "The converted arguments types were (null)")));
+    }
+
+    private StackTraceElement lastStackElement(StackTraceElement[] stackTrace) {
+        return stackTrace[stackTrace.length - 1];
     }
 
     private static final class ItemQuantity {
