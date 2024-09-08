@@ -12,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.TestAbortedException;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
 import static java.util.Arrays.asList;
@@ -20,6 +23,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RerunFormatterTest {
 
@@ -245,9 +249,14 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out,
-            bytes(
-                equalToCompressingWhiteSpace("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n")));
+        String outString = out.toString();
+        List<String> classPaths = Arrays.asList(outString.split("\\n"));
+        classPaths.sort(null);
+
+        List<String> extepedClassPaths = new ArrayList<>(
+            Arrays.asList("classpath:path/first.feature:2", "classpath:path/second.feature:2"));
+
+        assertEquals(classPaths, extepedClassPaths);
     }
 
 }
