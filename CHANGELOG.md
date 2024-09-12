@@ -12,6 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [Spring] Document `@CucumberContextConfiguration` semantics ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2887) M.P. Korstanje)
+- [Core] Enhanced stack trace to include step location for better debugging in case of datatable conversion errors ([#2908](https://github.com/cucumber/cucumber-jvm/pull/2908) Thomas Deblock)
+- [Archetype] Set `cucumber.junit-platform.naming-strategy` to `long` when using Surefire.
+
+### Changed
+- [JUnit Platform Engine] Use JUnit Platform 1.11.0 (JUnit Jupiter 5.11.0)
+
+## [7.18.1] - 2024-07-18
+### Changed
+- [Core] Include parameterized scenario name in JUnit and TestNG XML report
+
+### Fixed
+- [Archetype] Use `import static` for Assertions in archetype ([#2899](https://github.com/cucumber/cucumber-jvm/issues/2798) Patrick Altaie)
+- [Core] Escape json when writing html report ([#312](https://github.com/cucumber/html-formatter/pull/312] M.P. Korstanje)
 
 ## [7.18.0] - 2024-05-17
 ### Added
@@ -321,7 +334,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.18.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.18.1...HEAD
+[7.18.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.18.0...v7.18.1
 [7.18.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.17.0...v7.18.0
 [7.17.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.16.1...v7.17.0
 [7.16.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.16.0...v7.16.1

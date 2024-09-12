@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFramesAndAppendStepLocation;
 
 class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
@@ -51,13 +50,13 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         } catch (CucumberExpressionException | CucumberDataTableException | CucumberDocStringException e) {
             CucumberInvocationTargetException targetException;
             if ((targetException = causedByCucumberInvocationTargetException(e)) != null) {
-                throw removeFrameworkFrames(targetException);
+                throw removeFrameworkFramesAndAppendStepLocation(targetException, getStepLocation());
             }
             throw couldNotConvertArguments(e);
         } catch (CucumberBackendException e) {
             throw couldNotInvokeArgumentConversion(e);
         } catch (CucumberInvocationTargetException e) {
-            throw removeFrameworkFrames(e);
+            throw removeFrameworkFramesAndAppendStepLocation(e, getStepLocation());
         }
         try {
             stepDefinition.execute(result.toArray(new Object[0]));
