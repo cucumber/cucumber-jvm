@@ -47,10 +47,14 @@ As a result, a single Cucumber scenario will mostly behave like a JUnit test.
 
 The class annotated with `@CucumberContextConfiguration` is instantiated but not
 initialized by Spring. Instead, this instance is processed by Springs test
-execution listeners. So features that depend on a test execution listener such
-as mock beans will work on the annotated class - but not on other step definition
-classes. Features that depend on initializing beans - such as AspectJ - will not
-work on the annotated class - but will work on other step definition classes.
+execution listeners. So Spring features that depend on a test execution
+listeners, such as mock beans, will work on the annotated class - but not on
+other step definition classes. 
+
+Step definition classes are instantiated and initialized by Spring. Features
+that depend on beans initialisation, such as AspectJ, will work on step
+definition classes - but not on the `@CucumberContextConfiguration` annotated
+class.
 
 For more information configuring Spring tests see:
  - [Spring Framework Documentation - Testing](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/testing.html)

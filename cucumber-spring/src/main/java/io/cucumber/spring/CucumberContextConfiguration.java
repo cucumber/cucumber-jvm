@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * TestExecutionListeners}. So features that depend on a test execution listener
  * such as mock beans will work on the annotated class - but not on other step
  * definition classes. Features that depend on initializing beans - such as
- * AspectJ - will not work on the annotated class - but will work on other step
+ * AspectJ - will not work on the annotated class - but will work on step
  * definition classes.</li>
  * <li></li>
  * </ul>
