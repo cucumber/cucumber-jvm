@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- [Spring] Document `@CucumberContextConfiguration` semantics ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2887) M.P. Korstanje)
 - [Core] Enhanced stack trace to include step location for better debugging in case of datatable conversion errors ([#2908](https://github.com/cucumber/cucumber-jvm/pull/2908) Thomas Deblock)
 - [Archetype] Set `cucumber.junit-platform.naming-strategy` to `long` when using Surefire.
 
