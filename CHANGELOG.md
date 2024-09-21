@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+[JUnit Platform Engine] Enable use of custom UUID generators ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
+[JUnit] Enable use of custom UUID generators ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
+[TestNG] Enable use of custom UUID generators ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
+
 
 ## [7.19.0] - 2024-09-19
 ### Changed

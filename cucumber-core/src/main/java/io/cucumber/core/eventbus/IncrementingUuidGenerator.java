@@ -10,20 +10,20 @@ import java.util.concurrent.atomic.AtomicLong;
  * Thread-safe and collision-free UUID generator for single JVM. This is a
  * sequence generator and each instance has its own counter. This generator is
  * about 100 times faster than #RandomUuidGenerator.
- *
- * Properties:
- * - thread-safe
- * - collision-free in the same classloader
- * - almost collision-free in different classloaders / JVMs
- * - UUIDs generated using the instances from the same classloader are sortable
- *
- * UUID version 8 (custom) / variant 2 <a href=
- * "https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html#name-uuid-version-8">...</a>
- * <!-- @formatter:off -->
+ * <p>
+ * Properties: - thread-safe - collision-free in the same classloader - almost
+ * collision-free in different classloaders / JVMs - UUIDs generated using the
+ * instances from the same classloader are sortable
+ * <p>
+ * <a href=
+ * "https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html#name-uuid-version-8">UUID
+ * version 8 (custom) / variant 2 </a>
+ * 
+ * <pre>
  * |       40 bits      |      8 bits    |  4 bits |    12 bits    |  2 bits | 62 bits |
  * | -------------------| -------------- | ------- | ------------- | ------- | ------- |
  * | LSBs of epoch-time | sessionCounter | version | classloaderId | variant | counter |
- * <!-- @formatter:on -->
+ * </pre>
  */
 public class IncrementingUuidGenerator implements UuidGenerator {
     /**
@@ -84,7 +84,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
      * classloaderId which produces about 1% collision rate on the
      * classloaderId, and thus can have UUID collision if the epoch-time,
      * session counter and counter have the same values).
-     * 
+     *
      * @param classloaderId the new classloaderId (only the least significant 12
      *                      bits are used)
      * @see                 IncrementingUuidGenerator#classloaderId

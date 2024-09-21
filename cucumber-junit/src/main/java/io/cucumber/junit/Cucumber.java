@@ -23,6 +23,7 @@ import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,7 +39,6 @@ import java.time.Clock;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -146,11 +146,14 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 .parse(CucumberProperties.fromSystemProperties())
                 .build(junitEnvironmentOptions);
 
-        this.bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+        UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader,
+            runtimeOptions);
+        this.bus = synchronize(
+            new TimeServiceEventBus(Clock.systemUTC(), uuidGeneratorServiceLoader.loadUuidGenerator()));
 
         // Parse the features early. Don't proceed when there are lexer errors
         FeatureParser parser = new FeatureParser(bus::generateId);
-        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
             parser);
         List<Feature> features = featureSupplier.get();
