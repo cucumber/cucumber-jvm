@@ -69,10 +69,10 @@
       }
     }
   ],
-  "7.20.0": [
+  "internal": [
     {
       "extension": "revapi.differences",
-      "id": "intentional-api-changes",
+      "id": "internal-api-issues",
       "ignore": true,
       "configuration": {
         "differences": [
@@ -84,135 +84,6 @@
             "oldVisibility": "package",
             "newVisibility": "public",
             "justification": "Expose internal API to other internal components"
-          }
-        ]
-      }
-    }
-  ],
-  "internal": [
-    {
-      "extension": "revapi.differences",
-      "id": "internal-api-issues",
-      "ignore": true,
-      "configuration": {
-        "differences": [
-          {
-            "regex": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.nonPublicPartOfAPI",
-            "new": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.missing.oldClass",
-            "old": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.nonPublicPartOfAPI",
-            "old": ".* io\\.cucumber\\.core\\.gherkin\\.messages\\.internal\\..*",
-            "new": ".* io\\.cucumber\\.core\\.gherkin\\.messages\\.internal\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "code": "java.class.nonPublicPartOfAPI",
-            "old": "class io.cucumber.gherkin.internal.com.eclipsesource.json.JsonWriter",
-            "new": "class io.cucumber.gherkin.internal.com.eclipsesource.json.JsonWriter",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.method.returnTypeChanged",
-            "old": ".* io\\.cucumber\\.messages\\..*",
-            "new": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.method.removed",
-            "old": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.nowFinal",
-            "old": ".* io\\.cucumber\\.messages\\..*",
-            "new": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.method.numberOfParametersChanged",
-            "old": ".* io\\.cucumber\\.messages\\..*",
-            "new": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.removed",
-            "old": ".* io\\.cucumber\\.messages\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.removed",
-            "old": ".* io\\.cucumber\\.core\\.gherkin\\.messages\\.internal\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.removed",
-            "old": ".* io\\.cucumber\\.gherkin\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.removed",
-            "old": ".* io\\.cucumber\\.gherkin\\.internal\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.nonPublicPartOfAPI",
-            "new": ".* io\\.cucumber\\.core\\.internal\\..*",
-            "justification": "Internal API"
-          },
-          {
-            "code": "java.method.returnTypeChangedCovariantly",
-            "old": "method java.lang.Throwable java.lang.Throwable::fillInStackTrace() @ io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.UnresolvedForwardReference",
-            "new": "method io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.UnresolvedForwardReference io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.UnresolvedForwardReference::fillInStackTrace()",
-            "justification": "Internal API"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.finalMethodAddedToNonFinalClass",
-            "new": "method java.lang.Integer io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.std.StdDeserializer<T>::_parseInteger(io.cucumber.core.internal.com.fasterxml.jackson.databind.DeserializationContext, java.lang.String) throws java.io.IOException",
-            "justification": "Internal API"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.finalMethodAddedToNonFinalClass",
-            "new": "method java.lang.Long io.cucumber.core.internal.com.fasterxml.jackson.databind.deser.std.StdDeserializer<T>::_parseLong(io.cucumber.core.internal.com.fasterxml.jackson.databind.DeserializationContext, java.lang.String) throws java.io.IOException",
-            "justification": "Internal API"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method java.lang.Class<? extends io.cucumber.core.eventbus.UuidGenerator> io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions::uuidGenerator()",
-            "justification": "Internal API"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method java.lang.Class<? extends io.cucumber.core.eventbus.UuidGenerator> io.cucumber.core.runner.Options::getUuidGeneratorClass()",
-            "justification": "Internal API"
           }
         ]
       }
