@@ -11,12 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- [JUnit Platform Engine] Enable use of custom UUID generators ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
+- [JUnit Platform Engine] Enable use of custom UUID generators ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
+- [JUnit] Enable use of custom UUID generators ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
+- [TestNG] Enable use of custom UUID generators ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
 
 ### Fixed
-- [Core] Use custom UUID generators for hooks ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
-- [JUnit] Enable use of custom UUID generators ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
-- [TestNG] Enable use of custom UUID generators ([#2887](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
+- [Core] Use custom UUID generators for hooks ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
 
 
 ## [7.19.0] - 2024-09-19
