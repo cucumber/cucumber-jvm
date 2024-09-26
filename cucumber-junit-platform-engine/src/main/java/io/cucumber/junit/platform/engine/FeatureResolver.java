@@ -1,5 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -9,6 +10,7 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
+import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import io.cucumber.junit.platform.engine.NodeDescriptor.ExamplesDescriptor;
 import io.cucumber.junit.platform.engine.NodeDescriptor.PickleDescriptor;
 import io.cucumber.junit.platform.engine.NodeDescriptor.RuleDescriptor;
@@ -28,8 +30,8 @@ import org.junit.platform.engine.discovery.UriSelector;
 
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -38,11 +40,7 @@ final class FeatureResolver {
 
     private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
 
-    private final CachingFeatureParser featureParser = new CachingFeatureParser(new FeatureParser(UUID::randomUUID));
-    private final ResourceScanner<Feature> featureScanner = new ResourceScanner<>(
-        ClassLoaders::getDefaultClassLoader,
-        FeatureIdentifier::isFeature,
-        featureParser::parseResource);
+    private final ResourceScanner<Feature> featureScanner;
 
     private final CucumberEngineDescriptor engineDescriptor;
     private final Predicate<String> packageFilter;
@@ -56,7 +54,21 @@ final class FeatureResolver {
         this.parameters = parameters;
         this.engineDescriptor = engineDescriptor;
         this.packageFilter = packageFilter;
-        this.namingStrategy = new CucumberEngineOptions(parameters).namingStrategy();
+        CucumberEngineOptions options = new CucumberEngineOptions(parameters);
+        this.namingStrategy = options.namingStrategy();
+        CachingFeatureParser featureParser = createFeatureParser(options);
+        this.featureScanner = new ResourceScanner<>(
+            ClassLoaders::getDefaultClassLoader,
+            FeatureIdentifier::isFeature,
+            featureParser::parseResource);
+    }
+
+    private static CachingFeatureParser createFeatureParser(CucumberEngineOptions options) {
+        Supplier<ClassLoader> classLoader = FeatureResolver.class::getClassLoader;
+        UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
+        UuidGenerator uuidGenerator = uuidGeneratorServiceLoader.loadUuidGenerator();
+        FeatureParser featureParser = new FeatureParser(uuidGenerator::generateId);
+        return new CachingFeatureParser(featureParser);
     }
 
     static FeatureResolver create(

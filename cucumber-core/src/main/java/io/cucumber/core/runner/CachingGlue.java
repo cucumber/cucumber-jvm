@@ -105,25 +105,25 @@ final class CachingGlue implements Glue {
 
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
-        beforeHooks.add(CoreHookDefinition.create(hookDefinition));
+        beforeHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         beforeHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
-        afterHooks.add(CoreHookDefinition.create(hookDefinition));
+        afterHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         afterHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
-        beforeStepHooks.add(CoreHookDefinition.create(hookDefinition));
+        beforeStepHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         beforeStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
-        afterStepHooks.add(CoreHookDefinition.create(hookDefinition));
+        afterStepHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         afterStepHooks.sort(HOOK_ORDER_ASCENDING);
     }
 
