@@ -19,12 +19,12 @@ import io.cucumber.core.runtime.SingletonRunnerSupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
@@ -48,8 +48,10 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
 
     private CucumberExecutionContext createCucumberExecutionContext() {
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
+        UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
+        EventBus bus = synchronize(
+            new TimeServiceEventBus(Clock.systemUTC(), uuidGeneratorServiceLoader.loadUuidGenerator()));
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader, options);
-        EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
         Plugins plugins = new Plugins(new PluginFactory(), options);
         ExitStatus exitStatus = new ExitStatus(options);
         plugins.addPlugin(exitStatus);

@@ -69,6 +69,26 @@
       }
     }
   ],
+  "7.20.0": [
+    {
+      "extension": "revapi.differences",
+      "id": "intentional-api-changes",
+      "ignore": true,
+      "configuration": {
+        "differences": [
+          {
+            "ignore": true,
+            "code": "java.method.visibilityIncreased",
+            "old": "method io.cucumber.core.eventbus.UuidGenerator io.cucumber.core.runtime.UuidGeneratorServiceLoader::loadUuidGenerator()",
+            "new": "method io.cucumber.core.eventbus.UuidGenerator io.cucumber.core.runtime.UuidGeneratorServiceLoader::loadUuidGenerator()",
+            "oldVisibility": "package",
+            "newVisibility": "public",
+            "justification": "Expose internal API to other internal components"
+          }
+        ]
+      }
+    }
+  ],
   "internal": [
     {
       "extension": "revapi.differences",

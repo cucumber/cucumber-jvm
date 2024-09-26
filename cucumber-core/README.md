@@ -53,7 +53,8 @@ cucumber.plugin=                # comma separated plugin strings.
 cucumber.object-factory=        # object factory class name.
                                 # example: com.example.MyObjectFactory
 
-cucumber.uuid-generator=        # UUID generator class name.
+cucumber.uuid-generator         # uuid generator class name of a registered service provider.
+                                # default: io.cucumber.core.eventbus.RandomUuidGenerator
                                 # example: com.example.MyUuidGenerator
 
 cucumber.publish.enabled        # true or false. default: false
@@ -89,12 +90,13 @@ Cucumber emits events on an event bus in many cases:
 - during the feature file parsing
 - when the test scenarios are executed
 
-An event has a UUID. The UUID generator can be configured using the `cucumber.uuid-generator` property:
+An event has a UUID. The UUID generator can be configured using the
+`cucumber.uuid-generator` property:
 
 | UUID generator                                      | Features                                | Performance [Millions UUID/second] | Typical usage example                                                                                                                                                                                                                                                          | 
 |-----------------------------------------------------|-----------------------------------------|------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | io.cucumber.core.eventbus.RandomUuidGenerator       | Thread-safe, collision-free, multi-jvm  | ~1                                 | Reports may be generated on different JVMs at the same time. A typical example would be one suite that tests against Firefox and another against Safari. The exact browser is configured through a property. These are then executed concurrently on different Gitlab runners. |
-| io.cucumber.core.eventbus.IncrementingUuidGenerator | Thread-safe, collision-free, single-jvm | ~130                               | Reports are generated on a single JVM                                                                                                                                                                                                                                          |
+| io.cucumber.core.eventbus.IncrementingUuidGenerator | Thread-safe, collision-free, single-jvm | ~130                               | Reports are generated on a single JVM in a single execution of Cucumber.                                                                                                                                                                                                       |
 
 The performance gain on real projects depends on the feature size.
 
