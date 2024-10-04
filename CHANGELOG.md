@@ -10,16 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.20.0] - 2024-10-04
 ### Added
 - [JUnit Platform Engine] Enable use of custom UUID generators ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
 - [JUnit] Enable use of custom UUID generators ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
 - [TestNG] Enable use of custom UUID generators ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
 
-### Fixed
-- [Core] Use custom UUID generators for hooks ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
-
 ### Changed
 - [JUnit Platform Engine] Use JUnit Platform 1.11.2 (JUnit Jupiter 5.11.2)
+
+### Fixed
+- [Core] Use custom UUID generators for hooks ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
 
 ## [7.19.0] - 2024-09-19
 ### Changed
@@ -346,7 +348,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.19.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.20.0...HEAD
+[7.20.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.19.0...v7.20.0
 [7.19.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.18.1...v7.19.0
 [7.18.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.18.0...v7.18.1
 [7.18.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.17.0...v7.18.0
