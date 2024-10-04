@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Use custom UUID generators for hooks ([#2926](https://github.com/cucumber/cucumber-jvm/pull/2926) M.P. Korstanje)
 
 ### Changed
-- [JUnit Platform Engine] Use JUnit Platform 1.11.1 (JUnit Jupiter 5.11.1)
+- [JUnit Platform Engine] Use JUnit Platform 1.11.2 (JUnit Jupiter 5.11.2)
 
 ## [7.19.0] - 2024-09-19
 ### Changed
