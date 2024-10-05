@@ -1,8 +1,8 @@
 package io.cucumber.core.eventbus;
 
 import io.cucumber.core.exception.CucumberException;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.ThrowingSupplier;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -119,20 +121,33 @@ class IncrementingUuidGeneratorTest {
 
         // Then
         assertThat(cucumberException.getMessage(),
-            Matchers.containsString("Out of IncrementingUuidGenerator capacity"));
+            containsString("Out of IncrementingUuidGenerator capacity"));
     }
 
     @Test
     void version_overflow() {
         // Given
+        IncrementingUuidGenerator generator = new IncrementingUuidGenerator();
         IncrementingUuidGenerator.sessionCounter.set(IncrementingUuidGenerator.MAX_SESSION_ID - 1);
 
         // When
-        CucumberException cucumberException = assertThrows(CucumberException.class, IncrementingUuidGenerator::new);
+        CucumberException cucumberException = assertThrows(CucumberException.class, generator::generateId);
 
         // Then
         assertThat(cucumberException.getMessage(),
-            Matchers.containsString("Out of IncrementingUuidGenerator capacity"));
+            containsString("Out of IncrementingUuidGenerator capacity"));
+    }
+
+    @Test
+    void lazy_init() {
+        // Given
+        IncrementingUuidGenerator.sessionCounter.set(IncrementingUuidGenerator.MAX_SESSION_ID - 1);
+
+        // When
+        ThrowingSupplier<IncrementingUuidGenerator> instantiateGenerator = IncrementingUuidGenerator::new;
+
+        // Then
+        assertDoesNotThrow(instantiateGenerator);
     }
 
     private static void checkUuidProperties(List<UUID> uuids) {
