@@ -66,8 +66,7 @@ final class FeatureResolver {
     private static CachingFeatureParser createFeatureParser(CucumberEngineOptions options) {
         Supplier<ClassLoader> classLoader = FeatureResolver.class::getClassLoader;
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
-        UuidGenerator uuidGenerator = uuidGeneratorServiceLoader.loadUuidGenerator();
-        FeatureParser featureParser = new FeatureParser(uuidGenerator::generateId);
+        FeatureParser featureParser = new FeatureParser(uuidGeneratorServiceLoader.loadUuidGenerator());
         return new CachingFeatureParser(featureParser);
     }
 

@@ -5,6 +5,7 @@ import io.cucumber.core.exception.CucumberException;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 /**
  * Thread-safe and collision-free UUID generator for single JVM. This is a
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <a href=
  * "https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html#name-uuid-version-8">UUID
  * version 8 (custom) / variant 2 </a>
- * 
+ *
  * <pre>
  * |       40 bits      |      8 bits    |  4 bits |    12 bits    |  2 bits | 62 bits |
  * | -------------------| -------------- | ------- | ------------- | ------- | ------- |
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * </pre>
  */
 public class IncrementingUuidGenerator implements UuidGenerator {
+
     /**
      * 40 bits mask for the epoch-time part (MSB).
      */
@@ -66,24 +68,14 @@ public class IncrementingUuidGenerator implements UuidGenerator {
     static final AtomicLong sessionCounter = new AtomicLong(-1);
 
     /**
-     * Computed UUID MSB value.
-     */
-    private long msb;
-
-    /**
-     * Counter for the UUID LSB.
-     */
-    final AtomicLong counter = new AtomicLong(-1);
-
-    /**
      * Defines a new classloaderId for the class. This only affects instances
-     * created after the first call to {@link #generateId()} (the instances
-     * created before the call keep their classloaderId). This method should be
-     * called to specify a {@code classloaderId} if you are using more than one
-     * class loader, and you want to guarantee a collision-free UUID generation
-     * (instead of the default random classloaderId which produces about 1%
-     * collision rate on the classloaderId, and thus can have UUID collision if
-     * the epoch-time, session counter and counter have the same values).
+     * created after the call (the instances created before the call keep their
+     * classloaderId). This method should be called to specify a classloaderId
+     * if you are using more than one class loader, and you want to guarantee a
+     * collision-free UUID generation (instead of the default random
+     * classloaderId which produces about 1% collision rate on the
+     * classloaderId, and thus can have UUID collision if the epoch-time,
+     * session counter and counter have the same values).
      *
      * @param classloaderId the new classloaderId (only the least significant 12
      *                      bits are used)
@@ -93,44 +85,54 @@ public class IncrementingUuidGenerator implements UuidGenerator {
         IncrementingUuidGenerator.classloaderId = classloaderId & 0xfff;
     }
 
-    public IncrementingUuidGenerator() {
-
-    }
-
-    private long initializeMsb() {
-        long sessionId = sessionCounter.incrementAndGet();
-        if (sessionId == MAX_SESSION_ID) {
-            throw new CucumberException(
-                "Out of " + IncrementingUuidGenerator.class.getSimpleName() +
-                        " capacity. Please reuse existing instances or use another " +
-                        UuidGenerator.class.getSimpleName() + " implementation instead.");
-        }
-        long epochTime = System.currentTimeMillis();
-        // msb = epochTime | sessionId | version | classloaderId
-        return ((epochTime & MAX_EPOCH_TIME) << 24) | (sessionId << 16) | (8 << 12) | classloaderId;
-    }
-
-    /**
-     * Generate a new UUID. Will throw an exception when out of capacity.
-     *
-     * @return                   a non-null UUID
-     * @throws CucumberException when out of capacity
-     */
     @Override
-    public UUID generateId() {
-        if (msb == 0) {
-            // Lazy init to avoid starting sessions when not used.
-            msb = initializeMsb();
+    public Supplier<UUID> supplier() {
+        long sessionId = sessionCounter.incrementAndGet();
+        return new UuidGeneratorState(sessionId, classloaderId)::generateId;
+    }
+
+    private static class UuidGeneratorState {
+
+        /**
+         * Computed UUID MSB value.
+         */
+        private final long msb;
+
+        /**
+         * Counter for the UUID LSB.
+         */
+        final AtomicLong counter = new AtomicLong(-1);
+
+        private UuidGeneratorState(long sessionId, long classloaderId) {
+            if (sessionId == MAX_SESSION_ID) {
+                throw new CucumberException(
+                    "Out of " + IncrementingUuidGenerator.class.getSimpleName() +
+                            " capacity. Please reuse existing instances or use another " +
+                            UuidGenerator.class.getSimpleName() + " implementation instead.");
+            }
+            long epochTime = System.currentTimeMillis();
+            // msb = epochTime | sessionId | version | classloaderId
+            msb = ((epochTime & MAX_EPOCH_TIME) << 24) | (sessionId << 16) | (8 << 12) | classloaderId;
         }
 
-        long counterValue = counter.incrementAndGet();
-        if (counterValue == MAX_COUNTER_VALUE) {
-            throw new CucumberException(
-                "Out of " + IncrementingUuidGenerator.class.getSimpleName() +
-                        " capacity. Please generate using a new instance or use another " +
-                        UuidGenerator.class.getSimpleName() + "implementation.");
+        /**
+         * Generate a new UUID. Will throw an exception when out of capacity.
+         *
+         * @return                   a non-null UUID
+         * @throws CucumberException when out of capacity
+         */
+        public UUID generateId() {
+            long counterValue = counter.incrementAndGet();
+            if (counterValue == MAX_COUNTER_VALUE) {
+                throw new CucumberException(
+                    "Out of " + IncrementingUuidGenerator.class.getSimpleName() +
+                            " capacity. Please generate using a new instance or use another " +
+                            UuidGenerator.class.getSimpleName() + "implementation.");
+            }
+            long leastSigBits = counterValue | 0x8000000000000000L; // set
+                                                                    // variant
+            return new UUID(msb, leastSigBits);
         }
-        long leastSigBits = counterValue | 0x8000000000000000L; // set variant
-        return new UUID(msb, leastSigBits);
     }
+
 }

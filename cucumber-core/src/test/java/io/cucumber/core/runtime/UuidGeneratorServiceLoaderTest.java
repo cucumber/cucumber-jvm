@@ -9,6 +9,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -270,16 +271,17 @@ class UuidGeneratorServiceLoaderTest {
     }
 
     public static class OtherGenerator implements UuidGenerator {
+
         @Override
-        public UUID generateId() {
-            return null;
+        public Supplier<UUID> supplier() {
+            return () -> null;
         }
     }
 
     public static class YetAnotherGenerator implements UuidGenerator {
         @Override
-        public UUID generateId() {
-            return null;
+        public Supplier<UUID> supplier() {
+            return () -> null;
         }
     }
 

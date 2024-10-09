@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,15 +39,15 @@ public final class UuidGeneratorServiceLoader {
         this.options = requireNonNull(options);
     }
 
-    public UuidGenerator loadUuidGenerator() {
+    public Supplier<UUID> loadUuidGenerator() {
         Class<? extends UuidGenerator> objectFactoryClass = options.getUuidGeneratorClass();
         ClassLoader classLoader = classLoaderSupplier.get();
         ServiceLoader<UuidGenerator> loader = ServiceLoader.load(UuidGenerator.class, classLoader);
         if (objectFactoryClass == null) {
-            return loadSingleUuidGeneratorOrDefault(loader);
+            return loadSingleUuidGeneratorOrDefault(loader).supplier();
         }
 
-        return loadSelectedUuidGenerator(loader, objectFactoryClass);
+        return loadSelectedUuidGenerator(loader, objectFactoryClass).supplier();
     }
 
     private static UuidGenerator loadSingleUuidGeneratorOrDefault(ServiceLoader<UuidGenerator> loader) {
