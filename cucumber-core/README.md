@@ -37,11 +37,13 @@ cucumber.features=              # comma separated list of feature paths.
                                 # example: path/to/features, classpath:com/example/features, path/to/example.feature:42, @path/to/rerun.txt
   
 cucumber.filter.name=           # a regular expression
-                                # only scenarios with matching names are executed. 
-                                # example: ^Hello (World|Cucumber)$     
+                                # only scenarios with matching names are executed.
+                                # combined with cucumber.filter.tags using "and" semantics. 
+                                # example: ^Hello (World|Cucumber)$
 
 cucumber.filter.tags=           # a cucumber tag expression. 
-                                # only scenarios with matching tags are executed. 
+                                # only scenarios with matching tags are executed.
+                                # combined with cucumber.filter.name using "and" semantics.
                                 # example: @Cucumber and not (@Gherkin or @Zucchini)
 
 cucumber.glue=                  # comma separated package names. 
