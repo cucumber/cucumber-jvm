@@ -46,12 +46,12 @@ final class GherkinMessagesFeature implements Feature {
 
     private Node mapRuleOrScenario(FeatureChild featureChild) {
         if (featureChild.getRule().isPresent()) {
-            return new GherkinMessagesRule(this, featureChild.getRule().get());
+            return new GherkinMessagesRule(this, this, featureChild.getRule().get());
         }
 
         io.cucumber.messages.types.Scenario scenario = featureChild.getScenario().get();
         if (!scenario.getExamples().isEmpty()) {
-            return new GherkinMessagesScenarioOutline(this, scenario);
+            return new GherkinMessagesScenarioOutline(this, this, scenario);
         }
         return new GherkinMessagesScenario(this, scenario);
     }
