@@ -14,23 +14,23 @@ import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.argThat;
 
 class CucumberTest {
 
@@ -96,67 +96,57 @@ class CucumberTest {
     }
 
     @Test
-    void cucumber_can_run_features_in_parallel() throws Exception {
+    void cucumber_can_run_features_in_parallel() {
         RunNotifier notifier = new RunNotifier();
-        RunListener listener = Mockito.mock(RunListener.class);
+        MockRunListener listener = new MockRunListener();
         notifier.addListener(listener);
         ParallelComputer computer = new ParallelComputer(true, true);
         Request.classes(computer, ValidEmpty.class).getRunner().run(notifier);
         {
-            InOrder order = Mockito.inOrder(listener);
-
-            order.verify(listener)
-                    .testStarted(argThat(new DescriptionMatcher("Followed by some examples #1(Feature A)")));
-            order.verify(listener)
-                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples #1(Feature A)")));
-            order.verify(listener)
-                    .testStarted(argThat(new DescriptionMatcher("Followed by some examples #2(Feature A)")));
-            order.verify(listener)
-                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples #2(Feature A)")));
-            order.verify(listener)
-                    .testStarted(argThat(new DescriptionMatcher("Followed by some examples #3(Feature A)")));
-            order.verify(listener)
-                    .testFinished(argThat(new DescriptionMatcher("Followed by some examples #3(Feature A)")));
+            List<RunListenerEvent> events = listener.events.stream()
+                    .filter(runListenerEvent -> runListenerEvent.description.startsWith("Followed by some examples"))
+                    .collect(Collectors.toList());
+            assertIterableEquals(List.of(
+                new RunListenerEvent("testStarted", "Followed by some examples #1(Feature A)"),
+                new RunListenerEvent("testFinished", "Followed by some examples #1(Feature A)"),
+                new RunListenerEvent("testStarted", "Followed by some examples #2(Feature A)"),
+                new RunListenerEvent("testFinished", "Followed by some examples #2(Feature A)"),
+                new RunListenerEvent("testStarted", "Followed by some examples #3(Feature A)"),
+                new RunListenerEvent("testFinished", "Followed by some examples #3(Feature A)")), events);
         }
         {
-            InOrder order = Mockito.inOrder(listener);
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("A(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("A(Feature B)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("B(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("B(Feature B)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C #1(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C #1(Feature B)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C #2(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C #2(Feature B)")));
-            order.verify(listener).testStarted(argThat(new DescriptionMatcher("C #3(Feature B)")));
-            order.verify(listener).testFinished(argThat(new DescriptionMatcher("C #3(Feature B)")));
+            List<RunListenerEvent> events = listener.events.stream()
+                    .filter(runListenerEvent -> runListenerEvent.description.endsWith("(Feature B)"))
+                    .collect(Collectors.toList());
+            assertIterableEquals(List.of(
+                new RunListenerEvent("testStarted", "A(Feature B)"),
+                new RunListenerEvent("testFinished", "A(Feature B)"),
+                new RunListenerEvent("testStarted", "B(Feature B)"),
+                new RunListenerEvent("testFinished", "B(Feature B)"),
+                new RunListenerEvent("testStarted", "C #1(Feature B)"),
+                new RunListenerEvent("testFinished", "C #1(Feature B)"),
+                new RunListenerEvent("testStarted", "C #2(Feature B)"),
+                new RunListenerEvent("testFinished", "C #2(Feature B)"),
+                new RunListenerEvent("testStarted", "C #3(Feature B)"),
+                new RunListenerEvent("testFinished", "C #3(Feature B)")), events);
         }
     }
 
     @Test
-    void cucumber_distinguishes_between_identical_features() throws Exception {
+    void cucumber_distinguishes_between_identical_features() {
         RunNotifier notifier = new RunNotifier();
-        RunListener listener = Mockito.mock(RunListener.class);
+        MockRunListener listener = new MockRunListener();
         notifier.addListener(listener);
         Request.classes(ValidEmpty.class).getRunner().run(notifier);
-        {
-            InOrder order = Mockito.inOrder(listener);
 
-            order.verify(listener)
-                    .testStarted(
-                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #1)")));
-            order.verify(listener)
-                    .testFinished(
-                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #1)")));
-
-            order.verify(listener)
-                    .testStarted(
-                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #2)")));
-            order.verify(listener)
-                    .testFinished(
-                        argThat(new DescriptionMatcher("A single scenario(A feature with a single scenario #2)")));
-
-        }
+        List<RunListenerEvent> events = listener.events.stream()
+                .filter(runListenerEvent -> runListenerEvent.description.startsWith("A single scenario"))
+                .collect(Collectors.toList());
+        assertIterableEquals(List.of(
+            new RunListenerEvent("testStarted", "A single scenario(A feature with a single scenario #1)"),
+            new RunListenerEvent("testFinished", "A single scenario(A feature with a single scenario #1)"),
+            new RunListenerEvent("testStarted", "A single scenario(A feature with a single scenario #2)"),
+            new RunListenerEvent("testFinished", "A single scenario(A feature with a single scenario #2)")), events);
     }
 
     @Test
@@ -243,4 +233,39 @@ class CucumberTest {
 
     }
 
+    private static class MockRunListener extends RunListener {
+        List<RunListenerEvent> events = new ArrayList<>();
+        @Override
+        public void testStarted(Description description) {
+            this.events.add(new RunListenerEvent("testStarted", description.getDisplayName()));
+        }
+
+        @Override
+        public void testFinished(Description description) {
+            this.events.add(new RunListenerEvent("testFinished", description.getDisplayName()));
+        }
+
+    }
+
+    public static class RunListenerEvent {
+        String eventName;
+        String description;
+        public RunListenerEvent(String eventName, String description) {
+            this.eventName = eventName;
+            this.description = description;
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof RunListenerEvent) {
+                return this.toString().equals(o.toString());
+            } else {
+                return false;
+            }
+        }
+
+        public String toString() {
+            return eventName + ", description=" + description;
+        }
+
+    }
 }

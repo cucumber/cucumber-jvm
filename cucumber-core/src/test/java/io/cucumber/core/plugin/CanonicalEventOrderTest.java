@@ -6,7 +6,6 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
@@ -27,8 +26,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 class CanonicalEventOrderTest {
 
@@ -81,10 +78,7 @@ class CanonicalEventOrderTest {
         new Result(Status.PASSED, Duration.ZERO, null));
 
     private static TestCaseStarted createTestCaseEvent(Instant instant, URI uri, int line) {
-        final TestCase testCase = mock(TestCase.class);
-        given(testCase.getUri()).willReturn(uri);
-        given(testCase.getLocation()).willReturn(new Location(line, -1));
-        return new TestCaseStarted(instant, testCase);
+        return new TestCaseStarted(instant, new StubTestCase(uri, new Location(line, -1)));
     }
 
     @Test

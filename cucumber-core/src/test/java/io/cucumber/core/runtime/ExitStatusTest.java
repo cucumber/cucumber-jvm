@@ -3,9 +3,9 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.plugin.StubTestCase;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,6 @@ import static java.time.Duration.ZERO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.Mockito.mock;
 
 class ExitStatusTest {
 
@@ -55,7 +54,7 @@ class ExitStatusTest {
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
-        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
+        return new TestCaseFinished(ANY_INSTANT, new StubTestCase(), new Result(resultStatus, ZERO, null));
     }
 
     @Test

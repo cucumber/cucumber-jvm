@@ -5,7 +5,6 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.plugin.event.StepDefinition;
-import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
@@ -19,8 +18,6 @@ import java.util.UUID;
 import static io.cucumber.core.plugin.Bytes.bytes;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class UnusedStepsSummaryPrinterTest {
 
@@ -36,12 +33,12 @@ class UnusedStepsSummaryPrinterTest {
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/belly.feature:3", "a few cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/tummy.feature:5", "some more cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/gut.feature:7", "even more cukes")));
-        bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/belly.feature:3"),
+        bus.send(new TestStepFinished(bus.getInstant(), new StubTestCase(), new StubTestStep("my/belly.feature:3"),
             new Result(Status.UNUSED, Duration.ZERO, null)));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/belly.feature:3", "a few cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/tummy.feature:5", "some more cukes")));
         bus.send(new StepDefinedEvent(bus.getInstant(), mockStepDef("my/gut.feature:7", "even more cukes")));
-        bus.send(new TestStepFinished(bus.getInstant(), mock(TestCase.class), mockTestStep("my/gut.feature:7"),
+        bus.send(new TestStepFinished(bus.getInstant(), new StubTestCase(), new StubTestStep("my/gut.feature:7"),
             new Result(Status.UNUSED, Duration.ZERO, null)));
         bus.send(new TestRunFinished(bus.getInstant(), new Result(Status.PASSED, Duration.ZERO, null)));
 
@@ -54,10 +51,21 @@ class UnusedStepsSummaryPrinterTest {
         return new StepDefinition(location, pattern);
     }
 
-    private static TestStep mockTestStep(String location) {
-        TestStep testStep = mock(TestStep.class);
-        when(testStep.getCodeLocation()).thenReturn(location);
-        return testStep;
-    }
+    public static class StubTestStep implements TestStep {
+        private final String codeLocation;
 
+        public StubTestStep(String codeLocation) {
+            this.codeLocation = codeLocation;
+        }
+
+        @Override
+        public String getCodeLocation() {
+            return codeLocation;
+        }
+
+        @Override
+        public UUID getId() {
+            return null;
+        }
+    }
 }

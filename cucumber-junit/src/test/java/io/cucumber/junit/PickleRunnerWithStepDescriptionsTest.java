@@ -22,13 +22,12 @@ import java.util.UUID;
 import static io.cucumber.junit.TestPickleBuilder.picklesFromFeature;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.mock;
 
 class PickleRunnerWithStepDescriptionsTest {
 
     final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     final Options options = RuntimeOptions.defaultOptions();
-    final RunnerSupplier runnerSupplier = mock(RunnerSupplier.class);
+    final RunnerSupplier runnerSupplier = new StubRunnerSupplier();
     final CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
 
     @Test

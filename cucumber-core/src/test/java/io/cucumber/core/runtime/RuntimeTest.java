@@ -6,7 +6,6 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StaticHookDefinition;
-import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
@@ -15,6 +14,7 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.FeatureParserException;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.plugin.StubTestCase;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runner.TestBackendSupplier;
 import io.cucumber.messages.types.Envelope;
@@ -27,7 +27,6 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.plugin.event.StepDefinition;
-import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -36,7 +35,6 @@ import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentCaptor;
 
 import java.net.URI;
 import java.time.Clock;
@@ -60,10 +58,8 @@ import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class RuntimeTest {
 
@@ -89,7 +85,7 @@ class RuntimeTest {
     }
 
     private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
-        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
+        return new TestCaseFinished(ANY_INSTANT, new StubTestCase(), new Result(resultStatus, ZERO, null));
     }
 
     @Test
@@ -160,9 +156,7 @@ class RuntimeTest {
                     "    Given first step\n" +
                     "    When second step\n" +
                     "    Then third step\n");
-        final HookDefinition beforeHook = mock(HookDefinition.class);
-        when(beforeHook.getLocation()).thenReturn("");
-        when(beforeHook.getTagExpression()).thenReturn("");
+        final MockHookDefinition beforeHook = new MockHookDefinition();
 
         FeatureSupplier featureSupplier = new StubFeatureSupplier(feature);
 
@@ -171,16 +165,15 @@ class RuntimeTest {
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(beforeHook),
                     asList(
-                        new StubStepDefinition("first step"),
-                        new StubStepDefinition("second step"),
-                        new StubStepDefinition("third step")),
+                        new io.cucumber.core.backend.StubStepDefinition("first step"),
+                        new io.cucumber.core.backend.StubStepDefinition("second step"),
+                        new io.cucumber.core.backend.StubStepDefinition("third step")),
                     emptyList()))
                 .build();
         runtime.run();
 
-        ArgumentCaptor<TestCaseState> capturedScenario = ArgumentCaptor.forClass(TestCaseState.class);
-        verify(beforeHook).execute(capturedScenario.capture());
-        assertThat(capturedScenario.getValue().getName(), is(equalTo("scenario name")));
+        assertEquals(1, beforeHook.executedStates.size());
+        assertEquals("scenario name", beforeHook.executedStates.get(0).getName());
     }
 
     @Test
@@ -200,9 +193,9 @@ class RuntimeTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(formatterSpy)
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step"),
-                    new StubStepDefinition("second step"),
-                    new StubStepDefinition("third step")))
+                    new io.cucumber.core.backend.StubStepDefinition("first step"),
+                    new io.cucumber.core.backend.StubStepDefinition("second step"),
+                    new io.cucumber.core.backend.StubStepDefinition("third step")))
                 .build()
                 .run();
 
@@ -249,9 +242,9 @@ class RuntimeTest {
                 .withAdditionalPlugins(formatterSpy)
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step"),
-                    new StubStepDefinition("second step"),
-                    new StubStepDefinition("third step")))
+                    new io.cucumber.core.backend.StubStepDefinition("first step"),
+                    new io.cucumber.core.backend.StubStepDefinition("second step"),
+                    new io.cucumber.core.backend.StubStepDefinition("third step")))
                 .build()
                 .run();
 
@@ -309,7 +302,7 @@ class RuntimeTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2, feature3))
                 .withAdditionalPlugins(formatterSpy)
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step")))
+                    new io.cucumber.core.backend.StubStepDefinition("first step")))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setThreads(3).build())
                 .build()
                 .run();
@@ -487,8 +480,8 @@ class RuntimeTest {
                 stepDefinedEvents.add(event.getStepDefinition());
             });
 
-        final MockedStepDefinition mockedStepDefinition = new MockedStepDefinition();
-        final MockedScenarioScopedStepDefinition mockedScenarioScopedStepDefinition = new MockedScenarioScopedStepDefinition();
+        final StubStepDefinition mockedStepDefinition = new StubStepDefinition();
+        final StubScenarioScopedStepDefinition mockedScenarioScopedStepDefinition = new StubScenarioScopedStepDefinition();
 
         BackendSupplier backendSupplier = new TestBackendSupplier() {
 
@@ -541,7 +534,7 @@ class RuntimeTest {
         assertThat(meta.getCpu().getName(), matchesPattern(".+"));
     }
 
-    private static final class MockedStepDefinition implements io.cucumber.core.backend.StepDefinition {
+    private static final class StubStepDefinition implements io.cucumber.core.backend.StepDefinition {
 
         @Override
         public void execute(Object[] args) {
@@ -570,7 +563,7 @@ class RuntimeTest {
 
     }
 
-    private static final class MockedScenarioScopedStepDefinition
+    private static final class StubScenarioScopedStepDefinition
             implements ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
         @Override
@@ -650,4 +643,32 @@ class RuntimeTest {
 
     }
 
+    private static class MockHookDefinition implements HookDefinition {
+        final List<TestCaseState> executedStates = new ArrayList<>();
+
+        @Override
+        public void execute(TestCaseState state) {
+            this.executedStates.add(state);
+        }
+
+        @Override
+        public String getTagExpression() {
+            return "";
+        }
+
+        @Override
+        public int getOrder() {
+            return 0;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return "";
+        }
+    }
 }

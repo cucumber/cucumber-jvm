@@ -6,79 +6,127 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.Event;
+import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@ExtendWith({ MockitoExtension.class })
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class PluginsTest {
 
     private final PluginFactory pluginFactory = new PluginFactory();
-    @Mock
-    private EventPublisher rootEventPublisher;
-    @Captor
-    private ArgumentCaptor<EventPublisher> eventPublisher;
 
     @Test
     void shouldSetStrictOnPlugin() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        StrictAware plugin = mock(StrictAware.class);
+        MockStrictAware plugin = new MockStrictAware();
         plugins.addPlugin(plugin);
-        verify(plugin).setStrict(true);
+        assertTrue(plugin.strict);
     }
 
     @Test
     void shouldSetMonochromeOnPlugin() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        ColorAware plugin = mock(ColorAware.class);
+        MockColorAware plugin = new MockColorAware();
         plugins.addPlugin(plugin);
-        verify(plugin).setMonochrome(false);
+        assertFalse(plugin.monochrome);
     }
 
     @Test
     void shouldSetConcurrentEventListener() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        ConcurrentEventListener plugin = mock(ConcurrentEventListener.class);
+        MockConcurrentEventListener plugin = new MockConcurrentEventListener();
+        EventPublisher rootEventPublisher = new MockEventPublisher();
         plugins.addPlugin(plugin);
         plugins.setEventBusOnEventListenerPlugins(rootEventPublisher);
-        verify(plugin, times(1)).setEventPublisher(rootEventPublisher);
+
+        assertIterableEquals(List.of(rootEventPublisher), plugin.eventPublishers);
     }
 
     @Test
     void shouldSetNonConcurrentEventListener() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        EventListener plugin = mock(EventListener.class);
+        MockEventListener plugin = new MockEventListener();
+        EventPublisher rootEventPublisher = new MockEventPublisher();
         plugins.addPlugin(plugin);
         plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
-        verify(plugin, times(1)).setEventPublisher(eventPublisher.capture());
-        assertThat(eventPublisher.getValue().getClass(), is(equalTo(CanonicalOrderEventPublisher.class)));
+
+        assertEquals(1, plugin.eventPublishers.size());
+        assertInstanceOf(CanonicalOrderEventPublisher.class, plugin.eventPublishers.get(0));
     }
 
     @Test
     void shouldRegisterCanonicalOrderEventPublisherWithRootEventPublisher() {
         RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        EventListener plugin = mock(EventListener.class);
+        MockEventListener plugin = new MockEventListener();
+        MockEventPublisher rootEventPublisher = new MockEventPublisher();
         plugins.addPlugin(plugin);
         plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
-        verify(rootEventPublisher, times(1)).registerHandlerFor(eq(Event.class), ArgumentMatchers.any());
+
+        List<EventHandler<?>> eventHandlers = rootEventPublisher.handlers.get(Event.class);
+        assertNotNull(eventHandlers);
+        assertEquals(1, eventHandlers.size());
     }
 
+    @SuppressWarnings("deprecation")
+    private static class MockStrictAware implements StrictAware {
+        Boolean strict;
+        @Override
+        public void setStrict(boolean strict) {
+            this.strict = strict;
+        }
+    }
+
+    private static class MockColorAware implements ColorAware {
+        Boolean monochrome;
+        @Override
+        public void setMonochrome(boolean monochrome) {
+            this.monochrome = monochrome;
+        }
+    }
+
+    private static class MockConcurrentEventListener implements ConcurrentEventListener {
+        final List<EventPublisher> eventPublishers = new ArrayList<>();
+        @Override
+        public void setEventPublisher(EventPublisher publisher) {
+            eventPublishers.add(publisher);
+        }
+    }
+
+    private static class MockEventListener implements EventListener {
+        final List<EventPublisher> eventPublishers = new ArrayList<>();
+        @Override
+        public void setEventPublisher(EventPublisher publisher) {
+            eventPublishers.add(publisher);
+        }
+    }
+
+    private static class MockEventPublisher implements EventPublisher {
+        final Map<Class<?>, List<EventHandler<?>>> handlers = new HashMap<>();
+        @Override
+        public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+            List<EventHandler<?>> eventHandlers = handlers.computeIfAbsent(eventType, key -> new ArrayList<>());
+            eventHandlers.add(handler);
+        }
+
+        @Override
+        public <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+
+        }
+    }
 }

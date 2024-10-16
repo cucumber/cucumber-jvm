@@ -7,12 +7,14 @@ import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.DocStringTypeDefinition;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
+import io.cucumber.core.backend.Status;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.net.URI;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.cucumber.java8.LambdaGlue.DEFAULT_AFTER_ORDER;
@@ -25,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class LambdaGlueTest {
 
     private final AtomicBoolean invoked = new AtomicBoolean();
-    private final TestCaseState state = Mockito.mock(TestCaseState.class);
+    private final TestCaseState state = new StubTestCaseState();
     private final LambdaGlue lambdaGlue = new LambdaGlue() {
 
     };
@@ -200,4 +202,55 @@ class LambdaGlueTest {
         assertHook(afterStepHook, "taxExpression", 42);
     }
 
+    private static class StubTestCaseState implements TestCaseState {
+        @Override
+        public Collection<String> getSourceTagNames() {
+            return null;
+        }
+
+        @Override
+        public Status getStatus() {
+            return null;
+        }
+
+        @Override
+        public boolean isFailed() {
+            return false;
+        }
+
+        @Override
+        public void attach(byte[] data, String mediaType, String name) {
+
+        }
+
+        @Override
+        public void attach(String data, String mediaType, String name) {
+
+        }
+
+        @Override
+        public void log(String text) {
+
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
+        public Integer getLine() {
+            return null;
+        }
+    }
 }

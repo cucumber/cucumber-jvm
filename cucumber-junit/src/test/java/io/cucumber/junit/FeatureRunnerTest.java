@@ -19,13 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
+import org.junit.runner.notification.StoppedByUserException;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,11 +34,9 @@ import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 
 class FeatureRunnerTest {
 
@@ -141,24 +140,25 @@ class FeatureRunnerTest {
                 "    Examples: examples 2 name\n" +
                 "      | id |\n" +
                 "      | #3 |\n");
-        RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
+        MockRunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
-        InOrder order = inOrder(notifier);
-
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario #1(feature name)")));
-        order.verify(notifier, times(1)).fireTestFailure(argThat(new FailureMatcher("scenario #1(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #1(feature name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario #2(feature name)")));
-        order.verify(notifier, times(1)).fireTestFailure(argThat(new FailureMatcher("scenario #2(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #2(feature name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario #3(feature name)")));
-        order.verify(notifier, times(1)).fireTestFailure(argThat(new FailureMatcher("scenario #3(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #3(feature name)")));
+        assertIterableEquals(
+            List.of(
+                new RunNotifierEvent("fireTestStarted", "scenario #1(feature name)"),
+                new RunNotifierEvent("fireTestFailure", "scenario #1(feature name)"),
+                new RunNotifierEvent("fireTestFinished", "scenario #1(feature name)"),
+                new RunNotifierEvent("fireTestStarted", "scenario #2(feature name)"),
+                new RunNotifierEvent("fireTestFailure", "scenario #2(feature name)"),
+                new RunNotifierEvent("fireTestFinished", "scenario #2(feature name)"),
+                new RunNotifierEvent("fireTestStarted", "scenario #3(feature name)"),
+                new RunNotifierEvent("fireTestFailure", "scenario #3(feature name)"),
+                new RunNotifierEvent("fireTestFinished", "scenario #3(feature name)")),
+            notifier.events);
     }
 
-    private RunNotifier runFeatureWithNotifier(Feature feature, JUnitOptions options) {
+    private MockRunNotifier runFeatureWithNotifier(Feature feature, JUnitOptions options) {
         FeatureRunner runner = createFeatureRunner(feature, options);
-        RunNotifier notifier = mock(RunNotifier.class);
+        MockRunNotifier notifier = new MockRunNotifier();
         runner.run(notifier);
         return notifier;
     }
@@ -175,16 +175,17 @@ class FeatureRunnerTest {
                 "  Scenario: scenario_2 name\n" +
                 "    Then step #2\n");
 
-        RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
+        MockRunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
-        InOrder order = inOrder(notifier);
-
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_1 name(feature name)")));
-        order.verify(notifier, times(1)).fireTestFailure(argThat(new FailureMatcher("scenario_1 name(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name(feature name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
-        order.verify(notifier, times(1)).fireTestFailure(argThat(new FailureMatcher("scenario_2 name(feature name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name(feature name)")));
+        assertIterableEquals(
+            List.of(
+                new RunNotifierEvent("fireTestStarted", "scenario_1 name(feature name)"),
+                new RunNotifierEvent("fireTestFailure", "scenario_1 name(feature name)"),
+                new RunNotifierEvent("fireTestFinished", "scenario_1 name(feature name)"),
+                new RunNotifierEvent("fireTestStarted", "scenario_2 name(feature name)"),
+                new RunNotifierEvent("fireTestFailure", "scenario_2 name(feature name)"),
+                new RunNotifierEvent("fireTestFinished", "scenario_2 name(feature name)")),
+            notifier.events);
     }
 
     @Test
@@ -271,45 +272,49 @@ class FeatureRunnerTest {
                 "      | #3 |\n");
 
         JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
-        RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
+        MockRunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
 
-        InOrder order = inOrder(notifier);
+        assertIterableEquals(
+            List.of(
+                new RunNotifierEvent("fireTestStarted", "scenario #1"),
+                new RunNotifierEvent("fireTestStarted", "step #1(scenario #1)"),
+                new RunNotifierEvent("fireTestFailure", "step #1(scenario #1)"),
+                new RunNotifierEvent("fireTestFinished", "step #1(scenario #1)"),
+                new RunNotifierEvent("fireTestStarted", "step #2(scenario #1)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #2(scenario #1)"),
+                new RunNotifierEvent("fireTestFinished", "step #2(scenario #1)"),
+                new RunNotifierEvent("fireTestStarted", "step #3(scenario #1)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #3(scenario #1)"),
+                new RunNotifierEvent("fireTestFinished", "step #3(scenario #1)"),
+                new RunNotifierEvent("fireTestFailure", "scenario #1"),
+                new RunNotifierEvent("fireTestFinished", "scenario #1"),
 
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario #1")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #1(scenario #1)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario #1)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario #1)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario #1)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario #1)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario #1)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario #1)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario #1)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario #1)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #1")));
+                new RunNotifierEvent("fireTestStarted", "scenario #2"),
+                new RunNotifierEvent("fireTestStarted", "step #1(scenario #2)"),
+                new RunNotifierEvent("fireTestFailure", "step #1(scenario #2)"),
+                new RunNotifierEvent("fireTestFinished", "step #1(scenario #2)"),
+                new RunNotifierEvent("fireTestStarted", "step #2(scenario #2)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #2(scenario #2)"),
+                new RunNotifierEvent("fireTestFinished", "step #2(scenario #2)"),
+                new RunNotifierEvent("fireTestStarted", "step #3(scenario #2)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #3(scenario #2)"),
+                new RunNotifierEvent("fireTestFinished", "step #3(scenario #2)"),
+                new RunNotifierEvent("fireTestFailure", "scenario #2"),
+                new RunNotifierEvent("fireTestFinished", "scenario #2"),
 
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario #2")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #1(scenario #2)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario #2)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario #2)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario #2)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario #2)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario #2)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario #2)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario #2)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario #2)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #2")));
-
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario #3")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #1(scenario #3)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario #3)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario #3)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario #3)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario #3)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario #3)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario #3)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario #3)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario #3)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario #3")));
+                new RunNotifierEvent("fireTestStarted", "scenario #3"),
+                new RunNotifierEvent("fireTestStarted", "step #1(scenario #3)"),
+                new RunNotifierEvent("fireTestFailure", "step #1(scenario #3)"),
+                new RunNotifierEvent("fireTestFinished", "step #1(scenario #3)"),
+                new RunNotifierEvent("fireTestStarted", "step #2(scenario #3)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #2(scenario #3)"),
+                new RunNotifierEvent("fireTestFinished", "step #2(scenario #3)"),
+                new RunNotifierEvent("fireTestStarted", "step #3(scenario #3)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #3(scenario #3)"),
+                new RunNotifierEvent("fireTestFinished", "step #3(scenario #3)"),
+                new RunNotifierEvent("fireTestFailure", "scenario #3"),
+                new RunNotifierEvent("fireTestFinished", "scenario #3")),
+            notifier.events);
     }
 
     @Test
@@ -325,31 +330,33 @@ class FeatureRunnerTest {
                 "    Then another step #2\n");
 
         JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
-        RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
+        MockRunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
 
-        InOrder order = inOrder(notifier);
+        assertIterableEquals(
+            List.of(
+                new RunNotifierEvent("fireTestStarted", "scenario_1 name"),
+                new RunNotifierEvent("fireTestStarted", "step #1(scenario_1 name)"),
+                new RunNotifierEvent("fireTestFailure", "step #1(scenario_1 name)"),
+                new RunNotifierEvent("fireTestFinished", "step #1(scenario_1 name)"),
+                new RunNotifierEvent("fireTestStarted", "step #2(scenario_1 name)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #2(scenario_1 name)"),
+                new RunNotifierEvent("fireTestFinished", "step #2(scenario_1 name)"),
+                new RunNotifierEvent("fireTestStarted", "step #3(scenario_1 name)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "step #3(scenario_1 name)"),
+                new RunNotifierEvent("fireTestFinished", "step #3(scenario_1 name)"),
+                new RunNotifierEvent("fireTestFailure", "scenario_1 name"),
+                new RunNotifierEvent("fireTestFinished", "scenario_1 name"),
 
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_1 name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #1(scenario_1 name)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario_1 name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #2(scenario_1 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #2(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #2(scenario_1 name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #3(scenario_1 name)")));
-        order.verify(notifier).fireTestAssumptionFailed(argThat(new FailureMatcher("step #3(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #3(scenario_1 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_1 name")));
-
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("scenario_2 name")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("step #1(scenario_2 name)")));
-        order.verify(notifier).fireTestFailure(argThat(new FailureMatcher("step #1(scenario_2 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("step #1(scenario_2 name)")));
-        order.verify(notifier).fireTestStarted(argThat(new DescriptionMatcher("another step #2(scenario_2 name)")));
-        order.verify(notifier)
-                .fireTestAssumptionFailed(argThat(new FailureMatcher("another step #2(scenario_2 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("another step #2(scenario_2 name)")));
-        order.verify(notifier).fireTestFinished(argThat(new DescriptionMatcher("scenario_2 name")));
+                new RunNotifierEvent("fireTestStarted", "scenario_2 name"),
+                new RunNotifierEvent("fireTestStarted", "step #1(scenario_2 name)"),
+                new RunNotifierEvent("fireTestFailure", "step #1(scenario_2 name)"),
+                new RunNotifierEvent("fireTestFinished", "step #1(scenario_2 name)"),
+                new RunNotifierEvent("fireTestStarted", "another step #2(scenario_2 name)"),
+                new RunNotifierEvent("fireTestAssumptionFailed", "another step #2(scenario_2 name)"),
+                new RunNotifierEvent("fireTestFinished", "another step #2(scenario_2 name)"),
+                new RunNotifierEvent("fireTestFailure", "scenario_2 name"),
+                new RunNotifierEvent("fireTestFinished", "scenario_2 name")),
+            notifier.events);
     }
 
     @Test
@@ -370,20 +377,19 @@ class FeatureRunnerTest {
         CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
         FeatureRunner featureRunner = FeatureRunner.create(feature, null, filters, context, new JUnitOptions());
 
-        RunNotifier notifier = mock(RunNotifier.class);
+        MockRunNotifier notifier = new MockRunNotifier();
         PickleRunners.PickleRunner pickleRunner = featureRunner.getChildren().get(0);
         featureRunner.runChild(pickleRunner, notifier);
 
         Description description = pickleRunner.getDescription();
-        ArgumentCaptor<Failure> failureArgumentCaptor = ArgumentCaptor.forClass(Failure.class);
-
-        InOrder order = inOrder(notifier);
-        order.verify(notifier).fireTestStarted(description);
-        order.verify(notifier).fireTestFailure(failureArgumentCaptor.capture());
-        assertThat(failureArgumentCaptor.getValue().getException(), is(equalTo(illegalStateException)));
-        assertThat(failureArgumentCaptor.getValue().getDescription(), is(equalTo(description)));
-        order.verify(notifier).pleaseStop();
-        order.verify(notifier).fireTestFinished(description);
+        assertIterableEquals(
+            List.of(
+                new RunNotifierEvent("fireTestStarted", description.getDisplayName()),
+                new RunNotifierEvent("fireTestFailure", description.getDisplayName()),
+                new RunNotifierEvent("pleaseStop", ""),
+                new RunNotifierEvent("fireTestFinished", description.getDisplayName())),
+            notifier.events);
+        assertEquals(illegalStateException, notifier.events.get(1).throwable);
     }
 
     @Test
@@ -416,4 +422,64 @@ class FeatureRunnerTest {
             is("scenario_2 name(feature name)"));
     }
 
+    private static class MockRunNotifier extends RunNotifier {
+        List<RunNotifierEvent> events = new ArrayList<>();
+
+        @Override
+        public void fireTestStarted(Description description) throws StoppedByUserException {
+            this.events.add(new RunNotifierEvent("fireTestStarted", description.getDisplayName()));
+        }
+
+        @Override
+        public void fireTestFailure(Failure failure) {
+            this.events.add(new RunNotifierEvent("fireTestFailure", failure.getDescription().getDisplayName(),
+                failure.getException()));
+        }
+
+        @Override
+        public void fireTestAssumptionFailed(Failure failure) {
+            this.events.add(new RunNotifierEvent("fireTestAssumptionFailed", failure.getDescription().getDisplayName(),
+                failure.getException()));
+        }
+
+        @Override
+        public void fireTestFinished(Description description) {
+            this.events.add(new RunNotifierEvent("fireTestFinished", description.getDisplayName()));
+        }
+
+        @Override
+        public void pleaseStop() {
+            this.events.add(new RunNotifierEvent("pleaseStop", ""));
+        }
+
+    }
+
+    private static class RunNotifierEvent {
+        private final String eventName;
+        private final String description;
+        private final Throwable throwable;
+        public RunNotifierEvent(String eventName, String description) {
+            this.eventName = eventName;
+            this.description = description;
+            this.throwable = null;
+        }
+
+        public RunNotifierEvent(String eventName, String description, Throwable throwable) {
+            this.eventName = eventName;
+            this.description = description;
+            this.throwable = throwable;
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof RunNotifierEvent) {
+                return this.toString().equals(o.toString());
+            } else {
+                return false;
+            }
+        }
+
+        public String toString() {
+            return eventName + ", description=" + description;
+        }
+    }
 }

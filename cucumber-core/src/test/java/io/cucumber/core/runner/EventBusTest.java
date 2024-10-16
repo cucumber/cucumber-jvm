@@ -1,6 +1,8 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.plugin.StubPickleStepTestStep;
+import io.cucumber.core.plugin.StubTestCase;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.PickleStepTestStep;
@@ -10,50 +12,54 @@ import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static java.time.Duration.ZERO;
 import static java.time.Instant.EPOCH;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(MockitoExtension.class)
 class EventBusTest {
 
     @Test
     void handlers_receive_the_events_they_registered_for() {
-        EventHandler<TestStepFinished> handler = mock(EventHandler.class);
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
+        MockEventHandler<TestStepFinished> handler = new MockEventHandler<>();
+        PickleStepTestStep testStep = new StubPickleStepTestStep();
         Result result = new Result(Status.PASSED, ZERO, null);
-        TestCase testCase = mock(TestCase.class);
+        TestCase testCase = new StubTestCase();
         TestStepFinished event = new TestStepFinished(EPOCH, testCase, testStep, result);
 
         EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID);
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
-        verify(handler).receive(event);
+        assertEquals(event, handler.events.get(0));
     }
 
     @Test
     void handlers_do_not_receive_the_events_they_did_not_registered_for() {
-        EventHandler handler = mock(EventHandler.class);
-        PickleStepTestStep testStep = mock(PickleStepTestStep.class);
-        TestCase testCase = mock(TestCase.class);
+        MockEventHandler<TestStepFinished> handler = new MockEventHandler<>();
+        PickleStepTestStep testStep = new StubPickleStepTestStep();
+        TestCase testCase = new StubTestCase();
         TestStepStarted event = new TestStepStarted(EPOCH, testCase, testStep);
 
         EventBus bus = new TimeServiceEventBus(Clock.fixed(Instant.EPOCH, ZoneId.of("UTC")), UUID::randomUUID);
         bus.registerHandlerFor(TestStepFinished.class, handler);
         bus.send(event);
 
-        verify(handler, never()).receive(event);
+        assertEquals(0, handler.events.size());
     }
 
+    private static class MockEventHandler<T> implements EventHandler<T> {
+        final List<T> events = new ArrayList<>();
+        @Override
+        public void receive(T event) {
+            events.add(event);
+        }
+    }
 }

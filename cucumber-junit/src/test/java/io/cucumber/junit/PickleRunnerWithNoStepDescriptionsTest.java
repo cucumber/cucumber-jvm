@@ -18,13 +18,12 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.Mockito.mock;
 
 class PickleRunnerWithNoStepDescriptionsTest {
 
     final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     final Options options = RuntimeOptions.defaultOptions();
-    final RunnerSupplier runnerSupplier = mock(RunnerSupplier.class);
+    final RunnerSupplier runnerSupplier = new StubRunnerSupplier();
     final CucumberExecutionContext context = new CucumberExecutionContext(bus, new ExitStatus(options), runnerSupplier);
 
     @Test

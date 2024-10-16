@@ -1,15 +1,13 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.Status;
 import io.cucumber.core.backend.TestCaseState;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -18,8 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({ "WeakerAccess" })
-@ExtendWith({ MockitoExtension.class })
-@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class JavaHookDefinitionTest {
 
     private final Lookup lookup = new Lookup() {
@@ -31,8 +27,7 @@ public class JavaHookDefinitionTest {
         }
     };
 
-    @Mock
-    private TestCaseState state;
+    private TestCaseState state = new StubTestCaseState();
 
     private boolean invoked = false;
 
@@ -122,4 +117,55 @@ public class JavaHookDefinitionTest {
         return "";
     }
 
+    private class StubTestCaseState implements TestCaseState {
+        @Override
+        public Collection<String> getSourceTagNames() {
+            return null;
+        }
+
+        @Override
+        public Status getStatus() {
+            return null;
+        }
+
+        @Override
+        public boolean isFailed() {
+            return false;
+        }
+
+        @Override
+        public void attach(byte[] data, String mediaType, String name) {
+
+        }
+
+        @Override
+        public void attach(String data, String mediaType, String name) {
+
+        }
+
+        @Override
+        public void log(String text) {
+
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
+        public Integer getLine() {
+            return null;
+        }
+    }
 }

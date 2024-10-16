@@ -70,6 +70,32 @@ class UuidGeneratorServiceLoaderTest {
         assertThat(loader.loadUuidGenerator(), instanceOf(RandomUuidGenerator.class));
     }
 
+    @Test
+    void test_case_2_no_exception_when_calling_loadUuidGenerator_many_times() {
+        Options options = () -> null;
+        UuidGeneratorServiceLoader loader = new UuidGeneratorServiceLoader(
+            UuidGeneratorServiceLoaderTest.class::getClassLoader,
+            options);
+        UuidGenerator actual = null;
+        for (int i = 0; i < 1000; i++) {
+            actual = loader.loadUuidGenerator();
+        }
+        assertThat(actual, instanceOf(RandomUuidGenerator.class));
+    }
+
+    @Test
+    void test_case_2_no_exception_when_instantiating_UuidGeneratorServiceLoader_many_times() {
+        Options options = () -> null;
+        UuidGenerator actual = null;
+        for (int i = 0; i < 1000; i++) {
+            UuidGeneratorServiceLoader loader = new UuidGeneratorServiceLoader(
+                UuidGeneratorServiceLoaderTest.class::getClassLoader,
+                options);
+            actual = loader.loadUuidGenerator();
+        }
+        assertThat(actual, instanceOf(RandomUuidGenerator.class));
+    }
+
     /**
      * | 3 | RandomUuidGenerator | RandomUuidGenerator,
      * IncrementingUuidGenerator | RandomUuidGenerator used |
