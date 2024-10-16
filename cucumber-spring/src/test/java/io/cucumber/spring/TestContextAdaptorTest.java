@@ -3,196 +3,211 @@ package io.cucumber.spring;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.spring.beans.BellyBean;
 import io.cucumber.spring.beans.DummyComponent;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.cucumber.spring.TestContextAdaptor.create;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
 
-@ExtendWith(MockitoExtension.class)
-public class TestTestContextAdaptorTest {
-
-    @Mock
-    TestExecutionListener listener;
-
-    @AfterEach
-    void verifyNoMoroInteractions() {
-        Mockito.verifyNoMoreInteractions(listener);
-    }
+class TestContextAdaptorTest {
 
     @Test
-    void invokesAllLiveCycleHooks() throws Exception {
+    void invokesAllLiveCycleHooks() {
+        MockTestExecutionListener listener = new MockTestExecutionListener();
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
 
         adaptor.start();
-        inOrder.verify(listener).beforeTestClass(any());
-        inOrder.verify(listener).prepareTestInstance(any());
-        inOrder.verify(listener).beforeTestMethod(any());
-        inOrder.verify(listener).beforeTestExecution(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass",
+            "prepareTestInstance",
+            "beforeTestMethod",
+            "beforeTestExecution"),
+            listener.events);
 
+        listener.events.clear();
         adaptor.stop();
-        inOrder.verify(listener).afterTestExecution(any());
-        inOrder.verify(listener).afterTestMethod(any());
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestExecution",
+            "afterTestMethod",
+            "afterTestClass"),
+            listener.events);
     }
 
     @Test
-    void invokesAfterClassIfBeforeClassFailed() throws Exception {
+    void invokesAfterClassIfBeforeClassFailed() {
+        MockTestExecutionListener listener = new MockTestExecutionListener("beforeTestClass");
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).beforeTestClass(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
-        inOrder.verify(listener).beforeTestClass(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass"),
+            listener.events);
 
+        listener.events.clear();
         adaptor.stop();
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestClass"),
+            listener.events);
     }
 
     @Test
-    void invokesAfterClassIfPrepareTestInstanceFailed() throws Exception {
+    void invokesAfterClassIfPrepareTestInstanceFailed() {
+        MockTestExecutionListener listener = new MockTestExecutionListener("prepareTestInstance");
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).prepareTestInstance(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
-        inOrder.verify(listener).beforeTestClass(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass",
+            "prepareTestInstance"),
+            listener.events);
 
+        listener.events.clear();
         adaptor.stop();
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestClass"),
+            listener.events);
     }
 
     @Test
-    void invokesAfterMethodIfBeforeMethodThrows() throws Exception {
+    void invokesAfterMethodIfBeforeMethodThrows() {
+        MockTestExecutionListener listener = new MockTestExecutionListener("beforeTestMethod");
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).beforeTestMethod(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
-        inOrder.verify(listener).beforeTestClass(any());
-        inOrder.verify(listener).prepareTestInstance(any());
-        inOrder.verify(listener).beforeTestMethod(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass",
+            "prepareTestInstance",
+            "beforeTestMethod"),
+            listener.events);
 
+        listener.events.clear();
         adaptor.stop();
-        inOrder.verify(listener).afterTestMethod(any());
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestMethod",
+            "afterTestClass"),
+            listener.events);
     }
 
     @Test
-    void invokesAfterTestExecutionIfBeforeTestExecutionThrows() throws Exception {
+    void invokesAfterTestExecutionIfBeforeTestExecutionThrows() {
+        MockTestExecutionListener listener = new MockTestExecutionListener("beforeTestExecution");
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).beforeTestExecution(any());
 
         assertThrows(CucumberBackendException.class, adaptor::start);
-        inOrder.verify(listener).beforeTestClass(any());
-        inOrder.verify(listener).prepareTestInstance(any());
-        inOrder.verify(listener).beforeTestMethod(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass",
+            "prepareTestInstance",
+            "beforeTestMethod",
+            "beforeTestExecution"),
+            listener.events);
 
+        listener.events.clear();
         adaptor.stop();
-        inOrder.verify(listener).afterTestExecution(any());
-        inOrder.verify(listener).afterTestMethod(any());
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestExecution",
+            "afterTestMethod",
+            "afterTestClass"),
+            listener.events);
     }
 
     @Test
-    void invokesAfterTestMethodIfAfterTestExecutionThrows() throws Exception {
+    void invokesAfterTestMethodIfAfterTestExecutionThrows() {
+        MockTestExecutionListener listener = new MockTestExecutionListener("afterTestExecution");
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
 
         adaptor.start();
-        inOrder.verify(listener).beforeTestClass(any());
-        inOrder.verify(listener).prepareTestInstance(any());
-        inOrder.verify(listener).beforeTestMethod(any());
-        inOrder.verify(listener).beforeTestExecution(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass",
+            "prepareTestInstance",
+            "beforeTestMethod",
+            "beforeTestExecution"),
+            listener.events);
 
+        listener.events.clear();
         assertThrows(CucumberBackendException.class, adaptor::stop);
-        inOrder.verify(listener).afterTestExecution(any());
-        inOrder.verify(listener).afterTestMethod(any());
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestExecution",
+            "afterTestMethod",
+            "afterTestClass"),
+            listener.events);
     }
 
     @Test
     void invokesAfterTesClassIfAfterTestMethodThrows() throws Exception {
+        MockTestExecutionListener listener = new MockTestExecutionListener("afterTestMethod");
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).afterTestMethod(any());
 
         adaptor.start();
-        inOrder.verify(listener).beforeTestClass(any());
-        inOrder.verify(listener).prepareTestInstance(any());
-        inOrder.verify(listener).beforeTestMethod(any());
-        inOrder.verify(listener).beforeTestExecution(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass",
+            "prepareTestInstance",
+            "beforeTestMethod",
+            "beforeTestExecution"),
+            listener.events);
 
+        listener.events.clear();
         assertThrows(CucumberBackendException.class, adaptor::stop);
-        inOrder.verify(listener).afterTestExecution(any());
-        inOrder.verify(listener).afterTestMethod(any());
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestExecution",
+            "afterTestMethod",
+            "afterTestClass"),
+            listener.events);
     }
 
     @Test
-    void invokesAllMethodsPriorIfAfterTestClassThrows() throws Exception {
+    void invokesAllMethodsPriorIfAfterTestClassThrows() {
+        MockTestExecutionListener listener = new MockTestExecutionListener("afterTestExecution");
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
         TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
-        InOrder inOrder = inOrder(listener);
-
-        doThrow(new RuntimeException()).when(listener).afterTestExecution(any());
 
         adaptor.start();
-        inOrder.verify(listener).beforeTestClass(any());
-        inOrder.verify(listener).prepareTestInstance(any());
-        inOrder.verify(listener).beforeTestMethod(any());
-        inOrder.verify(listener).beforeTestExecution(any());
+        assertIterableEquals(List.of(
+            "beforeTestClass",
+            "prepareTestInstance",
+            "beforeTestMethod",
+            "beforeTestExecution"),
+            listener.events);
 
+        listener.events.clear();
         assertThrows(CucumberBackendException.class, adaptor::stop);
-        inOrder.verify(listener).afterTestExecution(any());
-        inOrder.verify(listener).afterTestMethod(any());
-        inOrder.verify(listener).afterTestClass(any());
+        assertIterableEquals(List.of(
+            "afterTestExecution",
+            "afterTestMethod",
+            "afterTestClass"),
+            listener.events);
     }
 
     @ParameterizedTest
@@ -316,4 +331,54 @@ public class TestTestContextAdaptorTest {
         }
     }
 
+    private static class MockTestExecutionListener implements TestExecutionListener {
+        private final List<String> eventsThrowingExceptions;
+        List<String> events = new ArrayList<>();
+
+        public MockTestExecutionListener(String... eventsThrowingExceptions) {
+            this.eventsThrowingExceptions = List.of(eventsThrowingExceptions);
+        }
+
+        private void addEvent(String eventName) {
+            events.add(eventName);
+            if (eventsThrowingExceptions.contains(eventName)) {
+                throw new RuntimeException(eventName);
+            }
+        }
+
+        @Override
+        public void beforeTestClass(TestContext testContext) {
+            addEvent("beforeTestClass");
+        }
+
+        @Override
+        public void prepareTestInstance(TestContext testContext) {
+            addEvent("prepareTestInstance");
+        }
+
+        @Override
+        public void beforeTestMethod(TestContext testContext) {
+            addEvent("beforeTestMethod");
+        }
+
+        @Override
+        public void beforeTestExecution(TestContext testContext) {
+            addEvent("beforeTestExecution");
+        }
+
+        @Override
+        public void afterTestExecution(TestContext testContext) {
+            addEvent("afterTestExecution");
+        }
+
+        @Override
+        public void afterTestMethod(TestContext testContext) {
+            addEvent("afterTestMethod");
+        }
+
+        @Override
+        public void afterTestClass(TestContext testContext) {
+            addEvent("afterTestClass");
+        }
+    }
 }
