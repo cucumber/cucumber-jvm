@@ -1,11 +1,9 @@
 package io.cucumber.java8;
 
-import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
 
-final class Java8DataTableDefinition extends AbstractDatatableElementTransformerDefinition
-        implements DataTableTypeDefinition {
+final class Java8DataTableDefinition extends Java8DataTableTypeDefinition {
 
     private final DataTableType dataTableType;
 
