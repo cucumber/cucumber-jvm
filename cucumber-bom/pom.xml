@@ -20,7 +20,7 @@
         <junit-xml-formatter.version>0.5.0</junit-xml-formatter.version>
         <messages.version>24.1.0</messages.version>
         <query.version>12.2.0</query.version>
-        <tag-expressions.version>6.1.0</tag-expressions.version>
+        <tag-expressions.version>6.1.1</tag-expressions.version>
         <testng-xml-formatter.version>0.2.0</testng-xml-formatter.version>
     </properties>
 
