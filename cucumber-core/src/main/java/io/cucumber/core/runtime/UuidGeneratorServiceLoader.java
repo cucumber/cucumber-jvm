@@ -38,7 +38,7 @@ public final class UuidGeneratorServiceLoader {
         this.options = requireNonNull(options);
     }
 
-    UuidGenerator loadUuidGenerator() {
+    public UuidGenerator loadUuidGenerator() {
         Class<? extends UuidGenerator> objectFactoryClass = options.getUuidGeneratorClass();
         ClassLoader classLoader = classLoaderSupplier.get();
         ServiceLoader<UuidGenerator> loader = ServiceLoader.load(UuidGenerator.class, classLoader);

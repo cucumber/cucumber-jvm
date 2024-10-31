@@ -331,6 +331,7 @@ cucumber.ansi-colors.disabled=                                 # true or false.
        
 cucumber.filter.name=                                          # a regular expression.
                                                                # only scenarios with matching names are executed.
+                                                               # combined with cucumber.filter.tags using "and" semantics.
                                                                # example: ^Hello (World|Cucumber)$
                                                                # note: To ensure consistent reports between Cucumber and
                                                                # JUnit 5 prefer using JUnit 5s discovery request filters
@@ -349,6 +350,7 @@ cucumber.features=                                             # comma separated
 
 cucumber.filter.tags=                                          # a cucumber tag expression.
                                                                # only scenarios with matching tags are executed.
+                                                               # combined with cucumber.filter.name using "and" semantics.                                                               
                                                                # example: @Cucumber and not (@Gherkin or @Zucchini)
                                                                # note: To ensure consistent reports between Cucumber and
                                                                # JUnit 5 prefer using JUnit 5s discovery request filters
@@ -373,6 +375,10 @@ cucumber.junit-platform.naming-strategy.long.example-name=     # number or pickl
 
 cucumber.plugin=                                               # comma separated plugin strings.
                                                                # example: pretty, json:path/to/report.json
+
+cucumber.uuid-generator                                        # uuid generator class name of a registered service provider.
+                                                               # default: io.cucumber.core.eventbus.RandomUuidGenerator
+                                                               # example: com.example.MyUuidGenerator
  
 cucumber.object-factory=                                       # object factory class name.
                                                                # example: com.example.MyObjectFactory

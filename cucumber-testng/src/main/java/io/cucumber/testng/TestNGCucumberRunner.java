@@ -23,11 +23,11 @@ import io.cucumber.core.runtime.ObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalObjectFactorySupplier;
 import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
 
 import java.time.Clock;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -98,9 +98,12 @@ public final class TestNGCucumberRunner {
                 .enablePublishPlugin()
                 .build(environmentOptions);
 
-        EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
-
         Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+        UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader,
+            runtimeOptions);
+        EventBus bus = synchronize(
+            new TimeServiceEventBus(Clock.systemUTC(), uuidGeneratorServiceLoader.loadUuidGenerator()));
+
         FeatureParser parser = new FeatureParser(bus::generateId);
         FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
             parser);
