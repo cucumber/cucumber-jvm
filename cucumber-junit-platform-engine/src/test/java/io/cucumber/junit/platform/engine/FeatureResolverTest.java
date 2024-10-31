@@ -61,7 +61,7 @@ class FeatureResolverTest {
     private TestDescriptor getFeature() {
         EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
                 .<CucumberEngineDescriptor> builder()
-                .addSelectorResolver(context -> new FeatureResolver(configurationParameters, aPackage -> true))
+                .addSelectorResolver(context -> new FeatureResolver(configurationParameters))
                 .addTestDescriptorVisitor(context -> new FeatureElementOrderingVisitor())
                 .build();
         resolver.resolve(new SelectorRequest(selectClasspathResource(featurePath)), engineDescriptor);

@@ -26,11 +26,8 @@ class DiscoverySelectorResolver {
     // @formatter:off
     private static final EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
             .<CucumberEngineDescriptor>builder()
-            .addSelectorResolver(context -> new FeatureResolver(
-                    context.getDiscoveryRequest().getConfigurationParameters(),
-                    getPackageFilter(context.getDiscoveryRequest()))
-            )
-            .addTestDescriptorVisitor(context -> new PackageFilteringVisitor(getPackageFilter(context.getDiscoveryRequest())))
+            .addResourceContainerSelectorResolver(new IsFeature())
+            .addSelectorResolver(context -> new FeatureResolver(context.getDiscoveryRequest().getConfigurationParameters()))
             .addTestDescriptorVisitor(context -> new FeatureOrderingVisitor())
             .addTestDescriptorVisitor(context -> new FeatureElementOrderingVisitor())
             .addTestDescriptorVisitor(context -> TestDescriptor::prune)
@@ -65,11 +62,6 @@ class DiscoverySelectorResolver {
             request = new CucumberFeaturesPropertyDiscoveryRequest(request, featureWithLines);
         }
         resolver.resolve(request, engineDescriptor);
-    }
-
-    private static Predicate<String> getPackageFilter(EngineDiscoveryRequest request) {
-        // TODO: Move into JUnit.
-        return composeFilters(request.getFiltersByType(PackageNameFilter.class)).toPredicate();
     }
 
     private static class CucumberFeaturesPropertyDiscoveryRequest implements EngineDiscoveryRequest {
