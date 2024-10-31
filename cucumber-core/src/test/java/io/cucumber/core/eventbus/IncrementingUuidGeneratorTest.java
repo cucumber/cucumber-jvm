@@ -1,5 +1,6 @@
 package io.cucumber.core.eventbus;
 
+import io.cucumber.core.eventbus.IncrementingUuidGenerator.UuidGeneratorState;
 import io.cucumber.core.exception.CucumberException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
@@ -49,7 +50,7 @@ class IncrementingUuidGeneratorTest {
     @Test
     void generates_different_non_null_uuids() {
         // Given
-        UuidGenerator generator = new IncrementingUuidGenerator();
+        UuidGeneratorState generator = new UuidGeneratorState(0, 0);
 
         // When
         List<UUID> uuids = IntStream.rangeClosed(1, 10)
@@ -76,9 +77,11 @@ class IncrementingUuidGeneratorTest {
      */
     @Test
     void same_thread_generates_different_UuidGenerators() {
-        // Given/When
+        // Given
+        IncrementingUuidGenerator generator = new IncrementingUuidGenerator();
+        // When
         List<UUID> uuids = IntStream.rangeClosed(1, 10)
-                .mapToObj(i -> new IncrementingUuidGenerator().generateId())
+                .mapToObj(i -> generator.supplier().get())
                 .collect(Collectors.toList());
 
         // Then
@@ -103,7 +106,7 @@ class IncrementingUuidGeneratorTest {
     void different_classloaders_generators() {
         // Given/When
         List<UUID> uuids = IntStream.rangeClosed(1, 10)
-                .mapToObj(i -> getUuidGeneratorFromOtherClassloader(i).generateId())
+                .mapToObj(i -> getUuidGeneratorFromOtherClassloader(i).supplier().get())
                 .collect(Collectors.toList());
 
         // Then
@@ -113,7 +116,7 @@ class IncrementingUuidGeneratorTest {
     @Test
     void raises_exception_when_out_of_range() {
         // Given
-        IncrementingUuidGenerator generator = new IncrementingUuidGenerator();
+        UuidGeneratorState generator = new UuidGeneratorState(0L, 0L);
         generator.counter.set(IncrementingUuidGenerator.MAX_COUNTER_VALUE - 1);
 
         // When
@@ -131,7 +134,7 @@ class IncrementingUuidGeneratorTest {
         IncrementingUuidGenerator.sessionCounter.set(IncrementingUuidGenerator.MAX_SESSION_ID - 1);
 
         // When
-        CucumberException cucumberException = assertThrows(CucumberException.class, generator::generateId);
+        CucumberException cucumberException = assertThrows(CucumberException.class, generator.supplier()::get);
 
         // Then
         assertThat(cucumberException.getMessage(),
@@ -233,8 +236,8 @@ class IncrementingUuidGeneratorTest {
         UuidGenerator generator2 = getUuidGeneratorFromOtherClassloader(255);
 
         // When the UUID are generated
-        UUID uuid1 = generator1.generateId();
-        UUID uuid2 = generator2.generateId();
+        UUID uuid1 = generator1.supplier().get();
+        UUID uuid2 = generator2.supplier().get();
 
         // Then the UUID are the same
         assertEquals(removeEpochTime(uuid1), removeEpochTime(uuid2));
@@ -247,8 +250,8 @@ class IncrementingUuidGeneratorTest {
         UuidGenerator generator2 = getUuidGeneratorFromOtherClassloader(2);
 
         // When the UUID are generated
-        UUID uuid1 = generator1.generateId();
-        UUID uuid2 = generator2.generateId();
+        UUID uuid1 = generator1.supplier().get();
+        UUID uuid2 = generator2.supplier().get();
 
         // Then the UUID are the same
         assertNotEquals(removeEpochTime(uuid1), removeEpochTime(uuid2));

@@ -91,7 +91,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
         return new UuidGeneratorState(sessionId, classloaderId)::generateId;
     }
 
-    private static class UuidGeneratorState {
+    static class UuidGeneratorState {
 
         /**
          * Computed UUID MSB value.
@@ -103,7 +103,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
          */
         final AtomicLong counter = new AtomicLong(-1);
 
-        private UuidGeneratorState(long sessionId, long classloaderId) {
+        UuidGeneratorState(long sessionId, long classloaderId) {
             if (sessionId == MAX_SESSION_ID) {
                 throw new CucumberException(
                     "Out of " + IncrementingUuidGenerator.class.getSimpleName() +
