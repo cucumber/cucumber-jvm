@@ -44,7 +44,8 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
     public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
         TestSource testSource = createEngineTestSource(discoveryRequest);
         CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, testSource);
-        new DiscoverySelectorResolver().resolveSelectors(discoveryRequest, engineDescriptor);
+        FeaturesPropertyResolver resolver = new FeaturesPropertyResolver(new DiscoverySelectorResolver());
+        resolver.resolveSelectors(discoveryRequest, engineDescriptor);
         return engineDescriptor;
     }
 
