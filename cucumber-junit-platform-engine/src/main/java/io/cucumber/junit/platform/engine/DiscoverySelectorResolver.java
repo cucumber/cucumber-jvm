@@ -4,9 +4,6 @@ import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 
-import static java.util.Objects.requireNonNull;
-import static org.junit.platform.engine.Filter.composeFilters;
-
 class DiscoverySelectorResolver {
 
     // @formatter:off

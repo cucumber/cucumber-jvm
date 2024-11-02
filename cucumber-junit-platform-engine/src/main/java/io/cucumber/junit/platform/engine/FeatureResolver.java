@@ -5,8 +5,6 @@ import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
@@ -43,13 +41,17 @@ import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.Featu
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementAt;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementsOf;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectFeature;
+import static io.cucumber.junit.platform.engine.FeatureOrigin.EXAMPLES_SEGMENT_TYPE;
+import static io.cucumber.junit.platform.engine.FeatureOrigin.EXAMPLE_SEGMENT_TYPE;
+import static io.cucumber.junit.platform.engine.FeatureOrigin.FEATURE_SEGMENT_TYPE;
+import static io.cucumber.junit.platform.engine.FeatureOrigin.RULE_SEGMENT_TYPE;
+import static io.cucumber.junit.platform.engine.FeatureOrigin.SCENARIO_SEGMENT_TYPE;
 import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 
 final class FeatureResolver implements SelectorResolver {
-
-    private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
 
     private final ResourceScanner<Feature> featureScanner;
 
@@ -63,9 +65,9 @@ final class FeatureResolver implements SelectorResolver {
         this.namingStrategy = options.namingStrategy();
         this.featureParser = createFeatureParser(options);
         this.featureScanner = new ResourceScanner<>(
-                ClassLoaders::getDefaultClassLoader,
-                FeatureIdentifier::isFeature,
-                featureParser::parseResource);
+            ClassLoaders::getDefaultClassLoader,
+            FeatureIdentifier::isFeature,
+            featureParser::parseResource);
     }
 
     private static CachingFeatureParser createFeatureParser(CucumberEngineOptions options) {
@@ -92,7 +94,7 @@ final class FeatureResolver implements SelectorResolver {
         Node selected = selector.getElement();
         return selected.getParent()
                 .map(parent -> context.addToParent(() -> selectElement(feature, parent),
-                        createTestDescriptor(feature, selected)))
+                    createTestDescriptor(feature, selected)))
                 .orElseGet(() -> context.addToParent(createTestDescriptor(feature, selected)))
                 .map(descriptor -> Match.exact(descriptor, () -> selectElementsOf(feature, selected)))
                 .map(Resolution::match)
@@ -138,11 +140,14 @@ final class FeatureResolver implements SelectorResolver {
             return Resolution.unresolved();
         }
         if (resources.size() > 1) {
-            log.warn(() -> String.format("There are %s identically named resources named %s on the classpath. Using the first.", resources.size(), selector.getClasspathResourceName()));
+            throw new IllegalArgumentException(String.format(
+                "Found %s resources named %s classpath %s. Using the first.",
+                resources.size(), selector.getClasspathResourceName(),
+                resources.stream().map(Resource::getUri).collect(toList())));
         }
-        Resource resource = resources.iterator().next();
-
-        return featureParser.parseResource(resource)
+        return resources.stream()
+                .findFirst()
+                .flatMap(featureParser::parseResource)
                 .map(feature -> selector.getPosition()
                         .map(position -> selectElementAt(feature, position))
                         .orElseGet(() -> Optional.of(selectFeature(feature))))
@@ -197,10 +202,10 @@ final class FeatureResolver implements SelectorResolver {
 
             if (node instanceof Node.Feature) {
                 return Optional.of(new FeatureDescriptor(
-                        parent.getUniqueId().append(FeatureOrigin.FEATURE_SEGMENT_TYPE, feature.getUri().toString()),
-                        name,
-                        source.featureSource(),
-                        feature));
+                    parent.getUniqueId().append(FEATURE_SEGMENT_TYPE, feature.getUri().toString()),
+                    name,
+                    source.featureSource(),
+                    feature));
             }
 
             TestSource testSource = source.nodeSource(node);
@@ -208,55 +213,55 @@ final class FeatureResolver implements SelectorResolver {
 
             if (node instanceof Node.Rule) {
                 return Optional.of(new RuleDescriptor(
-                        parameters,
-                        parent.getUniqueId().append(FeatureOrigin.RULE_SEGMENT_TYPE,
-                                String.valueOf(line)),
-                        name,
-                        testSource,
-                        line));
+                    parameters,
+                    parent.getUniqueId().append(RULE_SEGMENT_TYPE,
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line));
             }
 
             if (node instanceof Node.Scenario) {
                 return Optional.of(new PickleDescriptor(
-                        parameters,
-                        parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE,
-                                String.valueOf(line)),
-                        name,
-                        testSource,
-                        line,
-                        feature.getPickleAt(node)));
+                    parameters,
+                    parent.getUniqueId().append(SCENARIO_SEGMENT_TYPE,
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line,
+                    feature.getPickleAt(node)));
             }
 
             if (node instanceof Node.ScenarioOutline) {
                 return Optional.of(new ScenarioOutlineDescriptor(
-                        parameters,
-                        parent.getUniqueId().append(FeatureOrigin.SCENARIO_SEGMENT_TYPE,
-                                String.valueOf(line)),
-                        name,
-                        testSource,
-                        line));
+                    parameters,
+                    parent.getUniqueId().append(SCENARIO_SEGMENT_TYPE,
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line));
             }
 
             if (node instanceof Node.Examples) {
                 return Optional.of(new ExamplesDescriptor(
-                        parameters,
-                        parent.getUniqueId().append(FeatureOrigin.EXAMPLES_SEGMENT_TYPE,
-                                String.valueOf(line)),
-                        name,
-                        testSource,
-                        line));
+                    parameters,
+                    parent.getUniqueId().append(EXAMPLES_SEGMENT_TYPE,
+                        String.valueOf(line)),
+                    name,
+                    testSource,
+                    line));
             }
 
             if (node instanceof Node.Example) {
                 Pickle pickle = feature.getPickleAt(node);
                 return Optional.of(new PickleDescriptor(
-                        parameters,
-                        parent.getUniqueId().append(FeatureOrigin.EXAMPLE_SEGMENT_TYPE,
-                                String.valueOf(line)),
-                        namingStrategy.nameExample(node, pickle),
-                        testSource,
-                        line,
-                        pickle));
+                    parameters,
+                    parent.getUniqueId().append(EXAMPLE_SEGMENT_TYPE,
+                        String.valueOf(line)),
+                    namingStrategy.nameExample(node, pickle),
+                    testSource,
+                    line,
+                    pickle));
             }
             throw new IllegalStateException("Got a " + node.getClass() + " but didn't have a case to handle it");
         };

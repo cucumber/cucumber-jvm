@@ -2,6 +2,7 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoveryFilter;
 import org.junit.platform.engine.DiscoverySelector;
@@ -44,12 +45,16 @@ class FeaturesPropertyResolver {
     void resolveSelectors(EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor) {
         ConfigurationParameters configuration = request.getConfigurationParameters();
         CucumberEngineOptions options = new CucumberEngineOptions(configuration);
-        Set<CucumberDiscoverySelectors.FeatureWithLinesSelector> featureWithLines = options.featuresWithLines();
-        if (!featureWithLines.isEmpty()) {
-            warnWhenCucumberFeaturesPropertyIsUsed();
-            request = new CucumberFeaturesPropertyDiscoveryRequest(request, featureWithLines);
+        Set<FeatureWithLinesSelector> selectors = options.featuresWithLines();
+
+        if (selectors.isEmpty()) {
+            delegate.resolveSelectors(request, engineDescriptor);
+            return;
         }
-        delegate.resolveSelectors(request, engineDescriptor);
+
+        warnWhenCucumberFeaturesPropertyIsUsed();
+        EngineDiscoveryRequest replacement = new FeaturesPropertyDiscoveryRequest(request, selectors);
+        delegate.resolveSelectors(replacement, engineDescriptor);
     }
 
     private static void warnWhenCucumberFeaturesPropertyIsUsed() {
@@ -58,23 +63,23 @@ class FeaturesPropertyResolver {
         }
         warnedWhenCucumberFeaturesPropertyIsUsed = true;
         log.warn(
-                () -> "Discovering tests using the " + FEATURES_PROPERTY_NAME + " property. Other discovery " +
-                        "selectors are ignored!\n" +
-                        "\n" +
-                        "This is a work around for the limited JUnit 5 support in Maven and Gradle. " +
-                        "Please request/upvote/sponsor/ect better support for JUnit 5 discovery selectors. " +
-                        "For details see: https://github.com/cucumber/cucumber-jvm/pull/2498\n" +
-                        "\n" +
-                        "If you are using the JUnit 5 Suite Engine, Platform Launcher API or Console Launcher you " +
-                        "should not use this property. Please consult the JUnit 5 documentation on test selection.");
+            () -> "Discovering tests using the " + FEATURES_PROPERTY_NAME + " property. Other discovery " +
+                    "selectors are ignored!\n" +
+                    "\n" +
+                    "This is a work around for the limited JUnit 5 support in Maven and Gradle. " +
+                    "Please request/upvote/sponsor/ect better support for JUnit 5 discovery selectors. " +
+                    "For details see: https://github.com/cucumber/cucumber-jvm/pull/2498\n" +
+                    "\n" +
+                    "If you are using the JUnit 5 Suite Engine, Platform Launcher API or Console Launcher you " +
+                    "should not use this property. Please consult the JUnit 5 documentation on test selection.");
     }
 
-    private static class CucumberFeaturesPropertyDiscoveryRequest implements EngineDiscoveryRequest {
+    private static class FeaturesPropertyDiscoveryRequest implements EngineDiscoveryRequest {
 
         private final EngineDiscoveryRequest delegate;
         private final Set<? extends DiscoverySelector> selectors;
 
-        public CucumberFeaturesPropertyDiscoveryRequest(
+        public FeaturesPropertyDiscoveryRequest(
                 EngineDiscoveryRequest delegate,
                 Set<? extends DiscoverySelector> selectors
         ) {
