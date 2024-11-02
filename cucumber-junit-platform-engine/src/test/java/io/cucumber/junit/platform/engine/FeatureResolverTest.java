@@ -38,6 +38,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 import static org.junit.platform.engine.support.descriptor.ClasspathResourceSource.from;
 import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 
+// TODO: Move this into CucumberTestEngineTest
 class FeatureResolverTest {
 
     private final String featurePath = "io/cucumber/junit/platform/engine/feature-with-outline.feature";

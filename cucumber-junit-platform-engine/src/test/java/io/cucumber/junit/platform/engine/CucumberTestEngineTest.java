@@ -65,6 +65,7 @@ import static org.junit.platform.testkit.engine.EventConditions.finishedSuccessf
 import static org.junit.platform.testkit.engine.EventConditions.skippedWithReason;
 import static org.junit.platform.testkit.engine.EventConditions.test;
 
+// TODO: Split out tests to multiple classes, but do use EngineTestKit everywhere
 @WithLogRecordListener
 class CucumberTestEngineTest {
 
@@ -82,6 +83,7 @@ class CucumberTestEngineTest {
 
     @Test
     void createExecutionContext() {
+        // TODO: We don't need this test.
         EngineExecutionListener listener = new EmptyEngineExecutionListener();
         ConfigurationParameters configuration = new EmptyConfigurationParameters();
         EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
