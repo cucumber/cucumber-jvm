@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static io.cucumber.core.feature.FeatureWithLines.create;
@@ -24,7 +24,7 @@ import static io.cucumber.core.plugin.PrettyFormatter.relativize;
 public final class RerunFormatter implements ConcurrentEventListener {
 
     private final UTF8PrintWriter out;
-    private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new HashMap<>();
+    private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new LinkedHashMap<>();
 
     public RerunFormatter(OutputStream out) {
         this.out = new UTF8PrintWriter(out);
