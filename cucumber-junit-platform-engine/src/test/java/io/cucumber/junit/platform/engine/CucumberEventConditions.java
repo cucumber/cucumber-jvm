@@ -3,11 +3,16 @@ package io.cucumber.junit.platform.engine;
 import org.assertj.core.api.Condition;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
+import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.testkit.engine.Event;
 import org.junit.platform.testkit.engine.EventConditions;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.allOf;
 import static org.junit.platform.commons.util.FunctionUtils.where;
@@ -31,6 +36,20 @@ class CucumberEventConditions {
         return allOf(example(), uniqueIdSubstring(uniqueIdSubstring), displayName(displayName));
     }
 
+    static Condition<? super Event> example(String uniqueIdSubstring) {
+        return allOf(example(), uniqueIdSubstring(uniqueIdSubstring));
+    }
+
+    static Condition<Event> example() {
+        return new Condition<>(
+            byTestDescriptor(where(TestDescriptor::getUniqueId, lastSegmentTYpe("example"))),
+            "examples descriptor");
+    }
+
+    static Condition<? super Event> examples(String uniqueIdSubstring) {
+        return allOf(examples(), uniqueIdSubstring(uniqueIdSubstring));
+    }
+
     static Condition<? super Event> examples(String uniqueIdSubstring, String displayName) {
         return allOf(examples(), uniqueIdSubstring(uniqueIdSubstring), displayName(displayName));
     }
@@ -39,6 +58,23 @@ class CucumberEventConditions {
         return new Condition<>(
             byTestDescriptor(where(TestDescriptor::getUniqueId, lastSegmentTYpe("feature"))),
             "feature descriptor");
+    }
+
+    static Condition<Event> tags(Set<String> tags) {
+        return new Condition<>(
+            byTestDescriptor(where(TestDescriptor::getTags, hasTags(tags))),
+            "has tags " + tags);
+    }
+
+    static Condition<Event> tags(String... tags) {
+        return tags(new HashSet<>(Arrays.asList(tags)));
+    }
+
+    private static Predicate<Set<TestTag>> hasTags(Set<String> expected) {
+        return testTags -> {
+            Set<String> actual = testTags.stream().map(TestTag::getName).collect(Collectors.toSet());
+            return expected.equals(actual);
+        };
     }
 
     static Condition<Event> feature(String uniqueIdSubstring, String displayName) {
@@ -84,12 +120,6 @@ class CucumberEventConditions {
 
     static Condition<Event> emptySource() {
         return new Condition<>(event -> !event.getTestDescriptor().getSource().isPresent(), "without a test source");
-    }
-
-    static Condition<Event> example() {
-        return new Condition<>(
-            byTestDescriptor(where(TestDescriptor::getUniqueId, lastSegmentTYpe("example"))),
-            "examples descriptor");
     }
 
     private static Predicate<UniqueId> lastSegmentTYpe(String type) {

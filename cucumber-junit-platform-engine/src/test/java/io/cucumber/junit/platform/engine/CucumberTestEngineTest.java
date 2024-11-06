@@ -45,6 +45,8 @@ import static io.cucumber.junit.platform.engine.CucumberEventConditions.prefix;
 import static io.cucumber.junit.platform.engine.CucumberEventConditions.rule;
 import static io.cucumber.junit.platform.engine.CucumberEventConditions.scenario;
 import static io.cucumber.junit.platform.engine.CucumberEventConditions.source;
+import static io.cucumber.junit.platform.engine.CucumberEventConditions.tags;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -565,4 +567,21 @@ class CucumberTestEngineTest {
                 .haveExactly(1,
                     event(skippedWithReason("'cucumber.filter.name=^Nothing$' did not match this scenario")));
     }
+
+    @Test
+    void cucumberTagsAreConvertedToJunitTags() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/feature-with-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), tags(emptySet())))
+                .haveAtLeastOne(
+                    event(scenario("scenario:5"), tags("FeatureTag", "ScenarioTag", "ResourceA", "ResourceAReadOnly")))
+                .haveAtLeastOne(event(scenario("scenario:11"), tags(emptySet())))
+                .haveAtLeastOne(event(examples("examples:17"), tags(emptySet())))
+                .haveAtLeastOne(event(example("example:19"), tags("FeatureTag", "ScenarioOutlineTag", "Example1Tag")));
+    }
+
 }

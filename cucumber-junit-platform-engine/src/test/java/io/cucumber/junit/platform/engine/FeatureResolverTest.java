@@ -51,7 +51,6 @@ class FeatureResolverTest {
     void feature() {
         TestDescriptor feature = getFeature();
         assertEquals("A feature with scenario outlines", feature.getDisplayName());
-        assertEquals(emptySet(), feature.getTags());
         assertEquals(of(from(featurePath)), feature.getSource());
         assertEquals(CONTAINER, feature.getType());
         assertEquals(
@@ -74,9 +73,6 @@ class FeatureResolverTest {
     void scenario() {
         TestDescriptor scenario = getScenario();
         assertEquals("A scenario", scenario.getDisplayName());
-        assertEquals(
-            asSet(create("FeatureTag"), create("ScenarioTag"), create("ResourceA"), create("ResourceAReadOnly")),
-            scenario.getTags());
         assertEquals(of(from(featurePath, from(5, 3))), scenario.getSource());
         assertEquals(TEST, scenario.getType());
         assertEquals(
@@ -118,9 +114,6 @@ class FeatureResolverTest {
     void outline() {
         TestDescriptor outline = getOutline();
         assertEquals("A scenario outline", outline.getDisplayName());
-        assertEquals(
-            emptySet(),
-            outline.getTags());
         assertEquals(of(from(featurePath, from(11, 3))), outline.getSource());
         assertEquals(CONTAINER, outline.getType());
         assertEquals(
@@ -139,9 +132,6 @@ class FeatureResolverTest {
     void example() {
         TestDescriptor example = getExample();
         assertEquals("Example #1.1", example.getDisplayName());
-        assertEquals(
-            asSet(create("FeatureTag"), create("Example1Tag"), create("ScenarioOutlineTag")),
-            example.getTags());
         assertEquals(of(from(featurePath, from(19, 7))), example.getSource());
         assertEquals(TEST, example.getType());
 
