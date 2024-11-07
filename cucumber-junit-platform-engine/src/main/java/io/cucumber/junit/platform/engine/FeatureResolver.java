@@ -199,16 +199,15 @@ final class FeatureResolver implements SelectorResolver {
         return parent -> {
             FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
             String name = namingStrategy.name(node);
-
+            TestSource testSource = source.nodeSource(node);
             if (node instanceof Node.Feature) {
                 return Optional.of(new FeatureDescriptor(
                     parent.getUniqueId().append(FEATURE_SEGMENT_TYPE, feature.getUri().toString()),
                     name,
-                    source.featureSource(),
+                    testSource,
                     feature));
             }
 
-            TestSource testSource = source.nodeSource(node);
             int line = node.getLocation().getLine();
 
             if (node instanceof Node.Rule) {

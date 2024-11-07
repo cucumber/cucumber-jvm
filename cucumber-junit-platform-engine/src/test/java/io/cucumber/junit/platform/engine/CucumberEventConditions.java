@@ -115,7 +115,7 @@ class CucumberEventConditions {
 
     static Condition<Event> source(TestSource testSource) {
         return new Condition<>(event -> event.getTestDescriptor().getSource().filter(testSource::equals).isPresent(),
-            "test engine with test source '%s'", testSource);
+            "test descriptor with test source '%s'", testSource);
     }
 
     static Condition<Event> emptySource() {

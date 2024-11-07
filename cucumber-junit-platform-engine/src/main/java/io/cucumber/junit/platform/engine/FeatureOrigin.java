@@ -49,8 +49,6 @@ abstract class FeatureOrigin {
         return FEATURE_SEGMENT_TYPE.equals(segment.getType());
     }
 
-    abstract TestSource featureSource();
-
     abstract TestSource nodeSource(Node node);
 
     private static class FileFeatureOrigin extends FeatureOrigin {
@@ -59,11 +57,6 @@ abstract class FeatureOrigin {
 
         FileFeatureOrigin(FileSource source) {
             this.source = source;
-        }
-
-        @Override
-        TestSource featureSource() {
-            return source;
         }
 
         @Override
@@ -82,11 +75,6 @@ abstract class FeatureOrigin {
         }
 
         @Override
-        TestSource featureSource() {
-            return source;
-        }
-
-        @Override
         TestSource nodeSource(Node node) {
             return source;
         }
@@ -99,11 +87,6 @@ abstract class FeatureOrigin {
 
         ClasspathFeatureOrigin(ClasspathResourceSource source) {
             this.source = source;
-        }
-
-        @Override
-        TestSource featureSource() {
-            return source;
         }
 
         @Override

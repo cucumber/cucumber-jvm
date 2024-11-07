@@ -15,6 +15,8 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.discovery.FilePosition;
 import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
+import org.junit.platform.engine.support.descriptor.FileSource;
 import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Event;
 
@@ -34,7 +36,9 @@ import java.util.stream.Collectors;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.CucumberEngineDescriptor.ENGINE_ID;
 import static io.cucumber.junit.platform.engine.CucumberEventConditions.emptySource;
 import static io.cucumber.junit.platform.engine.CucumberEventConditions.engine;
@@ -62,6 +66,9 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
+import static org.junit.platform.engine.discovery.PackageNameFilter.includePackageNames;
+import static org.junit.platform.engine.support.descriptor.FilePosition.from;
+import static org.junit.platform.testkit.engine.EventConditions.displayName;
 import static org.junit.platform.testkit.engine.EventConditions.event;
 import static org.junit.platform.testkit.engine.EventConditions.finishedSuccessfully;
 import static org.junit.platform.testkit.engine.EventConditions.skippedWithReason;
@@ -98,7 +105,6 @@ class CucumberTestEngineTest {
     @Test
     void empty() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .execute()
                 .allEvents()
                 .assertThatEvents()
@@ -108,7 +114,6 @@ class CucumberTestEngineTest {
     @Test
     void notCucumber() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectUniqueId(forEngine("not-cucumber")))
                 .execute()
                 .allEvents()
@@ -119,14 +124,13 @@ class CucumberTestEngineTest {
     @Test
     void supportsClassSelector() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectClass(RunCucumberTest.class))
                 .execute()
                 .containerEvents()
                 .assertEventsMatchLooselyInOrder(
                     feature("disabled.feature"),
                     feature("empty-scenario.feature"),
-                    feature("feature-with-outline.feature"),
+                    feature("scenario-outline.feature"),
                     feature("rule.feature"),
                     feature("single.feature"),
                     feature("with%20space.feature"));
@@ -135,7 +139,6 @@ class CucumberTestEngineTest {
     @Test
     void supportsClasspathResourceSelector() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
                 .allEvents()
@@ -176,7 +179,6 @@ class CucumberTestEngineTest {
                 new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))));
 
         JUnitException exception = assertThrows(JUnitException.class, () -> EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectClasspathResource(resources))
                 .execute()
                 .allEvents()
@@ -197,7 +199,6 @@ class CucumberTestEngineTest {
     @Test
     void supportsClasspathResourceSelectorWithFilePosition() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature", //
                     FilePosition.from(5)))
                 .execute()
@@ -209,21 +210,19 @@ class CucumberTestEngineTest {
     @Test
     void supportsMultipleClasspathResourceSelectors() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(
                     selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"),
-                    selectClasspathResource("io/cucumber/junit/platform/engine/feature-with-outline.feature"))
+                    selectClasspathResource("io/cucumber/junit/platform/engine/scenario-outline.feature"))
                 .execute()
                 .allEvents()
                 .assertThatEvents()
                 .haveExactly(2, event(feature("single.feature", "A feature with a single scenario")))
-                .haveExactly(2, event(feature("feature-with-outline.feature", "A feature with scenario outlines")));
+                .haveExactly(2, event(feature("scenario-outline.feature", "A feature with scenario outlines")));
     }
 
     @Test
     void supportsClasspathResourceSelectorWithSpaceInResourceName() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/with space.feature"))
                 .execute()
                 .allEvents()
@@ -235,14 +234,13 @@ class CucumberTestEngineTest {
     void supportsClasspathRootSelector() {
         Path classpathRoot = Paths.get("src/test/resources/");
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectClasspathRoots(singleton(classpathRoot)).get(0))
                 .execute()
                 .containerEvents()
                 .assertEventsMatchLooselyInOrder(
                     feature("disabled.feature"),
                     feature("empty-scenario.feature"),
-                    feature("feature-with-outline.feature"),
+                    feature("scenario-outline.feature"),
                     feature("rule.feature"),
                     feature("single.feature"),
                     feature("with%20space.feature"),
@@ -252,14 +250,13 @@ class CucumberTestEngineTest {
     @Test
     void supportsDirectorySelector() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectDirectory("src/test/resources/io/cucumber/junit/platform/engine"))
                 .execute()
                 .containerEvents()
                 .assertEventsMatchLooselyInOrder(
                     feature("disabled.feature"),
                     feature("empty-scenario.feature"),
-                    feature("feature-with-outline.feature"),
+                    feature("scenario-outline.feature"),
                     feature("rule.feature"),
                     feature("single.feature"),
                     feature("with%20space.feature"));
@@ -268,7 +265,6 @@ class CucumberTestEngineTest {
     @Test
     void supportsFileSelector() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
                 .allEvents()
@@ -281,7 +277,6 @@ class CucumberTestEngineTest {
     @Test
     void supportsFileSelectorWithFilePosition() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/rule.feature", //
                     FilePosition.from(5)))
                 .execute()
@@ -295,14 +290,13 @@ class CucumberTestEngineTest {
     @Test
     void supportsPackageSelector() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectPackage("io.cucumber.junit.platform.engine"))
                 .execute()
                 .containerEvents()
                 .assertEventsMatchLooselyInOrder(
                     feature("disabled.feature"),
                     feature("empty-scenario.feature"),
-                    feature("feature-with-outline.feature"),
+                    feature("scenario-outline.feature"),
                     feature("rule.feature"),
                     feature("single.feature"),
                     feature("with%20space.feature"));
@@ -312,7 +306,6 @@ class CucumberTestEngineTest {
     void supportsUriSelector() {
         File file = new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature");
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectUri(file.toURI()))
                 .execute()
                 .allEvents()
@@ -326,7 +319,6 @@ class CucumberTestEngineTest {
     void supportsUriSelectorWithFilePosition() {
         File file = new File("src/test/resources/io/cucumber/junit/platform/engine/rule.feature");
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectUri(file.toURI() + "?line=5"))
                 .execute()
                 .allEvents()
@@ -342,7 +334,6 @@ class CucumberTestEngineTest {
     })
     void supportsUniqueIdSelector(UniqueId selected) {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(DiscoverySelectors.selectUniqueId(selected))
                 .execute()
                 .testEvents()
@@ -352,7 +343,6 @@ class CucumberTestEngineTest {
 
     static Set<UniqueId> supportsUniqueIdSelectorFromClasspathUri() {
         return EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectPackage("io.cucumber.junit.platform.engine"))
                 .execute()
                 .allEvents()
@@ -364,7 +354,6 @@ class CucumberTestEngineTest {
 
     static Set<UniqueId> supportsUniqueIdSelectorFromFileUri() {
         return EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectDirectory("src/test/resources/io/cucumber/junit/platform/engine"))
                 .execute()
                 .allEvents()
@@ -377,7 +366,6 @@ class CucumberTestEngineTest {
     static Set<UniqueId> supportsUniqueIdSelectorFromJarFileUri() {
         URI uri = new File("src/test/resources/feature.jar").toURI();
         return EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectUri(uri))
                 .execute()
                 .allEvents()
@@ -390,22 +378,20 @@ class CucumberTestEngineTest {
     @Test
     void supportsFilePositionFeature() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(
-                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature", //
+                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature", //
                         FilePosition.from(2)))
                 .execute()
                 .allEvents()
                 .assertThatEvents()
-                .haveExactly(2, event(feature("feature-with-outline.feature", "A feature with scenario outlines")));
+                .haveExactly(2, event(feature("scenario-outline.feature", "A feature with scenario outlines")));
     }
 
     @Test
     void supportsFilePositionScenario() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(
-                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature", //
+                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature", //
                         FilePosition.from(5)))
                 .execute()
                 .allEvents()
@@ -418,9 +404,8 @@ class CucumberTestEngineTest {
     @Test
     void supportsFilePositionScenarioOutline() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(
-                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature", //
+                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature", //
                         FilePosition.from(11)))
                 .execute()
                 .allEvents()
@@ -433,9 +418,8 @@ class CucumberTestEngineTest {
     @Test
     void supportsFilePositionExamples() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(
-                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature", //
+                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature", //
                         FilePosition.from(17)))
                 .execute()
                 .allEvents()
@@ -448,9 +432,8 @@ class CucumberTestEngineTest {
     @Test
     void supportsFilePositionExample() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(
-                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature", //
+                    selectFile("src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature", //
                         FilePosition.from(19)))
                 .execute()
                 .allEvents()
@@ -463,7 +446,6 @@ class CucumberTestEngineTest {
     @Test
     void supportsFilePositionRule() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature", //
                     FilePosition.from(3)))
                 .execute()
@@ -475,7 +457,6 @@ class CucumberTestEngineTest {
     @Test
     void executesFeaturesInUriOrderByDefault() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectPackage(""))
                 .execute()
                 .containerEvents()
@@ -483,7 +464,7 @@ class CucumberTestEngineTest {
                 .assertEventsMatchLooselyInOrder(
                     feature("disabled.feature"),
                     feature("empty-scenario.feature"),
-                    feature("feature-with-outline.feature"),
+                    feature("scenario-outline.feature"),
                     feature("rule.feature"),
                     feature("single.feature"),
                     feature("with%20space.feature"),
@@ -493,7 +474,6 @@ class CucumberTestEngineTest {
     @Test
     void supportsFeaturesProperty() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .configurationParameter(FEATURES_PROPERTY_NAME,
                     "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
                 .execute()
@@ -507,7 +487,6 @@ class CucumberTestEngineTest {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     void supportsFeaturesPropertyWillIgnoreOtherSelectors(LogRecordListener logRecordListener) {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .configurationParameter(FEATURES_PROPERTY_NAME,
                     "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
@@ -531,7 +510,6 @@ class CucumberTestEngineTest {
     @Test
     void onlySetsEngineSourceWhenFeaturesPropertyIsUsed() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
                 .allEvents()
@@ -543,7 +521,6 @@ class CucumberTestEngineTest {
     @Test
     void selectAndSkipDisabledScenarioByTags() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
@@ -557,22 +534,19 @@ class CucumberTestEngineTest {
     @Test
     void selectAndSkipDisabledScenarioByName() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
                 .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^Nothing$")
                 .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
                 .testEvents()
                 .assertThatEvents()
-                .haveExactly(1, event(test()))
-                .haveExactly(1,
-                    event(skippedWithReason("'cucumber.filter.name=^Nothing$' did not match this scenario")));
+                .haveExactly(1, event(test(),
+                    event(skippedWithReason("'cucumber.filter.name=^Nothing$' did not match this scenario"))));
     }
 
     @Test
     void cucumberTagsAreConvertedToJunitTags() {
         EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true")
-                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/feature-with-outline.feature"))
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/scenario-outline.feature"))
                 .execute()
                 .allEvents()
                 .assertThatEvents()
@@ -582,6 +556,158 @@ class CucumberTestEngineTest {
                 .haveAtLeastOne(event(scenario("scenario:11"), tags(emptySet())))
                 .haveAtLeastOne(event(examples("examples:17"), tags(emptySet())))
                 .haveAtLeastOne(event(example("example:19"), tags("FeatureTag", "ScenarioOutlineTag", "Example1Tag")));
+    }
+
+    @Test
+    void providesClasspathSourceWhenClasspathResourceIsSelected() {
+        String feature = "io/cucumber/junit/platform/engine/scenario-outline.feature";
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource(feature))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), source(ClasspathResourceSource.from(feature, from(2, 1)))))
+                .haveAtLeastOne(
+                    event(scenario("scenario:5"), source(ClasspathResourceSource.from(feature, from(5, 3)))))
+                .haveAtLeastOne(
+                    event(scenario("scenario:11"), source(ClasspathResourceSource.from(feature, from(11, 3)))))
+                .haveAtLeastOne(
+                    event(examples("examples:17"), source(ClasspathResourceSource.from(feature, from(17, 5)))))
+                .haveAtLeastOne(
+                    event(example("example:19"), source(ClasspathResourceSource.from(feature, from(19, 7)))));
+    }
+
+    @Test
+    void providesFileSourceWhenFileIsSelected() {
+        File feature = new File("src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature");
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectFile(feature))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), source(FileSource.from(feature, from(2, 1)))))
+                .haveAtLeastOne(event(scenario("scenario:5"), source(FileSource.from(feature, from(5, 3)))))
+                .haveAtLeastOne(event(scenario("scenario:11"), source(FileSource.from(feature, from(11, 3)))))
+                .haveAtLeastOne(event(examples("examples:17"), source(FileSource.from(feature, from(17, 5)))))
+                .haveAtLeastOne(event(example("example:19"), source(FileSource.from(feature, from(19, 7)))));
+    }
+
+    @Test
+    void supportsPackageFilterForClasspathResources() {
+        Path classpathRoot = Paths.get("src/test/resources/");
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathRoots(singleton(classpathRoot)).get(0))
+                .filters(includePackageNames("io.cucumber.junit.platform"))
+                .execute()
+                .containerEvents()
+                .assertEventsMatchLooselyInOrder(
+                    feature("disabled.feature"),
+                    feature("empty-scenario.feature"),
+                    feature("scenario-outline.feature"),
+                    feature("rule.feature"),
+                    feature("single.feature"),
+                    feature("with%20space.feature"));
+    }
+
+    @Test
+    void supportsShortWithNumberAndPickleIfParameterizedNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short")
+                .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME,
+                    "number-and-pickle-if-parameterized")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(), displayName("A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName("Example #1.1: A scenario full of Cucumbers")));
+    }
+
+    @Test
+    void defaultsToShortWithNumberAndPickleIfParameterizedNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(), displayName("A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName("Example #1.1: A scenario full of Cucumbers")));
+    }
+
+    @Test
+    void supportsLongWithNumberNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
+                .configurationParameter(JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "number")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(),
+                    displayName("A feature with a parameterized scenario outline - A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName(
+                    "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName(
+                    "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety - Example #1.1")));
+    }
+
+    @Test
+    void supportsLongWithPickleNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
+                .configurationParameter(JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "pickle")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(),
+                    displayName("A feature with a parameterized scenario outline - A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName(
+                    "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName(
+                    "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety - A scenario full of Cucumbers")));
+    }
+
+    @Test
+    void supportsShortWithPickleNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short")
+                .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "pickle")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(), displayName("A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName("A scenario full of Cucumbers")));
+    }
+
+    @Test
+    void supportsShortWithNumberNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short")
+                .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "number")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(), displayName("A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName("Example #1.1")));
     }
 
 }

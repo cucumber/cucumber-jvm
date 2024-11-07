@@ -45,7 +45,7 @@ class DiscoverySelectorResolverTest {
         Set<UniqueId> selectors = new HashSet<>();
 
         DiscoverySelector resource = selectDirectory(
-            "src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
+            "src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature");
         selectSomePickle(resource).ifPresent(selectors::add);
 
         DiscoverySelector resource2 = selectDirectory(
@@ -73,7 +73,7 @@ class DiscoverySelectorResolverTest {
         Set<UniqueId> selectors = new HashSet<>();
 
         DiscoverySelector resource = selectDirectory(
-            "src/test/resources/io/cucumber/junit/platform/engine/feature-with-outline.feature");
+            "src/test/resources/io/cucumber/junit/platform/engine/scenario-outline.feature");
         selectAllPickles(resource).forEach(selectors::add);
 
         EngineDiscoveryRequest discoveryRequest = new SelectorRequest(
