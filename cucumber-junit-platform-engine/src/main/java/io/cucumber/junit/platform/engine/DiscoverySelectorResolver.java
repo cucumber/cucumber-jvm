@@ -10,7 +10,7 @@ class DiscoverySelectorResolver {
     private static final EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
             .<CucumberEngineDescriptor>builder()
             .addResourceContainerSelectorResolver(new IsFeature())
-            .addSelectorResolver(context -> new FeatureResolver(context.getDiscoveryRequest().getConfigurationParameters()))
+            .addSelectorResolver(context -> new FeatureResolver(context.getEngineDescriptor().getConfiguration()))
             .addTestDescriptorVisitor(context -> new FeatureOrderingVisitor())
             .addTestDescriptorVisitor(context -> new FeatureElementOrderingVisitor())
             .addTestDescriptorVisitor(context -> TestDescriptor::prune)

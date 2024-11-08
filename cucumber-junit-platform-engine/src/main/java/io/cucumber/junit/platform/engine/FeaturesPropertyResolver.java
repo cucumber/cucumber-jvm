@@ -44,7 +44,7 @@ class FeaturesPropertyResolver {
 
     void resolveSelectors(EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor) {
         ConfigurationParameters configuration = request.getConfigurationParameters();
-        CucumberEngineOptions options = new CucumberEngineOptions(configuration);
+        CucumberConfiguration options = new CucumberConfiguration(configuration);
         Set<FeatureWithLinesSelector> selectors = options.featuresWithLines();
 
         if (selectors.isEmpty()) {

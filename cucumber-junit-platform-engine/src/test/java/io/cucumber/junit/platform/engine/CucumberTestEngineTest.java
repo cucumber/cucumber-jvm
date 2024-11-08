@@ -709,5 +709,4 @@ class CucumberTestEngineTest {
                 .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
                 .haveAtLeastOne(event(example(), displayName("Example #1.1")));
     }
-
 }

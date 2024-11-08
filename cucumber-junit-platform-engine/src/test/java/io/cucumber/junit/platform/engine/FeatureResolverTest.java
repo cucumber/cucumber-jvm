@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
@@ -23,51 +22,26 @@ import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.platform.engine.TestDescriptor.Type.CONTAINER;
-import static org.junit.platform.engine.TestDescriptor.Type.TEST;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
-import static org.junit.platform.engine.support.descriptor.ClasspathResourceSource.from;
-import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 
 // TODO: Move this into CucumberTestEngineTest
 class FeatureResolverTest {
 
     private final String featurePath = "io/cucumber/junit/platform/engine/scenario-outline.feature";
-    private final String featureSegmentValue = CLASSPATH_SCHEME_PREFIX + featurePath;
     private final UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
-    private final CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(id);
     private ConfigurationParameters configurationParameters = new EmptyConfigurationParameters();
-
-    @Test
-    void feature() {
-        TestDescriptor feature = getFeature();
-        assertEquals("A feature with scenario outlines", feature.getDisplayName());
-        assertEquals(CONTAINER, feature.getType());
-        assertEquals(
-            id.append("feature", featureSegmentValue),
-            feature.getUniqueId());
-    }
+    private final CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(id,
+        new CucumberConfiguration(configurationParameters));
 
     private TestDescriptor getFeature() {
         EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
                 .<CucumberEngineDescriptor> builder()
-                .addSelectorResolver(context -> new FeatureResolver(configurationParameters))
+                .addSelectorResolver(context -> new FeatureResolver(new CucumberConfiguration(configurationParameters)))
                 .addTestDescriptorVisitor(context -> new FeatureElementOrderingVisitor())
                 .build();
         resolver.resolve(new SelectorRequest(selectClasspathResource(featurePath)), engineDescriptor);
         Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
         return features.iterator().next();
-    }
-
-    @Test
-    void scenario() {
-        TestDescriptor scenario = getScenario();
-        assertEquals("A scenario", scenario.getDisplayName());
-        assertEquals(TEST, scenario.getType());
-        assertEquals(
-            id.append("feature", featureSegmentValue)
-                    .append("scenario", "5"),
-            scenario.getUniqueId());
     }
 
     @Test

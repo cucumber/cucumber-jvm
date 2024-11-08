@@ -20,7 +20,7 @@ import static org.hamcrest.core.IsIterableContaining.hasItems;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CucumberEngineOptionsTest {
+class CucumberConfigurationTest {
 
     @Test
     void getPluginNames() {
@@ -28,12 +28,12 @@ class CucumberEngineOptionsTest {
             Constants.PLUGIN_PROPERTY_NAME,
             "html:path/to/report.html");
 
-        assertThat(new CucumberEngineOptions(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             hasItem("html:path/to/report.html"));
 
-        CucumberEngineOptions htmlAndJson = new CucumberEngineOptions(
+        CucumberConfiguration htmlAndJson = new CucumberConfiguration(
             new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME,
                 "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson"));
 
@@ -48,7 +48,7 @@ class CucumberEngineOptionsTest {
         ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/token");
 
-        assertThat(new CucumberEngineOptions(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             hasItem("io.cucumber.core.plugin.PublishFormatter:some/token"));
@@ -58,7 +58,7 @@ class CucumberEngineOptionsTest {
     void getPluginNamesWithNothingEnabled() {
         ConfigurationParameters config = new EmptyConfigurationParameters();
 
-        assertThat(new CucumberEngineOptions(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             empty());
@@ -69,7 +69,7 @@ class CucumberEngineOptionsTest {
         ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true");
 
-        assertThat(new CucumberEngineOptions(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             empty());
@@ -80,7 +80,7 @@ class CucumberEngineOptionsTest {
         ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
 
-        assertThat(new CucumberEngineOptions(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             hasItem("io.cucumber.core.plugin.PublishFormatter"));
@@ -92,7 +92,7 @@ class CucumberEngineOptionsTest {
             Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "false",
             Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/token"));
 
-        assertThat(new CucumberEngineOptions(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             empty());
@@ -103,12 +103,12 @@ class CucumberEngineOptionsTest {
         MapConfigurationParameters ansiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,
             "true");
-        assertTrue(new CucumberEngineOptions(ansiColors).isMonochrome());
+        assertTrue(new CucumberConfiguration(ansiColors).isMonochrome());
 
         MapConfigurationParameters noAnsiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,
             "false");
-        assertFalse(new CucumberEngineOptions(noAnsiColors).isMonochrome());
+        assertFalse(new CucumberConfiguration(noAnsiColors).isMonochrome());
     }
 
     @Test
@@ -117,7 +117,7 @@ class CucumberEngineOptionsTest {
             Constants.GLUE_PROPERTY_NAME,
             "com.example.app, com.example.glue");
 
-        assertThat(new CucumberEngineOptions(config).getGlue(),
+        assertThat(new CucumberConfiguration(config).getGlue(),
             contains(
                 URI.create("classpath:/com/example/app"),
                 URI.create("classpath:/com/example/glue")));
@@ -128,12 +128,12 @@ class CucumberEngineOptionsTest {
         ConfigurationParameters dryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
             "true");
-        assertTrue(new CucumberEngineOptions(dryRun).isDryRun());
+        assertTrue(new CucumberConfiguration(dryRun).isDryRun());
 
         ConfigurationParameters noDryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
             "false");
-        assertFalse(new CucumberEngineOptions(noDryRun).isDryRun());
+        assertFalse(new CucumberConfiguration(noDryRun).isDryRun());
     }
 
     @Test
@@ -142,12 +142,12 @@ class CucumberEngineOptionsTest {
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
             "underscore");
 
-        assertThat(new CucumberEngineOptions(underscore).getSnippetType(), is(SnippetType.UNDERSCORE));
+        assertThat(new CucumberConfiguration(underscore).getSnippetType(), is(SnippetType.UNDERSCORE));
 
         ConfigurationParameters camelcase = new MapConfigurationParameters(
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
             "camelcase");
-        assertThat(new CucumberEngineOptions(camelcase).getSnippetType(), is(SnippetType.CAMELCASE));
+        assertThat(new CucumberConfiguration(camelcase).getSnippetType(), is(SnippetType.CAMELCASE));
     }
 
     @Test
@@ -155,15 +155,15 @@ class CucumberEngineOptionsTest {
         ConfigurationParameters enabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
             "true");
-        assertTrue(new CucumberEngineOptions(enabled).isParallelExecutionEnabled());
+        assertTrue(new CucumberConfiguration(enabled).isParallelExecutionEnabled());
 
         ConfigurationParameters disabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
             "false");
-        assertFalse(new CucumberEngineOptions(disabled).isParallelExecutionEnabled());
+        assertFalse(new CucumberConfiguration(disabled).isParallelExecutionEnabled());
         ConfigurationParameters absent = new MapConfigurationParameters(
             "some key", "some value");
-        assertFalse(new CucumberEngineOptions(absent).isParallelExecutionEnabled());
+        assertFalse(new CucumberConfiguration(absent).isParallelExecutionEnabled());
     }
 
     @Test
@@ -172,7 +172,7 @@ class CucumberEngineOptionsTest {
             Constants.OBJECT_FACTORY_PROPERTY_NAME,
             DefaultObjectFactory.class.getName());
 
-        assertThat(new CucumberEngineOptions(configurationParameters).getObjectFactoryClass(),
+        assertThat(new CucumberConfiguration(configurationParameters).getObjectFactoryClass(),
             is(DefaultObjectFactory.class));
     }
 
@@ -182,7 +182,7 @@ class CucumberEngineOptionsTest {
             Constants.UUID_GENERATOR_PROPERTY_NAME,
             IncrementingUuidGenerator.class.getName());
 
-        assertThat(new CucumberEngineOptions(configurationParameters).getUuidGeneratorClass(),
+        assertThat(new CucumberConfiguration(configurationParameters).getUuidGeneratorClass(),
             is(IncrementingUuidGenerator.class));
     }
 }

@@ -31,7 +31,8 @@ class DiscoverySelectorResolverTest {
     @BeforeEach
     void before() {
         UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
-        testDescriptor = new CucumberEngineDescriptor(id);
+        testDescriptor = new CucumberEngineDescriptor(id,
+            new CucumberConfiguration(new EmptyConfigurationParameters()));
         assertEquals(0, testDescriptor.getChildren().size());
     }
 

@@ -16,7 +16,6 @@ import io.cucumber.junit.platform.engine.FeatureElementDescriptor.RuleDescriptor
 import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ScenarioOutlineDescriptor;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.commons.support.Resource;
-import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
@@ -55,22 +54,19 @@ final class FeatureResolver implements SelectorResolver {
 
     private final ResourceScanner<Feature> featureScanner;
 
-    private final ConfigurationParameters parameters;
-    private final NamingStrategy namingStrategy;
+    private final CucumberConfiguration configuration;
     private final CachingFeatureParser featureParser;
 
-    FeatureResolver(ConfigurationParameters parameters) {
-        this.parameters = parameters;
-        CucumberEngineOptions options = new CucumberEngineOptions(parameters);
-        this.namingStrategy = options.namingStrategy();
-        this.featureParser = createFeatureParser(options);
+    FeatureResolver(CucumberConfiguration configuration) {
+        this.configuration = configuration;
+        this.featureParser = createFeatureParser(configuration);
         this.featureScanner = new ResourceScanner<>(
             ClassLoaders::getDefaultClassLoader,
             FeatureIdentifier::isFeature,
             featureParser::parseResource);
     }
 
-    private static CachingFeatureParser createFeatureParser(CucumberEngineOptions options) {
+    private static CachingFeatureParser createFeatureParser(CucumberConfiguration options) {
         Supplier<ClassLoader> classLoader = FeatureResolver.class::getClassLoader;
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
         UuidGenerator uuidGenerator = uuidGeneratorServiceLoader.loadUuidGenerator();
@@ -197,6 +193,7 @@ final class FeatureResolver implements SelectorResolver {
 
     private Function<TestDescriptor, Optional<TestDescriptor>> createTestDescriptor(Feature feature, Node node) {
         return parent -> {
+            NamingStrategy namingStrategy = configuration.namingStrategy();
             FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
             String name = namingStrategy.name(node);
             TestSource testSource = source.nodeSource(node);
@@ -212,7 +209,7 @@ final class FeatureResolver implements SelectorResolver {
 
             if (node instanceof Node.Rule) {
                 return Optional.of(new RuleDescriptor(
-                    parameters,
+                    configuration,
                     parent.getUniqueId().append(RULE_SEGMENT_TYPE,
                         String.valueOf(line)),
                     name,
@@ -222,7 +219,7 @@ final class FeatureResolver implements SelectorResolver {
 
             if (node instanceof Node.Scenario) {
                 return Optional.of(new PickleDescriptor(
-                    parameters,
+                    configuration,
                     parent.getUniqueId().append(SCENARIO_SEGMENT_TYPE,
                         String.valueOf(line)),
                     name,
@@ -233,7 +230,7 @@ final class FeatureResolver implements SelectorResolver {
 
             if (node instanceof Node.ScenarioOutline) {
                 return Optional.of(new ScenarioOutlineDescriptor(
-                    parameters,
+                    configuration,
                     parent.getUniqueId().append(SCENARIO_SEGMENT_TYPE,
                         String.valueOf(line)),
                     name,
@@ -243,7 +240,7 @@ final class FeatureResolver implements SelectorResolver {
 
             if (node instanceof Node.Examples) {
                 return Optional.of(new ExamplesDescriptor(
-                    parameters,
+                    configuration,
                     parent.getUniqueId().append(EXAMPLES_SEGMENT_TYPE,
                         String.valueOf(line)),
                     name,
@@ -254,7 +251,7 @@ final class FeatureResolver implements SelectorResolver {
             if (node instanceof Node.Example) {
                 Pickle pickle = feature.getPickleAt(node);
                 return Optional.of(new PickleDescriptor(
-                    parameters,
+                    configuration,
                     parent.getUniqueId().append(EXAMPLE_SEGMENT_TYPE,
                         String.valueOf(line)),
                     namingStrategy.nameExample(node, pickle),

@@ -1,30 +1,20 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.resource.ClasspathSupport;
-import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
-import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
 import org.junit.platform.engine.support.hierarchical.Node;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
-import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
-import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
@@ -34,13 +24,10 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
     private final int line;
 
     FeatureElementDescriptor(
-            ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+            CucumberConfiguration configuration, UniqueId uniqueId, String name, TestSource source, int line
     ) {
         super(uniqueId, name, source);
-        this.executionMode = parameters
-                .get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
-                    value -> ExecutionMode.valueOf(value.toUpperCase(Locale.US)))
-                .orElse(ExecutionMode.CONCURRENT);
+        this.executionMode = configuration.getExecutionModeFeature();
         this.line = line;
     }
 
@@ -56,9 +43,9 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
     static final class ExamplesDescriptor extends FeatureElementDescriptor {
 
         ExamplesDescriptor(
-                ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+                CucumberConfiguration configuration, UniqueId uniqueId, String name, TestSource source, int line
         ) {
-            super(parameters, uniqueId, name, source, line);
+            super(configuration, uniqueId, name, source, line);
         }
 
         @Override
@@ -71,9 +58,9 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
     static final class RuleDescriptor extends FeatureElementDescriptor {
 
         RuleDescriptor(
-                ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source, int line
+                CucumberConfiguration configuration, UniqueId uniqueId, String name, TestSource source, int line
         ) {
-            super(parameters, uniqueId, name, source, line);
+            super(configuration, uniqueId, name, source, line);
         }
 
         @Override
@@ -86,10 +73,10 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
     static final class ScenarioOutlineDescriptor extends FeatureElementDescriptor {
 
         ScenarioOutlineDescriptor(
-                ConfigurationParameters parameters, UniqueId uniqueId, String name,
+                CucumberConfiguration configuration, UniqueId uniqueId, String name,
                 TestSource source, int line
         ) {
-            super(parameters, uniqueId, name, source, line);
+            super(configuration, uniqueId, name, source, line);
         }
 
         @Override
@@ -106,18 +93,19 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
         private final Set<ExclusiveResource> exclusiveResources = new LinkedHashSet<>(0);
 
         PickleDescriptor(
-                ConfigurationParameters parameters, UniqueId uniqueId, String name, TestSource source,
+                CucumberConfiguration configuration, UniqueId uniqueId, String name, TestSource source,
                 int line, Pickle pickle
         ) {
-            super(parameters, uniqueId, name, source, line);
+            super(configuration, uniqueId, name, source, line);
             this.pickle = pickle;
             this.tags = getTags(pickle);
             this.tags.forEach(tag -> {
-                ExclusiveResourceOptions exclusiveResourceOptions = new ExclusiveResourceOptions(parameters, tag);
-                exclusiveResourceOptions.exclusiveReadWriteResource()
+                ExclusiveResourceConfiguration exclusiveResourceConfiguration = configuration
+                        .getExclusiveResourceConfiguration(tag.getName());
+                exclusiveResourceConfiguration.exclusiveReadWriteResource()
                         .map(resource -> new ExclusiveResource(resource, LockMode.READ_WRITE))
                         .forEach(exclusiveResources::add);
-                exclusiveResourceOptions.exclusiveReadResource()
+                exclusiveResourceConfiguration.exclusiveReadResource()
                         .map(resource -> new ExclusiveResource(resource, LockMode.READ))
                         .forEach(exclusiveResources::add);
             });
@@ -198,38 +186,6 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
         @Override
         public Set<TestTag> getTags() {
             return tags;
-        }
-
-        Optional<String> getPackage() {
-            return getSource()
-                    .filter(ClasspathResourceSource.class::isInstance)
-                    .map(ClasspathResourceSource.class::cast)
-                    .map(ClasspathResourceSource::getClasspathResourceName)
-                    .map(ClasspathSupport::packageNameOfResource);
-        }
-
-        private static final class ExclusiveResourceOptions {
-
-            private final ConfigurationParameters parameters;
-
-            ExclusiveResourceOptions(ConfigurationParameters parameters, TestTag tag) {
-                this.parameters = new PrefixedConfigurationParameters(
-                    parameters,
-                    EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + tag.getName());
-            }
-
-            public Stream<String> exclusiveReadWriteResource() {
-                return parameters.get(READ_WRITE_SUFFIX, s -> Arrays.stream(s.split(","))
-                        .map(String::trim))
-                        .orElse(Stream.empty());
-            }
-
-            public Stream<String> exclusiveReadResource() {
-                return parameters.get(READ_SUFFIX, s -> Arrays.stream(s.split(","))
-                        .map(String::trim))
-                        .orElse(Stream.empty());
-            }
-
         }
 
     }

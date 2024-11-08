@@ -15,12 +15,15 @@ import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithL
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
+import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -29,6 +32,8 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -44,7 +49,7 @@ import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_
 import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
 import static java.util.Objects.requireNonNull;
 
-class CucumberEngineOptions implements
+class CucumberConfiguration implements
         io.cucumber.core.plugin.Options,
         io.cucumber.core.runner.Options,
         io.cucumber.core.backend.Options,
@@ -52,7 +57,7 @@ class CucumberEngineOptions implements
 
     private final ConfigurationParameters configurationParameters;
 
-    CucumberEngineOptions(ConfigurationParameters configurationParameters) {
+    CucumberConfiguration(ConfigurationParameters configurationParameters) {
         this.configurationParameters = requireNonNull(configurationParameters);
     }
 
@@ -187,5 +192,19 @@ class CucumberEngineOptions implements
                     .map(FeatureWithLinesSelector::from)
                     .collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
+    }
+
+    ExecutionMode getExecutionModeFeature() {
+        return configurationParameters.get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
+            value -> ExecutionMode.valueOf(value.toUpperCase(Locale.US)))
+                .orElse(ExecutionMode.CONCURRENT);
+    }
+
+    ExclusiveResourceConfiguration getExclusiveResourceConfiguration(String tag) {
+        requireNonNull(tag);
+        return new ExclusiveResourceConfiguration(new PrefixedConfigurationParameters(
+            configurationParameters,
+            EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + tag));
+
     }
 }

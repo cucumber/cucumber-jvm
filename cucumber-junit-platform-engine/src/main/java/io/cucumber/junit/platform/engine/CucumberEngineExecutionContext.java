@@ -34,15 +34,15 @@ import static io.cucumber.junit.platform.engine.TestCaseResultObserver.observe;
 public final class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     private static final Logger log = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
-    private final CucumberEngineOptions options;
+    private final CucumberConfiguration options;
 
     private CucumberExecutionContext context;
 
     CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
-        options = new CucumberEngineOptions(configurationParameters);
+        options = new CucumberConfiguration(configurationParameters);
     }
 
-    CucumberEngineOptions getOptions() {
+    CucumberConfiguration getOptions() {
         return options;
     }
 

@@ -8,18 +8,26 @@ import org.junit.platform.engine.support.hierarchical.Node;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.util.Objects.requireNonNull;
+
 class CucumberEngineDescriptor extends EngineDescriptor implements Node<CucumberEngineExecutionContext> {
 
     static final String ENGINE_ID = "cucumber";
+    private final CucumberConfiguration configuration;
     private final TestSource source;
 
-    CucumberEngineDescriptor(UniqueId uniqueId) {
-        this(uniqueId, null);
+    CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration) {
+        this(uniqueId, configuration, null);
     }
 
-    CucumberEngineDescriptor(UniqueId uniqueId, TestSource source) {
+    CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration, TestSource source) {
         super(uniqueId, "Cucumber");
+        this.configuration = requireNonNull(configuration);
         this.source = source;
+    }
+
+    public CucumberConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override
