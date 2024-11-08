@@ -15,7 +15,6 @@ import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorSe
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_PREFIX;
-import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 
 /**
  * The Cucumber {@link org.junit.platform.engine.TestEngine TestEngine}.
@@ -65,17 +64,23 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
     @Override
     protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {
-        ConfigurationParameters config = request.getConfigurationParameters();
-        if (config.getBoolean(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME).orElse(false)) {
+        CucumberConfiguration configuration = getCucumberConfiguration(request);
+        if (configuration.isParallelExecutionEnabled()) {
             return new ForkJoinPoolHierarchicalTestExecutorService(
-                new PrefixedConfigurationParameters(config, PARALLEL_CONFIG_PREFIX));
+                new PrefixedConfigurationParameters(request.getConfigurationParameters(), PARALLEL_CONFIG_PREFIX));
         }
         return super.createExecutorService(request);
     }
 
     @Override
     protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
+        CucumberConfiguration configuration = getCucumberConfiguration(request);
+        return new CucumberEngineExecutionContext(configuration);
+    }
+
+    private CucumberConfiguration getCucumberConfiguration(ExecutionRequest request) {
+        CucumberEngineDescriptor engineDescriptor = (CucumberEngineDescriptor) request.getRootTestDescriptor();
+        return engineDescriptor.getConfiguration();
     }
 
 }

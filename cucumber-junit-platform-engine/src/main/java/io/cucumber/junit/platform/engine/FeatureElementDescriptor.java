@@ -6,7 +6,6 @@ import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
-import org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
 import org.junit.platform.engine.support.hierarchical.Node;
 
 import java.util.Collections;
@@ -17,23 +16,28 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toSet;
 
 abstract class FeatureElementDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
-    private final ExecutionMode executionMode;
+    private final CucumberConfiguration configuration;
     private final int line;
 
     FeatureElementDescriptor(
             CucumberConfiguration configuration, UniqueId uniqueId, String name, TestSource source, int line
     ) {
         super(uniqueId, name, source);
-        this.executionMode = configuration.getExecutionModeFeature();
+        this.configuration = configuration;
         this.line = line;
     }
 
     @Override
     public ExecutionMode getExecutionMode() {
-        return executionMode;
+        return configuration.getExecutionModeFeature();
+    }
+
+    CucumberConfiguration getConfiguration() {
+        return configuration;
     }
 
     int getLine() {
@@ -89,7 +93,6 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
     static final class PickleDescriptor extends FeatureElementDescriptor {
 
         private final Pickle pickle;
-        private final Set<TestTag> tags;
         private final Set<ExclusiveResource> exclusiveResources = new LinkedHashSet<>(0);
 
         PickleDescriptor(
@@ -98,30 +101,10 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
         ) {
             super(configuration, uniqueId, name, source, line);
             this.pickle = pickle;
-            this.tags = getTags(pickle);
-            this.tags.forEach(tag -> {
-                ExclusiveResourceConfiguration exclusiveResourceConfiguration = configuration
-                        .getExclusiveResourceConfiguration(tag.getName());
-                exclusiveResourceConfiguration.exclusiveReadWriteResource()
-                        .map(resource -> new ExclusiveResource(resource, LockMode.READ_WRITE))
-                        .forEach(exclusiveResources::add);
-                exclusiveResourceConfiguration.exclusiveReadResource()
-                        .map(resource -> new ExclusiveResource(resource, LockMode.READ))
-                        .forEach(exclusiveResources::add);
-            });
         }
 
         Pickle getPickle() {
             return pickle;
-        }
-
-        private Set<TestTag> getTags(Pickle pickleEvent) {
-            return pickleEvent.getTags().stream()
-                    .map(tag -> tag.substring(1))
-                    .filter(TestTag::isValid)
-                    .map(TestTag::create)
-                    // Retain input order
-                    .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
         }
 
         @Override
@@ -139,7 +122,7 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
         }
 
         private Optional<SkipResult> shouldBeSkippedByTagFilter(CucumberEngineExecutionContext context) {
-            return context.getOptions().tagFilter().map(expression -> {
+            return context.getConfiguration().tagFilter().map(expression -> {
                 if (expression.evaluate(pickle.getTags())) {
                     return SkipResult.doNotSkip();
                 }
@@ -151,7 +134,7 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
         }
 
         private Optional<SkipResult> shouldBeSkippedByNameFilter(CucumberEngineExecutionContext context) {
-            return context.getOptions().nameFilter().map(pattern -> {
+            return context.getConfiguration().nameFilter().map(pattern -> {
                 if (pattern.matcher(pickle.getName()).matches()) {
                     return SkipResult.doNotSkip();
                 }
@@ -171,7 +154,11 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
 
         @Override
         public Set<ExclusiveResource> getExclusiveResources() {
-            return exclusiveResources;
+            CucumberConfiguration configuration = getConfiguration();
+            return getTags().stream()
+                    .map(tag -> configuration.getExclusiveResourceConfiguration(tag.getName()))
+                    .flatMap(ExclusiveResourceConfiguration::getExclusiveResources)
+                    .collect(toSet());
         }
 
         /**
@@ -185,9 +172,13 @@ abstract class FeatureElementDescriptor extends AbstractTestDescriptor implement
          */
         @Override
         public Set<TestTag> getTags() {
-            return tags;
+            return pickle.getTags().stream()
+                    .map(tag -> tag.substring(1))
+                    .filter(TestTag::isValid)
+                    .map(TestTag::create)
+                    // Retain input order
+                    .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
         }
-
     }
 
 }
