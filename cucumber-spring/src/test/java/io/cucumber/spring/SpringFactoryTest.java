@@ -389,7 +389,7 @@ class SpringFactoryTest {
         public static class BrokenConfiguration {
 
             @Bean
-            public Object brokenBean(){
+            public Object brokenBean() {
                 throw new RuntimeException("Oops!");
             }
 
