@@ -23,6 +23,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
@@ -322,20 +324,9 @@ class SpringFactoryTest {
     }
 
     @Test
-    void shouldBeStoppableWhenFacedWithInvalidConfiguration() {
+    void shouldBeStoppableWhenFacedWithBrokenContextConfiguration() {
         final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithEmptySpringAnnotations.class);
-
-        IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
-        assertThat(exception.getMessage(),
-            containsString("DelegatingSmartContextLoader was unable to detect defaults"));
-        assertDoesNotThrow(factory::stop);
-    }
-
-    @Test
-    void shouldBeStoppableWhenFacedWithMissingContextConfiguration() {
-        final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithoutContextConfiguration.class);
+        factory.addClass(WithBrokenContextConfiguration.class);
 
         IllegalStateException exception = assertThrows(IllegalStateException.class, factory::start);
         assertThat(exception.getMessage(), containsString("Failed to load ApplicationContext"));
@@ -392,13 +383,17 @@ class SpringFactoryTest {
     }
 
     @CucumberContextConfiguration
-    @ContextConfiguration
-    public static class WithEmptySpringAnnotations {
+    public static class WithBrokenContextConfiguration {
 
-    }
+        @Configuration
+        public static class BrokenConfiguration {
 
-    @CucumberContextConfiguration
-    public static class WithoutContextConfiguration {
+            @Bean
+            public Object brokenBean(){
+                throw new RuntimeException("Oops!");
+            }
+
+        }
 
     }
 
