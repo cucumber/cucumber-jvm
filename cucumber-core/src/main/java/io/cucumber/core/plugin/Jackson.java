@@ -3,7 +3,6 @@ package io.cucumber.core.plugin;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.ConstructorDetector;
@@ -16,7 +15,6 @@ final class Jackson {
             .serializationInclusion(Include.NON_ABSENT)
             .constructorDetector(ConstructorDetector.USE_PROPERTIES_BASED)
             .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-            .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
             .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
             .enable(DeserializationFeature.USE_LONG_FOR_INTS)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
