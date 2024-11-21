@@ -5,6 +5,8 @@ import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
@@ -33,6 +35,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -51,14 +54,17 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 
 final class FeatureResolver implements SelectorResolver {
+    private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
 
     private final ResourceScanner<Feature> featureScanner;
 
     private final CucumberConfiguration configuration;
     private final CachingFeatureParser featureParser;
+    private final Predicate<String> packageFilter;
 
-    FeatureResolver(CucumberConfiguration configuration) {
+    FeatureResolver(CucumberConfiguration configuration, Predicate<String> packageFilter) {
         this.configuration = configuration;
+        this.packageFilter = packageFilter;
         this.featureParser = createFeatureParser(configuration);
         this.featureScanner = new ResourceScanner<>(
             ClassLoaders::getDefaultClassLoader,
@@ -133,11 +139,23 @@ final class FeatureResolver implements SelectorResolver {
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
         Set<Resource> resources = selector.getClasspathResources();
         if (!resources.stream().allMatch(isFeature)) {
-            return Resolution.unresolved();
+            Set<DiscoverySelector> selectors = featureScanner
+                    .scanForClasspathResource(selector.getClasspathResourceName(), packageFilter)
+                    .stream()
+                    .map(feature -> selector.getPosition()
+                            .map(position -> selectElementAt(feature, position))
+                            .orElseGet(() -> Optional.of(selectFeature(feature))))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(toSet());
+
+            warnClasspathResourceSelectorUsedForPackage(selector);
+
+            return toResolution(selectors);
         }
         if (resources.size() > 1) {
             throw new IllegalArgumentException(String.format(
-                "Found %s resources named %s classpath %s. Using the first.",
+                "Found %s resources named %s on the classpath %s.",
                 resources.size(), selector.getClasspathResourceName(),
                 resources.stream().map(Resource::getUri).collect(toList())));
         }
@@ -152,6 +170,17 @@ final class FeatureResolver implements SelectorResolver {
                 .map(Collections::singleton)
                 .map(FeatureResolver::toResolution)
                 .orElseGet(Resolution::unresolved);
+    }
+
+    private static void warnClasspathResourceSelectorUsedForPackage(ClasspathResourceSelector selector) {
+        log.warn(() -> {
+            String classpathResourceName = selector.getClasspathResourceName();
+            String packageName = classpathResourceName.replaceAll("/", ".");
+            return String.format(
+                "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead",
+                classpathResourceName,
+                packageName);
+        });
     }
 
     @Override

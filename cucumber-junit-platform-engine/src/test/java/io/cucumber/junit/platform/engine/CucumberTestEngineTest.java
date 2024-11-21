@@ -149,7 +149,34 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    void supportsClasspathResourceSelectorThrowIfDuplicateResources() {
+    void warnWhenResourceSelectorIsUsedToSelectAPackage(LogRecordListener logRecordListener) {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine"))
+                .execute()
+                .allEvents()
+                .assertEventsMatchLooselyInOrder(
+                    feature("disabled.feature"),
+                    feature("empty-scenario.feature"),
+                    feature("scenario-outline.feature"),
+                    feature("rule.feature"),
+                    feature("single.feature"),
+                    feature("with%20space.feature"));
+
+        LogRecord warning = logRecordListener.getLogRecords()
+                .stream()
+                .filter(logRecord -> FeatureResolver.class.getName().equals(logRecord.getLoggerName()))
+                .filter(logRecord -> Level.WARNING.equals(logRecord.getLevel()))
+                .findFirst().get();
+
+        assertThat(warning.getMessage())
+                .isEqualTo(
+                    "The classpath resource selector 'io/cucumber/junit/platform/engine' should not be " +
+                            "used to select features in a package. Use the package selector with " +
+                            "'io.cucumber.junit.platform.engine' instead");
+    }
+
+    @Test
+    void classpathResourceSelectorThrowIfDuplicateResources() {
         class TestResource implements Resource {
 
             private final String name;
@@ -190,7 +217,7 @@ class CucumberTestEngineTest {
         assertThat(exception) //
                 .hasRootCauseInstanceOf(IllegalArgumentException.class) //
                 .hasRootCauseMessage( //
-                    "Found %s resources named %s classpath %s. Using the first.", //
+                    "Found %s resources named %s on the classpath %s.", //
                     resources.size(), //
                     "io/cucumber/junit/platform/engine/single.feature", //
                     resources.stream().map(Resource::getUri).collect(toList()));
