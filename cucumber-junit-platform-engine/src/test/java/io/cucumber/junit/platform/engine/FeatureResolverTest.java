@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 
-// TODO: Move this into CucumberTestEngineTest
 class FeatureResolverTest {
 
     private final String featurePath = "io/cucumber/junit/platform/engine/scenario-outline.feature";
