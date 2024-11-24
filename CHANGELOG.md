@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [JUnit Platform Engine] Added option to include a parameterized scenario name only if the scenario is parameterized ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
+- [JUnit Platform Engine] Log warnings when a classpath resource selector  is (e.g. `@SelectClasspathResource`) is used to select a directory. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
+
+### Changed
+- [JUnit Platform Engine] Use JUnit Platform 1.12.0 (JUnit Jupiter 5.12.0) ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
+- [JUnit Platform Engine] Use JUnit's `EngineDiscoveryRequestResolver` to resolve classpath based resources. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
+
 
 ## [7.20.1] - 2024-10-09
 ### Fixed
