@@ -1,14 +1,11 @@
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.gherkin.GherkinDialectProvider;
-
 import java.io.IOException;
 import java.nio.file.Files;
+import static java.nio.file.Files.newBufferedWriter;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -16,11 +13,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-
-import static java.nio.file.Files.newBufferedWriter;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.util.stream.Collectors.toList;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import io.cucumber.gherkin.GherkinDialect;
+import io.cucumber.gherkin.GherkinDialectProvider;
 
 /* This class generates the cucumber-java Interfaces and package-info
  * based on the languages and keywords from the GherkinDialectProvider
@@ -78,14 +78,22 @@ public class GenerateI18n {
                 languageName += " - " + dialect.getNativeName();
             }
             String className = capitalize(normalizedLanguage);
-
+        
             Map<String, Object> binding = new LinkedHashMap<>();
             binding.put("className", className);
             binding.put("keywords", extractKeywords(dialect));
             binding.put("language_name", languageName);
-
-            Path path = Paths.get(baseDirectory, packagePath, className + ".java");
-
+        
+            Path path;
+            try {
+                path = Paths.get(baseDirectory, packagePath, className + ".java").normalize();
+                if (!path.startsWith(Paths.get(baseDirectory).normalize())) {
+                    throw new RuntimeException("Invalid path: " + path);
+                }
+            } catch (InvalidPathException e) {
+                throw new RuntimeException("Invalid path: " + e.getMessage(), e);
+            }
+        
             try {
                 Files.createDirectories(path.getParent());
                 templateSource.process(binding, newBufferedWriter(path, CREATE, TRUNCATE_EXISTING));
