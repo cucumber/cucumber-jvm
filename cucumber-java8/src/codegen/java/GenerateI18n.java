@@ -1,14 +1,10 @@
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
-import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.gherkin.GherkinDialectProvider;
-
 import java.io.IOException;
 import java.nio.file.Files;
+import static java.nio.file.Files.newBufferedWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -16,11 +12,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-
-import static java.nio.file.Files.newBufferedWriter;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.util.stream.Collectors.toList;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import io.cucumber.gherkin.GherkinDialect;
+import io.cucumber.gherkin.GherkinDialectProvider;
 
 /* This class generates the cucumber-java Interfaces and package-info
  * based on the languages and keywords from the GherkinDialectProvider
@@ -114,7 +113,15 @@ public class GenerateI18n {
         }
 
         private static String getNormalizedLanguage(GherkinDialect dialect) {
-            return dialect.getLanguage().replaceAll("[\\s-]", "_").toLowerCase();
+            if (dialect == null) {
+                throw new IllegalArgumentException("Dialect cannot be null");
+            }
+            String language = dialect.getLanguage();
+            if (language == null) {
+                throw new IllegalArgumentException("Language cannot be null");
+            }
+            return language.replaceAll("[\\s$-]", "_").toLowerCase();
         }
+        
     }
 }
