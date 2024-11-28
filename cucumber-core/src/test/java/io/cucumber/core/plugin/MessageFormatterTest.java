@@ -10,12 +10,15 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.Clock;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
@@ -46,4 +49,39 @@ public class MessageFormatterTest {
         }
     }
 
+    @Test
+    void testIOExceptionInWrite() {
+        OutputStream failingOutputStream = new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                throw new IOException("Simulated IO exception");
+            }
+        };
+        MessageFormatter formatter = new MessageFormatter(failingOutputStream);
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        formatter.setEventPublisher(bus);
+
+        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
+        Envelope envelope = Envelope.of(testRunStarted);
+
+        assertThrows(IllegalStateException.class, () -> bus.send(envelope));
+    }
+
+    @Test
+    void testIOExceptionInClose() {
+        OutputStream outputStream = new ByteArrayOutputStream() {
+            @Override
+            public void close() throws IOException {
+                throw new IOException("Simulated IO exception");
+            }
+        };
+        MessageFormatter formatter = new MessageFormatter(outputStream);
+        EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
+        formatter.setEventPublisher(bus);
+
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
+        Envelope envelope = Envelope.of(testRunFinished);
+
+        assertThrows(IllegalStateException.class, () -> bus.send(envelope));
+    }
 }

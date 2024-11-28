@@ -38,5 +38,4 @@ public final class MessageFormatter implements ConcurrentEventListener {
             }
         }
     }
-
 }
