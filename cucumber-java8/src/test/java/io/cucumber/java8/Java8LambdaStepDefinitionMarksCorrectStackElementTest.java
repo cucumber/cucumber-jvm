@@ -29,7 +29,7 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
         CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class,
             () -> stepDefinition.execute(new Object[0]));
-        assertThat(exception.getInvocationTargetExceptionCause(),
+        assertThat(exception.getCause(),
             new CustomTypeSafeMatcher<Throwable>("exception with matching stack trace") {
                 @Override
                 protected boolean matchesSafely(Throwable item) {
