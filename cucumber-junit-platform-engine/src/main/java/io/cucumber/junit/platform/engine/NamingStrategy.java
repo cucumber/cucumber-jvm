@@ -7,5 +7,5 @@ interface NamingStrategy {
 
     String name(Node node);
 
-    String nameExample(Node.Example node, Pickle pickle);
+    String nameExample(Node node, Pickle pickle);
 }
