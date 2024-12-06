@@ -62,6 +62,7 @@ public final class RuntimeOptions implements
     // For context see: https://mattwynne.net/new-beginning
     private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
+    private List<Expression> skipTagExpressions = new ArrayList<>();
 
     private RuntimeOptions() {
 
@@ -172,6 +173,11 @@ public final class RuntimeOptions implements
     @Override
     public Class<? extends UuidGenerator> getUuidGeneratorClass() {
         return uuidGeneratorClass;
+    }
+
+    @Override
+    public List<Expression> getSkipTagExpressions() {
+        return skipTagExpressions;
     }
 
     void setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_SKIP_TAGS_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -41,6 +42,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_P
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
+import static java.util.Collections.emptyList;
 
 class CucumberEngineOptions implements
         io.cucumber.core.plugin.Options,
@@ -164,6 +166,14 @@ class CucumberEngineOptions implements
                 .orElse(null);
     }
 
+    @Override
+    public List<Expression> getSkipTagExpressions() {
+        return configurationParameters
+                .get(EXECUTION_SKIP_TAGS_PROPERTY_NAME, TagExpressionParser::parse)
+                .map(Collections::singletonList)
+                .orElse(emptyList());
+    }
+
     boolean isParallelExecutionEnabled() {
         return configurationParameters
                 .getBoolean(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME)
@@ -185,6 +195,6 @@ class CucumberEngineOptions implements
                     .sorted(Comparator.comparing(FeatureWithLines::uri))
                     .distinct()
                     .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
+                .orElse(emptyList());
     }
 }

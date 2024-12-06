@@ -17,6 +17,7 @@ import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
+import io.cucumber.tagexpressions.Expression;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -138,15 +139,28 @@ public final class Runner {
     }
 
     private TestCase createTestCaseForPickle(Pickle pickle) {
+        ExecutionMode executionMode = getExecutionMode(pickle);
+
         if (pickle.getSteps().isEmpty()) {
-            return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle,
-                runnerOptions.isDryRun());
+            return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle, executionMode);
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
         List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickle.getTags());
         List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickle.getTags());
-        return new TestCase(bus.generateId(), testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
+        return new TestCase(bus.generateId(), testSteps, beforeHooks, afterHooks, pickle, executionMode);
+    }
+
+    private ExecutionMode getExecutionMode(Pickle pickle) {
+        List<Expression> skipTagExpression = runnerOptions.getSkipTagExpressions();
+        if (!skipTagExpression.isEmpty()
+                && skipTagExpression.stream().allMatch(expression -> expression.evaluate(pickle.getTags()))) {
+            return ExecutionMode.SKIP;
+        } else if (runnerOptions.isDryRun()) {
+            return ExecutionMode.DRY_RUN;
+        } else {
+            return ExecutionMode.RUN;
+        }
     }
 
     private void disposeBackendWorlds() {

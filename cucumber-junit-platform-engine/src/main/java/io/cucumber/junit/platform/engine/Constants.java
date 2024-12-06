@@ -35,6 +35,8 @@ public final class Constants {
      */
     public static final String EXECUTION_DRY_RUN_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 
+    public static final String EXECUTION_SKIP_TAGS_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_SKIP_TAGS_PROPERTY_NAME;
+
     /**
      * Tag replacement pattern for the exclusive resource templates: {@value}
      *

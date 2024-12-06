@@ -45,7 +45,7 @@ class TestCaseStateTest {
                 Collections.emptyList(),
                 Collections.emptyList(),
                 feature.getPickles().get(0),
-                false));
+                ExecutionMode.RUN));
     }
 
     @Test
