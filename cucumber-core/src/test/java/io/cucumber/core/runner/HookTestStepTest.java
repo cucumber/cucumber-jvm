@@ -39,7 +39,7 @@ class HookTestStepTest {
         Collections.emptyList(),
         Collections.emptyList(),
         feature.getPickles().get(0),
-        false);
+        ExecutionMode.RUN);
     private final EventBus bus = mock(EventBus.class);
     private final UUID testExecutionId = UUID.randomUUID();
     private final TestCaseState state = new TestCaseState(bus, testExecutionId, testCase);

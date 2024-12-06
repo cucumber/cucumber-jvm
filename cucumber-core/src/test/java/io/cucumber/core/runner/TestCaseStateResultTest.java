@@ -49,7 +49,7 @@ class TestCaseStateResultTest {
             Collections.emptyList(),
             Collections.emptyList(),
             feature.getPickles().get(0),
-            false));
+            ExecutionMode.RUN));
 
     @BeforeEach
     void setup() {

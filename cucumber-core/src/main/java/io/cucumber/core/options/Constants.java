@@ -32,7 +32,7 @@ public final class Constants {
      * <p>
      * Limits the number of scenarios to be executed to a specific amount.
      * <p>
-     * By default scenarios are executed.
+     * By default, scenarios are executed.
      */
     public static final String EXECUTION_LIMIT_PROPERTY_NAME = "cucumber.execution.limit";
 
@@ -42,9 +42,11 @@ public final class Constants {
      * Valid values are {@code lexical}, {@code reverse}, {@code random} or
      * {@code random:[seed]}.
      * <p>
-     * By default features are executed in lexical file name order
+     * By default, features are executed in lexical file name order
      */
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
+
+    public static final String EXECUTION_SKIP_TAGS_PROPERTY_NAME = "cucumber.execution.skip.tags";
 
     /**
      * Property name used to enable wip execution: {@value}
