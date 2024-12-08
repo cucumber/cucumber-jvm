@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.DataTableArgument;
+import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.plugin.ColorAware;
@@ -141,18 +142,28 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             String locationComment = formatLocationComment(event, testStep, keyword, stepText);
             out.println(STEP_INDENT + formattedStepText + locationComment);
             StepArgument stepArgument = testStep.getStep().getArgument();
-            if (DataTableArgument.class.isInstance(stepArgument)) {
+            if (stepArgument instanceof DataTableArgument) {
                 DataTableFormatter tableFormatter = DataTableFormatter
-                        .builder()
-                        .prefixRow(STEP_SCENARIO_INDENT)
-                        .escapeDelimiters(false)
-                        .build();
+                    .builder()
+                    .prefixRow(STEP_SCENARIO_INDENT)
+                    .escapeDelimiters(false)
+                    .build();
                 DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
                 try {
                     tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
                 } catch (IOException e) {
                     throw new CucumberException(e);
                 }
+            } else if (stepArgument instanceof DocStringArgument) {
+                DocStringArgument docStringArgument = (DocStringArgument) stepArgument;
+                String contentType = docStringArgument.getContentType();
+                String printableContentType = contentType == null ? "" : contentType;
+                out.println(STEP_INDENT + "\"\"\"" + printableContentType);
+                for (String l : docStringArgument.getContent().split("\\r?\\n|\\r")) {
+                    String s = STEP_INDENT + l;
+                    out.println(s);
+                }
+                out.println(STEP_INDENT + "\"\"\"");
             }
         }
     }
