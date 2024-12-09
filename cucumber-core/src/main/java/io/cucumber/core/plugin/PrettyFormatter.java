@@ -144,10 +144,10 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             StepArgument stepArgument = testStep.getStep().getArgument();
             if (stepArgument instanceof DataTableArgument) {
                 DataTableFormatter tableFormatter = DataTableFormatter
-                    .builder()
-                    .prefixRow(STEP_SCENARIO_INDENT)
-                    .escapeDelimiters(false)
-                    .build();
+                        .builder()
+                        .prefixRow(STEP_SCENARIO_INDENT)
+                        .escapeDelimiters(false)
+                        .build();
                 DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
                 try {
                     tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
