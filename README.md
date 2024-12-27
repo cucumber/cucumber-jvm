@@ -1,17 +1,40 @@
-# Cucumber JVM
+<h1 align="center">
+  <img src="https://raw.githubusercontent.com/cucumber/cucumber-js/46a5a78107be27e99c6e044c69b6e8f885ce456c/docs/images/logo.svg" alt="Cucumber logo" width="75">
+  <br>
+  Cucumber JVM
+</h1>
+<p align="center">
+  <b>Automated tests in plain language, for JVM</b>
+</p>
 
-[![#StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://vshymanskyy.github.io/StandWithUkraine)
-[![OpenCollective](https://opencollective.com/cucumber/backers/badge.svg)](https://opencollective.com/cucumber)
-[![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
-[![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.cucumber/cucumber-java)
-[![Build Status](https://github.com/cucumber/cucumber-jvm/workflows/Cucumber%20CI/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
-[![Coverage Status](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg)](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main)
+<p align="center">
+  <a href="https://central.sonatype.com/artifact/io.cucumber/cucumber-java" style="text-decoration: none">
+    <img src="https://img.shields.io/maven-central/v/io.cucumber/cucumber-java?style=flat&color=dark-green&label=Maven%20Central" alt="Cucumber JVM version">
+  </a>
+  <a href="https://github.com/cucumber/cucumber-jvm/actions" style="text-decoration: none">
+    <img src="https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml/badge.svg" alt="Build status">
+  </a>
+  <a href="https://codecov.io/gh/cucumber/cucumber-jvm/branch/main" style="text-decoration: none">
+    <img src="https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg" alt="Coverage">
+  </a>
+  <a href="https://opencollective.com/cucumber">
+    <img src="https://opencollective.com/cucumber/backers/badge.svg" alt="Cucumber backers">
+  </a>
+  <a href="https://opencollective.com/cucumber">
+    <img src="https://opencollective.com/cucumber/sponsors/badge.svg" alt="Cucumber sponsors">
+  </a>
+  <a href="https://vshymanskyy.github.io/StandWithUkraine">
+    <img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg" alt="Ukraine solidarity">
+  </a>
+</p>
 
-Cucumber-JVM is a pure Java implementation of Cucumber.
-You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with
-the tool of your choice.
+[Cucumber](https://github.com/cucumber) is a tool for running automated tests written in plain language. Because they're
+written in plain language, they can be read by anyone on your team. Because they can be
+read by anyone, you can use them to help improve communication, collaboration and trust on
+your team.
 
-Cucumber-JVM also integrates with all the popular
+This is the Java implementation of Cucumber. You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with
+the tool of your choice - including with popular
 [Dependency Injection containers](https://cucumber.io/docs/installation/java/#dependency-injection).
 
 ## Getting started
