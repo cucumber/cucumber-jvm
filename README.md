@@ -4,7 +4,7 @@
   Cucumber JVM
 </h1>
 <p align="center">
-  <b>Automated tests in plain language, for JVM</b>
+  <b>Automated tests in plain language, for the JVM</b>
 </p>
 
 <p align="center">
