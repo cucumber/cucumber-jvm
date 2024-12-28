@@ -25,7 +25,7 @@ your team.
 
 This is the Java implementation of Cucumber. You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with
 the tool of your choice - including with popular
-[Dependency Injection containers](https://cucumber.io/docs/installation/java/#dependency-injection).
+[dependency injection containers](https://cucumber.io/docs/installation/java/#dependency-injection).
 
 ## Getting started
 
