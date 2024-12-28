@@ -7,26 +7,16 @@
   <b>Automated tests in plain language, for the JVM</b>
 </p>
 
-<p align="center">
-  <a href="https://central.sonatype.com/artifact/io.cucumber/cucumber-java" style="text-decoration: none">
-    <img src="https://img.shields.io/maven-central/v/io.cucumber/cucumber-java?style=flat&color=dark-green&label=Maven%20Central" alt="Cucumber JVM version">
-  </a>
-  <a href="https://github.com/cucumber/cucumber-jvm/actions" style="text-decoration: none">
-    <img src="https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml/badge.svg" alt="Build status">
-  </a>
-  <a href="https://codecov.io/gh/cucumber/cucumber-jvm/branch/main" style="text-decoration: none">
-    <img src="https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg" alt="Coverage">
-  </a>
-  <a href="https://opencollective.com/cucumber">
-    <img src="https://opencollective.com/cucumber/backers/badge.svg" alt="Cucumber backers">
-  </a>
-  <a href="https://opencollective.com/cucumber">
-    <img src="https://opencollective.com/cucumber/sponsors/badge.svg" alt="Cucumber sponsors">
-  </a>
-  <a href="https://vshymanskyy.github.io/StandWithUkraine">
-    <img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg" alt="Ukraine solidarity">
-  </a>
-</p>
+<div align="center">
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java?style=flat&color=dark-green&label=Maven%20Central)](https://central.sonatype.com/artifact/io.cucumber/cucumber-java)
+[![Build Status](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
+[![Coverage Status](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg)](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main)
+[![OpenCollective](https://opencollective.com/cucumber/backers/badge.svg)](https://opencollective.com/cucumber)
+[![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
+[![#StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://vshymanskyy.github.io/StandWithUkraine)
+
+</div>
 
 [Cucumber](https://github.com/cucumber) is a tool for running automated tests written in plain language. Because they're
 written in plain language, they can be read by anyone on your team. Because they can be
