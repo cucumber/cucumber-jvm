@@ -17,7 +17,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <jackson.version>2.18.2</jackson.version>
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
-        <mockito.version>5.14.2</mockito.version>
+        <mockito.version>5.15.2</mockito.version>
     </properties>
 
     <dependencyManagement>
