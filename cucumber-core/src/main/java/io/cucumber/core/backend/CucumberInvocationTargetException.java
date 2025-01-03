@@ -20,12 +20,20 @@ public final class CucumberInvocationTargetException extends RuntimeException {
         this.invocationTargetException = invocationTargetException;
     }
 
+    /**
+     * @deprecated use {@link #getCause()} instead.
+     */
+    @Deprecated
     public Throwable getInvocationTargetExceptionCause() {
-        return invocationTargetException.getCause();
+        return getCause();
     }
 
     public Located getLocated() {
         return located;
     }
 
+    @Override
+    public Throwable getCause() {
+        return invocationTargetException.getCause();
+    }
 }

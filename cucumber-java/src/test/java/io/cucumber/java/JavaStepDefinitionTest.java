@@ -44,7 +44,7 @@ class JavaStepDefinitionTest {
         JavaStepDefinition definition = new JavaStepDefinition(method, "three (.*) mice", lookup);
         CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class,
             () -> definition.execute(new Object[0]));
-        Optional<StackTraceElement> match = stream(exception.getInvocationTargetExceptionCause().getStackTrace())
+        Optional<StackTraceElement> match = stream(exception.getCause().getStackTrace())
                 .filter(definition::isDefinedAt).findFirst();
         StackTraceElement stackTraceElement = match.get();
 

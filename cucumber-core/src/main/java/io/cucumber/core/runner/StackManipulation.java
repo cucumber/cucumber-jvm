@@ -3,60 +3,72 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Located;
 
+import java.util.function.Consumer;
+
 final class StackManipulation {
 
     private StackManipulation() {
 
     }
 
-    static Throwable removeFrameworkFrames(CucumberInvocationTargetException invocationException) {
-        Throwable error = invocationException.getInvocationTargetExceptionCause();
-        StackTraceElement[] stackTraceElements = error.getStackTrace();
-        Located located = invocationException.getLocated();
-
-        int newStackTraceLength = findIndexOf(located, stackTraceElements);
-        if (newStackTraceLength == -1) {
-            return error;
-        }
-
-        StackTraceElement[] newStackTrace = new StackTraceElement[newStackTraceLength];
-        System.arraycopy(stackTraceElements, 0, newStackTrace, 0, newStackTraceLength);
-        error.setStackTrace(newStackTrace);
-        return error;
-    }
-
-    private static int findIndexOf(Located located, StackTraceElement[] stackTraceElements) {
-        if (stackTraceElements.length == 0) {
-            return -1;
-        }
-
-        int newStackTraceLength;
-        for (newStackTraceLength = 1; newStackTraceLength < stackTraceElements.length; ++newStackTraceLength) {
-            if (located.isDefinedAt(stackTraceElements[newStackTraceLength - 1])) {
-                break;
-            }
-        }
-        return newStackTraceLength;
-    }
-
     static Throwable removeFrameworkFramesAndAppendStepLocation(
             CucumberInvocationTargetException invocationException, StackTraceElement stepLocation
     ) {
-        Located located = invocationException.getLocated();
-        Throwable error = invocationException.getInvocationTargetExceptionCause();
-        if (stepLocation == null) {
-            return error;
-        }
-        StackTraceElement[] stackTraceElements = error.getStackTrace();
-        int newStackTraceLength = findIndexOf(located, stackTraceElements);
-        if (newStackTraceLength == -1) {
-            return error;
-        }
-        StackTraceElement[] newStackTrace = new StackTraceElement[newStackTraceLength + 1];
-        System.arraycopy(stackTraceElements, 0, newStackTrace, 0, newStackTraceLength);
-        newStackTrace[newStackTraceLength] = stepLocation;
-        error.setStackTrace(newStackTrace);
+        Throwable error = invocationException.getCause();
+        walkException(error, appendStepLocation(invocationException.getLocated(), stepLocation));
         return error;
     }
 
+    static Throwable removeFrameworkFrames(CucumberInvocationTargetException invocationException) {
+        Throwable error = invocationException.getCause();
+        walkException(invocationException, removeFramesAfter(invocationException.getLocated()));
+        return error;
+    }
+
+    private static void walkException(Throwable cause, Consumer<Throwable> action) {
+        while (cause != null) {
+            action.accept(cause);
+            cause = cause.getCause();
+        }
+    }
+
+    static Consumer<Throwable> removeFramesAfter(Located located) {
+        return throwable -> {
+            StackTraceElement[] stackTrace = throwable.getStackTrace();
+            int lastFrame = findIndexOf(located, stackTrace);
+            if (lastFrame == -1) {
+                return;
+            }
+            StackTraceElement[] newStackTrace = new StackTraceElement[lastFrame + 1];
+            System.arraycopy(stackTrace, 0, newStackTrace, 0, lastFrame + 1);
+            throwable.setStackTrace(newStackTrace);
+        };
+    }
+
+    private static Consumer<Throwable> appendStepLocation(Located located, StackTraceElement stepLocation) {
+        return throwable -> {
+            if (located == null) {
+                return;
+            }
+            StackTraceElement[] stackTrace = throwable.getStackTrace();
+            int lastFrame = findIndexOf(located, stackTrace);
+            if (lastFrame == -1) {
+                return;
+            }
+            // One extra for the step location
+            StackTraceElement[] newStackTrace = new StackTraceElement[lastFrame + 1 + 1];
+            System.arraycopy(stackTrace, 0, newStackTrace, 0, lastFrame + 1);
+            newStackTrace[lastFrame + 1] = stepLocation;
+            throwable.setStackTrace(newStackTrace);
+        };
+    }
+
+    private static int findIndexOf(Located located, StackTraceElement[] stackTraceElements) {
+        for (int index = 0; index < stackTraceElements.length; index++) {
+            if (located.isDefinedAt(stackTraceElements[index])) {
+                return index;
+            }
+        }
+        return -1;
+    }
 }
