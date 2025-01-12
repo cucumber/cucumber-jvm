@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [JUnit Platform Engine] Use JUnit Platform 1.11.3 (JUnit Jupiter 5.11.3)
-### Fixed
+### Added
 - [Core] Pretty-Print DocStringArgument Step Arguments([#2953](https://github.com/cucumber/cucumber-jvm/pull/2953) Daniel Miladinov)
 
 ## [7.20.1] - 2024-10-09
