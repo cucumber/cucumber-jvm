@@ -11,7 +11,6 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java?style=flat&color=dark-green&label=Maven%20Central)](https://central.sonatype.com/artifact/io.cucumber/cucumber-java)
 [![Build Status](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
-[![Coverage Status](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg)](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main)
 [![OpenCollective](https://opencollective.com/cucumber/backers/badge.svg)](https://opencollective.com/cucumber)
 [![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
 [![#StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://vshymanskyy.github.io/StandWithUkraine)
