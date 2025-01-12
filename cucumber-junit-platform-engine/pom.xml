@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.20.2-SNAPSHOT</version>
+        <version>7.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-junit-platform-engine</artifactId>
@@ -13,7 +13,7 @@
 
     <properties>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.11.3</junit-jupiter.version>
+        <junit-jupiter.version>5.11.4</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
