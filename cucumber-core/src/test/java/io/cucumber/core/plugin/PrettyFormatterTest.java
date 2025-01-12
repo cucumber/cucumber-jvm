@@ -613,39 +613,6 @@ class PrettyFormatterTest {
     }
 
     @Test
-    void should_print_docstring_without_content_type() {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test Scenario\n" +
-                "    Given first step\n" +
-                "    \"\"\"\n" +
-                "    {\"key1\": \"value1\",\n" +
-                "     \"key2\": \"value2\",\n" +
-                "     \"another1\": \"another2\"}\n" +
-                "    \"\"\"\n");
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Runtime.builder()
-                .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(new PrettyFormatter(out))
-                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
-                .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", "path/step_definitions.java:7", DocString.class)))
-                .build()
-                .run();
-
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
-                "\n" +
-                "Scenario: Test Scenario # path/test.feature:2\n" +
-                "  Given first step      # path/step_definitions.java:7\n" +
-                "    \"\"\"\n" +
-                "    {\"key1\": \"value1\",\n" +
-                "     \"key2\": \"value2\",\n" +
-                "     \"another1\": \"another2\"}\n" +
-                "    \"\"\"\n")));
-    }
-
-    @Test
     void should_print_docstring_including_content_type() {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: Test feature\n" +

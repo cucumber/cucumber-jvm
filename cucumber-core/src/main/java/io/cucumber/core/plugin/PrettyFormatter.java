@@ -5,6 +5,8 @@ import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
+import io.cucumber.docstring.DocString;
+import io.cucumber.docstring.DocStringFormatter;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.Argument;
@@ -149,21 +151,25 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                         .escapeDelimiters(false)
                         .build();
                 DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
+                DataTable table = DataTable.create(dataTableArgument.cells());
                 try {
-                    tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
+                    tableFormatter.formatTo(table, out);
                 } catch (IOException e) {
                     throw new CucumberException(e);
                 }
             } else if (stepArgument instanceof DocStringArgument) {
+                DocStringFormatter docStringFormatter = DocStringFormatter
+                        .builder()
+                        .indentation(STEP_SCENARIO_INDENT)
+                        .build();
                 DocStringArgument docStringArgument = (DocStringArgument) stepArgument;
-                String contentType = docStringArgument.getContentType();
-                String printableContentType = contentType == null ? "" : contentType;
-                out.println(STEP_INDENT + "\"\"\"" + printableContentType);
-                for (String l : docStringArgument.getContent().split("\\r?\\n|\\r")) {
-                    String s = STEP_INDENT + l;
-                    out.println(s);
+                DocString docString = DocString.create(docStringArgument.getContent(),
+                    docStringArgument.getContentType());
+                try {
+                    docStringFormatter.formatTo(docString, out);
+                } catch (IOException e) {
+                    throw new CucumberException(e);
                 }
-                out.println(STEP_INDENT + "\"\"\"");
             }
         }
     }

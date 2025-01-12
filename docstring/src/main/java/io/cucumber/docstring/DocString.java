@@ -5,9 +5,7 @@ import org.apiguardian.api.API;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.joining;
 
 /**
  * A doc string. For example:
@@ -81,11 +79,9 @@ public final class DocString {
 
     @Override
     public String toString() {
-        return stream(content.split("\n"))
-                .collect(joining(
-                    "\n      ",
-                    "      \"\"\"" + contentType + "\n      ",
-                    "\n      \"\"\""));
+        return DocStringFormatter.builder()
+                .build()
+                .format(this);
     }
 
     public interface DocStringConverter {
