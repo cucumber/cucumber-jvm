@@ -12,7 +12,6 @@ public final class DocStringFormatter {
     private final String indentation;
 
     private DocStringFormatter(String indentation) {
-        requireNonNull(indentation, "indentation should be null");
         this.indentation = indentation;
     }
 
@@ -27,6 +26,8 @@ public final class DocStringFormatter {
     }
 
     public void formatTo(DocString docString, StringBuilder appendable) {
+        requireNonNull(docString, "docString may not be null");
+        requireNonNull(appendable, "appendable may not be null");
         try {
             formatTo(docString, (Appendable) appendable);
         } catch (IOException e) {
@@ -52,7 +53,7 @@ public final class DocStringFormatter {
         }
 
         public Builder indentation(String indentation) {
-            requireNonNull(indentation, "indentation should be null");
+            requireNonNull(indentation, "indentation may not be null");
             this.indentation = indentation;
             return this;
         }
