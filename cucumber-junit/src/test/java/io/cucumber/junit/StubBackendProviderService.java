@@ -11,6 +11,7 @@ import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.core.gherkin.Step;
 
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -169,7 +170,7 @@ public class StubBackendProviderService implements BackendProviderService {
                 private int i = 1;
 
                 @Override
-                public MessageFormat template() {
+                public MessageFormat template(Step step) {
                     return new MessageFormat("stub snippet " + i++);
                 }
 

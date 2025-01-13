@@ -1,5 +1,6 @@
 package io.cucumber.core.backend;
 
+import io.cucumber.core.gherkin.Step;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
@@ -10,19 +11,21 @@ import java.util.Map;
 public interface Snippet {
 
     /**
-     * @return a {@link java.text.MessageFormat} template used to generate a
-     *         snippet. The template can access the following variables:
-     *         <ul>
-     *         <li>{0} : Step Keyword</li>
-     *         <li>{1} : Value of {@link #escapePattern(String)}</li>
-     *         <li>{2} : Function name</li>
-     *         <li>{3} : Value of {@link #arguments(Map)}</li>
-     *         <li>{4} : Regexp hint comment</li>
-     *         <li>{5} : value of {@link #tableHint()} if the step has a
-     *         table</li>
-     *         </ul>
+     * @param  step information about the step that could determine how the
+     *              snippet template will be generated
+     * @return      a {@link java.text.MessageFormat} template used to generate
+     *              a snippet. The template can access the following variables:
+     *              <ul>
+     *              <li>{0} : Step Keyword</li>
+     *              <li>{1} : Value of {@link #escapePattern(String)}</li>
+     *              <li>{2} : Function name</li>
+     *              <li>{3} : Value of {@link #arguments(Map)}</li>
+     *              <li>{4} : Regexp hint comment</li>
+     *              <li>{5} : value of {@link #tableHint()} if the step has a
+     *              table</li>
+     *              </ul>
      */
-    MessageFormat template();
+    MessageFormat template(Step step);
 
     /**
      * @return a hint about alternative ways to declare a table argument

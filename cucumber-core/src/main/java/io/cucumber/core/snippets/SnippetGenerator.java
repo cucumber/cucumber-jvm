@@ -55,7 +55,7 @@ public final class SnippetGenerator {
         String functionName = functionName(source, functionNameGenerator);
         List<String> parameterNames = toParameterNames(expression, parameterNameGenerator);
         Map<String, Type> arguments = arguments(step, parameterNames, expression.getParameterTypes());
-        return snippet.template().format(new String[] {
+        return snippet.template(step).format(new String[] {
                 sanitize(keyword),
                 snippet.escapePattern(source),
                 functionName,

@@ -1,6 +1,7 @@
 package io.cucumber.core.snippets;
 
 import io.cucumber.core.backend.Snippet;
+import io.cucumber.core.gherkin.Step;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
@@ -11,7 +12,7 @@ public class TestSnippet implements Snippet {
     private int i;
 
     @Override
-    public MessageFormat template() {
+    public MessageFormat template(Step step) {
         return new MessageFormat("test snippet " + i++);
     }
 
