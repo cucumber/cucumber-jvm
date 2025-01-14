@@ -63,13 +63,12 @@ public final class Runner {
 
     public void runPickle(Pickle pickle) {
         try {
-            StepTypeRegistry stepTypeRegistry = createTypeRegistryForPickle(pickle);
-            snippetGenerators = createSnippetGeneratorsForPickle(stepTypeRegistry);
 
             // Java8 step definitions will be added to the glue here
             buildBackendWorlds();
 
-            glue.prepareGlue(stepTypeRegistry);
+            glue.prepareGlue(localeForPickle(pickle));
+            snippetGenerators = createSnippetGeneratorsForPickle(glue.getStepTypeRegistry());
 
             TestCase testCase = createTestCaseForPickle(pickle);
             testCase.run(bus);
@@ -79,10 +78,9 @@ public final class Runner {
         }
     }
 
-    private StepTypeRegistry createTypeRegistryForPickle(Pickle pickle) {
+    private Locale localeForPickle(Pickle pickle) {
         String language = pickle.getLanguage();
-        Locale locale = new Locale(language);
-        return new StepTypeRegistry(locale);
+        return new Locale(language);
     }
 
     public void runBeforeAllHooks() {
