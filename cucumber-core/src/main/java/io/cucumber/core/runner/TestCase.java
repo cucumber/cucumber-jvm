@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static io.cucumber.core.runner.ExecutionMode.DRY_RUN;
-import static io.cucumber.core.runner.ExecutionMode.RUN;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -42,14 +40,14 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             List<HookTestStep> beforeHooks,
             List<HookTestStep> afterHooks,
             Pickle pickle,
-            boolean dryRun
+            ExecutionMode executionMode
     ) {
         this.id = id;
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
         this.pickle = pickle;
-        this.executionMode = dryRun ? DRY_RUN : RUN;
+        this.executionMode = executionMode;
     }
 
     private static io.cucumber.messages.types.Group makeMessageGroup(

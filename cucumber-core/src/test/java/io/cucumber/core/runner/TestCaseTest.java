@@ -88,7 +88,7 @@ class TestCaseTest {
 
     private TestCase createTestCase(PickleStepTestStep... steps) {
         return new TestCase(UUID.randomUUID(), asList(steps), Collections.emptyList(), Collections.emptyList(),
-            pickle(), false);
+            pickle(), ExecutionMode.RUN);
     }
 
     private Pickle pickle() {
