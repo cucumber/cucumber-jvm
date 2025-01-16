@@ -5,7 +5,6 @@ import io.cucumber.plugin.event.Node;
 import org.junit.platform.engine.ConfigurationParameters;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
