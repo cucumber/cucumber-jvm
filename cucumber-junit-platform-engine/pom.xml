@@ -82,6 +82,7 @@
                     <archive>
                         <manifestEntries>
                             <Multi-Release>true</Multi-Release>
+                            <Engine-Version-cucumber>${project.version}</Engine-Version-cucumber>
                         </manifestEntries>
                     </archive>
                 </configuration>
