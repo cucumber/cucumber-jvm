@@ -46,7 +46,7 @@ class StepDefinitionMatchTest {
     private final Located stubbedLocation = new Located() {
         @Override
         public boolean isDefinedAt(StackTraceElement stackTraceElement) {
-            return false;
+            return true;
         }
 
         @Override

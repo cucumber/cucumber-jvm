@@ -2,8 +2,11 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.DataTableArgument;
+import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
+import io.cucumber.docstring.DocString;
+import io.cucumber.docstring.DocStringFormatter;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.Argument;
@@ -141,15 +144,29 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             String locationComment = formatLocationComment(event, testStep, keyword, stepText);
             out.println(STEP_INDENT + formattedStepText + locationComment);
             StepArgument stepArgument = testStep.getStep().getArgument();
-            if (DataTableArgument.class.isInstance(stepArgument)) {
+            if (stepArgument instanceof DataTableArgument) {
                 DataTableFormatter tableFormatter = DataTableFormatter
                         .builder()
                         .prefixRow(STEP_SCENARIO_INDENT)
                         .escapeDelimiters(false)
                         .build();
                 DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
+                DataTable table = DataTable.create(dataTableArgument.cells());
                 try {
-                    tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
+                    tableFormatter.formatTo(table, out);
+                } catch (IOException e) {
+                    throw new CucumberException(e);
+                }
+            } else if (stepArgument instanceof DocStringArgument) {
+                DocStringFormatter docStringFormatter = DocStringFormatter
+                        .builder()
+                        .indentation(STEP_SCENARIO_INDENT)
+                        .build();
+                DocStringArgument docStringArgument = (DocStringArgument) stepArgument;
+                DocString docString = DocString.create(docStringArgument.getContent(),
+                    docStringArgument.getContentType());
+                try {
+                    docStringFormatter.formatTo(docString, out);
                 } catch (IOException e) {
                     throw new CucumberException(e);
                 }
