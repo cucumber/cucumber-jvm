@@ -3,13 +3,13 @@ Cucumber JUnit Platform Engine
 
 Use the JUnit (5) Platform to execute Cucumber scenarios.
 
-Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
+Add the `cucumber-junit-platform-engine` dependency to your `pom.xml` and use
+the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependency>
    <groupId>io.cucumber</groupId>
    <artifactId>cucumber-junit-platform-engine</artifactId>
-   <version>${cucumber.version}</version>
    <scope>test</scope>
 </dependency>
 ```
@@ -17,9 +17,27 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 This will allow IntelliJ IDEA, Eclipse, Maven, Gradle, etc, to discover, select
 and execute Cucumber scenarios.
 
-## Surefire and Gradle workarounds
+## Running Cucumber
 
-Maven, Surefire and Gradle do not yet support discovery of non-class based tests
+The JUnit Platform provides a single interface for tools and IDE's to discover,
+select and execute tests from different test engines. Conceptually this looks
+like this:
+
+
+```mermaid
+erDiagram
+    "IDE, Maven, Gradle or Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "JUnit Platform" ||--|{ "Cucumber Test Engine": "forwards request"
+    "JUnit Platform" ||--|{ "Jupiter Test Engine": "forwards request"
+    "Cucumber Test Engine" ||--|{ "Feature Files": "discovers and executes"
+    "Jupiter Test Engine" ||--|{ "Test Classes": "discovers and executes"
+```
+
+
+### Maven Surefire and Gradle
+
+Maven Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
 [SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
  workaround, you can either use:
@@ -28,7 +46,7 @@ Maven, Surefire and Gradle do not yet support discovery of non-class based tests
  * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
  * the [Cucable](https://github.com/trivago/cucable-plugin) plugin for Maven.
 
-### Use the JUnit Platform Suite Engine
+#### Use the JUnit Platform Suite Engine
 
 The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
@@ -40,7 +58,7 @@ can make for hard to read reports. To improve the readability of the reports
 provide the `cucumber.junit-platform.naming-strategy=long` configuration
 parameter. This will include the feature name as part of the test name. 
 
-#### Maven
+##### Maven
 
 ```xml
 <plugin>
@@ -57,7 +75,7 @@ parameter. This will include the feature name as part of the test name.
 </plugin>
 ```            
 
-#### Gradle
+##### Gradle
 
 ```kotlin
 tasks.test {
@@ -66,12 +84,12 @@ tasks.test {
 }
 ```
 
-### Use the JUnit Console Launcher ###
+#### Use the JUnit Console Launcher ###
 
 You can integrate the JUnit Platform Console Launcher in your build by using 
 either the Maven Antrun plugin or the Gradle JavaExec task.
 
-#### Use the Maven Antrun plugin  ####
+##### Use the Maven Antrun plugin  ####
 
 Add the following to your `pom.xml`:
 
@@ -121,7 +139,7 @@ Add the following to your `pom.xml`:
 </plugins>
 </build>
 ```
-#### Use the Gradle JavaExec task  ####
+##### Use the Gradle JavaExec task  ####
 
 Add the following to your `build.gradle.kts`:
 
@@ -167,13 +185,30 @@ TODO: (I don't know how. Feel free to send a pull request. ;))
 ## Suites with different configurations
 
 The JUnit Platform Suite Engine can be used to run Cucumber multiple times with
-different configurations. Add the `junit-platform-suite` dependency:
+different configurations. Conceptually this looks like this:
+
+```mermaid
+erDiagram
+    "IDE, Maven, Gradle or Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "JUnit Platform" ||--|{ "Suite Test Engine": "forwards request"
+    "Suite Test Engine" ||--|{ "@Suite annotated class A" : "discovers and executes"
+    "Suite Test Engine" ||--|{ "@Suite annotated class B" : "discovers and executes"
+        
+    "@Suite annotated class A" ||--|{ "JUnit Platform (A)" :  "requests discovery and execution"
+    "@Suite annotated class B" ||--|{ "JUnit Platform (B)" :  "requests discovery and execution"
+    "JUnit Platform (A)" ||--|{ "Cucumber Test Engine (A)": "forwards request"
+    "JUnit Platform (B)" ||--|{ "Cucumber Test Engine (B)": "forwards request"
+    "Cucumber Test Engine (A)" ||--|{ "Feature Files (A)": "discovers and executes"
+    "Cucumber Test Engine (B)" ||--|{ "Feature Files (B)": "discovers and executes"
+```
+
+To use, add the `junit-platform-suite` dependency and use
+the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependency>
    <groupId>org.junit.platform</groupId>
    <artifactId>junit-platform-suite</artifactId>
-   <version>${junit-platform.version}</version>
    <scope>test</scope>
 </dependency>
 ```
@@ -199,6 +234,8 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 public class RunCucumberTest {
 }
 ```
+
+
 
 ## Parallel execution ## 
 
