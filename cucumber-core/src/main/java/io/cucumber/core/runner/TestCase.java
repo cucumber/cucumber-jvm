@@ -161,7 +161,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             getTestSteps()
                     .stream()
                     .map(this::createTestStep)
-                    .collect(toList())));
+                    .collect(toList()),
+            null));
         bus.send(envelope);
     }
 
