@@ -191,12 +191,14 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", new StubException("Step failed", "the stack trace"))))
+                    new StubStepDefinition("first step",
+                        new StubException("Step failed")
+                                .withStacktrace("the stack trace"))))
                 .build()
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'first step']\n")));
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'Step failed|n\tthe stack trace|n' name = 'first step']\n")));
     }
 
     @Test
@@ -255,7 +257,9 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(new StubException("Step failed", "the stack trace"))),
+                    singletonList(
+                        new StubHookDefinition(new StubException("Step failed")
+                                .withStacktrace("the stack trace"))),
                     singletonList(new StubStepDefinition("first step")),
                     emptyList()))
                 .build()
@@ -264,7 +268,7 @@ class TeamCityPluginTest {
         assertThat(out, bytes(containsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '{stubbed location with details}' captureStandardOutput = 'true' name = 'Before']\n"
                 +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'the stack trace' name = 'Before']")));
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'Step failed|n\tthe stack trace|n' name = 'Before']")));
     }
 
     @Test
@@ -333,13 +337,15 @@ class TeamCityPluginTest {
                     emptyList(),
                     emptyList(),
                     emptyList(),
-                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
+                    singletonList(new StubStaticHookDefinition(
+                        new StubException("Hook failed")
+                                .withStacktrace("the stack trace")))))
                 .build()
                 .run());
 
         assertThat(out, bytes(containsString("" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']\n" +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/After All failed' details = 'the stack trace' name = 'Before All/After All']\n"
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' message = 'Before All/After All failed' details = 'Hook failed|n\tthe stack trace|n' name = 'Before All/After All']\n"
                 +
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Before All/After All']")));
     }

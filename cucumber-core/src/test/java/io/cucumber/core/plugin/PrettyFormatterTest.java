@@ -24,8 +24,15 @@ import java.time.Clock;
 import java.util.Locale;
 import java.util.UUID;
 
+import static io.cucumber.core.plugin.AnsiEscapes.GREEN;
+import static io.cucumber.core.plugin.AnsiEscapes.GREY;
+import static io.cucumber.core.plugin.AnsiEscapes.INTENSITY_BOLD;
+import static io.cucumber.core.plugin.AnsiEscapes.RED;
+import static io.cucumber.core.plugin.AnsiEscapes.RESET;
+import static io.cucumber.core.plugin.AnsiEscapes.YELLOW;
 import static io.cucumber.core.plugin.Bytes.bytes;
 import static io.cucumber.core.plugin.Formats.ansi;
+import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -33,7 +40,6 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PrettyFormatterTest {
@@ -61,7 +67,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
@@ -90,7 +96,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
@@ -121,7 +127,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
                 "Scenario: s1       # path/test.feature:4\n" +
                 "  Given first step # path/step_definitions.java:3\n" +
@@ -156,7 +162,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
                 "Scenario Outline: name 1 # path/test.feature:7\n" +
                 "  Given first step       # path/step_definitions.java:3\n" +
@@ -186,7 +192,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
 
                 "\n" +
                 "Scenario: Test Characters # path/test.feature:2\n" +
@@ -221,7 +227,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
 
                 "\n" +
                 "@feature_tag @scenario_tag\n" +
@@ -253,7 +259,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
 
                 "\n" +
                 "Scenario: Test Scenario # path/test.feature:2\n" +
@@ -288,7 +294,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
 
                 "\n" +
                 "Scenario: Test Scenario # path/test.feature:2\n" +
@@ -315,14 +321,47 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", "path/step_definitions.java:3", new StubException())))
+                    new StubStepDefinition("first step", "path/step_definitions.java:3",
+                        new StubException("the exception message")
+                                .withClassName()
+                                .withStacktrace("the stack trace"))))
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
-                "      the stack trace\n")));
+                "      io.cucumber.core.plugin.StubException\n" +
+                "      the exception message\n" +
+                "      \tthe stack trace\n")));
+    }
+
+    @Test
+    void should_indent_stacktrace() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", "path/step_definitions.java:3",
+                        new StubException("the exception message")
+                                .withClassName()
+                                .withStacktrace("the stack trace"))))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
+                "Scenario: scenario name # path/test.feature:2\n" +
+                "  Given first step      # path/step_definitions.java:3\n" +
+                "      io.cucumber.core.plugin.StubException\n" +
+                "      the exception message\n" +
+                "      \tthe stack trace\n")));
     }
 
     @Test
@@ -338,16 +377,20 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(new StubException())),
+                    singletonList(new StubHookDefinition(new StubException("the exception message")
+                            .withClassName()
+                            .withStacktrace("the stack trace"))),
                     singletonList(new StubStepDefinition("first step", "path/step_definitions.java:3")),
                     emptyList()))
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
-                "      the stack trace\n" +
-                "  Given first step      # path/step_definitions.java:3\n")));
+                "      io.cucumber.core.plugin.StubException\n" +
+                "      the exception message\n" +
+                "      \tthe stack trace\n" +
+                "  Given first step      # path/step_definitions.java:3")));
     }
 
     @Test
@@ -365,14 +408,18 @@ class PrettyFormatterTest {
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
                     singletonList(new StubStepDefinition("first step", "path/step_definitions.java:3")),
-                    singletonList(new StubHookDefinition(new StubException()))))
+                    singletonList(new StubHookDefinition(new StubException("the exception message")
+                            .withClassName()
+                            .withStacktrace("the stack trace")))))
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
-                "      the stack trace")));
+                "      io.cucumber.core.plugin.StubException\n" +
+                "      the exception message\n" +
+                "      \tthe stack trace\n")));
     }
 
     @Test
@@ -394,7 +441,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "\n" +
                 "    printed from hook\n" +
@@ -421,7 +468,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
                 "\n" +
@@ -453,7 +500,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "Scenario: scenario name # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:3\n" +
                 "\n" +
@@ -482,8 +529,8 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "  " + AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET + AnsiEscapes.GREEN + "first step"
-                + AnsiEscapes.RESET)));
+                "  " + GREEN + "Given " + RESET + GREEN + "first step"
+                + RESET)));
     }
 
     @Test
@@ -503,7 +550,7 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                AnsiEscapes.GREY + "# path/step_definitions.java:3" + AnsiEscapes.RESET)));
+                GREY + "# path/step_definitions.java:3" + RESET)));
     }
 
     @Test
@@ -518,12 +565,20 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", "path/step_definitions.java:3", new StubException())))
+                    new StubStepDefinition("first step", "path/step_definitions.java:3",
+                        new StubException("the exception message")
+                                .withClassName()
+                                .withStacktrace("the stack trace"))))
                 .build()
                 .run();
 
-        assertThat(out, bytes(containsString("" +
-                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET)));
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
+                "Scenario: scenario name " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                "  " + RED + "Given " + RESET + RED + "first step" + RESET + "      " + GREY
+                + "# path/step_definitions.java:3" + RESET + "\n" +
+                "      " + RED + "io.cucumber.core.plugin.StubException\n" +
+                "      the exception message\n" +
+                "      \tthe stack trace" + RESET + "\n")));
     }
 
     @Test
@@ -540,11 +595,11 @@ class PrettyFormatterTest {
         String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
             formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
-        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + "text " + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg1'" + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + " text " + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + "'arg2'" + AnsiEscapes.RESET));
+        assertThat(formattedText, equalTo(GREEN + "Given " + RESET +
+                GREEN + "text " + RESET +
+                GREEN + INTENSITY_BOLD + "'arg1'" + RESET +
+                GREEN + " text " + RESET +
+                GREEN + INTENSITY_BOLD + "'arg2'" + RESET));
     }
 
     @Test
@@ -563,9 +618,9 @@ class PrettyFormatterTest {
         String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
             formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
-        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
+        assertThat(formattedText, equalTo(GREEN + "Given " + RESET +
+                GREEN + "the order is placed" + RESET +
+                GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET));
     }
 
     @Test
@@ -581,9 +636,9 @@ class PrettyFormatterTest {
         String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
             formats.get("passed_arg"), createArguments(expression.match(stepText)));
 
-        assertThat(formattedText, equalTo(AnsiEscapes.GREEN + "Given " + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + "the order is placed" + AnsiEscapes.RESET +
-                AnsiEscapes.GREEN + AnsiEscapes.INTENSITY_BOLD + " and not yet confirmed" + AnsiEscapes.RESET));
+        assertThat(formattedText, equalTo(GREEN + "Given " + RESET +
+                GREEN + "the order is placed" + RESET +
+                GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET));
     }
 
     @Test
@@ -604,12 +659,18 @@ class PrettyFormatterTest {
                     emptyList(),
                     emptyList(),
                     emptyList(),
-                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed", "the stack trace")))))
+                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed")
+                            .withClassName()
+                            .withStacktrace("the stack trace")))))
                 .build()
                 .run());
 
-        assertThat(out, bytes(containsString("" +
-                "      " + AnsiEscapes.RED + "the stack trace" + AnsiEscapes.RESET)));
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
+                "Scenario: scenario name " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                "  " + YELLOW + "Given " + RESET + YELLOW + "first step" + RESET + "\n" +
+                RED + "io.cucumber.core.plugin.StubException\n" +
+                "Hook failed\n" +
+                "\tthe stack trace" + RESET + "\n")));
     }
 
     @Test
@@ -634,7 +695,7 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("" +
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
                 "Scenario: Test Scenario # path/test.feature:2\n" +
                 "  Given first step      # path/step_definitions.java:7\n" +

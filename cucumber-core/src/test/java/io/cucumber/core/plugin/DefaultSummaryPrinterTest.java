@@ -19,11 +19,11 @@ import java.time.ZoneId;
 import java.util.Locale;
 import java.util.UUID;
 
+import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Instant.ofEpochSecond;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 
 class DefaultSummaryPrinterTest {
 
@@ -56,7 +56,7 @@ class DefaultSummaryPrinterTest {
 
         bus.send(new TestRunFinished(bus.getInstant(), new Result(Status.PASSED, Duration.ZERO, null)));
 
-        assertThat(new String(out.toByteArray(), UTF_8), equalToCompressingWhiteSpace("" +
+        assertThat(new String(out.toByteArray(), UTF_8), equalCompressingLineSeparators("" +
                 "\n" +
                 "0 Scenarios\n" +
                 "0 Steps\n" +

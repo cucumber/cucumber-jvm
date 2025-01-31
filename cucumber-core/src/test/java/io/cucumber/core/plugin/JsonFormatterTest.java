@@ -230,7 +230,7 @@ class JsonFormatterTest {
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", "StepDefs.there_are_bananas()",
-                        new StubException())))
+                        new StubException("the stack trace"))))
                 .build()
                 .run();
 
@@ -1485,5 +1485,4 @@ class JsonFormatterTest {
                 "]";
         assertJsonEquals(expected, out);
     }
-
 }
