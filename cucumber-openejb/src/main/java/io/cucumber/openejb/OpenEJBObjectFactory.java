@@ -2,10 +2,9 @@ package io.cucumber.openejb;
 
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
+import jakarta.ejb.embeddable.EJBContainer;
 import org.apache.openejb.OpenEjbContainer;
 import org.apiguardian.api.API;
-
-import javax.ejb.embeddable.EJBContainer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
