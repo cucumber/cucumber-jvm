@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [JUnit Platform Engine] Set Engine-Version-cucumber attribute ([#2963](https://github.com/cucumber/cucumber-jvm/pull/2963) M.P. Korstanje)
 
 ### Changed
+- [Archetype] Replace JUnit Jupiter with AssertJ ([#2969](https://github.com/cucumber/cucumber-jvm/pull/2969) M.P. Korstanje)
 - [JUnit Platform Engine] Use JUnit Platform 1.11.3 (JUnit Jupiter 5.11.3)
 
 ### Added

@@ -6,5 +6,5 @@ This is a Maven Archetype for setting up an empty Cucumber project. Used by the 
 mvn archetype:generate                                  \
   -DarchetypeGroupId=io.cucumber                        \
   -DarchetypeArtifactId=cucumber-archetype              \
-  -DarchetypeVersion=${cucumber.version}                \
+  -DarchetypeVersion=${cucumber.version}
 ```
