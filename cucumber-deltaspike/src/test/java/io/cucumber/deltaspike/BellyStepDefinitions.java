@@ -2,9 +2,8 @@ package io.cucumber.deltaspike;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
