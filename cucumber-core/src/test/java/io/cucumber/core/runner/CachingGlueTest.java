@@ -16,6 +16,7 @@ import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
 import io.cucumber.datatable.DataTable;
@@ -526,6 +527,94 @@ class CachingGlueTest {
         io.cucumber.messages.types.SourceReference sourceReference = events.get(0).getParameterType().get()
                 .getSourceReference().get();
         assertNotNull(sourceReference.getJavaStackTraceElement());
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_language_changes() {
+        // Given
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.prepareGlue(Locale.FRENCH);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_not_evicted_when_language_remains() {
+        // Given
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1==stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_stepDefinition_added() {
+        // Given
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addStepDefinition(new MockedStepDefinition("mock"));
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_parameterType_added() {
+        // Given
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addParameterType(new MockedParameterTypeDefinition());
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_dataTableType_added() {
+        // Given
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addDataTableType(new MockedDataTableTypeDefinition());
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_docString_added() {
+        // Given
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addDocStringType(new MockedDocStringTypeDefinition());
+        glue.prepareGlue(LANGUAGE);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
     }
 
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
