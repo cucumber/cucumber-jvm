@@ -540,7 +540,7 @@ class CachingGlueTest {
         StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
 
         // Then
-        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
     }
 
     @Test
@@ -554,7 +554,7 @@ class CachingGlueTest {
         StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
 
         // Then
-        assertThat(stepTypeRegistry1==stepTypeRegistry2, is(true));
+        assertThat(stepTypeRegistry1 == stepTypeRegistry2, is(true));
     }
 
     @Test
@@ -569,7 +569,7 @@ class CachingGlueTest {
         StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
 
         // Then
-        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
     }
 
     @Test
@@ -584,7 +584,7 @@ class CachingGlueTest {
         StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
 
         // Then
-        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
     }
 
     @Test
@@ -599,7 +599,7 @@ class CachingGlueTest {
         StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
 
         // Then
-        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
     }
 
     @Test
@@ -614,7 +614,7 @@ class CachingGlueTest {
         StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
 
         // Then
-        assertThat(stepTypeRegistry1!=stepTypeRegistry2, is(true));
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
     }
 
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
