@@ -84,6 +84,9 @@ final class CachingGlue implements Glue {
 
     private final EventBus bus;
     private StepTypeRegistry stepTypeRegistry;
+    private Locale locale = null;
+    private StepExpressionFactory stepExpressionFactory = null;
+    private boolean dirtyCache = false;
 
     CachingGlue(EventBus bus) {
         this.bus = bus;
@@ -104,6 +107,7 @@ final class CachingGlue implements Glue {
     @Override
     public void addStepDefinition(StepDefinition stepDefinition) {
         stepDefinitions.add(stepDefinition);
+        dirtyCache = true;
     }
 
     @Override
@@ -133,11 +137,13 @@ final class CachingGlue implements Glue {
     @Override
     public void addParameterType(ParameterTypeDefinition parameterType) {
         parameterTypeDefinitions.add(parameterType);
+        dirtyCache = true;
     }
 
     @Override
     public void addDataTableType(DataTableTypeDefinition dataTableType) {
         dataTableTypeDefinitions.add(dataTableType);
+        dirtyCache = true;
     }
 
     @Override
@@ -163,6 +169,7 @@ final class CachingGlue implements Glue {
     @Override
     public void addDocStringType(DocStringTypeDefinition docStringType) {
         docStringTypeDefinitions.add(docStringType);
+        dirtyCache = true;
     }
 
     List<StaticHookDefinition> getBeforeAllHooks() {
@@ -232,21 +239,36 @@ final class CachingGlue implements Glue {
     }
 
     StepTypeRegistry getStepTypeRegistry() {
-        return null;
+        return stepTypeRegistry;
     }
 
     void prepareGlue(Locale locale) throws DuplicateStepDefinitionException {
-        stepTypeRegistry = new StepTypeRegistry(locale);
-        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(stepTypeRegistry, bus);
+        boolean firstTime = stepTypeRegistry == null;
+        boolean languageChanged = !locale.equals(this.locale);
+        boolean mustRebuildCache = false;
+        if (firstTime || languageChanged || this.dirtyCache) {
+            // conditions changed => invalidate the glue cache
+            this.locale = locale;
+            stepTypeRegistry = new StepTypeRegistry(locale);
+            stepExpressionFactory = new StepExpressionFactory(stepTypeRegistry, bus);
+            stepDefinitionsByPattern.clear();
+            stepPatternByStepText.clear();
+            mustRebuildCache = true;
+            this.dirtyCache = false; // since we must rebuild the cache, it will
+                                     // not be dirty the next time
+        }
 
         // TODO: separate prepared and unprepared glue into different classes
-        parameterTypeDefinitions.forEach(ptd -> {
-            ParameterType<?> parameterType = ptd.parameterType();
-            stepTypeRegistry.defineParameterType(parameterType);
-            emitParameterTypeDefined(ptd);
-        });
-        dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
-        docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
+        if (mustRebuildCache) {
+            // parameters changed from the previous scenario => re-register them
+            parameterTypeDefinitions.forEach(ptd -> {
+                ParameterType<?> parameterType = ptd.parameterType();
+                stepTypeRegistry.defineParameterType(parameterType);
+                emitParameterTypeDefined(ptd);
+            });
+            dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
+            docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
+        }
 
         if (defaultParameterTransformers.size() == 1) {
             DefaultParameterTransformerDefinition definition = defaultParameterTransformers.get(0);
@@ -277,17 +299,19 @@ final class CachingGlue implements Glue {
         beforeHooks.forEach(this::emitHook);
         beforeStepHooks.forEach(this::emitHook);
 
-        stepDefinitions.forEach(stepDefinition -> {
-            StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-            CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition,
-                expression);
-            CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
-            if (previous != null) {
-                throw new DuplicateStepDefinitionException(previous, stepDefinition);
-            }
-            stepDefinitionsByPattern.put(coreStepDefinition.getExpression().getSource(), coreStepDefinition);
-            emitStepDefined(coreStepDefinition);
-        });
+        if (mustRebuildCache) {
+            stepDefinitions.forEach(stepDefinition -> {
+                StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+                CoreStepDefinition coreStepDefinition = new CoreStepDefinition(bus.generateId(), stepDefinition,
+                    expression);
+                CoreStepDefinition previous = stepDefinitionsByPattern.get(stepDefinition.getPattern());
+                if (previous != null) {
+                    throw new DuplicateStepDefinitionException(previous, stepDefinition);
+                }
+                stepDefinitionsByPattern.put(coreStepDefinition.getExpression().getSource(), coreStepDefinition);
+                emitStepDefined(coreStepDefinition);
+            });
+        }
 
         afterStepHooks.forEach(this::emitHook);
         afterHooks.forEach(this::emitHook);
@@ -449,20 +473,33 @@ final class CachingGlue implements Glue {
     }
 
     void removeScenarioScopedGlue() {
-        removeScenarioScopedGlue(beforeHooks);
-        removeScenarioScopedGlue(beforeStepHooks);
-        removeScenarioScopedGlue(afterHooks);
-        removeScenarioScopedGlue(afterStepHooks);
-        removeScenarioScopedGlue(stepDefinitions);
-        removeScenarioScopedGlue(dataTableTypeDefinitions);
-        removeScenarioScopedGlue(docStringTypeDefinitions);
-        removeScenarioScopedGlue(parameterTypeDefinitions);
-        removeScenarioScopedGlue(defaultParameterTransformers);
-        removeScenarioScopedGlue(defaultDataTableEntryTransformers);
-        removeScenarioScopedGlue(defaultDataTableCellTransformers);
-
-        stepDefinitionsByPattern.clear();
-
+        boolean dirty = false;
+        dirty |= removeScenarioScopedGlue(beforeHooks);
+        dirty |= removeScenarioScopedGlue(beforeStepHooks);
+        dirty |= removeScenarioScopedGlue(afterHooks);
+        dirty |= removeScenarioScopedGlue(afterStepHooks);
+        if (removeScenarioScopedGlue(stepDefinitions)) {
+            dirty = true;
+            dirtyCache = true;
+        }
+        if (removeScenarioScopedGlue(dataTableTypeDefinitions)) {
+            dirty = true;
+            dirtyCache = true;
+        }
+        if (removeScenarioScopedGlue(docStringTypeDefinitions)) {
+            dirty = true;
+            dirtyCache = true;
+        }
+        if (removeScenarioScopedGlue(parameterTypeDefinitions)) {
+            dirty = true;
+            dirtyCache = true;
+        }
+        dirty |= removeScenarioScopedGlue(defaultParameterTransformers);
+        dirty |= removeScenarioScopedGlue(defaultDataTableEntryTransformers);
+        dirty |= removeScenarioScopedGlue(defaultDataTableCellTransformers);
+        if (dirty) {
+            stepDefinitionsByPattern.clear();
+        }
     }
 
     private boolean removeScenarioScopedGlue(Iterable<?> glues) {
