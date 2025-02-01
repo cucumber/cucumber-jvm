@@ -246,7 +246,7 @@ final class CachingGlue implements Glue {
         boolean firstTime = stepTypeRegistry == null;
         boolean languageChanged = !locale.equals(this.locale);
         boolean mustRebuildCache = false;
-        if (firstTime || languageChanged || this.dirtyCache) {
+        if (firstTime || languageChanged || dirtyCache) {
             // conditions changed => invalidate the glue cache
             this.locale = locale;
             stepTypeRegistry = new StepTypeRegistry(locale);
@@ -254,8 +254,9 @@ final class CachingGlue implements Glue {
             stepDefinitionsByPattern.clear();
             stepPatternByStepText.clear();
             mustRebuildCache = true;
-            this.dirtyCache = false; // since we must rebuild the cache, it will
-                                     // not be dirty the next time
+            // since we must rebuild the cache, it will not be dirty the next
+            // time
+            dirtyCache = false;
         }
 
         // TODO: separate prepared and unprepared glue into different classes
