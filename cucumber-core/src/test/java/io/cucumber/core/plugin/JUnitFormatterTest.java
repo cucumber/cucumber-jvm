@@ -25,10 +25,10 @@ class JUnitFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
+        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L), null);
         bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null, null);
         bus.send(Envelope.of(testRunFinished));
 
         assertThat(bytes, bytes(equalTo("" +

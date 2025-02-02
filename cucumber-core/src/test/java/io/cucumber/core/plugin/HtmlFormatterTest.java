@@ -35,10 +35,10 @@ class HtmlFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
+        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L), null);
         bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null);
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null, null);
         bus.send(Envelope.of(testRunFinished));
 
         assertEquals("[" +
@@ -55,7 +55,7 @@ class HtmlFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L));
+        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L), null);
         bus.send(Envelope.of(testRunStarted));
 
         StepDefinition stepDefinition = new StepDefinition(
@@ -67,7 +67,7 @@ class HtmlFormatterTest {
         Hook hook = new Hook("",
             null,
             SourceReference.of("https://example.com"),
-            null);
+            null, null);
         bus.send(Envelope.of(hook));
 
         // public ParameterType(String name, List<String> regularExpressions,
@@ -86,7 +86,7 @@ class HtmlFormatterTest {
             null,
             true,
             new Timestamp(15L, 0L),
-            null);
+            null, null);
         bus.send(Envelope.of(testRunFinished));
 
         assertEquals("[" +

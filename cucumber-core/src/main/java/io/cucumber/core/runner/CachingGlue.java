@@ -306,7 +306,7 @@ final class CachingGlue implements Glue {
             coreHook.getDefinitionLocation()
                     .map(this::createSourceReference)
                     .orElseGet(this::emptySourceReference),
-            coreHook.getTagExpression());
+            coreHook.getTagExpression(), null);
         bus.send(Envelope.of(messagesHook));
     }
 
