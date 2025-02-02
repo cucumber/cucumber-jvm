@@ -39,6 +39,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
@@ -50,7 +51,6 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -411,7 +411,7 @@ class CommandlineOptionsParserTest {
         parser
                 .parse("--threads", "0")
                 .build();
-        assertThat(output(), equalToCompressingWhiteSpace("--threads must be > 0"));
+        assertThat(output(), equalCompressingLineSeparators("--threads must be > 0"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
 
@@ -518,7 +518,7 @@ class CommandlineOptionsParserTest {
         parser
                 .parse("--count", "0")
                 .build();
-        assertThat(output(), equalToCompressingWhiteSpace("--count must be > 0"));
+        assertThat(output(), equalCompressingLineSeparators("--count must be > 0"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x1)));
     }
 
