@@ -14,12 +14,12 @@ import org.opentest4j.TestAbortedException;
 import java.io.ByteArrayOutputStream;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
+import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 
 class RerunFormatterTest {
 
@@ -66,7 +66,7 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("classpath:path/test.feature:2:4:6\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("classpath:path/test.feature:2:4:6\n")));
     }
 
     @Test
@@ -89,7 +89,7 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("file:path/test.feature:2\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("file:path/test.feature:2\n")));
     }
 
     @Test
@@ -113,7 +113,7 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("file:path/test.feature:4\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("file:path/test.feature:4\n")));
     }
 
     @Test
@@ -139,7 +139,7 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("classpath:path/test.feature:8\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("classpath:path/test.feature:8\n")));
     }
 
     @Test
@@ -165,7 +165,7 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("classpath:path/test.feature:2\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("classpath:path/test.feature:2\n")));
     }
 
     @Test
@@ -191,7 +191,7 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("classpath:path/test.feature:2\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("classpath:path/test.feature:2\n")));
     }
 
     @Test
@@ -217,7 +217,7 @@ class RerunFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalToCompressingWhiteSpace("classpath:path/test.feature:2:5\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("classpath:path/test.feature:2:5\n")));
     }
 
     @Test
@@ -247,7 +247,7 @@ class RerunFormatterTest {
 
         assertThat(out,
             bytes(
-                equalToCompressingWhiteSpace("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n")));
+                equalCompressingLineSeparators("classpath:path/first.feature:2\nclasspath:path/second.feature:2\n")));
     }
 
 }

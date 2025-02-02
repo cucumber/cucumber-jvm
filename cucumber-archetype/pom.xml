@@ -16,6 +16,7 @@
 
     <properties>
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <assertj.version>3.25.3</assertj.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     </properties>
@@ -36,6 +37,16 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Not used by this module. But ensures the assertj.version
+                 in the archetype template is also automatically updated by renovate
+                 bot. -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-bom</artifactId>
+                <version>${assertj.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
