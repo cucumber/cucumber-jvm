@@ -16,7 +16,7 @@
 
     <properties>
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
-        <assertj.version>3.25.3</assertj.version>
+        <assertj.version>3.27.3</assertj.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     </properties>
