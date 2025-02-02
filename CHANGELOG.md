@@ -10,10 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Core] Include root cause when using DataTable.asList and friends ([#2949](https://github.com/cucumber/cucumber-jvm/pull/2949) M.P. Korstanje)
-- [Core] Indent stacktrace in pretty formatter ([#2970](https://github.com/cucumber/cucumber-jvm/pull/2970) M.P. Korstanje)
-- [JUnit Platform Engine] Set Engine-Version-cucumber attribute ([#2963](https://github.com/cucumber/cucumber-jvm/pull/2963) M.P. Korstanje)
+
+## [7.21.0] - 2025-02-02
+### Added
+- [Core] Pretty-Print DocStringArgument Step Arguments([#2953](https://github.com/cucumber/cucumber-jvm/pull/2953) Daniel Miladinov)
+- [Core] Include hook type in cucumber message ([#2972](https://github.com/cucumber/cucumber-jvm/pull/2972) M.P. Korstanje)
 
 ### Changed
 - [Archetype] Replace JUnit Jupiter with AssertJ ([#2969](https://github.com/cucumber/cucumber-jvm/pull/2969) M.P. Korstanje)
@@ -24,9 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:query to v13.2.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter to v0.3.1
 
-### Added
-- [Core] Pretty-Print DocStringArgument Step Arguments([#2953](https://github.com/cucumber/cucumber-jvm/pull/2953) Daniel Miladinov)
-- [Core] Include hook type in cucumber message ([#2972](https://github.com/cucumber/cucumber-jvm/pull/2972) M.P. Korstanje)
+### Fixed
+- [Core] Include root cause when using DataTable.asList and friends ([#2949](https://github.com/cucumber/cucumber-jvm/pull/2949) M.P. Korstanje)
+- [Core] Indent stacktrace in pretty formatter ([#2970](https://github.com/cucumber/cucumber-jvm/pull/2970) M.P. Korstanje)
+- [JUnit Platform Engine] Set Engine-Version-cucumber attribute ([#2963](https://github.com/cucumber/cucumber-jvm/pull/2963) M.P. Korstanje)
 
 ## [7.20.1] - 2024-10-09
 ### Fixed
@@ -369,7 +371,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.20.1...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.0...HEAD
+[7.21.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.20.1...v7.21.0
 [7.20.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.20.0...v7.20.1
 [7.20.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.19.0...v7.20.0
 [7.19.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.18.1...v7.19.0
