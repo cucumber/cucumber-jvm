@@ -87,6 +87,7 @@ final class CachingGlue implements Glue {
     private Locale locale = null;
     private StepExpressionFactory stepExpressionFactory = null;
     private boolean dirtyCache = false;
+    private boolean hasScenarioScopedGlue = false;
 
     CachingGlue(EventBus bus) {
         this.bus = bus;
@@ -108,42 +109,47 @@ final class CachingGlue implements Glue {
     public void addStepDefinition(StepDefinition stepDefinition) {
         stepDefinitions.add(stepDefinition);
         dirtyCache = true;
+        hasScenarioScopedGlue |= stepDefinition instanceof ScenarioScoped;
     }
 
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
         beforeHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         beforeHooks.sort(HOOK_ORDER_ASCENDING);
+        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         afterHooks.sort(HOOK_ORDER_ASCENDING);
+        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
         beforeStepHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         beforeStepHooks.sort(HOOK_ORDER_ASCENDING);
+        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         afterStepHooks.sort(HOOK_ORDER_ASCENDING);
+        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
     }
 
     @Override
     public void addParameterType(ParameterTypeDefinition parameterType) {
         parameterTypeDefinitions.add(parameterType);
         dirtyCache = true;
+        hasScenarioScopedGlue |= parameterType instanceof ScenarioScoped;
     }
 
     @Override
     public void addDataTableType(DataTableTypeDefinition dataTableType) {
         dataTableTypeDefinitions.add(dataTableType);
-        dirtyCache = true;
     }
 
     @Override
@@ -169,7 +175,6 @@ final class CachingGlue implements Glue {
     @Override
     public void addDocStringType(DocStringTypeDefinition docStringType) {
         docStringTypeDefinitions.add(docStringType);
-        dirtyCache = true;
     }
 
     List<StaticHookDefinition> getBeforeAllHooks() {
@@ -246,8 +251,10 @@ final class CachingGlue implements Glue {
         boolean firstTime = stepTypeRegistry == null;
         boolean languageChanged = !locale.equals(this.locale);
         boolean mustRebuildCache = false;
-        if (firstTime || languageChanged || dirtyCache) {
+        if (firstTime || languageChanged || dirtyCache || hasScenarioScopedGlue) {
             // conditions changed => invalidate the glue cache
+            // Note: we have a prudent approach of avoiding caching if
+            // scenario-scoped glue exist (e.g. cucumber-java8).
             this.locale = locale;
             stepTypeRegistry = new StepTypeRegistry(locale);
             stepExpressionFactory = new StepExpressionFactory(stepTypeRegistry, bus);
@@ -483,14 +490,8 @@ final class CachingGlue implements Glue {
             dirty = true;
             dirtyCache = true;
         }
-        if (removeScenarioScopedGlue(dataTableTypeDefinitions)) {
-            dirty = true;
-            dirtyCache = true;
-        }
-        if (removeScenarioScopedGlue(docStringTypeDefinitions)) {
-            dirty = true;
-            dirtyCache = true;
-        }
+        dirty |= removeScenarioScopedGlue(dataTableTypeDefinitions);
+        dirty |= removeScenarioScopedGlue(docStringTypeDefinitions);
         if (removeScenarioScopedGlue(parameterTypeDefinitions)) {
             dirty = true;
             dirtyCache = true;
@@ -501,6 +502,7 @@ final class CachingGlue implements Glue {
         if (dirty) {
             stepDefinitionsByPattern.clear();
         }
+        hasScenarioScopedGlue = false;
     }
 
     private boolean removeScenarioScopedGlue(Iterable<?> glues) {
