@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [Core] Include root cause when using DataTable.asList and friends ([#2949](https://github.com/cucumber/cucumber-jvm/pull/2949) M.P. Korstanje)
+- [Core] Indent stacktrace in pretty formatter ([#2970](https://github.com/cucumber/cucumber-jvm/pull/2970) M.P. Korstanje)
 - [JUnit Platform Engine] Set Engine-Version-cucumber attribute ([#2963](https://github.com/cucumber/cucumber-jvm/pull/2963) M.P. Korstanje)
 
 ### Changed

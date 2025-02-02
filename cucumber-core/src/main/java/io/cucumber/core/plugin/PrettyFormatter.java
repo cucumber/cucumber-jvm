@@ -49,8 +49,9 @@ import static java.util.Locale.ROOT;
 public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
 
     private static final String SCENARIO_INDENT = "";
-    private static final String STEP_INDENT = "  ";
-    private static final String STEP_SCENARIO_INDENT = "    ";
+    private static final String STEP_INDENT = SCENARIO_INDENT + "  ";
+    private static final String STEP_SCENARIO_INDENT = STEP_INDENT + "  ";
+    private static final String STACK_TRACE_INDENT = STEP_SCENARIO_INDENT + "  ";
 
     private final Map<UUID, Integer> commentStartIndex = new HashMap<>();
 
@@ -120,7 +121,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private void printTags(TestCaseStarted event) {
         List<String> tags = event.getTestCase().getTags();
         if (!tags.isEmpty()) {
-            out.println(PrettyFormatter.SCENARIO_INDENT + String.join(" ", tags));
+            out.println(SCENARIO_INDENT + String.join(" ", tags));
         }
     }
 
@@ -187,21 +188,23 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     private void printError(TestStepFinished event) {
         Result result = event.getResult();
-        printError(result);
+        printError(STACK_TRACE_INDENT, result);
     }
 
     private void printError(TestRunFinished event) {
         Result result = event.getResult();
-        printError(result);
+        printError(SCENARIO_INDENT, result);
     }
 
-    private void printError(Result result) {
+    private void printError(String prefix, Result result) {
         Throwable error = result.getError();
         if (error != null) {
             String name = result.getStatus().name().toLowerCase(ROOT);
             Format format = formats.get(name);
             String text = printStackTrace(error);
-            out.println("      " + format.text(text));
+            // TODO: Java 12+ use String.indent
+            String indented = text.replaceAll("(\r\n|\r|\n)", "$1" + prefix).trim();
+            out.println(prefix + format.text(indented));
         }
     }
 

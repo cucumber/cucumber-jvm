@@ -17,8 +17,8 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
+import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +47,7 @@ class UnusedStepsSummaryPrinterTest {
 
         // Verify produced output
         assertThat(out,
-            bytes(equalToCompressingWhiteSpace("1 Unused steps:\n" + "my/tummy.feature:5 # some more cukes\n")));
+            bytes(equalCompressingLineSeparators("1 Unused steps:\n" + "my/tummy.feature:5 # some more cukes\n")));
     }
 
     private static StepDefinition mockStepDef(String location, String pattern) {
