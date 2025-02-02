@@ -19,7 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Archetype] Replace JUnit Jupiter with AssertJ ([#2969](https://github.com/cucumber/cucumber-jvm/pull/2969) M.P. Korstanje)
 - [JUnit Platform Engine] Use JUnit Platform 1.11.3 (JUnit Jupiter 5.11.3)
 - [Core] Update dependency io.cucumber:gherkin to v31.0.0
-- [Core] Update dependency io.cucumber:messages to v27.1.0
+- [Core] Update dependency io.cucumber:messages to v27.2.0
+- [Core] Update dependency io.cucumber:html-formatter to v21.9.0
+- [Core] Update dependency io.cucumber:query to v13.2.0
+- [Core] Update dependency io.cucumber:testng-xml-formatter to v0.3.1
 
 ### Added
 - [Core] Pretty-Print DocStringArgument Step Arguments([#2953](https://github.com/cucumber/cucumber-jvm/pull/2953) Daniel Miladinov)
