@@ -85,7 +85,7 @@ public final class CucumberExecutionContext {
         log.debug(() -> "Sending run test started event");
         start = bus.getInstant();
         bus.send(new TestRunStarted(start));
-        bus.send(Envelope.of(new io.cucumber.messages.types.TestRunStarted(toMessage(start))));
+        bus.send(Envelope.of(new io.cucumber.messages.types.TestRunStarted(toMessage(start), null)));
     }
 
     public void runBeforeAllHooks() {
@@ -120,7 +120,7 @@ public final class CucumberExecutionContext {
             exception != null ? exception.getMessage() : null,
             exception == null && exitStatus.isSuccess(),
             toMessage(instant),
-            exception == null ? null : toMessage(exception));
+            exception == null ? null : toMessage(exception), null);
         bus.send(Envelope.of(testRunFinished));
     }
 

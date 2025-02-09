@@ -18,12 +18,12 @@ import java.time.Instant;
 import java.util.UUID;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
+import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static io.cucumber.plugin.event.Status.FAILED;
 import static io.cucumber.plugin.event.Status.PASSED;
 import static io.cucumber.plugin.event.Status.UNDEFINED;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualCompressingWhiteSpace.equalToCompressingWhiteSpace;
 import static org.mockito.Mockito.mock;
 
 class ProgressFormatterTest {
@@ -41,7 +41,7 @@ class ProgressFormatterTest {
     void prints_empty_line_for_empty_test_run() {
         Result result = new Result(PASSED, Duration.ZERO, null);
         bus.send(new TestRunFinished(Instant.now(), result));
-        assertThat(out, bytes(equalToCompressingWhiteSpace("\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("\n")));
     }
 
     @Test
@@ -49,7 +49,7 @@ class ProgressFormatterTest {
         Result result = new Result(PASSED, Duration.ZERO, null);
         bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
         bus.send(new TestRunFinished(Instant.now(), result));
-        assertThat(out, bytes(equalToCompressingWhiteSpace(AnsiEscapes.GREEN + "." + AnsiEscapes.RESET + "\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators(AnsiEscapes.GREEN + "." + AnsiEscapes.RESET + "\n")));
     }
 
     @Test

@@ -30,8 +30,8 @@ class NoPublishFormatterTest {
         noPublishFormatter.setMonochrome(true);
         noPublishFormatter.setEventPublisher(bus);
 
-        bus.send(Envelope.of(new TestRunStarted(new Timestamp(0L, 0L))));
-        bus.send(Envelope.of(new TestRunFinished(null, true, new Timestamp(0L, 0L), null)));
+        bus.send(Envelope.of(new TestRunStarted(new Timestamp(0L, 0L), null)));
+        bus.send(Envelope.of(new TestRunFinished(null, true, new Timestamp(0L, 0L), null, null)));
 
         assertThat(bytes, bytes(equalTo("" +
                 "┌───────────────────────────────────────────────────────────────────────────────────┐\n" +

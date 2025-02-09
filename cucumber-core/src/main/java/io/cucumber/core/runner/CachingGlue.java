@@ -28,6 +28,7 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Hook;
+import io.cucumber.messages.types.HookType;
 import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.JavaStackTraceElement;
 import io.cucumber.messages.types.Location;
@@ -306,7 +307,23 @@ final class CachingGlue implements Glue {
             coreHook.getDefinitionLocation()
                     .map(this::createSourceReference)
                     .orElseGet(this::emptySourceReference),
-            coreHook.getTagExpression());
+            coreHook.getTagExpression(),
+            coreHook.getHookType()
+                    .map(hookType -> {
+                        switch (hookType) {
+                            case BEFORE:
+                                return HookType.BEFORE_TEST_CASE;
+                            case AFTER:
+                                return HookType.AFTER_TEST_CASE;
+                            case BEFORE_STEP:
+                                return HookType.BEFORE_TEST_STEP;
+                            case AFTER_STEP:
+                                return HookType.AFTER_TEST_STEP;
+                            default:
+                                return null;
+                        }
+                    })
+                    .orElse(null));
         bus.send(Envelope.of(messagesHook));
     }
 

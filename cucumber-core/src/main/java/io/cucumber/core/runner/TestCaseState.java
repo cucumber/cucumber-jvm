@@ -80,6 +80,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             null,
             testExecutionId.toString(),
             currentTestStepId.toString(),
+            null,
             null)));
     }
 
@@ -98,6 +99,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             null,
             testExecutionId.toString(),
             currentTestStepId.toString(),
+            null,
             null)));
     }
 
@@ -113,6 +115,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             null,
             testExecutionId.toString(),
             currentTestStepId.toString(),
+            null,
             null)));
     }
 

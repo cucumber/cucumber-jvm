@@ -203,7 +203,7 @@ erDiagram
 ```
 
 To use, add the `junit-platform-suite` dependency and use
-the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
+the [`junit-bom`](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven-bom) for dependency management:
 
 ```xml
 <dependency>
