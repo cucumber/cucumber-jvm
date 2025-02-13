@@ -21,8 +21,10 @@ import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,7 @@ public final class Runner {
     private final Collection<? extends Backend> backends;
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
+    private final Map<String, Locale> localeCache = new HashMap<>();
     private List<SnippetGenerator> snippetGenerators;
 
     public Runner(
@@ -63,13 +66,12 @@ public final class Runner {
 
     public void runPickle(Pickle pickle) {
         try {
-            StepTypeRegistry stepTypeRegistry = createTypeRegistryForPickle(pickle);
-            snippetGenerators = createSnippetGeneratorsForPickle(stepTypeRegistry);
 
             // Java8 step definitions will be added to the glue here
             buildBackendWorlds();
 
-            glue.prepareGlue(stepTypeRegistry);
+            glue.prepareGlue(localeForPickle(pickle));
+            snippetGenerators = createSnippetGeneratorsForPickle(glue.getStepTypeRegistry());
 
             TestCase testCase = createTestCaseForPickle(pickle);
             testCase.run(bus);
@@ -79,10 +81,9 @@ public final class Runner {
         }
     }
 
-    private StepTypeRegistry createTypeRegistryForPickle(Pickle pickle) {
+    private Locale localeForPickle(Pickle pickle) {
         String language = pickle.getLanguage();
-        Locale locale = new Locale(language);
-        return new StepTypeRegistry(locale);
+        return localeCache.computeIfAbsent(language, (lang) -> new Locale(language));
     }
 
     public void runBeforeAllHooks() {

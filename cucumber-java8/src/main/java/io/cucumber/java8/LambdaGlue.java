@@ -660,7 +660,7 @@ public interface LambdaGlue {
      */
     default void DefaultParameterTransformer(DefaultParameterTransformerBody definitionBody) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addDefaultParameterTransformer(new Java8DefaultParameterTypeDefinition(definitionBody));
+                .addDefaultParameterTransformer(new Java8DefaultParameterTransformerDefinition(definitionBody));
     }
 
     /**
