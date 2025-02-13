@@ -180,7 +180,21 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-TODO: (I don't know how. Feel free to send a pull request. ;))
+Remember to define Cucumber properties before running the test to ensure that your build.gradle (or build.gradle.kts) correctly passes system properties to the test task.
+
+```groovy
+tasks.test {
+    systemProperty("cucumber.features",     System.getProperty("cucumber.features"))
+    systemProperty("cucumber.filter.tags",  System.getProperty("cucumber.filter.tags"))
+    systemProperty("cucumber.filter.name",  System.getProperty("cucumber.filter.name"))
+}
+```
+
+Then you can run it like:
+
+```shell
+gradle test -Dcucumber.features="path/to/example.feature:10"
+```
 
 ## Suites with different configurations
 
