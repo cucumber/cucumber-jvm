@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_P
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -206,5 +208,13 @@ class CucumberConfiguration implements
             configurationParameters,
             EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + tag));
 
+    }
+
+    UnaryOperator<List<?>> getFeatureOrderer(){
+        return configurationParameters.get(EXECUTION_ORDER_PROPERTY_NAME, order -> {
+            switch (order){
+                case ""
+            }
+        })
     }
 }
