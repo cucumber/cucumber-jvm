@@ -1,16 +1,21 @@
 Feature: Hooks
   Hooks are special steps that run before or after each scenario's steps.
+
   They can also conditionally target specific scenarios, using tag expressions
 
-  Scenario: no tags, passed step
+  Scenario: No tags and a passed step
     When a step passes
 
-  Scenario: no tags, failed step
-    When a step throws an exception
+  Scenario: No tags and a failed step
+    When a step fails
 
-  Scenario: no tags, undefined step
-    When a step throws an exception
+  Scenario: No tags and a undefined step
+    When a step does not exist
 
   @some-tag
-  Scenario: with a tag, passed step
+  Scenario: With a tag, a failure in the hook and a passed step
+    When a step passes
+
+  @with-attachment
+  Scenario: With an tag, an valid attachment in the hook and a passed step
     When a step passes

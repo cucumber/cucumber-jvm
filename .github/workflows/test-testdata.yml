@@ -1,0 +1,32 @@
+name: test-testdata
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-testdata:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        cache: 'npm'
+        cache-dependency-path: compatibility/src/test/resources
+
+    - run: npm ci
+      working-directory: testdata
+
+    - name: check repository is not dirty
+      run: "[[ -z $(git status --porcelain) ]]"
+
+    - name: show diff
+      if: ${{ failure() }}
+      run: git status --porcelain

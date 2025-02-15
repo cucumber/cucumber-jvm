@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.HtmlFormatter;
-import io.cucumber.core.plugin.JsonFormatter;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
 import org.hamcrest.Matcher;
@@ -38,8 +36,6 @@ public class CompatibilityTest {
         Path parentDir = Files.createDirectories(Paths.get("target", "messages",
             testCase.getId()));
         Path outputNdjson = parentDir.resolve("out.ndjson");
-        Path outputHtml = parentDir.resolve("out.html");
-        Path outputJson = parentDir.resolve("out.json");
 
         try {
             Runtime.builder()
@@ -48,9 +44,7 @@ public class CompatibilityTest {
                             .addFeature(testCase.getFeature())
                             .build())
                     .withAdditionalPlugins(
-                        new MessageFormatter(newOutputStream(outputNdjson)),
-                        new HtmlFormatter(newOutputStream(outputHtml)),
-                        new JsonFormatter(newOutputStream(outputJson)))
+                        new MessageFormatter(newOutputStream(outputNdjson)))
                     .build()
                     .run();
         } catch (Exception ignored) {
@@ -63,10 +57,10 @@ public class CompatibilityTest {
         Map<String, List<JsonNode>> expectedEnvelopes = openEnvelopes(expected);
         Map<String, List<JsonNode>> actualEnvelopes = openEnvelopes(actual);
 
-        // exception: Java step definitions are not in a predictable order
-        // because Class#getMethods() does not return a predictable order.
-        sortStepDefinitions(expectedEnvelopes);
-        sortStepDefinitions(actualEnvelopes);
+        // exception: Java step definitions and hooks are not in a predictable
+        // order because Class#getMethods() does not return a predictable order.
+        sortStepDefinitionsAndHooks(expectedEnvelopes);
+        sortStepDefinitionsAndHooks(actualEnvelopes);
 
         // exception: Cucumber JVM can't execute when there are
         // unknown-parameter-types
@@ -81,7 +75,7 @@ public class CompatibilityTest {
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
             actualEnvelopes,
             hasEntry(is(messageType),
-                containsInRelativeOrder(aComparableMessage(expectedMessages)))));
+                containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
     }
 
     private static List<JsonNode> readAllMessages(Path output) throws IOException {
@@ -113,18 +107,30 @@ public class CompatibilityTest {
         return map;
     }
 
-    private void sortStepDefinitions(Map<String, List<JsonNode>> envelopes) {
+    private void sortStepDefinitionsAndHooks(Map<String, List<JsonNode>> envelopes) {
         Comparator<JsonNode> stepDefinitionPatternComparator = Comparator
                 .comparing(a -> a.get("pattern").get("source").asText());
         List<JsonNode> actualStepDefinitions = envelopes.get("stepDefinition");
         if (actualStepDefinitions != null) {
             actualStepDefinitions.sort(stepDefinitionPatternComparator);
         }
+        Comparator<JsonNode> hookTypeComparator = Comparator.comparing(a -> a.get("type").asText());
+        Comparator<JsonNode> hookTagExpressionComparator = Comparator.comparing(a -> {
+            JsonNode tagExpression = a.get("tagExpression");
+            if (tagExpression != null) {
+                return tagExpression.asText();
+            }
+            return "";
+        });
+        List<JsonNode> actualHooks = envelopes.get("hook");
+        if (actualHooks != null) {
+            actualHooks.sort(hookTypeComparator.thenComparing(hookTagExpressionComparator));
+        }
     }
 
-    private static List<Matcher<? super JsonNode>> aComparableMessage(List<JsonNode> messages) {
+    private static List<Matcher<? super JsonNode>> aComparableMessage(String messageType, List<JsonNode> messages) {
         return messages.stream()
-                .map(AComparableMessage::new)
+                .map(jsonNode -> new AComparableMessage(messageType, jsonNode))
                 .collect(Collectors.toList());
     }
 
