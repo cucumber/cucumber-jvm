@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static io.cucumber.java8.LambdaGlueRegistry.CLOSED;
+
 final class Java8Backend implements Backend {
 
     private final Lookup lookup;
@@ -56,11 +58,12 @@ final class Java8Backend implements Backend {
         for (Class<? extends LambdaGlue> lambdaGlueClass : lambdaGlueClasses) {
             lookup.getInstance(lambdaGlueClass);
         }
+        LambdaGlueRegistry.INSTANCE.set(CLOSED);
+        glue.finishRegistration();
     }
 
     @Override
     public void disposeWorld() {
-        LambdaGlueRegistry.INSTANCE.remove();
         glue.disposeClosures();
     }
 

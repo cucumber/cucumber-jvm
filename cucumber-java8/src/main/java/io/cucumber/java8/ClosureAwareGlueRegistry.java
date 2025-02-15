@@ -1,5 +1,6 @@
 package io.cucumber.java8;
 
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.DefaultDataTableCellTransformerDefinition;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
@@ -18,6 +19,7 @@ final class ClosureAwareGlueRegistry implements LambdaGlueRegistry {
 
     private final List<AbstractGlueDefinition> definitions = new ArrayList<>();
     private int registered;
+    private int expectedRegistrations = -1;
 
     private final Glue glue;
 
@@ -27,6 +29,17 @@ final class ClosureAwareGlueRegistry implements LambdaGlueRegistry {
 
     void startRegistration() {
         registered = 0;
+    }
+
+    void finishRegistration() {
+        if (expectedRegistrations < 0) {
+            expectedRegistrations = registered;
+        } else if (expectedRegistrations != registered) {
+            throw new CucumberBackendException(String.format("Found an inconsistent number of glue registrations.\n" +
+                    "Previously %s step definitions, hooks and parameter types were registered. Currently %s.\n" +
+                    "To optimize performance Cucumber expects glue registration to be identical for each scenario and example.",
+                expectedRegistrations, registered));
+        }
     }
 
     @Override
@@ -95,16 +108,28 @@ final class ClosureAwareGlueRegistry implements LambdaGlueRegistry {
     }
 
     private <T extends AbstractGlueDefinition> void updateOrRegister(
-            T definition, List<AbstractGlueDefinition> definitions, Consumer<T> register
+            T candidate, List<AbstractGlueDefinition> definitions, Consumer<T> register
     ) {
         if (definitions.size() <= registered) {
-            definitions.add(definition);
-            register.accept(definition);
+            definitions.add(candidate);
+            register.accept(candidate);
         } else {
             AbstractGlueDefinition existing = definitions.get(registered);
-            existing.updateClosure(definition);
+            requireSameGlueClass(existing, candidate);
+            existing.updateClosure(candidate);
         }
         registered++;
+    }
+
+    private <T extends AbstractGlueDefinition> void requireSameGlueClass(
+            AbstractGlueDefinition existing, AbstractGlueDefinition candidate
+    ) {
+        if (!existing.getClass().equals(candidate.getClass())) {
+            throw new CucumberBackendException(String.format("Found an inconsistent glue registrations.\n" +
+                    "Previously the registration in slot %s was a '%s'. Currently '%s'.\n" +
+                    "To optimize performance Cucumber expects glue registration to be identical for each scenario and example.",
+                registered, existing.getClass().getName(), candidate.getClass().getName()));
+        }
     }
 
     void disposeClosures() {

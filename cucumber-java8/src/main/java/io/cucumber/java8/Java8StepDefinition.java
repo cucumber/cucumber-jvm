@@ -34,7 +34,7 @@ final class Java8StepDefinition extends AbstractGlueDefinition implements StepDe
                 .collect(toList());
     }
 
-    public static <T extends StepDefinitionBody> Java8StepDefinition create(
+    static <T extends StepDefinitionBody> Java8StepDefinition create(
             String expression, Class<T> bodyClass, T body
     ) {
         return new Java8StepDefinition(expression, bodyClass, body);
