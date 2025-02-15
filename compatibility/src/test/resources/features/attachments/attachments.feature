@@ -36,14 +36,6 @@ Feature: Attachments
   Scenario: Attaching PNG images
     When a PNG image is attached
 
-  Scenario Outline: Attaching images in an examples table
-    When a <type> image is attached
-
-    Examples:
-      | type |
-      | JPEG |
-      | PNG  |
-
   Scenario: Attaching PDFs with a different filename
     When a PDF document is attached and renamed
 

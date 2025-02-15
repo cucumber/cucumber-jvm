@@ -16,13 +16,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.newOutputStream;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.containsInRelativeOrder;
@@ -51,6 +54,21 @@ public class CompatibilityTest {
 
         }
 
+        // exception: Cucumber JVM does not support named hooks
+        if ("hooks-named".equals(testCase.getId())) {
+            return;
+        }
+
+        // exception: Cucumber JVM does not support markdown features
+        if ("markdown".equals(testCase.getId())) {
+            return;
+        }
+
+        // exception: Cucumber JVM does not support retrying features
+        if ("retry".equals(testCase.getId())) {
+            return;
+        }
+
         List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
         List<JsonNode> actual = readAllMessages(outputNdjson);
 
@@ -61,6 +79,17 @@ public class CompatibilityTest {
         // order because Class#getMethods() does not return a predictable order.
         sortStepDefinitionsAndHooks(expectedEnvelopes);
         sortStepDefinitionsAndHooks(actualEnvelopes);
+
+        // exception: Cucumber JVM needs a hook to access the scenario, remove
+        // this hook from the actual test case.
+        if ("attachments".equals(testCase.getId()) || "examples-tables-attachment".equals(testCase.getId())) {
+            actualEnvelopes.getOrDefault("testCase", emptyList())
+                    .forEach(jsonNode -> {
+                        Iterator<JsonNode> testSteps = jsonNode.get("testSteps").iterator();
+                        testSteps.next();
+                        testSteps.remove();
+                    });
+        }
 
         // exception: Cucumber JVM can't execute when there are
         // unknown-parameter-types

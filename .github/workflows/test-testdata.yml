@@ -22,7 +22,7 @@ jobs:
         cache-dependency-path: compatibility/src/test/resources
 
     - run: npm ci
-      working-directory: testdata
+      working-directory: compatibility/src/test/resources
 
     - name: check repository is not dirty
       run: "[[ -z $(git status --porcelain) ]]"

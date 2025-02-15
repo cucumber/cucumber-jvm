@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.StreamSupport.stream;
@@ -51,7 +53,9 @@ public class AComparableMessage extends
         asMapOfJsonNameToField(expectedMessage).forEach((fieldName, expectedValue) -> {
             switch (fieldName) {
                 // exception: error messages are platform specific
+                case "exception":
                 case "message":
+                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
@@ -92,11 +96,16 @@ public class AComparableMessage extends
                     break;
                 case "astNodeIds":
                 case "stepDefinitionIds":
-                    expected.add(hasEntry(is(fieldName),
-                        containsInRelativeOrder(isA(TextNode.class))));
-                    break;
-
-                // exception: timestamps and durations are not predictable
+                    if (expectedValue instanceof ArrayNode) {
+                        ArrayNode expectedValues = (ArrayNode) expectedValue;
+                        if (expectedValues.isEmpty()) {
+                            expected.add(hasEntry(is(fieldName), emptyIterable()));
+                        } else {
+                            expected.add(hasEntry(is(fieldName), containsInRelativeOrder(isA(TextNode.class))));
+                        }
+                        break;
+                    }
+                    // exception: timestamps and durations are not predictable
                 case "timestamp":
                 case "duration":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
@@ -168,6 +177,8 @@ public class AComparableMessage extends
         Map<String, Object> actualFields = asMapOfJsonNameToField(actual);
         for (Matcher<?> expectedField : expectedFields) {
             if (!expectedField.matches(actualFields)) {
+                System.out.println("Mismatch on " + actual);
+                System.out.println("Expected on " + expectedField);
                 expectedField.describeMismatch(actualFields, mismatchDescription);
                 return false;
             }

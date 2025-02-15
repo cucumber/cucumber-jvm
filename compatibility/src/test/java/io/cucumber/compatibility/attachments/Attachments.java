@@ -2,6 +2,7 @@ package io.cucumber.compatibility.attachments;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
 import java.io.IOException;
@@ -50,10 +51,10 @@ public class Attachments {
 
     @When("a JPEG image is attached")
     public void aJPEGImageIsAttached() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/cucumber.jpg");
+        Path path = Paths.get("src/test/resources/features/attachments/cucumber.jpeg");
         byte[] bytes = Files.readAllBytes(path);
         String fileName = path.getFileName().toString();
-        scenario.attach(bytes, "image/jpg", fileName);
+        scenario.attach(bytes, "image/jpeg", fileName);
     }
 
     @When("a PNG image is attached")
@@ -66,7 +67,7 @@ public class Attachments {
 
     @When("a PDF document is attached and renamed")
     public void aPDFDocumentIsAttachedAndRenamed() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/cucumber.pdf");
+        Path path = Paths.get("src/test/resources/features/attachments/document.pdf");
         byte[] bytes = Files.readAllBytes(path);
         scenario.attach(bytes, "application/pdf", "renamed.pdf");
     }
@@ -75,4 +76,5 @@ public class Attachments {
     public void aLinkToIsAttached(String uri) {
         scenario.attach(uri, "text/uri-list", null);
     }
+
 }
