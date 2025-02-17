@@ -476,6 +476,9 @@ final class CachingGlue implements Glue {
     }
 
     void removeScenarioScopedGlue() {
+        if (!hasScenarioScopedGlue) {
+            return;
+        }
         removeScenarioScopedGlue(beforeHooks);
         removeScenarioScopedGlue(beforeStepHooks);
         removeScenarioScopedGlue(afterHooks);
