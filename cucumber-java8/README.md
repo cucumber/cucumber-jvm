@@ -216,7 +216,7 @@ For example, a table with the fields for a User and a data table type to create 
  Given the user is
     | firstname	    | Roberto	|
     | lastname	    | Lo Giacco |
-    | nationality	| Italian	|
+    | nationality   | Italian	|
  ```
 
 ```java 
