@@ -174,8 +174,6 @@ public class AComparableMessage extends
         Map<String, Object> actualFields = asMapOfJsonNameToField(actual);
         for (Matcher<?> expectedField : expectedFields) {
             if (!expectedField.matches(actualFields)) {
-                System.out.println("Mismatch on " + actual);
-                System.out.println("Expected on " + expectedField);
                 expectedField.describeMismatch(actualFields, mismatchDescription);
                 return false;
             }
