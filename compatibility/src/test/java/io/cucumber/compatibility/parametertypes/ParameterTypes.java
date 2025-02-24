@@ -7,11 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParameterTypes {
 
-    @Given("{flight} has been delayed {int} minutes")
-    public void lhrCDGHasBeenDelayedMinutes(Flight flight, int delay) {
+    @Given("{flight} has been delayed")
+    public void lhrCDGHasBeenDelayedMinutes(Flight flight) {
         assertEquals("LHR", flight.from);
         assertEquals("CDG", flight.to);
-        assertEquals(45, delay);
     }
 
     @ParameterType(value = "([A-Z]{3})-([A-Z]{3})", useForSnippets = true)
@@ -19,7 +18,7 @@ public class ParameterTypes {
         return new Flight(from, to);
     }
 
-    static class Flight {
+    public static class Flight {
 
         public final String from;
         public final String to;

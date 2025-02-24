@@ -1,0 +1,39 @@
+{"meta":{"ci":{"buildNumber":"154666429","git":{"remote":"https://github.com/cucumber-ltd/shouty.rb.git","revision":"99684bcacf01d95875834d87903dcb072306c9ad"},"name":"GitHub Actions","url":"https://github.com/cucumber-ltd/shouty.rb/actions/runs/154666429"},"cpu":{"name":"x64"},"implementation":{"name":"fake-cucumber","version":"18.0.0"},"os":{"name":"linux","version":"6.8.0-52-generic"},"protocolVersion":"27.2.0","runtime":{"name":"node.js","version":"18.19.1"}}}
+{"source":{"data":"Feature: Hooks\n  Hooks are special steps that run before or after each scenario's steps.\n\n  Scenario: No tags and a passed step\n    When a step passes\n\n  Scenario: No tags and a failed step\n    When a step fails\n\n  Scenario: No tags and a undefined step\n    When a step does not exist\n","mediaType":"text/x.cucumber.gherkin+plain","uri":"samples/hooks/hooks.feature"}}
+{"gherkinDocument":{"comments":[],"feature":{"children":[{"scenario":{"description":"","examples":[],"id":"5","keyword":"Scenario","location":{"column":3,"line":4},"name":"No tags and a passed step","steps":[{"id":"4","keyword":"When ","keywordType":"Action","location":{"column":5,"line":5},"text":"a step passes"}],"tags":[]}},{"scenario":{"description":"","examples":[],"id":"7","keyword":"Scenario","location":{"column":3,"line":7},"name":"No tags and a failed step","steps":[{"id":"6","keyword":"When ","keywordType":"Action","location":{"column":5,"line":8},"text":"a step fails"}],"tags":[]}},{"scenario":{"description":"","examples":[],"id":"9","keyword":"Scenario","location":{"column":3,"line":10},"name":"No tags and a undefined step","steps":[{"id":"8","keyword":"When ","keywordType":"Action","location":{"column":5,"line":11},"text":"a step does not exist"}],"tags":[]}}],"description":"  Hooks are special steps that run before or after each scenario's steps.","keyword":"Feature","language":"en","location":{"column":1,"line":1},"name":"Hooks","tags":[]},"uri":"samples/hooks/hooks.feature"}}
+{"pickle":{"astNodeIds":["5"],"id":"11","language":"en","name":"No tags and a passed step","steps":[{"astNodeIds":["4"],"id":"10","text":"a step passes","type":"Action"}],"tags":[],"uri":"samples/hooks/hooks.feature"}}
+{"pickle":{"astNodeIds":["7"],"id":"13","language":"en","name":"No tags and a failed step","steps":[{"astNodeIds":["6"],"id":"12","text":"a step fails","type":"Action"}],"tags":[],"uri":"samples/hooks/hooks.feature"}}
+{"pickle":{"astNodeIds":["9"],"id":"15","language":"en","name":"No tags and a undefined step","steps":[{"astNodeIds":["8"],"id":"14","text":"a step does not exist","type":"Action"}],"tags":[],"uri":"samples/hooks/hooks.feature"}}
+{"stepDefinition":{"id":"1","pattern":{"source":"a step passes","type":"CUCUMBER_EXPRESSION"},"sourceReference":{"location":{"line":7},"uri":"samples/hooks/hooks.feature.ts"}}}
+{"stepDefinition":{"id":"2","pattern":{"source":"a step fails","type":"CUCUMBER_EXPRESSION"},"sourceReference":{"location":{"line":11},"uri":"samples/hooks/hooks.feature.ts"}}}
+{"hook":{"id":"0","sourceReference":{"location":{"line":3},"uri":"samples/hooks/hooks.feature.ts"},"type":"BEFORE_TEST_CASE"}}
+{"hook":{"id":"3","sourceReference":{"location":{"line":15},"uri":"samples/hooks/hooks.feature.ts"},"type":"AFTER_TEST_CASE"}}
+{"testRunStarted":{"id":"16","timestamp":{"nanos":0,"seconds":0}}}
+{"testCase":{"id":"20","pickleId":"11","testRunStartedId":"16","testSteps":[{"hookId":"0","id":"17"},{"id":"18","pickleStepId":"10","stepDefinitionIds":["1"],"stepMatchArgumentsLists":[{"stepMatchArguments":[]}]},{"hookId":"3","id":"19"}]}}
+{"testCase":{"id":"24","pickleId":"13","testRunStartedId":"16","testSteps":[{"hookId":"0","id":"21"},{"id":"22","pickleStepId":"12","stepDefinitionIds":["2"],"stepMatchArgumentsLists":[{"stepMatchArguments":[]}]},{"hookId":"3","id":"23"}]}}
+{"testCase":{"id":"28","pickleId":"15","testRunStartedId":"16","testSteps":[{"hookId":"0","id":"25"},{"id":"26","pickleStepId":"14","stepDefinitionIds":[],"stepMatchArgumentsLists":[]},{"hookId":"3","id":"27"}]}}
+{"testCaseStarted":{"attempt":0,"id":"29","testCaseId":"20","timestamp":{"nanos":1000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"29","testStepId":"17","timestamp":{"nanos":2000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"29","testStepId":"17","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"status":"PASSED"},"timestamp":{"nanos":3000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"29","testStepId":"18","timestamp":{"nanos":4000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"29","testStepId":"18","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"status":"PASSED"},"timestamp":{"nanos":5000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"29","testStepId":"19","timestamp":{"nanos":6000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"29","testStepId":"19","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"status":"PASSED"},"timestamp":{"nanos":7000000,"seconds":0}}}
+{"testCaseFinished":{"testCaseStartedId":"29","timestamp":{"nanos":8000000,"seconds":0},"willBeRetried":false}}
+{"testCaseStarted":{"attempt":0,"id":"30","testCaseId":"24","timestamp":{"nanos":9000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"30","testStepId":"21","timestamp":{"nanos":10000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"30","testStepId":"21","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"status":"PASSED"},"timestamp":{"nanos":11000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"30","testStepId":"22","timestamp":{"nanos":12000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"30","testStepId":"22","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"exception":{"message":"Exception in step","type":"Error"},"message":"Exception in step\nsamples/hooks/hooks.feature:8","status":"FAILED"},"timestamp":{"nanos":13000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"30","testStepId":"23","timestamp":{"nanos":14000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"30","testStepId":"23","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"status":"PASSED"},"timestamp":{"nanos":15000000,"seconds":0}}}
+{"testCaseFinished":{"testCaseStartedId":"30","timestamp":{"nanos":16000000,"seconds":0},"willBeRetried":false}}
+{"testCaseStarted":{"attempt":0,"id":"31","testCaseId":"28","timestamp":{"nanos":17000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"31","testStepId":"25","timestamp":{"nanos":18000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"31","testStepId":"25","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"status":"PASSED"},"timestamp":{"nanos":19000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"31","testStepId":"26","timestamp":{"nanos":20000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"31","testStepId":"26","testStepResult":{"duration":{"nanos":0,"seconds":0},"status":"UNDEFINED"},"timestamp":{"nanos":21000000,"seconds":0}}}
+{"testStepStarted":{"testCaseStartedId":"31","testStepId":"27","timestamp":{"nanos":22000000,"seconds":0}}}
+{"testStepFinished":{"testCaseStartedId":"31","testStepId":"27","testStepResult":{"duration":{"nanos":1000000,"seconds":0},"status":"PASSED"},"timestamp":{"nanos":23000000,"seconds":0}}}
+{"testCaseFinished":{"testCaseStartedId":"31","timestamp":{"nanos":24000000,"seconds":0},"willBeRetried":false}}
+{"testRunFinished":{"success":false,"testRunStartedId":"16","timestamp":{"nanos":25000000,"seconds":0}}}

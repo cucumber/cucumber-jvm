@@ -55,7 +55,7 @@ final class TestCase {
     }
 
     Path getExpectedFile() {
-        return Paths.get(FEATURES_DIRECTORY + "/" + id + "/" + id + ".ndjson");
+        return Paths.get(FEATURES_DIRECTORY + "/" + id + "/" + id + ".feature.ndjson");
     }
 
     @Override

@@ -1,0 +1,15 @@
+{
+  "name": "demo-formatter-testdata",
+  "version": "1.0.0",
+  "description": "The demo formatter uses some test data for acceptance testing.",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "shx rm -r features && cp -r node_modules/@cucumber/compatibility-kit/features ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cucumber/compatibility-kit": "^18.0.2",
+    "shx": "^0.3.4"
+  }
+}
