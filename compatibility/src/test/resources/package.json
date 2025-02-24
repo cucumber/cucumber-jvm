@@ -4,7 +4,7 @@
   "description": "The demo formatter uses some test data for acceptance testing.",
   "main": "index.js",
   "scripts": {
-    "postinstall": "shx cp -r node_modules/@cucumber/compatibility-kit/features ."
+    "postinstall": "shx rm -r features && cp -r node_modules/@cucumber/compatibility-kit/features ."
   },
   "author": "",
   "license": "ISC",
