@@ -5,8 +5,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import org.junit.jupiter.api.Assumptions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class Skipped {
 
     @Before("@skip")

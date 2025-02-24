@@ -4,9 +4,16 @@ on:
   push:
     branches:
       - main
+      - renovate/**
+    paths:
+      - compatibility/src/test/resources/**
+      - .github/**
   pull_request:
     branches:
       - main
+    paths:
+      - compatibility/src/test/resources/**
+      - .github/**
 
 jobs:
   test-testdata:
