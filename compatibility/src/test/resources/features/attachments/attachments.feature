@@ -15,20 +15,29 @@ Feature: Attachments
 
     When the string "hello" is attached as "application/octet-stream"
 
+  Scenario: Log text
+    When the string "hello" is logged
+
+  Scenario: Log ANSI coloured text
+    When text with ANSI escapes is logged
+
   Scenario: Log JSON
      When the following string is attached as "application/json":
        ```
        {"message": "The <b>big</b> question", "foo": "bar"}
        ```
 
-  Scenario: Log text
-    When the string "hello" is logged
-
-  Scenario: Log ANSI coloured text
-     When text with ANSI escapes is logged
-
   Scenario: Byte arrays are base64-encoded regardless of media type
     When an array with 10 bytes is attached as "text/plain"
 
-  Scenario: Streams are always base64-encoded
+  Scenario: Attaching JPEG images
     When a JPEG image is attached
+
+  Scenario: Attaching PNG images
+    When a PNG image is attached
+
+  Scenario: Attaching PDFs with a different filename
+    When a PDF document is attached and renamed
+
+  Scenario: Attaching URIs
+    When a link to "https://cucumber.io" is attached

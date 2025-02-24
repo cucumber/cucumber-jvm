@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.21.1-SNAPSHOT</version>
+        <version>7.21.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -21,7 +21,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
         <mockito.version>5.15.2</mockito.version>
-        <vertx.version>4.5.12</vertx.version>
+        <vertx.version>4.5.13</vertx.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
     </properties>
 

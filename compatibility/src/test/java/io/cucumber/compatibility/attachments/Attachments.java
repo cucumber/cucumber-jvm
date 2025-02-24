@@ -48,21 +48,32 @@ public class Attachments {
         scenario.attach(bytes, mediaType, null);
     }
 
-    @When("a stream with {int} bytes are attached as {string}")
-    public void aStreamWithBytesAreAttachedAs(int n, String mediaType) {
-        byte[] bytes = new byte[n];
-        for (byte i = 0; i < n; i++) {
-            bytes[i] = i;
-        }
-        scenario.attach(bytes, mediaType, null);
-    }
-
     @When("a JPEG image is attached")
     public void aJPEGImageIsAttached() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/cucumber-growing-on-vine.jpg");
+        Path path = Paths.get("src/test/resources/features/attachments/cucumber.jpeg");
         byte[] bytes = Files.readAllBytes(path);
         String fileName = path.getFileName().toString();
-        scenario.attach(bytes, "image/jpg", fileName);
+        scenario.attach(bytes, "image/jpeg", fileName);
+    }
+
+    @When("a PNG image is attached")
+    public void aPNGImageIsAttached() throws IOException {
+        Path path = Paths.get("src/test/resources/features/attachments/cucumber.png");
+        byte[] bytes = Files.readAllBytes(path);
+        String fileName = path.getFileName().toString();
+        scenario.attach(bytes, "image/png", fileName);
+    }
+
+    @When("a PDF document is attached and renamed")
+    public void aPDFDocumentIsAttachedAndRenamed() throws IOException {
+        Path path = Paths.get("src/test/resources/features/attachments/document.pdf");
+        byte[] bytes = Files.readAllBytes(path);
+        scenario.attach(bytes, "application/pdf", "renamed.pdf");
+    }
+
+    @When("a link to {string} is attached")
+    public void aLinkToIsAttached(String uri) {
+        scenario.attach(uri, "text/uri-list", null);
     }
 
 }

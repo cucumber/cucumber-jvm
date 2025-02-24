@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.containsInRelativeOrder;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -35,21 +36,23 @@ public class AComparableMessage extends
     private final List<Matcher<?>> expectedFields;
     private final int depth;
 
-    public AComparableMessage(JsonNode expectedMessage) {
-        this(expectedMessage, 0);
+    public AComparableMessage(String messageType, JsonNode expectedMessage) {
+        this(messageType, expectedMessage, 0);
     }
 
-    AComparableMessage(JsonNode expectedMessage, int depth) {
+    AComparableMessage(String messageType, JsonNode expectedMessage, int depth) {
         this.depth = depth + 1;
-        this.expectedFields = extractExpectedFields(expectedMessage, this.depth);
+        this.expectedFields = extractExpectedFields(messageType, expectedMessage, this.depth);
     }
 
-    private static List<Matcher<?>> extractExpectedFields(JsonNode expectedMessage, int depth) {
+    private static List<Matcher<?>> extractExpectedFields(String messageType, JsonNode expectedMessage, int depth) {
         List<Matcher<?>> expected = new ArrayList<>();
         asMapOfJsonNameToField(expectedMessage).forEach((fieldName, expectedValue) -> {
             switch (fieldName) {
                 // exception: error messages are platform specific
+                case "exception":
                 case "message":
+                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
                     break;
 
@@ -66,6 +69,11 @@ public class AComparableMessage extends
 
                 // exception: ids are not predictable
                 case "id":
+                    // exception: not yet implemented
+                    if ("testRunStarted".equals(messageType)) {
+                        expected.add(not(hasKey(fieldName)));
+                        break;
+                    }
                 case "pickleId":
                 case "astNodeId":
                 case "hookId":
@@ -75,17 +83,26 @@ public class AComparableMessage extends
                 case "testCaseStartedId":
                     expected.add(hasEntry(is(fieldName), isA(TextNode.class)));
                     break;
+                // exception: not yet implemented
+                case "testRunStartedId":
+                    expected.add(not(hasKey(fieldName)));
+                    break;
                 // exception: protocolVersion can vary
                 case "protocolVersion":
                     expected.add(hasEntry(is(fieldName), isA(TextNode.class)));
                     break;
                 case "astNodeIds":
                 case "stepDefinitionIds":
-                    expected.add(hasEntry(is(fieldName),
-                        containsInRelativeOrder(isA(TextNode.class))));
-                    break;
-
-                // exception: timestamps and durations are not predictable
+                    if (expectedValue instanceof ArrayNode) {
+                        ArrayNode expectedValues = (ArrayNode) expectedValue;
+                        if (expectedValues.isEmpty()) {
+                            expected.add(hasEntry(is(fieldName), emptyIterable()));
+                        } else {
+                            expected.add(hasEntry(is(fieldName), containsInRelativeOrder(isA(TextNode.class))));
+                        }
+                        break;
+                    }
+                    // exception: timestamps and durations are not predictable
                 case "timestamp":
                 case "duration":
                     expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
@@ -105,7 +122,8 @@ public class AComparableMessage extends
                             isA(expectedValue.getClass()))));
                     break;
                 default:
-                    expected.add(hasEntry(is(fieldName), aComparableValue(expectedValue,
+                    expected.add(hasEntry(is(fieldName), aComparableValue(messageType,
+                        expectedValue,
                         depth)));
             }
         });
@@ -113,19 +131,22 @@ public class AComparableMessage extends
     }
 
     @SuppressWarnings("unchecked")
-    private static Matcher<?> aComparableValue(Object value, int depth) {
+    private static Matcher<?> aComparableValue(String messageType, Object value, int depth) {
         if (value instanceof ObjectNode) {
             JsonNode message = (JsonNode) value;
-            return new AComparableMessage(message, depth);
+            return new AComparableMessage(messageType, message, depth);
         }
 
         if (value instanceof ArrayNode) {
             ArrayNode values = (ArrayNode) value;
             Spliterator<JsonNode> spliterator = spliteratorUnknownSize(values.iterator(), 0);
             List<Matcher<? super Object>> allComparableValues = stream(spliterator, false)
-                    .map(o -> aComparableValue(o, depth))
+                    .map(o -> aComparableValue(messageType, o, depth))
                     .map(o -> (Matcher<? super Object>) o)
                     .collect(Collectors.toList());
+            if (allComparableValues.isEmpty()) {
+                return emptyIterable();
+            }
             return contains(allComparableValues);
         }
 

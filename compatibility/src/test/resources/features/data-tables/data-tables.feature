@@ -1,7 +1,8 @@
 Feature: Data Tables
-  Data Tables can be places underneath a step and will be passed as the last
-  argument to the step definition. They can be used to represent richer data
-  structures, and can also be transformed to other types.
+  Data Tables can be placed underneath a step and will be passed as the last
+  argument to the step definition.
+
+  They can be used to represent richer data structures, and can be transformed to other data-types.
 
   Scenario: transposed table
     When the following table is transposed:

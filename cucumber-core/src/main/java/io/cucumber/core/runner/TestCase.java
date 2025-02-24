@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.runner.ExecutionMode.DRY_RUN;
 import static io.cucumber.core.runner.ExecutionMode.RUN;
 import static io.cucumber.messages.Convertor.toMessage;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
@@ -55,11 +56,12 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private static io.cucumber.messages.types.Group makeMessageGroup(
             Group group
     ) {
+        long start = group.getStart();
         return new io.cucumber.messages.types.Group(
             group.getChildren().stream()
                     .map(TestCase::makeMessageGroup)
                     .collect(toList()),
-            (long) group.getStart(),
+            start == -1 ? null : start,
             group.getValue());
     }
 
@@ -173,8 +175,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         String id = pluginTestStep.getId().toString();
         String hookId = null;
         String pickleStepId = null;
-        List<StepMatchArgumentsList> stepMatchArgumentsLists = null;
-        List<String> stepDefinitionIds = null;
+        List<StepMatchArgumentsList> stepMatchArgumentsLists = emptyList();
+        List<String> stepDefinitionIds = emptyList();
 
         if (pluginTestStep instanceof HookTestStep) {
             HookTestStep hookTestStep = (HookTestStep) pluginTestStep;
@@ -184,7 +186,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         } else if (pluginTestStep instanceof PickleStepTestStep) {
             PickleStepTestStep pickleStep = (PickleStepTestStep) pluginTestStep;
             pickleStepId = pickleStep.getStep().getId();
-            stepMatchArgumentsLists = singletonList(getStepMatchArguments(pickleStep));
+            stepMatchArgumentsLists = getStepMatchArguments(pickleStep);
             StepDefinition stepDefinition = pickleStep.getDefinitionMatch().getStepDefinition();
             if (stepDefinition instanceof CoreStepDefinition) {
                 CoreStepDefinition coreStepDefinition = (CoreStepDefinition) stepDefinition;
@@ -196,11 +198,15 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             stepMatchArgumentsLists);
     }
 
-    public StepMatchArgumentsList getStepMatchArguments(PickleStepTestStep pickleStep) {
-        return new StepMatchArgumentsList(
-            pickleStep.getDefinitionArgument().stream()
-                    .map(arg -> new StepMatchArgument(makeMessageGroup(arg.getGroup()), arg.getParameterTypeName()))
-                    .collect(Collectors.toList()));
+    public List<StepMatchArgumentsList> getStepMatchArguments(PickleStepTestStep pickleStep) {
+        if (pickleStep.getDefinitionMatch() instanceof UndefinedPickleStepDefinitionMatch) {
+            return emptyList();
+        }
+
+        return singletonList(pickleStep.getDefinitionArgument()
+                .stream()
+                .map(arg -> new StepMatchArgument(makeMessageGroup(arg.getGroup()), arg.getParameterTypeName()))
+                .collect(Collectors.collectingAndThen(toList(), StepMatchArgumentsList::new)));
     }
 
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {
