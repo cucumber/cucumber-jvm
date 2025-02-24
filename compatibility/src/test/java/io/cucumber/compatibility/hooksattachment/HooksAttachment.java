@@ -14,9 +14,7 @@ public class HooksAttachment {
 
     @Before
     public void before(Scenario scenario) throws IOException {
-        Path path = Paths.get("src/test/resources/features/hooks-attachment/cucumber.svg");
-        byte[] bytes = Files.readAllBytes(path);
-        scenario.attach(bytes, "image/svg+xml", null);
+        attachImage(scenario);
     }
 
     @When("a step passes")
@@ -25,8 +23,13 @@ public class HooksAttachment {
 
     @After
     public void afterWithAttachment(Scenario scenario) throws Exception {
+        attachImage(scenario);
+    }
+
+    private static void attachImage(Scenario scenario) throws IOException {
         Path path = Paths.get("src/test/resources/features/hooks-attachment/cucumber.svg");
         byte[] bytes = Files.readAllBytes(path);
+
         scenario.attach(bytes, "image/svg+xml", null);
     }
 
