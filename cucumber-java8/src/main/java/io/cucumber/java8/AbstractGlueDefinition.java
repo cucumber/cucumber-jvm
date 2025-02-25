@@ -1,7 +1,6 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.Located;
-import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.SourceReference;
 import net.jodah.typetools.TypeResolver;
 
@@ -14,20 +13,33 @@ import static io.cucumber.core.backend.SourceReference.fromStackTraceElement;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
-abstract class AbstractGlueDefinition implements ScenarioScoped, Located {
+abstract class AbstractGlueDefinition implements Located {
 
     private Object body;
-    final Method method;
+    private Method method;
+    private SourceReference sourceReference;
     final StackTraceElement location;
-    SourceReference sourceReference;
 
     AbstractGlueDefinition(Object body, StackTraceElement location) {
-        this.body = requireNonNull(body);
-        this.method = getAcceptMethod(body.getClass());
+        updateClosure(body);
         this.location = requireNonNull(location);
     }
 
-    private Method getAcceptMethod(Class<?> bodyClass) {
+    void updateClosure(AbstractGlueDefinition other) {
+        updateClosure(other.body);
+    }
+
+    private void updateClosure(Object body) {
+        this.body = requireNonNull(body);
+        this.method = getAcceptMethod(body.getClass());
+    }
+
+    void disposeClosure() {
+        this.body = null;
+        this.method = null;
+    }
+
+    private static Method getAcceptMethod(Class<?> bodyClass) {
         List<Method> acceptMethods = new ArrayList<>();
         for (Method method : bodyClass.getDeclaredMethods()) {
             if (!method.isBridge() && !method.isSynthetic() && "accept".equals(method.getName())) {
@@ -48,9 +60,8 @@ abstract class AbstractGlueDefinition implements ScenarioScoped, Located {
         return Invoker.invoke(this, body, method, args);
     }
 
-    @Override
-    public void dispose() {
-        this.body = null;
+    protected int getParameterCount() {
+        return method.getParameterCount();
     }
 
     @Override
@@ -65,10 +76,14 @@ abstract class AbstractGlueDefinition implements ScenarioScoped, Located {
 
     @Override
     public Optional<SourceReference> getSourceReference() {
+        return Optional.of(requireSourceReference());
+    }
+
+    SourceReference requireSourceReference() {
         if (sourceReference == null) {
             sourceReference = fromStackTraceElement(location);
         }
-        return Optional.of(sourceReference);
+        return sourceReference;
     }
 
     Class<?>[] resolveRawArguments(Class<?> bodyClass, Class<?> body) {
