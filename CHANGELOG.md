@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [Core] Improved caching glue performance ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
+- [Java, Java8] Significantly reduced number of emitted step- and hook-definition messages ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
+- [Core] Removed workarounds to limit size of html report ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
+
+### Deprecated
+- [Core] Deprecated `ScenarioScoped` glue ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
 
 ## [7.21.1] - 2025-02-07
 ### Fixed

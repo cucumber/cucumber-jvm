@@ -8,9 +8,9 @@ package io.cucumber.core.backend;
  * scenario scoped object (e.g. a method closure).
  *
  * @deprecated backend with scenario scoped glue should hide this complexity
- * from Cucumber by updating the registered glue during
- * {@link Backend#buildWorld()} and transparently dispose of any closures during
- * {@link Backend#disposeWorld()}.
+ *             from Cucumber by updating the registered glue during
+ *             {@link Backend#buildWorld()} and transparently dispose of any
+ *             closures during {@link Backend#disposeWorld()}.
  */
 @Deprecated
 public interface ScenarioScoped {
