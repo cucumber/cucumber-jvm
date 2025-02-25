@@ -14,7 +14,7 @@
     <properties>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <junit-jupiter.version>5.12.0</junit-jupiter.version>
         <junit.version>4.13.2</junit.version>
         <mockito.version>5.15.2</mockito.version>
         <project.Automatic-Module-Name>io.cucumber.junit</project.Automatic-Module-Name>
