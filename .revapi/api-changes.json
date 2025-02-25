@@ -330,20 +330,69 @@
         "differences": [
           {
             "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "new": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.INTERNAL",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "new": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.0\"",
+            "newValue": "\"1.11\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.STABLE",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.9\"",
+            "newValue": "\"1.11\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
             "code": "java.class.externalClassExposedInAPI",
-            "new": "class org.junit.platform.engine.support.hierarchical.ExclusiveResource",
+            "new": "class org.junit.platform.engine.reporting.FileEntry",
             "justification": "API consumed from JUnit 5"
           },
           {
             "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method java.util.List<org.junit.platform.engine.support.hierarchical.ExclusiveResource> org.junit.platform.engine.support.hierarchical.ResourceLock::getResources()",
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
             "justification": "API consumed from JUnit 5"
           },
           {
             "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method boolean org.junit.platform.engine.support.hierarchical.ResourceLock::isExclusive()",
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
+            "new": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"5.8\"",
+            "newValue": "\"1.8\"",
             "justification": "API consumed from JUnit 5"
           }
         ]
