@@ -16,7 +16,7 @@
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <cdi-api.version>2.0.SP1</cdi-api.version>
         <deltaspike.version>1.9.6</deltaspike.version>
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <junit-jupiter.version>5.12.0</junit-jupiter.version>
         <project.Automatic-Module-Name>io.cucumber.deltaspike</project.Automatic-Module-Name>
     </properties>
 
