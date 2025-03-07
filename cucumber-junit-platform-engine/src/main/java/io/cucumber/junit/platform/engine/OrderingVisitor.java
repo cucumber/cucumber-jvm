@@ -2,15 +2,8 @@ package io.cucumber.junit.platform.engine;
 
 import org.junit.platform.engine.TestDescriptor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-
-import static java.util.Comparator.comparing;
 
 class OrderingVisitor implements TestDescriptor.Visitor {
 
@@ -19,12 +12,13 @@ class OrderingVisitor implements TestDescriptor.Visitor {
     public OrderingVisitor(UnaryOperator<List<AbstractCucumberTestDescriptor>> ordrer) {
         this.ordrer = ordrer;
     }
-
+    @SuppressWarnings("unchecked")
     @Override
     public void visit(TestDescriptor descriptor) {
         descriptor.orderChildren(children -> {
-            List untypedChildren = children;
-            List<AbstractCucumberTestDescriptor> cucumberDescriptors = untypedChildren;
+            // Ok. All TestDescriptors are AbstractCucumberTestDescriptor
+            @SuppressWarnings("rawtypes")
+            List<AbstractCucumberTestDescriptor> cucumberDescriptors = (List) children;
             ordrer.apply(cucumberDescriptors);
             return children;
         });
