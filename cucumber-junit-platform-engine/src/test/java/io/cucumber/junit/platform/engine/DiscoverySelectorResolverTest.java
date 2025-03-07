@@ -2,7 +2,6 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.DiscoverySelector;

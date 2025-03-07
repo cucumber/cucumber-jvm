@@ -4,6 +4,8 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.SnippetTypeParser;
@@ -25,8 +27,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -57,6 +61,7 @@ class CucumberConfiguration implements
         io.cucumber.core.backend.Options,
         io.cucumber.core.eventbus.Options {
 
+    private static final Logger log = LoggerFactory.getLogger(CucumberConfiguration.class);
     private final ConfigurationParameters configurationParameters;
 
     CucumberConfiguration(ConfigurationParameters configurationParameters) {
@@ -210,11 +215,30 @@ class CucumberConfiguration implements
 
     }
 
-    UnaryOperator<List<?>> getFeatureOrderer(){
+    UnaryOperator<List<AbstractCucumberTestDescriptor>> getOrderer() {
         return configurationParameters.get(EXECUTION_ORDER_PROPERTY_NAME, order -> {
-            switch (order){
-                case ""
+            if (order.equals("lexical")) {
+                return StandardDescriptorOrders.lexicalUriOrder();
+            }
+            if (order.equals("reverse")) {
+                return StandardDescriptorOrders.reverseLexicalUriOrder();
+            }
+            Pattern randomAndSeedPattern = Pattern.compile("random(?::(\\d+))?");
+            Matcher matcher = randomAndSeedPattern.matcher(order);
+            if (!matcher.matches()) {
+                throw new IllegalArgumentException("Invalid order. Must be either reverse, random or random:<long>");
+            }
+            final long seed;
+            String seedString = matcher.group(1);
+            if (seedString != null) {
+                seed = Long.parseLong(seedString);
+                return StandardDescriptorOrders.random(seed);
+            } else {
+                seed = Math.abs(new Random().nextLong());
+                log.info(() -> "Using random test descriptor order. Seed: " + seed);
+                return StandardDescriptorOrders.random(seed);
             }
         })
+                .orElseGet(StandardDescriptorOrders::lexicalUriOrder);
     }
 }

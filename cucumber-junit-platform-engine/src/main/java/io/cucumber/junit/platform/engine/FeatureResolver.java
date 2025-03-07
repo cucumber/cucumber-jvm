@@ -13,7 +13,6 @@ import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
 import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ExamplesDescriptor;
-import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
 import io.cucumber.junit.platform.engine.FeatureElementDescriptor.RuleDescriptor;
 import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ScenarioOutlineDescriptor;
 import io.cucumber.plugin.event.Node;
@@ -243,7 +242,7 @@ final class FeatureResolver implements SelectorResolver {
                         String.valueOf(line)),
                     name,
                     testSource,
-                    line));
+                    node));
             }
 
             if (node instanceof Node.Scenario) {
@@ -253,7 +252,6 @@ final class FeatureResolver implements SelectorResolver {
                         String.valueOf(line)),
                     name,
                     testSource,
-                    line,
                     feature.getPickleAt(node)));
             }
 
@@ -264,7 +262,7 @@ final class FeatureResolver implements SelectorResolver {
                         String.valueOf(line)),
                     name,
                     testSource,
-                    line));
+                    node));
             }
 
             if (node instanceof Node.Examples) {
@@ -274,7 +272,7 @@ final class FeatureResolver implements SelectorResolver {
                         String.valueOf(line)),
                     name,
                     testSource,
-                    line));
+                    node));
             }
 
             if (node instanceof Node.Example) {
@@ -285,7 +283,6 @@ final class FeatureResolver implements SelectorResolver {
                         String.valueOf(line)),
                     namingStrategy.nameExample(node, pickle),
                     testSource,
-                    line,
                     pickle));
             }
             throw new IllegalStateException("Got a " + node.getClass() + " but didn't have a case to handle it");

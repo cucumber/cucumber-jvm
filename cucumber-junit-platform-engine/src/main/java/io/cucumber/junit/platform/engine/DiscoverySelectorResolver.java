@@ -11,7 +11,7 @@ class DiscoverySelectorResolver {
             .<CucumberEngineDescriptor>builder()
             .addResourceContainerSelectorResolver(new IsFeature())
             .addSelectorResolver(context -> new FeatureResolver(context.getEngineDescriptor().getConfiguration(), context.getPackageFilter()))
-            .addTestDescriptorVisitor(context -> new OrderingVisitor(context.getEngineDescriptor().getConfiguration()))
+            .addTestDescriptorVisitor(context -> new OrderingVisitor(context.getEngineDescriptor().getConfiguration().getOrderer()))
             .addTestDescriptorVisitor(context -> TestDescriptor::prune)
             .build();
     // @formatter:on

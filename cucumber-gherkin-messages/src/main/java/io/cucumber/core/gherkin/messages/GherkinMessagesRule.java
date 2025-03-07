@@ -4,6 +4,7 @@ import io.cucumber.messages.types.RuleChild;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,11 @@ final class GherkinMessagesRule implements Node.Rule {
     @Override
     public Collection<Node> elements() {
         return children;
+    }
+
+    @Override
+    public URI getUri() {
+        return parent.getUri();
     }
 
     @Override

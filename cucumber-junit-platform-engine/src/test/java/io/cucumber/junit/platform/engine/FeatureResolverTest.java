@@ -1,6 +1,5 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.junit.platform.engine.FeatureElementDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
@@ -19,6 +18,7 @@ import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RE
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
+import static io.cucumber.junit.platform.engine.StandardDescriptorOrders.lexicalUriOrder;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,7 +37,7 @@ class FeatureResolverTest {
                 .<CucumberEngineDescriptor> builder()
                 .addSelectorResolver(context -> new FeatureResolver(new CucumberConfiguration(configurationParameters),
                     context.getPackageFilter()))
-                .addTestDescriptorVisitor(context -> new FeatureElementOrderingVisitor())
+                .addTestDescriptorVisitor(context -> new OrderingVisitor(lexicalUriOrder()))
                 .build();
         resolver.resolve(new SelectorRequest(selectClasspathResource(featurePath)), engineDescriptor);
         Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
