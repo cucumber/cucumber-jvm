@@ -12,6 +12,7 @@ class OrderingVisitor implements TestDescriptor.Visitor {
     public OrderingVisitor(UnaryOperator<List<AbstractCucumberTestDescriptor>> ordrer) {
         this.ordrer = ordrer;
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public void visit(TestDescriptor descriptor) {
