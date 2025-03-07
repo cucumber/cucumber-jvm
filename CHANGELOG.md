@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Java, Java8] Significantly reduced number of emitted step- and hook-definition messages ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
 - [Core] Removed workarounds to limit size of html report ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
 - [JUnit Platform Engine] Use JUnit Platform 1.12.0 (JUnit Jupiter 5.12.0)
+- [JUnit Platform Engine] Use JUnit's `EngineDiscoveryRequestResolver` to resolve classpath based resources. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
+
+### Added
+- [JUnit Platform Engine] Added option to include a parameterized scenario name only if the scenario is parameterized ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
+- [JUnit Platform Engine] Log warnings when a classpath resource selector is (e.g. `@SelectClasspathResource`) is used to select a directory. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 
 ### Deprecated
 - [Core] Deprecated `ScenarioScoped` glue ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)

@@ -1,17 +1,14 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
-import org.junit.platform.engine.TestDescriptor;
+import io.cucumber.plugin.event.Location;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.Node;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
+import java.net.URI;
 
-class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberEngineExecutionContext> {
+class FeatureDescriptor extends AbstractCucumberTestDescriptor implements Node<CucumberEngineExecutionContext> {
 
     private final Feature feature;
 
@@ -22,20 +19,6 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
 
     Feature getFeature() {
         return feature;
-    }
-
-    private static void pruneRecursively(TestDescriptor descriptor, Predicate<TestDescriptor> toKeep) {
-        if (!toKeep.test(descriptor)) {
-            if (descriptor.isTest()) {
-                descriptor.removeFromHierarchy();
-            }
-            List<TestDescriptor> children = new ArrayList<>(descriptor.getChildren());
-            children.forEach(child -> pruneRecursively(child, toKeep));
-        }
-    }
-
-    void prune(Predicate<TestDescriptor> toKeep) {
-        pruneRecursively(this, toKeep);
     }
 
     @Override
@@ -49,4 +32,13 @@ class FeatureDescriptor extends AbstractTestDescriptor implements Node<CucumberE
         return Type.CONTAINER;
     }
 
+    @Override
+    protected URI getUri() {
+        return feature.getUri();
+    }
+
+    @Override
+    protected Location getLocation() {
+        return feature.getLocation();
+    }
 }
