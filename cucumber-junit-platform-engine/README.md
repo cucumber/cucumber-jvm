@@ -180,7 +180,8 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-Remember to define Cucumber properties before running the test to ensure that your build.gradle (or build.gradle.kts) correctly passes system properties to the test task.
+Define Cucumber properties before running the test to ensure that your `build.gradle`
+(or `build.gradle.kts`) correctly passes system properties to the test task.
 
 ```groovy
 tasks.test {
@@ -190,7 +191,7 @@ tasks.test {
 }
 ```
 
-Then you can run it like:
+Then to select the scenario on line 10 of the `example.feature` file use:
 
 ```shell
 gradle test -Dcucumber.features="path/to/example.feature:10"
