@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- [Core] Remove duplications in steps due to empty parameters ([#373](https://github.com/cucumber/react-components/pull/373))
+- [Core] Remove duplications in steps due to empty parameters ([react-components/#373](https://github.com/cucumber/react-components/pull/373))
 
 ### Changed
 - [Core] Improved Gherkin parser performance ([gherkin/#372](https://github.com/cucumber/gherkin/pull/372) M.P. Korstanje & Julien Kronegg)
