@@ -4,6 +4,8 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.ObjectFactoryParser;
 import io.cucumber.core.options.PluginOption;
 import io.cucumber.core.options.SnippetTypeParser;
@@ -11,23 +13,33 @@ import io.cucumber.core.options.UuidGeneratorParser;
 import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
+import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -41,17 +53,19 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_P
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
+import static java.util.Objects.requireNonNull;
 
-class CucumberEngineOptions implements
+class CucumberConfiguration implements
         io.cucumber.core.plugin.Options,
         io.cucumber.core.runner.Options,
         io.cucumber.core.backend.Options,
         io.cucumber.core.eventbus.Options {
 
+    private static final Logger log = LoggerFactory.getLogger(CucumberConfiguration.class);
     private final ConfigurationParameters configurationParameters;
 
-    CucumberEngineOptions(ConfigurationParameters configurationParameters) {
-        this.configurationParameters = configurationParameters;
+    CucumberConfiguration(ConfigurationParameters configurationParameters) {
+        this.configurationParameters = requireNonNull(configurationParameters);
     }
 
     @Override
@@ -177,14 +191,54 @@ class CucumberEngineOptions implements
                 .create(configurationParameters);
     }
 
-    List<FeatureWithLines> featuresWithLines() {
+    Set<FeatureWithLinesSelector> featuresWithLines() {
         return configurationParameters.get(FEATURES_PROPERTY_NAME,
             s -> Arrays.stream(s.split(","))
                     .map(String::trim)
                     .map(FeatureWithLines::parse)
-                    .sorted(Comparator.comparing(FeatureWithLines::uri))
-                    .distinct()
-                    .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
+                    .map(FeatureWithLinesSelector::from)
+                    .collect(Collectors.toSet()))
+                .orElse(Collections.emptySet());
+    }
+
+    ExecutionMode getExecutionModeFeature() {
+        return configurationParameters.get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
+            value -> ExecutionMode.valueOf(value.toUpperCase(Locale.US)))
+                .orElse(ExecutionMode.CONCURRENT);
+    }
+
+    ExclusiveResourceConfiguration getExclusiveResourceConfiguration(String tag) {
+        requireNonNull(tag);
+        return new ExclusiveResourceConfiguration(new PrefixedConfigurationParameters(
+            configurationParameters,
+            EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + tag));
+
+    }
+
+    UnaryOperator<List<AbstractCucumberTestDescriptor>> getOrderer() {
+        return configurationParameters.get(EXECUTION_ORDER_PROPERTY_NAME, order -> {
+            if (order.equals("lexical")) {
+                return StandardDescriptorOrders.lexicalUriOrder();
+            }
+            if (order.equals("reverse")) {
+                return StandardDescriptorOrders.reverseLexicalUriOrder();
+            }
+            Pattern randomAndSeedPattern = Pattern.compile("random(?::(\\d+))?");
+            Matcher matcher = randomAndSeedPattern.matcher(order);
+            if (!matcher.matches()) {
+                throw new IllegalArgumentException("Invalid order. Must be either reverse, random or random:<long>");
+            }
+            final long seed;
+            String seedString = matcher.group(1);
+            if (seedString != null) {
+                seed = Long.parseLong(seedString);
+                return StandardDescriptorOrders.random(seed);
+            } else {
+                seed = Math.abs(new Random().nextLong());
+                log.info(() -> "Using random test descriptor order. Seed: " + seed);
+                return StandardDescriptorOrders.random(seed);
+            }
+        })
+                .orElseGet(StandardDescriptorOrders::lexicalUriOrder);
     }
 }

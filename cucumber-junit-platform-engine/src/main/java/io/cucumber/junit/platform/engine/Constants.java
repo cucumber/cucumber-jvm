@@ -262,6 +262,11 @@ public final class Constants {
     public static final String EXECUTION_MODE_FEATURE_PROPERTY_NAME = "cucumber.execution.execution-mode.feature";
 
     /**
+     * TODO: Document
+     */
+    public static final String EXECUTION_ORDER_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
+
+    /**
      * Property name used to enable parallel test execution: {@value}
      * <p>
      * By default, tests are executed sequentially in a single thread.
