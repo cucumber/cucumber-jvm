@@ -181,7 +181,27 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-TODO: (I don't know how. Feel free to send a pull request. ;))
+Define Cucumber properties before running the test to ensure that your `build.gradle`
+(or `build.gradle.kts`) correctly passes system properties to the test task.
+
+```groovy
+tasks.test {
+    systemProperty("cucumber.features", System.getProperty("cucumber.features"))
+    systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
+    systemProperty("cucumber.filter.name", System.getProperty("cucumber.filter.name"))
+    systemProperty("cucumber.plugin", System.getProperty("cucumber.plugin"))
+}
+```
+
+Then to select the scenario on line 10 of the `example.feature` file use:
+
+```shell
+gradle test --rerun-tasks --info -Dcucumber.plugin=pretty -Dcucumber.features=path/to/example.feature:10
+```
+
+Note: Because both the Suite Engine and the Cucumber Engine are included, this
+will run tests twice. (If you know how to prevent this, please send a pull
+request).
 
 ## Suites with different configurations
 

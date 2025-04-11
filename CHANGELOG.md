@@ -10,7 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.22.0] - 2025-04-05
 ### Changed
+- [Core] Improved Gherkin parser performance ([gherkin/#372](https://github.com/cucumber/gherkin/pull/372) M.P. Korstanje & Julien Kronegg)
 - [Core] Improved caching glue performance ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
 - [Java, Java8] Significantly reduced number of emitted step- and hook-definition messages ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
 - [Core] Removed workarounds to limit size of html report ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
@@ -23,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 - [Core] Deprecated `ScenarioScoped` glue ([#2971](https://github.com/cucumber/cucumber-jvm/pull/2971) M.P. Korstanje & Julien Kronegg)
+
+### Fixed
+- [Core] Remove duplications in steps in html report due to empty parameters ([react-components/#373](https://github.com/cucumber/react-components/pull/373))
 
 ## [7.21.1] - 2025-02-07
 ### Fixed
@@ -388,7 +394,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.1...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.0...HEAD
+[7.22.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.1...v7.22.0
 [7.21.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.0...v7.21.1
 [7.21.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.20.1...v7.21.0
 [7.20.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.20.0...v7.20.1
