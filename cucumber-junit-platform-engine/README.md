@@ -26,7 +26,8 @@ like this:
 
 ```mermaid
 erDiagram
-    "IDE, Maven, Gradle or Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "IDE" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Maven or Gradle" ||--|{ "JUnit Platform" : "requests discovery and execution"
     "Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
     "JUnit Platform" ||--|{ "Cucumber Test Engine": "forwards request"
     "JUnit Platform" ||--|{ "Jupiter Test Engine": "forwards request"
@@ -209,11 +210,12 @@ different configurations. Conceptually this looks like this:
 
 ```mermaid
 erDiagram
-    "IDE, Maven, Gradle or Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "IDE" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Maven or Gradle" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
     "JUnit Platform" ||--|{ "Suite Test Engine": "forwards request"
     "Suite Test Engine" ||--|{ "@Suite annotated class A" : "discovers and executes"
     "Suite Test Engine" ||--|{ "@Suite annotated class B" : "discovers and executes"
-        
     "@Suite annotated class A" ||--|{ "JUnit Platform (A)" :  "requests discovery and execution"
     "@Suite annotated class B" ||--|{ "JUnit Platform (B)" :  "requests discovery and execution"
     "JUnit Platform (A)" ||--|{ "Cucumber Test Engine (A)": "forwards request"
@@ -420,14 +422,14 @@ cucumber.junit-platform.naming-strategy=                       # long or short.
                                                                # default: short
                                                                # include parent descriptor name in test descriptor.
 
-cucumber.junit-platform.naming-strategy.short.example-name=    # number or pickle.
-                                                               # default: number
-                                                               # Use example number or pickle name for examples when
+cucumber.junit-platform.naming-strategy.short.example-name=    # number, number-and-pickle-if-parameterized or pickle.
+                                                               # default: number-and-pickle-if-parameterized
+                                                               # Use example number and/or pickle name for examples when
                                                                # short naming strategy is used
 
-cucumber.junit-platform.naming-strategy.long.example-name=     # number or pickle.
-                                                               # default: number
-                                                               # Use example number or pickle name for examples when
+cucumber.junit-platform.naming-strategy.long.example-name=     # number, number-and-pickle-if-parameterized, or pickle.
+                                                               # default: number-and-pickle-if-parameterized
+                                                               # Use example number and/or pickle name for examples when
                                                                # long naming strategy is used
 
 cucumber.plugin=                                               # comma separated plugin strings.
@@ -463,6 +465,12 @@ cucumber.execution.execution-mode.feature=                     # same_thread or 
                                                                # same thread as the parent feature 
                                                                # concurrent - executes scenarios concurrently on any
                                                                # available thread
+
+cucumber.execution.order=                                     # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+                                                              # default: lexical
+                                                              # lexical - executes features in lexical uri order, scenarios and examples from top to bottom 
+                                                              # reverse - as lexical, but in reverse
+                                                              # random - at random. Note: scenarios and examples are only shuffled within their containing element 
 
 cucumber.execution.parallel.enabled=                           # true or false.
                                                                # default: false

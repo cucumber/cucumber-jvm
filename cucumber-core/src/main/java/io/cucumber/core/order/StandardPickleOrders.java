@@ -8,8 +8,9 @@ import java.util.Random;
 
 public final class StandardPickleOrders {
 
-    private static final Comparator<Pickle> pickleUriComparator = Comparator.comparing(Pickle::getUri)
-            .thenComparing(pickle -> pickle.getLocation().getLine());
+    private static final Comparator<Pickle> pickleUriComparator = Comparator
+            .comparing(Pickle::getUri)
+            .thenComparing(Pickle::getLocation);
 
     private StandardPickleOrders() {
 

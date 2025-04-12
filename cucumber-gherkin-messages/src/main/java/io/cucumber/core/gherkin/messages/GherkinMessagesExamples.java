@@ -3,6 +3,7 @@ package io.cucumber.core.gherkin.messages;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,11 @@ final class GherkinMessagesExamples implements Node.Examples {
     @Override
     public Collection<Example> elements() {
         return children;
+    }
+
+    @Override
+    public URI getUri() {
+        return parent.getUri();
     }
 
     @Override

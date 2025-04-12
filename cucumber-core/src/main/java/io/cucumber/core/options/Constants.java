@@ -42,7 +42,8 @@ public final class Constants {
      * Valid values are {@code lexical}, {@code reverse}, {@code random} or
      * {@code random:[seed]}.
      * <p>
-     * By default features are executed in lexical file name order
+     * By default, features are executed in lexical file name order and
+     * scenarios in a feature from top to bottom.
      */
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
 
