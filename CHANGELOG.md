@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Core] Fix issue with hook steps not being rendered in html report [react-components/#379](https://github.com/cucumber/react-components/pull/379)
+
+### Changed
+- [JUnit Platform Engine] Use JUnit Platform 1.12.2 (JUnit Jupiter 5.12.2)
 
 ## [7.22.0] - 2025-04-05
 ### Changed
