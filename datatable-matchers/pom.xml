@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.22.1-SNAPSHOT</version>
+        <version>7.22.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>datatable-matchers</artifactId>
@@ -15,9 +15,9 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.datatable.matchers</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <guava.version>33.4.7-jre</guava.version>
+        <guava.version>33.4.8-jre</guava.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.12.1</junit-jupiter.version>
+        <junit-jupiter.version>5.12.2</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
