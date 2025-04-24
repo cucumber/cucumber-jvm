@@ -10,11 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Core] Fix issue with hook steps not being rendered in html report [react-components/#379](https://github.com/cucumber/react-components/pull/379)
 
+## [7.22.1] - 2025-04-24
 ### Changed
 - [JUnit Platform Engine] Use JUnit Platform 1.12.2 (JUnit Jupiter 5.12.2)
+
+### Fixed
+- [Core] Fix issue with hook steps not being rendered in html report [react-components/#379](https://github.com/cucumber/react-components/pull/379)
 
 ## [7.22.0] - 2025-04-05
 ### Changed
@@ -394,7 +396,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.1...HEAD
+[7.22.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.0...v7.22.1
 [7.22.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.1...v7.22.0
 [7.21.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.0...v7.21.1
 [7.21.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.20.1...v7.21.0
