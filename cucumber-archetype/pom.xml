@@ -18,7 +18,7 @@
         <junit-jupiter.version>5.12.2</junit-jupiter.version>
         <assertj.version>3.27.3</assertj.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
