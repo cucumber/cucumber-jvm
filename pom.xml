@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>4.2.0</version>
+        <version>4.3.7</version>
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
@@ -226,17 +226,31 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <excludeArtifacts>
+                        <artifact>cucumber-kotlin-java8</artifact>
+                        <artifact>examples</artifact>
+                        <artifact>calculator-java8-cli</artifact>
+                        <artifact>calculator-java-cli</artifact>
+                        <artifact>calculator-java-junit4</artifact>
+                        <artifact>calculator-java-junit5</artifact>
+                        <artifact>calculator-java-testng</artifact>
+                        <artifact>spring-java-junit5</artifact>
+                    </excludeArtifacts>
+                </configuration>
+            </plugin>
+
         </plugins>
 
         <pluginManagement>
             <plugins>
                 <!-- Standard plugins - alphabetically -->
-                <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>groovy-maven-plugin</artifactId>
-                    <version>2.1.1</version>
-                </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -328,18 +342,7 @@
                                 </packages>
                             </group>
                         </groups>
-                        <stylesheet>java</stylesheet>
                     </configuration>
-                </plugin>
-
-                <!-- Need the 3.0.0+ release for Junit5 + Before/After hooks -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
                 </plugin>
 
                 <!-- Determine project root for revapi and spotless  -->
