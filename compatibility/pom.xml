@@ -15,6 +15,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <jackson.version>2.19.0</jackson.version>
         <junit-jupiter.version>5.12.2</junit-jupiter.version>
+        <project.Automatic-Module-Name>io.cucumber.compatibility</project.Automatic-Module-Name>
     </properties>
 
     <dependencyManagement>
@@ -92,13 +93,6 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <configuration>
                         <skip>true</skip>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <configuration>
-                        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
                     </configuration>
                 </plugin>
                 <plugin>

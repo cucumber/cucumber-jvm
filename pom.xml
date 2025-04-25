@@ -42,7 +42,6 @@
         <module>cucumber-java</module>
         <module>cucumber-junit</module>
         <module>cucumber-junit-platform-engine</module>
-        <module>cucumber-kotlin-java8</module>
         <module>cucumber-openejb</module>
         <module>cucumber-picocontainer</module>
         <module>cucumber-plugin</module>
@@ -60,8 +59,9 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>examples</module>
                 <module>compatibility</module>
+                <module>cucumber-kotlin-java8</module>
+                <module>examples</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -92,8 +92,9 @@
                  these modules. -->
             <id>include-extra-modules</id>
             <modules>
-                <module>examples</module>
                 <module>compatibility</module>
+                <module>cucumber-kotlin-java8</module>
+                <module>examples</module>
             </modules>
         </profile>
 
@@ -225,25 +226,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <excludeArtifacts>
-                        <artifact>cucumber-kotlin-java8</artifact>
-                        <artifact>examples</artifact>
-                        <artifact>calculator-java8-cli</artifact>
-                        <artifact>calculator-java-cli</artifact>
-                        <artifact>calculator-java-junit4</artifact>
-                        <artifact>calculator-java-junit5</artifact>
-                        <artifact>calculator-java-testng</artifact>
-                        <artifact>spring-java-junit5</artifact>
-                    </excludeArtifacts>
-                </configuration>
             </plugin>
 
         </plugins>
