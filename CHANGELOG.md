@@ -10,11 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Core] Convert parameterized objects with `@DefaultDataTableEntryTransformer` ([#2995](https://github.com/cucumber/cucumber-jvm/pull/2995) Jean Tissot)
 
+## [7.22.2] - 2025-05-12
 ### Changed
 - [Archetype] Assume new projects are created with at least Java 17
+
+### Fixed
+- [Core] Convert parameterized objects with `@DefaultDataTableEntryTransformer` ([#2995](https://github.com/cucumber/cucumber-jvm/pull/2995) Jean Tissot)
 
 ## [7.22.1] - 2025-04-24
 ### Changed
@@ -401,7 +403,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.1...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.2...HEAD
+[7.22.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.1...v7.22.2
 [7.22.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.0...v7.22.1
 [7.22.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.1...v7.22.0
 [7.21.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.21.0...v7.21.1
