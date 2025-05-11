@@ -129,10 +129,14 @@ class DataTableTypeRegistryTableConverterTest {
             cellTransformer) -> objectMapper.convertValue(entry, objectMapper.constructType(type));
     private static final TableEntryByTypeTransformer JACKSON_NUMBERED_OBJECT_TABLE_ENTRY_CONVERTER = (entry, type,
             cellTransformer) -> {
-        if (type instanceof ParameterizedType && NumberedObject.class.equals(((ParameterizedType) type).getRawType())) {
-            return convertToNumberedObject(entry, ((ParameterizedType) type).getActualTypeArguments()[0]);
+        if (!(type instanceof ParameterizedType)) {
+            throw new IllegalArgumentException("Unsupported type " + type);
         }
-        return objectMapper.convertValue(entry, objectMapper.constructType(type));
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        if (!NumberedObject.class.equals(parameterizedType.getRawType())) {
+            throw new IllegalArgumentException("Unsupported type " + parameterizedType);
+        }
+        return convertToNumberedObject(entry, parameterizedType.getActualTypeArguments()[0]);
     };
     private static final TableCellByTypeTransformer JACKSON_TABLE_CELL_BY_TYPE_CONVERTER = (value,
             cellType) -> objectMapper.convertValue(value, objectMapper.constructType(cellType));
