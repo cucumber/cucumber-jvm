@@ -6,8 +6,7 @@ import org.testng.annotations.DataProvider
 
 
 @CucumberOptions(
-    plugin = ["html:target/results.html"],
-//    tags = "@shopping"
+    plugin = ["html:target/results.html"]
 )
 class RunCucumberTest : AbstractTestNGCucumberTests() {
 
