@@ -13,7 +13,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Kotlin Examples: Calculator - Annotations - TestNG</name>
+    <name>Examples: Calculator - Kotlin - Annotations - TestNG</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
