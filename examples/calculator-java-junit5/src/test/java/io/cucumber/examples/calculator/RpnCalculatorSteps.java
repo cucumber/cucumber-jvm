@@ -11,7 +11,7 @@ import io.cucumber.java.en.When;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RpnCalculatorSteps {
 
@@ -66,7 +66,7 @@ public class RpnCalculatorSteps {
 
     @Then("the result is {int}")
     public void the_result_is(double expected) {
-        assertEquals(expected, calc.value());
+        assertThat(calc.value()).isEqualTo(expected);
     }
 
     @Given("the previous entries:")

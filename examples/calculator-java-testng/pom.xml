@@ -9,7 +9,7 @@
 
     <artifactId>calculator-java-testng</artifactId>
     <packaging>jar</packaging>
-    <name>Examples: Calculator - Annotations - TestNG</name>
+    <name>Examples: Calculator - Java - Annotations - TestNG</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.examples.calculator</project.Automatic-Module-Name>

@@ -17,6 +17,7 @@
         <module>calculator-java-junit4</module>
         <module>calculator-java-junit5</module>
         <module>calculator-java-testng</module>
+        <module>calculator-kotlin-junit5</module>
         <module>spring-java-junit5</module>
         <module>wicket-java-junit4</module>
     </modules>
