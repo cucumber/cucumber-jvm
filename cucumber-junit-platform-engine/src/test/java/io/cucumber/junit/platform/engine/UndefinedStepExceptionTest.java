@@ -1,15 +1,23 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
+import io.cucumber.plugin.event.Location;
 import org.junit.jupiter.api.Test;
+
+import java.net.URI;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsArrayWithSize.arrayWithSize;
 
 class UndefinedStepExceptionTest {
+
+    private final URI uri = URI.create("classpath:example.feature");
+    private final Location stepLocation = new Location(12, 4);
 
     @Test
     void should_generate_a_message_for_no_suggestions() {
@@ -18,10 +26,16 @@ class UndefinedStepExceptionTest {
     }
 
     @Test
+    void should_generate_an_empty_stacktrace_for_no_suggestions() {
+        UndefinedStepException exception = new UndefinedStepException(emptyList());
+        assertThat(exception.getStackTrace(), arrayWithSize(0));
+    }
+
+    @Test
     void should_generate_a_message_for_one_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             singletonList(
-                new Suggestion("some step", singletonList("some snippet")))
+                new Suggestion("some step", singletonList("some snippet"), uri, stepLocation))
 
         );
         assertThat(exception.getMessage(), is("" +
@@ -32,10 +46,22 @@ class UndefinedStepExceptionTest {
     }
 
     @Test
+    void should_generate_a_stacktrace_for_one_suggestions() {
+        UndefinedStepException exception = new UndefinedStepException(
+            singletonList(
+                new Suggestion("some step", singletonList("some snippet"), uri, stepLocation))
+
+        );
+        assertThat(exception.getStackTrace(), arrayWithSize(1));
+        assertThat(exception.getStackTrace()[0].toString(), equalTo("✽.some step(classpath:example.feature:12)"));
+    }
+
+    @Test
     void should_generate_a_message_for_one_suggestions_with_multiple_snippets() {
         UndefinedStepException exception = new UndefinedStepException(
             singletonList(
-                new Suggestion("some step", asList("some snippet", "some other snippet")))
+                new Suggestion("some step", asList("some snippet", "some other snippet"), uri,
+                    stepLocation))
 
         );
         assertThat(exception.getMessage(), is("" +
@@ -50,8 +76,9 @@ class UndefinedStepExceptionTest {
     void should_generate_a_message_for_two_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             asList(
-                new Suggestion("some step", singletonList("some snippet")),
-                new Suggestion("some other step", singletonList("some other snippet")))
+                new Suggestion("some step", singletonList("some snippet"), uri, stepLocation),
+                new Suggestion("some other step", singletonList("some other snippet"), uri,
+                    stepLocation))
 
         );
         assertThat(exception.getMessage(), is("" +
@@ -66,8 +93,10 @@ class UndefinedStepExceptionTest {
     void should_generate_a_message_without_duplicate_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             asList(
-                new Suggestion("some step", asList("some snippet", "some snippet")),
-                new Suggestion("some other step", asList("some other snippet", "some other snippet")))
+                new Suggestion("some step", asList("some snippet", "some snippet"), uri,
+                    stepLocation),
+                new Suggestion("some other step", asList("some other snippet", "some other snippet"), uri,
+                    stepLocation))
 
         );
         assertThat(exception.getMessage(), is("" +
@@ -82,9 +111,11 @@ class UndefinedStepExceptionTest {
     void should_generate_a_message_for_three_suggestions() {
         UndefinedStepException exception = new UndefinedStepException(
             asList(
-                new Suggestion("some step", singletonList("some snippet")),
-                new Suggestion("some other step", singletonList("some other snippet")),
-                new Suggestion("yet another step", singletonList("yet another snippet")))
+                new Suggestion("some step", singletonList("some snippet"), uri, stepLocation),
+                new Suggestion("some other step", singletonList("some other snippet"), uri,
+                    stepLocation),
+                new Suggestion("yet another step", singletonList("yet another snippet"), uri,
+                    stepLocation))
 
         );
         assertThat(exception.getMessage(), is("" +
