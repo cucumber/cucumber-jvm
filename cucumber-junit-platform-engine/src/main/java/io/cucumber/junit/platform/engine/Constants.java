@@ -143,17 +143,19 @@ public final class Constants {
      * Property name used to configure the naming strategy of examples in case
      * of short naming strategy: {@value}
      * <p>
-     * Value must be one of {@code number} or {@code pickle}. By default,
-     * numbers are used.
-     * <p>
-     * When set to {@code pickle} the pickle name is used. So for scenario name
-     * {@code Adding <a> and <b>} and example with params {@code a = 10} and
-     * {@code b = 20} the following name would be produced:
+     * Value must be one of {@code number}, {@code pickle}, or
+     * {@code number-and-pickle-if-parameterized}. By default,
+     * {@code number-and-pickle-if-parameterized} is used.
+     * <ul>
+     * <li>When set to {@code number} examples are numbered. So the first
+     * example of the first examples section would be named {@code #1.1}
+     * <li>When set to {@code pickle} the pickle name is used. So for scenario
+     * name {@code Adding <a> and <b>} and example with params {@code a = 10}
+     * and {@code b = 20} the following name would be produced:
      * {@code Adding 10 and 20}.
-     * <p>
-     * Using example numbers works well in all scenarios, but if parameterized
-     * scenario names are used consistently, the pickle name provides more
-     * clarity.
+     * <li>When set to {@code number-and-pickle-if-parameterized} the name would
+     * be rendered as {@code #1.1: Adding 10 and 20}.
+     * </ul>
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.short.example-name";
@@ -162,17 +164,19 @@ public final class Constants {
      * Property name used to configure the naming strategy of examples in case
      * of long naming strategy: {@value}
      * <p>
-     * Value must be one of {@code number} or {@code pickle}. By default,
-     * numbers are used.
-     * <p>
-     * When set to {@code pickle} the pickle name is used. So for scenario name
-     * {@code Adding <a> and <b>} and example with params {@code a = 10} and
-     * {@code b = 20} the following name would be produced:
-     * {@code Feature Name - Rule Name - Adding <a> and <b> - Examples Name - Adding 10 and 20}.
-     * <p>
-     * Using example numbers works well in all scenarios, but if parameterized
-     * scenario names are used consistently, the pickle name provides more
-     * clarity.
+     * Value must be one of {@code number}, {@code pickle}, or
+     * {@code number-and-pickle-if-parameterized}. By default,
+     * {@code number-and-pickle-if-parameterized} is used.
+     * <ul>
+     * <li>When set to {@code number} examples are numbered. So the first
+     * example of the first examples section would be named {@code #1.1}
+     * <li>When set to {@code pickle} the pickle name is used. So for scenario
+     * name {@code Adding <a> and <b>} and example with params {@code a = 10}
+     * and {@code b = 20} the following name would be produced:
+     * {@code Adding 10 and 20}.
+     * <li>When set to {@code number-and-pickle-if-parameterized} the name would
+     * be rendered as {@code #1.1: Adding 10 and 20}.
+     * </ul>
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";

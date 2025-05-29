@@ -130,6 +130,14 @@ class FeatureResolverTest {
         return iterator.next();
     }
 
+    private TestDescriptor getParameterizedOutline() {
+        Iterator<? extends TestDescriptor> iterator = getFeature().getChildren().iterator();
+        iterator.next();
+        iterator.next();
+        iterator.next();
+        return iterator.next();
+    }
+
     @Test
     void example() {
         TestDescriptor example = getExample();
@@ -153,8 +161,9 @@ class FeatureResolverTest {
 
     @Test
     void longNames() {
-        configurationParameters = new MapConfigurationParameters(
-            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long");
+        configurationParameters = new MapConfigurationParameters(Map.of(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long",
+            JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME, "number"));
 
         TestDescriptor example = getExample();
         assertEquals("A feature with scenario outlines - A scenario outline - With some text - Example #1.1",
@@ -169,6 +178,17 @@ class FeatureResolverTest {
 
         TestDescriptor example = getExample();
         assertEquals("A feature with scenario outlines - A scenario outline - With some text - A scenario outline",
+            example.getDisplayName());
+    }
+
+    @Test
+    void longNamesWithPickleNamesIfParameterized() {
+        configurationParameters = new MapConfigurationParameters(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long");
+
+        TestDescriptor example = getParametrizedExample();
+        assertEquals(
+            "A feature with scenario outlines - A scenario with <example> - Examples - Example #1.1: A scenario with A",
             example.getDisplayName());
     }
 
@@ -191,8 +211,21 @@ class FeatureResolverTest {
         assertEquals("A scenario outline", example.getDisplayName());
     }
 
+    @Test
+    void shortNamesWithPickleNamesIfParameterized() {
+        configurationParameters = new MapConfigurationParameters(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short");
+
+        TestDescriptor example = getParametrizedExample();
+        assertEquals("Example #1.1: A scenario with A", example.getDisplayName());
+    }
+
     private TestDescriptor getExample() {
         return getOutline().getChildren().iterator().next().getChildren().iterator().next();
+    }
+
+    private TestDescriptor getParametrizedExample() {
+        return getParameterizedOutline().getChildren().iterator().next().getChildren().iterator().next();
     }
 
     @Test

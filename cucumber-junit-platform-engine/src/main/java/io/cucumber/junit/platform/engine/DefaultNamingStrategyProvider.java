@@ -18,7 +18,7 @@ enum DefaultNamingStrategyProvider {
         NamingStrategy create(ConfigurationParameters configuration) {
             return configuration.get(JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME)
                     .map(DefaultNamingStrategyProvider::parseStrategy)
-                    .orElse(DefaultNamingStrategyProvider::exampleNumberStrategy)
+                    .orElse(DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy)
                     .apply(DefaultNamingStrategyProvider::longStrategy);
         }
     },
@@ -28,7 +28,7 @@ enum DefaultNamingStrategyProvider {
         NamingStrategy create(ConfigurationParameters configuration) {
             return configuration.get(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME)
                     .map(DefaultNamingStrategyProvider::parseStrategy)
-                    .orElse(DefaultNamingStrategyProvider::exampleNumberStrategy)
+                    .orElse(DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy)
                     .apply(DefaultNamingStrategyProvider::shortStrategy);
         }
     };
@@ -43,11 +43,36 @@ enum DefaultNamingStrategyProvider {
         switch (exampleStrategy) {
             case "number":
                 return DefaultNamingStrategyProvider::exampleNumberStrategy;
+            case "number-and-pickle-if-parameterized":
+                return DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy;
             case "pickle":
                 return DefaultNamingStrategyProvider::pickleNameStrategy;
             default:
                 throw new IllegalArgumentException("Unrecognized example naming strategy " + exampleStrategy);
         }
+    }
+
+    private static NamingStrategy exampleNumberAndPickleIfParameterizedStrategy(
+            BiFunction<Node, String, String> baseStrategy
+    ) {
+        return createNamingStrategy(
+            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+            (node, pickle) -> baseStrategy.apply(node, nameOrKeyword(node) + pickleNameIfParameterized(node, pickle)));
+    }
+
+    private static String pickleNameIfParameterized(Node node, Pickle pickle) {
+        if (node instanceof Node.Example) {
+            String pickleName = pickle.getName();
+            boolean parameterized = !node.getParent()
+                    .flatMap(Node::getParent)
+                    .flatMap(Node::getName)
+                    .filter(pickleName::equals)
+                    .isPresent();
+            if (parameterized) {
+                return ": " + pickleName;
+            }
+        }
+        return "";
     }
 
     private static NamingStrategy exampleNumberStrategy(BiFunction<Node, String, String> baseStrategy) {
