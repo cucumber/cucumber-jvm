@@ -420,13 +420,13 @@ cucumber.junit-platform.naming-strategy=                       # long or short.
                                                                # default: short
                                                                # include parent descriptor name in test descriptor.
 
-cucumber.junit-platform.naming-strategy.short.example-name=    # number or pickle.
-                                                               # default: number
+cucumber.junit-platform.naming-strategy.short.example-name=    # number, number-and-pickle-if-parameterized or pickle.
+                                                               # default: number-and-pickle-if-parameterized
                                                                # Use example number or pickle name for examples when
                                                                # short naming strategy is used
 
-cucumber.junit-platform.naming-strategy.long.example-name=     # number or pickle.
-                                                               # default: number
+cucumber.junit-platform.naming-strategy.long.example-name=     # number, number-and-pickle-if-parameterized or pickle.
+                                                               # default: number-and-pickle-if-parameterized
                                                                # Use example number or pickle name for examples when
                                                                # long naming strategy is used
 
