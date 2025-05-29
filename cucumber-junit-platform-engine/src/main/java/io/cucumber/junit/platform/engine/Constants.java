@@ -126,15 +126,20 @@ public final class Constants {
     /**
      * Property name used to configure the naming strategy: {@value}
      * <p>
-     * Value must be one of {@code long} or {@code short}. By default, short
-     * names are used.
+     * Value must be one of {@code long}, {@code short}, or {@code surefire}. By
+     * default, short names are used.
      * <p>
-     * When long names are used the parent descriptor names are included into
-     * each test descriptor name. So for example a single example would be
-     * named:
+     * When the {@code long} naming strategy is used all parent descriptor names
+     * are included in each test descriptor name. So for example a single
+     * example would be named:
      * {@code Feature Name - Rule Name - Scenario Name - Examples Name - Example #N }.
-     * This is useful for tools that only report the test name such as Maven and
-     * Gradle.
+     * This is useful for tools that only report the test name such as Gradle.
+     * <p>
+     * When the {@code surefire} naming strategy is used nodes are named such
+     * that the Surefire output makes sense. The feature name will be rendered
+     * as the class name. The long name without the feature will be rendered as
+     * the test method name. For example:
+     * {@code Feature Name.Rule Name - Scenario Name - Examples Name - Example #N}.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.0.0")
     public static final String JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy";
@@ -159,6 +164,27 @@ public final class Constants {
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.short.example-name";
+
+    /**
+     * Property name used to configure the naming strategy of examples in case
+     * of surefire naming strategy: {@value}
+     * <p>
+     * Value must be one of {@code number}, {@code pickle}, or
+     * {@code number-and-pickle-if-parameterized}. By default,
+     * {@code number-and-pickle-if-parameterized} is used.
+     * <ul>
+     * <li>When set to {@code number} examples are numbered. So the first
+     * example of the first examples section would be named {@code #1.1}
+     * <li>When set to {@code pickle} the pickle name is used. So for scenario
+     * name {@code Adding <a> and <b>} and example with params {@code a = 10}
+     * and {@code b = 20} the following name would be produced:
+     * {@code Adding 10 and 20}.
+     * <li>When set to {@code number-and-pickle-if-parameterized} the name would
+     * be rendered as {@code #1.1: Adding 10 and 20}.
+     * </ul>
+     */
+    @API(status = Status.EXPERIMENTAL, since = "7.23.0")
+    public static final String JUNIT_PLATFORM_SUREFIRE_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.surefire.example-name";
 
     /**
      * Property name used to configure the naming strategy of examples in case

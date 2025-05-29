@@ -220,6 +220,31 @@ class FeatureResolverTest {
         assertEquals("Example #1.1: A scenario with A", example.getDisplayName());
     }
 
+    @Test
+    void surefireNamesWithPickleNamesIfParameterized() {
+        configurationParameters = new MapConfigurationParameters(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "surefire");
+
+        // The test node gets the long name, without the feature name.
+        TestDescriptor example = getParametrizedExample();
+        assertEquals("A scenario with <example> - Examples - Example #1.1: A scenario with A",
+            example.getDisplayName());
+
+        // The parent node gets the feature name.
+        TestDescriptor examples = example.getParent().get();
+        assertEquals("A feature with scenario outlines",
+            examples.getDisplayName());
+
+        // Remaining nodes are named by their short names.
+        TestDescriptor scenarioOutline = examples.getParent().get();
+        assertEquals("A scenario with <example>",
+            scenarioOutline.getDisplayName());
+
+        TestDescriptor feature = scenarioOutline.getParent().get();
+        assertEquals("A feature with scenario outlines",
+            feature.getDisplayName());
+    }
+
     private TestDescriptor getExample() {
         return getOutline().getChildren().iterator().next().getChildren().iterator().next();
     }

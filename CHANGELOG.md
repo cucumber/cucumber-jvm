@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [JUnit Platform Engine, TestNG] Remove framework elements from `UndefinedStepException` stacktrace ([#3002](https://github.com/cucumber/cucumber-jvm/pull/3002) M.P. Korstanje)
+- [JUnit Platform Engine] Add `surefire` naming strategy ([#3003](https://github.com/cucumber/cucumber-jvm/pull/3003) M.P. Korstanje)
+
+### Changed
+- [JUnit Platform Engine] Use `number-and-pickle-if-parameterized ` example naming strategy by default ([#3004](https://github.com/cucumber/cucumber-jvm/pull/3004) M.P. Korstanje)
 
 ## [7.22.2] - 2025-05-12
 ### Changed
