@@ -135,11 +135,11 @@ public final class Constants {
      * {@code Feature Name - Rule Name - Scenario Name - Examples Name - Example #N }.
      * This is useful for tools that only report the test name such as Gradle.
      * <p>
-     * When the {@code surefire} naming strategy is used nodes are named such
-     * that the Surefire makes sense. The feature name will be rendered as the
-     * class name. The long name without the feature will be rendered as the
-     * test\ method name. For example:
-     * {@code Feature Name.Rule Name - Scenario Name - Examples Name - Example #N }.
+     * When the {@code surefire} naming strategy is used nodes are named such that
+     * the Surefire output makes sense. The feature name will be rendered as the
+     * class name. The long name without the feature will be rendered as the test
+     * method name. For example:
+     * {@code Feature Name.Rule Name - Scenario Name - Examples Name - Example #N}.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.0.0")
     public static final String JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy";

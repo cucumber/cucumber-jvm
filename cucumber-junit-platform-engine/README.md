@@ -433,7 +433,7 @@ cucumber.junit-platform.naming-strategy.long.example-name=     # number, number-
                                                                # long naming strategy is used
                                                                
 cucumber.junit-platform.naming-strategy.surefire.example-name= # number or pickle.
-                                                               # default: number
+                                                               # default: number-and-pickle-if-parameterized
                                                                # Use example number or pickle name for examples when
                                                                # surefire naming strategy is used
 

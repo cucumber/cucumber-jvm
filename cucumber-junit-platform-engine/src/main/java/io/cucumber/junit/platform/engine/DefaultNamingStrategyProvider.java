@@ -39,7 +39,7 @@ enum DefaultNamingStrategyProvider {
         NamingStrategy create(ConfigurationParameters configuration) {
             return configuration.get(JUNIT_PLATFORM_SUREFIRE_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME)
                     .map(DefaultNamingStrategyProvider::parseStrategy)
-                    .orElse(DefaultNamingStrategyProvider::exampleNumberStrategy)
+                    .orElse(DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy)
                     .apply(DefaultNamingStrategyProvider::surefireStrategy);
         }
     };

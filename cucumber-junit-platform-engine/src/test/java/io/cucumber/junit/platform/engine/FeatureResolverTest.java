@@ -221,12 +221,12 @@ class FeatureResolverTest {
     }
 
     @Test
-    void surefireNames() {
+    void surefireNamesWithPickleNamesIfParameterized() {
         configurationParameters = new MapConfigurationParameters(
             JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "surefire");
 
-        TestDescriptor example = getExample();
-        assertEquals("A scenario outline - With some text - Example #1.1",
+        TestDescriptor example = getParametrizedExample();
+        assertEquals("A scenario with <example> - Examples - Example #1.1: A scenario with A",
             example.getDisplayName());
 
         TestDescriptor examples = example.getParent().get();
@@ -235,7 +235,7 @@ class FeatureResolverTest {
 
         TestDescriptor feature = examples.getParent().get();
         assertEquals("A feature with scenario outlines",
-            examples.getDisplayName());
+                feature.getDisplayName());
     }
 
     private TestDescriptor getExample() {
