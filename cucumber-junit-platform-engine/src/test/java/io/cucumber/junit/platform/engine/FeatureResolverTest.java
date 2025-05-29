@@ -130,6 +130,14 @@ class FeatureResolverTest {
         return iterator.next();
     }
 
+    private TestDescriptor getParameterizedOutline() {
+        Iterator<? extends TestDescriptor> iterator = getFeature().getChildren().iterator();
+        iterator.next();
+        iterator.next();
+        iterator.next();
+        return iterator.next();
+    }
+
     @Test
     void example() {
         TestDescriptor example = getExample();
@@ -189,6 +197,24 @@ class FeatureResolverTest {
 
         TestDescriptor example = getExample();
         assertEquals("A scenario outline", example.getDisplayName());
+    }
+
+    @Test
+    void surefireNames() {
+        configurationParameters = new MapConfigurationParameters(
+            JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "surefire");
+
+        TestDescriptor example = getExample();
+        assertEquals("A scenario outline - With some text - Example #1.1",
+            example.getDisplayName());
+
+        TestDescriptor examples = example.getParent().get();
+        assertEquals("A feature with scenario outlines",
+            examples.getDisplayName());
+
+        TestDescriptor feature = examples.getParent().get();
+        assertEquals("A feature with scenario outlines",
+            examples.getDisplayName());
     }
 
     private TestDescriptor getExample() {

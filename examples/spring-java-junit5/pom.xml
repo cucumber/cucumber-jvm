@@ -111,7 +111,7 @@
                         <!-- Work around. Surefire does not include enough information to disambiguate between different
                              examples. -->
                         <configurationParameters>
-                            cucumber.junit-platform.naming-strategy=long
+                            cucumber.junit-platform.naming-strategy=surefire
                         </configurationParameters>
                     </properties>
                 </configuration>

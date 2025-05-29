@@ -54,9 +54,11 @@ for a brief how to.
 
 Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
-can make for hard to read reports. To improve the readability of the reports
-provide the `cucumber.junit-platform.naming-strategy=long` configuration
-parameter. This will include the feature name as part of the test name. 
+can make for hard to read reports. 
+
+To improve the readability of the reports provide the
+`cucumber.junit-platform.naming-strategy` configuration parameter to
+Gradle. This will include the feature name as part of the test name.
 
 ##### Maven
 
@@ -68,7 +70,7 @@ parameter. This will include the feature name as part of the test name.
     <configuration>
         <properties>
             <configurationParameters>
-                cucumber.junit-platform.naming-strategy=long
+                cucumber.junit-platform.naming-strategy=surefire
             </configurationParameters>
         </properties>
     </configuration>
@@ -416,7 +418,7 @@ cucumber.filter.tags=                                          # a cucumber tag 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
 
-cucumber.junit-platform.naming-strategy=                       # long or short.
+cucumber.junit-platform.naming-strategy=                       # long, short or surefire.
                                                                # default: short
                                                                # include parent descriptor name in test descriptor.
 
@@ -429,6 +431,11 @@ cucumber.junit-platform.naming-strategy.long.example-name=     # number or pickl
                                                                # default: number
                                                                # Use example number or pickle name for examples when
                                                                # long naming strategy is used
+                                                               
+cucumber.junit-platform.naming-strategy.surefire.example-name= # number or pickle.
+                                                               # default: number
+                                                               # Use example number or pickle name for examples when
+                                                               # surefire naming strategy is used
 
 cucumber.plugin=                                               # comma separated plugin strings.
                                                                # example: pretty, json:path/to/report.json
@@ -615,7 +622,7 @@ Note: any files written by Cucumber will be overwritten during the rerun.
                  information to disambiguate between different
                  examples and scenarios. -->
             <configurationParameters>
-                cucumber.junit-platform.naming-strategy=long
+                cucumber.junit-platform.naming-strategy=surefire
             </configurationParameters>
         </properties>
     </configuration>
