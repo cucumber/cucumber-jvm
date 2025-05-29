@@ -2,11 +2,13 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -41,7 +43,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
 
     private void handleSnippetSuggestedEvent(SnippetsSuggestedEvent event) {
         SnippetsSuggestedEvent.Suggestion s = event.getSuggestion();
-        suggestions.add(new Suggestion(s.getStep(), s.getSnippets()));
+        suggestions.add(new Suggestion(s.getStep(), s.getSnippets(), event.getUri(), event.getStepLocation()));
     }
 
     private void handleTestCaseFinished(TestCaseFinished event) {
@@ -80,10 +82,22 @@ public final class TestCaseResultObserver implements AutoCloseable {
 
         final String step;
         final List<String> snippets;
+        final URI uri;
+        final Location location;
 
+        @Deprecated
         public Suggestion(String step, List<String> snippets) {
             this.step = requireNonNull(step);
             this.snippets = unmodifiableList(requireNonNull(snippets));
+            this.uri = null;
+            this.location = null;
+        }
+
+        public Suggestion(String step, List<String> snippets, URI uri, Location location) {
+            this.step = requireNonNull(step);
+            this.snippets = unmodifiableList(requireNonNull(snippets));
+            this.uri = requireNonNull(uri);
+            this.location = requireNonNull(location);
         }
 
         public String getStep() {
@@ -94,6 +108,13 @@ public final class TestCaseResultObserver implements AutoCloseable {
             return snippets;
         }
 
+        public URI getUri() {
+            return uri;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
     }
 
 }

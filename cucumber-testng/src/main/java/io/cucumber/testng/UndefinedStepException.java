@@ -12,6 +12,19 @@ final class UndefinedStepException extends SkipException {
 
     UndefinedStepException(Collection<Suggestion> suggestions) {
         super(createMessage(suggestions));
+        setStackTrace(createSyntheticStacktrace(suggestions));
+    }
+
+    private StackTraceElement[] createSyntheticStacktrace(Collection<Suggestion> suggestions) {
+        if (suggestions.isEmpty()) {
+            return new StackTraceElement[0];
+        }
+        Suggestion first = suggestions.iterator().next();
+        int line = first.getLocation().getLine();
+        String uri = first.getUri().toString();
+        String stepText = first.getStep();
+        StackTraceElement stackTraceElement = new StackTraceElement("✽", stepText, uri, line);
+        return new StackTraceElement[] { stackTraceElement };
     }
 
     private static String createMessage(Collection<Suggestion> suggestions) {
