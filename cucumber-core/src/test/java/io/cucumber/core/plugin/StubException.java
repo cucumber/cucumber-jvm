@@ -15,7 +15,7 @@ class StubException extends RuntimeException {
     }
 
     public StubException() {
-        this("the stack trace");
+        this("stub exception");
     }
 
     public StubException(String message) {

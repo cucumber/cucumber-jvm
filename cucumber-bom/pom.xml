@@ -19,7 +19,7 @@
         <html-formatter.version>21.10.1</html-formatter.version>
         <junit-xml-formatter.version>0.7.1</junit-xml-formatter.version>
         <messages.version>27.2.0</messages.version>
-        <query.version>13.2.0</query.version>
+        <query.version>13.2.1-SNAPSHOT</query.version>
         <tag-expressions.version>6.1.2</tag-expressions.version>
         <testng-xml-formatter.version>0.3.1</testng-xml-formatter.version>
     </properties>
