@@ -47,20 +47,20 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static io.cucumber.messages.Convertor.toDuration;
 import static io.cucumber.query.LineageReducer.descending;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Outputs Teamcity services messages to std out.
  *
  * @see <a
- *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
- *      - Service Messages</a>
+ * href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
+ * - Service Messages</a>
  */
 public class TeamCityPlugin implements EventListener {
 
@@ -153,7 +153,9 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private void printTestCaseStarted(TestCaseStarted event) {
-        query.findPickleBy(event).ifPresent(pickle -> query.reduceLinageOf(pickle, descending(PathCollector::new))
+        LineageReducer<List<NameLocation>> createPath = descending(PathCollector::new);
+        query.findPickleBy(event).ifPresent(pickle -> query.findLineageBy(pickle)
+                .map(lineage -> createPath.reduce(lineage, pickle))
                 .ifPresent(path -> {
                     String timestamp = formatTimeStamp(event.getTimestamp());
                     poppedNodes(path).forEach(node -> finishNode(timestamp, node));
@@ -295,7 +297,7 @@ public class TeamCityPlugin implements EventListener {
                         break;
                     }
                     out.print(TEMPLATE_TEST_COMPARISON_FAILED, timeStamp, duration, "Step failed", details,
-                        comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
+                            comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
                     break;
                 }
                 default:
@@ -351,38 +353,38 @@ public class TeamCityPlugin implements EventListener {
 
     private static String getHookName(Hook hook) {
         return hook.getType().map(
-            hookType -> {
-                switch (hookType) {
-                    case BEFORE_TEST_RUN:
-                        return "BeforeAll";
-                    case AFTER_TEST_RUN:
-                        return "AfterAll";
-                    case BEFORE_TEST_CASE:
-                        return "Before";
-                    case AFTER_TEST_CASE:
-                        return "After";
-                    case BEFORE_TEST_STEP:
-                        return "BeforeStep";
-                    case AFTER_TEST_STEP:
-                        return "AfterStep";
-                    default:
-                        return "Unknown";
-                }
-            }).orElse("Unknown");
+                hookType -> {
+                    switch (hookType) {
+                        case BEFORE_TEST_RUN:
+                            return "BeforeAll";
+                        case AFTER_TEST_RUN:
+                            return "AfterAll";
+                        case BEFORE_TEST_CASE:
+                            return "Before";
+                        case AFTER_TEST_CASE:
+                            return "After";
+                        case BEFORE_TEST_STEP:
+                            return "BeforeStep";
+                        case AFTER_TEST_STEP:
+                            return "AfterStep";
+                        default:
+                            return "Unknown";
+                    }
+                }).orElse("Unknown");
     }
 
     private String getSnippets(TestStepFinished event, Pickle testCase) {
         return query.findLocationOf(testCase)
                 // TODO: Clean this up.
                 .map(location1 -> new Location((int) (long) location1.getLine(),
-                    (int) (long) location1.getColumn().orElse(0L)))
+                        (int) (long) location1.getColumn().orElse(0L)))
                 .map(location -> {
                     URI uri = URI.create(testCase.getUri());
                     List<Suggestion> suggestionForTestCase = suggestions.stream()
                             .filter(suggestion -> suggestion.getUri().equals(uri) &&
                                     suggestion.getTestCaseLocation().equals(location))
                             .map(SnippetsSuggestedEvent::getSuggestion)
-                            .collect(Collectors.toList());
+                            .collect(toList());
                     return createMessage(suggestionForTestCase);
                 })
                 .orElse("");
@@ -451,8 +453,8 @@ public class TeamCityPlugin implements EventListener {
             case BASE64:
                 String name = event.getFileName().map(s -> s + " ").orElse("");
                 out.print(TEMPLATE_ATTACH_WRITE_EVENT,
-                    "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
-                            + " bytes]\n");
+                        "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
+                                + " bytes]\n");
                 return;
             default:
                 // Ignore.
@@ -505,22 +507,22 @@ public class TeamCityPlugin implements EventListener {
 
     private static class ComparisonFailure {
 
-        private static final Pattern[] COMPARE_PATTERNS = new Pattern[] {
+        private static final Pattern[] COMPARE_PATTERNS = new Pattern[]{
                 // Hamcrest 2 MatcherAssert.assertThat
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) {5}but: was (.*)$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // AssertJ 3 ShouldBeEqual.smartErrorMessage
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) but was: (.*)$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 5 AssertionFailureBuilder
                 Pattern.compile("expected: <(.*)> but was: <(.*)>$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 4 Assert.assertEquals
                 Pattern.compile("expected:\\s?<(.*)> but was:\\s?<(.*)>$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // TestNG 7 Assert.assertEquals
                 Pattern.compile("expected \\[(.*)] but found \\[(.*)]\n$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
         };
 
         static ComparisonFailure parse(String message) {
@@ -600,12 +602,12 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private static class PathCollector implements LineageReducer.Collector<List<NameLocation>> {
+        // There are at most 5 levels to a feature file.
         private final List<NameLocation> path = new ArrayList<>(5);
-        private String scenarioName;
-        private boolean isExample;
-        private int examplesIndex;
-        private String pickleName;
         private String uri;
+        private String scenarioName;
+        private int examplesIndex;
+        private boolean isExample;
 
         @Override
         public void add(GherkinDocument document) {
@@ -616,18 +618,6 @@ public class TeamCityPlugin implements EventListener {
         public void add(Feature feature) {
             String name = getNameOrKeyword(feature.getName(), feature.getKeyword());
             path.add(new NameLocation(name, uri, feature.getLocation()));
-        }
-
-        private String getNameOrKeyword(String name, String keyword) {
-            if (!name.isEmpty()) {
-                return name;
-            }
-            if (!keyword.isEmpty()) {
-                return keyword;
-            }
-            // Always return a non-empty string otherwise the tree diagram is
-            // hard to click.
-            return "Unknown";
         }
 
         @Override
@@ -659,24 +649,35 @@ public class TeamCityPlugin implements EventListener {
 
         @Override
         public void add(Pickle pickle) {
-            this.pickleName = pickle.getName();
+            // Case 1: Pickles from a scenario outline
+            if (isExample) {
+                String pickleName = pickle.getName();
+                boolean parameterized = !scenarioName.equals(pickleName);
+                if (parameterized) {
+                    NameLocation example = path.remove(path.size() - 1);
+                    String parameterizedExampleName = example.getName() + ": " + pickleName;
+                    path.add(new NameLocation(parameterizedExampleName, example.getUri(), example.getLocation()));
+                }
+            }
+            // Case 2: Pickles from a scenario
+            // Nothing to do, scenario name and pickle name are the same.
         }
 
         @Override
         public List<NameLocation> finish() {
-            // Only examples need to have parameterized scenario name attached
-            if (!isExample) {
-                return path;
-            }
-            // And only if the scenario was parameterized
-            if (scenarioName.equals(pickleName)) {
-                return path;
-            }
-            // Bounds ok, implied by isExample
-            NameLocation example = path.remove(path.size() - 1);
-            String parameterizedExampleName = example.getName() + ": " + pickleName;
-            path.add(new NameLocation(parameterizedExampleName, example.getUri(), example.getLocation()));
             return path;
+        }
+
+        private static String getNameOrKeyword(String name, String keyword) {
+            if (!name.isEmpty()) {
+                return name;
+            }
+            if (!keyword.isEmpty()) {
+                return keyword;
+            }
+            // Always return a non-empty string otherwise the tree diagram is
+            // hard to click.
+            return "Unknown";
         }
     }
 }
