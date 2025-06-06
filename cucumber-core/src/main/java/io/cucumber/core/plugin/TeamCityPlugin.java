@@ -10,6 +10,7 @@ import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.Hook;
 import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.JavaStackTraceElement;
+import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Pickle;
 import io.cucumber.messages.types.PickleStep;
 import io.cucumber.messages.types.Rule;
@@ -27,7 +28,6 @@ import io.cucumber.messages.types.TestStepStarted;
 import io.cucumber.messages.types.Timestamp;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.query.LineageReducer;
@@ -59,8 +59,8 @@ import static java.util.stream.Collectors.toList;
  * Outputs Teamcity services messages to std out.
  *
  * @see <a
- *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
- *      - Service Messages</a>
+ * href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
+ * - Service Messages</a>
  */
 public class TeamCityPlugin implements EventListener {
 
@@ -112,7 +112,7 @@ public class TeamCityPlugin implements EventListener {
     private final TeamCityCommandWriter out;
     private final List<SnippetsSuggestedEvent> suggestions = new ArrayList<>();
     private List<NameLocation> currentStack = new ArrayList<>();
-    private Pickle currentTestCase;
+    private Pickle currentPickle;
 
     private final Query query = new Query();
 
@@ -161,7 +161,7 @@ public class TeamCityPlugin implements EventListener {
                     poppedNodes(path).forEach(node -> finishNode(timestamp, node));
                     pushedNodes(path).forEach(node -> startNode(timestamp, node));
                     this.currentStack = path;
-                    this.currentTestCase = pickle;
+                    this.currentPickle = pickle;
                     out.print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
                 }));
     }
@@ -279,7 +279,7 @@ public class TeamCityPlugin implements EventListener {
                     break;
                 }
                 case UNDEFINED: {
-                    String snippets = getSnippets(event, currentTestCase);
+                    String snippets = findSnippets(currentPickle).orElse("");
                     out.print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step undefined", snippets, name);
                     break;
                 }
@@ -297,7 +297,7 @@ public class TeamCityPlugin implements EventListener {
                         break;
                     }
                     out.print(TEMPLATE_TEST_COMPARISON_FAILED, timeStamp, duration, "Step failed", details,
-                        comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
+                            comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
                     break;
                 }
                 default:
@@ -353,41 +353,40 @@ public class TeamCityPlugin implements EventListener {
 
     private static String getHookName(Hook hook) {
         return hook.getType().map(
-            hookType -> {
-                switch (hookType) {
-                    case BEFORE_TEST_RUN:
-                        return "BeforeAll";
-                    case AFTER_TEST_RUN:
-                        return "AfterAll";
-                    case BEFORE_TEST_CASE:
-                        return "Before";
-                    case AFTER_TEST_CASE:
-                        return "After";
-                    case BEFORE_TEST_STEP:
-                        return "BeforeStep";
-                    case AFTER_TEST_STEP:
-                        return "AfterStep";
-                    default:
-                        return "Unknown";
-                }
-            }).orElse("Unknown");
+                hookType -> {
+                    switch (hookType) {
+                        case BEFORE_TEST_RUN:
+                            return "BeforeAll";
+                        case AFTER_TEST_RUN:
+                            return "AfterAll";
+                        case BEFORE_TEST_CASE:
+                            return "Before";
+                        case AFTER_TEST_CASE:
+                            return "After";
+                        case BEFORE_TEST_STEP:
+                            return "BeforeStep";
+                        case AFTER_TEST_STEP:
+                            return "AfterStep";
+                        default:
+                            return "Unknown";
+                    }
+                }).orElse("Unknown");
     }
 
-    private String getSnippets(TestStepFinished event, Pickle testCase) {
-        return query.findLocationOf(testCase)
-                // TODO: Clean this up.
-                .map(location1 -> new Location((int) (long) location1.getLine(),
-                    (int) (long) location1.getColumn().orElse(0L)))
+    private Optional<String> findSnippets(Pickle pickle) {
+        return query.findLocationOf(pickle)
                 .map(location -> {
-                    URI uri = URI.create(testCase.getUri());
+                    URI uri = URI.create(pickle.getUri());
                     List<Suggestion> suggestionForTestCase = suggestions.stream()
-                            .filter(suggestion -> suggestion.getUri().equals(uri) &&
-                                    suggestion.getTestCaseLocation().equals(location))
+                            .filter(suggestion -> isSuggestionForPickleAt(suggestion, uri, location))
                             .map(SnippetsSuggestedEvent::getSuggestion)
                             .collect(toList());
                     return createMessage(suggestionForTestCase);
-                })
-                .orElse("");
+                });
+    }
+
+    private static boolean isSuggestionForPickleAt(SnippetsSuggestedEvent suggestion, URI uri, Location location) {
+        return suggestion.getUri().equals(uri) && suggestion.getTestCaseLocation().getLine() == location.getLine();
     }
 
     private static String createMessage(Collection<Suggestion> suggestions) {
@@ -413,7 +412,7 @@ public class TeamCityPlugin implements EventListener {
         String timestamp = formatTimeStamp(event.getTimestamp());
         out.print(TEMPLATE_PROGRESS_TEST_FINISHED, timestamp);
         finishNode(timestamp, currentStack.remove(currentStack.size() - 1));
-        this.currentTestCase = null;
+        this.currentPickle = null;
     }
 
     private void printTestRunFinished(io.cucumber.messages.types.TestRunFinished event) {
@@ -453,8 +452,8 @@ public class TeamCityPlugin implements EventListener {
             case BASE64:
                 String name = event.getFileName().map(s -> s + " ").orElse("");
                 out.print(TEMPLATE_ATTACH_WRITE_EVENT,
-                    "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
-                            + " bytes]\n");
+                        "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
+                                + " bytes]\n");
                 return;
             default:
                 // Ignore.
@@ -507,22 +506,22 @@ public class TeamCityPlugin implements EventListener {
 
     private static class ComparisonFailure {
 
-        private static final Pattern[] COMPARE_PATTERNS = new Pattern[] {
+        private static final Pattern[] COMPARE_PATTERNS = new Pattern[]{
                 // Hamcrest 2 MatcherAssert.assertThat
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) {5}but: was (.*)$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // AssertJ 3 ShouldBeEqual.smartErrorMessage
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) but was: (.*)$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 5 AssertionFailureBuilder
                 Pattern.compile("expected: <(.*)> but was: <(.*)>$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 4 Assert.assertEquals
                 Pattern.compile("expected:\\s?<(.*)> but was:\\s?<(.*)>$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // TestNG 7 Assert.assertEquals
                 Pattern.compile("expected \\[(.*)] but found \\[(.*)]\n$",
-                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
         };
 
         static ComparisonFailure parse(String message) {
