@@ -59,8 +59,8 @@ import static java.util.stream.Collectors.toList;
  * Outputs Teamcity services messages to std out.
  *
  * @see <a
- * href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
- * - Service Messages</a>
+ *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
+ *      - Service Messages</a>
  */
 public class TeamCityPlugin implements EventListener {
 
@@ -297,7 +297,7 @@ public class TeamCityPlugin implements EventListener {
                         break;
                     }
                     out.print(TEMPLATE_TEST_COMPARISON_FAILED, timeStamp, duration, "Step failed", details,
-                            comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
+                        comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
                     break;
                 }
                 default:
@@ -353,31 +353,31 @@ public class TeamCityPlugin implements EventListener {
 
     private static String getHookName(Hook hook) {
         return hook.getType().map(
-                hookType -> {
-                    switch (hookType) {
-                        case BEFORE_TEST_RUN:
-                            return "BeforeAll";
-                        case AFTER_TEST_RUN:
-                            return "AfterAll";
-                        case BEFORE_TEST_CASE:
-                            return "Before";
-                        case AFTER_TEST_CASE:
-                            return "After";
-                        case BEFORE_TEST_STEP:
-                            return "BeforeStep";
-                        case AFTER_TEST_STEP:
-                            return "AfterStep";
-                        default:
-                            return "Unknown";
-                    }
-                }).orElse("Unknown");
+            hookType -> {
+                switch (hookType) {
+                    case BEFORE_TEST_RUN:
+                        return "BeforeAll";
+                    case AFTER_TEST_RUN:
+                        return "AfterAll";
+                    case BEFORE_TEST_CASE:
+                        return "Before";
+                    case AFTER_TEST_CASE:
+                        return "After";
+                    case BEFORE_TEST_STEP:
+                        return "BeforeStep";
+                    case AFTER_TEST_STEP:
+                        return "AfterStep";
+                    default:
+                        return "Unknown";
+                }
+            }).orElse("Unknown");
     }
 
     private String getSnippets(TestStepFinished event, Pickle testCase) {
         return query.findLocationOf(testCase)
                 // TODO: Clean this up.
                 .map(location1 -> new Location((int) (long) location1.getLine(),
-                        (int) (long) location1.getColumn().orElse(0L)))
+                    (int) (long) location1.getColumn().orElse(0L)))
                 .map(location -> {
                     URI uri = URI.create(testCase.getUri());
                     List<Suggestion> suggestionForTestCase = suggestions.stream()
@@ -453,8 +453,8 @@ public class TeamCityPlugin implements EventListener {
             case BASE64:
                 String name = event.getFileName().map(s -> s + " ").orElse("");
                 out.print(TEMPLATE_ATTACH_WRITE_EVENT,
-                        "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
-                                + " bytes]\n");
+                    "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
+                            + " bytes]\n");
                 return;
             default:
                 // Ignore.
@@ -507,22 +507,22 @@ public class TeamCityPlugin implements EventListener {
 
     private static class ComparisonFailure {
 
-        private static final Pattern[] COMPARE_PATTERNS = new Pattern[]{
+        private static final Pattern[] COMPARE_PATTERNS = new Pattern[] {
                 // Hamcrest 2 MatcherAssert.assertThat
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) {5}but: was (.*)$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // AssertJ 3 ShouldBeEqual.smartErrorMessage
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) but was: (.*)$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 5 AssertionFailureBuilder
                 Pattern.compile("expected: <(.*)> but was: <(.*)>$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 4 Assert.assertEquals
                 Pattern.compile("expected:\\s?<(.*)> but was:\\s?<(.*)>$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // TestNG 7 Assert.assertEquals
                 Pattern.compile("expected \\[(.*)] but found \\[(.*)]\n$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
         };
 
         static ComparisonFailure parse(String message) {
