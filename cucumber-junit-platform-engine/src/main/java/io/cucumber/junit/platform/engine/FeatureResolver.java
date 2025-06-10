@@ -26,6 +26,7 @@ import org.junit.platform.engine.discovery.DirectorySelector;
 import org.junit.platform.engine.discovery.FileSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
+import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.discovery.SelectorResolver;
 
@@ -50,6 +51,7 @@ import static io.cucumber.junit.platform.engine.FeatureOrigin.SCENARIO_SEGMENT_T
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 
 final class FeatureResolver implements SelectorResolver {
@@ -180,7 +182,7 @@ final class FeatureResolver implements SelectorResolver {
             "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead",
             classpathResourceName,
             packageName);
-        issueReporter.reportIssue(DiscoveryIssue.builder(DiscoveryIssue.Severity.WARNING, message));
+        issueReporter.reportIssue(DiscoveryIssue.builder(WARNING, message));
     }
 
     @Override
@@ -206,11 +208,20 @@ final class FeatureResolver implements SelectorResolver {
         Class<?> javaClass = selector.getJavaClass();
         Cucumber annotation = javaClass.getAnnotation(Cucumber.class);
         if (annotation != null) {
+            warnAboutDeprecatedCucumberClass(javaClass);
             String packageName = javaClass.getPackage().getName();
             Set<DiscoverySelector> selectors = singleton(selectPackage(packageName));
             return toResolution(selectors);
         }
         return Resolution.unresolved();
+    }
+
+    private void warnAboutDeprecatedCucumberClass(Class<?> javaClass) {
+        String message = "The @Cucumber annotation has been deprecated. See the Javadoc for more details.";
+        DiscoveryIssue issue = DiscoveryIssue.builder(WARNING, message)
+                .source(ClassSource.from(javaClass))
+                .build();
+        issueReporter.reportIssue(issue);
     }
 
     @Override

@@ -138,6 +138,17 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void warnsAboutClassSelector() {
+        EngineDiscoveryResults results = EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClass(RunCucumberTest.class))
+                .discover();
+
+        DiscoveryIssue discoveryIssue = results.getDiscoveryIssues().get(0);
+        assertThat(discoveryIssue.message())
+                .isEqualTo("The @Cucumber annotation has been deprecated. See the Javadoc for more details.");
+    }
+
+    @Test
     void supportsClasspathResourceSelector() {
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"))
