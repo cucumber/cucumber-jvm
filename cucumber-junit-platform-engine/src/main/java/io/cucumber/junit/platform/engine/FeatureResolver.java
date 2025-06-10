@@ -60,7 +60,9 @@ final class FeatureResolver implements SelectorResolver {
     private final Predicate<String> packageFilter;
     private final DiscoveryIssueReporter issueReporter;
 
-    FeatureResolver(CucumberConfiguration configuration, Predicate<String> packageFilter, DiscoveryIssueReporter issueReporter) {
+    FeatureResolver(
+            CucumberConfiguration configuration, Predicate<String> packageFilter, DiscoveryIssueReporter issueReporter
+    ) {
         this.configuration = configuration;
         this.packageFilter = packageFilter;
         this.issueReporter = issueReporter;
@@ -175,9 +177,9 @@ final class FeatureResolver implements SelectorResolver {
         String classpathResourceName = selector.getClasspathResourceName();
         String packageName = classpathResourceName.replaceAll("/", ".");
         String message = String.format(
-                "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead",
-                classpathResourceName,
-                packageName);
+            "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead",
+            classpathResourceName,
+            packageName);
         issueReporter.reportIssue(DiscoveryIssue.builder(DiscoveryIssue.Severity.WARNING, message));
     }
 

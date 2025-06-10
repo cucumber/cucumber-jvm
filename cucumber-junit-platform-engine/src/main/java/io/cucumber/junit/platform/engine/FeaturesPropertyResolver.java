@@ -50,7 +50,8 @@ class FeaturesPropertyResolver {
             delegate.resolveSelectors(request, engineDescriptor);
             return;
         }
-        DiscoveryIssueReporter issueReporter = forwarding(request.getDiscoveryListener(), engineDescriptor.getUniqueId());
+        DiscoveryIssueReporter issueReporter = forwarding(request.getDiscoveryListener(),
+            engineDescriptor.getUniqueId());
         issueReporter.reportIssue(createCucumberFeaturesPropertyIsUsedIssue());
         EngineDiscoveryRequest replacement = new FeaturesPropertyDiscoveryRequest(request, selectors);
         delegate.resolveSelectors(replacement, engineDescriptor);
@@ -58,15 +59,15 @@ class FeaturesPropertyResolver {
 
     private static DiscoveryIssue createCucumberFeaturesPropertyIsUsedIssue() {
         return DiscoveryIssue.create(WARNING,
-                "Discovering tests using the " + FEATURES_PROPERTY_NAME + " property. Other discovery " +
-                        "selectors are ignored!\n" +
-                        "\n" +
-                        "This is a work around for the limited JUnit 5 support in Maven and Gradle. " +
-                        "Please request/upvote/sponsor/ect better support for JUnit 5 discovery selectors. " +
-                        "For details see: https://github.com/cucumber/cucumber-jvm/pull/2498\n" +
-                        "\n" +
-                        "If you are using the JUnit 5 Suite Engine, Platform Launcher API or Console Launcher you " +
-                        "should not use this property. Please consult the JUnit 5 documentation on test selection.");
+            "Discovering tests using the " + FEATURES_PROPERTY_NAME + " property. Other discovery " +
+                    "selectors are ignored!\n" +
+                    "\n" +
+                    "This is a work around for the limited JUnit 5 support in Maven and Gradle. " +
+                    "Please request/upvote/sponsor/ect better support for JUnit 5 discovery selectors. " +
+                    "For details see: https://github.com/cucumber/cucumber-jvm/pull/2498\n" +
+                    "\n" +
+                    "If you are using the JUnit 5 Suite Engine, Platform Launcher API or Console Launcher you " +
+                    "should not use this property. Please consult the JUnit 5 documentation on test selection.");
     }
 
     private static class FeaturesPropertyDiscoveryRequest implements EngineDiscoveryRequest {

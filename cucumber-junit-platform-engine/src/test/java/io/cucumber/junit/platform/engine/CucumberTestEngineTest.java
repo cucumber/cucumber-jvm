@@ -30,8 +30,6 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.stream.Collectors;
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
@@ -152,7 +150,7 @@ class CucumberTestEngineTest {
     void warnWhenResourceSelectorIsUsedToSelectAPackage() {
         EngineTestKit.Builder selectors = EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine"));
-        
+
         EngineDiscoveryResults discoveryResults = selectors.discover();
         DiscoveryIssue discoveryIssue = discoveryResults.getDiscoveryIssues().get(0);
         assertThat(discoveryIssue.message())
@@ -166,12 +164,12 @@ class CucumberTestEngineTest {
                 .execute()
                 .allEvents()
                 .assertEventsMatchLooselyInOrder(
-                        feature("disabled.feature"),
-                        feature("empty-scenario.feature"),
-                        feature("scenario-outline.feature"),
-                        feature("rule.feature"),
-                        feature("single.feature"),
-                        feature("with%20space.feature"));
+                    feature("disabled.feature"),
+                    feature("empty-scenario.feature"),
+                    feature("scenario-outline.feature"),
+                    feature("rule.feature"),
+                    feature("single.feature"),
+                    feature("with%20space.feature"));
 
     }
 
@@ -212,14 +210,14 @@ class CucumberTestEngineTest {
                 .get(0) //
                 .cause() //
                 .get();
-        
+
         assertThat(exception) //
                 .isInstanceOf(IllegalArgumentException.class) //
                 .hasMessage( //
-                        "Found %s resources named %s on the classpath %s.", //
-                        resources.size(), //
-                        "io/cucumber/junit/platform/engine/single.feature", //
-                        resources.stream().map(Resource::getUri).collect(toList()));
+                    "Found %s resources named %s on the classpath %s.", //
+                    resources.size(), //
+                    "io/cucumber/junit/platform/engine/single.feature", //
+                    resources.stream().map(Resource::getUri).collect(toList()));
     }
 
     @Test
@@ -513,7 +511,7 @@ class CucumberTestEngineTest {
     void supportsFeaturesPropertyWillIgnoreOtherSelectors(LogRecordListener logRecordListener) {
         EngineDiscoveryResults discoveryResult = EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(FEATURES_PROPERTY_NAME,
-                        "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
+                    "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
                 .discover();
 
@@ -624,11 +622,12 @@ class CucumberTestEngineTest {
                     feature("single.feature"),
                     feature("with%20space.feature"));
     }
+
     @Test
     void defaultsToShortWithNumberAndPickleIfParameterizedNamingStrategy() {
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(
-                        selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
                 .execute()
                 .allEvents()
                 .assertThatEvents()
@@ -681,20 +680,20 @@ class CucumberTestEngineTest {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
                 .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME,
-                        "number-and-pickle-if-parameterized")
+                    "number-and-pickle-if-parameterized")
                 .selectors(
-                        selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
                 .execute()
                 .allEvents()
 
                 .assertThatEvents()
                 .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
                 .haveAtLeastOne(event(scenario(),
-                        displayName("A feature with a parameterized scenario outline - A scenario full of <vegetable>s")))
+                    displayName("A feature with a parameterized scenario outline - A scenario full of <vegetable>s")))
                 .haveAtLeastOne(event(examples(), displayName(
-                        "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety")))
+                    "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety")))
                 .haveAtLeastOne(event(example(), displayName(
-                        "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety - Example #1.1: A scenario full of Cucumbers")));
+                    "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety - Example #1.1: A scenario full of Cucumbers")));
     }
 
     @Test
@@ -734,9 +733,9 @@ class CucumberTestEngineTest {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short")
                 .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME,
-                        "number-and-pickle-if-parameterized")
+                    "number-and-pickle-if-parameterized")
                 .selectors(
-                        selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
                 .execute()
                 .allEvents()
                 .assertThatEvents()
