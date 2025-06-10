@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
 import org.junit.platform.engine.support.hierarchical.Node;
@@ -18,7 +17,6 @@ import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RE
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
-import static io.cucumber.junit.platform.engine.StandardDescriptorOrders.lexicalUriOrder;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,17 +27,13 @@ class FeatureResolverTest {
     private final String featurePath = "io/cucumber/junit/platform/engine/scenario-outline.feature";
     private final UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
     private ConfigurationParameters configurationParameters = new EmptyConfigurationParameters();
-    private final CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(id,
-        new CucumberConfiguration(configurationParameters));
 
     private TestDescriptor getFeature() {
-        EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
-                .<CucumberEngineDescriptor> builder()
-                .addSelectorResolver(context -> new FeatureResolver(new CucumberConfiguration(configurationParameters),
-                    context.getPackageFilter(), context.getIssueReporter()))
-                .addTestDescriptorVisitor(context -> new OrderingVisitor(lexicalUriOrder()))
-                .build();
-        resolver.resolve(new SelectorRequest(selectClasspathResource(featurePath)), engineDescriptor);
+        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(id,
+            new CucumberConfiguration(configurationParameters));
+        DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
+        SelectorRequest request = new SelectorRequest(configurationParameters, selectClasspathResource(featurePath));
+        resolver.resolveSelectors(request, engineDescriptor);
         Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
         return features.iterator().next();
     }

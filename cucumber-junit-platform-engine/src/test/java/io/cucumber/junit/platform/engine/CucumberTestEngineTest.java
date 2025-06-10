@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -55,6 +57,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.platform.engine.DiscoveryIssue.Severity.INFO;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
@@ -743,6 +746,125 @@ class CucumberTestEngineTest {
                 .haveAtLeastOne(event(scenario(), displayName("A scenario full of <vegetable>s")))
                 .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
                 .haveAtLeastOne(event(example(), displayName("Example #1.1: A scenario full of Cucumbers")));
+    }
+
+    @Test
+    void defaultsToLexicalOrder() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"),
+                    selectClasspathResource("io/cucumber/junit/platform/engine/ordering.feature"))
+                .execute()
+                .allEvents()
+                .started()
+                .assertThatEvents()
+                .extracting(Event::getTestDescriptor)
+                .extracting(TestDescriptor::getDisplayName)
+                .containsExactly("Cucumber",
+                    "1. A feature to order scenarios",
+                    "1. A feature to order scenarios - 1.1",
+                    "1. A feature to order scenarios - 1.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1 - Example #1.1",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1 - Example #1.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2 - Example #2.1",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2 - Example #2.2",
+                    "1. A feature to order scenarios - 1.3 A rule",
+                    "1. A feature to order scenarios - 1.3 A rule - 1.3.1",
+                    "1. A feature to order scenarios - 1.3 A rule - 1.3.2",
+                    "1. A feature to order scenarios - 1.4",
+                    "1. A feature to order scenarios - 1.4 - 1.4.1",
+                    "1. A feature to order scenarios - 1.4 - 1.4.2",
+                    "A feature with a single scenario",
+                    "A feature with a single scenario - A single scenario");
+    }
+
+    @Test
+    void supportsReverseOrder() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, "reverse")
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"),
+                    selectClasspathResource("io/cucumber/junit/platform/engine/ordering.feature"))
+                .execute()
+                .allEvents()
+                .started()
+                .assertThatEvents()
+                .extracting(Event::getTestDescriptor)
+                .extracting(TestDescriptor::getDisplayName)
+                .containsExactly("Cucumber",
+                    "A feature with a single scenario",
+                    "A feature with a single scenario - A single scenario",
+                    "1. A feature to order scenarios",
+                    "1. A feature to order scenarios - 1.4",
+                    "1. A feature to order scenarios - 1.4 - 1.4.2",
+                    "1. A feature to order scenarios - 1.4 - 1.4.1",
+                    "1. A feature to order scenarios - 1.3 A rule",
+                    "1. A feature to order scenarios - 1.3 A rule - 1.3.2",
+                    "1. A feature to order scenarios - 1.3 A rule - 1.3.1",
+                    "1. A feature to order scenarios - 1.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2 - Example #2.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2 - Example #2.1",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1 - Example #1.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1 - Example #1.1",
+                    "1. A feature to order scenarios - 1.1");
+    }
+
+    @Test
+    void supportsRandomOrder() {
+        EngineTestKit.Builder selectors = EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, "random")
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"),
+                    selectClasspathResource("io/cucumber/junit/platform/engine/ordering.feature"));
+
+        EngineDiscoveryResults results = selectors.discover();
+
+        DiscoveryIssue discoveryIssue = results.getDiscoveryIssues().get(0);
+        assertThat(discoveryIssue.severity()).isEqualTo(INFO);
+        assertThat(discoveryIssue.message())
+                .startsWith("Property cucumber.execution.order.random.seed was not set. Using random value: ");
+    }
+
+    @Test
+    void supportsRandomOrderWithSeed() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, "random")
+                .configurationParameter(EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME, "1234")
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"),
+                    selectClasspathResource("io/cucumber/junit/platform/engine/ordering.feature"))
+                .execute()
+                .allEvents()
+                .started()
+                .assertThatEvents()
+                .extracting(Event::getTestDescriptor)
+                .extracting(TestDescriptor::getDisplayName)
+                .containsExactly("Cucumber",
+                    "1. A feature to order scenarios",
+                    "1. A feature to order scenarios - 1.4",
+                    "1. A feature to order scenarios - 1.4 - 1.4.1",
+                    "1. A feature to order scenarios - 1.4 - 1.4.2",
+                    "1. A feature to order scenarios - 1.1",
+                    "1. A feature to order scenarios - 1.3 A rule",
+                    "1. A feature to order scenarios - 1.3 A rule - 1.3.2",
+                    "1. A feature to order scenarios - 1.3 A rule - 1.3.1",
+                    "1. A feature to order scenarios - 1.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2 - Example #2.1",
+                    "1. A feature to order scenarios - 1.2 - 1.2.2 - Example #2.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1 - Example #1.2",
+                    "1. A feature to order scenarios - 1.2 - 1.2.1 - Example #1.1",
+                    "A feature with a single scenario",
+                    "A feature with a single scenario - A single scenario");
     }
 
 }

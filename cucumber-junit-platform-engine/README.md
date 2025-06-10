@@ -473,11 +473,15 @@ cucumber.execution.execution-mode.feature=                     # same_thread or 
                                                                # concurrent - executes scenarios concurrently on any
                                                                # available thread
 
-cucumber.execution.order=                                     # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+cucumber.execution.order=                                     # lexical, reverse or random
                                                               # default: lexical
                                                               # lexical - executes features in lexical uri order, scenarios and examples from top to bottom 
                                                               # reverse - as lexical, but with the elements of each container reversed
-                                                              # random - executes scenarios and examples at random within their parent container 
+                                                              # random - executes scenarios and examples in a random order within their parent container 
+
+cucumber.execution.order.random.seed=                         # any long
+                                                              # example: 20090120
+                                                              # enables deterministic random execution  
 
 cucumber.execution.parallel.enabled=                           # true or false.
                                                                # default: false
