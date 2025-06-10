@@ -59,8 +59,8 @@ import static java.util.stream.Collectors.toList;
  * Outputs Teamcity services messages to std out.
  *
  * @see <a
- * href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
- * - Service Messages</a>
+ *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
+ *      - Service Messages</a>
  */
 public class TeamCityPlugin implements EventListener {
 
@@ -109,12 +109,13 @@ public class TeamCityPlugin implements EventListener {
 
     private static final String TEMPLATE_ATTACH_WRITE_EVENT = TEAMCITY_PREFIX + "[message text='%s' status='NORMAL']";
 
-    private final TeamCityCommandWriter out;
-    private final List<SnippetsSuggestedEvent> suggestions = new ArrayList<>();
-    private List<NameLocation> currentStack = new ArrayList<>();
-    private Pickle currentPickle;
-
+    private final LineageReducer<List<TreeNode>> pathCollector = descending(PathCollector::new);
     private final Query query = new Query();
+    private final List<SnippetsSuggestedEvent> suggestions = new ArrayList<>();
+    private final TeamCityCommandWriter out;
+
+    private List<TreeNode> currentPath = new ArrayList<>();
+    private Pickle currentPickle;
 
     @SuppressWarnings("unused") // Used by PluginFactory
     public TeamCityPlugin() {
@@ -153,37 +154,41 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private void printTestCaseStarted(TestCaseStarted event) {
-        LineageReducer<List<NameLocation>> createPath = descending(PathCollector::new);
-        query.findPickleBy(event).ifPresent(pickle -> query.findLineageBy(pickle)
-                .map(lineage -> createPath.reduce(lineage, pickle))
-                .ifPresent(path -> {
-                    String timestamp = formatTimeStamp(event.getTimestamp());
-                    poppedNodes(path).forEach(node -> finishNode(timestamp, node));
-                    pushedNodes(path).forEach(node -> startNode(timestamp, node));
-                    this.currentStack = path;
-                    this.currentPickle = pickle;
-                    out.print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
-                }));
+        query.findPickleBy(event)
+                .ifPresent(pickle -> findPathTo(pickle)
+                        .ifPresent(path -> {
+                            String timestamp = formatTimeStamp(event.getTimestamp());
+                            poppedNodes(path).forEach(node -> finishNode(timestamp, node));
+                            pushedNodes(path).forEach(node -> startNode(timestamp, node));
+                            this.currentPath = path;
+                            this.currentPickle = pickle;
+                            out.print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
+                        }));
     }
 
-    private void startNode(String timestamp, NameLocation node) {
+    private Optional<List<TreeNode>> findPathTo(Pickle pickle) {
+        return query.findLineageBy(pickle)
+                .map(lineage -> pathCollector.reduce(lineage, pickle));
+    }
+
+    private void startNode(String timestamp, TreeNode node) {
         String name = node.getName();
         String location = node.getUri() + ":" + node.getLocation().getLine();
         out.print(TEMPLATE_TEST_SUITE_STARTED, timestamp, location, name);
     }
 
-    private void finishNode(String timestamp, NameLocation node) {
+    private void finishNode(String timestamp, TreeNode node) {
         String name = node.getName();
         out.print(TEMPLATE_TEST_SUITE_FINISHED, timestamp, name);
     }
 
-    private List<NameLocation> poppedNodes(List<NameLocation> newStack) {
-        List<NameLocation> nodes = new ArrayList<>(reversedPoppedNodes(currentStack, newStack));
+    private List<TreeNode> poppedNodes(List<TreeNode> newStack) {
+        List<TreeNode> nodes = new ArrayList<>(reversedPoppedNodes(currentPath, newStack));
         Collections.reverse(nodes);
         return nodes;
     }
 
-    private List<NameLocation> reversedPoppedNodes(List<NameLocation> currentStack, List<NameLocation> newStack) {
+    private List<TreeNode> reversedPoppedNodes(List<TreeNode> currentStack, List<TreeNode> newStack) {
         for (int i = 0; i < currentStack.size() && i < newStack.size(); i++) {
             if (!currentStack.get(i).equals(newStack.get(i))) {
                 return currentStack.subList(i, currentStack.size());
@@ -195,16 +200,16 @@ public class TeamCityPlugin implements EventListener {
         return emptyList();
     }
 
-    private List<NameLocation> pushedNodes(List<NameLocation> newStack) {
-        for (int i = 0; i < currentStack.size() && i < newStack.size(); i++) {
-            if (!currentStack.get(i).equals(newStack.get(i))) {
+    private List<TreeNode> pushedNodes(List<TreeNode> newStack) {
+        for (int i = 0; i < currentPath.size() && i < newStack.size(); i++) {
+            if (!currentPath.get(i).equals(newStack.get(i))) {
                 return newStack.subList(i, newStack.size());
             }
         }
-        if (newStack.size() < currentStack.size()) {
+        if (newStack.size() < currentPath.size()) {
             return emptyList();
         }
-        return newStack.subList(currentStack.size(), newStack.size());
+        return newStack.subList(currentPath.size(), newStack.size());
     }
 
     private void printTestStepStarted(io.cucumber.messages.types.TestStepStarted event) {
@@ -297,7 +302,7 @@ public class TeamCityPlugin implements EventListener {
                         break;
                     }
                     out.print(TEMPLATE_TEST_COMPARISON_FAILED, timeStamp, duration, "Step failed", details,
-                            comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
+                        comparisonFailure.getExpected(), comparisonFailure.getActual(), name);
                     break;
                 }
                 default:
@@ -353,24 +358,24 @@ public class TeamCityPlugin implements EventListener {
 
     private static String getHookName(Hook hook) {
         return hook.getType().map(
-                hookType -> {
-                    switch (hookType) {
-                        case BEFORE_TEST_RUN:
-                            return "BeforeAll";
-                        case AFTER_TEST_RUN:
-                            return "AfterAll";
-                        case BEFORE_TEST_CASE:
-                            return "Before";
-                        case AFTER_TEST_CASE:
-                            return "After";
-                        case BEFORE_TEST_STEP:
-                            return "BeforeStep";
-                        case AFTER_TEST_STEP:
-                            return "AfterStep";
-                        default:
-                            return "Unknown";
-                    }
-                }).orElse("Unknown");
+            hookType -> {
+                switch (hookType) {
+                    case BEFORE_TEST_RUN:
+                        return "BeforeAll";
+                    case AFTER_TEST_RUN:
+                        return "AfterAll";
+                    case BEFORE_TEST_CASE:
+                        return "Before";
+                    case AFTER_TEST_CASE:
+                        return "After";
+                    case BEFORE_TEST_STEP:
+                        return "BeforeStep";
+                    case AFTER_TEST_STEP:
+                        return "AfterStep";
+                    default:
+                        return "Unknown";
+                }
+            }).orElse("Unknown");
     }
 
     private Optional<String> findSnippets(Pickle pickle) {
@@ -411,7 +416,7 @@ public class TeamCityPlugin implements EventListener {
     private void printTestCaseFinished(TestCaseFinished event) {
         String timestamp = formatTimeStamp(event.getTimestamp());
         out.print(TEMPLATE_PROGRESS_TEST_FINISHED, timestamp);
-        finishNode(timestamp, currentStack.remove(currentStack.size() - 1));
+        finishNode(timestamp, currentPath.remove(currentPath.size() - 1));
         this.currentPickle = null;
     }
 
@@ -419,9 +424,9 @@ public class TeamCityPlugin implements EventListener {
         String timestamp = formatTimeStamp(event.getTimestamp());
         out.print(TEMPLATE_PROGRESS_COUNTING_FINISHED, timestamp);
 
-        List<NameLocation> emptyStack = new ArrayList<>();
-        poppedNodes(emptyStack).forEach(node -> finishNode(timestamp, node));
-        currentStack = emptyStack;
+        List<TreeNode> emptyPath = new ArrayList<>();
+        poppedNodes(emptyPath).forEach(node -> finishNode(timestamp, node));
+        currentPath = emptyPath;
 
         printBeforeAfterAllResult(event, timestamp);
         out.print(TEMPLATE_TEST_RUN_FINISHED, timestamp);
@@ -452,8 +457,8 @@ public class TeamCityPlugin implements EventListener {
             case BASE64:
                 String name = event.getFileName().map(s -> s + " ").orElse("");
                 out.print(TEMPLATE_ATTACH_WRITE_EVENT,
-                        "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
-                                + " bytes]\n");
+                    "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
+                            + " bytes]\n");
                 return;
             default:
                 // Ignore.
@@ -506,22 +511,22 @@ public class TeamCityPlugin implements EventListener {
 
     private static class ComparisonFailure {
 
-        private static final Pattern[] COMPARE_PATTERNS = new Pattern[]{
+        private static final Pattern[] COMPARE_PATTERNS = new Pattern[] {
                 // Hamcrest 2 MatcherAssert.assertThat
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) {5}but: was (.*)$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // AssertJ 3 ShouldBeEqual.smartErrorMessage
                 Pattern.compile("expected: (.*)(?:\r\n|\r|\n) but was: (.*)$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 5 AssertionFailureBuilder
                 Pattern.compile("expected: <(.*)> but was: <(.*)>$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // JUnit 4 Assert.assertEquals
                 Pattern.compile("expected:\\s?<(.*)> but was:\\s?<(.*)>$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
                 // TestNG 7 Assert.assertEquals
                 Pattern.compile("expected \\[(.*)] but found \\[(.*)]\n$",
-                        Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE),
         };
 
         static ComparisonFailure parse(String message) {
@@ -562,12 +567,12 @@ public class TeamCityPlugin implements EventListener {
         }
     }
 
-    private static final class NameLocation {
+    private static final class TreeNode {
         private final String name;
         private final String uri;
         private final io.cucumber.messages.types.Location location;
 
-        private NameLocation(String name, String uri, io.cucumber.messages.types.Location location) {
+        private TreeNode(String name, String uri, io.cucumber.messages.types.Location location) {
             this.name = name;
             this.uri = uri;
             this.location = location;
@@ -589,7 +594,7 @@ public class TeamCityPlugin implements EventListener {
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass())
                 return false;
-            NameLocation that = (NameLocation) o;
+            TreeNode that = (TreeNode) o;
             return Objects.equals(name, that.name) && Objects.equals(uri, that.uri)
                     && Objects.equals(location, that.location);
         }
@@ -600,9 +605,9 @@ public class TeamCityPlugin implements EventListener {
         }
     }
 
-    private static class PathCollector implements LineageReducer.Collector<List<NameLocation>> {
+    private static class PathCollector implements LineageReducer.Collector<List<TreeNode>> {
         // There are at most 5 levels to a feature file.
-        private final List<NameLocation> path = new ArrayList<>(5);
+        private final List<TreeNode> path = new ArrayList<>(5);
         private String uri;
         private String scenarioName;
         private int examplesIndex;
@@ -616,26 +621,26 @@ public class TeamCityPlugin implements EventListener {
         @Override
         public void add(Feature feature) {
             String name = getNameOrKeyword(feature.getName(), feature.getKeyword());
-            path.add(new NameLocation(name, uri, feature.getLocation()));
+            path.add(new TreeNode(name, uri, feature.getLocation()));
         }
 
         @Override
         public void add(Rule rule) {
             String name = getNameOrKeyword(rule.getName(), rule.getKeyword());
-            path.add(new NameLocation(name, uri, rule.getLocation()));
+            path.add(new TreeNode(name, uri, rule.getLocation()));
         }
 
         @Override
         public void add(Scenario scenario) {
             String name = getNameOrKeyword(scenario.getName(), scenario.getKeyword());
-            path.add(new NameLocation(name, uri, scenario.getLocation()));
+            path.add(new TreeNode(name, uri, scenario.getLocation()));
             scenarioName = name;
         }
 
         @Override
         public void add(Examples examples, int index) {
             String name = getNameOrKeyword(examples.getName(), examples.getKeyword());
-            path.add(new NameLocation(name, uri, examples.getLocation()));
+            path.add(new TreeNode(name, uri, examples.getLocation()));
             examplesIndex = index;
         }
 
@@ -643,7 +648,7 @@ public class TeamCityPlugin implements EventListener {
         public void add(TableRow example, int index) {
             isExample = true;
             String name = "#" + (examplesIndex + 1) + "." + (index + 1);
-            path.add(new NameLocation(name, uri, example.getLocation()));
+            path.add(new TreeNode(name, uri, example.getLocation()));
         }
 
         @Override
@@ -653,9 +658,9 @@ public class TeamCityPlugin implements EventListener {
                 String pickleName = pickle.getName();
                 boolean parameterized = !scenarioName.equals(pickleName);
                 if (parameterized) {
-                    NameLocation example = path.remove(path.size() - 1);
+                    TreeNode example = path.remove(path.size() - 1);
                     String parameterizedExampleName = example.getName() + ": " + pickleName;
-                    path.add(new NameLocation(parameterizedExampleName, example.getUri(), example.getLocation()));
+                    path.add(new TreeNode(parameterizedExampleName, example.getUri(), example.getLocation()));
                 }
             }
             // Case 2: Pickles from a scenario
@@ -663,7 +668,7 @@ public class TeamCityPlugin implements EventListener {
         }
 
         @Override
-        public List<NameLocation> finish() {
+        public List<TreeNode> finish() {
             return path;
         }
 
