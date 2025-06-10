@@ -1,5 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;

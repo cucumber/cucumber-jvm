@@ -11,13 +11,13 @@ import static io.cucumber.junit.platform.engine.DefaultDescriptorOrderingStrateg
 
 class OrderingVisitor implements TestDescriptor.Visitor {
 
-    private final UnaryOperator<List<AbstractCucumberTestDescriptor>> orderer;
+    private final UnaryOperator<List<CucumberTestDescriptor>> orderer;
 
     OrderingVisitor(ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter) {
         this(getStrategy(configuration).create(configuration, issueReporter));
     }
 
-    private OrderingVisitor(UnaryOperator<List<AbstractCucumberTestDescriptor>> orderer) {
+    private OrderingVisitor(UnaryOperator<List<CucumberTestDescriptor>> orderer) {
         this.orderer = orderer;
     }
 
@@ -27,7 +27,7 @@ class OrderingVisitor implements TestDescriptor.Visitor {
         descriptor.orderChildren(children -> {
             // Ok. All TestDescriptors are AbstractCucumberTestDescriptor
             @SuppressWarnings("rawtypes")
-            List<AbstractCucumberTestDescriptor> cucumberDescriptors = (List) children;
+            List<CucumberTestDescriptor> cucumberDescriptors = (List) children;
             orderer.apply(cucumberDescriptors);
             return children;
         });

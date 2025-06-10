@@ -10,9 +10,11 @@ import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
-import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ExamplesDescriptor;
-import io.cucumber.junit.platform.engine.FeatureElementDescriptor.RuleDescriptor;
-import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ScenarioOutlineDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.ExamplesDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.RuleDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.ScenarioOutlineDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.commons.support.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
@@ -142,19 +144,7 @@ final class FeatureResolver implements SelectorResolver {
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
         Set<Resource> resources = selector.getClasspathResources();
         if (!resources.stream().allMatch(isFeature)) {
-            Set<DiscoverySelector> selectors = featureScanner
-                    .scanForClasspathResource(selector.getClasspathResourceName(), packageFilter)
-                    .stream()
-                    .map(feature -> selector.getPosition()
-                            .map(position -> selectElementAt(feature, position))
-                            .orElseGet(() -> Optional.of(selectFeature(feature))))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(toSet());
-
-            warnClasspathResourceSelectorUsedForPackage(selector);
-
-            return toResolution(selectors);
+            return resolveClasspathResourceSelectorAsPackageSelector(selector);
         }
         if (resources.size() > 1) {
             throw new IllegalArgumentException(String.format(
@@ -173,6 +163,24 @@ final class FeatureResolver implements SelectorResolver {
                 .map(Collections::singleton)
                 .map(FeatureResolver::toResolution)
                 .orElseGet(Resolution::unresolved);
+    }
+
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated
+    private Resolution resolveClasspathResourceSelectorAsPackageSelector(ClasspathResourceSelector selector) {
+        Set<DiscoverySelector> selectors = featureScanner
+                .scanForClasspathResource(selector.getClasspathResourceName(), packageFilter)
+                .stream()
+                .map(feature -> selector.getPosition()
+                        .map(position -> selectElementAt(feature, position))
+                        .orElseGet(() -> Optional.of(selectFeature(feature))))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toSet());
+
+        warnClasspathResourceSelectorUsedForPackage(selector);
+
+        return toResolution(selectors);
     }
 
     private void warnClasspathResourceSelectorUsedForPackage(ClasspathResourceSelector selector) {

@@ -8,7 +8,7 @@ import java.util.function.UnaryOperator;
 
 interface DescriptorOrderingStrategy {
 
-    UnaryOperator<List<AbstractCucumberTestDescriptor>> create(
+    UnaryOperator<List<CucumberTestDescriptor>> create(
             ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
     );
 

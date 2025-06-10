@@ -63,7 +63,7 @@ class DiscoverySelectorResolverTest {
             selectors,
             testDescriptor.getDescendants()
                     .stream()
-                    .filter(PickleDescriptor.class::isInstance)
+                    .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
                     .map(TestDescriptor::getUniqueId)
                     .collect(toSet()));
     }
@@ -85,9 +85,9 @@ class DiscoverySelectorResolverTest {
 
         Set<String> pickleIdsFromFeature = testDescriptor.getDescendants()
                 .stream()
-                .filter(FeatureDescriptor.class::isInstance)
-                .map(FeatureDescriptor.class::cast)
-                .map(FeatureDescriptor::getFeature)
+                .filter(CucumberTestDescriptor.FeatureDescriptor.class::isInstance)
+                .map(CucumberTestDescriptor.FeatureDescriptor.class::cast)
+                .map(CucumberTestDescriptor.FeatureDescriptor::getFeature)
                 .map(Feature::getPickles)
                 .flatMap(Collection::stream)
                 .map(Pickle::getId)
@@ -95,9 +95,9 @@ class DiscoverySelectorResolverTest {
 
         Set<String> pickleIdsFromPickles = testDescriptor.getDescendants()
                 .stream()
-                .filter(PickleDescriptor.class::isInstance)
-                .map(PickleDescriptor.class::cast)
-                .map(PickleDescriptor::getPickle)
+                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                .map(CucumberTestDescriptor.PickleDescriptor.class::cast)
+                .map(CucumberTestDescriptor.PickleDescriptor::getPickle)
                 .map(Pickle::getId)
                 .collect(toSet());
 
@@ -114,7 +114,7 @@ class DiscoverySelectorResolverTest {
         Set<? extends TestDescriptor> descendants = testDescriptor.getDescendants();
         resetTestDescriptor();
         return descendants.stream()
-                .filter(PickleDescriptor.class::isInstance)
+                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
                 .map(TestDescriptor::getUniqueId);
     }
 

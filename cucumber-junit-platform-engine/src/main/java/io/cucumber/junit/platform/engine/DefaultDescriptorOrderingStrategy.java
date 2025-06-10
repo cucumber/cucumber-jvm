@@ -19,7 +19,7 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
 
     LEXICAL {
         @Override
-        public UnaryOperator<List<AbstractCucumberTestDescriptor>> create(
+        public UnaryOperator<List<CucumberTestDescriptor>> create(
                 ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
         ) {
             return pickles -> {
@@ -30,7 +30,7 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
     },
     REVERSE {
         @Override
-        public UnaryOperator<List<AbstractCucumberTestDescriptor>> create(
+        public UnaryOperator<List<CucumberTestDescriptor>> create(
                 ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
         ) {
             return pickles -> {
@@ -41,7 +41,7 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
     },
     RANDOM {
         @Override
-        public UnaryOperator<List<AbstractCucumberTestDescriptor>> create(
+        public UnaryOperator<List<CucumberTestDescriptor>> create(
                 ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
         ) {
             long seed = configuration
@@ -70,16 +70,16 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
     },
     CUSTOM {
         @Override
-        public UnaryOperator<List<AbstractCucumberTestDescriptor>> create(
+        public UnaryOperator<List<CucumberTestDescriptor>> create(
                 ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
         ) {
             return null;
         }
     };
 
-    private static final Comparator<AbstractCucumberTestDescriptor> lexical = Comparator
-            .comparing(AbstractCucumberTestDescriptor::getUri)
-            .thenComparing(AbstractCucumberTestDescriptor::getLocation);
+    private static final Comparator<CucumberTestDescriptor> lexical = Comparator
+            .comparing(CucumberTestDescriptor::getUri)
+            .thenComparing(CucumberTestDescriptor::getLocation);
 
     static DefaultDescriptorOrderingStrategy getStrategy(ConfigurationParameters configurationParameters) {
         return valueOf(
