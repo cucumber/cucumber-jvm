@@ -7,6 +7,10 @@
     {
       "matchPackagePatterns": ["io.cucumber:(messages|gherkin|html-formatter|junit-xml-formatter)"],
       "groupName": "Messages and dependants"
+    },
+    {
+      "matchPackageNames": ["org.apache.maven.plugins:maven-surefire-plugin"],
+      "allowedVersions": "!/^3.5.3$/"
     }
   ]
 }

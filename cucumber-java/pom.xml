@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.22.2-SNAPSHOT</version>
+        <version>7.23.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-java</artifactId>
@@ -15,9 +15,9 @@
         <project.Automatic-Module-Name>io.cucumber.java</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <jackson.version>2.18.3</jackson.version>
-        <junit-jupiter.version>5.12.2</junit-jupiter.version>
-        <mockito.version>5.17.0</mockito.version>
+        <jackson.version>2.19.0</jackson.version>
+        <junit-jupiter.version>5.13.1</junit-jupiter.version>
+        <mockito.version>5.18.0</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -143,7 +143,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.5.1</version>
                 <executions>
                     <execution>
                         <id>generate-i18n</id>

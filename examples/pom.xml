@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.22.2-SNAPSHOT</version>
+        <version>7.23.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>examples</artifactId>
@@ -17,6 +17,7 @@
         <module>calculator-java-junit4</module>
         <module>calculator-java-junit5</module>
         <module>calculator-java-testng</module>
+        <module>calculator-kotlin-junit5</module>
         <module>spring-java-junit5</module>
         <module>wicket-java-junit4</module>
     </modules>
@@ -46,13 +47,6 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <configuration>
                         <skip>true</skip>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <configuration>
-                        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
                     </configuration>
                 </plugin>
                 <plugin>

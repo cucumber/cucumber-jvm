@@ -6,7 +6,7 @@ import io.cucumber.java.en.When;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ShoppingSteps {
 
@@ -28,7 +28,7 @@ public class ShoppingSteps {
 
     @Then("my change should be {}")
     public void my_change_should_be_(int change) {
-        assertEquals(-calc.value().intValue(), change);
+        assertThat(-calc.value().intValue()).isEqualTo(change);
     }
 
     static class Grocery {

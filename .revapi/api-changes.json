@@ -328,71 +328,71 @@
       "ignore": true,
       "configuration": {
         "differences": [
+
           {
             "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "new": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "status",
-            "oldValue": "org.apiguardian.api.API.Status.INTERNAL",
-            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
-            "justification": "API consumed from JUnit 5"
-          },
-          {
-            "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "new": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "since",
-            "oldValue": "\"1.0\"",
-            "newValue": "\"1.11\"",
-            "justification": "API consumed from JUnit 5"
-          },
-          {
-            "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "status",
-            "oldValue": "org.apiguardian.api.API.Status.STABLE",
-            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
-            "justification": "API consumed from JUnit 5"
-          },
-          {
-            "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "since",
-            "oldValue": "\"1.9\"",
-            "newValue": "\"1.11\"",
+            "code": "java.method.added",
+            "new": "method void org.junit.platform.commons.JUnitException::<init>(java.lang.String, java.lang.Throwable, boolean, boolean)",
             "justification": "API consumed from JUnit 5"
           },
           {
             "ignore": true,
             "code": "java.class.externalClassExposedInAPI",
-            "new": "class org.junit.platform.engine.reporting.FileEntry",
+            "new": "interface org.junit.platform.engine.DiscoveryIssue",
             "justification": "API consumed from JUnit 5"
           },
           {
             "ignore": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "code": "java.method.defaultMethodAddedToInterface",
+            "new": "method void org.junit.platform.engine.EngineDiscoveryListener::issueEncountered(org.junit.platform.engine.UniqueId, org.junit.platform.engine.DiscoveryIssue)",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.numberOfParametersChanged",
+            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.reporting.OutputDirectoryProvider)",
+            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.reporting.OutputDirectoryProvider, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
             "justification": "API consumed from JUnit 5"
           },
           {
             "ignore": true,
             "code": "java.annotation.attributeValueChanged",
-            "old": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
-            "new": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
+            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.reporting.OutputDirectoryProvider)",
+            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.reporting.OutputDirectoryProvider, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
             "annotationType": "org.apiguardian.api.API",
             "attribute": "since",
-            "oldValue": "\"5.8\"",
-            "newValue": "\"1.8\"",
+            "oldValue": "\"1.12\"",
+            "newValue": "\"1.13\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.added",
+            "new": "method org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace> org.junit.platform.engine.ExecutionRequest::getStore()",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.staticMethodAddedToInterface",
+            "new": "method org.junit.platform.engine.TestDescriptor.Visitor org.junit.platform.engine.TestDescriptor.Visitor::composite(org.junit.platform.engine.TestDescriptor.Visitor[])",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class org.junit.platform.engine.support.store.Namespace",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException",
             "justification": "API consumed from JUnit 5"
           }
         ]

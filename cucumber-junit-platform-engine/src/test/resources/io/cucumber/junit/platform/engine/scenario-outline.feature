@@ -36,3 +36,27 @@ Feature: A feature with scenario outlines
       | example |
       | A       |
       | B       |
+  
+  @ScenarioOutlineTag
+  Scenario Outline: A scenario with <example>
+    Given a parameterized scenario outline
+    When it is executed
+    Then <example> is used
+
+    @Example1Tag
+    Examples:
+      | example |
+      | A       |
+      | B       |
+  
+  @ScenarioOutlineTag
+  Scenario Outline: A scenario with <example>
+    Given a parameterized scenario outline
+    When it is executed
+    Then <example> is used
+
+    @Example1Tag
+    Examples:
+      | example |
+      | A       |
+      | B       |

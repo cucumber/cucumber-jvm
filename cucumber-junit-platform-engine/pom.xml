@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.22.2-SNAPSHOT</version>
+        <version>7.23.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-junit-platform-engine</artifactId>
@@ -13,7 +13,7 @@
 
     <properties>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.12.2</junit-jupiter.version>
+        <junit-jupiter.version>5.13.1</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -90,6 +90,14 @@
                             <Engine-Version-cucumber>${project.version}</Engine-Version-cucumber>
                         </manifestEntries>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>

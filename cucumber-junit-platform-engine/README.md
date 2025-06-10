@@ -55,9 +55,11 @@ for a brief how to.
 
 Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
-can make for hard to read reports. To improve the readability of the reports
-provide the `cucumber.junit-platform.naming-strategy=long` configuration
-parameter. This will include the feature name as part of the test name. 
+can make for hard to read reports. 
+
+To improve the readability of the reports provide the
+`cucumber.junit-platform.naming-strategy` configuration parameter to
+Gradle. This will include the feature name as part of the test name.
 
 ##### Maven
 
@@ -69,7 +71,7 @@ parameter. This will include the feature name as part of the test name.
     <configuration>
         <properties>
             <configurationParameters>
-                cucumber.junit-platform.naming-strategy=long
+                cucumber.junit-platform.naming-strategy=surefire
             </configurationParameters>
         </properties>
     </configuration>
@@ -418,7 +420,7 @@ cucumber.filter.tags=                                          # a cucumber tag 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
 
-cucumber.junit-platform.naming-strategy=                       # long or short.
+cucumber.junit-platform.naming-strategy=                       # long, short or surefire.
                                                                # default: short
                                                                # include parent descriptor name in test descriptor.
 
@@ -427,10 +429,15 @@ cucumber.junit-platform.naming-strategy.short.example-name=    # number, number-
                                                                # Use example number and/or pickle name for examples when
                                                                # short naming strategy is used
 
-cucumber.junit-platform.naming-strategy.long.example-name=     # number, number-and-pickle-if-parameterized, or pickle.
+cucumber.junit-platform.naming-strategy.long.example-name=     # number, number-and-pickle-if-parameterized or pickle.
                                                                # default: number-and-pickle-if-parameterized
                                                                # Use example number and/or pickle name for examples when
                                                                # long naming strategy is used
+                                                               
+cucumber.junit-platform.naming-strategy.surefire.example-name= # number or pickle.
+                                                               # default: number-and-pickle-if-parameterized
+                                                               # Use example number or pickle name for examples when
+                                                               # surefire naming strategy is used
 
 cucumber.plugin=                                               # comma separated plugin strings.
                                                                # example: pretty, json:path/to/report.json
@@ -469,8 +476,8 @@ cucumber.execution.execution-mode.feature=                     # same_thread or 
 cucumber.execution.order=                                     # lexical, reverse, random or random:[seed] (CLI only). default: lexical
                                                               # default: lexical
                                                               # lexical - executes features in lexical uri order, scenarios and examples from top to bottom 
-                                                              # reverse - as lexical, but in reverse
-                                                              # random - at random. Note: scenarios and examples are only shuffled within their containing element 
+                                                              # reverse - as lexical, but with the elements of each container reversed
+                                                              # random - executes scenarios and examples at random within their parent container 
 
 cucumber.execution.parallel.enabled=                           # true or false.
                                                                # default: false
@@ -623,7 +630,7 @@ Note: any files written by Cucumber will be overwritten during the rerun.
                  information to disambiguate between different
                  examples and scenarios. -->
             <configurationParameters>
-                cucumber.junit-platform.naming-strategy=long
+                cucumber.junit-platform.naming-strategy=surefire
             </configurationParameters>
         </properties>
     </configuration>

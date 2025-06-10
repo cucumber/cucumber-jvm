@@ -45,7 +45,7 @@ public class StubBackendProviderService implements BackendProviderService {
             glue.addStepDefinition(createStepDefinition("B is used"));
             glue.addStepDefinition(createStepDefinition("C is used"));
             glue.addStepDefinition(createStepDefinition("D is used"));
-
+            glue.addStepDefinition(createStepDefinition("a parameterized scenario outline"));
         }
 
         private StepDefinition createStepDefinition(final String pattern) {

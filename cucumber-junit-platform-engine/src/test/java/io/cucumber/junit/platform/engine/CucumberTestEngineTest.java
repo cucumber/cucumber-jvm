@@ -4,7 +4,6 @@ import io.cucumber.core.logging.LogRecordListener;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.support.Resource;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
@@ -56,7 +55,6 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
@@ -205,22 +203,21 @@ class CucumberTestEngineTest {
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
                 new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))));
 
-        JUnitException exception = assertThrows(JUnitException.class, () -> EngineTestKit.engine(ENGINE_ID)
-                .selectors(selectClasspathResource(resources))
-                .execute()
-                .allEvents()
-                .assertThatEvents()
-                .haveExactly(1, event( //
-                    scenario("scenario:3", "A single scenario"), //
-                    finishedSuccessfully())));
-
+        Throwable exception = EngineTestKit.engine(ENGINE_ID) //
+                .selectors(selectClasspathResource(resources)) //
+                .discover() //
+                .getDiscoveryIssues() //
+                .get(0) //
+                .cause() //
+                .get();
+        
         assertThat(exception) //
-                .hasRootCauseInstanceOf(IllegalArgumentException.class) //
-                .hasRootCauseMessage( //
-                    "Found %s resources named %s on the classpath %s.", //
-                    resources.size(), //
-                    "io/cucumber/junit/platform/engine/single.feature", //
-                    resources.stream().map(Resource::getUri).collect(toList()));
+                .isInstanceOf(IllegalArgumentException.class) //
+                .hasMessage( //
+                        "Found %s resources named %s on the classpath %s.", //
+                        resources.size(), //
+                        "io/cucumber/junit/platform/engine/single.feature", //
+                        resources.stream().map(Resource::getUri).collect(toList()));
     }
 
     @Test
@@ -635,29 +632,11 @@ class CucumberTestEngineTest {
                     feature("single.feature"),
                     feature("with%20space.feature"));
     }
-
-    @Test
-    void supportsShortWithNumberAndPickleIfParameterizedNamingStrategy() {
-        EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short")
-                .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME,
-                    "number-and-pickle-if-parameterized")
-                .selectors(
-                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
-                .execute()
-                .allEvents()
-                .assertThatEvents()
-                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
-                .haveAtLeastOne(event(scenario(), displayName("A scenario full of <vegetable>s")))
-                .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
-                .haveAtLeastOne(event(example(), displayName("Example #1.1: A scenario full of Cucumbers")));
-    }
-
     @Test
     void defaultsToShortWithNumberAndPickleIfParameterizedNamingStrategy() {
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(
-                    selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                        selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
                 .execute()
                 .allEvents()
                 .assertThatEvents()
@@ -706,6 +685,27 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void supportsLongWithNumberAndPickleIfParameterizedNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
+                .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME,
+                        "number-and-pickle-if-parameterized")
+                .selectors(
+                        selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(),
+                        displayName("A feature with a parameterized scenario outline - A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName(
+                        "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName(
+                        "A feature with a parameterized scenario outline - A scenario full of <vegetable>s - Of the Gherkin variety - Example #1.1: A scenario full of Cucumbers")));
+    }
+
+    @Test
     void supportsShortWithPickleNamingStrategy() {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short")
@@ -736,4 +736,22 @@ class CucumberTestEngineTest {
                 .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
                 .haveAtLeastOne(event(example(), displayName("Example #1.1")));
     }
+
+    @Test
+    void supportsShortWithNumberAndPickleIfParameterizedNamingStrategy() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "short")
+                .configurationParameter(JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME,
+                        "number-and-pickle-if-parameterized")
+                .selectors(
+                        selectClasspathResource("io/cucumber/junit/platform/engine/parameterized-scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(feature(), displayName("A feature with a parameterized scenario outline")))
+                .haveAtLeastOne(event(scenario(), displayName("A scenario full of <vegetable>s")))
+                .haveAtLeastOne(event(examples(), displayName("Of the Gherkin variety")))
+                .haveAtLeastOne(event(example(), displayName("Example #1.1: A scenario full of Cucumbers")));
+    }
+
 }

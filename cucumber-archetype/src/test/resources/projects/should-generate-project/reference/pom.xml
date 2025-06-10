@@ -11,6 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>17</maven.compiler.release>
     </properties>
 
     <dependencyManagement>
@@ -71,11 +72,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -87,7 +83,7 @@
                              information to disambiguate between different
                              examples and scenarios. -->
                         <configurationParameters>
-                            cucumber.junit-platform.naming-strategy=long
+                            cucumber.junit-platform.naming-strategy=surefire
                         </configurationParameters>
                     </properties>
                 </configuration>
