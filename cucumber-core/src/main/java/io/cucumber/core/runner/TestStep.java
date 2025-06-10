@@ -61,7 +61,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         Result result = mapStatusToResult(status, error, duration);
         state.add(result);
 
-        emitTestStepFinished(testCase, bus, state.getTestExecutionId(), stopTime, duration, result, error);
+        emitTestStepFinished(testCase, bus, state.getTestExecutionId(), stopTime, duration, result);
 
         return result.getStatus().is(Status.PASSED) ? executionMode : SKIP;
     }
@@ -108,16 +108,15 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
     }
 
     private void emitTestStepFinished(
-            TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result,
-            Throwable error
+            TestCase testCase, EventBus bus, UUID textExecutionId, Instant stopTime, Duration duration, Result result
     ) {
         bus.send(new TestStepFinished(stopTime, testCase, this, result));
 
         TestStepResult testStepResult = new TestStepResult(
             toMessage(duration),
-            error != null ? error.getMessage() : null,
+            result.getError() != null ? result.getError().getMessage() : null,
             from(result.getStatus()),
-            error != null ? toMessage(error) : null);
+            result.getError() != null ? toMessage(result.getError()) : null);
 
         Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepFinished(
             textExecutionId.toString(),
