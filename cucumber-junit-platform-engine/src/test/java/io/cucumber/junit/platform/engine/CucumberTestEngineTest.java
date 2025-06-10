@@ -149,30 +149,30 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    void warnWhenResourceSelectorIsUsedToSelectAPackage(LogRecordListener logRecordListener) {
-        EngineTestKit.engine(ENGINE_ID)
-                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine"))
-                .execute()
-                .allEvents()
-                .assertEventsMatchLooselyInOrder(
-                    feature("disabled.feature"),
-                    feature("empty-scenario.feature"),
-                    feature("scenario-outline.feature"),
-                    feature("rule.feature"),
-                    feature("single.feature"),
-                    feature("with%20space.feature"));
-
-        LogRecord warning = logRecordListener.getLogRecords()
-                .stream()
-                .filter(logRecord -> FeatureResolver.class.getName().equals(logRecord.getLoggerName()))
-                .filter(logRecord -> Level.WARNING.equals(logRecord.getLevel()))
-                .findFirst().get();
-
-        assertThat(warning.getMessage())
+    void warnWhenResourceSelectorIsUsedToSelectAPackage() {
+        EngineTestKit.Builder selectors = EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine"));
+        
+        EngineDiscoveryResults discoveryResults = selectors.discover();
+        DiscoveryIssue discoveryIssue = discoveryResults.getDiscoveryIssues().get(0);
+        assertThat(discoveryIssue.message())
                 .isEqualTo(
                     "The classpath resource selector 'io/cucumber/junit/platform/engine' should not be " +
                             "used to select features in a package. Use the package selector with " +
                             "'io.cucumber.junit.platform.engine' instead");
+
+        // It should also still work
+        selectors
+                .execute()
+                .allEvents()
+                .assertEventsMatchLooselyInOrder(
+                        feature("disabled.feature"),
+                        feature("empty-scenario.feature"),
+                        feature("scenario-outline.feature"),
+                        feature("rule.feature"),
+                        feature("single.feature"),
+                        feature("with%20space.feature"));
+
     }
 
     @Test

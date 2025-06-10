@@ -36,7 +36,7 @@ class FeatureResolverTest {
         EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
                 .<CucumberEngineDescriptor> builder()
                 .addSelectorResolver(context -> new FeatureResolver(new CucumberConfiguration(configurationParameters),
-                    context.getPackageFilter()))
+                    context.getPackageFilter(), context.getIssueReporter()))
                 .addTestDescriptorVisitor(context -> new OrderingVisitor(lexicalUriOrder()))
                 .build();
         resolver.resolve(new SelectorRequest(selectClasspathResource(featurePath)), engineDescriptor);

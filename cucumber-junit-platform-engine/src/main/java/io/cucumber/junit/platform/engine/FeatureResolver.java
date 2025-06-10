@@ -5,8 +5,6 @@ import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
-import io.cucumber.core.logging.Logger;
-import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
@@ -17,6 +15,7 @@ import io.cucumber.junit.platform.engine.FeatureElementDescriptor.RuleDescriptor
 import io.cucumber.junit.platform.engine.FeatureElementDescriptor.ScenarioOutlineDescriptor;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.commons.support.Resource;
+import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
@@ -27,6 +26,7 @@ import org.junit.platform.engine.discovery.DirectorySelector;
 import org.junit.platform.engine.discovery.FileSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.discovery.SelectorResolver;
 
 import java.net.URI;
@@ -53,17 +53,17 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 
 final class FeatureResolver implements SelectorResolver {
-    private static final Logger log = LoggerFactory.getLogger(FeatureResolver.class);
-
     private final ResourceScanner<Feature> featureScanner;
 
     private final CucumberConfiguration configuration;
     private final CachingFeatureParser featureParser;
     private final Predicate<String> packageFilter;
+    private final DiscoveryIssueReporter issueReporter;
 
-    FeatureResolver(CucumberConfiguration configuration, Predicate<String> packageFilter) {
+    FeatureResolver(CucumberConfiguration configuration, Predicate<String> packageFilter, DiscoveryIssueReporter issueReporter) {
         this.configuration = configuration;
         this.packageFilter = packageFilter;
+        this.issueReporter = issueReporter;
         this.featureParser = createFeatureParser(configuration);
         this.featureScanner = new ResourceScanner<>(
             ClassLoaders::getDefaultClassLoader,
@@ -171,15 +171,14 @@ final class FeatureResolver implements SelectorResolver {
                 .orElseGet(Resolution::unresolved);
     }
 
-    private static void warnClasspathResourceSelectorUsedForPackage(ClasspathResourceSelector selector) {
-        log.warn(() -> {
-            String classpathResourceName = selector.getClasspathResourceName();
-            String packageName = classpathResourceName.replaceAll("/", ".");
-            return String.format(
+    private void warnClasspathResourceSelectorUsedForPackage(ClasspathResourceSelector selector) {
+        String classpathResourceName = selector.getClasspathResourceName();
+        String packageName = classpathResourceName.replaceAll("/", ".");
+        String message = String.format(
                 "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead",
                 classpathResourceName,
                 packageName);
-        });
+        issueReporter.reportIssue(DiscoveryIssue.builder(DiscoveryIssue.Severity.WARNING, message));
     }
 
     @Override
