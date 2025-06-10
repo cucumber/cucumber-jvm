@@ -184,8 +184,8 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
                 }
                 return SkipResult
                         .skip(
-                                "'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression
-                                        + "' did not match this scenario");
+                            "'" + Constants.FILTER_TAGS_PROPERTY_NAME + "=" + expression
+                                    + "' did not match this scenario");
             });
         }
 
@@ -219,9 +219,9 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
         /**
          * Returns the set of {@linkplain TestTag tags} for a pickle.
          * <p>
-         * Note that Cucumber will remove the {code @} symbol from all Gherkin tags.
-         * So a scenario tagged with {@code @Smoke} becomes a test tagged with
-         * {@code Smoke}.
+         * Note that Cucumber will remove the {code @} symbol from all Gherkin
+         * tags. So a scenario tagged with {@code @Smoke} becomes a test tagged
+         * with {@code Smoke}.
          *
          * @return the set of tags
          */
