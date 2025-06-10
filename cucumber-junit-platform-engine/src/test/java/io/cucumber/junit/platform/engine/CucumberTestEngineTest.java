@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.support.Resource;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
@@ -16,6 +17,7 @@ import org.junit.platform.engine.discovery.FilePosition;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.descriptor.FileSource;
+import org.junit.platform.testkit.engine.EngineDiscoveryResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Event;
 
@@ -508,25 +510,15 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     void supportsFeaturesPropertyWillIgnoreOtherSelectors(LogRecordListener logRecordListener) {
-        EngineTestKit.engine(ENGINE_ID)
+        EngineDiscoveryResults discoveryResult = EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(FEATURES_PROPERTY_NAME,
-                    "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
+                        "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
-                .execute()
-                .allEvents()
-                .assertThatEvents()
-                .haveExactly(2, event(engine(source(ClassSource.from(CucumberTestEngine.class)))))
-                .haveExactly(1, event(test(finishedSuccessfully())));
+                .discover();
 
-        LogRecord warning = logRecordListener.getLogRecords()
-                .stream()
-                .filter(logRecord -> FeaturesPropertyResolver.class.getName().equals(logRecord.getLoggerName()))
-                .filter(logRecord -> Level.WARNING.equals(logRecord.getLevel()))
-                .findFirst().get();
-
-        assertThat(warning.getMessage())
+        DiscoveryIssue discoveryIssue = discoveryResult.getDiscoveryIssues().get(0);
+        assertThat(discoveryIssue.message())
                 .startsWith(
                     "Discovering tests using the cucumber.features property. Other discovery selectors are ignored!");
     }
