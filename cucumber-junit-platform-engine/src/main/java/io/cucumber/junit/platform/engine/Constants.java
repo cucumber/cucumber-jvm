@@ -292,6 +292,27 @@ public final class Constants {
     public static final String EXECUTION_MODE_FEATURE_PROPERTY_NAME = "cucumber.execution.execution-mode.feature";
 
     /**
+     * Property name used to set execution order: {@value}
+     * <p>
+     * Valid values are {@code lexical}, {@code reverse} or {@code random}.
+     * <p>
+     * By default, features are executed in lexical file name order and
+     * scenarios in a feature from top to bottom.
+     */
+    public static final String EXECUTION_ORDER_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
+
+    /**
+     * Property name used to set the seed for random execution order: {@value}
+     * <p>
+     * Valid values are any value understood by {@link Long#decode(String)}. If
+     * omitted a random seed is used instead. The exact value can be obtained by
+     * <a
+     * href=https://junit.org/junit5/docs/snapshot/user-guide/#running-tests-discovery-issues>
+     * listening for discovery issues</a>.
+     */
+    public static final String EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME = "cucumber.execution.order.random.seed";
+
+    /**
      * Property name used to enable parallel test execution: {@value}
      * <p>
      * By default, tests are executed sequentially in a single thread.

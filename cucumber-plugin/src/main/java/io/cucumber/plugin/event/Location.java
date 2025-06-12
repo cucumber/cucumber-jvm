@@ -5,7 +5,7 @@ import org.apiguardian.api.API;
 import java.util.Objects;
 
 @API(status = API.Status.EXPERIMENTAL)
-public final class Location {
+public final class Location implements Comparable<Location> {
 
     private final int line;
     private final int column;
@@ -39,4 +39,13 @@ public final class Location {
                 column == location.column;
     }
 
+    @Override
+    public int compareTo(Location o) {
+        Objects.requireNonNull(o);
+        int c = Integer.compare(line, o.line);
+        if (c != 0) {
+            return c;
+        }
+        return Integer.compare(column, o.column);
+    }
 }

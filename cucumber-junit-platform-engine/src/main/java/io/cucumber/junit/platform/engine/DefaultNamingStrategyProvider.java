@@ -108,7 +108,7 @@ enum DefaultNamingStrategyProvider {
             }
 
             @Override
-            public String nameExample(Node.Example node, Pickle pickle) {
+            public String nameExample(Node node, Pickle pickle) {
                 return exampleNameFunction.apply(node, pickle);
             }
         };
