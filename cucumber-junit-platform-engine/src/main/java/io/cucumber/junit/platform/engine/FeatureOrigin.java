@@ -51,6 +51,8 @@ abstract class FeatureOrigin {
 
     abstract TestSource nodeSource(Node node);
 
+    abstract TestSource source();
+
     private static class FileFeatureOrigin extends FeatureOrigin {
 
         private final FileSource source;
@@ -62,6 +64,11 @@ abstract class FeatureOrigin {
         @Override
         TestSource nodeSource(Node node) {
             return FileSource.from(source.getFile(), createFilePosition(node.getLocation()));
+        }
+
+        @Override
+        TestSource source() {
+            return source;
         }
 
     }
@@ -79,6 +86,10 @@ abstract class FeatureOrigin {
             return source;
         }
 
+        @Override
+        TestSource source() {
+            return source;
+        }
     }
 
     private static class ClasspathFeatureOrigin extends FeatureOrigin {
@@ -95,6 +106,10 @@ abstract class FeatureOrigin {
                 createFilePosition(node.getLocation()));
         }
 
+        @Override
+        TestSource source() {
+            return source;
+        }
     }
 
 }

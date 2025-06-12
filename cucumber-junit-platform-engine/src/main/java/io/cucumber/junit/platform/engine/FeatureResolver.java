@@ -60,7 +60,7 @@ final class FeatureResolver implements SelectorResolver {
     private final ResourceScanner<Feature> featureScanner;
 
     private final CucumberConfiguration configuration;
-    private final CachingFeatureParser featureParser;
+    private final FeatureParserWithCaching featureParser;
     private final Predicate<String> packageFilter;
     private final DiscoveryIssueReporter issueReporter;
 
@@ -70,19 +70,23 @@ final class FeatureResolver implements SelectorResolver {
         this.configuration = configuration;
         this.packageFilter = packageFilter;
         this.issueReporter = issueReporter;
-        this.featureParser = createFeatureParser(configuration);
+        this.featureParser = createFeatureParser(configuration, issueReporter);
         this.featureScanner = new ResourceScanner<>(
             ClassLoaders::getDefaultClassLoader,
             FeatureIdentifier::isFeature,
             featureParser::parseResource);
     }
 
-    private static CachingFeatureParser createFeatureParser(CucumberConfiguration options) {
+    private static FeatureParserWithCaching createFeatureParser(
+            CucumberConfiguration options, DiscoveryIssueReporter issueReporter
+    ) {
         Supplier<ClassLoader> classLoader = FeatureResolver.class::getClassLoader;
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
         UuidGenerator uuidGenerator = uuidGeneratorServiceLoader.loadUuidGenerator();
         FeatureParser featureParser = new FeatureParser(uuidGenerator::generateId);
-        return new CachingFeatureParser(featureParser);
+        FeatureParserWithIssueReporting featureParserWithIssueReporting = new FeatureParserWithIssueReporting(
+            featureParser, issueReporter);
+        return new FeatureParserWithCaching(featureParserWithIssueReporting);
     }
 
     @Override

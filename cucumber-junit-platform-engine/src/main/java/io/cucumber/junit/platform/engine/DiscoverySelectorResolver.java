@@ -20,8 +20,7 @@ class DiscoverySelectorResolver {
                     context.getIssueReporter() //
                 ))
             .addTestDescriptorVisitor(context -> new OrderingVisitor(
-                    context.getDiscoveryRequest().getConfigurationParameters(), //
-                    context.getIssueReporter() //
+                    context.getDiscoveryRequest().getConfigurationParameters() //
                 )
             )
             .addTestDescriptorVisitor(context -> TestDescriptor::prune)

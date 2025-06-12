@@ -1,6 +1,5 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.logging.LogRecordListener;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -55,9 +54,9 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.platform.engine.DiscoveryIssue.Severity.INFO;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
@@ -522,7 +521,7 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    void supportsFeaturesPropertyWillIgnoreOtherSelectors(LogRecordListener logRecordListener) {
+    void supportsFeaturesPropertyWillIgnoreOtherSelectors() {
         EngineDiscoveryResults discoveryResult = EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(FEATURES_PROPERTY_NAME,
                     "src/test/resources/io/cucumber/junit/platform/engine/single.feature")
@@ -827,23 +826,6 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    void supportsRandomOrder() {
-        EngineTestKit.Builder selectors = EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, "random")
-                .configurationParameter(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, "long")
-                .selectors(
-                    selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"),
-                    selectClasspathResource("io/cucumber/junit/platform/engine/ordering.feature"));
-
-        EngineDiscoveryResults results = selectors.discover();
-
-        DiscoveryIssue discoveryIssue = results.getDiscoveryIssues().get(0);
-        assertThat(discoveryIssue.severity()).isEqualTo(INFO);
-        assertThat(discoveryIssue.message())
-                .startsWith("Property cucumber.execution.order.random.seed was not set. Using random value: ");
-    }
-
-    @Test
     void supportsRandomOrderWithSeed() {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, "random")
@@ -878,4 +860,19 @@ class CucumberTestEngineTest {
                     "A feature with a single scenario - A single scenario");
     }
 
+    @Test
+    void reportsParsErrorsAsDiscoveryIssues() {
+        EngineDiscoveryResults results = EngineTestKit.engine(ENGINE_ID)
+                .selectors(
+                    selectFile("src/test/bad-features/parse-error.feature"))
+                .discover();
+
+        DiscoveryIssue issue = results.getDiscoveryIssues().get(0);
+
+        assertAll(() -> {
+            assertThat(issue.message()).startsWith("Failed to parse resource at: ");
+            assertThat(issue.source())
+                    .contains(FileSource.from(new File("src/test/bad-features/parse-error.feature")));
+        });
+    }
 }

@@ -2,7 +2,6 @@ package io.cucumber.junit.platform.engine;
 
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -13,8 +12,8 @@ class OrderingVisitor implements TestDescriptor.Visitor {
 
     private final UnaryOperator<List<CucumberTestDescriptor>> orderer;
 
-    OrderingVisitor(ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter) {
-        this(getStrategy(configuration).create(configuration, issueReporter));
+    OrderingVisitor(ConfigurationParameters configuration) {
+        this(getStrategy(configuration).create(configuration));
     }
 
     private OrderingVisitor(UnaryOperator<List<CucumberTestDescriptor>> orderer) {

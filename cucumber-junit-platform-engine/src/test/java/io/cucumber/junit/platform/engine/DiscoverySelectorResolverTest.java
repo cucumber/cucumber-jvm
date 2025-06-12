@@ -2,6 +2,8 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.DiscoverySelector;
@@ -63,7 +65,7 @@ class DiscoverySelectorResolverTest {
             selectors,
             testDescriptor.getDescendants()
                     .stream()
-                    .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                    .filter(PickleDescriptor.class::isInstance)
                     .map(TestDescriptor::getUniqueId)
                     .collect(toSet()));
     }
@@ -85,9 +87,9 @@ class DiscoverySelectorResolverTest {
 
         Set<String> pickleIdsFromFeature = testDescriptor.getDescendants()
                 .stream()
-                .filter(CucumberTestDescriptor.FeatureDescriptor.class::isInstance)
-                .map(CucumberTestDescriptor.FeatureDescriptor.class::cast)
-                .map(CucumberTestDescriptor.FeatureDescriptor::getFeature)
+                .filter(FeatureDescriptor.class::isInstance)
+                .map(FeatureDescriptor.class::cast)
+                .map(FeatureDescriptor::getFeature)
                 .map(Feature::getPickles)
                 .flatMap(Collection::stream)
                 .map(Pickle::getId)
@@ -95,9 +97,9 @@ class DiscoverySelectorResolverTest {
 
         Set<String> pickleIdsFromPickles = testDescriptor.getDescendants()
                 .stream()
-                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
-                .map(CucumberTestDescriptor.PickleDescriptor.class::cast)
-                .map(CucumberTestDescriptor.PickleDescriptor::getPickle)
+                .filter(PickleDescriptor.class::isInstance)
+                .map(PickleDescriptor.class::cast)
+                .map(PickleDescriptor::getPickle)
                 .map(Pickle::getId)
                 .collect(toSet());
 
@@ -114,7 +116,7 @@ class DiscoverySelectorResolverTest {
         Set<? extends TestDescriptor> descendants = testDescriptor.getDescendants();
         resetTestDescriptor();
         return descendants.stream()
-                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                .filter(PickleDescriptor.class::isInstance)
                 .map(TestDescriptor::getUniqueId);
     }
 
