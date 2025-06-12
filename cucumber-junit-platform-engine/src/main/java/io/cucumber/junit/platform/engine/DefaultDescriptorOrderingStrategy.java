@@ -1,8 +1,8 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.logging.Logger;
+import io.cucumber.core.logging.LoggerFactory;
 import org.junit.platform.engine.ConfigurationParameters;
-import org.junit.platform.engine.DiscoveryIssue;
-import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,15 +13,12 @@ import java.util.function.UnaryOperator;
 
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME;
-import static org.junit.platform.engine.DiscoveryIssue.Severity.INFO;
 
 enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
 
     LEXICAL {
         @Override
-        public UnaryOperator<List<CucumberTestDescriptor>> create(
-                ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
-        ) {
+        public UnaryOperator<List<CucumberTestDescriptor>> create(ConfigurationParameters configuration) {
             return pickles -> {
                 pickles.sort(lexical);
                 return pickles;
@@ -30,9 +27,7 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
     },
     REVERSE {
         @Override
-        public UnaryOperator<List<CucumberTestDescriptor>> create(
-                ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
-        ) {
+        public UnaryOperator<List<CucumberTestDescriptor>> create(ConfigurationParameters configuration) {
             return pickles -> {
                 pickles.sort(lexical.reversed());
                 return pickles;
@@ -41,12 +36,10 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
     },
     RANDOM {
         @Override
-        public UnaryOperator<List<CucumberTestDescriptor>> create(
-                ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
-        ) {
+        public UnaryOperator<List<CucumberTestDescriptor>> create(ConfigurationParameters configuration) {
             long seed = configuration
                     .get(EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME, Long::decode)
-                    .orElseGet(() -> createRandomSeed(issueReporter));
+                    .orElseGet(this::createRandomSeed);
             // Invoked multiple times, keep state outside of closure.
             Random random = new Random(seed);
             return testDescriptors -> {
@@ -59,23 +52,13 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
 
         }
 
-        private long createRandomSeed(DiscoveryIssueReporter issueReporter) {
+        private long createRandomSeed() {
             long generatedSeed = Math.abs(new Random().nextLong());
-            String message = String.format("Property %s was not set. Using random value: %d",
-                EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME, generatedSeed);
-            issueReporter.reportIssue(DiscoveryIssue.create(INFO, message));
+            log.config(() -> String.format("Using generated seed for configuration parameter [%s] with value [%s].", EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME, generatedSeed));
             return generatedSeed;
         }
-
-    },
-    CUSTOM {
-        @Override
-        public UnaryOperator<List<CucumberTestDescriptor>> create(
-                ConfigurationParameters configuration, DiscoveryIssueReporter issueReporter
-        ) {
-            return null;
-        }
     };
+    private static final Logger log = LoggerFactory.getLogger(DefaultDescriptorOrderingStrategy.class);
 
     private static final Comparator<CucumberTestDescriptor> lexical = Comparator
             .comparing(CucumberTestDescriptor::getUri)
