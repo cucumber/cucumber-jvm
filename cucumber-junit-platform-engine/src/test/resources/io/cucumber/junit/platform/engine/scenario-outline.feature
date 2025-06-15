@@ -1,7 +1,7 @@
 @FeatureTag
 Feature: A feature with scenario outlines
 
-  @ScenarioTag @ResourceA  @ResourceAReadOnly
+  @ScenarioTag
   Scenario: A scenario
     Given a scenario
     When it is executed

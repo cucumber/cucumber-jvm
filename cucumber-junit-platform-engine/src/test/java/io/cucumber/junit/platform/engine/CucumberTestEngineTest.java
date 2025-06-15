@@ -2,16 +2,15 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.support.Resource;
-import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
-import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.EngineExecutionListener;
-import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
@@ -19,6 +18,8 @@ import org.junit.platform.engine.discovery.FilePosition;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.descriptor.FileSource;
+import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
+import org.junit.platform.engine.support.hierarchical.Node;
 import org.junit.platform.testkit.engine.EngineDiscoveryResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Event;
@@ -33,7 +34,11 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_EXCLUSIVE_RESOURCES_PREFIX;
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
@@ -42,6 +47,8 @@ import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_N
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
+import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static io.cucumber.junit.platform.engine.CucumberEngineDescriptor.ENGINE_ID;
 import static io.cucumber.junit.platform.engine.CucumberEventConditions.emptySource;
 import static io.cucumber.junit.platform.engine.CucumberEventConditions.engine;
@@ -60,7 +67,6 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
@@ -72,6 +78,8 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqu
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 import static org.junit.platform.engine.discovery.PackageNameFilter.includePackageNames;
 import static org.junit.platform.engine.support.descriptor.FilePosition.from;
+import static org.junit.platform.engine.support.hierarchical.Node.ExecutionMode.CONCURRENT;
+import static org.junit.platform.engine.support.hierarchical.Node.ExecutionMode.SAME_THREAD;
 import static org.junit.platform.testkit.engine.EventConditions.displayName;
 import static org.junit.platform.testkit.engine.EventConditions.event;
 import static org.junit.platform.testkit.engine.EventConditions.finishedSuccessfully;
@@ -79,6 +87,7 @@ import static org.junit.platform.testkit.engine.EventConditions.skippedWithReaso
 import static org.junit.platform.testkit.engine.EventConditions.test;
 
 // TODO: Split out tests to multiple classes, but do use EngineTestKit everywhere
+
 @WithLogRecordListener
 class CucumberTestEngineTest {
 
@@ -92,18 +101,6 @@ class CucumberTestEngineTest {
     @Test
     void version() {
         assertEquals(Optional.of("DEVELOPMENT"), engine.getVersion());
-    }
-
-    @Test
-    void createExecutionContext() {
-        // TODO: We don't need this test.
-        EngineExecutionListener listener = new EmptyEngineExecutionListener();
-        ConfigurationParameters configuration = new EmptyConfigurationParameters();
-        EngineDiscoveryRequest discoveryRequest = new EmptyEngineDiscoveryRequest(configuration);
-        UniqueId id = forEngine(engine.getId());
-        TestDescriptor testDescriptor = engine.discover(discoveryRequest, id);
-        ExecutionRequest execution = new ExecutionRequest(testDescriptor, listener, configuration);
-        assertNotNull(engine.createExecutionContext(execution));
     }
 
     @Test
@@ -404,19 +401,20 @@ class CucumberTestEngineTest {
                 .execute()
                 .allEvents()
                 .map(Event::getTestDescriptor)
-                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                .filter(PickleDescriptor.class::isInstance)
                 .map(TestDescriptor::getUniqueId)
                 .findAny()
-                .get();
+                .orElseThrow();
 
         UniqueId b = EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"))
                 .execute()
                 .allEvents()
                 .map(Event::getTestDescriptor)
-                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                .filter(PickleDescriptor.class::isInstance)
                 .map(TestDescriptor::getUniqueId)
-                .findAny().get();
+                .findAny()
+                .orElseThrow();
 
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectUniqueId(a), selectUniqueId(b))
@@ -443,9 +441,9 @@ class CucumberTestEngineTest {
 
         Set<String> pickleIdsFromFeature = results
                 .getEngineDescriptor().getChildren().stream()
-                .filter(CucumberTestDescriptor.FeatureDescriptor.class::isInstance)
-                .map(CucumberTestDescriptor.FeatureDescriptor.class::cast)
-                .map(CucumberTestDescriptor.FeatureDescriptor::getFeature)
+                .filter(FeatureDescriptor.class::isInstance)
+                .map(FeatureDescriptor.class::cast)
+                .map(FeatureDescriptor::getFeature)
                 .map(Feature::getPickles)
                 .flatMap(Collection::stream)
                 .map(Pickle::getId)
@@ -453,9 +451,9 @@ class CucumberTestEngineTest {
 
         Set<String> pickleIdsFromPickles = results
                 .getEngineDescriptor().getDescendants().stream()
-                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
-                .map(CucumberTestDescriptor.PickleDescriptor.class::cast)
-                .map(CucumberTestDescriptor.PickleDescriptor::getPickle)
+                .filter(PickleDescriptor.class::isInstance)
+                .map(PickleDescriptor.class::cast)
+                .map(PickleDescriptor::getPickle)
                 .map(Pickle::getId)
                 .collect(toSet());
 
@@ -640,7 +638,7 @@ class CucumberTestEngineTest {
                 .assertThatEvents()
                 .haveAtLeastOne(event(feature(), tags(emptySet())))
                 .haveAtLeastOne(
-                    event(scenario("scenario:5"), tags("FeatureTag", "ScenarioTag", "ResourceA", "ResourceAReadOnly")))
+                    event(scenario("scenario:5"), tags("FeatureTag", "ScenarioTag")))
                 .haveAtLeastOne(event(scenario("scenario:11"), tags(emptySet())))
                 .haveAtLeastOne(event(examples("examples:17"), tags(emptySet())))
                 .haveAtLeastOne(event(example("example:19"), tags("FeatureTag", "ScenarioOutlineTag", "Example1Tag")));
@@ -887,6 +885,26 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void supportsRandomOrder(LogRecordListener logRecordListener) {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, "random")
+                .discover();
+
+        LogRecord message = logRecordListener.getLogRecords()
+                .stream()
+                .filter(logRecord -> logRecord.getLoggerName()
+                        .equals(DefaultDescriptorOrderingStrategy.class.getCanonicalName()))
+                .findFirst()
+                .orElseThrow();
+
+        assertAll(
+            () -> assertThat(message.getLevel()).isEqualTo(Level.CONFIG),
+            () -> assertThat(message.getMessage())
+                    .matches(
+                        "Using generated seed for configuration parameter 'cucumber\\.execution\\.order\\.random\\.seed' with value '\\d+'."));
+    }
+
+    @Test
     void supportsRandomOrderWithSeed() {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, "random")
@@ -935,5 +953,83 @@ class CucumberTestEngineTest {
             assertThat(issue.source())
                     .contains(FileSource.from(new File("src/test/bad-features/parse-error.feature")));
         });
+    }
+
+    @Test
+    void supportsExclusiveResources() {
+        PickleDescriptor pickleDescriptor = EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceA" + READ_WRITE_SUFFIX,
+                    "resource-a")
+                .configurationParameter(EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + "ResourceAReadOnly" + READ_SUFFIX,
+                    "resource-a")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/resource.feature"))
+                .discover()
+                .getEngineDescriptor()
+                .getDescendants()
+                .stream()
+                .filter(PickleDescriptor.class::isInstance)
+                .map(PickleDescriptor.class::cast)
+                .findAny()
+                .orElseThrow();
+
+        assertThat(pickleDescriptor.getExclusiveResources())
+                .containsExactlyInAnyOrder(
+                    new ExclusiveResource("resource-a", ExclusiveResource.LockMode.READ_WRITE),
+                    new ExclusiveResource("resource-a", ExclusiveResource.LockMode.READ));
+
+    }
+
+    @Test
+    void supportsConcurrentExecutionOfFeatureElements() {
+        Set<Node> testDescriptors = EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(EXECUTION_MODE_FEATURE_PROPERTY_NAME, "concurrent")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"))
+                .discover()
+                .getEngineDescriptor()
+                .getDescendants()
+                .stream()
+                .filter(Node.class::isInstance)
+                .map(Node.class::cast)
+                .collect(toSet());
+
+        assertThat(testDescriptors)
+                .isNotEmpty()
+                .extracting(Node::getExecutionMode)
+                .containsOnly(CONCURRENT);
+    }
+
+    @Test
+    void supportsSameThreadExecutionOfFeatureElements() {
+        Set<? extends TestDescriptor> testDescriptors = EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(EXECUTION_MODE_FEATURE_PROPERTY_NAME, "same_thread")
+                .selectors(
+                    selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"))
+                .discover()
+                .getEngineDescriptor()
+                .getDescendants();
+
+        Set<? extends TestDescriptor> featureDescriptors = testDescriptors
+                .stream()
+                .filter(FeatureDescriptor.class::isInstance)
+                .collect(toSet());
+
+        assertThat(featureDescriptors)
+                .isNotEmpty()
+                .map(Node.class::cast)
+                .extracting(Node::getExecutionMode)
+                .containsOnly(CONCURRENT);
+
+        Set<? extends TestDescriptor> pickleDescriptors = testDescriptors
+                .stream()
+                .filter(testDescriptor -> !featureDescriptors.contains(testDescriptor))
+                .collect(toSet());
+
+        assertThat(pickleDescriptors)
+                .isNotEmpty()
+                .map(Node.class::cast)
+                .extracting(Node::getExecutionMode)
+                .containsOnly(SAME_THREAD);
     }
 }
