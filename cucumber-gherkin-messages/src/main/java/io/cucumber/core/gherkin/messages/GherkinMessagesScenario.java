@@ -3,6 +3,7 @@ package io.cucumber.core.gherkin.messages;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
+import java.net.URI;
 import java.util.Optional;
 
 final class GherkinMessagesScenario implements Node.Scenario {
@@ -18,6 +19,11 @@ final class GherkinMessagesScenario implements Node.Scenario {
     @Override
     public Optional<Node> getParent() {
         return Optional.of(parent);
+    }
+
+    @Override
+    public URI getUri() {
+        return parent.getUri();
     }
 
     @Override
