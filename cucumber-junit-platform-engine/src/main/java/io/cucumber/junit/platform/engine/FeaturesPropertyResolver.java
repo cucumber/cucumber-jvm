@@ -15,7 +15,6 @@ import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
-import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.forwarding;
 
 /**
  * Decorator to support resolving the
@@ -41,20 +40,21 @@ class FeaturesPropertyResolver {
         this.delegate = delegate;
     }
 
-    void resolveSelectors(EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor) {
+    void resolveSelectors(
+            EngineDiscoveryRequest request, CucumberEngineDescriptor engineDescriptor,
+            DiscoveryIssueReporter issueReporter
+    ) {
         ConfigurationParameters configuration = request.getConfigurationParameters();
         CucumberConfiguration options = new CucumberConfiguration(configuration);
         Set<FeatureWithLinesSelector> selectors = options.featuresWithLines();
 
         if (selectors.isEmpty()) {
-            delegate.resolveSelectors(request, engineDescriptor);
+            delegate.resolveSelectors(request, engineDescriptor, issueReporter);
             return;
         }
-        DiscoveryIssueReporter issueReporter = forwarding(request.getDiscoveryListener(),
-            engineDescriptor.getUniqueId());
         issueReporter.reportIssue(createCucumberFeaturesPropertyIsUsedIssue());
         EngineDiscoveryRequest replacement = new FeaturesPropertyDiscoveryRequest(request, selectors);
-        delegate.resolveSelectors(replacement, engineDescriptor);
+        delegate.resolveSelectors(replacement, engineDescriptor, issueReporter);
     }
 
     private static DiscoveryIssue createCucumberFeaturesPropertyIsUsedIssue() {

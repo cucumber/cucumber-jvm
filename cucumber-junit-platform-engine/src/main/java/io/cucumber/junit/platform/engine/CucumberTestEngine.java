@@ -9,12 +9,15 @@ import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorService;
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_PREFIX;
+import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.deduplicating;
+import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.forwarding;
 
 /**
  * The Cucumber {@link org.junit.platform.engine.TestEngine TestEngine}.
@@ -44,8 +47,14 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
         TestSource testSource = createEngineTestSource(discoveryRequest);
         CucumberConfiguration configuration = new CucumberConfiguration(discoveryRequest.getConfigurationParameters());
         CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, configuration, testSource);
+
+        DiscoveryIssueReporter issueReporter = deduplicating(forwarding( //
+            discoveryRequest.getDiscoveryListener(), //
+            engineDescriptor.getUniqueId() //
+        ));
+
         FeaturesPropertyResolver resolver = new FeaturesPropertyResolver(new DiscoverySelectorResolver());
-        resolver.resolveSelectors(discoveryRequest, engineDescriptor);
+        resolver.resolveSelectors(discoveryRequest, engineDescriptor, issueReporter);
         return engineDescriptor;
     }
 

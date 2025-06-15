@@ -4,14 +4,18 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDe
 import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource.LockMode;
 import org.junit.platform.engine.support.hierarchical.Node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,18 +28,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
 
+// TODO: Move to CucumberTestEngineTest
 class FeatureResolverTest {
 
     private final String featurePath = "io/cucumber/junit/platform/engine/scenario-outline.feature";
     private final UniqueId id = UniqueId.forEngine(new CucumberTestEngine().getId());
     private ConfigurationParameters configurationParameters = new EmptyConfigurationParameters();
+    private final List<DiscoveryIssue> issues = new ArrayList<>();
 
     private TestDescriptor getFeature() {
         CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(id,
             new CucumberConfiguration(configurationParameters));
         DiscoverySelectorResolver resolver = new DiscoverySelectorResolver();
         SelectorRequest request = new SelectorRequest(configurationParameters, selectClasspathResource(featurePath));
-        resolver.resolveSelectors(request, engineDescriptor);
+        DiscoveryIssueReporter issueReporter = DiscoveryIssueReporter.collecting(issues);
+        resolver.resolveSelectors(request, engineDescriptor, issueReporter);
         Set<? extends TestDescriptor> features = engineDescriptor.getChildren();
         return features.iterator().next();
     }

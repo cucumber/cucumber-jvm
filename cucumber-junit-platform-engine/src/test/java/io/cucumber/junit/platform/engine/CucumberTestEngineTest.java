@@ -1,11 +1,14 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.gherkin.Pickle;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.support.Resource;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoveryIssue;
+import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
@@ -25,11 +28,11 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME;
@@ -53,6 +56,7 @@ import static io.cucumber.junit.platform.engine.CucumberEventConditions.tags;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -379,37 +383,94 @@ class CucumberTestEngineTest {
     }
 
     static Set<UniqueId> supportsUniqueIdSelectorFromClasspathUri() {
-        return EngineTestKit.engine(ENGINE_ID)
-                .selectors(selectPackage("io.cucumber.junit.platform.engine"))
-                .execute()
-                .allEvents()
-                .map(Event::getTestDescriptor)
-                .filter(Predicate.not(TestDescriptor::isRoot))
-                .map(TestDescriptor::getUniqueId)
-                .collect(Collectors.toSet());
+        return discoverUniqueIds(selectPackage("io.cucumber.junit.platform.engine"));
+
     }
 
     static Set<UniqueId> supportsUniqueIdSelectorFromFileUri() {
-        return EngineTestKit.engine(ENGINE_ID)
-                .selectors(selectDirectory("src/test/resources/io/cucumber/junit/platform/engine"))
-                .execute()
-                .allEvents()
-                .map(Event::getTestDescriptor)
-                .filter(Predicate.not(TestDescriptor::isRoot))
-                .map(TestDescriptor::getUniqueId)
-                .collect(Collectors.toSet());
+        return discoverUniqueIds(selectDirectory("src/test/resources/io/cucumber/junit/platform/engine"));
+
     }
 
     static Set<UniqueId> supportsUniqueIdSelectorFromJarFileUri() {
         URI uri = new File("src/test/resources/feature.jar").toURI();
+        return discoverUniqueIds(selectUri(uri));
+    }
+
+    @Test
+    void supportsUniqueIdSelectorWithMultipleSelectors() {
+        UniqueId a = EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/scenario-outline.feature"))
+                .execute()
+                .allEvents()
+                .map(Event::getTestDescriptor)
+                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                .map(TestDescriptor::getUniqueId)
+                .findAny()
+                .get();
+
+        UniqueId b = EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .allEvents()
+                .map(Event::getTestDescriptor)
+                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                .map(TestDescriptor::getUniqueId)
+                .findAny().get();
+
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectUniqueId(a), selectUniqueId(b))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveAtLeastOne(event(prefix(a), finishedSuccessfully()))
+                .haveAtLeastOne(event(prefix(b), finishedSuccessfully()));
+    }
+
+    @Test
+    void supportsUniqueIdSelectorCachesParsedFeaturesAndPickles() {
+        DiscoverySelector featureSelector = selectClasspathResource(
+            "io/cucumber/junit/platform/engine/scenario-outline.feature");
+        DiscoverySelector[] uniqueIdsFromFeature = discoverUniqueIds(featureSelector)
+                .stream()
+                .map(DiscoverySelectors::selectUniqueId)
+                .toArray(DiscoverySelector[]::new);
+
+        EngineDiscoveryResults results = EngineTestKit.engine(ENGINE_ID)
+                .selectors(featureSelector)
+                .selectors(uniqueIdsFromFeature)
+                .discover();
+
+        Set<String> pickleIdsFromFeature = results
+                .getEngineDescriptor().getChildren().stream()
+                .filter(CucumberTestDescriptor.FeatureDescriptor.class::isInstance)
+                .map(CucumberTestDescriptor.FeatureDescriptor.class::cast)
+                .map(CucumberTestDescriptor.FeatureDescriptor::getFeature)
+                .map(Feature::getPickles)
+                .flatMap(Collection::stream)
+                .map(Pickle::getId)
+                .collect(toSet());
+
+        Set<String> pickleIdsFromPickles = results
+                .getEngineDescriptor().getDescendants().stream()
+                .filter(CucumberTestDescriptor.PickleDescriptor.class::isInstance)
+                .map(CucumberTestDescriptor.PickleDescriptor.class::cast)
+                .map(CucumberTestDescriptor.PickleDescriptor::getPickle)
+                .map(Pickle::getId)
+                .collect(toSet());
+
+        assertEquals(pickleIdsFromFeature, pickleIdsFromPickles);
+    }
+
+    private static Set<UniqueId> discoverUniqueIds(DiscoverySelector discoverySelector) {
         return EngineTestKit.engine(ENGINE_ID)
-                .selectors(selectUri(uri))
+                .selectors(discoverySelector)
                 .execute()
                 .allEvents()
                 .map(Event::getTestDescriptor)
                 .filter(Predicate.not(TestDescriptor::isRoot))
                 .map(TestDescriptor::getUniqueId)
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 
     @Test
