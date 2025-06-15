@@ -36,7 +36,9 @@ import static java.util.Collections.singletonList;
 @API(status = API.Status.EXPERIMENTAL)
 public interface Node {
 
-    URI getUri();
+    default URI getUri() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    };
 
     Location getLocation();
 
