@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.23.1-SNAPSHOT</version>
+        <version>7.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -14,7 +14,7 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <jackson.version>2.19.0</jackson.version>
+        <jackson.version>2.19.1</jackson.version>
         <jsoup.version>1.20.1</jsoup.version>
         <junit-jupiter.version>5.13.1</junit-jupiter.version>
         <xmlunit.version>2.10.2</xmlunit.version>
