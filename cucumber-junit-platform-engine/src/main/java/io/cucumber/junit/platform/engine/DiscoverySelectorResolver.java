@@ -1,7 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
 import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
 
@@ -20,7 +19,6 @@ class DiscoverySelectorResolver {
                     context.getDiscoveryRequest().getConfigurationParameters() //
                 )
             )
-            .addTestDescriptorVisitor(context -> TestDescriptor::prune)
             .build();
     // @formatter:on
 

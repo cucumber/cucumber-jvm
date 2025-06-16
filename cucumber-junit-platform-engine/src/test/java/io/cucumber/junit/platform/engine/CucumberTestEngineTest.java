@@ -223,7 +223,7 @@ class CucumberTestEngineTest {
                 .getDiscoveryIssues() //
                 .get(0) //
                 .cause() //
-                .get();
+                .orElseThrow();
 
         assertThat(exception) //
                 .isInstanceOf(IllegalArgumentException.class) //
@@ -982,7 +982,7 @@ class CucumberTestEngineTest {
 
     @Test
     void supportsConcurrentExecutionOfFeatureElements() {
-        Set<Node> testDescriptors = EngineTestKit.engine(ENGINE_ID)
+        Set<Node<?>> testDescriptors = EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(EXECUTION_MODE_FEATURE_PROPERTY_NAME, "concurrent")
                 .selectors(
                     selectClasspathResource("io/cucumber/junit/platform/engine/single.feature"))
@@ -991,7 +991,7 @@ class CucumberTestEngineTest {
                 .getDescendants()
                 .stream()
                 .filter(Node.class::isInstance)
-                .map(Node.class::cast)
+                .map(testDescriptor -> (Node<?>)testDescriptor)
                 .collect(toSet());
 
         assertThat(testDescriptors)
