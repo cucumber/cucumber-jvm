@@ -2,6 +2,7 @@ package io.cucumber.plugin.event;
 
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NodeTest {
 
     private final Node.Example example1 = new Node.Example() {
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
         @Override
         public Location getLocation() {
             return null;
@@ -41,6 +47,11 @@ class NodeTest {
 
     private final Node.Example example2 = new Node.Example() {
         @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
         public Location getLocation() {
             return null;
         }
@@ -66,6 +77,11 @@ class NodeTest {
         }
     };
     private final Node.Example example3 = new Node.Example() {
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
         @Override
         public Location getLocation() {
             return null;
@@ -93,6 +109,11 @@ class NodeTest {
     };
 
     private final Node.Example example4 = new Node.Example() {
+        @Override
+        public URI getUri() {
+            return null;
+        }
+
         @Override
         public Location getLocation() {
             return null;
@@ -123,6 +144,11 @@ class NodeTest {
         @Override
         public Collection<Example> elements() {
             return asList(example1, example2);
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
         }
 
         @Override
@@ -158,6 +184,11 @@ class NodeTest {
         }
 
         @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
         public Location getLocation() {
             return null;
         }
@@ -187,6 +218,11 @@ class NodeTest {
         @Override
         public Collection<Example> elements() {
             return Collections.emptyList();
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
         }
 
         @Override
@@ -222,6 +258,11 @@ class NodeTest {
         }
 
         @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
         public Location getLocation() {
             return null;
         }
@@ -254,6 +295,11 @@ class NodeTest {
         }
 
         @Override
+        public URI getUri() {
+            return null;
+        }
+
+        @Override
         public Location getLocation() {
             return null;
         }
@@ -283,6 +329,11 @@ class NodeTest {
         @Override
         public Collection<Examples> elements() {
             return asList(emptyExamplesA, emptyExamplesB);
+        }
+
+        @Override
+        public URI getUri() {
+            return null;
         }
 
         @Override

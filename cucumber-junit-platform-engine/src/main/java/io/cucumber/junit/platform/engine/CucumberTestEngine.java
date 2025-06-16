@@ -9,13 +9,15 @@ import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorService;
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_PREFIX;
-import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
+import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.deduplicating;
+import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.forwarding;
 
 /**
  * The Cucumber {@link org.junit.platform.engine.TestEngine TestEngine}.
@@ -43,8 +45,16 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
         TestSource testSource = createEngineTestSource(discoveryRequest);
-        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, testSource);
-        new DiscoverySelectorResolver().resolveSelectors(discoveryRequest, engineDescriptor);
+        CucumberConfiguration configuration = new CucumberConfiguration(discoveryRequest.getConfigurationParameters());
+        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, configuration, testSource);
+
+        DiscoveryIssueReporter issueReporter = deduplicating(forwarding( //
+            discoveryRequest.getDiscoveryListener(), //
+            engineDescriptor.getUniqueId() //
+        ));
+
+        FeaturesPropertyResolver resolver = new FeaturesPropertyResolver(new DiscoverySelectorResolver());
+        resolver.resolveSelectors(discoveryRequest, engineDescriptor, issueReporter);
         return engineDescriptor;
     }
 
@@ -63,17 +73,23 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
     @Override
     protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {
-        ConfigurationParameters config = request.getConfigurationParameters();
-        if (config.getBoolean(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME).orElse(false)) {
+        CucumberConfiguration configuration = getCucumberConfiguration(request);
+        if (configuration.isParallelExecutionEnabled()) {
             return new ForkJoinPoolHierarchicalTestExecutorService(
-                new PrefixedConfigurationParameters(config, PARALLEL_CONFIG_PREFIX));
+                new PrefixedConfigurationParameters(request.getConfigurationParameters(), PARALLEL_CONFIG_PREFIX));
         }
         return super.createExecutorService(request);
     }
 
     @Override
     protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
+        CucumberConfiguration configuration = getCucumberConfiguration(request);
+        return new CucumberEngineExecutionContext(configuration);
+    }
+
+    private CucumberConfiguration getCucumberConfiguration(ExecutionRequest request) {
+        CucumberEngineDescriptor engineDescriptor = (CucumberEngineDescriptor) request.getRootTestDescriptor();
+        return engineDescriptor.getConfiguration();
     }
 
 }

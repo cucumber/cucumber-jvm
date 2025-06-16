@@ -32,11 +32,15 @@ public class FeatureIdentifier {
     }
 
     public static boolean isFeature(URI featureIdentifier) {
-        return featureIdentifier.getSchemeSpecificPart().endsWith(FEATURE_FILE_SUFFIX);
+        return isFeature(featureIdentifier.getSchemeSpecificPart());
     }
 
     public static boolean isFeature(Path path) {
-        return path.getFileName().toString().endsWith(FEATURE_FILE_SUFFIX);
+        return isFeature(path.getFileName().toString());
+    }
+
+    public static boolean isFeature(String fileName) {
+        return fileName.endsWith(FEATURE_FILE_SUFFIX);
     }
 
 }

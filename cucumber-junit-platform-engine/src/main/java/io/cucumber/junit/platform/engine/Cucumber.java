@@ -24,7 +24,9 @@ import java.lang.annotation.Target;
  * <p>
  * 
  * @deprecated Please use the JUnit Platform Suite to run Cucumber in
- *             combination with Surefire or Gradle. E.g: <code><pre>{@code
+ *             combination with Surefire or Gradle. E.g:
+ * 
+ *             <pre>{@code
  *package com.example;
  *
  *import org.junit.platform.suite.api.ConfigurationParameter;
@@ -33,15 +35,15 @@ import java.lang.annotation.Target;
  *
  *import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
  *
- *&#64;Suite
- *&#64;SelectPackages("com.example")
- *&#64;ConfigurationParameter(
- *   key = GLUE_PROPERTY_NAME,
- *   value = "com.example"
- *)
- *public class RunCucumberTest {
- *}
- *}</pre></code>
+ *             @Suite
+ *             @SelectPackages("com.example")
+ *             @ConfigurationParameter(
+ *             key = GLUE_PROPERTY_NAME,
+ *             value = "com.example")
+ *             public class RunCucumberTest {
+ *             }
+ * }</pre>
+ * 
  * @see        CucumberTestEngine
  */
 @API(status = Status.DEPRECATED)

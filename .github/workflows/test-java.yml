@@ -33,8 +33,6 @@ jobs:
         run: ./mvnw install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -D"archetype.test.skip=true" -D"maven.javadoc.skip=true" --batch-mode -D"style.color=always" --show-version
       - name: Test
         run: ./mvnw verify -Pinclude-extra-modules -D"style.color=always"
-        env:
-          CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
   javadoc:
     name: 'Javadoc'
