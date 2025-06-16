@@ -24,7 +24,6 @@ import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
-import org.junit.platform.engine.discovery.DirectorySelector;
 import org.junit.platform.engine.discovery.FileSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
 import org.junit.platform.engine.discovery.UriSelector;
@@ -41,6 +40,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElement;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementAt;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementsOf;
@@ -130,8 +130,7 @@ final class FeatureResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(FileSelector selector, Context context) {
-        Set<DiscoverySelector> selectors = featureScanner
-                .scanForResourcesPath(selector.getPath())
+        Set<DiscoverySelector> selectors = featureParser.parseResource(selector.getPath())
                 .stream()
                 .map(feature -> selector.getPosition()
                         .map(position -> selectElementAt(feature, position))
@@ -142,12 +141,10 @@ final class FeatureResolver implements SelectorResolver {
         return toResolution(selectors);
     }
 
-    private final IsFeature isFeature = new IsFeature();
-
     @Override
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
         Set<Resource> resources = selector.getClasspathResources();
-        if (!resources.stream().allMatch(isFeature)) {
+        if (!resources.stream().allMatch(resource -> isFeature(resource.getName()))) {
             return resolveClasspathResourceSelectorAsPackageSelector(selector);
         }
         if (resources.size() > 1) {
@@ -201,16 +198,6 @@ final class FeatureResolver implements SelectorResolver {
     public Resolution resolve(UriSelector selector, Context context) {
         URI uri = selector.getUri();
         Set<DiscoverySelector> selectors = singleton(FeatureWithLinesSelector.from(uri));
-        return toResolution(selectors);
-    }
-
-    @Override
-    public Resolution resolve(DirectorySelector selector, Context context) {
-        Set<DiscoverySelector> selectors = featureScanner
-                .scanForResourcesPath(selector.getPath())
-                .stream()
-                .map(FeatureElementSelector::selectFeature)
-                .collect(toSet());
         return toResolution(selectors);
     }
 

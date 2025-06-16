@@ -991,7 +991,7 @@ class CucumberTestEngineTest {
                 .getDescendants()
                 .stream()
                 .filter(Node.class::isInstance)
-                .map(testDescriptor -> (Node<?>)testDescriptor)
+                .map(testDescriptor -> (Node<?>) testDescriptor)
                 .collect(toSet());
 
         assertThat(testDescriptors)

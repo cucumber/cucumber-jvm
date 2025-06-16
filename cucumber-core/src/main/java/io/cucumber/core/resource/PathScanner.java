@@ -2,6 +2,7 @@ package io.cucumber.core.resource;
 
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import org.apiguardian.api.API;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,8 +21,10 @@ import java.util.function.Predicate;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.walkFileTree;
+import static org.apiguardian.api.API.Status.INTERNAL;
 
-class PathScanner {
+@API(status = INTERNAL)
+public class PathScanner {
 
     private static final Logger log = LoggerFactory.getLogger(PathScanner.class);
 
@@ -48,10 +51,14 @@ class PathScanner {
         if (!exists(path)) {
             throw new IllegalArgumentException("path must exist: " + path);
         }
+        findResourcesForPath(path, filter, consumer.apply(path));
+    }
 
+    public void findResourcesForPath(Path path, Predicate<Path> filter, Consumer<Path> consumer) {
         try {
-            walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
-                new ResourceFileVisitor(filter, consumer.apply(path)));
+            EnumSet<FileVisitOption> options = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
+            ResourceFileVisitor visitor = new ResourceFileVisitor(filter, consumer);
+            walkFileTree(path, options, Integer.MAX_VALUE, visitor);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

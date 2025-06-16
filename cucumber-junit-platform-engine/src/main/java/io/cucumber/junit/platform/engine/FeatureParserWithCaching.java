@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +25,10 @@ class FeatureParserWithCaching {
 
     Optional<Feature> parseResource(Resource resource) {
         return cache.computeIfAbsent(resource.getUri(), uri -> delegate.parseResource(resource));
+    }
+
+    Optional<Feature> parseResource(Path resource) {
+        return parseResource(new PathAdapter(resource));
     }
 
     Optional<Feature> parseResource(org.junit.platform.commons.support.Resource resource) {
@@ -52,4 +58,23 @@ class FeatureParserWithCaching {
             return resource.getInputStream();
         }
     }
+
+    private static class PathAdapter implements Resource {
+        private final Path resource;
+
+        public PathAdapter(Path resource) {
+            this.resource = resource;
+        }
+
+        @Override
+        public URI getUri() {
+            return resource.toUri();
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            return Files.newInputStream(resource);
+        }
+    }
+
 }
