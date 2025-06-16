@@ -12,7 +12,7 @@ class DiscoverySelectorResolver {
     private static final EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
             .<CucumberEngineDescriptor> builder()
             .addSelectorResolver(context -> new FileContainerSelectorResolver( //
-                    FeatureIdentifier::isFeature //
+                FeatureIdentifier::isFeature //
             ))
             .addResourceContainerSelectorResolver(resource -> isFeature(resource.getName()))
             .addSelectorResolver(context -> new FeatureResolver(
