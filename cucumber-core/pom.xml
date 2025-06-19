@@ -21,7 +21,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
         <mockito.version>5.18.0</mockito.version>
-        <vertx.version>4.5.15</vertx.version>
+        <vertx.version>4.5.16</vertx.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
     </properties>
 
