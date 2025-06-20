@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [JUnit Platform Engine] Log discovery issues for feature files with parse errors. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 
+### Deprecated
+- [JUnit] Deprecate `cucumber-junit` in favour of `cucumber-junit-platform-engine` ([#2835](https://github.com/cucumber/cucumber-jvm/pull/3016) M.P. Korstanje)
 
 ## [7.23.0] - 2025-05-29
 ### Added

@@ -84,8 +84,11 @@ import static java.util.stream.Collectors.toList;
  * commandline, IntelliJ IDEA or Cucumber-Eclipse. Instead it is recommended to
  * use Cucumbers `Before` and `After` hooks.
  *
- * @see CucumberOptions
+ * @see        CucumberOptions
+ * @deprecated JUnit 4 is in maintenance mode. Upgrade to JUnit 5 and switch to
+ *             the {@code cucumber-junit-platform-engine}.
  */
+@Deprecated
 @API(status = API.Status.STABLE)
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 
