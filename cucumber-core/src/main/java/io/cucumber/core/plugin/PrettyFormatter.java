@@ -1,8 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.DataTableArgument;
-import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.docstring.DocString;
@@ -29,8 +27,6 @@ import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.WriteEvent;
 import io.cucumber.query.Lineage;
 import io.cucumber.query.Query;
@@ -48,11 +44,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static io.cucumber.core.plugin.Formats.ansi;
 import static io.cucumber.core.plugin.Formats.monochrome;
-import static java.lang.Math.max;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -134,18 +128,12 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                 .flatMap(Lineage::scenario)
                 .ifPresent(scenario -> {
                     query.findPickleBy(event).ifPresent(pickle -> {
-                        int longestLine = calculateScenarioLineLength(pickle, scenario);
-
-                        List<Step> steps = scenario.getSteps();
-                        List<PickleStep> pickleSteps = pickle.getSteps();
-
-                        int stepSize = pickleSteps.size();
-                        for (int i = 0; i < stepSize; i++) {
-                            Step step = steps.get(i);
-                            PickleStep pickleStep = pickleSteps.get(i);
-                            longestLine = Math.max(longestLine, calculateStepLineLength(step, pickleStep));
-                        }
-
+                        int scenarioLineLength = calculateScenarioLineLength(pickle, scenario);
+                        int longestLine = pickle.getSteps().stream()
+                                .mapToInt(pickleStep -> query.findStepBy(pickleStep)
+                                        .map(step -> calculateStepLineLength(step, pickleStep))
+                                        .orElse(0))
+                                .reduce(scenarioLineLength, Math::max);
                         commentStartIndexByTestCaseId.put(event.getTestCaseId(), longestLine + 1);
                     });
                 });
@@ -154,8 +142,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private static int calculateStepLineLength(Step step, PickleStep pickleStep) {
         String keyword = step.getKeyword();
         String text = pickleStep.getText();
-        // The ": " add 2
-        return STEP_INDENT.length() + keyword.length() + text.length() + 2;
+        return STEP_INDENT.length() + keyword.length() + text.length();
     }
 
     private static int calculateScenarioLineLength(Pickle pickle, Scenario scenario) {
@@ -217,7 +204,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                         .map(StepMatchArgumentsList::getStepMatchArguments).flatMap(Collection::stream)
                         .collect(toList()))
                 .orElseGet(Collections::emptyList);// TODO: Create separate _arg
-                                                   // map
+        // map
 
         String formattedStepText = STEP_INDENT + formatStepText(keyword, stepText, formats.get(status),
             formats.get(status + "_arg"), stepMatchArgumentsLists);
@@ -353,11 +340,6 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private String formatPlainStep(String keyword, String stepText) {
         return STEP_INDENT + keyword + stepText;
     }
-    //
-    // private String
-    // formatScenarioDefinition(io.cucumber.messages.types.TestCase testCase) {
-    // return testCase.getKeyword() + ": " + testCase.getName();
-    // }
 
     static URI relativize(String uri) {
         return relativize(URI.create(uri));

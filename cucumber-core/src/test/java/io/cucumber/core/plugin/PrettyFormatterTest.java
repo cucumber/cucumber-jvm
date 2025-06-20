@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.backend.SourceReference;
-import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.StubHookDefinition;
 import io.cucumber.core.backend.StubStaticHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
@@ -13,16 +12,12 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.core.stepexpression.StepExpression;
-import io.cucumber.core.stepexpression.StepExpressionFactory;
-import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Clock;
-import java.util.Locale;
 import java.util.UUID;
 
 import static io.cucumber.core.plugin.AnsiEscapes.GREEN;
@@ -32,19 +27,16 @@ import static io.cucumber.core.plugin.AnsiEscapes.RED;
 import static io.cucumber.core.plugin.AnsiEscapes.RESET;
 import static io.cucumber.core.plugin.AnsiEscapes.YELLOW;
 import static io.cucumber.core.plugin.Bytes.bytes;
-import static io.cucumber.core.plugin.Formats.ansi;
 import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgumentsReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoArgumentsReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
-import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PrettyFormatterTest {
@@ -605,14 +597,14 @@ class PrettyFormatterTest {
 
         assertThat(out, bytes(equalCompressingLineSeparators(
             "" +
-                    "Scenario: scenario name                        " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                    "Scenario: scenario name                      " + GREY + "# path/test.feature:2" + RESET + "\n" +
                     "  " + GREEN + "Given " + RESET +
                     GREEN + "around " + RESET +
                     GREEN + INTENSITY_BOLD + "31" + RESET +
                     GREEN + " cucumbers and " + RESET +
                     GREEN + INTENSITY_BOLD + "41" + RESET +
                     GREEN + " zucchinis" + RESET +
-                    "   " +
+                    " " +
                     GREY
                     + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoArguments(java.lang.Integer,java.lang.Integer)"
                     + RESET + "\n")));
@@ -636,11 +628,11 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "Scenario: scenario name                             " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                "Scenario: scenario name                           " + GREY + "# path/test.feature:2" + RESET + "\n" +
                 "  " + GREEN + "Given " + RESET +
                 GREEN + "the order is placed" + RESET +
                 GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET +
-                "   " +
+                " " +
                 GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgument(java.lang.String)" + RESET
                 + "\n")));
     }
@@ -663,11 +655,11 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "Scenario: scenario name                             " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                "Scenario: scenario name                           " + GREY + "# path/test.feature:2" + RESET + "\n" +
                 "  " + GREEN + "Given " + RESET +
                 GREEN + "the order is placed" + RESET +
                 GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET +
-                "   " +
+                " " +
                 GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgument(java.lang.String)" + RESET
                 + "\n")));
     }
