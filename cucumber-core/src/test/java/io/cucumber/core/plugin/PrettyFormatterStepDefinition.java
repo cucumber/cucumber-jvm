@@ -18,16 +18,17 @@ class PrettyFormatterStepDefinition {
     public void two() {
 
     }
+
     public void three() {
-        
+
     }
 
-    public void oneArgument(String a){
-        
+    public void oneArgument(String a) {
+
     }
 
-    public void twoArguments(Integer a, Integer b){
-        
+    public void twoArguments(Integer a, Integer b) {
+
     }
 
     static SourceReference oneReference() {
@@ -41,6 +42,7 @@ class PrettyFormatterStepDefinition {
     static SourceReference threeReference() {
         return getSourceReference("three");
     }
+
     static SourceReference twoArgumentsReference() {
         return getSourceReference("twoArguments", Integer.class, Integer.class);
     }

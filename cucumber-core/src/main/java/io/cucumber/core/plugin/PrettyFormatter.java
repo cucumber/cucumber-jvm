@@ -85,7 +85,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(Envelope.class, event -> {
             query.update(event);
-            event.getStepDefinition().ifPresent(stepDefinition -> stepDefinitionsById.put(stepDefinition.getId(), stepDefinition));
+            event.getStepDefinition()
+                    .ifPresent(stepDefinition -> stepDefinitionsById.put(stepDefinition.getId(), stepDefinition));
             event.getTestCaseStarted().ifPresent(this::handleTestCaseStarted);
             event.getTestStepFinished().ifPresent(this::handleTestStepFinished);
             event.getTestRunFinished().ifPresent(this::handleTestRunFinished);
@@ -183,7 +184,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                                 String definitionText = formatScenarioDefinition(scenario, pickle);
                                 String path = relativize(pickle.getUri()).getSchemeSpecificPart();
                                 String locationIndent = calculateLocationIndent(event.getTestCaseId(), definitionText);
-                                String pathWithLine = query.findLocationOf(pickle).map(Location::getLine).map(line -> path + ":" + line).orElse(path);
+                                String pathWithLine = query.findLocationOf(pickle).map(Location::getLine)
+                                        .map(line -> path + ":" + line).orElse(path);
                                 out.println(definitionText + locationIndent + formatLocation(pathWithLine));
                             });
                 });
@@ -211,20 +213,25 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         // TODO: Use proper enum map.
         String status = event.getTestStepResult().getStatus().toString().toLowerCase(ROOT);
         List<StepMatchArgument> stepMatchArgumentsLists = testStep.getStepMatchArgumentsLists()
-                .map(stepMatchArgumentsLists1 -> stepMatchArgumentsLists1.stream().map(StepMatchArgumentsList::getStepMatchArguments).flatMap(Collection::stream).collect(toList()))
-                .orElseGet(Collections::emptyList);// TODO: Create separate _arg map
+                .map(stepMatchArgumentsLists1 -> stepMatchArgumentsLists1.stream()
+                        .map(StepMatchArgumentsList::getStepMatchArguments).flatMap(Collection::stream)
+                        .collect(toList()))
+                .orElseGet(Collections::emptyList);// TODO: Create separate _arg
+                                                   // map
 
-        String formattedStepText = STEP_INDENT + formatStepText(keyword, stepText, formats.get(status), formats.get(status + "_arg"), stepMatchArgumentsLists);
+        String formattedStepText = STEP_INDENT + formatStepText(keyword, stepText, formats.get(status),
+            formats.get(status + "_arg"), stepMatchArgumentsLists);
         String locationComment = formatLocationComment(event, testStep, keyword, stepText);
         out.println(formattedStepText + locationComment);
     }
-    
+
     private void printArgument(PickleStep pickleStep) {
         pickleStep.getArgument().ifPresent(pickleStepArgument -> {
-            
+
             pickleStepArgument.getDataTable().ifPresent(pickleTable -> {
                 List<List<String>> cells = pickleTable.getRows().stream()
-                        .map(pickleTableRow -> pickleTableRow.getCells().stream().map(PickleTableCell::getValue).collect(toList()))
+                        .map(pickleTableRow -> pickleTableRow.getCells().stream().map(PickleTableCell::getValue)
+                                .collect(toList()))
                         .collect(toList());
                 DataTableFormatter tableFormatter = DataTableFormatter.builder()
                         .prefixRow(STEP_SCENARIO_INDENT)
@@ -242,7 +249,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                         .builder()
                         .indentation(STEP_SCENARIO_INDENT)
                         .build();
-                DocString docString = DocString.create(pickleDocString.getContent(), pickleDocString.getMediaType().orElse(null));
+                DocString docString = DocString.create(pickleDocString.getContent(),
+                    pickleDocString.getMediaType().orElse(null));
                 try {
                     docStringFormatter.formatTo(docString, out);
                 } catch (IOException e) {
@@ -264,7 +272,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                 })
                 .flatMap(PrettyFormatter::formatSourceReference)
                 .map(codeLocation -> query.findTestCaseBy(event).map(testCase -> {
-                    String locationIndent = calculateLocationIndent(testCase.getId(), formatPlainStep(keyword, stepText));
+                    String locationIndent = calculateLocationIndent(testCase.getId(),
+                        formatPlainStep(keyword, stepText));
                     return locationIndent + formatLocation(codeLocation);
 
                 }).orElse("")).orElse("");
@@ -286,15 +295,15 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         String location = sourceReference.getLocation().map(Location::getLine).map(line -> ":" + line).orElse("");
         return sourceReference.getJavaStackTraceElement()
                 .map(javaStackTraceElement -> String.format("%s.%s(%s%s)",
-                        javaStackTraceElement.getClassName(),
-                        javaStackTraceElement.getMethodName(),
-                        javaStackTraceElement.getFileName(),
-                        location
-                ));
+                    javaStackTraceElement.getClassName(),
+                    javaStackTraceElement.getMethodName(),
+                    javaStackTraceElement.getFileName(),
+                    location));
     }
 
     private static String formatJavaMethod(JavaMethod javaMethod) {
-        return javaMethod.getClassName() + "." + javaMethod.getMethodName() + "(" + javaMethod.getMethodParameterTypes().stream().collect(joining(",")) + ")";
+        return javaMethod.getClassName() + "." + javaMethod.getMethodName() + "("
+                + javaMethod.getMethodParameterTypes().stream().collect(joining(",")) + ")";
     }
 
     private void printError(io.cucumber.messages.types.TestStepFinished event) {
@@ -344,10 +353,11 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private String formatPlainStep(String keyword, String stepText) {
         return STEP_INDENT + keyword + stepText;
     }
-//
-//    private String formatScenarioDefinition(io.cucumber.messages.types.TestCase testCase) {
-//        return testCase.getKeyword() + ": " + testCase.getName();
-//    }
+    //
+    // private String
+    // formatScenarioDefinition(io.cucumber.messages.types.TestCase testCase) {
+    // return testCase.getKeyword() + ": " + testCase.getName();
+    // }
 
     static URI relativize(String uri) {
         return relativize(URI.create(uri));
