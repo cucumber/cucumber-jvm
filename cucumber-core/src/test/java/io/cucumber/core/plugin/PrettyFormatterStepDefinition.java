@@ -22,6 +22,14 @@ class PrettyFormatterStepDefinition {
         
     }
 
+    public void oneArgument(String a){
+        
+    }
+
+    public void twoArguments(Integer a, Integer b){
+        
+    }
+
     static SourceReference oneReference() {
         return getSourceReference("one");
     }
@@ -33,10 +41,17 @@ class PrettyFormatterStepDefinition {
     static SourceReference threeReference() {
         return getSourceReference("three");
     }
+    static SourceReference twoArgumentsReference() {
+        return getSourceReference("twoArguments", Integer.class, Integer.class);
+    }
 
-    private static SourceReference getSourceReference(String methodName) {
+    static SourceReference oneArgumentsReference() {
+        return getSourceReference("oneArgument", String.class);
+    }
+
+    private static SourceReference getSourceReference(String methodName, Class<?>... p) {
         try {
-            Method method = PrettyFormatterStepDefinition.class.getMethod(methodName);
+            Method method = PrettyFormatterStepDefinition.class.getMethod(methodName, p);
             return SourceReference.fromMethod(method);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);

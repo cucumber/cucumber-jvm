@@ -34,7 +34,9 @@ import static io.cucumber.core.plugin.AnsiEscapes.YELLOW;
 import static io.cucumber.core.plugin.Bytes.bytes;
 import static io.cucumber.core.plugin.Formats.ansi;
 import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
+import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgumentsReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
+import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoArgumentsReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
 import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static java.util.Arrays.asList;
@@ -64,9 +66,9 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference()),
-                    new StubStepDefinition("second step", twoReference()),
-                    new StubStepDefinition("third step", PrettyFormatterStepDefinition.threeReference())))
+                        new StubStepDefinition("first step", oneReference()),
+                        new StubStepDefinition("second step", twoReference()),
+                        new StubStepDefinition("third step", PrettyFormatterStepDefinition.threeReference())))
                 .build()
                 .run();
 
@@ -191,7 +193,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", twoReference(), DataTable.class)))
+                        new StubStepDefinition("first step", twoReference(), DataTable.class)))
                 .build()
                 .run();
 
@@ -258,7 +260,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference(), DataTable.class)))
+                        new StubStepDefinition("first step", oneReference(), DataTable.class)))
                 .build()
                 .run();
 
@@ -292,8 +294,8 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference(), DataTable.class),
-                    new StubStepDefinition("second step", twoReference(), DataTable.class)))
+                        new StubStepDefinition("first step", oneReference(), DataTable.class),
+                        new StubStepDefinition("second step", twoReference(), DataTable.class)))
                 .build()
                 .run();
 
@@ -324,10 +326,10 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference(),
-                        new StubException("the exception message")
-                                .withClassName()
-                                .withStacktrace("the stack trace"))))
+                        new StubStepDefinition("first step", oneReference(),
+                                new StubException("the exception message")
+                                        .withClassName()
+                                        .withStacktrace("the stack trace"))))
                 .build()
                 .run();
 
@@ -352,10 +354,10 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference(),
-                        new StubException("the exception message")
-                                .withClassName()
-                                .withStacktrace("the stack trace"))))
+                        new StubStepDefinition("first step", oneReference(),
+                                new StubException("the exception message")
+                                        .withClassName()
+                                        .withStacktrace("the stack trace"))))
                 .build()
                 .run();
 
@@ -380,11 +382,11 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(new StubException("the exception message")
-                            .withClassName()
-                            .withStacktrace("the stack trace"))),
-                    singletonList(new StubStepDefinition("first step", oneReference())),
-                    emptyList()))
+                        singletonList(new StubHookDefinition(new StubException("the exception message")
+                                .withClassName()
+                                .withStacktrace("the stack trace"))),
+                        singletonList(new StubStepDefinition("first step", oneReference())),
+                        emptyList()))
                 .build()
                 .run();
 
@@ -409,11 +411,11 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    emptyList(),
-                    singletonList(new StubStepDefinition("first step", oneReference())),
-                    singletonList(new StubHookDefinition(new StubException("the exception message")
-                            .withClassName()
-                            .withStacktrace("the stack trace")))))
+                        emptyList(),
+                        singletonList(new StubStepDefinition("first step", oneReference())),
+                        singletonList(new StubHookDefinition(new StubException("the exception message")
+                                .withClassName()
+                                .withStacktrace("the stack trace")))))
                 .build()
                 .run();
 
@@ -438,9 +440,9 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(testCaseState -> testCaseState.log("printed from hook"))),
-                    singletonList(new StubStepDefinition("first step", oneReference())),
-                    emptyList()))
+                        singletonList(new StubHookDefinition(testCaseState -> testCaseState.log("printed from hook"))),
+                        singletonList(new StubStepDefinition("first step", oneReference())),
+                        emptyList()))
                 .build()
                 .run();
 
@@ -465,9 +467,9 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    emptyList(),
-                    singletonList(new StubStepDefinition("first step", oneReference())),
-                    singletonList(new StubHookDefinition(testCaseState -> testCaseState.log("printed from hook")))))
+                        emptyList(),
+                        singletonList(new StubStepDefinition("first step", oneReference())),
+                        singletonList(new StubHookDefinition(testCaseState -> testCaseState.log("printed from hook")))))
                 .build()
                 .run();
 
@@ -492,14 +494,14 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    emptyList(),
-                    emptyList(),
-                    asList(
-                        new StubStepDefinition("first step", oneReference()),
-                        new StubStepDefinition("second step", twoReference())),
-                    singletonList(
-                        new StubHookDefinition(testCaseState -> testCaseState.log("printed from afterstep hook"))),
-                    emptyList()))
+                        emptyList(),
+                        emptyList(),
+                        asList(
+                                new StubStepDefinition("first step", oneReference()),
+                                new StubStepDefinition("second step", twoReference())),
+                        singletonList(
+                                new StubHookDefinition(testCaseState -> testCaseState.log("printed from afterstep hook"))),
+                        emptyList()))
                 .build()
                 .run();
 
@@ -527,7 +529,7 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference())))
+                        new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
@@ -548,7 +550,7 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference())))
+                        new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
@@ -568,10 +570,10 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference(),
-                        new StubException("the exception message")
-                                .withClassName()
-                                .withStacktrace("the stack trace"))))
+                        new StubStepDefinition("first step", oneReference(),
+                                new StubException("the exception message")
+                                        .withClassName()
+                                        .withStacktrace("the stack trace"))))
                 .build()
                 .run();
 
@@ -584,47 +586,61 @@ class PrettyFormatterTest {
                 "      \tthe stack trace" + RESET + "\n")));
     }
 
-//    @Test
-//    void should_mark_subsequent_arguments_in_steps() {
-//        Formats formats = ansi();
-//
-//        StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
-//        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-//        StepDefinition stepDefinition = new StubStepDefinition("text {string} text {string}", String.class);
-//        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-//
-//        PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
-//        String stepText = "text 'arg1' text 'arg2'";
-//        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
-//            formats.get("passed_arg"), expression.match(stepText));
-//
-//        assertThat(formattedText, equalTo(GREEN + "Given " + RESET +
-//                GREEN + "text " + RESET +
-//                GREEN + INTENSITY_BOLD + "'arg1'" + RESET +
-//                GREEN + " text " + RESET +
-//                GREEN + INTENSITY_BOLD + "'arg2'" + RESET));
-//    }
-//
-//    @Test
-//    void should_mark_nested_argument_as_part_of_full_argument() {
-//        Formats formats = ansi();
-//
-//        StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
-//        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-//        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not yet )?confirmed)?$",
-//            String.class);
-//        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-//
-//        PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
-//        String stepText = "the order is placed and not yet confirmed";
-//
-//        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
-//            formats.get("passed_arg"), createArguments(expression.match(stepText)));
-//
-//        assertThat(formattedText, equalTo(GREEN + "Given " + RESET +
-//                GREEN + "the order is placed" + RESET +
-//                GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET));
-//    }
+    @Test
+    void should_mark_subsequent_arguments_in_steps() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given around 31 cucumbers and 41 zucchinis\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("around {int} cucumbers and {int} zucchinis", twoArgumentsReference(), Integer.class, Integer.class)))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators(
+                "" +
+                        "Scenario: scenario name                        " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                        "  " + GREEN + "Given " + RESET +
+                        GREEN + "around " + RESET +
+                        GREEN + INTENSITY_BOLD + "31" + RESET +
+                        GREEN + " cucumbers and " + RESET +
+                        GREEN + INTENSITY_BOLD + "41" + RESET +
+                        GREEN + " zucchinis" + RESET +
+                        "   " +
+                        GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoArguments(java.lang.Integer,java.lang.Integer)" + RESET + "\n"
+        )));
+    }
+    @Test
+    void should_mark_nested_argument_as_part_of_full_argument() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given the order is placed and not yet confirmed\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("^the order is placed( and (not yet )?confirmed)?$", oneArgumentsReference(), String.class)))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
+                        "Scenario: scenario name                             " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                        "  " + GREEN + "Given " + RESET +
+                        GREEN + "the order is placed" + RESET +
+                        GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET + 
+                        "   " +
+                        GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgument(java.lang.String)" + RESET + "\n"
+        )));
+    }
+
 //
 //    @Test
 //    void should_mark_nested_arguments_as_part_of_enclosing_argument() {
@@ -656,15 +672,15 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    singletonList(new StubStaticHookDefinition(new StubException("Hook failed")
-                            .withClassName()
-                            .withStacktrace("the stack trace")))))
+                        emptyList(),
+                        emptyList(),
+                        emptyList(),
+                        emptyList(),
+                        emptyList(),
+                        emptyList(),
+                        singletonList(new StubStaticHookDefinition(new StubException("Hook failed")
+                                .withClassName()
+                                .withStacktrace("the stack trace")))))
                 .build()
                 .run());
 
@@ -694,7 +710,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference(), DocString.class)))
+                        new StubStepDefinition("first step", oneReference(), DocString.class)))
                 .build()
                 .run();
 
