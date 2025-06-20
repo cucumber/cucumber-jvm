@@ -26,9 +26,7 @@ import io.cucumber.messages.types.TestStep;
 import io.cucumber.messages.types.TestStepFinished;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.WriteEvent;
 import io.cucumber.query.Lineage;
 import io.cucumber.query.Query;
 
