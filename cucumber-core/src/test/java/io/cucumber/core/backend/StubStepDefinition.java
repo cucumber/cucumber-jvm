@@ -3,6 +3,7 @@ package io.cucumber.core.backend;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,6 +16,7 @@ public class StubStepDefinition implements StepDefinition {
     private final String expression;
     private final Throwable exception;
     private final Located location;
+    private SourceReference sourceReference;
 
     public StubStepDefinition(String pattern, String location, Type... types) {
         this(pattern, location, null, types);
@@ -32,6 +34,18 @@ public class StubStepDefinition implements StepDefinition {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
         this.location = new StubLocation(location);
+        this.exception = exception;
+    }
+
+    public StubStepDefinition(String pattern, SourceReference sourceReference, Type... types) {
+        this(pattern, sourceReference, null, types);
+    }
+
+    public StubStepDefinition(String pattern, SourceReference sourceReference, Throwable exception, Type... types) {
+        this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
+        this.expression = pattern;
+        this.location = new StubLocation("");
+        this.sourceReference = sourceReference;
         this.exception = exception;
     }
 
@@ -68,6 +82,11 @@ public class StubStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return expression;
+    }
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        return Optional.ofNullable(sourceReference);
     }
 
     private static final class StubParameterInfo implements ParameterInfo {
