@@ -10,24 +10,26 @@ import io.cucumber.docstring.DocStringFormatter;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Exception;
 import io.cucumber.messages.types.Group;
+import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Pickle;
 import io.cucumber.messages.types.PickleStep;
 import io.cucumber.messages.types.PickleTag;
 import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.SourceReference;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.StepDefinition;
 import io.cucumber.messages.types.StepMatchArgument;
 import io.cucumber.messages.types.StepMatchArgumentsList;
 import io.cucumber.messages.types.TestCaseStarted;
+import io.cucumber.messages.types.TestStep;
+import io.cucumber.messages.types.TestStepFinished;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.StepArgument;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.WriteEvent;
 import io.cucumber.query.Lineage;
 import io.cucumber.query.Query;
@@ -84,11 +86,11 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             event.getStepDefinition().ifPresent(stepDefinition -> stepDefinitionsById.put(stepDefinition.getId(), stepDefinition));
             event.getTestCaseStarted().ifPresent(this::handleTestCaseStarted);
             event.getTestStepFinished().ifPresent(this::handleTestStepFinished);
+            event.getTestRunFinished().ifPresent(this::handleTestRunFinished);
         });
 
         publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
         publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbed);
-        publisher.registerHandlerFor(TestRunFinished.class, this::handleTestRunFinished);
     }
 
     private void handleTestCaseStarted(io.cucumber.messages.types.TestCaseStarted event) {
@@ -180,7 +182,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                                 String path = relativize(pickle.getUri()).getSchemeSpecificPart();
                                 String locationIndent = calculateLocationIndent(event.getTestCaseId(), definitionText);
                                 String pathWithLine = query.findLocationOf(pickle).map(Location::getLine).map(line -> path + ":" + line).orElse(path);
-                                out.println(definitionText + locationIndent + formatLocation(path + ":" + pathWithLine));
+                                out.println(definitionText + locationIndent + formatLocation(pathWithLine));
                             });
                 });
     }
@@ -207,58 +209,92 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                             out.println(formattedStepText + locationComment);
                         });
                     });
-                })
+                });
 
-
-        if (event.getTestStep() instanceof PickleStepTestStep) {
-            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-            String keyword = testStep.getStep().getKeyword();
-            String stepText = testStep.getStep().getText();
-            String status = event.getResult().getStatus().name().toLowerCase(ROOT);
-            String formattedStepText = formatStepText(keyword, stepText, formats.get(status),
-                    formats.get(status + "_arg"), testStep.getDefinitionArgument());
-            String locationComment = formatLocationComment(event, testStep, keyword, stepText);
-            out.println(STEP_INDENT + formattedStepText + locationComment);
-            StepArgument stepArgument = testStep.getStep().getArgument();
-            if (stepArgument instanceof DataTableArgument) {
-                DataTableFormatter tableFormatter = DataTableFormatter
-                        .builder()
-                        .prefixRow(STEP_SCENARIO_INDENT)
-                        .escapeDelimiters(false)
-                        .build();
-                DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
-                DataTable table = DataTable.create(dataTableArgument.cells());
-                try {
-                    tableFormatter.formatTo(table, out);
-                } catch (IOException e) {
-                    throw new CucumberException(e);
-                }
-            } else if (stepArgument instanceof DocStringArgument) {
-                DocStringFormatter docStringFormatter = DocStringFormatter
-                        .builder()
-                        .indentation(STEP_SCENARIO_INDENT)
-                        .build();
-                DocStringArgument docStringArgument = (DocStringArgument) stepArgument;
-                DocString docString = DocString.create(docStringArgument.getContent(),
-                        docStringArgument.getContentType());
-                try {
-                    docStringFormatter.formatTo(docString, out);
-                } catch (IOException e) {
-                    throw new CucumberException(e);
-                }
-            }
-        }
+//
+//        if (event.getTestStep() instanceof PickleStepTestStep) {
+//            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
+//            String keyword = testStep.getStep().getKeyword();
+//            String stepText = testStep.getStep().getText();
+//            String status = event.getResult().getStatus().name().toLowerCase(ROOT);
+//            String formattedStepText = formatStepText(keyword, stepText, formats.get(status),
+//                    formats.get(status + "_arg"), testStep.getDefinitionArgument());
+//            String locationComment = formatLocationComment(event, testStep, keyword, stepText);
+//            out.println(STEP_INDENT + formattedStepText + locationComment);
+//            StepArgument stepArgument = testStep.getStep().getArgument();
+//            if (stepArgument instanceof DataTableArgument) {
+//                DataTableFormatter tableFormatter = DataTableFormatter
+//                        .builder()
+//                        .prefixRow(STEP_SCENARIO_INDENT)
+//                        .escapeDelimiters(false)
+//                        .build();
+//                DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
+//                DataTable table = DataTable.create(dataTableArgument.cells());
+//                try {
+//                    tableFormatter.formatTo(table, out);
+//                } catch (IOException e) {
+//                    throw new CucumberException(e);
+//                }
+//            } else if (stepArgument instanceof DocStringArgument) {
+//                DocStringFormatter docStringFormatter = DocStringFormatter
+//                        .builder()
+//                        .indentation(STEP_SCENARIO_INDENT)
+//                        .build();
+//                DocStringArgument docStringArgument = (DocStringArgument) stepArgument;
+//                DocString docString = DocString.create(docStringArgument.getContent(),
+//                        docStringArgument.getContentType());
+//                try {
+//                    docStringFormatter.formatTo(docString, out);
+//                } catch (IOException e) {
+//                    throw new CucumberException(e);
+//                }
+//            }
+//        }
     }
 
     private String formatLocationComment(
-            TestStepFinished event, PickleStepTestStep testStep, String keyword, String stepText
+            TestStepFinished event, TestStep testStep, String keyword, String stepText
     ) {
-        String codeLocation = testStep.getCodeLocation();
-        if (codeLocation == null) {
-            return "";
-        }
-        String locationIndent = calculateLocationIndent(event.getTestCase(), formatPlainStep(keyword, stepText));
-        return locationIndent + formatLocation(codeLocation);
+        return testStep.getStepDefinitionIds()
+                .filter(ids -> !ids.isEmpty())
+                .map(ids -> {
+                    String id = ids.get(0);
+                    StepDefinition stepDefinition = this.stepDefinitionsById.get(id);
+                    return stepDefinition.getSourceReference();
+                })
+                .flatMap(PrettyFormatter::formatSourceReference)
+                .map(codeLocation -> query.findTestCaseBy(event).map(testCase -> {
+                    String locationIndent = calculateLocationIndent(testCase.getId(), formatPlainStep(keyword, stepText));
+                    return locationIndent + formatLocation(codeLocation);
+
+                }).orElse("")).orElse("");
+
+    }
+
+    private static Optional<String> formatSourceReference(SourceReference sourceReference) {
+        return formatJavaMethod(sourceReference)
+                .map(Optional::of)
+                .orElseGet(() -> formatStackTraceElement(sourceReference));
+    }
+
+    private static Optional<String> formatJavaMethod(SourceReference sourceReference) {
+        return sourceReference.getJavaMethod()
+                .map(PrettyFormatter::formatJavaMethod);
+    }
+
+    private static Optional<String> formatStackTraceElement(SourceReference sourceReference) {
+        String location = sourceReference.getLocation().map(Location::getLine).map(line -> ":" + line).orElse("");
+        return sourceReference.getJavaStackTraceElement()
+                .map(javaStackTraceElement -> String.format("%s.%s(%s%s)",
+                        javaStackTraceElement.getClassName(),
+                        javaStackTraceElement.getMethodName(),
+                        javaStackTraceElement.getFileName(),
+                        location
+                ));
+    }
+
+    private static String formatJavaMethod(JavaMethod javaMethod) {
+        return javaMethod.getClassName() + "." + javaMethod.getMethodName() + "(" + javaMethod.getMethodParameterTypes().stream().collect(joining(",")) + ")";
     }
 
     private void printError(io.cucumber.messages.types.TestStepFinished event) {
@@ -308,10 +344,10 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private String formatPlainStep(String keyword, String stepText) {
         return STEP_INDENT + keyword + stepText;
     }
-
-    private String formatScenarioDefinition(io.cucumber.messages.types.TestCase testCase) {
-        return testCase.getKeyword() + ": " + testCase.getName();
-    }
+//
+//    private String formatScenarioDefinition(io.cucumber.messages.types.TestCase testCase) {
+//        return testCase.getKeyword() + ": " + testCase.getName();
+//    }
 
     static URI relativize(String uri) {
         return relativize(URI.create(uri));
