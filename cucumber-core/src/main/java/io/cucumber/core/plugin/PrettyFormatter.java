@@ -5,6 +5,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringFormatter;
+import io.cucumber.messages.types.Attachment;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Exception;
 import io.cucumber.messages.types.Group;
@@ -84,10 +85,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             event.getTestCaseStarted().ifPresent(this::handleTestCaseStarted);
             event.getTestStepFinished().ifPresent(this::handleTestStepFinished);
             event.getTestRunFinished().ifPresent(this::handleTestRunFinished);
+            event.getAttachment().ifPresent(this::handleAttachment);
         });
-
-        publisher.registerHandlerFor(WriteEvent.class, this::handleWrite);
-        publisher.registerHandlerFor(EmbedEvent.class, this::handleEmbed);
     }
 
     private void handleTestCaseStarted(io.cucumber.messages.types.TestCaseStarted event) {
@@ -104,16 +103,16 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         out.flush();
     }
 
-    private void handleWrite(WriteEvent event) {
+    private void handleAttachment(Attachment attachment) {
         out.println();
-        printText(event);
-        out.println();
-        out.flush();
-    }
-
-    private void handleEmbed(EmbedEvent event) {
-        out.println();
-        printEmbedding(event);
+        switch (attachment.getContentEncoding()) {
+            case BASE64:       
+                printEmbedding(attachment);
+            break;
+            case IDENTITY:
+                printText(attachment);
+            break;
+        }
         out.println();
         out.flush();
     }
@@ -314,10 +313,10 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         out.println(scenarioIndent + format.text(indented));
     }
 
-    private void printText(WriteEvent event) {
+    private void printText(Attachment event) {
         // Prevent interleaving when multiple threads write to System.out
         StringBuilder builder = new StringBuilder();
-        try (BufferedReader lines = new BufferedReader(new StringReader(event.getText()))) {
+        try (BufferedReader lines = new BufferedReader(new StringReader(event.getBody()))) {
             String line;
             while ((line = lines.readLine()) != null) {
                 builder.append(STEP_SCENARIO_INDENT)
@@ -331,9 +330,9 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
         out.append(builder);
     }
 
-    private void printEmbedding(EmbedEvent event) {
-        String line = "Embedding " + event.getName() + " [" + event.getMediaType() + " " + event.getData().length
-                + " bytes]";
+    private void printEmbedding(Attachment event) {
+        int bytes = (event.getBody().length() / 4) * 3;
+        String line = String.format("Embedding %s [%s %d bytes]", event.getFileName(), event.getMediaType(), bytes);
         out.println(STEP_SCENARIO_INDENT + line);
     }
 
