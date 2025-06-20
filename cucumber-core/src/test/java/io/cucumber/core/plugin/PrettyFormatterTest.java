@@ -34,6 +34,8 @@ import static io.cucumber.core.plugin.AnsiEscapes.YELLOW;
 import static io.cucumber.core.plugin.Bytes.bytes;
 import static io.cucumber.core.plugin.Formats.ansi;
 import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
+import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
+import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
 import static io.cucumber.core.runner.TestDefinitionArgument.createArguments;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -62,8 +64,8 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference()),
-                    new StubStepDefinition("second step", PrettyFormatterStepDefinition.twoReference()),
+                    new StubStepDefinition("first step", oneReference()),
+                    new StubStepDefinition("second step", twoReference()),
                     new StubStepDefinition("third step", PrettyFormatterStepDefinition.threeReference())))
                 .build()
                 .run();
@@ -91,7 +93,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference()),
+                        new StubStepDefinition("first step", oneReference()),
                         new StubStepDefinition("second step", (SourceReference) null),
                         new StubStepDefinition("third step", PrettyFormatterStepDefinition.threeReference())))
                 .build()
@@ -122,8 +124,8 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference()),
-                        new StubStepDefinition("second step", PrettyFormatterStepDefinition.twoReference()),
+                        new StubStepDefinition("first step", oneReference()),
+                        new StubStepDefinition("second step", twoReference()),
                         new StubStepDefinition("third step", PrettyFormatterStepDefinition.threeReference())))
                 .build()
                 .run();
@@ -157,8 +159,8 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference()),
-                        new StubStepDefinition("second step", PrettyFormatterStepDefinition.twoReference()),
+                        new StubStepDefinition("first step", oneReference()),
+                        new StubStepDefinition("second step", twoReference()),
                         new StubStepDefinition("third step", PrettyFormatterStepDefinition.threeReference())))
                 .build()
                 .run();
@@ -189,7 +191,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.twoReference(), DataTable.class)))
+                    new StubStepDefinition("first step", twoReference(), DataTable.class)))
                 .build()
                 .run();
 
@@ -223,8 +225,8 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference()),
-                        new StubStepDefinition("second step", PrettyFormatterStepDefinition.twoReference())))
+                        new StubStepDefinition("first step", oneReference()),
+                        new StubStepDefinition("second step", twoReference())))
                 .build()
                 .run();
 
@@ -256,7 +258,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference(), DataTable.class)))
+                    new StubStepDefinition("first step", oneReference(), DataTable.class)))
                 .build()
                 .run();
 
@@ -290,8 +292,8 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()", DataTable.class),
-                    new StubStepDefinition("second step", "path/step_definitions.java:15", DataTable.class)))
+                    new StubStepDefinition("first step", oneReference(), DataTable.class),
+                    new StubStepDefinition("second step", twoReference(), DataTable.class)))
                 .build()
                 .run();
 
@@ -299,11 +301,11 @@ class PrettyFormatterTest {
 
                 "\n" +
                 "Scenario: Test Scenario # path/test.feature:2\n" +
-                "  Given first step      # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
+                "  Given first step      # io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
                 "    | key1     | key2     |\n" +
                 "    | value1   | value2   |\n" +
                 "    | another1 | another2 |\n" +
-                "  Given second step     # path/step_definitions.java:15\n" +
+                "  Given second step     # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
                 "    | key3     | key4     |\n" +
                 "    | value3   | value4   |\n" +
                 "    | another3 | another4 |\n")));
@@ -322,7 +324,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference(),
+                    new StubStepDefinition("first step", oneReference(),
                         new StubException("the exception message")
                                 .withClassName()
                                 .withStacktrace("the stack trace"))))
@@ -350,7 +352,7 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference(),
+                    new StubStepDefinition("first step", oneReference(),
                         new StubException("the exception message")
                                 .withClassName()
                                 .withStacktrace("the stack trace"))))
@@ -381,7 +383,7 @@ class PrettyFormatterTest {
                     singletonList(new StubHookDefinition(new StubException("the exception message")
                             .withClassName()
                             .withStacktrace("the stack trace"))),
-                    singletonList(new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference())),
+                    singletonList(new StubStepDefinition("first step", oneReference())),
                     emptyList()))
                 .build()
                 .run();
@@ -408,7 +410,7 @@ class PrettyFormatterTest {
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
-                    singletonList(new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference())),
+                    singletonList(new StubStepDefinition("first step", oneReference())),
                     singletonList(new StubHookDefinition(new StubException("the exception message")
                             .withClassName()
                             .withStacktrace("the stack trace")))))
@@ -437,7 +439,7 @@ class PrettyFormatterTest {
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(testCaseState -> testCaseState.log("printed from hook"))),
-                    singletonList(new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference())),
+                    singletonList(new StubStepDefinition("first step", oneReference())),
                     emptyList()))
                 .build()
                 .run();
@@ -464,7 +466,7 @@ class PrettyFormatterTest {
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
-                    singletonList(new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference())),
+                    singletonList(new StubStepDefinition("first step", oneReference())),
                     singletonList(new StubHookDefinition(testCaseState -> testCaseState.log("printed from hook")))))
                 .build()
                 .run();
@@ -493,8 +495,8 @@ class PrettyFormatterTest {
                     emptyList(),
                     emptyList(),
                     asList(
-                        new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference()),
-                        new StubStepDefinition("second step", PrettyFormatterStepDefinition.twoReference())),
+                        new StubStepDefinition("first step", oneReference()),
+                        new StubStepDefinition("second step", twoReference())),
                     singletonList(
                         new StubHookDefinition(testCaseState -> testCaseState.log("printed from afterstep hook"))),
                     emptyList()))
@@ -507,7 +509,7 @@ class PrettyFormatterTest {
                 "\n" +
                 "    printed from afterstep hook\n" +
                 "\n" +
-                "  When second step      # path/step_definitions.java:4\n" +
+                "  When second step      # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
                 "\n" +
                 "    printed from afterstep hook" +
                 "\n")));
@@ -525,7 +527,7 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference())))
+                    new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
@@ -546,7 +548,7 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference())))
+                    new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
@@ -566,7 +568,7 @@ class PrettyFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", PrettyFormatterStepDefinition.oneReference(),
+                    new StubStepDefinition("first step", oneReference(),
                         new StubException("the exception message")
                                 .withClassName()
                                 .withStacktrace("the stack trace"))))
@@ -692,14 +694,14 @@ class PrettyFormatterTest {
                 .withAdditionalPlugins(new PrettyFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()", DocString.class)))
+                    new StubStepDefinition("first step", oneReference(), DocString.class)))
                 .build()
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
                 "Scenario: Test Scenario # path/test.feature:2\n" +
-                "  Given first step      # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
+                "  Given first step      # io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
                 "    \"\"\"json\n" +
                 "    {\"key1\": \"value1\",\n" +
                 "     \"key2\": \"value2\",\n" +

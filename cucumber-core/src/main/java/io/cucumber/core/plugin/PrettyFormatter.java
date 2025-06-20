@@ -14,6 +14,7 @@ import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Pickle;
 import io.cucumber.messages.types.PickleStep;
+import io.cucumber.messages.types.PickleTableCell;
 import io.cucumber.messages.types.PickleTag;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.SourceReference;
@@ -54,6 +55,7 @@ import static io.cucumber.core.plugin.Formats.monochrome;
 import static java.lang.Math.max;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Prints a pretty report of the scenario execution as it happens.
@@ -196,60 +198,58 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
                 .ifPresent(testStep -> {
                     query.findPickleStepBy(testStep).ifPresent(pickleStep -> {
                         query.findStepBy(pickleStep).ifPresent(step -> {
-                            String keyword = step.getKeyword();
-                            String stepText = pickleStep.getText();
-                            // TODO: Use proper enum map.
-                            String status = event.getTestStepResult().getStatus().toString().toLowerCase(ROOT);
-                            List<StepMatchArgument> stepMatchArgumentsLists = testStep.getStepMatchArgumentsLists()
-                                    .map(stepMatchArgumentsLists1 -> stepMatchArgumentsLists1.stream().map(StepMatchArgumentsList::getStepMatchArguments).flatMap(Collection::stream).collect(Collectors.toList()))
-                                    .orElseGet(Collections::emptyList);// TODO: Create separate _arg map
-
-                            String formattedStepText = STEP_INDENT + formatStepText(keyword, stepText, formats.get(status), formats.get(status + "_arg"), stepMatchArgumentsLists);
-                            String locationComment = formatLocationComment(event, testStep, keyword, stepText);
-                            out.println(formattedStepText + locationComment);
+                            printStep(event, testStep, pickleStep, step);
+                            printArgument(pickleStep);
                         });
                     });
                 });
+    }
 
-//
-//        if (event.getTestStep() instanceof PickleStepTestStep) {
-//            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-//            String keyword = testStep.getStep().getKeyword();
-//            String stepText = testStep.getStep().getText();
-//            String status = event.getResult().getStatus().name().toLowerCase(ROOT);
-//            String formattedStepText = formatStepText(keyword, stepText, formats.get(status),
-//                    formats.get(status + "_arg"), testStep.getDefinitionArgument());
-//            String locationComment = formatLocationComment(event, testStep, keyword, stepText);
-//            out.println(STEP_INDENT + formattedStepText + locationComment);
-//            StepArgument stepArgument = testStep.getStep().getArgument();
-//            if (stepArgument instanceof DataTableArgument) {
-//                DataTableFormatter tableFormatter = DataTableFormatter
-//                        .builder()
-//                        .prefixRow(STEP_SCENARIO_INDENT)
-//                        .escapeDelimiters(false)
-//                        .build();
-//                DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
-//                DataTable table = DataTable.create(dataTableArgument.cells());
-//                try {
-//                    tableFormatter.formatTo(table, out);
-//                } catch (IOException e) {
-//                    throw new CucumberException(e);
-//                }
-//            } else if (stepArgument instanceof DocStringArgument) {
-//                DocStringFormatter docStringFormatter = DocStringFormatter
-//                        .builder()
-//                        .indentation(STEP_SCENARIO_INDENT)
-//                        .build();
-//                DocStringArgument docStringArgument = (DocStringArgument) stepArgument;
-//                DocString docString = DocString.create(docStringArgument.getContent(),
-//                        docStringArgument.getContentType());
-//                try {
-//                    docStringFormatter.formatTo(docString, out);
-//                } catch (IOException e) {
-//                    throw new CucumberException(e);
-//                }
-//            }
-//        }
+    private void printStep(TestStepFinished event, TestStep testStep, PickleStep pickleStep, Step step) {
+        String keyword = step.getKeyword();
+        String stepText = pickleStep.getText();
+        // TODO: Use proper enum map.
+        String status = event.getTestStepResult().getStatus().toString().toLowerCase(ROOT);
+        List<StepMatchArgument> stepMatchArgumentsLists = testStep.getStepMatchArgumentsLists()
+                .map(stepMatchArgumentsLists1 -> stepMatchArgumentsLists1.stream().map(StepMatchArgumentsList::getStepMatchArguments).flatMap(Collection::stream).collect(toList()))
+                .orElseGet(Collections::emptyList);// TODO: Create separate _arg map
+
+        String formattedStepText = STEP_INDENT + formatStepText(keyword, stepText, formats.get(status), formats.get(status + "_arg"), stepMatchArgumentsLists);
+        String locationComment = formatLocationComment(event, testStep, keyword, stepText);
+        out.println(formattedStepText + locationComment);
+    }
+    
+    private void printArgument(PickleStep pickleStep) {
+        pickleStep.getArgument().ifPresent(pickleStepArgument -> {
+            
+            pickleStepArgument.getDataTable().ifPresent(pickleTable -> {
+                List<List<String>> cells = pickleTable.getRows().stream()
+                        .map(pickleTableRow -> pickleTableRow.getCells().stream().map(PickleTableCell::getValue).collect(toList()))
+                        .collect(toList());
+                DataTableFormatter tableFormatter = DataTableFormatter.builder()
+                        .prefixRow(STEP_SCENARIO_INDENT)
+                        .escapeDelimiters(false)
+                        .build();
+                DataTable table = DataTable.create(cells);
+                try {
+                    tableFormatter.formatTo(table, out);
+                } catch (IOException e) {
+                    throw new CucumberException(e);
+                }
+            });
+            pickleStepArgument.getDocString().ifPresent(pickleDocString -> {
+                DocStringFormatter docStringFormatter = DocStringFormatter
+                        .builder()
+                        .indentation(STEP_SCENARIO_INDENT)
+                        .build();
+                DocString docString = DocString.create(pickleDocString.getContent(), pickleDocString.getMediaType().orElse(null));
+                try {
+                    docStringFormatter.formatTo(docString, out);
+                } catch (IOException e) {
+                    throw new CucumberException(e);
+                }
+            });
+        });
     }
 
     private String formatLocationComment(
