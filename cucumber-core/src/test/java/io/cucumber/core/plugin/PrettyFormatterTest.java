@@ -640,25 +640,31 @@ class PrettyFormatterTest {
                         GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgument(java.lang.String)" + RESET + "\n"
         )));
     }
+    @Test
+    void should_mark_nested_arguments_as_part_of_enclosing_argument() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given the order is placed and not yet confirmed\n");
 
-//
-//    @Test
-//    void should_mark_nested_arguments_as_part_of_enclosing_argument() {
-//        Formats formats = ansi();
-//        PrettyFormatter prettyFormatter = new PrettyFormatter(new ByteArrayOutputStream());
-//        StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
-//        StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
-//        StepDefinition stepDefinition = new StubStepDefinition("^the order is placed( and (not( yet)? )?confirmed)?$",
-//            String.class);
-//        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-//        String stepText = "the order is placed and not yet confirmed";
-//        String formattedText = prettyFormatter.formatStepText("Given ", stepText, formats.get("passed"),
-//            formats.get("passed_arg"), createArguments(expression.match(stepText)));
-//
-//        assertThat(formattedText, equalTo(GREEN + "Given " + RESET +
-//                GREEN + "the order is placed" + RESET +
-//                GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET));
-//    }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new PrettyFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                        new StubStepDefinition("^the order is placed( and (not( yet)? )?confirmed)?$", oneArgumentsReference(), String.class)))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators("" +
+                        "Scenario: scenario name                             " + GREY + "# path/test.feature:2" + RESET + "\n" +
+                        "  " + GREEN + "Given " + RESET +
+                        GREEN + "the order is placed" + RESET +
+                        GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET + 
+                        "   " +
+                        GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgument(java.lang.String)" + RESET + "\n"
+        )));
+    }
 
     @Test
     void should_print_system_failure_for_failed_hooks() {
