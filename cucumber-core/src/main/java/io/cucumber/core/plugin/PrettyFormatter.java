@@ -145,7 +145,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private static int calculateScenarioLineLength(Pickle pickle, Scenario scenario) {
         String pickleName = pickle.getName();
         String pickleKeyword = scenario.getKeyword();
-        // The ": " add 2
+        // The ": " between keyword and name adds 2
         return SCENARIO_INDENT.length() + pickleName.length() + pickleKeyword.length() + 2;
     }
 
