@@ -35,6 +35,7 @@ erDiagram
     "Jupiter Test Engine" ||--|{ "Test Classes": "discovers and executes"
 ```
 
+In practice, integration is still limited so we discuss the most common workarounds below.
 
 ### Maven Surefire and Gradle
 
@@ -53,15 +54,15 @@ The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
 for a brief how to.
 
+##### Maven and Gradle workarounds
+
 Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
 can make for hard to read reports. 
 
-To improve the readability of the reports provide the
-`cucumber.junit-platform.naming-strategy` configuration parameter to
-Gradle. This will include the feature name as part of the test name.
-
-##### Maven
+To improve the readability of the reports use the
+`cucumber.junit-platform.naming-strategy` configuration parameter. This  will
+include the feature name, scenario name, example number, ect in the report.
 
 ```xml
 <plugin>
@@ -78,12 +79,28 @@ Gradle. This will include the feature name as part of the test name.
 </plugin>
 ```            
 
-##### Gradle
-
 ```kotlin
 tasks.test {
     useJUnitPlatform()
     systemProperty("cucumber.junit-platform.naming-strategy", "long")
+}
+```
+
+##### IDEA workarounds
+
+When running features through IDEA, the Cucumber CLI is used. The CLI looks for
+configuration properties in `cucumber.properties` while JUnit looks for
+`junit-platform.properties`. To avoid duplication you can use the
+`@ConfigurationParametersResource` annotation to include `cucumber.properties`
+into a Suite.
+
+```java
+@Suite
+@IncludeEngines("cucumber")
+@SelectPackages("com.example")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
+@ConfigurationParametersResource("cucumber.properties")
+public class RunCucumberTest {
 }
 ```
 
@@ -258,8 +275,6 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 public class RunCucumberTest {
 }
 ```
-
-
 
 ## Parallel execution ## 
 
