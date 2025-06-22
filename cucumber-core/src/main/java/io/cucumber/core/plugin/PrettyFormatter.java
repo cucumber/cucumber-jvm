@@ -9,8 +9,6 @@ import io.cucumber.prettyformatter.MessagesToPrettyWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Prints a pretty report of the scenario execution as it happens.
