@@ -4,11 +4,13 @@ import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.prettyformatter.Formatter;
 import io.cucumber.prettyformatter.MessagesToPrettyWriter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Prints a pretty report of the scenario execution as it happens.
@@ -18,12 +20,12 @@ import java.io.OutputStream;
  */
 public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
 
-    private final OutputStream out;
     private MessagesToPrettyWriter writer;
 
     public PrettyFormatter(OutputStream out) {
-        this.out = out;
-        this.writer = new MessagesToPrettyWriter(out, Formatter.ansi());
+        String cwdUri = new File("").toURI().toString();
+        this.writer = new MessagesToPrettyWriter(out)
+                .withRemovePathPrefix(cwdUri);
     }
 
     @Override
@@ -47,9 +49,9 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     @Override
     public void setMonochrome(boolean monochrome) {
-        writer = new MessagesToPrettyWriter(out, 
-                monochrome ? Formatter.noAnsi() : Formatter.ansi()
-        );
+        if (monochrome) {
+            writer = writer.withNoAnsiColors();
+        }
     }
 
 }
