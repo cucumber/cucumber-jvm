@@ -22,26 +22,31 @@ Add the `datatable-matchers` dependency to your pom.
 Use the matcher in your step definition.
 
 ```java
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Then;
+
 import static io.cucumber.datatable.matchers.DataTableHasTheSameRowsAs.hasTheSameRowsAs;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-[...]
+public class StepDefinitions {
 
-private final DataTable expected = DataTable.create(
-    asList(
-        asList("Annie M. G.", "Schmidt"),
-        asList("Roald", "Dahl"),
-));
-    
-@Then("these authors have registered:")
-public void these_authors_have_registered(DataTable registeredAuthors){
-    assertThat(registeredAuthors, hasTheSameRowsAs(expected).inOrder());
-    
-    // java.lang.AssertionError: 
-    // Expected: a datable with the same rows
-    // but: the tables were different
-    // - | Annie M. G. | Schmidt  |
-    //   | Roald       | Dahl     |
-    // + | Astrid      | Lindgren |
-} 
+    // Provided by the system under test
+    DataTable actual = DataTable.create(asList(
+            asList("Annie M. G.", "Schmidt"),
+            asList("Roald", "Dahl")
+    ));
+
+    @Then("these authors have registered:")
+    public void these_authors_have_registered(DataTable expected) {
+        assertThat(actual, hasTheSameRowsAs(expected).inOrder());
+        // java.lang.AssertionError: 
+        // Expected: a datable with the same rows
+        //     but: the tables were different
+        //    + | Annie M. G. | Schmidt  |
+        //      | Roald       | Dahl     |
+        //    - | Astrid      | Lindgren |
+    }
+}
 ```
 
