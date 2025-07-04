@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import static io.cucumber.prettyformatter.Theme.cucumber;
+import static io.cucumber.prettyformatter.Theme.none;
+
 /**
  * Prints a pretty report of the scenario execution as it happens.
  * <p>
@@ -18,12 +21,20 @@ import java.io.OutputStream;
  */
 public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
 
+    private final OutputStream out;
     private MessagesToPrettyWriter writer;
 
     public PrettyFormatter(OutputStream out) {
+        this.out = out;
+        this.writer = createBuilder().build(out);
+    }
+
+    private static MessagesToPrettyWriter.Builder createBuilder() {
         String cwdUri = new File("").toURI().toString();
-        this.writer = new MessagesToPrettyWriter(out)
-                .withRemovePathPrefix(cwdUri);
+        return MessagesToPrettyWriter.builder()
+                .includeFeatureAndRules(false)
+                .theme(cucumber())
+                .removeUriPrefix(cwdUri);
     }
 
     @Override
@@ -48,7 +59,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     @Override
     public void setMonochrome(boolean monochrome) {
         if (monochrome) {
-            writer = writer.withNoAnsiColors();
+            writer = createBuilder().theme(none()).build(out);
         }
     }
 

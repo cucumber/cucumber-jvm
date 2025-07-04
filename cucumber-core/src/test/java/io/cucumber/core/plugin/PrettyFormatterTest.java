@@ -4,25 +4,22 @@ import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StubHookDefinition;
 import io.cucumber.core.backend.StubStaticHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
-import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.docstring.DocString;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.time.Clock;
-import java.util.UUID;
 
 import static io.cucumber.core.plugin.AnsiEscapes.GREEN;
 import static io.cucumber.core.plugin.AnsiEscapes.GREY;
 import static io.cucumber.core.plugin.AnsiEscapes.INTENSITY_BOLD;
+import static io.cucumber.core.plugin.AnsiEscapes.INTENSITY_BOLD_OFF;
 import static io.cucumber.core.plugin.AnsiEscapes.RED;
 import static io.cucumber.core.plugin.AnsiEscapes.RESET;
 import static io.cucumber.core.plugin.AnsiEscapes.YELLOW;
@@ -40,8 +37,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PrettyFormatterTest {
-
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     @Test
     void should_align_the_indentation_of_location_strings() {
@@ -526,8 +521,7 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "  " + GREEN + "Given " + RESET + GREEN + "first step"
-                + RESET)));
+                "  " + GREEN + INTENSITY_BOLD + "Given " + INTENSITY_BOLD_OFF + "first step" + RESET)));
     }
 
     @Test
@@ -570,9 +564,10 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "Scenario: scenario name " + GREY + "# path/test.feature:2" + RESET + "\n" +
-                "  " + RED + "Given " + RESET + RED + "first step" + RESET + "      " + GREY
-                + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()" + RESET + "\n" +
+                INTENSITY_BOLD + "Scenario:" + INTENSITY_BOLD_OFF + " scenario name " +
+                GREY + "# path/test.feature:2" + RESET + "\n" +
+                "  " + RED + INTENSITY_BOLD + "Given " + INTENSITY_BOLD_OFF + "first step" + RESET + "      " +
+                GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()" + RESET + "\n" +
                 "      " + RED + "io.cucumber.core.plugin.StubException\n" +
                 "      the exception message\n" +
                 "      \tthe stack trace" + RESET + "\n")));
@@ -597,13 +592,12 @@ class PrettyFormatterTest {
 
         assertThat(out, bytes(equalCompressingLineSeparators(
             "" +
-                    "Scenario: scenario name                      " + GREY + "# path/test.feature:2" + RESET + "\n" +
-                    "  " + GREEN + "Given " + RESET +
-                    GREEN + "around " + RESET +
-                    GREEN + INTENSITY_BOLD + "31" + RESET +
-                    GREEN + " cucumbers and " + RESET +
-                    GREEN + INTENSITY_BOLD + "41" + RESET +
-                    GREEN + " zucchinis" + RESET +
+                    INTENSITY_BOLD + "Scenario:" + INTENSITY_BOLD_OFF + " scenario name                      " +
+                    GREY + "# path/test.feature:2" + RESET + "\n" +
+                    "  " + GREEN + INTENSITY_BOLD + "Given " + INTENSITY_BOLD_OFF +
+                    "around " + INTENSITY_BOLD + "31" + INTENSITY_BOLD_OFF +
+                    " cucumbers and " + INTENSITY_BOLD + "41" + INTENSITY_BOLD_OFF +
+                    " zucchinis" + RESET +
                     " " +
                     GREY
                     + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoArguments(java.lang.Integer,java.lang.Integer)"
@@ -628,10 +622,10 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "Scenario: scenario name                           " + GREY + "# path/test.feature:2" + RESET + "\n" +
-                "  " + GREEN + "Given " + RESET +
-                GREEN + "the order is placed" + RESET +
-                GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET +
+                INTENSITY_BOLD + "Scenario:" + INTENSITY_BOLD_OFF + " scenario name                           " +
+                GREY + "# path/test.feature:2" + RESET + "\n" +
+                "  " + GREEN + INTENSITY_BOLD + "Given " + INTENSITY_BOLD_OFF + "the order is placed" +
+                INTENSITY_BOLD + " and not yet confirmed" + INTENSITY_BOLD_OFF + RESET +
                 " " +
                 GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgument(java.lang.String)" + RESET
                 + "\n")));
@@ -655,10 +649,13 @@ class PrettyFormatterTest {
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "Scenario: scenario name                           " + GREY + "# path/test.feature:2" + RESET + "\n" +
-                "  " + GREEN + "Given " + RESET +
-                GREEN + "the order is placed" + RESET +
-                GREEN + INTENSITY_BOLD + " and not yet confirmed" + RESET +
+                INTENSITY_BOLD + "Scenario:" + INTENSITY_BOLD_OFF + " scenario name                           " + GREY
+                + "# path/test.feature:2" + RESET + "\n" +
+                "  " + GREEN +
+                INTENSITY_BOLD + "Given " + INTENSITY_BOLD_OFF +
+                "the order is placed" +
+                INTENSITY_BOLD + " and not yet confirmed" + INTENSITY_BOLD_OFF +
+                RESET +
                 " " +
                 GREY + "# io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneArgument(java.lang.String)" + RESET
                 + "\n")));
@@ -689,8 +686,10 @@ class PrettyFormatterTest {
                 .run());
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "Scenario: scenario name " + GREY + "# path/test.feature:2" + RESET + "\n" +
-                "  " + YELLOW + "Given " + RESET + YELLOW + "first step" + RESET + "\n" +
+                INTENSITY_BOLD + "Scenario:" + INTENSITY_BOLD_OFF + " scenario name " +
+                GREY + "# path/test.feature:2" + RESET + "\n" +
+                "  " + YELLOW + INTENSITY_BOLD + "Given " + INTENSITY_BOLD_OFF +
+                "first step" + RESET + "\n" +
                 RED + "io.cucumber.core.plugin.StubException\n" +
                 "Hook failed\n" +
                 "\tthe stack trace" + RESET + "\n")));
