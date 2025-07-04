@@ -13,6 +13,7 @@ final class AnsiEscapes {
     static final AnsiEscapes DEFAULT = color(9);
     static final AnsiEscapes GREY = color(90);
     static final AnsiEscapes INTENSITY_BOLD = color(1);
+    static final AnsiEscapes INTENSITY_BOLD_OFF = color(22);
     static final AnsiEscapes UNDERLINE = color(4);
     private static final char ESC = 27;
     private static final char BRACKET = '[';
