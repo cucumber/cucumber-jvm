@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import static io.cucumber.prettyformatter.MessagesToPrettyWriter.PrettyFeature.INCLUDE_FEATURE_LINE;
+import static io.cucumber.prettyformatter.MessagesToPrettyWriter.PrettyFeature.INCLUDE_RULE_LINE;
 import static io.cucumber.prettyformatter.Theme.cucumber;
 import static io.cucumber.prettyformatter.Theme.none;
 
@@ -32,7 +34,8 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private static MessagesToPrettyWriter.Builder createBuilder() {
         String cwdUri = new File("").toURI().toString();
         return MessagesToPrettyWriter.builder()
-                .includeFeatureAndRules(false)
+                .feature(INCLUDE_FEATURE_LINE, false)
+                .feature(INCLUDE_RULE_LINE, false)
                 .theme(cucumber())
                 .removeUriPrefix(cwdUri);
     }
