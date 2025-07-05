@@ -35,12 +35,12 @@ class IdNamingVisitor implements LineageReducer.Collector<String> {
     @Override
     public void add(Examples examples, int index) {
         parts.add(convertToId(examples.getName()));
-        parts.add(String.valueOf(index + 1));
-    }
+    } 
 
     @Override
     public void add(TableRow example, int index) {
-        parts.add(String.valueOf(index + 1));
+        // json report uses base-1 indexing, and skips the first row
+        parts.add(String.valueOf(index + 2));
     }
 
     @Override

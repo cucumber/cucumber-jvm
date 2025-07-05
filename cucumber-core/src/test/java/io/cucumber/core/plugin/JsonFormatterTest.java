@@ -453,7 +453,7 @@ class JsonFormatterTest {
                 "    ],\n" +
                 "    \"name\": \"Banana party\",\n" +
                 "    \"description\": \"\",\n" +
-                "    \"id\": \"banana-party\",\n" +
+                "    \"id\": \"banana-party;this-is-all-monkey-business;monkey-eats-bananas\",\n" +
                 "    \"keyword\": \"Feature\",\n" +
                 "    \"uri\": \"file:path/test.feature\",\n" +
                 "    \"tags\": []\n" +
