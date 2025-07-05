@@ -1,5 +1,7 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.core.backend.HookDefinition;
+import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StubHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
@@ -35,18 +37,18 @@ import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 class JsonFormatterTest {
 
-    final Method monkeyArrives = getMethod("monkey_arrives");
-    final Method thereAreBananas = getMethod("there_are_bananas");
-    final Method thereAreOranges = getMethod("there_are_oranges");
-    final Method beforeHook1 = getMethod("before_hook_1");
-    final Method afterHook1 = getMethod("after_hook_1");
+    final SourceReference monkeyArrives = getMethod("monkey_arrives");
+    final SourceReference thereAreBananas = getMethod("there_are_bananas");
+    final SourceReference thereAreOranges = getMethod("there_are_oranges");
+    final SourceReference beforeHook1 = getMethod("before_hook_1");
+    final SourceReference afterHook1 = getMethod("after_hook_1");
 
-    final Method monkeyEatsBananas = getMethod("monkey_eats_bananas");
-    final Method monkeyEatsMoreBananas = getMethod("monkey_eats_more_bananas");
+    final SourceReference monkeyEatsBananas = getMethod("monkey_eats_bananas");
+    final SourceReference monkeyEatsMoreBananas = getMethod("monkey_eats_more_bananas");
 
-    private static Method getMethod(String name)  {
+    private static SourceReference getMethod(String name) {
         try {
-            return StepDefs.class.getMethod(name);
+            return SourceReference.fromMethod(StepDefs.class.getMethod(name));
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -217,7 +219,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -249,7 +252,7 @@ class JsonFormatterTest {
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas,
-                        new StubException())))
+                        new StubException("the stack trace"))))
                 .build()
                 .run();
 
@@ -277,7 +280,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"failed\",\n" +
@@ -336,7 +340,8 @@ class JsonFormatterTest {
                 "            \"line\": 5,\n" +
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"keyword\": \"Given \"\n" +
                 "          }\n" +
@@ -401,7 +406,8 @@ class JsonFormatterTest {
                 "            \"line\": 4,\n" +
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"keyword\": \"Given \"\n" +
                 "          },\n" +
@@ -413,7 +419,8 @@ class JsonFormatterTest {
                 "            \"line\": 9,\n" +
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"keyword\": \"Given \"\n" +
                 "          }\n" +
@@ -436,7 +443,8 @@ class JsonFormatterTest {
                 "            \"line\": 12,\n" +
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"keyword\": \"Given \"\n" +
                 "          }\n" +
@@ -500,7 +508,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -565,7 +574,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -588,7 +598,8 @@ class JsonFormatterTest {
                 "            \"name\": \"the monkey eats bananas\",\n" +
                 "            \"line\": 7,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_eats_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_eats_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -609,7 +620,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -632,7 +644,8 @@ class JsonFormatterTest {
                 "            \"name\": \"the monkey eats more bananas\",\n" +
                 "            \"line\": 10,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_eats_more_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_eats_more_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -690,7 +703,8 @@ class JsonFormatterTest {
                 "            \"line\": 5,\n" +
                 "            \"name\": \"the monkey eats more bananas\",\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_eats_more_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_eats_more_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"keyword\": \"Then \"\n" +
                 "          }\n" +
@@ -751,9 +765,9 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(beforeHook1)),
+                    singletonList(new StubHookDefinition(beforeHook1, HookDefinition.HookType.BEFORE)),
                     singletonList(new StubStepDefinition("there are bananas", thereAreBananas)),
-                    singletonList(new StubHookDefinition(afterHook1))))
+                    singletonList(new StubHookDefinition(afterHook1, HookDefinition.HookType.BEFORE))))
                 .build()
                 .run();
 
@@ -792,7 +806,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -880,7 +895,8 @@ class JsonFormatterTest {
                 "            \"line\": 4,\n" +
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"after\": [\n" +
                 "              {\n" +
@@ -923,7 +939,8 @@ class JsonFormatterTest {
                 "            \"line\": 5,\n" +
                 "            \"name\": \"monkey arrives\",\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_arrives()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#monkey_arrives()\"\n"
+                +
                 "            },\n" +
                 "            \"after\": [\n" +
                 "              {\n" +
@@ -1021,7 +1038,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1101,7 +1119,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1182,7 +1201,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1248,7 +1268,8 @@ class JsonFormatterTest {
                 "              \"line\": 5\n" +
                 "            },\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1315,7 +1336,8 @@ class JsonFormatterTest {
                 "              \"line\": 5\n" +
                 "            },\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1390,7 +1412,8 @@ class JsonFormatterTest {
                 "              }\n" +
                 "            ],\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1455,7 +1478,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are bananas\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_bananas()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1489,7 +1513,8 @@ class JsonFormatterTest {
                 "            \"name\": \"there are oranges\",\n" +
                 "            \"line\": 4,\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_oranges()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#there_are_oranges()\"\n"
+                +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -1506,25 +1531,31 @@ class JsonFormatterTest {
     }
 
     static class StepDefs {
-        public void before_hook_1(){
+        public void before_hook_1() {
 
         }
-        public void after_hook_1(){
+
+        public void after_hook_1() {
 
         }
-        public void there_are_bananas(){
+
+        public void there_are_bananas() {
 
         }
-        public void there_are_oranges(){
+
+        public void there_are_oranges() {
 
         }
-        public void monkey_eats_bananas(){
+
+        public void monkey_eats_bananas() {
 
         }
-        public void monkey_eats_more_bananas(){
+
+        public void monkey_eats_more_bananas() {
 
         }
-        public void monkey_arrives(){
+
+        public void monkey_arrives() {
 
         }
     }

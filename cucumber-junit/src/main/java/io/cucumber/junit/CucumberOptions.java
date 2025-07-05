@@ -10,7 +10,11 @@ import java.lang.annotation.Target;
 
 /**
  * Configure Cucumbers options.
+ * 
+ * @deprecated JUnit 4 is in maintenance mode. Upgrade to JUnit 5 and switch to
+ *             the {@code cucumber-junit-platform-engine}.
  */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 @API(status = API.Status.STABLE)

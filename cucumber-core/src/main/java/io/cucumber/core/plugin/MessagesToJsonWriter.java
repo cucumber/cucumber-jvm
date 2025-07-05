@@ -1,6 +1,5 @@
 package io.cucumber.core.plugin;
 
-
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.query.Query;
 
@@ -16,7 +15,8 @@ import static java.util.Objects.requireNonNull;
 /**
  * Writes the message output of a test run as single json report.
  * <p>
- * Note: Messages are first collected and only written once the stream is closed.
+ * Note: Messages are first collected and only written once the stream is
+ * closed.
  */
 public class MessagesToJsonWriter implements AutoCloseable {
 
@@ -27,17 +27,15 @@ public class MessagesToJsonWriter implements AutoCloseable {
 
     public MessagesToJsonWriter(OutputStream out, Serializer serializer) {
         this.out = new OutputStreamWriter(
-                requireNonNull(out),
-                StandardCharsets.UTF_8
-        );
+            requireNonNull(out),
+            StandardCharsets.UTF_8);
         this.serializer = serializer;
     }
-
 
     /**
      * Writes a cucumber message to the xml output.
      *
-     * @param envelope the message
+     * @param  envelope    the message
      * @throws IOException if an IO error occurs
      */
     public void write(Envelope envelope) throws IOException {
@@ -78,4 +76,3 @@ public class MessagesToJsonWriter implements AutoCloseable {
 
     }
 }
-

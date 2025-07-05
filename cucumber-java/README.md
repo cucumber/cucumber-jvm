@@ -67,7 +67,7 @@ Depending on the table shape, it can also be accessed as one of the following co
  * `Map<String, List<String>> table`
  * `Map<String, Map<String, String>> table`
  
-For examples of each type see: [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+For examples of each type see: [cucumber-jvm/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/datatable)
 
 ```java
 package com.example.app;
@@ -295,7 +295,7 @@ Depending on the parameter type, this will be one of the following:
  * `DataTable` -> `io.cucumber.datatable.TableTransformer`
 
 For a full list of transformations that can be achieved with data table types, 
-see [cucumber/datatable](https://github.com/cucumber/cucumber/tree/master/datatable)
+see [cucumber-jvm/datatable](https://github.com/cucumber/cucumber-jvm/tree/main/datatable)
 
 ### Default Transformers
 
@@ -418,7 +418,7 @@ For example, a table with the fields for a User and a data table type to create 
  Given the user is
     | firstname	    | Roberto	|
     | lastname	    | Lo Giacco |
-    | nationality	| Italian	|
+    | nationality   | Italian	|
  ```
 
 ```java 

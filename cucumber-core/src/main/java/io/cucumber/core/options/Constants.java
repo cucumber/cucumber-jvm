@@ -42,7 +42,8 @@ public final class Constants {
      * Valid values are {@code lexical}, {@code reverse}, {@code random} or
      * {@code random:[seed]}.
      * <p>
-     * By default features are executed in lexical file name order
+     * By default, features are executed in lexical file name order and
+     * scenarios in a feature from top to bottom.
      */
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
 
@@ -88,9 +89,10 @@ public final class Constants {
      * <p>
      * Filters scenarios by name based on the provided regex pattern e.g:
      * {@code ^Hello (World|Cucumber)$}. Scenarios that do not match the
-     * expression are not executed.
+     * expression are not executed. Combined with
+     * {@value FILTER_TAGS_PROPERTY_NAME} using "and" semantics.
      * <p>
-     * By default all scenarios are executed
+     * By default, all scenarios are executed
      */
     public static final String FILTER_NAME_PROPERTY_NAME = "cucumber.filter.name";
 
@@ -99,9 +101,10 @@ public final class Constants {
      * <p>
      * Filters scenarios by tag based on the provided tag expression e.g:
      * {@code @Cucumber and not (@Gherkin or @Zucchini)}. Scenarios that do not
-     * match the expression are not executed.
+     * match the expression are not executed. Combined with
+     * {@value FILTER_NAME_PROPERTY_NAME} using "and" semantics.
      * <p>
-     * By default all scenarios are executed
+     * By default, all scenarios are executed
      */
     public static final String FILTER_TAGS_PROPERTY_NAME = "cucumber.filter.tags";
 

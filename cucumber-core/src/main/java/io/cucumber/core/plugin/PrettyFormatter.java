@@ -2,8 +2,11 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.DataTableArgument;
+import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
+import io.cucumber.docstring.DocString;
+import io.cucumber.docstring.DocStringFormatter;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.Argument;
@@ -46,8 +49,9 @@ import static java.util.Locale.ROOT;
 public final class PrettyFormatter implements ConcurrentEventListener, ColorAware {
 
     private static final String SCENARIO_INDENT = "";
-    private static final String STEP_INDENT = "  ";
-    private static final String STEP_SCENARIO_INDENT = "    ";
+    private static final String STEP_INDENT = SCENARIO_INDENT + "  ";
+    private static final String STEP_SCENARIO_INDENT = STEP_INDENT + "  ";
+    private static final String STACK_TRACE_INDENT = STEP_SCENARIO_INDENT + "  ";
 
     private final Map<UUID, Integer> commentStartIndex = new HashMap<>();
 
@@ -117,7 +121,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     private void printTags(TestCaseStarted event) {
         List<String> tags = event.getTestCase().getTags();
         if (!tags.isEmpty()) {
-            out.println(PrettyFormatter.SCENARIO_INDENT + String.join(" ", tags));
+            out.println(SCENARIO_INDENT + String.join(" ", tags));
         }
     }
 
@@ -141,15 +145,29 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
             String locationComment = formatLocationComment(event, testStep, keyword, stepText);
             out.println(STEP_INDENT + formattedStepText + locationComment);
             StepArgument stepArgument = testStep.getStep().getArgument();
-            if (DataTableArgument.class.isInstance(stepArgument)) {
+            if (stepArgument instanceof DataTableArgument) {
                 DataTableFormatter tableFormatter = DataTableFormatter
                         .builder()
                         .prefixRow(STEP_SCENARIO_INDENT)
                         .escapeDelimiters(false)
                         .build();
                 DataTableArgument dataTableArgument = (DataTableArgument) stepArgument;
+                DataTable table = DataTable.create(dataTableArgument.cells());
                 try {
-                    tableFormatter.formatTo(DataTable.create(dataTableArgument.cells()), out);
+                    tableFormatter.formatTo(table, out);
+                } catch (IOException e) {
+                    throw new CucumberException(e);
+                }
+            } else if (stepArgument instanceof DocStringArgument) {
+                DocStringFormatter docStringFormatter = DocStringFormatter
+                        .builder()
+                        .indentation(STEP_SCENARIO_INDENT)
+                        .build();
+                DocStringArgument docStringArgument = (DocStringArgument) stepArgument;
+                DocString docString = DocString.create(docStringArgument.getContent(),
+                    docStringArgument.getContentType());
+                try {
+                    docStringFormatter.formatTo(docString, out);
                 } catch (IOException e) {
                     throw new CucumberException(e);
                 }
@@ -170,21 +188,23 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
 
     private void printError(TestStepFinished event) {
         Result result = event.getResult();
-        printError(result);
+        printError(STACK_TRACE_INDENT, result);
     }
 
     private void printError(TestRunFinished event) {
         Result result = event.getResult();
-        printError(result);
+        printError(SCENARIO_INDENT, result);
     }
 
-    private void printError(Result result) {
+    private void printError(String prefix, Result result) {
         Throwable error = result.getError();
         if (error != null) {
             String name = result.getStatus().name().toLowerCase(ROOT);
             Format format = formats.get(name);
             String text = printStackTrace(error);
-            out.println("      " + format.text(text));
+            // TODO: Java 12+ use String.indent
+            String indented = text.replaceAll("(\r\n|\r|\n)", "$1" + prefix).trim();
+            out.println(prefix + format.text(indented));
         }
     }
 

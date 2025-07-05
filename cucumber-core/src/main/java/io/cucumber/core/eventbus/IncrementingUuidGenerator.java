@@ -10,20 +10,20 @@ import java.util.concurrent.atomic.AtomicLong;
  * Thread-safe and collision-free UUID generator for single JVM. This is a
  * sequence generator and each instance has its own counter. This generator is
  * about 100 times faster than #RandomUuidGenerator.
- *
- * Properties:
- * - thread-safe
- * - collision-free in the same classloader
- * - almost collision-free in different classloaders / JVMs
- * - UUIDs generated using the instances from the same classloader are sortable
- *
- * UUID version 8 (custom) / variant 2 <a href=
- * "https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html#name-uuid-version-8">...</a>
- * <!-- @formatter:off -->
+ * <p>
+ * Properties: - thread-safe - collision-free in the same classloader - almost
+ * collision-free in different classloaders / JVMs - UUIDs generated using the
+ * instances from the same classloader are sortable
+ * <p>
+ * <a href=
+ * "https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-04.html#name-uuid-version-8">UUID
+ * version 8 (custom) / variant 2 </a>
+ * 
+ * <pre>
  * |       40 bits      |      8 bits    |  4 bits |    12 bits    |  2 bits | 62 bits |
  * | -------------------| -------------- | ------- | ------------- | ------- | ------- |
  * | LSBs of epoch-time | sessionCounter | version | classloaderId | variant | counter |
- * <!-- @formatter:on -->
+ * </pre>
  */
 public class IncrementingUuidGenerator implements UuidGenerator {
     /**
@@ -68,7 +68,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
     /**
      * Computed UUID MSB value.
      */
-    final long msb;
+    private long msb;
 
     /**
      * Counter for the UUID LSB.
@@ -77,14 +77,14 @@ public class IncrementingUuidGenerator implements UuidGenerator {
 
     /**
      * Defines a new classloaderId for the class. This only affects instances
-     * created after the call (the instances created before the call keep their
-     * classloaderId). This method should be called to specify a classloaderId
-     * if you are using more than one class loader, and you want to guarantee a
-     * collision-free UUID generation (instead of the default random
-     * classloaderId which produces about 1% collision rate on the
-     * classloaderId, and thus can have UUID collision if the epoch-time,
-     * session counter and counter have the same values).
-     * 
+     * created after the first call to {@link #generateId()} (the instances
+     * created before the call keep their classloaderId). This method should be
+     * called to specify a {@code classloaderId} if you are using more than one
+     * class loader, and you want to guarantee a collision-free UUID generation
+     * (instead of the default random classloaderId which produces about 1%
+     * collision rate on the classloaderId, and thus can have UUID collision if
+     * the epoch-time, session counter and counter have the same values).
+     *
      * @param classloaderId the new classloaderId (only the least significant 12
      *                      bits are used)
      * @see                 IncrementingUuidGenerator#classloaderId
@@ -94,6 +94,10 @@ public class IncrementingUuidGenerator implements UuidGenerator {
     }
 
     public IncrementingUuidGenerator() {
+
+    }
+
+    private long initializeMsb() {
         long sessionId = sessionCounter.incrementAndGet();
         if (sessionId == MAX_SESSION_ID) {
             throw new CucumberException(
@@ -103,7 +107,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
         }
         long epochTime = System.currentTimeMillis();
         // msb = epochTime | sessionId | version | classloaderId
-        msb = ((epochTime & MAX_EPOCH_TIME) << 24) | (sessionId << 16) | (8 << 12) | classloaderId;
+        return ((epochTime & MAX_EPOCH_TIME) << 24) | (sessionId << 16) | (8 << 12) | classloaderId;
     }
 
     /**
@@ -114,6 +118,11 @@ public class IncrementingUuidGenerator implements UuidGenerator {
      */
     @Override
     public UUID generateId() {
+        if (msb == 0) {
+            // Lazy init to avoid starting sessions when not used.
+            msb = initializeMsb();
+        }
+
         long counterValue = counter.incrementAndGet();
         if (counterValue == MAX_COUNTER_VALUE) {
             throw new CucumberException(

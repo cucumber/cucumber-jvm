@@ -11,6 +11,7 @@ import io.cucumber.tagexpressions.TagExpressionParser;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,13 +34,13 @@ class CoreHookDefinition {
         }
     }
 
-    static CoreHookDefinition create(HookDefinition hookDefinition) {
+    static CoreHookDefinition create(HookDefinition hookDefinition, Supplier<UUID> uuidGenerator) {
         // Ideally we would avoid this by keeping the scenario scoped
         // glue in a different bucket from the globally scoped glue.
         if (hookDefinition instanceof ScenarioScoped) {
-            return new ScenarioScopedCoreHookDefinition(hookDefinition);
+            return new ScenarioScopedCoreHookDefinition(uuidGenerator.get(), hookDefinition);
         }
-        return new CoreHookDefinition(UUID.randomUUID(), hookDefinition);
+        return new CoreHookDefinition(uuidGenerator.get(), hookDefinition);
     }
 
     void execute(TestCaseState scenario) {
@@ -70,10 +71,14 @@ class CoreHookDefinition {
         return delegate.getTagExpression();
     }
 
+    Optional<HookDefinition.HookType> getHookType() {
+        return delegate.getHookType();
+    }
+
     static class ScenarioScopedCoreHookDefinition extends CoreHookDefinition implements ScenarioScoped {
 
-        private ScenarioScopedCoreHookDefinition(HookDefinition delegate) {
-            super(UUID.randomUUID(), delegate);
+        private ScenarioScopedCoreHookDefinition(UUID id, HookDefinition delegate) {
+            super(id, delegate);
         }
 
         @Override

@@ -4,6 +4,7 @@ import io.cucumber.messages.types.TableRow;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Node;
 
+import java.net.URI;
 import java.util.Optional;
 
 final class GherkinMessagesExample implements Node.Example {
@@ -18,6 +19,11 @@ final class GherkinMessagesExample implements Node.Example {
         this.tableRow = tableRow;
         this.examplesIndex = examplesIndex;
         this.rowIndex = rowIndex;
+    }
+
+    @Override
+    public URI getUri() {
+        return parent.getUri();
     }
 
     @Override

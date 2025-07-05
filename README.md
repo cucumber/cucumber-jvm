@@ -1,18 +1,30 @@
-# Cucumber JVM
+<h1 align="center">
+  <img src="https://raw.githubusercontent.com/cucumber/cucumber-js/46a5a78107be27e99c6e044c69b6e8f885ce456c/docs/images/logo.svg" alt="Cucumber logo" width="75">
+  <br>
+  Cucumber JVM
+</h1>
+<p align="center">
+  <b>Automated tests in plain language, for the JVM</b>
+</p>
 
-[![#StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://vshymanskyy.github.io/StandWithUkraine)
+<div align="center">
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java?style=flat&color=dark-green&label=Maven%20Central)](https://central.sonatype.com/artifact/io.cucumber/cucumber-java)
+[![Build Status](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
 [![OpenCollective](https://opencollective.com/cucumber/backers/badge.svg)](https://opencollective.com/cucumber)
 [![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
-[![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.cucumber/cucumber-java)
-[![Build Status](https://github.com/cucumber/cucumber-jvm/workflows/Cucumber%20CI/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
-[![Coverage Status](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main/graph/badge.svg)](https://codecov.io/gh/cucumber/cucumber-jvm/branch/main)
+[![#StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://vshymanskyy.github.io/StandWithUkraine)
 
-Cucumber-JVM is a pure Java implementation of Cucumber.
-You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with
-the tool of your choice.
+</div>
 
-Cucumber-JVM also integrates with all the popular
-[Dependency Injection containers](https://cucumber.io/docs/installation/java/#dependency-injection).
+[Cucumber](https://github.com/cucumber) is a tool for running automated tests written in plain language. Because they're
+written in plain language, they can be read by anyone on your team. Because they can be
+read by anyone, you can use them to help improve communication, collaboration and trust on
+your team.
+
+This is the Java implementation of Cucumber. You can [run](https://cucumber.io/docs/cucumber/api/#running-cucumber) it with
+the tool of your choice - including with popular
+[dependency injection containers](https://cucumber.io/docs/installation/java/#dependency-injection).
 
 ## Getting started
 
@@ -32,7 +44,8 @@ The changes for the current major version can be found in the [CHANGELOG.md](CHA
 Please ask on
 
 * [Stack Overflow](https://stackoverflow.com/questions/tagged/cucumber-jvm).
-* [CucumberBDD Slack](https://communityinviter.com/apps/cucumberbdd/docs-page) <sup>[direct link](https://cucumberbdd.slack.com/)</sup>
+* [Github Discusssion](https://github.com/orgs/cucumber/discussions)
+* [Cucumber Discord](https://cucumber.io/docs/community/get-in-touch/#discord)
 
 ## Bugs and Feature requests
 

@@ -6,7 +6,9 @@ import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Object representation of <a href="https://github.com/cucumber/cucumber-json-schema/blob/main/schemas/cucumber-jvm.json">cucumber-jvm.json</a> schema.
+ * Object representation of <a href=
+ * "https://github.com/cucumber/cucumber-json-schema/blob/main/schemas/cucumber-jvm.json">cucumber-jvm.json</a>
+ * schema.
  */
 class CucumberJvmJson {
     enum JvmElementType {
@@ -30,7 +32,10 @@ class CucumberJvmJson {
         private final List<JvmElement> elements;
         private final List<JvmLocationTag> tags;
 
-        JvmFeature(String uri, String id, Long line, String keyword, String name, String description, List<JvmElement> elements, List<JvmLocationTag> tags) {
+        JvmFeature(
+                String uri, String id, Long line, String keyword, String name, String description,
+                List<JvmElement> elements, List<JvmLocationTag> tags
+        ) {
             this.uri = requireNonNull(uri);
             this.id = requireNonNull(id);
             this.line = requireNonNull(line);
@@ -87,7 +92,10 @@ class CucumberJvmJson {
         private final List<JvmHook> after;
         private final List<JvmTag> tags;
 
-        JvmElement(String start_timestamp, Long line, String id, JvmElementType type, String keyword, String name, String description, List<JvmStep> steps, List<JvmHook> before, List<JvmHook> after, List<JvmTag> tags) {
+        JvmElement(
+                String start_timestamp, Long line, String id, JvmElementType type, String keyword, String name,
+                String description, List<JvmStep> steps, List<JvmHook> before, List<JvmHook> after, List<JvmTag> tags
+        ) {
             this.start_timestamp = start_timestamp;
             this.line = requireNonNull(line);
             this.id = id;
@@ -155,7 +163,10 @@ class CucumberJvmJson {
         private final JvmDocString doc_string;
         private final List<JvmDataTableRow> rows;
 
-        JvmStep(String keyword, Long line, JvmMatch match, String name, JvmResult result, JvmDocString doc_string, List<JvmDataTableRow> rows) {
+        JvmStep(
+                String keyword, Long line, JvmMatch match, String name, JvmResult result, JvmDocString doc_string,
+                List<JvmDataTableRow> rows
+        ) {
             this.keyword = requireNonNull(keyword);
             this.line = requireNonNull(line);
             this.match = match;

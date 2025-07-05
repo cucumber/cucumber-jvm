@@ -1,8 +1,8 @@
 package io.cucumber.core.eventbus;
 
 import io.cucumber.core.exception.CucumberException;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.ThrowingSupplier;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +21,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -119,25 +122,38 @@ class IncrementingUuidGeneratorTest {
 
         // Then
         assertThat(cucumberException.getMessage(),
-            Matchers.containsString("Out of IncrementingUuidGenerator capacity"));
+            containsString("Out of IncrementingUuidGenerator capacity"));
     }
 
     @Test
     void version_overflow() {
         // Given
+        IncrementingUuidGenerator generator = new IncrementingUuidGenerator();
         IncrementingUuidGenerator.sessionCounter.set(IncrementingUuidGenerator.MAX_SESSION_ID - 1);
 
         // When
-        CucumberException cucumberException = assertThrows(CucumberException.class, IncrementingUuidGenerator::new);
+        CucumberException cucumberException = assertThrows(CucumberException.class, generator::generateId);
 
         // Then
         assertThat(cucumberException.getMessage(),
-            Matchers.containsString("Out of IncrementingUuidGenerator capacity"));
+            containsString("Out of IncrementingUuidGenerator capacity"));
+    }
+
+    @Test
+    void lazy_init() {
+        // Given
+        IncrementingUuidGenerator.sessionCounter.set(IncrementingUuidGenerator.MAX_SESSION_ID - 1);
+
+        // When
+        ThrowingSupplier<IncrementingUuidGenerator> instantiateGenerator = IncrementingUuidGenerator::new;
+
+        // Then
+        assertDoesNotThrow(instantiateGenerator);
     }
 
     private static void checkUuidProperties(List<UUID> uuids) {
         // all UUIDs are non-null
-        assertTrue(uuids.stream().filter(Objects::isNull).findFirst().isEmpty());
+        assertFalse(uuids.stream().anyMatch(Objects::isNull));
 
         // UUID version is always 8
         List<Integer> versions = uuids.stream().map(UUID::version).distinct().collect(Collectors.toList());
@@ -316,7 +332,7 @@ class IncrementingUuidGeneratorTest {
 
         private byte[] loadClassBytesFromDisk(String className) {
             try {
-                return Files.readAllBytes(Path.of(Objects.requireNonNull(NonCachingClassLoader.class
+                return Files.readAllBytes(Paths.get(Objects.requireNonNull(NonCachingClassLoader.class
                         .getResource(className.replaceFirst(".+\\.", "") + ".class")).toURI()));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to read file from disk");

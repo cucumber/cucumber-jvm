@@ -3,13 +3,13 @@ Cucumber JUnit Platform Engine
 
 Use the JUnit (5) Platform to execute Cucumber scenarios.
 
-Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
+Add the `cucumber-junit-platform-engine` dependency to your `pom.xml` and use
+the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependency>
    <groupId>io.cucumber</groupId>
    <artifactId>cucumber-junit-platform-engine</artifactId>
-   <version>${cucumber.version}</version>
    <scope>test</scope>
 </dependency>
 ```
@@ -17,9 +17,29 @@ Add the `cucumber-junit-platform-engine` dependency to your `pom.xml`:
 This will allow IntelliJ IDEA, Eclipse, Maven, Gradle, etc, to discover, select
 and execute Cucumber scenarios.
 
-## Surefire and Gradle workarounds
+## Running Cucumber
 
-Maven, Surefire and Gradle do not yet support discovery of non-class based tests
+The JUnit Platform provides a single interface for tools and IDE's to discover,
+select and execute tests from different test engines. Conceptually this looks
+like this:
+
+
+```mermaid
+erDiagram
+    "IDE" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Maven or Gradle" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "JUnit Platform" ||--|{ "Cucumber Test Engine": "forwards request"
+    "JUnit Platform" ||--|{ "Jupiter Test Engine": "forwards request"
+    "Cucumber Test Engine" ||--|{ "Feature Files": "discovers and executes"
+    "Jupiter Test Engine" ||--|{ "Test Classes": "discovers and executes"
+```
+
+In practice, integration is still limited so we discuss the most common workarounds below.
+
+### Maven Surefire and Gradle
+
+Maven Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
 [SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
  workaround, you can either use:
@@ -28,19 +48,21 @@ Maven, Surefire and Gradle do not yet support discovery of non-class based tests
  * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
  * the [Cucable](https://github.com/trivago/cucable-plugin) plugin for Maven.
 
-### Use the JUnit Platform Suite Engine
+#### Use the JUnit Platform Suite Engine
 
 The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
 for a brief how to.
 
+##### Maven and Gradle workarounds
+
 Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
-can make for hard to read reports. To improve the readability of the reports
-provide the `cucumber.junit-platform.naming-strategy=long` configuration
-parameter. This will include the feature name as part of the test name. 
+can make for hard to read reports. 
 
-#### Maven
+To improve the readability of the reports use the
+`cucumber.junit-platform.naming-strategy` configuration parameter. This  will
+include the feature name, scenario name, example number, etc. in the report.
 
 ```xml
 <plugin>
@@ -50,14 +72,12 @@ parameter. This will include the feature name as part of the test name.
     <configuration>
         <properties>
             <configurationParameters>
-                cucumber.junit-platform.naming-strategy=long
+                cucumber.junit-platform.naming-strategy=surefire
             </configurationParameters>
         </properties>
     </configuration>
 </plugin>
 ```            
-
-#### Gradle
 
 ```kotlin
 tasks.test {
@@ -66,12 +86,30 @@ tasks.test {
 }
 ```
 
-### Use the JUnit Console Launcher ###
+##### IDEA workarounds
+
+When running features through IDEA, the Cucumber CLI is used. The CLI looks for
+configuration properties in `cucumber.properties` while JUnit looks for
+`junit-platform.properties`. To avoid duplication you can use the
+`@ConfigurationParametersResource` annotation to include `cucumber.properties`
+into a Suite.
+
+```java
+@Suite
+@IncludeEngines("cucumber")
+@SelectPackages("com.example")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
+@ConfigurationParametersResource("cucumber.properties")
+public class RunCucumberTest {
+}
+```
+
+#### Use the JUnit Console Launcher ###
 
 You can integrate the JUnit Platform Console Launcher in your build by using 
 either the Maven Antrun plugin or the Gradle JavaExec task.
 
-#### Use the Maven Antrun plugin  ####
+##### Use the Maven Antrun plugin  ####
 
 Add the following to your `pom.xml`:
 
@@ -121,7 +159,7 @@ Add the following to your `pom.xml`:
 </plugins>
 </build>
 ```
-#### Use the Gradle JavaExec task  ####
+##### Use the Gradle JavaExec task  ####
 
 Add the following to your `build.gradle.kts`:
 
@@ -162,18 +200,56 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-TODO: (I don't know how. Feel free to send a pull request. ;))
+Define Cucumber properties before running the test to ensure that your `build.gradle`
+(or `build.gradle.kts`) correctly passes system properties to the test task.
+
+```groovy
+tasks.test {
+    systemProperty("cucumber.features", System.getProperty("cucumber.features"))
+    systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
+    systemProperty("cucumber.filter.name", System.getProperty("cucumber.filter.name"))
+    systemProperty("cucumber.plugin", System.getProperty("cucumber.plugin"))
+}
+```
+
+Then to select the scenario on line 10 of the `example.feature` file use:
+
+```shell
+gradle test --rerun-tasks --info -Dcucumber.plugin=pretty -Dcucumber.features=path/to/example.feature:10
+```
+
+Note: Because both the Suite Engine and the Cucumber Engine are included, this
+will run tests twice. (If you know how to prevent this, please send a pull
+request).
 
 ## Suites with different configurations
 
 The JUnit Platform Suite Engine can be used to run Cucumber multiple times with
-different configurations. Add the `junit-platform-suite` dependency:
+different configurations. Conceptually this looks like this:
+
+```mermaid
+erDiagram
+    "IDE" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Maven or Gradle" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "JUnit Platform" ||--|{ "Suite Test Engine": "forwards request"
+    "Suite Test Engine" ||--|{ "@Suite annotated class A" : "discovers and executes"
+    "Suite Test Engine" ||--|{ "@Suite annotated class B" : "discovers and executes"
+    "@Suite annotated class A" ||--|{ "JUnit Platform (A)" :  "requests discovery and execution"
+    "@Suite annotated class B" ||--|{ "JUnit Platform (B)" :  "requests discovery and execution"
+    "JUnit Platform (A)" ||--|{ "Cucumber Test Engine (A)": "forwards request"
+    "JUnit Platform (B)" ||--|{ "Cucumber Test Engine (B)": "forwards request"
+    "Cucumber Test Engine (A)" ||--|{ "Feature Files (A)": "discovers and executes"
+    "Cucumber Test Engine (B)" ||--|{ "Feature Files (B)": "discovers and executes"
+```
+
+To use, add the `junit-platform-suite` dependency and use
+the [`junit-bom`](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven-bom) for dependency management:
 
 ```xml
 <dependency>
    <groupId>org.junit.platform</groupId>
    <artifactId>junit-platform-suite</artifactId>
-   <version>${junit-platform.version}</version>
    <scope>test</scope>
 </dependency>
 ```
@@ -331,6 +407,7 @@ cucumber.ansi-colors.disabled=                                 # true or false.
        
 cucumber.filter.name=                                          # a regular expression.
                                                                # only scenarios with matching names are executed.
+                                                               # combined with cucumber.filter.tags using "and" semantics.
                                                                # example: ^Hello (World|Cucumber)$
                                                                # note: To ensure consistent reports between Cucumber and
                                                                # JUnit 5 prefer using JUnit 5s discovery request filters
@@ -349,6 +426,7 @@ cucumber.features=                                             # comma separated
 
 cucumber.filter.tags=                                          # a cucumber tag expression.
                                                                # only scenarios with matching tags are executed.
+                                                               # combined with cucumber.filter.name using "and" semantics.                                                               
                                                                # example: @Cucumber and not (@Gherkin or @Zucchini)
                                                                # note: To ensure consistent reports between Cucumber and
                                                                # JUnit 5 prefer using JUnit 5s discovery request filters
@@ -357,22 +435,31 @@ cucumber.filter.tags=                                          # a cucumber tag 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
 
-cucumber.junit-platform.naming-strategy=                       # long or short.
+cucumber.junit-platform.naming-strategy=                       # long, short or surefire.
                                                                # default: short
                                                                # include parent descriptor name in test descriptor.
 
-cucumber.junit-platform.naming-strategy.short.example-name=    # number or pickle.
-                                                               # default: number
-                                                               # Use example number or pickle name for examples when
+cucumber.junit-platform.naming-strategy.short.example-name=    # number, number-and-pickle-if-parameterized or pickle.
+                                                               # default: number-and-pickle-if-parameterized
+                                                               # Use example number and/or pickle name for examples when
                                                                # short naming strategy is used
 
-cucumber.junit-platform.naming-strategy.long.example-name=     # number or pickle.
-                                                               # default: number
-                                                               # Use example number or pickle name for examples when
+cucumber.junit-platform.naming-strategy.long.example-name=     # number, number-and-pickle-if-parameterized or pickle.
+                                                               # default: number-and-pickle-if-parameterized
+                                                               # Use example number and/or pickle name for examples when
                                                                # long naming strategy is used
+                                                               
+cucumber.junit-platform.naming-strategy.surefire.example-name= # number or pickle.
+                                                               # default: number-and-pickle-if-parameterized
+                                                               # Use example number or pickle name for examples when
+                                                               # surefire naming strategy is used
 
 cucumber.plugin=                                               # comma separated plugin strings.
                                                                # example: pretty, json:path/to/report.json
+
+cucumber.uuid-generator                                        # uuid generator class name of a registered service provider.
+                                                               # default: io.cucumber.core.eventbus.RandomUuidGenerator
+                                                               # example: com.example.MyUuidGenerator
  
 cucumber.object-factory=                                       # object factory class name.
                                                                # example: com.example.MyObjectFactory
@@ -400,6 +487,16 @@ cucumber.execution.execution-mode.feature=                     # same_thread or 
                                                                # same thread as the parent feature 
                                                                # concurrent - executes scenarios concurrently on any
                                                                # available thread
+
+cucumber.execution.order=                                     # lexical, reverse or random
+                                                              # default: lexical
+                                                              # lexical - executes features in lexical uri order, scenarios and examples from top to bottom 
+                                                              # reverse - as lexical, but with the elements of each container reversed
+                                                              # random - executes scenarios and examples in a random order within their parent container 
+
+cucumber.execution.order.random.seed=                         # any long
+                                                              # example: 20090120
+                                                              # enables deterministic random execution  
 
 cucumber.execution.parallel.enabled=                           # true or false.
                                                                # default: false
@@ -552,7 +649,7 @@ Note: any files written by Cucumber will be overwritten during the rerun.
                  information to disambiguate between different
                  examples and scenarios. -->
             <configurationParameters>
-                cucumber.junit-platform.naming-strategy=long
+                cucumber.junit-platform.naming-strategy=surefire
             </configurationParameters>
         </properties>
     </configuration>

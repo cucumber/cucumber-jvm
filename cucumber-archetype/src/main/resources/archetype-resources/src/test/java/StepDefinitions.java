@@ -2,7 +2,7 @@ package ${package};
 
 import io.cucumber.java.en.*;
 
-import org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepDefinitions {
 

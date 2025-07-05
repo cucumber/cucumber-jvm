@@ -18,6 +18,11 @@ public class StubLocation implements Located {
         this.sourceReference = SourceReference.fromMethod(method);
     }
 
+    public StubLocation(SourceReference sourceReference) {
+        this.location = null;
+        this.sourceReference = sourceReference;
+    }
+
     @Override
     public boolean isDefinedAt(StackTraceElement stackTraceElement) {
         return false;

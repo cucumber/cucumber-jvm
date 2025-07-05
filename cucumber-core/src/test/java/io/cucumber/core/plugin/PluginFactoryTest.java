@@ -413,7 +413,8 @@ class PluginFactoryTest {
             }
             if (envelopeHandler != null) {
                 envelopeHandler.receive(
-                    Envelope.of(new io.cucumber.messages.types.TestRunFinished("done", false, toMessage(now()), null)));
+                    Envelope.of(
+                        new io.cucumber.messages.types.TestRunFinished("done", false, toMessage(now()), null, null)));
             }
         }
 

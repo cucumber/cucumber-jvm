@@ -1,53 +1,55 @@
 package io.cucumber.core.backend;
 
-import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class StubHookDefinition implements HookDefinition {
 
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
-    private final StubLocation location;
+    private final Located location;
     private final RuntimeException exception;
     private final Consumer<TestCaseState> action;
+    private final HookType hookType;
 
-    public StubHookDefinition(Method location, RuntimeException exception, Consumer<TestCaseState> action) {
-        this.location = new StubLocation(location);
+    public StubHookDefinition(
+            Located location, RuntimeException exception, Consumer<TestCaseState> action, HookType hookType
+    ) {
+        this.location = location;
         this.exception = exception;
         this.action = action;
-    }
-    public StubHookDefinition(String location, RuntimeException exception, Consumer<TestCaseState> action) {
-        this.location = new StubLocation(location);
-        this.exception = exception;
-        this.action = action;
+        this.hookType = hookType;
     }
 
     public StubHookDefinition(String location, Consumer<TestCaseState> action) {
-        this(location, null, action);
+        this(new StubLocation(location), null, action, null);
     }
 
-    public StubHookDefinition(Method location, Consumer<TestCaseState> action) {
-        this(location, null, action);
+    public StubHookDefinition(SourceReference location, Consumer<TestCaseState> action) {
+        this(new StubLocation(location), null, action, null);
     }
 
     public StubHookDefinition() {
-        this(STUBBED_LOCATION_WITH_DETAILS, null, null);
+        this(new StubLocation(STUBBED_LOCATION_WITH_DETAILS), null, null, null);
     }
 
     public StubHookDefinition(Consumer<TestCaseState> action) {
-        this(STUBBED_LOCATION_WITH_DETAILS, null, action);
+        this(new StubLocation(STUBBED_LOCATION_WITH_DETAILS), null, action, null);
     }
 
     public StubHookDefinition(RuntimeException exception) {
-        this(STUBBED_LOCATION_WITH_DETAILS, exception, null);
+        this(new StubLocation(STUBBED_LOCATION_WITH_DETAILS), exception, null, null);
     }
 
     public StubHookDefinition(String location) {
-        this(location, null, null);
+        this(new StubLocation(location), null, null, null);
     }
 
-    public StubHookDefinition(Method location) {
-        this(location, null, null);
+    public StubHookDefinition(SourceReference sourceReference, HookType hookType) {
+        this(new StubLocation(sourceReference), null, null, hookType);
+    }
+
+    public StubHookDefinition(SourceReference sourceReference, HookType hookType, RuntimeException exception) {
+        this(new StubLocation(sourceReference), exception, null, hookType);
     }
 
     @Override
@@ -83,5 +85,10 @@ public class StubHookDefinition implements HookDefinition {
     @Override
     public Optional<SourceReference> getSourceReference() {
         return location.getSourceReference();
+    }
+
+    @Override
+    public Optional<HookType> getHookType() {
+        return Optional.ofNullable(hookType);
     }
 }

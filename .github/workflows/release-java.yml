@@ -16,7 +16,7 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
           cache: 'maven'
-      - uses: cucumber/action-publish-mvn@v2.0.0
+      - uses: cucumber/action-publish-mvn@v3.0.0
         with:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}

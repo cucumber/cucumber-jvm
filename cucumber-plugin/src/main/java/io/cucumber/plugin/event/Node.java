@@ -2,6 +2,7 @@ package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
 
+import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +35,10 @@ import static java.util.Collections.singletonList;
  */
 @API(status = API.Status.EXPERIMENTAL)
 public interface Node {
+
+    default URI getUri() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    };
 
     Location getLocation();
 
