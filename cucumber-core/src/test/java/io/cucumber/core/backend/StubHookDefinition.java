@@ -20,16 +20,8 @@ public class StubHookDefinition implements HookDefinition {
         this.hookType = hookType;
     }
 
-    public StubHookDefinition(String location, Consumer<TestCaseState> action) {
-        this(new StubLocation(location), null, action, null);
-    }
-
-    public StubHookDefinition(SourceReference location, Consumer<TestCaseState> action) {
-        this(new StubLocation(location), null, action, null);
-    }
-
-    public StubHookDefinition() {
-        this(new StubLocation(STUBBED_LOCATION_WITH_DETAILS), null, null, null);
+    public StubHookDefinition(SourceReference location, HookType hookType, Consumer<TestCaseState> action) {
+        this(new StubLocation(location), null, action, hookType);
     }
 
     public StubHookDefinition(Consumer<TestCaseState> action) {
@@ -38,10 +30,6 @@ public class StubHookDefinition implements HookDefinition {
 
     public StubHookDefinition(RuntimeException exception) {
         this(new StubLocation(STUBBED_LOCATION_WITH_DETAILS), exception, null, null);
-    }
-
-    public StubHookDefinition(String location) {
-        this(new StubLocation(location), null, null, null);
     }
 
     public StubHookDefinition(SourceReference sourceReference, HookType hookType) {

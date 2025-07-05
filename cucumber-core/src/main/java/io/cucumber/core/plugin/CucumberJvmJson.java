@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -305,11 +304,13 @@ class CucumberJvmJson {
         private final JvmMatch match;
         private final JvmResult result;
         private final List<JvmEmbedding> embeddings;
+        private final List<String> output;
 
-        JvmHook(JvmMatch match, JvmResult result, List<JvmEmbedding> embeddings) {
+        JvmHook(JvmMatch match, JvmResult result, List<JvmEmbedding> embeddings, List<String> output) {
             this.match = requireNonNull(match);
             this.result = requireNonNull(result);
             this.embeddings = embeddings;
+            this.output = output;
         }
 
         public JvmMatch getMatch() {
@@ -322,6 +323,10 @@ class CucumberJvmJson {
 
         public List<JvmEmbedding> getEmbeddings() {
             return embeddings;
+        }
+
+        public List<String> getOutput() {
+            return output;
         }
     }
 

@@ -52,7 +52,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()"
             }
           }
         ],
@@ -159,7 +159,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()"
             }
           }
         ],
@@ -273,7 +273,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()"
             }
           }
         ],
@@ -387,7 +387,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()"
             }
           }
         ],

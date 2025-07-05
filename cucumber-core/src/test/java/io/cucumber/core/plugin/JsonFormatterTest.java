@@ -21,10 +21,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.Scanner;
 import java.util.UUID;
 
+import static io.cucumber.core.backend.HookDefinition.HookType.AFTER_STEP;
+import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE;
+import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE_STEP;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Clock.fixed;
 import static java.time.Duration.ofMillis;
@@ -42,6 +44,9 @@ class JsonFormatterTest {
     final SourceReference thereAreOranges = getMethod("there_are_oranges");
     final SourceReference beforeHook1 = getMethod("before_hook_1");
     final SourceReference afterHook1 = getMethod("after_hook_1");
+    final SourceReference beforeStepHook1 = getMethod("beforestep_hook_1");
+    final SourceReference afterStepHook1 = getMethod("afterstep_hook_1");
+    final SourceReference afterStepHook2 = getMethod("afterstep_hook_2");
 
     final SourceReference monkeyEatsBananas = getMethod("monkey_eats_bananas");
     final SourceReference monkeyEatsMoreBananas = getMethod("monkey_eats_more_bananas");
@@ -78,7 +83,7 @@ class JsonFormatterTest {
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition()),
+                    singletonList(new StubHookDefinition(beforeHook1, BEFORE)),
                     asList(
                         new StubStepDefinition("bg_1"),
                         new StubStepDefinition("bg_2"),
@@ -431,7 +436,7 @@ class JsonFormatterTest {
                 "        \"line\": 11,\n" +
                 "        \"name\": \"Monkey eats bananas\",\n" +
                 "        \"description\": \"\",\n" +
-                "        \"id\": \";monkey-eats-bananas\",\n" +
+                "        \"id\": \"banana-party;this-is-all-monkey-business;monkey-eats-bananas\",\n" +
                 "        \"type\": \"scenario\",\n" +
                 "        \"keyword\": \"Scenario\",\n" +
                 "        \"steps\": [\n" +
@@ -453,7 +458,7 @@ class JsonFormatterTest {
                 "    ],\n" +
                 "    \"name\": \"Banana party\",\n" +
                 "    \"description\": \"\",\n" +
-                "    \"id\": \"banana-party;this-is-all-monkey-business;monkey-eats-bananas\",\n" +
+                "    \"id\": \"banana-party\",\n" +
                 "    \"keyword\": \"Feature\",\n" +
                 "    \"uri\": \"file:path/test.feature\",\n" +
                 "    \"tags\": []\n" +
@@ -792,7 +797,7 @@ class JsonFormatterTest {
                 "        \"before\": [\n" +
                 "          {\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"Hooks.before_hook_1()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()\"\n" +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -851,13 +856,13 @@ class JsonFormatterTest {
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
-                    singletonList(new StubHookDefinition("Hooks.beforestep_hooks_1()")),
+                    singletonList(new StubHookDefinition(beforeStepHook1, BEFORE_STEP)),
                     asList(
                         new StubStepDefinition("there are bananas", thereAreBananas),
                         new StubStepDefinition("monkey arrives", monkeyArrives)),
                     asList(
-                        new StubHookDefinition("Hooks.afterstep_hooks_1()"),
-                        new StubHookDefinition("Hooks.afterstep_hooks_2()")),
+                        new StubHookDefinition(afterStepHook1, AFTER_STEP),
+                        new StubHookDefinition(afterStepHook2, AFTER_STEP)),
                     emptyList()))
                 .build()
                 .run();
@@ -993,7 +998,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(beforeHook1,
+                    singletonList(new StubHookDefinition(beforeHook1, BEFORE,
                         testCaseState -> testCaseState.log("printed from hook"))),
                     singletonList(new StubStepDefinition("there are bananas", thereAreBananas)),
                     emptyList()))
@@ -1021,7 +1026,7 @@ class JsonFormatterTest {
                 "        \"before\": [\n" +
                 "          {\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"Hooks.before_hook_1()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()\"\n" +
                 "            },\n" +
                 "            \"output\": [\n" +
                 "              \"printed from hook\"\n" +
@@ -1070,7 +1075,8 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                    singletonList(new StubHookDefinition(beforeHook1,
+                        BEFORE,
                         testCaseState -> testCaseState
                                 .attach(new byte[] { 1, 2, 3 }, "mime-type;base64", null))),
                     singletonList(new StubStepDefinition("there are bananas", thereAreBananas)),
@@ -1099,7 +1105,7 @@ class JsonFormatterTest {
                 "        \"before\": [\n" +
                 "          {\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"Hooks.before_hook_1()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()\"\n" +
                 "            },\n" +
                 "            \"embeddings\": [\n" +
                 "              {\n" +
@@ -1151,7 +1157,7 @@ class JsonFormatterTest {
                 .withAdditionalPlugins(timeService, new JsonFormatter(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition("Hooks.before_hook_1()",
+                    singletonList(new StubHookDefinition(beforeHook1, BEFORE,
                         testCaseState -> testCaseState.attach(new byte[] { 1, 2, 3 }, "mime-type;base64",
                             "someEmbedding"))),
                     singletonList(new StubStepDefinition("there are bananas", thereAreBananas)),
@@ -1180,7 +1186,7 @@ class JsonFormatterTest {
                 "        \"before\": [\n" +
                 "          {\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"Hooks.before_hook_1()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#before_hook_1()\"\n" +
                 "            },\n" +
                 "            \"embeddings\": [\n" +
                 "              {\n" +
@@ -1539,6 +1545,15 @@ class JsonFormatterTest {
 
         }
 
+        public void beforestep_hook_1() {
+
+        }
+        public void afterstep_hook_1() {
+
+        }
+        public void afterstep_hook_2() {
+
+        }
         public void there_are_bananas() {
 
         }

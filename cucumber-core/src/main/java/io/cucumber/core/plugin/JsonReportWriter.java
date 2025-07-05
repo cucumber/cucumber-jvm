@@ -67,6 +67,8 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static io.cucumber.core.plugin.TestSourcesModel.convertToId;
+import static io.cucumber.messages.types.AttachmentContentEncoding.BASE64;
+import static io.cucumber.messages.types.AttachmentContentEncoding.IDENTITY;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.groupingBy;
@@ -263,7 +265,8 @@ class JsonReportWriter {
                                 .map(hook -> new CucumberJvmJson.JvmHook(
                                     createMatchMap(testStep, testStepFinished.getTestStepResult()),
                                     createResultMap(testStepFinished.getTestStepResult()),
-                                    createEmbeddings(query.findAttachmentsBy(testStepFinished))))))
+                                    createEmbeddings(query.findAttachmentsBy(testStepFinished)),
+                                    createOutput(query.findAttachmentsBy(testStepFinished))))))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toList());
@@ -273,12 +276,33 @@ class JsonReportWriter {
         if (attachments.isEmpty()) {
             return null;
         }
-        return attachments.stream()
+        List<CucumberJvmJson.JvmEmbedding> embeddings = attachments.stream()
+                .filter(attachment -> attachment.getContentEncoding() == BASE64)
                 .map(attachment -> new CucumberJvmJson.JvmEmbedding(
-                    attachment.getMediaType(),
-                    attachment.getBody(),
-                    attachment.getFileName().orElse(null)))
+                        attachment.getMediaType(),
+                        attachment.getBody(),
+                        attachment.getFileName().orElse(null)))
                 .collect(toList());
+
+        if (embeddings.isEmpty()) {
+            return null;
+        }
+        return embeddings;
+    }
+    
+    private List<String> createOutput(List<Attachment> attachments) {
+        if (attachments.isEmpty()) {
+            return null;
+        }
+        List<String> outputs = attachments.stream()
+                .filter(attachment -> attachment.getContentEncoding() == IDENTITY)
+                .map(Attachment::getBody)
+                .collect(toList());
+        
+        if (outputs.isEmpty()) {
+            return null;
+        }
+        return outputs;
     }
 
     private List<JvmStep> createTestSteps(List<TestStepFinished> testStepsFinished) {
@@ -322,7 +346,13 @@ class JsonReportWriter {
                 .findFirst()
                 .map(StepDefinition::getSourceReference);
 
-        Optional<String> location = source.flatMap(sourceReference -> {
+        Optional<SourceReference> hookSource = query.findHookBy(step)
+                .map(Hook::getSourceReference);
+
+        Optional<String> location = Stream.of(source, hookSource)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst().flatMap(sourceReference -> {
             Optional<String> fromUri = sourceReference.getUri()
                     .map(uri -> renderLocationString(sourceReference, uri));
 
