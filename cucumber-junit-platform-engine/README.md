@@ -62,7 +62,7 @@ can make for hard to read reports.
 
 To improve the readability of the reports use the
 `cucumber.junit-platform.naming-strategy` configuration parameter. This  will
-include the feature name, scenario name, example number, ect in the report.
+include the feature name, scenario name, example number, etc. in the report.
 
 ```xml
 <plugin>
