@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.24.0] - 2025-07-07
 ### Added
 - [JUnit Platform Engine] Option to include a parameterized scenario name only if the scenario is parameterized ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 - [JUnit Platform Engine] Option to order features and scenarios ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
@@ -26,11 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:query to v13.4.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter to v0.4.1
 
-### Fixed
-- [JUnit Platform Engine] Log discovery issues for feature files with parse errors. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
-
 ### Deprecated
 - [JUnit] Deprecate `cucumber-junit` in favour of `cucumber-junit-platform-engine` ([#2835](https://github.com/cucumber/cucumber-jvm/pull/3016) M.P. Korstanje)
+
+### Fixed
+- [JUnit Platform Engine] Log discovery issues for feature files with parse errors. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 
 ## [7.23.0] - 2025-05-29
 ### Added
@@ -432,7 +434,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.23.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.24.0...HEAD
+[7.24.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.23.0...v7.24.0
 [7.23.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.2...v7.23.0
 [7.22.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.1...v7.22.2
 [7.22.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.0...v7.22.1
