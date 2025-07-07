@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [JUnit Platform Engine] Use JUnit's `EngineDiscoveryRequestResolver` to resolve classpath based resources. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
-- [JUnit Platform Engine] Use JUnit Platform 1.13.1 (JUnit Jupiter 5.13.1)
+- [JUnit Platform Engine] Use JUnit Platform 1.13.3 (JUnit Jupiter 5.13.3)
 - [Core] Use a message based [Pretty Formatter](https://github.com/cucumber/pretty-formatter) ([#2835](https://github.com/cucumber/cucumber-jvm/pull/3012) M.P. Korstanje)
 - [Core] Update dependency io.cucumber:gherkin to v33.0.0
 - [Core] Update dependency io.cucumber:messages to v28.2.0
