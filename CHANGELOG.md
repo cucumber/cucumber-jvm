@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [JUnit Platform Engine] Use JUnit's `EngineDiscoveryRequestResolver` to resolve classpath based resources. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 - [JUnit Platform Engine] Use JUnit Platform 1.13.1 (JUnit Jupiter 5.13.1)
+- [Core] Update dependency io.cucumber:gherkin to v33.0.0
+- [Core] Update dependency io.cucumber:messages to v28.0.0
 
 ### Fixed
 - [JUnit Platform Engine] Log discovery issues for feature files with parse errors. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
