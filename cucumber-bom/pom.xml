@@ -19,8 +19,8 @@
         <html-formatter.version>21.12.0</html-formatter.version>
         <junit-xml-formatter.version>0.7.1</junit-xml-formatter.version>
         <messages.version>27.2.0</messages.version>
-        <pretty-formatter.version>0.0.1-SNAPSHOT</pretty-formatter.version>
-        <query.version>13.3.1-SNAPSHOT</query.version>
+        <pretty-formatter.version>0.1.0</pretty-formatter.version>
+        <query.version>13.3.1</query.version>
         <tag-expressions.version>6.1.2</tag-expressions.version>
         <testng-xml-formatter.version>0.3.1</testng-xml-formatter.version>
     </properties>
