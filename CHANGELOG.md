@@ -20,7 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [JUnit Platform Engine] Use JUnit Platform 1.13.1 (JUnit Jupiter 5.13.1)
 - [Core] Use a message based [Pretty Formatter](https://github.com/cucumber/pretty-formatter) ([#2835](https://github.com/cucumber/cucumber-jvm/pull/3012) M.P. Korstanje)
 - [Core] Update dependency io.cucumber:gherkin to v33.0.0
-- [Core] Update dependency io.cucumber:messages to v28.0.0
+- [Core] Update dependency io.cucumber:messages to v28.2.0
+- [Core] Update dependency io.cucumber:html-formatter to v21.13.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.8.0
+- [Core] Update dependency io.cucumber:query to v13.4.0
+- [Core] Update dependency io.cucumber:testng-xml-formatter to v0.4.1
 
 ### Fixed
 - [JUnit Platform Engine] Log discovery issues for feature files with parse errors. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
