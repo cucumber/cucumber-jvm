@@ -43,9 +43,9 @@ The changes for the current major version can be found in the [CHANGELOG.md](CHA
 
 Please ask on
 
-* [Stack Overflow](https://stackoverflow.com/questions/tagged/cucumber-jvm).
 * [Github Discusssion](https://github.com/orgs/cucumber/discussions)
 * [Cucumber Discord](https://cucumber.io/docs/community/get-in-touch/#discord)
+* [Stack Overflow](https://stackoverflow.com/questions/tagged/cucumber-jvm)
 
 ## Bugs and Feature requests
 
