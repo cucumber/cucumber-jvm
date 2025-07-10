@@ -54,9 +54,11 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
             engineDescriptor.getUniqueId() //
         ));
 
-        // Early out if Cucumber is the root engine and discovery has been explicitly disabled
-        // Workaround for https://github.com/sbt/sbt-jupiter-interface/issues/142
-        if (supportsDiscoveryAsRootEngine(configurationParameters) && isRootEngine(uniqueId)) {
+        // Early out if Cucumber is the root engine and discovery has been
+        // explicitly disabled
+        // Workaround for
+        // https://github.com/sbt/sbt-jupiter-interface/issues/142
+        if (!supportsDiscoveryAsRootEngine(configurationParameters) && isRootEngine(uniqueId)) {
             return engineDescriptor;
         }
 
