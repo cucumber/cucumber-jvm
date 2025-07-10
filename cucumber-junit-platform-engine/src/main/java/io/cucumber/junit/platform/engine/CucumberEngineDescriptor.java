@@ -16,10 +16,6 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
     private final CucumberConfiguration configuration;
     private final TestSource source;
 
-    CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration) {
-        this(uniqueId, configuration, null);
-    }
-
     CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration, TestSource source) {
         super(uniqueId, "Cucumber");
         this.configuration = requireNonNull(configuration);
