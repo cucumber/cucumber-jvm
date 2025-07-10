@@ -44,8 +44,8 @@ class PrettyFormatterTest {
         assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
                 "Scenario: scenario name # path/test.feature:2\n" +
-                "  Given first step      # io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
-                "  When second step      # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
-                "  Then third step       # io.cucumber.core.plugin.PrettyFormatterStepDefinition.three()\n")));
+                "  ✔ Given first step    # io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
+                "  ✔ When second step    # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
+                "  ✔ Then third step     # io.cucumber.core.plugin.PrettyFormatterStepDefinition.three()")));
     }
 }

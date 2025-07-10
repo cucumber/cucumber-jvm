@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import static io.cucumber.prettyformatter.MessagesToPrettyWriter.PrettyFeature.INCLUDE_FEATURE_LINE;
 import static io.cucumber.prettyformatter.MessagesToPrettyWriter.PrettyFeature.INCLUDE_RULE_LINE;
 import static io.cucumber.prettyformatter.Theme.cucumber;
-import static io.cucumber.prettyformatter.Theme.none;
+import static io.cucumber.prettyformatter.Theme.plain;
 
 /**
  * Prints a pretty report of the scenario execution as it happens.
@@ -62,7 +62,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     @Override
     public void setMonochrome(boolean monochrome) {
         if (monochrome) {
-            writer = createBuilder().theme(none()).build(out);
+            writer = createBuilder().theme(plain()).build(out);
         }
     }
 
