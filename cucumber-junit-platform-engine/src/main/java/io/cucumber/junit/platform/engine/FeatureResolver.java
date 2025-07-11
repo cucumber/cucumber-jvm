@@ -130,14 +130,13 @@ final class FeatureResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(FileSelector selector, Context context) {
-        Set<DiscoverySelector> selectors = featureParser.parseResource(selector.getPath())
-                .stream()
-                .map(feature -> selector.getPosition()
+        Set<FeatureElementSelector> selectors = featureParser.parseResource(selector.getPath())
+                .flatMap(feature -> selector.getPosition()
                         .map(position -> selectElementAt(feature, position))
                         .orElseGet(() -> Optional.of(selectFeature(feature))))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(toSet());
+                .map(Collections::singleton)
+                .orElseGet(Collections::emptySet);
+
         return toResolution(selectors);
     }
 
