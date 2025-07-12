@@ -97,7 +97,10 @@ class CucumberDiscoverySelectors {
 
         @Override
         public String toString() {
-            return new ToStringBuilder(this).append("uri", this.uri).append("filePositions", this.filePositions).toString();
+            return new ToStringBuilder(this) //
+                    .append("uri", this.uri) //
+                    .append("filePositions", this.filePositions) //
+                    .toString();
         }
     }
 
@@ -164,7 +167,10 @@ class CucumberDiscoverySelectors {
 
         @Override
         public String toString() {
-            return new ToStringBuilder(this).append("feature", this.feature.getUri()).append("element", this.element.getLocation()).toString();
+            return new ToStringBuilder(this) //
+                    .append("feature", this.feature.getUri()) //
+                    .append("element", this.element.getLocation()) //
+                    .toString();
         }
     }
 }
