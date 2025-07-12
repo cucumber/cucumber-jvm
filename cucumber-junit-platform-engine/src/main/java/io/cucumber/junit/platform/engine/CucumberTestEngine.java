@@ -14,6 +14,7 @@ import org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTe
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorService;
 
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_PREFIX;
 import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.deduplicating;
@@ -55,8 +56,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
         ));
 
         // Early out if Cucumber is the root engine and discovery has been
-        // explicitly disabled
-        // Workaround for
+        // explicitly disabled. Workaround for:
         // https://github.com/sbt/sbt-jupiter-interface/issues/142
         if (!supportsDiscoveryAsRootEngine(configurationParameters) && isRootEngine(uniqueId)) {
             return engineDescriptor;
@@ -68,7 +68,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
     }
 
     private static boolean supportsDiscoveryAsRootEngine(ConfigurationParameters configurationParameters) {
-        return configurationParameters.getBoolean("cucumber.junit-platform.discover-as-root-engine")
+        return configurationParameters.getBoolean(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME)
                 .orElse(true);
     }
 

@@ -208,6 +208,23 @@ public final class Constants {
     public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";
 
     /**
+     * Property name used to enable discovery as a root engine: {@value}
+     * <p>
+     * Valid values are {@code true}, {@code false}. Default: {@code true}.
+     * <p>
+     * While the JUnit Platform supports both class and file based tests, in
+     * practice most build tools still assume that the children of a test engine
+     * have a class source. This can lead to problems when these tools decide to
+     * process the file based discovery results from Cucumber. 
+     * <p>
+     * By running Cucumber through the JUnit Platform Suit Engine and disabling
+     * discovery when Cucumber is a "root engine" we prevent this situation from
+     * occurring.    
+     */
+    @API(status = Status.EXPERIMENTAL, since = "7.26.0")
+    public static final String JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME = "cucumber.junit-platform.discovery.as-root-engine";
+
+    /**
      * Property name to enable plugins: {@value}
      * <p>
      * A comma separated list of {@code [PLUGIN[:PATH_OR_URL]]} e.g:
@@ -272,7 +289,7 @@ public final class Constants {
      * <p>
      * Valid values are {@code underscore} or {@code camelcase}.
      * <p>
-     * By defaults are generated using the under score naming convention.
+     * By defaults are generated using the underscore naming convention.
      */
     public static final String SNIPPET_TYPE_PROPERTY_NAME = io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
@@ -346,8 +363,8 @@ public final class Constants {
      * scenarios with the same tag.
      *
      * @see <a href=
-     *      "https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization">Junit
-     *      5 User Guide - Synchronization</a>
+     * "https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization">Junit
+     * 5 User Guide - Synchronization</a>
      */
     public static final String EXECUTION_EXCLUSIVE_RESOURCES_READ_WRITE_TEMPLATE = EXECUTION_EXCLUSIVE_RESOURCES_PREFIX
             + EXECUTION_EXCLUSIVE_RESOURCES_TAG_TEMPLATE_VARIABLE + READ_WRITE_SUFFIX;
