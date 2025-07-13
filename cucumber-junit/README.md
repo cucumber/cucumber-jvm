@@ -6,7 +6,8 @@ Cucumber JUnit (Deprecated)
 > For JUnit 5 use the [Cucumber JUnit Platform Engine](../cucumber-junit-platform-engine)
 
 Use JUnit 4 to execute Cucumber scenarios. To use add the `cucumber-junit`
-dependency to your pom.xml:
+dependency to your `pom.xml` and use the [`cucumber-bom`](../cucumber-bom/README.md)
+for dependency management:
 
 ```xml
 <dependencies>
@@ -14,7 +15,6 @@ dependency to your pom.xml:
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-junit</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]

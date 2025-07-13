@@ -48,7 +48,9 @@ public class BellyStepdefs {
 ```
 It is not possible to use any other scope than Dependent. This means also it is not possible to share a state over two or more scenarios; every scenario starts with a clean environment.
 
-To enable this object factory, add the following dependency to your classpath:
+To enable this object factory, add the following dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
+
 ```xml
 <dependency>
     <groupId>io.cucumber</groupId>

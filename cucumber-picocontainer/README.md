@@ -3,7 +3,8 @@ Cucumber PicoContainer
 
 Use PicoContainer to provide dependency injection to steps.
 
-Add the `cucumber-picocontainer` dependency to your pom.xml:
+Add the `cucumber-picocontainer` dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependencies>
@@ -11,7 +12,6 @@ Add the `cucumber-picocontainer` dependency to your pom.xml:
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-picocontainer</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]

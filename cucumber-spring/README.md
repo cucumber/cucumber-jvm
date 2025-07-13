@@ -4,7 +4,8 @@ Cucumber Spring
 Use Cucumber Spring to share state between steps in a scenario and access the
 spring application context.
 
-Add the `cucumber-spring` dependency to your `pom.xml`:
+Add the `cucumber-spring` dependency to your `pom.xml` to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependencies>
@@ -12,7 +13,6 @@ Add the `cucumber-spring` dependency to your `pom.xml`:
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-spring</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]

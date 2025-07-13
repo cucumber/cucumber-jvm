@@ -5,7 +5,8 @@ standard with singleton scope and 'no scope'. This module adds Cucumber scenario
 in your test code. The rest of this documentation assumes you have at least a basic understanding of Guice. Please refer
 to the Guice wiki if necessary, see [Google Guice - Motivation](https://github.com/google/guice/wiki/Motivation)
 
-Add the `cucumber-guice` dependency to your `pom.xml`:
+Add the `cucumber-guice` dependency to your `pom.xml` and use
+the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 
@@ -14,7 +15,6 @@ Add the `cucumber-guice` dependency to your `pom.xml`:
 	<dependency>
 		<groupId>io.cucumber</groupId>
 		<artifactId>cucumber-guice</artifactId>
-		<version>${cucumber.version}</version>
 		<scope>test</scope>
 	</dependency>
 	[...]
