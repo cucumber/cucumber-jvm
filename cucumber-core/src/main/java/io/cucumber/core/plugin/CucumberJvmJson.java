@@ -22,9 +22,9 @@ class CucumberJvmJson {
     }
 
     static class JvmFeature {
+        private final Long line;
         private final String uri;
         private final String id;
-        private final Long line;
         private final String keyword;
         private final String name;
         private final String description;

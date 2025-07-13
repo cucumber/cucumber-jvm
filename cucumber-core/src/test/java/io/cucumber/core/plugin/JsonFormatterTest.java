@@ -85,19 +85,19 @@ class JsonFormatterTest {
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(beforeHook1, BEFORE)),
                     asList(
-                        new StubStepDefinition("bg_1"),
-                        new StubStepDefinition("bg_2"),
-                        new StubStepDefinition("bg_3"),
-                        new StubStepDefinition("step_1"),
-                        new StubStepDefinition("step_2"),
-                        new StubStepDefinition("step_3"),
-                        new StubStepDefinition("cliché"),
-                        new StubStepDefinition("so_1 {int}", Integer.class),
-                        new StubStepDefinition("so_2 {int} cucumbers", Integer.class),
-                        new StubStepDefinition("{int} so_3", Integer.class),
-                        new StubStepDefinition("a"),
-                        new StubStepDefinition("b"),
-                        new StubStepDefinition("c")),
+                        new StubStepDefinition("bg_1", getMethod("bg_1")),
+                        new StubStepDefinition("bg_2", getMethod("bg_2")),
+                        new StubStepDefinition("bg_3", getMethod("bg_3")),
+                        new StubStepDefinition("step_1", getMethod("step_1")),
+                        new StubStepDefinition("step_2", getMethod("step_2")),
+                        new StubStepDefinition("step_3", getMethod("step_3")),
+                        new StubStepDefinition("cliché", getMethod("cliche")),
+                        new StubStepDefinition("so_1 {int}", getMethod("so_1"), Integer.class),
+                        new StubStepDefinition("so_2 {int} cucumbers", getMethod("so_2"), Integer.class),
+                        new StubStepDefinition("{int} so_3", getMethod("so_3"), Integer.class),
+                        new StubStepDefinition("a", getMethod("a")),
+                        new StubStepDefinition("b", getMethod("b")),
+                        new StubStepDefinition("c", getMethod("c"))),
                     emptyList()))
                 .withAdditionalPlugins(new JsonFormatter(out));
     }
@@ -1537,6 +1537,21 @@ class JsonFormatterTest {
     }
 
     static class StepDefs {
+        
+        public void bg_1() {}
+        public void bg_2() {}
+        public void bg_3() {}
+        public void step_1() {}
+        public void step_2() {}
+        public void step_3() {}
+        public void cliche() {}
+        public void so_1 () {}
+        public void so_2 () {}
+        public void so_3 () {}
+        public void a() {}
+        public void b() {}
+        public void c() {}
+
         public void before_hook_1() {
 
         }
