@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [JUnit Platform Engine] Don't use Java 9+ APIs ([#3025](https://github.com/cucumber/cucumber-jvm/pull/3025) M.P. Korstanje)
+- [JUnit Platform Engine] Implement toString on custom DiscoverySelectors
 
 ## [7.25.0] - 2025-07-10
 ### Changed

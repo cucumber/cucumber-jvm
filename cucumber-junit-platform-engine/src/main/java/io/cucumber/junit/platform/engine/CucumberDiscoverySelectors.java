@@ -3,6 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.Node;
+import org.junit.platform.commons.util.ToStringBuilder;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.FilePosition;
@@ -93,6 +94,14 @@ class CucumberDiscoverySelectors {
         public int hashCode() {
             return Objects.hash(uri, filePositions);
         }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this) //
+                    .append("uri", this.uri) //
+                    .append("filePositions", this.filePositions) //
+                    .toString();
+        }
     }
 
     static class FeatureElementSelector implements DiscoverySelector {
@@ -154,6 +163,14 @@ class CucumberDiscoverySelectors {
         @Override
         public int hashCode() {
             return Objects.hash(feature, element);
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this) //
+                    .append("feature", this.feature.getUri()) //
+                    .append("element", this.element.getLocation()) //
+                    .toString();
         }
     }
 }
