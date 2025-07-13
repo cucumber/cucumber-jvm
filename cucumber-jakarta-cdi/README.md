@@ -4,7 +4,8 @@ Cucumber CDI Jakarta
 Use CDI Standalone Edition (CDI SE) API to provide dependency injection in to
 steps definitions.
 
-Add the `cucumber-jakarta-cdi` dependency to your pom.xml:
+Add the `cucumber-jakarta-cdi` dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependencies>
@@ -12,7 +13,6 @@ Add the `cucumber-jakarta-cdi` dependency to your pom.xml:
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jakarta-cdi</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]

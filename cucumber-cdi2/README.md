@@ -4,7 +4,8 @@ Cucumber CDI 2
 Use CDI Standalone Edition (CDI SE) API to provide dependency injection into
 steps definitions.
 
-Add the `cucumber-cdi2` dependency to your pom.xml:
+Add the `cucumber-cdi2` dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependencies>
@@ -12,7 +13,6 @@ Add the `cucumber-cdi2` dependency to your pom.xml:
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-cdi2</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]

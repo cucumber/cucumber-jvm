@@ -1,7 +1,8 @@
 Cucumber Java8
 ==============
 
-Provides lambda-based step definitions. To use add the `cucumber-java8` dependency to your pom.xml:
+Provides lambda-based step definitions. To use add the `cucumber-java8` dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependencies>
@@ -9,7 +10,6 @@ Provides lambda-based step definitions. To use add the `cucumber-java8` dependen
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-java8</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]
