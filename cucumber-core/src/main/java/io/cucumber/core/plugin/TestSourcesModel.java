@@ -7,6 +7,7 @@ import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.messages.types.GherkinDocument;
+import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.RuleChild;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Source;
@@ -19,8 +20,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 final class TestSourcesModel {
@@ -43,6 +46,9 @@ final class TestSourcesModel {
 
     static String calculateId(AstNode astNode) {
         Object node = astNode.node;
+        if (node instanceof Rule) {
+            return calculateId(astNode.parent) + ";" + convertToId(((Rule) node).getName());
+        }
         if (node instanceof Scenario) {
             return calculateId(astNode.parent) + ";" + convertToId(((Scenario) node).getName());
         }
@@ -61,8 +67,10 @@ final class TestSourcesModel {
         return "";
     }
 
+    private static final Pattern replacementPattern = Pattern.compile("[\\s'_,!]");
+
     static String convertToId(String name) {
-        return name.replaceAll("[\\s'_,!]", "-").toLowerCase();
+        return replacementPattern.matcher(name).replaceAll("-").toLowerCase(Locale.ROOT);
     }
 
     static URI relativize(URI uri) {
