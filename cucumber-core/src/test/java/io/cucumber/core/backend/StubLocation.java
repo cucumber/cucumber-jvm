@@ -19,8 +19,19 @@ public class StubLocation implements Located {
     }
 
     public StubLocation(SourceReference sourceReference) {
-        this.location = null;
         this.sourceReference = sourceReference;
+        this.location = formatLocation(sourceReference);
+    }
+
+    private static String formatLocation(SourceReference sourceReference) {
+        if (sourceReference instanceof JavaMethodReference) {
+            JavaMethodReference javaMethodReference = (JavaMethodReference) sourceReference;
+            String className = javaMethodReference.className();
+            String methodName = javaMethodReference.methodName();
+            String parameterTypes = String.join(",", javaMethodReference.methodParameterTypes());
+            return String.format("%s#%s(%s)", className, methodName, parameterTypes);
+        }
+        return null;
     }
 
     @Override

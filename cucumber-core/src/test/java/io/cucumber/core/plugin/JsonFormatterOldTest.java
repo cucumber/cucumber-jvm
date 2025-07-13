@@ -37,7 +37,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
-class JsonFormatterTest {
+class JsonFormatterOldTest {
 
     final SourceReference monkeyArrives = getMethod("monkey_arrives");
     final SourceReference thereAreBananas = getMethod("there_are_bananas");
@@ -99,7 +99,7 @@ class JsonFormatterTest {
                         new StubStepDefinition("b", getMethod("b")),
                         new StubStepDefinition("c", getMethod("c"))),
                     emptyList()))
-                .withAdditionalPlugins(new JsonFormatter(out));
+                .withAdditionalPlugins(new JsonFormatterOld(out));
     }
 
     @Test
@@ -129,7 +129,7 @@ class JsonFormatterTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(new JsonFormatter(out))
+                .withAdditionalPlugins(new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier())
                 .build()
@@ -193,7 +193,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, new IncrementingUuidGenerator()))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas)))
@@ -253,7 +253,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas,
@@ -316,7 +316,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas)))
@@ -384,7 +384,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas)))
@@ -482,7 +482,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas)))
@@ -548,7 +548,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas),
@@ -679,7 +679,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("the monkey eats more bananas", monkeyEatsMoreBananas)))
@@ -767,7 +767,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(beforeHook1, HookDefinition.HookType.BEFORE)),
@@ -854,7 +854,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     emptyList(),
@@ -1003,7 +1003,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(beforeHook1, BEFORE,
@@ -1081,7 +1081,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(beforeHook1,
@@ -1164,7 +1164,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(beforeHook1, BEFORE,
@@ -1250,7 +1250,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas, String.class)))
@@ -1317,7 +1317,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas, DocString.class)))
@@ -1384,7 +1384,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas, DataTable.class)))
@@ -1463,7 +1463,7 @@ class JsonFormatterTest {
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
-                .withAdditionalPlugins(timeService, new JsonFormatter(out))
+                .withAdditionalPlugins(timeService, new JsonFormatterOld(out))
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("there are bananas", thereAreBananas),
@@ -1546,5 +1546,4 @@ class JsonFormatterTest {
                 "]";
         assertJsonEquals(expected, out);
     }
-
 }

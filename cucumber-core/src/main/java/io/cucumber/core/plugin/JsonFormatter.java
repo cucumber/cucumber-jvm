@@ -2,7 +2,6 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.IOException;

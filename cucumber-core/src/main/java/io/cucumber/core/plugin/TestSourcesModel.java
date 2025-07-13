@@ -7,6 +7,7 @@ import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.messages.types.GherkinDocument;
+import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.RuleChild;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Source;
@@ -43,6 +44,9 @@ final class TestSourcesModel {
 
     static String calculateId(AstNode astNode) {
         Object node = astNode.node;
+        if (node instanceof Rule) {
+            return calculateId(astNode.parent) + ";" + convertToId(((Rule) node).getName());
+        }
         if (node instanceof Scenario) {
             return calculateId(astNode.parent) + ";" + convertToId(((Scenario) node).getName());
         }
