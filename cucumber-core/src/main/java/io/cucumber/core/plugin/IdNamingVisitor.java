@@ -35,7 +35,7 @@ class IdNamingVisitor implements LineageReducer.Collector<String> {
     @Override
     public void add(Examples examples, int index) {
         parts.add(convertToId(examples.getName()));
-    } 
+    }
 
     @Override
     public void add(TableRow example, int index) {

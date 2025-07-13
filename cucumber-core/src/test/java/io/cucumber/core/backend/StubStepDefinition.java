@@ -36,6 +36,7 @@ public class StubStepDefinition implements StepDefinition {
     public StubStepDefinition(String pattern, SourceReference location, Throwable exception, Type... types) {
         this(pattern, new StubLocation(location), exception, types);
     }
+
     private StubStepDefinition(String pattern, StubLocation location, Throwable exception, Type... types) {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
