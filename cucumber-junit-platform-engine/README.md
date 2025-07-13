@@ -448,9 +448,15 @@ cucumber.filter.tags=                                          # a cucumber tag 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
 
+cucumber.junit-platform.discovery.as-root-engine               # true or false
+                                                               # default: true
+                                                               # enable discovery when used as a root engine.
+                                                               # note: Workaround for SBT issues.
+
 cucumber.junit-platform.naming-strategy=                       # long, short or surefire.
                                                                # default: short
-                                                               # include parent descriptor name in test descriptor.
+                                                               # long: include parent descriptor names in test descriptor.
+                                                               # surefire: Workaround to make test names appear nicely with Surefire.
 
 cucumber.junit-platform.naming-strategy.short.example-name=    # number, number-and-pickle-if-parameterized or pickle.
                                                                # default: number-and-pickle-if-parameterized
