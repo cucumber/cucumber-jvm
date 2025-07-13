@@ -16,7 +16,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_1()"
             },
             "keyword": "Given "
           },
@@ -27,7 +27,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_2()"
             },
             "keyword": "When "
           },
@@ -38,7 +38,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_3()"
             },
             "keyword": "Then "
           }
@@ -70,7 +70,7 @@
             "line": 9,
             "name": "step_1",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#step_1()"
             },
             "keyword": "Given "
           },
@@ -81,7 +81,7 @@
             "line": 10,
             "name": "step_2",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#step_2()"
             },
             "keyword": "When "
           },
@@ -92,7 +92,7 @@
             "line": 11,
             "name": "step_3",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#step_3()"
             },
             "keyword": "Then "
           },
@@ -103,7 +103,7 @@
             "line": 12,
             "name": "cliché",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#cliche()"
             },
             "keyword": "Then "
           }
@@ -123,7 +123,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_1()"
             },
             "keyword": "Given "
           },
@@ -134,7 +134,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_2()"
             },
             "keyword": "When "
           },
@@ -145,7 +145,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_3()"
             },
             "keyword": "Then "
           }
@@ -183,7 +183,7 @@
                   "offset": 5
                 }
               ],
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#so_1()"
             },
             "keyword": "Given "
           },
@@ -200,7 +200,7 @@
                   "offset": 5
                 }
               ],
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#so_2()"
             },
             "keyword": "When "
           },
@@ -217,7 +217,7 @@
                   "offset": 0
                 }
               ],
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#so_3()"
             },
             "keyword": "Then "
           }
@@ -237,7 +237,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_1()"
             },
             "keyword": "Given "
           },
@@ -248,7 +248,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_2()"
             },
             "keyword": "When "
           },
@@ -259,7 +259,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_3()"
             },
             "keyword": "Then "
           }
@@ -297,7 +297,7 @@
                   "offset": 5
                 }
               ],
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#so_1()"
             },
             "keyword": "Given "
           },
@@ -314,7 +314,7 @@
                   "offset": 5
                 }
               ],
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#so_2()"
             },
             "keyword": "When "
           },
@@ -331,7 +331,7 @@
                   "offset": 0
                 }
               ],
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#so_3()"
             },
             "keyword": "Then "
           }
@@ -351,7 +351,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_1()"
             },
             "keyword": "Given "
           },
@@ -362,7 +362,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_2()"
             },
             "keyword": "When "
           },
@@ -373,7 +373,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#bg_3()"
             },
             "keyword": "Then "
           }
@@ -405,7 +405,7 @@
             "line": 25,
             "name": "a",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#a()"
             },
             "keyword": "Given "
           },
@@ -416,7 +416,7 @@
             "line": 26,
             "name": "b",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#b()"
             },
             "keyword": "Then "
           },
@@ -427,7 +427,7 @@
             "line": 27,
             "name": "c",
             "match": {
-              "location": "{stubbed location with details}"
+              "location": "io.cucumber.core.plugin.JsonFormatterTest$StepDefs#c()"
             },
             "keyword": "When "
           }
