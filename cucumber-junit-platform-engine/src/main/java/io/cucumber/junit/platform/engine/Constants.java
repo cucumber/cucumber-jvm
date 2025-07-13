@@ -214,12 +214,12 @@ public final class Constants {
      * <p>
      * As an engine on the JUnit Platform, Cucumber can participate in discovery
      * directly as a "root" engine. Or indirectly when used through the JUnit
-     * Platform Suite Engine.  
+     * Platform Suite Engine.
      * <p>
-     * Some build tools assume that all root engines produce class based tests. 
+     * Some build tools assume that all root engines produce class based tests.
      * This is not the case for Cucumber. Running Cucumber through the JUnit
-     * Platform Suite Engine. Disabling discovery as a root engine
-     * resolves this.
+     * Platform Suite Engine. Disabling discovery as a root engine resolves
+     * this.
      * <p>
      * Note: If a build tool supports JUnits include/exclude Engine
      * configuration that option should be preferred over this property.
@@ -366,8 +366,8 @@ public final class Constants {
      * scenarios with the same tag.
      *
      * @see <a href=
-     * "https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization">Junit
-     * 5 User Guide - Synchronization</a>
+     *      "https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization">Junit
+     *      5 User Guide - Synchronization</a>
      */
     public static final String EXECUTION_EXCLUSIVE_RESOURCES_READ_WRITE_TEMPLATE = EXECUTION_EXCLUSIVE_RESOURCES_PREFIX
             + EXECUTION_EXCLUSIVE_RESOURCES_TAG_TEMPLATE_VARIABLE + READ_WRITE_SUFFIX;
