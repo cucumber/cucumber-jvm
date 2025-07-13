@@ -20,6 +20,9 @@ import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.descriptor.FileSource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.Node;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
 import org.junit.platform.testkit.engine.EngineDiscoveryResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Event;
@@ -93,21 +96,6 @@ import static org.junit.platform.testkit.engine.EventConditions.test;
 class CucumberTestEngineTest {
 
     private final CucumberTestEngine engine = new CucumberTestEngine();
-
-    static Set<UniqueId> supportsUniqueIdSelectorFromClasspathUri() {
-        return discoverUniqueIds(selectPackage("io.cucumber.junit.platform.engine"));
-
-    }
-
-    static Set<UniqueId> supportsUniqueIdSelectorFromFileUri() {
-        return discoverUniqueIds(selectDirectory("src/test/resources/io/cucumber/junit/platform/engine"));
-
-    }
-
-    static Set<UniqueId> supportsUniqueIdSelectorFromJarFileUri() {
-        URI uri = new File("src/test/resources/feature.jar").toURI();
-        return discoverUniqueIds(selectUri(uri));
-    }
 
     private static Set<UniqueId> discoverUniqueIds(DiscoverySelector discoverySelector) {
         return EngineTestKit.engine(ENGINE_ID)
@@ -406,6 +394,22 @@ class CucumberTestEngineTest {
                 .haveAtLeastOne(event(prefix(selected), finishedSuccessfully()));
     }
 
+
+    static Set<UniqueId> supportsUniqueIdSelectorFromClasspathUri() {
+        return discoverUniqueIds(selectPackage("io.cucumber.junit.platform.engine"));
+
+    }
+
+    static Set<UniqueId> supportsUniqueIdSelectorFromFileUri() {
+        return discoverUniqueIds(selectDirectory("src/test/resources/io/cucumber/junit/platform/engine"));
+
+    }
+
+    static Set<UniqueId> supportsUniqueIdSelectorFromJarFileUri() {
+        URI uri = new File("src/test/resources/feature.jar").toURI();
+        return discoverUniqueIds(selectUri(uri));
+    }
+
     @Test
     void supportsUniqueIdSelectorWithMultipleSelectors() {
         UniqueId a = EngineTestKit.engine(ENGINE_ID)
@@ -605,28 +609,40 @@ class CucumberTestEngineTest {
                 .haveExactly(1, event(test(finishedSuccessfully())));
     }
 
+    @Suite
+    @IncludeEngines("cucumber")
+    @SelectClasspathResource("io/cucumber/junit/platform/engine/single.feature")
+    static class SuiteTestCase {
 
+    }
+    
     @Test
     void supportsDisablingDiscoveryAsRootEngine() {
-        EngineDiscoveryResults discover = EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
-                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
-                .discover();
+        DiscoverySelector selector = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
 
-        assertThat(discover.getEngineDescriptor().getChildren()).isEmpty();
-    }
-
-
-    @Test
-    void supportsDisablingDiscoveryAsRootEngine__noRoot() {
-        EngineTestKit.engine(ENGINE_ID)
-                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
-                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+        // Ensure classpath resource exists.
+        assertThat(EngineTestKit.engine(ENGINE_ID)
+                .selectors(selector)
                 .discover()
-                .allEvents()
-                .assertThatEvents()
-                .haveExactly(2, event(engine(emptySource())))
-                .haveExactly(1, event(test(finishedSuccessfully())));
+                .getEngineDescriptor()
+                .getChildren())
+                .isNotEmpty();
+
+        assertThat(EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
+                .selectors(selector)
+                .discover()
+                .getEngineDescriptor()
+                .getChildren())
+                .isEmpty();
+
+        assertThat(EngineTestKit.engine("junit-platform-suite")
+                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
+                .selectors(selectClass(SuiteTestCase.class))
+                .discover()
+                .getEngineDescriptor()
+                .getChildren())
+                .isNotEmpty();
     }
 
     @Test

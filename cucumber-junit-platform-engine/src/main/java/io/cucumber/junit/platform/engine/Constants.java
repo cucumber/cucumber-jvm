@@ -212,14 +212,17 @@ public final class Constants {
      * <p>
      * Valid values are {@code true}, {@code false}. Default: {@code true}.
      * <p>
-     * While the JUnit Platform supports both class and file based tests, in
-     * practice most build tools still assume that the children of a test engine
-     * have a class source. This can lead to problems when these tools decide to
-     * process the file based discovery results from Cucumber. 
+     * As an engine on the JUnit Platform, Cucumber can participate in discovery
+     * directly as a "root" engine. Or indirectly when used through the JUnit
+     * Platform Suite Engine.  
      * <p>
-     * By running Cucumber through the JUnit Platform Suit Engine and disabling
-     * discovery when Cucumber is a "root engine" we prevent this situation from
-     * occurring.    
+     * Some build tools assume that all root engines produce class based tests. 
+     * This is not the case for Cucumber. Running Cucumber through the JUnit
+     * Platform Suite Engine. Disabling discovery as a root engine
+     * resolves this.
+     * <p>
+     * Note: If a build tool supports JUnits include/exclude Engine
+     * configuration that option should be preferred over this property.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.26.0")
     public static final String JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME = "cucumber.junit-platform.discovery.as-root-engine";

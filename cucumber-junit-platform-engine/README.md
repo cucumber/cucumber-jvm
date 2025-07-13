@@ -37,12 +37,12 @@ erDiagram
 
 In practice, integration is still limited so we discuss the most common workarounds below.
 
-### Maven Surefire and Gradle
+### Maven Surefire, Gradle and SBT
 
 Maven Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
-[SUREFIRE-1724](https://issues.apache.org/jira/browse/SUREFIRE-1724)). As a
- workaround, you can either use:
+[maven-surefire/#2065](https://github.com/apache/maven-surefire/issues/2065), [stb-jupiter-interface/#142](https://github.com/sbt/sbt-jupiter-interface/issues/142)).
+As a workaround, you can either use:
  * the [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine);
  * the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher) or;
  * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
@@ -102,6 +102,19 @@ into a Suite.
 @ConfigurationParametersResource("cucumber.properties")
 public class RunCucumberTest {
 }
+```
+
+##### SBT workarounds
+
+The `sbt-jupiter-interface` assumes that all tests directly under a test engine
+have a class source. This is not the case for Cucumber. By running Cucumber
+indirectly through the JUnit Platform Suite Engine and disabling discovery when
+run directly as a "root engine" this problem is avoided.
+
+Add to `junit-platform.properties`: 
+
+```
+cucumber.junit-platform.discovery.as-root-engine=false
 ```
 
 #### Use the JUnit Console Launcher ###
