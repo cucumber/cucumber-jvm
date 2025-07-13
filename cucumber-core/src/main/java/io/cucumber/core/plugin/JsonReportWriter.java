@@ -152,18 +152,13 @@ class JsonReportWriter {
         Feature feature = entry.getKey().get();
         return new JvmFeature(
                 TestSourcesModel.relativize(URI.create(document.getUri().get())).toString(), // TODO:
-                // Relativize,
-                // optional?,
-                // null?
+                // Relativize, optional?, null?
                 convertToId(feature.getName()),
                 feature.getLocation().getLine(),
                 feature.getKeyword(),
                 feature.getName(),
                 feature.getDescription() != null ? feature.getDescription() : "", // TODO:
-                // Can
-                // this
-                // be
-                // null?
+                // Can this be null?
                 writeElementsReport(entry),
                 feature.getTags().stream()
                         .map(JsonReportWriter::createLocationTag)
@@ -277,9 +272,6 @@ class JsonReportWriter {
         Pickle pickle = query.findPickleBy(event).get();
         Scenario scenario = query.findLineageBy(event).flatMap(Lineage::scenario).get();
         LineageReducer<String> idStrategy = LineageReducer.descending(IdNamingVisitor::new);
-
-        // TODO: Push down 
-        List<Entry<Optional<HookType>, TestStepFinished>> testStepsFinishedWithHookType = mapTestStepsFinishedToHookType(testStepsFinished);
         List<CucumberJvmJson.JvmHook> beforeHooks = createHookSteps(testStepsFinished, include(HookType.BEFORE_TEST_CASE));
         List<CucumberJvmJson.JvmHook> afterHooks = createHookSteps(testStepsFinished, include(HookType.AFTER_TEST_CASE));
         return new JvmElement(
@@ -347,11 +339,62 @@ class JsonReportWriter {
     }
 
     private List<JvmStep> createTestSteps(List<TestStepFinished> testStepsFinished) {
-        return testStepsFinished.stream()
-                .map(this::createTestStep)
+        List<Entry<Optional<HookType>, TestStepFinished>> testStepsFinishedWithHookType = mapTestStepsFinishedToHookType(testStepsFinished);
+        return testStepsFinishedWithHookType
+                .stream()
+                .filter(testStepFinished -> !testStepFinished.getKey().isPresent())
+                .map(Entry::getValue)
+                .map(testStepFinished1 -> {
+                    List<TestStepFinished> beforeStepHooks = findHooksFor(testStepsFinishedWithHookType, testStepFinished1, HookType.BEFORE_TEST_STEP);
+                    List<TestStepFinished> afterStepHooks = findHooksFor(testStepsFinishedWithHookType, testStepFinished1, HookType.AFTER_TEST_STEP);
+                    return createTestStep(testStepFinished1, beforeStepHooks, afterStepHooks);
+                })
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toList());
+    }
+
+    private List<TestStepFinished> findHooksFor(List<Entry<Optional<HookType>, TestStepFinished>> withHookType, TestStepFinished testStepFinished, HookType hookType) {
+        int stepIndex = findIndexOf(withHookType, testStepFinished);
+        if (stepIndex < 0) {
+            return Collections.emptyList();
+        }
+        if (hookType == HookType.BEFORE_TEST_STEP) {
+            List<TestStepFinished> beforeStepHooks = new ArrayList<>();
+            for (int hookIndex = stepIndex - 1; hookIndex >= 0; hookIndex--) {
+                Entry<Optional<HookType>, TestStepFinished> candidate = withHookType.get(hookIndex);
+                boolean isBeforeStepHook = candidate.getKey().map(hookType1 -> hookType1 == hookType).orElse(false);
+                if (!isBeforeStepHook) {
+                    break;
+                }
+                beforeStepHooks.add(candidate.getValue());
+            }
+            return beforeStepHooks;
+        } else if (hookType == HookType.AFTER_TEST_STEP) {
+            List<TestStepFinished> afterStepHooks = new ArrayList<>();
+            for (int hookIndex = stepIndex + 1; hookIndex < withHookType.size(); hookIndex++) {
+                Entry<Optional<HookType>, TestStepFinished> candidate = withHookType.get(hookIndex);
+                boolean isAfterStepHook = candidate.getKey().map(hookType1 -> hookType1 == hookType).orElse(false);
+                if (!isAfterStepHook) {
+                    break;
+                }
+                afterStepHooks.add(candidate.getValue());
+            }
+            return afterStepHooks;
+        }
+        
+        return Collections.emptyList();
+    }
+
+    private static int findIndexOf(List<Entry<Optional<HookType>, TestStepFinished>> withHookType, TestStepFinished testStepFinished) {
+        for (int i = 0; i < withHookType.size(); i++) {
+            TestStepFinished candidate = withHookType.get(i).getValue();
+            if (testStepFinished.equals(candidate)) {
+                return i;
+            }
+
+        }
+        return -1;
     }
 
     private List<Entry<Optional<HookType>, TestStepFinished>> mapTestStepsFinishedToHookType(List<TestStepFinished> testStepsFinished) {
@@ -362,22 +405,25 @@ class JsonReportWriter {
                 .collect(toList());
     }
 
-    private Optional<JvmStep> createTestStep(TestStepFinished testStepFinished) {
+    private Optional<JvmStep> createTestStep(TestStepFinished testStepFinished, List<TestStepFinished> beforeStepHooks, List<TestStepFinished> afterStepHooks) {
         return query.findTestStepBy(testStepFinished)
                 .flatMap(testStep -> query.findPickleStepBy(testStep)
                         .flatMap(pickleStep -> query.findStepBy(pickleStep)
-                                .map(step -> new JvmStep(
-                                        step.getKeyword(),
-                                        step.getLocation().getLine(),
-                                        createMatchMap(testStep, testStepFinished.getTestStepResult()),
-                                        pickleStep.getText(),
-                                        createResultMap(testStepFinished.getTestStepResult()),
-                                        step.getDocString().map(this::createDocStringMap).orElse(null),
-                                        step.getDataTable().map(this::createDataTableList).orElse(null),
-                                        // TODO: You are here
-                                        null, // createHookSteps(testStepsFinished, include(HookType.BEFORE_TEST_STEP)),
-                                        null // createHookSteps(testStepsFinished, include(HookType.AFTER_TEST_STEP))
-                                ))));
+                                .map(step -> {
+                                    List<CucumberJvmJson.JvmHook> jvmBeforeStepHooks = createHookSteps(beforeStepHooks, include(HookType.BEFORE_TEST_STEP));
+                                    List<CucumberJvmJson.JvmHook> jvmAfterStepHooks = createHookSteps(afterStepHooks, include(HookType.AFTER_TEST_STEP));
+                                    return new JvmStep(
+                                            step.getKeyword(),
+                                            step.getLocation().getLine(),
+                                            createMatchMap(testStep, testStepFinished.getTestStepResult()),
+                                            pickleStep.getText(),
+                                            createResultMap(testStepFinished.getTestStepResult()),
+                                            step.getDocString().map(this::createDocStringMap).orElse(null),
+                                            step.getDataTable().map(this::createDataTableList).orElse(null),
+                                            jvmBeforeStepHooks.isEmpty() ? null : jvmBeforeStepHooks,
+                                            jvmAfterStepHooks.isEmpty() ? null : jvmAfterStepHooks
+                                    );
+                                })));
     }
 
     private JvmMatch createMatchMap(TestStep step, TestStepResult result) {

@@ -772,7 +772,7 @@ class JsonFormatterTest {
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(beforeHook1, HookDefinition.HookType.BEFORE)),
                     singletonList(new StubStepDefinition("there are bananas", thereAreBananas)),
-                    singletonList(new StubHookDefinition(afterHook1, HookDefinition.HookType.BEFORE))))
+                    singletonList(new StubHookDefinition(afterHook1, HookDefinition.HookType.AFTER))))
                 .build()
                 .run();
 
@@ -823,7 +823,7 @@ class JsonFormatterTest {
                 "        \"after\": [\n" +
                 "          {\n" +
                 "            \"match\": {\n" +
-                "              \"location\": \"Hooks.after_hook_1()\"\n" +
+                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#after_hook_1()\"\n" +
                 "            },\n" +
                 "            \"result\": {\n" +
                 "              \"status\": \"passed\",\n" +
@@ -893,7 +893,7 @@ class JsonFormatterTest {
                 "                  \"status\": \"passed\"\n" +
                 "                },\n" +
                 "                \"match\": {\n" +
-                "                  \"location\": \"Hooks.beforestep_hooks_1()\"\n" +
+                "                  \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#beforestep_hook_1()\"\n" +
                 "                }\n" +
                 "              }\n" +
                 "            ],\n" +
@@ -910,7 +910,7 @@ class JsonFormatterTest {
                 "                  \"status\": \"passed\"\n" +
                 "                },\n" +
                 "                \"match\": {\n" +
-                "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+                "                  \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#afterstep_hook_2()\"\n" +
                 "                }\n" +
                 "              },\n" +
                 "              {\n" +
@@ -919,7 +919,7 @@ class JsonFormatterTest {
                 "                  \"status\": \"passed\"\n" +
                 "                },\n" +
                 "                \"match\": {\n" +
-                "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+                "                  \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#afterstep_hook_1()\"\n" +
                 "                }\n" +
                 "              }\n" +
                 "            ],\n" +
@@ -937,7 +937,7 @@ class JsonFormatterTest {
                 "                  \"status\": \"passed\"\n" +
                 "                },\n" +
                 "                \"match\": {\n" +
-                "                  \"location\": \"Hooks.beforestep_hooks_1()\"\n" +
+                "                  \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#beforestep_hook_1()\"\n" +
                 "                }\n" +
                 "              }\n" +
                 "            ],\n" +
@@ -954,7 +954,7 @@ class JsonFormatterTest {
                 "                  \"status\": \"passed\"\n" +
                 "                },\n" +
                 "                \"match\": {\n" +
-                "                  \"location\": \"Hooks.afterstep_hooks_2()\"\n" +
+                "                  \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#afterstep_hook_2()\"\n" +
                 "                }\n" +
                 "              },\n" +
                 "              {\n" +
@@ -963,7 +963,7 @@ class JsonFormatterTest {
                 "                  \"status\": \"passed\"\n" +
                 "                },\n" +
                 "                \"match\": {\n" +
-                "                  \"location\": \"Hooks.afterstep_hooks_1()\"\n" +
+                "                  \"location\": \"io.cucumber.core.plugin.JsonFormatterTest$StepDefs#afterstep_hook_1()\"\n" +
                 "                }\n" +
                 "              }\n" +
                 "            ],\n" +
