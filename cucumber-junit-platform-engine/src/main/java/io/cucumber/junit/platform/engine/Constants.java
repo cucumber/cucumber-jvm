@@ -208,6 +208,26 @@ public final class Constants {
     public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";
 
     /**
+     * Property name used to enable discovery as a root engine: {@value}
+     * <p>
+     * Valid values are {@code true}, {@code false}. Default: {@code true}.
+     * <p>
+     * As an engine on the JUnit Platform, Cucumber can participate in discovery
+     * directly as a "root" engine. Or indirectly when used through the JUnit
+     * Platform Suite Engine.
+     * <p>
+     * Some build tools assume that all root engines produce class based tests.
+     * This is not the case for Cucumber. Running Cucumber through the JUnit
+     * Platform Suite Engine. Disabling discovery as a root engine resolves
+     * this.
+     * <p>
+     * Note: If a build tool supports JUnits include/exclude Engine
+     * configuration that option should be preferred over this property.
+     */
+    @API(status = Status.EXPERIMENTAL, since = "7.26.0")
+    public static final String JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME = "cucumber.junit-platform.discovery.as-root-engine";
+
+    /**
      * Property name to enable plugins: {@value}
      * <p>
      * A comma separated list of {@code [PLUGIN[:PATH_OR_URL]]} e.g:
@@ -272,7 +292,7 @@ public final class Constants {
      * <p>
      * Valid values are {@code underscore} or {@code camelcase}.
      * <p>
-     * By defaults are generated using the under score naming convention.
+     * By defaults are generated using the underscore naming convention.
      */
     public static final String SNIPPET_TYPE_PROPERTY_NAME = io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 

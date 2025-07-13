@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [JUnit Platform Engine] Add `cucumber.junit-platform.discovery.as-root-engine` to work around SBT issues ([#3023](https://github.com/cucumber/cucumber-jvm/pull/3023) M.P. Korstanje)
+
 ### Fixed
 - [JUnit Platform Engine] Don't use Java 9+ APIs ([#3025](https://github.com/cucumber/cucumber-jvm/pull/3025) M.P. Korstanje)
 - [JUnit Platform Engine] Implement toString on custom DiscoverySelectors
