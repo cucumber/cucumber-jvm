@@ -72,6 +72,8 @@ import java.util.stream.Stream;
 import static io.cucumber.core.plugin.TestSourcesModel.convertToId;
 import static io.cucumber.messages.types.AttachmentContentEncoding.BASE64;
 import static io.cucumber.messages.types.AttachmentContentEncoding.IDENTITY;
+import static io.cucumber.messages.types.HookType.AFTER_TEST_STEP;
+import static io.cucumber.messages.types.HookType.BEFORE_TEST_STEP;
 import static java.util.Locale.ROOT;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.groupingBy;
@@ -108,10 +110,6 @@ class JsonReportWriter {
     private static Predicate<Hook> include(HookType... hookTypes) {
         List<HookType> keep = Arrays.asList(hookTypes);
         return hook -> hook.getType().map(keep::contains).orElse(false);
-    }
-
-    private static Predicate<Hook> exclude(HookType... hookTypes) {
-        return include(hookTypes).negate();
     }
 
     private static String renderLocationString(SourceReference sourceReference, String uri) {
@@ -151,6 +149,40 @@ class JsonReportWriter {
 
         }
         return -1;
+    }
+
+    private static List<TestStepFinished> findAfterStepHooksAfter(
+            List<Entry<Optional<HookType>, TestStepFinished>> withHookType, int stepIndex
+    ) {
+        List<TestStepFinished> afterStepHooks = new ArrayList<>();
+        // after step hooks, come after the step, so search forward.
+        for (int hookIndex = stepIndex + 1; hookIndex < withHookType.size(); hookIndex++) {
+            Entry<Optional<HookType>, TestStepFinished> candidate = withHookType.get(hookIndex);
+            boolean isAfterStepHook = candidate.getKey().map(AFTER_TEST_STEP::equals).orElse(false);
+            // We found the end of this sequence
+            if (!isAfterStepHook) {
+                break;
+            }
+            afterStepHooks.add(candidate.getValue());
+        }
+        return afterStepHooks;
+    }
+
+    private static List<TestStepFinished> findBeforeStepHooksBefore(
+            List<Entry<Optional<HookType>, TestStepFinished>> withHookType, int stepIndex
+    ) {
+        List<TestStepFinished> beforeStepHooks = new ArrayList<>();
+        // before step hooks, come before the step, so search in reverse.
+        for (int hookIndex = stepIndex - 1; hookIndex >= 0; hookIndex--) {
+            Entry<Optional<HookType>, TestStepFinished> candidate = withHookType.get(hookIndex);
+            boolean isBeforeStepHook = candidate.getKey().map(BEFORE_TEST_STEP::equals).orElse(false);
+            // We found the end of this sequence
+            if (!isBeforeStepHook) {
+                break;
+            }
+            beforeStepHooks.add(candidate.getValue());
+        }
+        return beforeStepHooks;
     }
 
     List<Object> writeJsonReport() {
@@ -216,7 +248,7 @@ class JsonReportWriter {
         };
         Map<Optional<Background>, List<TestStepFinished>> stepsByBackground = data.testStepFinishedAndTestStep
                 .stream()
-                .collect(groupByBackground(data.testCaseStarted));
+                .collect(groupByBackground(data));
 
         // There can be multiple backgrounds, but historically the json format
         // only ever had one. So we group all other backgrounds steps with the
@@ -239,9 +271,9 @@ class JsonReportWriter {
     }
 
     private Collector<Entry<TestStepFinished, TestStep>, ?, Map<Optional<Background>, List<TestStepFinished>>> groupByBackground(
-            TestCaseStarted testCaseStarted
+            TestCaseData testCaseData
     ) {
-        List<Background> backgrounds = query.findFeatureBy(testCaseStarted)
+        List<Background> backgrounds = testCaseData.lineage.feature()
                 .map(this::getBackgroundsBy)
                 .orElseGet(Collections::emptyList);
 
@@ -306,7 +338,7 @@ class JsonReportWriter {
             JvmElementType.scenario,
             scenario.getKeyword(),
             data.pickle.getName(),
-            scenario.getDescription() != null ? scenario.getDescription() : "",
+            scenario.getDescription() == null ? "" : scenario.getDescription(),
             createTestSteps(testStepsFinished),
             beforeHooks.isEmpty() ? null : beforeHooks,
             afterHooks.isEmpty() ? null : afterHooks,
@@ -372,9 +404,9 @@ class JsonReportWriter {
                 .map(Entry::getValue)
                 .map(testStepFinished1 -> {
                     List<TestStepFinished> beforeStepHooks = findHooksFor(testStepsFinishedWithHookType,
-                        testStepFinished1, HookType.BEFORE_TEST_STEP);
+                        testStepFinished1, BEFORE_TEST_STEP);
                     List<TestStepFinished> afterStepHooks = findHooksFor(testStepsFinishedWithHookType,
-                        testStepFinished1, HookType.AFTER_TEST_STEP);
+                        testStepFinished1, AFTER_TEST_STEP);
                     return createTestStep(testStepFinished1, beforeStepHooks, afterStepHooks);
                 })
                 .filter(Optional::isPresent)
@@ -384,36 +416,18 @@ class JsonReportWriter {
 
     private List<TestStepFinished> findHooksFor(
             List<Entry<Optional<HookType>, TestStepFinished>> withHookType, TestStepFinished testStepFinished,
-            HookType hookType
+            HookType targetHookType
     ) {
         int stepIndex = findIndexOf(withHookType, testStepFinished);
         if (stepIndex < 0) {
             return Collections.emptyList();
         }
-        if (hookType == HookType.BEFORE_TEST_STEP) {
-            List<TestStepFinished> beforeStepHooks = new ArrayList<>();
-            for (int hookIndex = stepIndex - 1; hookIndex >= 0; hookIndex--) {
-                Entry<Optional<HookType>, TestStepFinished> candidate = withHookType.get(hookIndex);
-                boolean isBeforeStepHook = candidate.getKey().map(hookType1 -> hookType1 == hookType).orElse(false);
-                if (!isBeforeStepHook) {
-                    break;
-                }
-                beforeStepHooks.add(candidate.getValue());
-            }
-            return beforeStepHooks;
-        } else if (hookType == HookType.AFTER_TEST_STEP) {
-            List<TestStepFinished> afterStepHooks = new ArrayList<>();
-            for (int hookIndex = stepIndex + 1; hookIndex < withHookType.size(); hookIndex++) {
-                Entry<Optional<HookType>, TestStepFinished> candidate = withHookType.get(hookIndex);
-                boolean isAfterStepHook = candidate.getKey().map(hookType1 -> hookType1 == hookType).orElse(false);
-                if (!isAfterStepHook) {
-                    break;
-                }
-                afterStepHooks.add(candidate.getValue());
-            }
-            return afterStepHooks;
+        if (targetHookType == BEFORE_TEST_STEP) {
+            return findBeforeStepHooksBefore(withHookType, stepIndex);
         }
-
+        if (targetHookType == AFTER_TEST_STEP) {
+            return findAfterStepHooksAfter(withHookType, stepIndex);
+        }
         return Collections.emptyList();
     }
 
@@ -437,9 +451,9 @@ class JsonReportWriter {
                         .flatMap(pickleStep -> query.findStepBy(pickleStep)
                                 .map(step -> {
                                     List<CucumberJvmJson.JvmHook> jvmBeforeStepHooks = createHookSteps(beforeStepHooks,
-                                        include(HookType.BEFORE_TEST_STEP));
+                                        include(BEFORE_TEST_STEP));
                                     List<CucumberJvmJson.JvmHook> jvmAfterStepHooks = createHookSteps(afterStepHooks,
-                                        include(HookType.AFTER_TEST_STEP));
+                                        include(AFTER_TEST_STEP));
                                     return new JvmStep(
                                         step.getKeyword(),
                                         step.getLocation().getLine(),
