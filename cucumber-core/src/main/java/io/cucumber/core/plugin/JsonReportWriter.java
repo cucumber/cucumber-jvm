@@ -86,11 +86,11 @@ class JsonReportWriter {
 
     private static JvmLocationTag createLocationTag(Tag tag) {
         return new JvmLocationTag(
-                tag.getName(),
-                "Tag",
-                new JvmLocation(
-                        tag.getLocation().getLine(),
-                        tag.getLocation().getColumn().orElse(0L)));
+            tag.getName(),
+            "Tag",
+            new JvmLocation(
+                tag.getLocation().getLine(),
+                tag.getLocation().getColumn().orElse(0L)));
     }
 
     private static Optional<Background> findBackgroundBy(List<Background> backgrounds, PickleStep pickleStep) {
@@ -125,19 +125,19 @@ class JsonReportWriter {
         String locationLine = sourceReference.getLocation().map(location -> ":" + location.getLine()).orElse("");
         String argumentList = String.join(",", javaStackTraceElement.getFileName());
         return String.format(
-                "%s#%s(%s%s)",
-                javaStackTraceElement.getClassName(),
-                javaStackTraceElement.getMethodName(),
-                argumentList,
-                locationLine);
+            "%s#%s(%s%s)",
+            javaStackTraceElement.getClassName(),
+            javaStackTraceElement.getMethodName(),
+            argumentList,
+            locationLine);
     }
 
     private static String renderLocationString(JavaMethod javaMethod) {
         return String.format(
-                "%s#%s(%s)",
-                javaMethod.getClassName(),
-                javaMethod.getMethodName(),
-                String.join(",", javaMethod.getMethodParameterTypes()));
+            "%s#%s(%s)",
+            javaMethod.getClassName(),
+            javaMethod.getMethodName(),
+            String.join(",", javaMethod.getMethodParameterTypes()));
     }
 
     private static int findIndexOf(
@@ -156,15 +156,11 @@ class JsonReportWriter {
     List<Object> writeJsonReport() {
         return query.findAllTestCaseStarted()
                 .stream()
-                .map(testCaseStarted -> query
-                        .findPickleBy(testCaseStarted)
-                        .flatMap(pickle -> query
-                                .findLineageBy(pickle)
-                                .flatMap(lineage -> query.findLocationOf(pickle)
-                                .map(location -> new Data(testCaseStarted, lineage, pickle, location)))))
+                .map(this::createTestCaseStartedData)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .sorted(Comparator.comparing((Data data) -> data.pickle.getUri()).thenComparing(data -> data.location.getLine()))
+                .sorted(Comparator.comparing((TestCaseData data) -> data.pickle.getUri())
+                        .thenComparing(data -> data.location.getLine()))
                 .collect(groupingBy(data -> data.pickle.getUri(), LinkedHashMap::new, toList()))
                 .values()
                 .stream()
@@ -172,32 +168,44 @@ class JsonReportWriter {
                 .collect(toList());
     }
 
-    private JvmFeature createFeatureMap(List<Data> entries) {
+    private Optional<TestCaseData> createTestCaseStartedData(TestCaseStarted testCaseStarted) {
+        return query.findPickleBy(testCaseStarted)
+                .flatMap(pickle -> query.findLineageBy(pickle)
+                        .flatMap(lineage -> query.findLocationOf(pickle)
+                                .map(location -> {
+                                    List<Entry<TestStepFinished, TestStep>> testStepFinishedAndTestStep = query
+                                            .findTestStepFinishedAndTestStepBy(testCaseStarted);
+                                    return new TestCaseData(testCaseStarted, lineage, pickle, location,
+                                        testStepFinishedAndTestStep);
+                                })));
+    }
+
+    private JvmFeature createFeatureMap(List<TestCaseData> entries) {
         GherkinDocument document = entries.get(0).lineage.document();
         Feature feature = entries.get(0).lineage.feature().orElseThrow(() -> new IllegalStateException("No feature?"));
         return new JvmFeature(
-                TestSourcesModel.relativize(URI.create(document.getUri().get())).toString(), // TODO:
-                // Relativize, optional?, null?
-                convertToId(feature.getName()),
-                feature.getLocation().getLine(),
-                feature.getKeyword(),
-                feature.getName(),
-                feature.getDescription() != null ? feature.getDescription() : "", // TODO:
-                // Can this be null?
-                writeElementsReport(entries),
-                feature.getTags().stream()
-                        .map(JsonReportWriter::createLocationTag)
-                        .collect(toList()));
+            // TODO: Relativize, optional?, null?
+            TestSourcesModel.relativize(URI.create(document.getUri().get())).toString(),
+            convertToId(feature.getName()),
+            feature.getLocation().getLine(),
+            feature.getKeyword(),
+            feature.getName(),
+            // TODO: Can this be null?
+            feature.getDescription() != null ? feature.getDescription() : "",
+            writeElementsReport(entries),
+            feature.getTags().stream()
+                    .map(JsonReportWriter::createLocationTag)
+                    .collect(toList()));
     }
 
-    private List<JvmElement> writeElementsReport(List<Data> entries) {
+    private List<JvmElement> writeElementsReport(List<TestCaseData> entries) {
         return entries.stream()
                 .map(this::createTestCaseAndBackGround)
                 .flatMap(Collection::stream)
                 .collect(toList());
     }
 
-    private List<JvmElement> createTestCaseAndBackGround(Data data) {
+    private List<JvmElement> createTestCaseAndBackGround(TestCaseData data) {
         // TODO: Clean up
         Predicate<Entry<Optional<Background>, List<TestStepFinished>>> isBackGround = entry -> entry.getKey()
                 .isPresent();
@@ -206,8 +214,7 @@ class JsonReportWriter {
             a.getValue().addAll(b.getValue());
             return a;
         };
-        Map<Optional<Background>, List<TestStepFinished>> stepsByBackground = query
-                .findTestStepFinishedAndTestStepBy(data.testCaseStarted)
+        Map<Optional<Background>, List<TestStepFinished>> stepsByBackground = data.testStepFinishedAndTestStep
                 .stream()
                 .collect(groupByBackground(data.testCaseStarted));
 
@@ -223,7 +230,7 @@ class JsonReportWriter {
                 .filter(isTestCase)
                 .reduce(mergeSteps)
                 .map(Entry::getValue)
-                .map(testStepFinished -> createTestCase(data.testCaseStarted, testStepFinished));
+                .map(testStepFinished -> createTestCase(data, testStepFinished));
 
         return Stream.of(background, testCase)
                 .filter(Optional::isPresent)
@@ -272,39 +279,38 @@ class JsonReportWriter {
 
     private JvmElement createBackground(Background background, List<TestStepFinished> testStepsFinished) {
         return new JvmElement(
-                null,
-                background.getLocation().getLine(),
-                null,
-                JvmElementType.background,
-                background.getKeyword(),
-                background.getName(),
-                background.getDescription() != null ? background.getDescription() : "",
-                createTestSteps(testStepsFinished),
-                null,
-                null,
-                null);
+            null,
+            background.getLocation().getLine(),
+            null,
+            JvmElementType.background,
+            background.getKeyword(),
+            background.getName(),
+            background.getDescription() != null ? background.getDescription() : "",
+            createTestSteps(testStepsFinished),
+            null,
+            null,
+            null);
     }
 
-    private JvmElement createTestCase(TestCaseStarted event, List<TestStepFinished> testStepsFinished) {
-        Pickle pickle = query.findPickleBy(event).get();
-        Scenario scenario = query.findLineageBy(event).flatMap(Lineage::scenario).get();
+    private JvmElement createTestCase(TestCaseData data, List<TestStepFinished> testStepsFinished) {
+        Scenario scenario = data.lineage.scenario().orElseThrow(() -> new IllegalStateException("No scenario?"));
         LineageReducer<String> idStrategy = LineageReducer.descending(IdNamingVisitor::new);
         List<CucumberJvmJson.JvmHook> beforeHooks = createHookSteps(testStepsFinished,
-                include(HookType.BEFORE_TEST_CASE));
+            include(HookType.BEFORE_TEST_CASE));
         List<CucumberJvmJson.JvmHook> afterHooks = createHookSteps(testStepsFinished,
-                include(HookType.AFTER_TEST_CASE));
+            include(HookType.AFTER_TEST_CASE));
         return new JvmElement(
-                getDateTimeFromTimeStamp(event.getTimestamp()),
-                query.findLocationOf(pickle).get().getLine(),
-                query.findLineageBy(pickle).map(idStrategy::reduce).orElse(convertToId(pickle.getName())),
-                JvmElementType.scenario,
-                scenario.getKeyword(),
-                pickle.getName(),
-                scenario.getDescription() != null ? scenario.getDescription() : "",
-                createTestSteps(testStepsFinished),
-                beforeHooks.isEmpty() ? null : beforeHooks,
-                afterHooks.isEmpty() ? null : afterHooks,
-                pickle.getTags().isEmpty() ? null : createTags(pickle));
+            getDateTimeFromTimeStamp(data.testCaseStarted.getTimestamp()),
+            data.location.getLine(),
+            idStrategy.reduce(data.lineage),
+            JvmElementType.scenario,
+            scenario.getKeyword(),
+            data.pickle.getName(),
+            scenario.getDescription() != null ? scenario.getDescription() : "",
+            createTestSteps(testStepsFinished),
+            beforeHooks.isEmpty() ? null : beforeHooks,
+            afterHooks.isEmpty() ? null : afterHooks,
+            data.pickle.getTags().isEmpty() ? null : createTags(data.pickle));
     }
 
     private List<CucumberJvmJson.JvmHook> createHookSteps(
@@ -315,10 +321,10 @@ class JsonReportWriter {
                         .flatMap(testStep -> query.findHookBy(testStep)
                                 .filter(predicate)
                                 .map(hook -> new CucumberJvmJson.JvmHook(
-                                        createMatchMap(testStep, testStepFinished.getTestStepResult()),
-                                        createResultMap(testStepFinished.getTestStepResult()),
-                                        createEmbeddings(query.findAttachmentsBy(testStepFinished)),
-                                        createOutput(query.findAttachmentsBy(testStepFinished))))))
+                                    createMatchMap(testStep, testStepFinished.getTestStepResult()),
+                                    createResultMap(testStepFinished.getTestStepResult()),
+                                    createEmbeddings(query.findAttachmentsBy(testStepFinished)),
+                                    createOutput(query.findAttachmentsBy(testStepFinished))))))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toList());
@@ -331,9 +337,9 @@ class JsonReportWriter {
         List<CucumberJvmJson.JvmEmbedding> embeddings = attachments.stream()
                 .filter(attachment -> attachment.getContentEncoding() == BASE64)
                 .map(attachment -> new CucumberJvmJson.JvmEmbedding(
-                        attachment.getMediaType(),
-                        attachment.getBody(),
-                        attachment.getFileName().orElse(null)))
+                    attachment.getMediaType(),
+                    attachment.getBody(),
+                    attachment.getFileName().orElse(null)))
                 .collect(toList());
 
         if (embeddings.isEmpty()) {
@@ -359,16 +365,16 @@ class JsonReportWriter {
 
     private List<JvmStep> createTestSteps(List<TestStepFinished> testStepsFinished) {
         List<Entry<Optional<HookType>, TestStepFinished>> testStepsFinishedWithHookType = mapTestStepsFinishedToHookType(
-                testStepsFinished);
+            testStepsFinished);
         return testStepsFinishedWithHookType
                 .stream()
                 .filter(testStepFinished -> !testStepFinished.getKey().isPresent())
                 .map(Entry::getValue)
                 .map(testStepFinished1 -> {
                     List<TestStepFinished> beforeStepHooks = findHooksFor(testStepsFinishedWithHookType,
-                            testStepFinished1, HookType.BEFORE_TEST_STEP);
+                        testStepFinished1, HookType.BEFORE_TEST_STEP);
                     List<TestStepFinished> afterStepHooks = findHooksFor(testStepsFinishedWithHookType,
-                            testStepFinished1, HookType.AFTER_TEST_STEP);
+                        testStepFinished1, HookType.AFTER_TEST_STEP);
                     return createTestStep(testStepFinished1, beforeStepHooks, afterStepHooks);
                 })
                 .filter(Optional::isPresent)
@@ -418,7 +424,7 @@ class JsonReportWriter {
                 .map(testStepFinished -> new SimpleEntry<>(query.findTestStepBy(testStepFinished)
                         .flatMap(query::findHookBy)
                         .flatMap(Hook::getType),
-                        testStepFinished))
+                    testStepFinished))
                 .collect(toList());
     }
 
@@ -431,19 +437,19 @@ class JsonReportWriter {
                         .flatMap(pickleStep -> query.findStepBy(pickleStep)
                                 .map(step -> {
                                     List<CucumberJvmJson.JvmHook> jvmBeforeStepHooks = createHookSteps(beforeStepHooks,
-                                            include(HookType.BEFORE_TEST_STEP));
+                                        include(HookType.BEFORE_TEST_STEP));
                                     List<CucumberJvmJson.JvmHook> jvmAfterStepHooks = createHookSteps(afterStepHooks,
-                                            include(HookType.AFTER_TEST_STEP));
+                                        include(HookType.AFTER_TEST_STEP));
                                     return new JvmStep(
-                                            step.getKeyword(),
-                                            step.getLocation().getLine(),
-                                            createMatchMap(testStep, testStepFinished.getTestStepResult()),
-                                            pickleStep.getText(),
-                                            createResultMap(testStepFinished.getTestStepResult()),
-                                            step.getDocString().map(this::createDocStringMap).orElse(null),
-                                            step.getDataTable().map(this::createDataTableList).orElse(null),
-                                            jvmBeforeStepHooks.isEmpty() ? null : jvmBeforeStepHooks,
-                                            jvmAfterStepHooks.isEmpty() ? null : jvmAfterStepHooks);
+                                        step.getKeyword(),
+                                        step.getLocation().getLine(),
+                                        createMatchMap(testStep, testStepFinished.getTestStepResult()),
+                                        pickleStep.getText(),
+                                        createResultMap(testStepFinished.getTestStepResult()),
+                                        step.getDocString().map(this::createDocStringMap).orElse(null),
+                                        step.getDataTable().map(this::createDataTableList).orElse(null),
+                                        jvmBeforeStepHooks.isEmpty() ? null : jvmBeforeStepHooks,
+                                        jvmAfterStepHooks.isEmpty() ? null : jvmAfterStepHooks);
                                 })));
     }
 
@@ -479,30 +485,30 @@ class JsonReportWriter {
                         .map(argument -> {
                             Group group = argument.getGroup();
                             return new JvmArgument(
-                                    // TODO: Nullable
-                                    group.getValue().get(),
-                                    group.getStart().get());
+                                // TODO: Nullable
+                                group.getValue().get(),
+                                group.getStart().get());
                         }).collect(toList()))
                 .filter(maps -> !maps.isEmpty());
 
         return new JvmMatch(
-                result.getStatus() != TestStepResultStatus.UNDEFINED ? location.orElse(null) : null,
-                argumentList.orElse(null));
+            result.getStatus() != TestStepResultStatus.UNDEFINED ? location.orElse(null) : null,
+            argumentList.orElse(null));
     }
 
     private JvmResult createResultMap(TestStepResult result) {
         Duration duration = Convertor.toDuration(result.getDuration());
         return new JvmResult(
-                duration.isZero() ? null : duration.toNanos(),
-                JvmStatus.valueOf(result.getStatus().name().toLowerCase(ROOT)),
-                result.getException().flatMap(Exception::getStackTrace).orElse(null));
+            duration.isZero() ? null : duration.toNanos(),
+            JvmStatus.valueOf(result.getStatus().name().toLowerCase(ROOT)),
+            result.getException().flatMap(Exception::getStackTrace).orElse(null));
     }
 
     private JvmDocString createDocStringMap(DocString docString) {
         return new JvmDocString(
-                docString.getLocation().getLine(),
-                docString.getContent(),
-                docString.getMediaType().orElse(null));
+            docString.getLocation().getLine(),
+            docString.getContent(),
+            docString.getMediaType().orElse(null));
     }
 
     private List<JvmDataTableRow> createDataTableList(DataTable argument) {
@@ -519,17 +525,22 @@ class JsonReportWriter {
         return formatter.format(Convertor.toInstant(instant));
     }
 
-    private static class Data {
+    private static class TestCaseData {
         private final TestCaseStarted testCaseStarted;
         private final Lineage lineage;
         private final Pickle pickle;
         private final Location location;
+        private final List<Entry<TestStepFinished, TestStep>> testStepFinishedAndTestStep;
 
-        private Data(TestCaseStarted testCaseStarted, Lineage lineage, Pickle pickle, Location location) {
+        private TestCaseData(
+                TestCaseStarted testCaseStarted, Lineage lineage, Pickle pickle, Location location,
+                List<Entry<TestStepFinished, TestStep>> testStepFinishedAndTestStep
+        ) {
             this.testCaseStarted = testCaseStarted;
             this.lineage = lineage;
             this.pickle = pickle;
             this.location = location;
+            this.testStepFinishedAndTestStep = testStepFinishedAndTestStep;
         }
     }
 
