@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [JUnit Platform Engine] Don't use Java 9+ APIs ([#3025](https://github.com/cucumber/cucumber-jvm/pull/3025) M.P. Korstanje)
 - [JUnit Platform Engine] Implement toString on custom DiscoverySelectors
+  [Core] Fix incomplete id for scenarios under rules in json output ([#3026](https://github.com/cucumber/cucumber-jvm/pull/3026) M.P. Korstanje)
 
 ## [7.25.0] - 2025-07-10
 ### Changed
