@@ -70,7 +70,7 @@ final class TestSourcesModel {
     private static final Pattern replacementPattern = Pattern.compile("[\\s'_,!]");
 
     static String convertToId(String name) {
-        return replacementPattern.matcher(name).replaceAll("-").toLowerCase(Locale.ROOT);
+        return replacementPattern.matcher(name).replaceAll("-");
     }
 
     static URI relativize(URI uri) {
