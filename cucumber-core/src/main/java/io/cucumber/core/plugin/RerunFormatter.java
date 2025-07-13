@@ -7,15 +7,16 @@ import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestRunFinished;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static io.cucumber.core.feature.FeatureWithLines.create;
-import static io.cucumber.core.plugin.PrettyFormatter.relativize;
 
 /**
  * Formatter for reporting all failed test cases and print their locations
@@ -61,4 +62,21 @@ public final class RerunFormatter implements ConcurrentEventListener {
         return featureAndFailedLinesMapping.computeIfAbsent(uri, k -> new ArrayList<>());
     }
 
+    static URI relativize(URI uri) {
+        if (!"file".equals(uri.getScheme())) {
+            return uri;
+        }
+        if (!uri.isAbsolute()) {
+            return uri;
+        }
+
+        try {
+            URI root = new File("").toURI();
+            URI relative = root.relativize(uri);
+            // Scheme is lost by relativize
+            return new URI("file", relative.getSchemeSpecificPart(), relative.getFragment());
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+    }
 }

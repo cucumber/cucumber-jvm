@@ -4,7 +4,8 @@ Contains [Hamcrest matchers](http://hamcrest.org/) to compare data tables.
 These can be used in most common test frameworks and produces pretty error
 messages.
 
-Add the `datatable-matchers` dependency to your pom.
+Add the `datatable-matchers` dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```
 <dependencies>
@@ -12,7 +13,6 @@ Add the `datatable-matchers` dependency to your pom.
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>datatable-matchers</artifactId>
-        <version>${cucumber-datatable.version}</version>
         <scope>test</scope>
     </dependency>
   [...]

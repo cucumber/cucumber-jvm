@@ -381,9 +381,7 @@ class JsonReportWriter {
     }
 
     private JvmMatch createMatchMap(TestStep step, TestStepResult result) {
-        Optional<SourceReference> source = query.findStepDefinitionBy(step)
-                .stream()
-                .findFirst()
+        Optional<SourceReference> source = query.findUnambiguousStepDefinitionBy(step)
                 .map(StepDefinition::getSourceReference);
 
         Optional<SourceReference> hookSource = query.findHookBy(step)

@@ -11,19 +11,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- [JUnit Platform Engine] Add `cucumber.junit-platform.discovery.as-root-engine` to work around SBT issues ([#3023](https://github.com/cucumber/cucumber-jvm/pull/3023) M.P. Korstanje)
+
+### Fixed
+- [JUnit Platform Engine] Don't use Java 9+ APIs ([#3025](https://github.com/cucumber/cucumber-jvm/pull/3025) M.P. Korstanje)
+- [JUnit Platform Engine] Implement toString on custom DiscoverySelectors
+
+## [7.25.0] - 2025-07-10
+### Changed
+- [Core] Add status icons to pretty formatter ([pretty-formatter/#5](https://github.com/cucumber/pretty-formatter/pull/5))
+
+## [7.24.0] - 2025-07-07
+### Added
 - [JUnit Platform Engine] Option to include a parameterized scenario name only if the scenario is parameterized ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 - [JUnit Platform Engine] Option to order features and scenarios ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 - [JUnit Platform Engine] Log discovery issues when a classpath resource selector is (e.g. `@SelectClasspathResource`) is used to select a directory. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 
 ### Changed
 - [JUnit Platform Engine] Use JUnit's `EngineDiscoveryRequestResolver` to resolve classpath based resources. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
-- [JUnit Platform Engine] Use JUnit Platform 1.13.1 (JUnit Jupiter 5.13.1)
-
-### Fixed
-- [JUnit Platform Engine] Log discovery issues for feature files with parse errors. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
+- [JUnit Platform Engine] Use JUnit Platform 1.13.3 (JUnit Jupiter 5.13.3)
+- [Core] Use a message based [Pretty Formatter](https://github.com/cucumber/pretty-formatter) ([#2835](https://github.com/cucumber/cucumber-jvm/pull/3012) M.P. Korstanje)
+- [Core] Update dependency io.cucumber:gherkin to v33.0.0
+- [Core] Update dependency io.cucumber:messages to v28.2.0
+- [Core] Update dependency io.cucumber:html-formatter to v21.13.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.8.0
+- [Core] Update dependency io.cucumber:query to v13.4.0
+- [Core] Update dependency io.cucumber:testng-xml-formatter to v0.4.1
 
 ### Deprecated
 - [JUnit] Deprecate `cucumber-junit` in favour of `cucumber-junit-platform-engine` ([#2835](https://github.com/cucumber/cucumber-jvm/pull/3016) M.P. Korstanje)
+
+### Fixed
+- [JUnit Platform Engine] Log discovery issues for feature files with parse errors. ([#2835](https://github.com/cucumber/cucumber-jvm/pull/2835) M.P. Korstanje)
 
 ## [7.23.0] - 2025-05-29
 ### Added
@@ -425,7 +444,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.23.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.25.0...HEAD
+[7.25.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.24.0...v7.25.0
+[7.24.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.23.0...v7.24.0
 [7.23.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.2...v7.23.0
 [7.22.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.1...v7.22.2
 [7.22.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.0...v7.22.1

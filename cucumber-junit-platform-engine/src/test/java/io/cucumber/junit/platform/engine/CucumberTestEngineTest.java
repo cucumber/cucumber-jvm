@@ -20,6 +20,9 @@ import org.junit.platform.engine.support.descriptor.ClasspathResourceSource;
 import org.junit.platform.engine.support.descriptor.FileSource;
 import org.junit.platform.engine.support.hierarchical.ExclusiveResource;
 import org.junit.platform.engine.support.hierarchical.Node;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
 import org.junit.platform.testkit.engine.EngineDiscoveryResults;
 import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Event;
@@ -44,6 +47,7 @@ import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_RANDOM
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
@@ -92,6 +96,17 @@ import static org.junit.platform.testkit.engine.EventConditions.test;
 class CucumberTestEngineTest {
 
     private final CucumberTestEngine engine = new CucumberTestEngine();
+
+    private static Set<UniqueId> discoverUniqueIds(DiscoverySelector discoverySelector) {
+        return EngineTestKit.engine(ENGINE_ID)
+                .selectors(discoverySelector)
+                .execute()
+                .allEvents()
+                .map(Event::getTestDescriptor)
+                .filter(Predicate.not(TestDescriptor::isRoot))
+                .map(TestDescriptor::getUniqueId)
+                .collect(toSet());
+    }
 
     @Test
     void id() {
@@ -460,17 +475,6 @@ class CucumberTestEngineTest {
         assertEquals(pickleIdsFromFeature, pickleIdsFromPickles);
     }
 
-    private static Set<UniqueId> discoverUniqueIds(DiscoverySelector discoverySelector) {
-        return EngineTestKit.engine(ENGINE_ID)
-                .selectors(discoverySelector)
-                .execute()
-                .allEvents()
-                .map(Event::getTestDescriptor)
-                .filter(Predicate.not(TestDescriptor::isRoot))
-                .map(TestDescriptor::getUniqueId)
-                .collect(toSet());
-    }
-
     @Test
     void supportsFilePositionFeature() {
         EngineTestKit.engine(ENGINE_ID)
@@ -602,6 +606,42 @@ class CucumberTestEngineTest {
                 .assertThatEvents()
                 .haveExactly(2, event(engine(emptySource())))
                 .haveExactly(1, event(test(finishedSuccessfully())));
+    }
+
+    @Suite
+    @IncludeEngines("cucumber")
+    @SelectClasspathResource("io/cucumber/junit/platform/engine/single.feature")
+    static class SuiteTestCase {
+
+    }
+
+    @Test
+    void supportsDisablingDiscoveryAsRootEngine() {
+        DiscoverySelector selector = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
+
+        // Ensure classpath resource exists.
+        assertThat(EngineTestKit.engine(ENGINE_ID)
+                .selectors(selector)
+                .discover()
+                .getEngineDescriptor()
+                .getChildren())
+                .isNotEmpty();
+
+        assertThat(EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
+                .selectors(selector)
+                .discover()
+                .getEngineDescriptor()
+                .getChildren())
+                .isEmpty();
+
+        assertThat(EngineTestKit.engine("junit-platform-suite")
+                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
+                .selectors(selectClass(SuiteTestCase.class))
+                .discover()
+                .getEngineDescriptor()
+                .getChildren())
+                .isNotEmpty();
     }
 
     @Test

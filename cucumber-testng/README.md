@@ -1,7 +1,8 @@
 Cucumber TestNG 
 ==============
 
-Use TestNG to execute Cucumber scenarios. To use add the `cucumber-testng` dependency to your pom.
+Use TestNG to execute Cucumber scenarios. To use add the `cucumber-testng` dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependencies>
@@ -9,7 +10,6 @@ Use TestNG to execute Cucumber scenarios. To use add the `cucumber-testng` depen
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-testng</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]

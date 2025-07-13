@@ -328,7 +328,6 @@
       "ignore": true,
       "configuration": {
         "differences": [
-
           {
             "ignore": true,
             "code": "java.method.added",
@@ -393,6 +392,182 @@
             "ignore": true,
             "code": "java.class.externalClassExposedInAPI",
             "new": "class org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method java.util.Optional<org.junit.platform.engine.DiscoverySelectorIdentifier> org.junit.platform.engine.DiscoverySelector::toIdentifier()",
+            "new": "method java.util.Optional<org.junit.platform.engine.DiscoverySelectorIdentifier> org.junit.platform.engine.DiscoverySelector::toIdentifier()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method java.util.Optional<org.junit.platform.engine.DiscoverySelectorIdentifier> org.junit.platform.engine.DiscoverySelector::toIdentifier()",
+            "new": "method java.util.Optional<org.junit.platform.engine.DiscoverySelectorIdentifier> org.junit.platform.engine.DiscoverySelector::toIdentifier()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.11\"",
+            "newValue": "\"1.13.3\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.DiscoverySelectorIdentifier",
+            "new": "class org.junit.platform.engine.DiscoverySelectorIdentifier",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.DiscoverySelectorIdentifier",
+            "new": "class org.junit.platform.engine.DiscoverySelectorIdentifier",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.11\"",
+            "newValue": "\"1.13.3\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.12\"",
+            "newValue": "\"1.13.3\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.EngineExecutionListener::fileEntryPublished(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.reporting.FileEntry)",
+            "new": "method void org.junit.platform.engine.EngineExecutionListener::fileEntryPublished(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.reporting.FileEntry)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.EngineExecutionListener::fileEntryPublished(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.reporting.FileEntry)",
+            "new": "method void org.junit.platform.engine.EngineExecutionListener::fileEntryPublished(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.reporting.FileEntry)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.12\"",
+            "newValue": "\"1.13.3\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.12\"",
+            "newValue": "\"1.13.3\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.TestDescriptor::orderChildren(java.util.function.UnaryOperator<java.util.List<org.junit.platform.engine.TestDescriptor>>)",
+            "new": "method void org.junit.platform.engine.TestDescriptor::orderChildren(java.util.function.UnaryOperator<java.util.List<org.junit.platform.engine.TestDescriptor>>)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.12\"",
+            "newValue": "\"1.13.3\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.TestDescriptor::orderChildren(java.util.function.UnaryOperator<java.util.List<org.junit.platform.engine.TestDescriptor>>)",
+            "new": "method void org.junit.platform.engine.TestDescriptor::orderChildren(java.util.function.UnaryOperator<java.util.List<org.junit.platform.engine.TestDescriptor>>)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.reporting.FileEntry",
+            "new": "class org.junit.platform.engine.reporting.FileEntry",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.reporting.FileEntry",
+            "new": "class org.junit.platform.engine.reporting.FileEntry",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.12\"",
+            "newValue": "\"1.13.3\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "newValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.12\"",
+            "newValue": "\"1.13.3\"",
             "justification": "API consumed from JUnit 5"
           }
         ]

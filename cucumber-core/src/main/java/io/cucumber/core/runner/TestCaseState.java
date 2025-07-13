@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Attachment;
 import io.cucumber.messages.types.AttachmentContentEncoding;
 import io.cucumber.messages.types.Envelope;
@@ -11,6 +12,7 @@ import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.WriteEvent;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -71,7 +73,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         requireNonNull(mediaType);
 
         requireActiveTestStep();
-        bus.send(new EmbedEvent(bus.getInstant(), testCase, data, mediaType, name));
+        Instant instant = bus.getInstant();
+        bus.send(new EmbedEvent(instant, testCase, data, mediaType, name));
         bus.send(Envelope.of(new Attachment(
             Base64.getEncoder().encodeToString(data),
             AttachmentContentEncoding.BASE64,
@@ -81,7 +84,9 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             testExecutionId.toString(),
             currentTestStepId.toString(),
             null,
-            null)));
+            null,
+            null,
+            Convertor.toMessage(instant))));
     }
 
     @Override
@@ -90,7 +95,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         requireNonNull(mediaType);
 
         requireActiveTestStep();
-        bus.send(new EmbedEvent(bus.getInstant(), testCase, data.getBytes(UTF_8), mediaType, name));
+        Instant instant = bus.getInstant();
+        bus.send(new EmbedEvent(instant, testCase, data.getBytes(UTF_8), mediaType, name));
         bus.send(Envelope.of(new Attachment(
             data,
             AttachmentContentEncoding.IDENTITY,
@@ -100,13 +106,16 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             testExecutionId.toString(),
             currentTestStepId.toString(),
             null,
-            null)));
+            null,
+            null,
+            Convertor.toMessage(instant))));
     }
 
     @Override
     public void log(String text) {
         requireActiveTestStep();
-        bus.send(new WriteEvent(bus.getInstant(), testCase, text));
+        Instant instant = bus.getInstant();
+        bus.send(new WriteEvent(instant, testCase, text));
         bus.send(Envelope.of(new Attachment(
             text,
             AttachmentContentEncoding.IDENTITY,
@@ -116,7 +125,9 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
             testExecutionId.toString(),
             currentTestStepId.toString(),
             null,
-            null)));
+            null,
+            null,
+            Convertor.toMessage(instant))));
     }
 
     @Override
