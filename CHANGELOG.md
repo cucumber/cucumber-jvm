@@ -10,13 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.26.0] - 2025-07-14
 ### Added
 - [JUnit Platform Engine] Add `cucumber.junit-platform.discovery.as-root-engine` to work around SBT issues ([#3023](https://github.com/cucumber/cucumber-jvm/pull/3023) M.P. Korstanje)
 
 ### Fixed
 - [JUnit Platform Engine] Don't use Java 9+ APIs ([#3025](https://github.com/cucumber/cucumber-jvm/pull/3025) M.P. Korstanje)
 - [JUnit Platform Engine] Implement toString on custom DiscoverySelectors
-  [Core] Fix incomplete id for scenarios under rules in json output ([#3026](https://github.com/cucumber/cucumber-jvm/pull/3026) M.P. Korstanje)
+[Core] Fix incomplete id for scenarios under rules in json output ([#3026](https://github.com/cucumber/cucumber-jvm/pull/3026) M.P. Korstanje)
 
 ## [7.25.0] - 2025-07-10
 ### Changed
@@ -445,7 +447,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.25.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.26.0...HEAD
+[7.26.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.25.0...v7.26.0
 [7.25.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.24.0...v7.25.0
 [7.24.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.23.0...v7.24.0
 [7.23.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.22.2...v7.23.0
