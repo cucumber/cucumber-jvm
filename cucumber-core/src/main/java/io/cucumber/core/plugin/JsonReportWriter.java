@@ -396,13 +396,13 @@ class JsonReportWriter {
                 .map(argumentsLists -> argumentsLists.stream()
                         .map(StepMatchArgumentsList::getStepMatchArguments)
                         .flatMap(Collection::stream)
-                        .map(JsonReportWriter::createJvmArgument)
+                        .map(this::createJvmArgument)
                         .collect(toList()))
                 .filter(jvmArguments -> !jvmArguments.isEmpty())
                 .orElse(null);
     }
 
-    private static JvmArgument createJvmArgument(StepMatchArgument argument) {
+    private JvmArgument createJvmArgument(StepMatchArgument argument) {
         Group group = argument.getGroup();
         return new JvmArgument(
             group.getValue().orElse(null),
