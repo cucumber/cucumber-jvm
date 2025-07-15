@@ -102,7 +102,7 @@ class JsonReportWriter {
         return dateTimeFormatter.format(Convertor.toInstant(instant));
     }
 
-    List<Object> writeJsonReport() {
+    List<Object> createJsonReport() {
         return query.findAllTestCaseStarted()
                 .stream()
                 .map(this::createJvmElementData)
@@ -181,8 +181,12 @@ class JsonReportWriter {
     }
 
     private JvmFeature createJvmFeature(List<JvmElementData> elements) {
-        GherkinDocument document = elements.get(0).lineage.document();
-        Feature feature = elements.get(0).lineage.feature().orElseThrow(() -> new IllegalStateException("No feature?"));
+        JvmElementData firstElement = elements.get(0);
+        GherkinDocument document = firstElement.lineage.document();
+        Feature feature = firstElement.lineage.feature()
+                .orElseThrow(
+                    () -> new IllegalStateException(
+                        "No Feature for testCaseStarted " + firstElement.testCaseStarted.getId()));
         return new JvmFeature(
             document.getUri()
                     .map(URI::create)
@@ -206,14 +210,6 @@ class JsonReportWriter {
     }
 
     private List<JvmElement> createJvmElement(JvmElementData data) {
-        Predicate<Entry<Optional<Background>, List<TestStepFinished>>> isBackGround = entry -> entry.getKey()
-                .isPresent();
-        Predicate<Entry<Optional<Background>, List<TestStepFinished>>> isTestCase = isBackGround.negate();
-        BinaryOperator<Entry<Optional<Background>, List<TestStepFinished>>> mergeEntries = (a, b) -> {
-            a.getValue().addAll(b.getValue());
-            return a;
-        };
-
         Map<Optional<Background>, List<TestStepFinished>> stepsByBackground = query
                 .findTestStepFinishedAndTestStepBy(data.testCaseStarted)
                 .stream()
@@ -223,14 +219,14 @@ class JsonReportWriter {
         // only ever had one. So we group all other backgrounds steps with the
         // first.
         Optional<JvmElement> background = stepsByBackground.entrySet().stream()
-                .filter(isBackGround)
-                .reduce(mergeEntries)
+                .filter(isBackGround())
+                .reduce(mergeEntries())
                 .flatMap(entry -> entry.getKey()
                         .map(bg -> createBackground(data, bg, entry.getValue())));
 
         Optional<JvmElement> testCase = stepsByBackground.entrySet().stream()
-                .filter(isTestCase)
-                .reduce(mergeEntries)
+                .filter(isTestCase())
+                .reduce(mergeEntries())
                 .map(Entry::getValue)
                 .map(scenarioTestStepsFinished -> createTestCase(data, scenarioTestStepsFinished));
 
@@ -238,6 +234,21 @@ class JsonReportWriter {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toList());
+    }
+
+    private static BinaryOperator<Entry<Optional<Background>, List<TestStepFinished>>> mergeEntries() {
+        return (a, b) -> {
+            a.getValue().addAll(b.getValue());
+            return a;
+        };
+    }
+
+    private static Predicate<Entry<Optional<Background>, List<TestStepFinished>>> isTestCase() {
+        return isBackGround().negate();
+    }
+
+    private static Predicate<Entry<Optional<Background>, List<TestStepFinished>>> isBackGround() {
+        return entry -> entry.getKey().isPresent();
     }
 
     private JvmElement createTestCase(JvmElementData data, List<TestStepFinished> scenarioTestStepsFinished) {

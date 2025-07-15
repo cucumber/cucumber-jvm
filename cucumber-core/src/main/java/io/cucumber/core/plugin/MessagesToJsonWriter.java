@@ -109,7 +109,7 @@ class MessagesToJsonWriter implements AutoCloseable {
             return;
         }
         try {
-            List<Object> report = new JsonReportWriter(query, uriFormatter).writeJsonReport();
+            List<Object> report = new JsonReportWriter(query, uriFormatter).createJsonReport();
             serializer.writeValue(out, report);
         } finally {
             try {
