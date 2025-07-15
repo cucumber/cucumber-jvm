@@ -398,9 +398,8 @@ class JsonReportWriter {
                         .map(argument -> {
                             Group group = argument.getGroup();
                             return new JvmArgument(
-                                // TODO: Nullable
-                                group.getValue().get(),
-                                group.getStart().get());
+                                group.getValue().orElse(null),
+                                group.getStart().orElse(-1L));
                         }).collect(toList()))
                 .filter(maps -> !maps.isEmpty())
                 .orElse(null);
