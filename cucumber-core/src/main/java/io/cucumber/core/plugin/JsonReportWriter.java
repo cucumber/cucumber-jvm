@@ -54,7 +54,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -495,56 +494,6 @@ class JsonReportWriter {
 
         return query.findHookBy(step)
                 .map(Hook::getSourceReference);
-    }
-
-    private static class TestStepData {
-        private final List<TestStepFinished> beforeTestCaseSteps;
-        private final List<TestStepFinished> afterTestCaseSteps;
-        private final Map<TestStepFinished, List<TestStepFinished>> beforeStepStepsByStep;
-        private final Map<TestStepFinished, List<TestStepFinished>> afterStepStepsByStep;
-
-        private TestStepData(
-                List<TestStepFinished> beforeTestCaseSteps,
-                List<TestStepFinished> afterTestCaseSteps,
-                Map<TestStepFinished, List<TestStepFinished>> beforeStepStepsByStep,
-                Map<TestStepFinished, List<TestStepFinished>> afterStepStepsByStep
-        ) {
-            this.beforeTestCaseSteps = beforeTestCaseSteps;
-            this.afterTestCaseSteps = afterTestCaseSteps;
-            this.beforeStepStepsByStep = beforeStepStepsByStep;
-            this.afterStepStepsByStep = afterStepStepsByStep;
-        }
-    }
-
-    private static class JvmElementData {
-        private final TestCaseStarted testCaseStarted;
-        private final Lineage lineage;
-        private final Pickle pickle;
-        private final Location location;
-        private final TestStepData testStepData;
-
-        private JvmElementData(
-                TestCaseStarted testCaseStarted, Lineage lineage, Pickle pickle, Location location,
-                TestStepData testStepData
-        ) {
-            this.testCaseStarted = requireNonNull(testCaseStarted);
-            this.lineage = requireNonNull(lineage);
-            this.pickle = requireNonNull(pickle);
-            this.location = requireNonNull(location);
-            this.testStepData = requireNonNull(testStepData);
-        }
-    }
-
-    private static class JvmFeatureDataComparator implements Comparator<JvmElementData> {
-
-        @Override
-        public int compare(JvmElementData o1, JvmElementData o2) {
-            int c = o1.pickle.getUri().compareTo(o2.pickle.getUri());
-            if (c != 0) {
-                return c;
-            }
-            return o1.location.getLine().compareTo(o2.location.getLine());
-        }
     }
 
 }
