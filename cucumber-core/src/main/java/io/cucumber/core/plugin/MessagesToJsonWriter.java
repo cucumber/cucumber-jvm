@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,18 +21,66 @@ import static java.util.Objects.requireNonNull;
  * Note: Messages are first collected and only written once the stream is
  * closed.
  */
-public class MessagesToJsonWriter implements AutoCloseable {
+class MessagesToJsonWriter implements AutoCloseable {
 
     private final OutputStreamWriter out;
     private final Query query = new Query();
     private final Serializer serializer;
+    private final Function<URI, String> uriFormatter;
     private boolean streamClosed = false;
 
-    public MessagesToJsonWriter(OutputStream out, Serializer serializer) {
+    private MessagesToJsonWriter(OutputStream out, Serializer serializer, Function<URI, String> uriFormatter) {
         this.out = new OutputStreamWriter(
             requireNonNull(out),
             StandardCharsets.UTF_8);
-        this.serializer = serializer;
+        this.serializer = requireNonNull(serializer);
+        this.uriFormatter = requireNonNull(uriFormatter);
+    }
+
+    public static Builder builder(Serializer serializer) {
+        return new Builder(serializer);
+    }
+
+    static final class Builder {
+        private final Serializer serializer;
+        private Function<URI, String> uriFormatter = URI::toString;
+
+        public Builder(Serializer serializer) {
+            this.serializer = requireNonNull(serializer);
+        }
+
+        public Builder relativizeAgainst(URI uri) {
+            // TODO: Needs coverage
+            // TODO: Naming?
+            this.uriFormatter = relativize(uri)
+                    .andThen(URI::toString);
+            return this;
+        }
+
+        static Function<URI, URI> relativize(URI base) {
+            return uri -> {
+                // TODO: Needs coverage
+                if (!"file".equals(uri.getScheme())) {
+                    return uri;
+                }
+                if (!uri.isAbsolute()) {
+                    return uri;
+                }
+
+                try {
+                    URI relative = base.relativize(uri);
+                    // Scheme is lost by relativize
+                    return new URI("file", relative.getSchemeSpecificPart(), relative.getFragment());
+                } catch (URISyntaxException e) {
+                    throw new IllegalArgumentException(e.getMessage(), e);
+                }
+            };
+        }
+
+        public MessagesToJsonWriter build(OutputStream out) {
+            requireNonNull(out);
+            return new MessagesToJsonWriter(out, serializer, uriFormatter);
+        }
     }
 
     /**
@@ -58,7 +109,7 @@ public class MessagesToJsonWriter implements AutoCloseable {
             return;
         }
         try {
-            List<Object> report = new JsonReportWriter(query).writeJsonReport();
+            List<Object> report = new JsonReportWriter(query, uriFormatter).writeJsonReport();
             serializer.writeValue(out, report);
         } finally {
             try {
