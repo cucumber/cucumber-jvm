@@ -34,6 +34,7 @@ import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.SourceReference;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.StepDefinition;
+import io.cucumber.messages.types.StepMatchArgument;
 import io.cucumber.messages.types.StepMatchArgumentsList;
 import io.cucumber.messages.types.TableCell;
 import io.cucumber.messages.types.Tag;
@@ -395,14 +396,17 @@ class JsonReportWriter {
                 .map(argumentsLists -> argumentsLists.stream()
                         .map(StepMatchArgumentsList::getStepMatchArguments)
                         .flatMap(Collection::stream)
-                        .map(argument -> {
-                            Group group = argument.getGroup();
-                            return new JvmArgument(
-                                group.getValue().orElse(null),
-                                group.getStart().orElse(-1L));
-                        }).collect(toList()))
-                .filter(maps -> !maps.isEmpty())
+                        .map(JsonReportWriter::createJvmArgument)
+                        .collect(toList()))
+                .filter(jvmArguments -> !jvmArguments.isEmpty())
                 .orElse(null);
+    }
+
+    private static JvmArgument createJvmArgument(StepMatchArgument argument) {
+        Group group = argument.getGroup();
+        return new JvmArgument(
+            group.getValue().orElse(null),
+            group.getStart().orElse(-1L));
     }
 
     private List<JvmDataTableRow> createJvmDataTableRows(Step step) {
