@@ -10,31 +10,33 @@ import io.cucumber.query.LineageReducer;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static io.cucumber.core.plugin.TestSourcesModel.convertToId;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 class IdNamingVisitor implements LineageReducer.Collector<String> {
+
+    private static final Pattern replacementPattern = Pattern.compile("[\\s'_,!]");
 
     private final List<String> parts = new ArrayList<>();
 
     @Override
     public void add(Feature feature) {
-        parts.add(convertToId(feature.getName()));
+        parts.add(formatId(feature.getName()));
     }
 
     @Override
     public void add(Rule rule) {
-        parts.add(convertToId(rule.getName()));
+        parts.add(formatId(rule.getName()));
     }
 
     @Override
     public void add(Scenario scenario) {
-        parts.add(convertToId(scenario.getName()));
+        parts.add(formatId(scenario.getName()));
     }
 
     @Override
     public void add(Examples examples, int index) {
-        parts.add(convertToId(examples.getName()));
+        parts.add(formatId(examples.getName()));
     }
 
     @Override
@@ -45,11 +47,15 @@ class IdNamingVisitor implements LineageReducer.Collector<String> {
 
     @Override
     public void add(Pickle pickle) {
-        convertToId(pickle.getName());
+        formatId(pickle.getName());
     }
 
     @Override
     public String finish() {
         return String.join(";", parts);
+    }
+
+    static String formatId(String name) {
+        return replacementPattern.matcher(name).replaceAll("-").toLowerCase(Locale.ROOT);
     }
 }

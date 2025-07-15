@@ -57,17 +57,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import static io.cucumber.core.plugin.IdNamingVisitor.formatId;
 import static io.cucumber.messages.types.AttachmentContentEncoding.BASE64;
 import static io.cucumber.messages.types.AttachmentContentEncoding.IDENTITY;
 import static java.util.Collections.emptyList;
@@ -78,7 +77,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 class JsonReportWriter {
-    private static final Pattern replacementPattern = Pattern.compile("[\\s'_,!]");
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             .withZone(ZoneOffset.UTC);
     private final Query query;
@@ -92,10 +90,6 @@ class JsonReportWriter {
 
     private static <T> List<T> nullIfEmpty(List<T> list) {
         return list.isEmpty() ? null : list;
-    }
-
-    private String formatId(String name) {
-        return replacementPattern.matcher(name).replaceAll("-").toLowerCase(Locale.ROOT);
     }
 
     private String formatTimeStamp(Timestamp instant) {
