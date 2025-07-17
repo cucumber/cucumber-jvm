@@ -38,10 +38,10 @@ import static java.util.Objects.requireNonNull;
 public final class ProgressFormatter implements ConcurrentEventListener, ColorAware {
 
     private static final int MAX_WIDTH = 80;
-    private static final Map<TestStepResultStatus, String> SYMBOLS = new EnumMap<>(TestStepResultStatus.class); 
+    private static final Map<TestStepResultStatus, String> SYMBOLS = new EnumMap<>(TestStepResultStatus.class);
     private static final Map<TestStepResultStatus, Ansi> ESCAPES = new EnumMap<>(TestStepResultStatus.class);
     private static final Ansi RESET = Ansi.with(FOREGROUND_DEFAULT);
-    static  {
+    static {
         SYMBOLS.put(PASSED, ".");
         SYMBOLS.put(UNDEFINED, "U");
         SYMBOLS.put(PENDING, "P");
@@ -56,7 +56,7 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         ESCAPES.put(FAILED, Ansi.with(FOREGROUND_RED));
         ESCAPES.put(AMBIGUOUS, Ansi.with(FOREGROUND_RED));
     }
-    
+
     private final PrintWriter writer;
     private boolean monochrome = false;
     private int width = 0;
