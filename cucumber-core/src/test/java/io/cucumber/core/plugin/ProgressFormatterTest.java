@@ -4,6 +4,8 @@ import io.cucumber.core.backend.StubHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.plugin.ProgressFormatter.Ansi;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
@@ -25,11 +27,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class ProgressFormatterTest {
 
-    private final ProgressFormatter.Ansi GREEN = ProgressFormatter.Ansi.with(FOREGROUND_GREEN);
-    private final ProgressFormatter.Ansi YELLOW = ProgressFormatter.Ansi.with(FOREGROUND_YELLOW);
-    private final ProgressFormatter.Ansi RED = ProgressFormatter.Ansi.with(FOREGROUND_RED);
-    private final ProgressFormatter.Ansi RESET = ProgressFormatter.Ansi.with(FOREGROUND_DEFAULT);
-    private final ProgressFormatter.Ansi CYAN = ProgressFormatter.Ansi.with(FOREGROUND_CYAN);
+    private final Ansi GREEN = Ansi.with(FOREGROUND_GREEN);
+    private final Ansi YELLOW = Ansi.with(FOREGROUND_YELLOW);
+    private final Ansi RED = Ansi.with(FOREGROUND_RED);
+    private final Ansi RESET = Ansi.with(FOREGROUND_DEFAULT);
+    private final Ansi CYAN = Ansi.with(FOREGROUND_CYAN);
 
     @Test
     void prints_empty_line_for_empty_test_run() {
@@ -62,6 +64,26 @@ class ProgressFormatterTest {
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators(GREEN + "." + RESET + "\n")));
+    }
+
+    @Test
+    void prints_dot_for_passed_step_without_color() {
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: passed scenario\n" +
+                "    Given passed step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("passed step")))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators(".\n")));
     }
 
     @Test
