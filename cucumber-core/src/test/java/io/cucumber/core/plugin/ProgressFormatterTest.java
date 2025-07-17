@@ -20,7 +20,6 @@ import static io.cucumber.core.plugin.ProgressFormatter.Ansi.Attributes.FOREGROU
 import static io.cucumber.core.plugin.ProgressFormatter.Ansi.Attributes.FOREGROUND_YELLOW;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class ProgressFormatterTest {
@@ -142,7 +141,7 @@ class ProgressFormatterTest {
                 .run();
 
         assertThat(out, bytes(
-            equalTo(RED + "F" + RESET + CYAN + "-" + RESET + "\n")));
+                equalCompressingLineSeparators(RED + "F" + RESET + CYAN + "-" + RESET + "\n")));
     }
 
 }
