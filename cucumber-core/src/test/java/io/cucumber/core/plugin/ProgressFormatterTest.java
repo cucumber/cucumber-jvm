@@ -30,7 +30,7 @@ class ProgressFormatterTest {
     private final ProgressFormatter.Ansi RED = ProgressFormatter.Ansi.with(FOREGROUND_RED);
     private final ProgressFormatter.Ansi RESET = ProgressFormatter.Ansi.with(FOREGROUND_DEFAULT);
     private final ProgressFormatter.Ansi CYAN = ProgressFormatter.Ansi.with(FOREGROUND_CYAN);
-    
+
     @Test
     void prints_empty_line_for_empty_test_run() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

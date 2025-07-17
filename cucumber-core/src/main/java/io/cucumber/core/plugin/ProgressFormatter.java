@@ -31,8 +31,8 @@ import static java.util.Objects.requireNonNull;
 /**
  * Renders a rudimentary progress bar.
  * <p>
- * Each character in the bar represents either a step or hook. The status of that
- * step or hook is indicated by the character and its color.
+ * Each character in the bar represents either a step or hook. The status of
+ * that step or hook is indicated by the character and its color.
  */
 public final class ProgressFormatter implements ConcurrentEventListener, ColorAware {
 
@@ -62,11 +62,9 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
 
     private static PrintWriter createPrintWriter(OutputStream out) {
         return new PrintWriter(
-                new OutputStreamWriter(
-                        requireNonNull(out),
-                        StandardCharsets.UTF_8
-                )
-        );
+            new OutputStreamWriter(
+                requireNonNull(out),
+                StandardCharsets.UTF_8));
     }
 
     @Override
@@ -94,6 +92,7 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
             buffer.append(reset);
         }
         writer.append(buffer);
+        // Flush to provide immediate feedback.
         writer.flush();
     }
 
@@ -103,7 +102,9 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
     }
 
     /**
-     * Represents an <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape code</a> in the format {@code CSI n m}.
+     * Represents an
+     * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape
+     * code</a> in the format {@code CSI n m}.
      */
     static final class Ansi {
 
@@ -115,8 +116,8 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         /**
          * Constructs an ANSI escape code with the given attributes.
          *
-         * @param attributes to include.
-         * @return an ANSI escape code with the given attributes
+         * @param  attributes to include.
+         * @return            an ANSI escape code with the given attributes
          */
         public static Ansi with(Ansi.Attributes... attributes) {
             return new Ansi(requireNonNull(attributes));
@@ -144,8 +145,9 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         }
 
         /**
-         * A select number of attributes from all the available 
-         * <a href=https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters>Select Graphic Rendition attributes</a>.
+         * A select number of attributes from all the available <a
+         * href=https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters>Select
+         * Graphic Rendition attributes</a>.
          */
         enum Attributes {
 
