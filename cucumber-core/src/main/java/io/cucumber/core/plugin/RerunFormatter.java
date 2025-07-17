@@ -37,8 +37,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Formatter for reporting all failed test cases and print their locations
- * Failed means: results that make the exit code non-zero.
+ * Formatter for reporting all failed test cases and print their locations.
  */
 public final class RerunFormatter implements ConcurrentEventListener {
 
