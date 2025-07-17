@@ -379,7 +379,7 @@ public class TeamCityPlugin implements EventListener {
     }
 
     private Optional<String> findSnippets(Pickle pickle) {
-        return query.findLocationOf(pickle)
+        return pickle.getLocation()
                 .map(location -> {
                     URI uri = URI.create(pickle.getUri());
                     List<Suggestion> suggestionForTestCase = suggestions.stream()
