@@ -1,89 +1,148 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.plugin.event.HookTestStep;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestStepFinished;
-import org.junit.jupiter.api.BeforeEach;
+import io.cucumber.core.backend.StubHookDefinition;
+import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.runtime.StubFeatureSupplier;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.UUID;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
 import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
-import static io.cucumber.plugin.event.Status.FAILED;
-import static io.cucumber.plugin.event.Status.PASSED;
-import static io.cucumber.plugin.event.Status.UNDEFINED;
+import static io.cucumber.core.plugin.ProgressFormatter.Ansi.Attributes.FOREGROUND_CYAN;
+import static io.cucumber.core.plugin.ProgressFormatter.Ansi.Attributes.FOREGROUND_DEFAULT;
+import static io.cucumber.core.plugin.ProgressFormatter.Ansi.Attributes.FOREGROUND_GREEN;
+import static io.cucumber.core.plugin.ProgressFormatter.Ansi.Attributes.FOREGROUND_RED;
+import static io.cucumber.core.plugin.ProgressFormatter.Ansi.Attributes.FOREGROUND_YELLOW;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 
 class ProgressFormatterTest {
 
-    final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    final ProgressFormatter formatter = new ProgressFormatter(out);
-
-    @BeforeEach
-    void setup() {
-        formatter.setEventPublisher(bus);
-    }
-
+    private final ProgressFormatter.Ansi GREEN = ProgressFormatter.Ansi.with(FOREGROUND_GREEN);
+    private final ProgressFormatter.Ansi YELLOW = ProgressFormatter.Ansi.with(FOREGROUND_YELLOW);
+    private final ProgressFormatter.Ansi RED = ProgressFormatter.Ansi.with(FOREGROUND_RED);
+    private final ProgressFormatter.Ansi RESET = ProgressFormatter.Ansi.with(FOREGROUND_DEFAULT);
+    private final ProgressFormatter.Ansi CYAN = ProgressFormatter.Ansi.with(FOREGROUND_CYAN);
+    
     @Test
     void prints_empty_line_for_empty_test_run() {
-        Result result = new Result(PASSED, Duration.ZERO, null);
-        bus.send(new TestRunFinished(Instant.now(), result));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier())
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("passed step")))
+                .build()
+                .run();
+
         assertThat(out, bytes(equalCompressingLineSeparators("\n")));
     }
 
     @Test
-    void prints_empty_line_and_green_dot_for_passing_test_run() {
-        Result result = new Result(PASSED, Duration.ZERO, null);
-        bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
-        bus.send(new TestRunFinished(Instant.now(), result));
-        assertThat(out, bytes(equalCompressingLineSeparators(AnsiEscapes.GREEN + "." + AnsiEscapes.RESET + "\n")));
-    }
+    void prints_green_dot_for_passed_step() {
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: passed scenario\n" +
+                "    Given passed step\n");
 
-    @Test
-    void print_green_dot_for_passing_step() {
-        Result result = new Result(PASSED, Duration.ZERO, null);
-        bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
-        assertThat(out, bytes(equalTo(AnsiEscapes.GREEN + "." + AnsiEscapes.RESET)));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("passed step")))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators(GREEN + "." + RESET + "\n")));
     }
 
     @Test
     void print_yellow_U_for_undefined_step() {
-        Result result = new Result(UNDEFINED, Duration.ZERO, null);
-        bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
-        assertThat(out, bytes(equalTo(AnsiEscapes.YELLOW + "U" + AnsiEscapes.RESET)));
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: undefined scenario\n" +
+                "    Given undefined step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier())
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators(YELLOW + "U" + RESET + "\n")));
     }
 
     @Test
-    void print_nothing_for_passed_hook() {
-        Result result = new Result(PASSED, Duration.ZERO, null);
-        bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(HookTestStep.class), result));
+    void prints_green_dot_for_passed_hook() {
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: passed scenario\n" +
+                "    Given passed step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition()),
+                    singletonList(new StubStepDefinition("passed step")),
+                    emptyList()))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators(GREEN + "." + RESET + GREEN + "." + RESET + "\n")));
     }
 
     @Test
     void print_red_F_for_failed_step() {
-        Result result = new Result(FAILED, Duration.ZERO, null);
-        bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(PickleStepTestStep.class), result));
-        assertThat(out, bytes(equalTo(AnsiEscapes.RED + "F" + AnsiEscapes.RESET)));
+
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: failing scenario\n" +
+                "    Given failed step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("failed step", new Exception("Boom"))))
+                .build()
+                .run();
+
+        assertThat(out, bytes(equalCompressingLineSeparators(RED + "F" + RESET + "\n")));
     }
 
     @Test
     void print_red_F_for_failed_hook() {
-        Result result = new Result(FAILED, Duration.ZERO, null);
-        bus.send(new TestStepFinished(Instant.now(), mock(TestCase.class), mock(HookTestStep.class), result));
-        assertThat(out, bytes(equalTo(AnsiEscapes.RED + "F" + AnsiEscapes.RESET)));
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: failed hook\n" +
+                "    Given passed step\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new StubHookDefinition(new RuntimeException("Boom"))),
+                    singletonList(new StubStepDefinition("passed step")),
+                    emptyList()))
+                .build()
+                .run();
+
+        assertThat(out, bytes(
+            equalTo(RED + "F" + RESET + CYAN + "-" + RESET + "\n")));
     }
 
 }
