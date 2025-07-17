@@ -8,8 +8,10 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
 import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
@@ -61,6 +63,35 @@ class ProgressFormatterTest {
                 .run();
 
         assertThat(out, bytes(equalCompressingLineSeparators(GREEN + "." + RESET + "\n")));
+    }
+    
+    @Test
+    void prints_at_most_80_characters_per_line() {
+        Feature[] features = new Feature[81];
+        Arrays.fill(features, 
+                TestFeatureParser.parse("classpath:path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: passed scenario\n" +
+                "    Given passed step\n"));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(features))
+                .withAdditionalPlugins(new ProgressFormatter(out))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("passed step")))
+                .build()
+                .run();
+
+        StringBuilder expected = new StringBuilder();
+        for (int i = 0; i < 80; i++) {
+            expected.append(GREEN).append(".").append(RESET);
+        }
+        expected.append("\n");
+        expected.append(GREEN).append(".").append(RESET);
+        expected.append("\n");
+        
+        assertThat(out, bytes(equalCompressingLineSeparators(expected.toString())));
     }
 
     @Test
@@ -141,7 +172,7 @@ class ProgressFormatterTest {
                 .run();
 
         assertThat(out, bytes(
-                equalCompressingLineSeparators(RED + "F" + RESET + CYAN + "-" + RESET + "\n")));
+            equalCompressingLineSeparators(RED + "F" + RESET + CYAN + "-" + RESET + "\n")));
     }
 
 }

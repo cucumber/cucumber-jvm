@@ -26,6 +26,7 @@ import static io.cucumber.messages.types.TestStepResultStatus.PASSED;
 import static io.cucumber.messages.types.TestStepResultStatus.PENDING;
 import static io.cucumber.messages.types.TestStepResultStatus.SKIPPED;
 import static io.cucumber.messages.types.TestStepResultStatus.UNDEFINED;
+import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -36,28 +37,32 @@ import static java.util.Objects.requireNonNull;
  */
 public final class ProgressFormatter implements ConcurrentEventListener, ColorAware {
 
-    private final Map<TestStepResultStatus, String> chars = new EnumMap<>(TestStepResultStatus.class);
-    private final Map<TestStepResultStatus, Ansi> escapes = new EnumMap<>(TestStepResultStatus.class);
-    private final Ansi reset = Ansi.with(FOREGROUND_DEFAULT);
+    private static final int MAX_WIDTH = 80;
+    private static final Map<TestStepResultStatus, String> SYMBOLS = new EnumMap<>(TestStepResultStatus.class); 
+    private static final Map<TestStepResultStatus, Ansi> ESCAPES = new EnumMap<>(TestStepResultStatus.class);
+    private static final Ansi RESET = Ansi.with(FOREGROUND_DEFAULT);
+    static  {
+        SYMBOLS.put(PASSED, ".");
+        SYMBOLS.put(UNDEFINED, "U");
+        SYMBOLS.put(PENDING, "P");
+        SYMBOLS.put(SKIPPED, "-");
+        SYMBOLS.put(FAILED, "F");
+        SYMBOLS.put(AMBIGUOUS, "A");
+
+        ESCAPES.put(PASSED, Ansi.with(FOREGROUND_GREEN));
+        ESCAPES.put(UNDEFINED, Ansi.with(FOREGROUND_YELLOW));
+        ESCAPES.put(PENDING, Ansi.with(FOREGROUND_YELLOW));
+        ESCAPES.put(SKIPPED, Ansi.with(FOREGROUND_CYAN));
+        ESCAPES.put(FAILED, Ansi.with(FOREGROUND_RED));
+        ESCAPES.put(AMBIGUOUS, Ansi.with(FOREGROUND_RED));
+    }
+    
     private final PrintWriter writer;
     private boolean monochrome = false;
+    private int width = 0;
 
     public ProgressFormatter(OutputStream out) {
         this.writer = createPrintWriter(out);
-
-        chars.put(PASSED, ".");
-        chars.put(UNDEFINED, "U");
-        chars.put(PENDING, "P");
-        chars.put(SKIPPED, "-");
-        chars.put(FAILED, "F");
-        chars.put(AMBIGUOUS, "A");
-
-        escapes.put(PASSED, Ansi.with(FOREGROUND_GREEN));
-        escapes.put(UNDEFINED, Ansi.with(FOREGROUND_YELLOW));
-        escapes.put(PENDING, Ansi.with(FOREGROUND_YELLOW));
-        escapes.put(SKIPPED, Ansi.with(FOREGROUND_CYAN));
-        escapes.put(FAILED, Ansi.with(FOREGROUND_RED));
-        escapes.put(AMBIGUOUS, Ansi.with(FOREGROUND_RED));
     }
 
     private static PrintWriter createPrintWriter(OutputStream out) {
@@ -85,11 +90,16 @@ public final class ProgressFormatter implements ConcurrentEventListener, ColorAw
         // Prevent tearing in output when multiple threads write to System.out
         StringBuilder buffer = new StringBuilder();
         if (!monochrome) {
-            buffer.append(escapes.get(status));
+            buffer.append(ESCAPES.get(status));
         }
-        buffer.append(chars.get(status));
+        buffer.append(SYMBOLS.get(status));
         if (!monochrome) {
-            buffer.append(reset);
+            buffer.append(RESET);
+        }
+        // Start a new line if at the end of this one
+        if (++width % MAX_WIDTH == 0) {
+            width = 0;
+            buffer.append(lineSeparator());
         }
         writer.append(buffer);
         // Flush to provide immediate feedback.
