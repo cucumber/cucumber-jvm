@@ -16,7 +16,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_1()"
             },
             "keyword": "Given "
           },
@@ -27,7 +27,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_2()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_2()"
             },
             "keyword": "When "
           },
@@ -38,7 +38,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_3()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_3()"
             },
             "keyword": "Then "
           }
@@ -52,7 +52,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#before_hook_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.before_hook_1()"
             }
           }
         ],
@@ -70,7 +70,7 @@
             "line": 9,
             "name": "step_1",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#step_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.step_1()"
             },
             "keyword": "Given "
           },
@@ -81,7 +81,7 @@
             "line": 10,
             "name": "step_2",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#step_2()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.step_2()"
             },
             "keyword": "When "
           },
@@ -92,7 +92,7 @@
             "line": 11,
             "name": "step_3",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#step_3()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.step_3()"
             },
             "keyword": "Then "
           },
@@ -103,7 +103,7 @@
             "line": 12,
             "name": "cliché",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#cliche()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.cliche()"
             },
             "keyword": "Then "
           }
@@ -123,7 +123,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_1()"
             },
             "keyword": "Given "
           },
@@ -134,7 +134,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_2()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_2()"
             },
             "keyword": "When "
           },
@@ -145,7 +145,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_3()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_3()"
             },
             "keyword": "Then "
           }
@@ -159,7 +159,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#before_hook_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.before_hook_1()"
             }
           }
         ],
@@ -183,7 +183,7 @@
                   "offset": 5
                 }
               ],
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#so_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.so_1()"
             },
             "keyword": "Given "
           },
@@ -200,7 +200,7 @@
                   "offset": 5
                 }
               ],
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#so_2()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.so_2()"
             },
             "keyword": "When "
           },
@@ -217,7 +217,7 @@
                   "offset": 0
                 }
               ],
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#so_3()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.so_3()"
             },
             "keyword": "Then "
           }
@@ -237,7 +237,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_1()"
             },
             "keyword": "Given "
           },
@@ -248,7 +248,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_2()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_2()"
             },
             "keyword": "When "
           },
@@ -259,7 +259,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_3()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_3()"
             },
             "keyword": "Then "
           }
@@ -273,7 +273,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#before_hook_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.before_hook_1()"
             }
           }
         ],
@@ -297,7 +297,7 @@
                   "offset": 5
                 }
               ],
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#so_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.so_1()"
             },
             "keyword": "Given "
           },
@@ -314,7 +314,7 @@
                   "offset": 5
                 }
               ],
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#so_2()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.so_2()"
             },
             "keyword": "When "
           },
@@ -331,7 +331,7 @@
                   "offset": 0
                 }
               ],
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#so_3()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.so_3()"
             },
             "keyword": "Then "
           }
@@ -351,7 +351,7 @@
             "line": 4,
             "name": "bg_1",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_1()"
             },
             "keyword": "Given "
           },
@@ -362,7 +362,7 @@
             "line": 5,
             "name": "bg_2",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_2()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_2()"
             },
             "keyword": "When "
           },
@@ -373,7 +373,7 @@
             "line": 6,
             "name": "bg_3",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#bg_3()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.bg_3()"
             },
             "keyword": "Then "
           }
@@ -387,7 +387,7 @@
               "status": "passed"
             },
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#before_hook_1()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.before_hook_1()"
             }
           }
         ],
@@ -405,7 +405,7 @@
             "line": 25,
             "name": "a",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#a()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.a()"
             },
             "keyword": "Given "
           },
@@ -416,7 +416,7 @@
             "line": 26,
             "name": "b",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#b()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.b()"
             },
             "keyword": "Then "
           },
@@ -427,7 +427,7 @@
             "line": 27,
             "name": "c",
             "match": {
-              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions#c()"
+              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.c()"
             },
             "keyword": "When "
           }
