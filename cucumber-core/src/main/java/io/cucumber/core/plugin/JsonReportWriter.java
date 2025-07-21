@@ -100,7 +100,7 @@ class JsonReportWriter {
         return query.findAllTestCaseStarted()
                 .stream()
                 .map(this::createJvmElementData)
-                .sorted(new JvmFeatureDataComparator())
+                .sorted(JvmElementData.comparator)
                 // Preserve order with linked hashmap
                 .collect(groupingBy(data -> data.pickle.getUri(), LinkedHashMap::new, toList()))
                 .values()
