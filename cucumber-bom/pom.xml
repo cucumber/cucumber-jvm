@@ -17,6 +17,7 @@
         <cucumber-expressions.version>18.0.1</cucumber-expressions.version>
         <gherkin.version>33.0.0</gherkin.version>
         <html-formatter.version>21.13.0</html-formatter.version>
+        <json-formatter.version>0.0.1-SNAPSHOT</json-formatter.version>
         <junit-xml-formatter.version>0.8.0</junit-xml-formatter.version>
         <messages.version>28.1.0</messages.version>
         <pretty-formatter.version>0.3.0</pretty-formatter.version>
@@ -47,6 +48,11 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>html-formatter</artifactId>
                 <version>${html-formatter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>json-formatter</artifactId>
+                <version>${json-formatter.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>

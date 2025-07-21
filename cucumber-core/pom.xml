@@ -98,6 +98,10 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
+            <artifactId>json-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
             <artifactId>junit-xml-formatter</artifactId>
         </dependency>
         <dependency>

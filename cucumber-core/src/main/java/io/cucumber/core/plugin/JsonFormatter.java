@@ -1,5 +1,6 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.jsonformatter.MessagesToJsonWriter;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -9,7 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 
-import static io.cucumber.core.plugin.MessagesToJsonWriter.builder;
+import static io.cucumber.jsonformatter.MessagesToJsonWriter.builder;
 
 public final class JsonFormatter implements ConcurrentEventListener {
 
