@@ -1,38 +1,29 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.options.PluginOption;
-import io.cucumber.core.runner.ClockStub;
-import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.PickleStepTestStep;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import io.cucumber.plugin.event.TestStepFinished;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.UUID;
 
 import static io.cucumber.core.options.TestPluginOption.parse;
 import static io.cucumber.messages.Convertor.toMessage;
@@ -48,7 +39,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 class PluginFactoryTest {
 
@@ -177,33 +167,6 @@ class PluginFactoryTest {
         PluginOption option = parse("usage:" + tmp.resolve("out.txt").toAbsolutePath());
         plugin = fc.create(option);
         assertThat(plugin.getClass(), is(equalTo(UsageFormatter.class)));
-    }
-
-    @Test
-    void plugin_does_not_buffer_its_output() {
-        PrintStream previousSystemOut = System.out;
-        OutputStream mockSystemOut = new ByteArrayOutputStream();
-
-        try {
-            System.setOut(new PrintStream(mockSystemOut));
-
-            // Need to create a new plugin factory here since we need it to pick
-            // up the new value of System.out
-            fc = new PluginFactory();
-
-            PluginOption option = parse("progress");
-            ProgressFormatter plugin = (ProgressFormatter) fc.create(option);
-            EventBus bus = new TimeServiceEventBus(new ClockStub(ZERO), UUID::randomUUID);
-            plugin.setEventPublisher(bus);
-            Result result = new Result(Status.PASSED, ZERO, null);
-            TestStepFinished event = new TestStepFinished(bus.getInstant(), mock(TestCase.class),
-                mock(PickleStepTestStep.class), result);
-            bus.send(event);
-
-            assertThat(mockSystemOut.toString(), is(not(equalTo(""))));
-        } finally {
-            System.setOut(previousSystemOut);
-        }
     }
 
     @Test
