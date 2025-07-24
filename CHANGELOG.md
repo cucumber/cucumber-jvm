@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- [Core] Use a [message based Cucumber JSON Formatter](https://github.com/cucumber/cucumber-json-formatter) ([##2888](https://github.com/cucumber/cucumber-jvm/pull/#2888) M.P. Korstanje)
 - [Core] Show all steps in progress formatter ([#3029](https://github.com/cucumber/cucumber-jvm/pull/3029) M.P. Korstanje)
 
 ## [7.26.0] - 2025-07-14
