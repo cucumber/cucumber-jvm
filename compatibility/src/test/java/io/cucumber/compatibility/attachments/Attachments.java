@@ -48,22 +48,6 @@ public class Attachments {
         scenario.attach(bytes, mediaType, null);
     }
 
-    @When("a JPEG image is attached")
-    public void aJPEGImageIsAttached() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/cucumber.jpeg");
-        byte[] bytes = Files.readAllBytes(path);
-        String fileName = path.getFileName().toString();
-        scenario.attach(bytes, "image/jpeg", fileName);
-    }
-
-    @When("a PNG image is attached")
-    public void aPNGImageIsAttached() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/cucumber.png");
-        byte[] bytes = Files.readAllBytes(path);
-        String fileName = path.getFileName().toString();
-        scenario.attach(bytes, "image/png", fileName);
-    }
-
     @When("a PDF document is attached and renamed")
     public void aPDFDocumentIsAttachedAndRenamed() throws IOException {
         Path path = Paths.get("src/test/resources/features/attachments/document.pdf");
