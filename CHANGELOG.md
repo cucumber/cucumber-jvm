@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.27.0] - 2025-07-27
 ### Changed
 - [Core] Show both steps and hooks in progress formatter ([#3029](https://github.com/cucumber/cucumber-jvm/pull/3029) M.P. Korstanje)
-- [Core] Use a more consistent definition of whitespace ([gherkin/#442](github.com/cucumber/gherkin/pull/442) M.P. Korstanje)
-- [Core] Improve Gherkin parser performance ([gherkin/#436](github.com/cucumber/gherkin/pull/436) Julien Kronegg,  M.P. Korstanje)
+- [Core] Use a more consistent definition of whitespace ([gherkin/#442](https://github.com/cucumber/gherkin/pull/442) M.P. Korstanje)
+- [Core] Improve Gherkin parser performance ([gherkin/#436](https://github.com/cucumber/gherkin/pull/436) Julien Kronegg,  M.P. Korstanje)
 
 ## [7.26.0] - 2025-07-14
 ### Added
