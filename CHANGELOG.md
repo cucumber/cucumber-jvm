@@ -12,7 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - [Core] Use a [message based Cucumber JSON Formatter](https://github.com/cucumber/cucumber-json-formatter) ([##2888](https://github.com/cucumber/cucumber-jvm/pull/#2888) M.P. Korstanje)
-- [Core] Show all steps in progress formatter ([#3029](https://github.com/cucumber/cucumber-jvm/pull/3029) M.P. Korstanje)
+
+## [7.27.0] - 2025-07-27
+### Changed
+- [Core] Show both steps and hooks in progress formatter ([#3029](https://github.com/cucumber/cucumber-jvm/pull/3029) M.P. Korstanje)
+- [Core] Use a more consistent definition of whitespace ([gherkin/#442](https://github.com/cucumber/gherkin/pull/442) M.P. Korstanje)
+- [Core] Improve Gherkin parser performance ([gherkin/#436](https://github.com/cucumber/gherkin/pull/436) Julien Kronegg,  M.P. Korstanje)
 
 ## [7.26.0] - 2025-07-14
 ### Added
@@ -450,7 +455,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.26.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.0...HEAD
+[7.27.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.26.0...v7.27.0
 [7.26.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.25.0...v7.26.0
 [7.25.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.24.0...v7.25.0
 [7.24.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.23.0...v7.24.0
