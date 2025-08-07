@@ -3,6 +3,7 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.logging.Logger;
@@ -119,6 +120,7 @@ public final class Runtime {
         private BackendSupplier backendSupplier;
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = emptyList();
+		private UuidGenerator uuidGenerator;
 
         private Builder() {
         }
@@ -140,6 +142,11 @@ public final class Runtime {
 
         public Builder withFeatureSupplier(final FeatureSupplier featureSupplier) {
             this.featureSupplier = featureSupplier;
+            return this;
+        }
+        
+		public Builder withFeatureSupplier(final UuidGenerator uuidGenerator) {
+			this.uuidGenerator = uuidGenerator;
             return this;
         }
 
@@ -173,11 +180,15 @@ public final class Runtime {
             plugins.addPlugin(exitStatus);
 
             if (this.eventBus == null) {
-                final UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(
-                    classLoader,
-                    runtimeOptions);
-                this.eventBus = new TimeServiceEventBus(Clock.systemUTC(),
-                    uuidGeneratorServiceLoader.loadUuidGenerator());
+				UuidGenerator generator;
+				if (uuidGenerator == null) {
+					final UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(
+							classLoader, runtimeOptions);
+					generator = uuidGeneratorServiceLoader.loadUuidGenerator();
+				} else {
+					generator = uuidGenerator;
+				}
+				this.eventBus = new TimeServiceEventBus(Clock.systemUTC(), generator);
             }
             final EventBus eventBus = synchronize(this.eventBus);
 
