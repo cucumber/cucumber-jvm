@@ -16,36 +16,31 @@ public class StubStepDefinition implements StepDefinition {
     private final String expression;
     private final Throwable exception;
     private final Located location;
-    private SourceReference sourceReference;
 
     public StubStepDefinition(String pattern, String location, Type... types) {
-        this(pattern, location, null, types);
+        this(pattern, new StubLocation(location), null, types);
+    }
+
+    public StubStepDefinition(String pattern, SourceReference location, Type... types) {
+        this(pattern, new StubLocation(location), null, types);
     }
 
     public StubStepDefinition(String pattern, Type... types) {
-        this(pattern, STUBBED_LOCATION_WITH_DETAILS, null, types);
+        this(pattern, new StubLocation(STUBBED_LOCATION_WITH_DETAILS), null, types);
     }
 
     public StubStepDefinition(String pattern, Throwable exception, Type... types) {
-        this(pattern, STUBBED_LOCATION_WITH_DETAILS, exception, types);
+        this(pattern, new StubLocation(STUBBED_LOCATION_WITH_DETAILS), exception, types);
     }
 
-    public StubStepDefinition(String pattern, String location, Throwable exception, Type... types) {
+    public StubStepDefinition(String pattern, SourceReference location, Throwable exception, Type... types) {
+        this(pattern, new StubLocation(location), exception, types);
+    }
+
+    private StubStepDefinition(String pattern, StubLocation location, Throwable exception, Type... types) {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
-        this.location = new StubLocation(location);
-        this.exception = exception;
-    }
-
-    public StubStepDefinition(String pattern, SourceReference sourceReference, Type... types) {
-        this(pattern, sourceReference, null, types);
-    }
-
-    public StubStepDefinition(String pattern, SourceReference sourceReference, Throwable exception, Type... types) {
-        this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
-        this.expression = pattern;
-        this.location = new StubLocation("");
-        this.sourceReference = sourceReference;
+        this.location = location;
         this.exception = exception;
     }
 
@@ -86,7 +81,7 @@ public class StubStepDefinition implements StepDefinition {
 
     @Override
     public Optional<SourceReference> getSourceReference() {
-        return Optional.ofNullable(sourceReference);
+        return location.getSourceReference();
     }
 
     private static final class StubParameterInfo implements ParameterInfo {
