@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
@@ -21,10 +22,12 @@ final class TestCase {
 
     private final String packageName;
     private final String id;
+    private final List<String> featurePaths;
 
-    private TestCase(String packageName, String id) {
+    private TestCase(String packageName, String id, List<String> featurePaths) {
         this.packageName = packageName;
         this.id = id;
+        this.featurePaths = featurePaths;
     }
 
     static List<TestCase> testCases() throws IOException {
@@ -34,12 +37,25 @@ final class TestCase {
             for (Path path : stream) {
                 if (path.toFile().isDirectory()) {
                     String id = path.getFileName().toString();
-                    testCases.add(new TestCase(id.replace("-", ""), id));
+                    List<String> featurePaths = discoverFeaturePaths(path);
+                    testCases.add(new TestCase(id.replace("-", ""), id, featurePaths));
                 }
             }
         }
         testCases.sort(comparing(TestCase::getId));
         return testCases;
+    }
+
+    private static List<String> discoverFeaturePaths(Path testCaseDir) throws IOException {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(testCaseDir, "*.feature")) {
+            List<String> featurePaths = new ArrayList<>();
+            for (Path featurePath : stream) {
+                featurePaths.add("file:" + featurePath.toString());
+            }
+            return featurePaths.stream()
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
     }
 
     String getId() {
@@ -50,8 +66,10 @@ final class TestCase {
         return GluePath.parse(FEATURES_PACKAGE + "." + packageName);
     }
 
-    FeatureWithLines getFeature() {
-        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id + "/" + id + ".feature");
+    List<FeatureWithLines> getFeatures() {
+        return featurePaths.stream()
+                .map(FeatureWithLines::parse)
+                .collect(Collectors.toList());
     }
 
     Path getExpectedFile() {
