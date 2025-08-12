@@ -50,7 +50,7 @@ final class TestCase {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(testCaseDir, "*.feature")) {
             List<String> featurePaths = new ArrayList<>();
             for (Path featurePath : stream) {
-                featurePaths.add("file:" + featurePath.toString());
+                featurePaths.add(featurePath.toUri().toString());
             }
             return featurePaths.stream()
                     .sorted()
