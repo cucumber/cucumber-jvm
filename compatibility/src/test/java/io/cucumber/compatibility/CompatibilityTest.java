@@ -40,11 +40,10 @@ public class CompatibilityTest {
         Path outputNdjson = parentDir.resolve("out.ndjson");
 
         try {
-            RuntimeOptionsBuilder optionsBuilder = new RuntimeOptionsBuilder()
-                    .addGlue(testCase.getGlue())
-                    .addFeature(testCase.getFeatures());
             Runtime.builder()
-                    .withRuntimeOptions(optionsBuilder.build())
+                    .withRuntimeOptions(new RuntimeOptionsBuilder()
+                            .addGlue(testCase.getGlue())
+                            .addFeature(testCase.getFeatures()).build())
                     .withAdditionalPlugins(
                         new MessageFormatter(newOutputStream(outputNdjson)))
                     .build()
