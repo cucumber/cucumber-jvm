@@ -48,8 +48,11 @@ public class CompatibilityTest {
                         new MessageFormatter(newOutputStream(outputNdjson)))
                     .build()
                     .run();
-        } catch (Exception ignored) {
-
+        } catch (Exception e) {
+            // exception: Scenario with unknown parameter types fails by throwing an exceptions
+            if (!"unknown-parameter-type".equals(testCase.getId())) {
+                throw e;
+            }
         }
 
         // exception: Cucumber JVM does not support named hooks
