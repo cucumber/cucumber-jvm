@@ -16,7 +16,7 @@ import static java.util.Comparator.comparing;
 
 final class TestCase {
 
-    private static final Path FEATURES_DIRECTORY = Paths.get("src/test/resources/features");
+    private static final String FEATURES_DIRECTORY = "src/test/resources/features";
     private static final String FEATURES_PACKAGE = "io.cucumber.compatibility";
 
     private final String id;
@@ -27,7 +27,8 @@ final class TestCase {
 
     static List<TestCase> testCases() throws IOException {
         List<TestCase> testCases = new ArrayList<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(FEATURES_DIRECTORY)) {
+        Path dir = Paths.get(FEATURES_DIRECTORY);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path path : stream) {
                 if (path.toFile().isDirectory()) {
                     testCases.add(new TestCase(path.getFileName().toString()));
