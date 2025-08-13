@@ -11,51 +11,37 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
 final class TestCase {
 
-    private static final String FEATURES_DIRECTORY = "src/test/resources/features";
+    private static final Path FEATURES_DIRECTORY = Paths.get("src/test/resources/features");
     private static final String FEATURES_PACKAGE = "io.cucumber.compatibility";
 
     private final String packageName;
     private final String id;
-    private final List<String> featurePaths;
+    private final FeatureWithLines features;
 
-    private TestCase(String packageName, String id, List<String> featurePaths) {
+    private TestCase(String packageName, String id, FeatureWithLines features) {
         this.packageName = packageName;
         this.id = id;
-        this.featurePaths = featurePaths;
+        this.features = features;
     }
 
     static List<TestCase> testCases() throws IOException {
         List<TestCase> testCases = new ArrayList<>();
-        Path dir = Paths.get(FEATURES_DIRECTORY);
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(FEATURES_DIRECTORY)) {
             for (Path path : stream) {
                 if (path.toFile().isDirectory()) {
                     String id = path.getFileName().toString();
-                    List<String> featurePaths = discoverFeaturePaths(path);
-                    testCases.add(new TestCase(id.replace("-", ""), id, featurePaths));
+                    String packageName = id.replace("-", "");
+                    testCases.add(new TestCase(packageName, id, FeatureWithLines.parse(path.toString())));
                 }
             }
         }
         testCases.sort(comparing(TestCase::getId));
         return testCases;
-    }
-
-    private static List<String> discoverFeaturePaths(Path testCaseDir) throws IOException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(testCaseDir, "*.feature")) {
-            List<String> featurePaths = new ArrayList<>();
-            for (Path featurePath : stream) {
-                featurePaths.add(featurePath.toUri().toString());
-            }
-            return featurePaths.stream()
-                    .sorted()
-                    .collect(Collectors.toList());
-        }
     }
 
     String getId() {
@@ -66,10 +52,8 @@ final class TestCase {
         return GluePath.parse(FEATURES_PACKAGE + "." + packageName);
     }
 
-    List<FeatureWithLines> getFeatures() {
-        return featurePaths.stream()
-                .map(FeatureWithLines::parse)
-                .collect(Collectors.toList());
+    FeatureWithLines getFeatures() {
+        return features;
     }
 
     Path getExpectedFile() {

@@ -41,8 +41,8 @@ public class CompatibilityTest {
 
         try {
             RuntimeOptionsBuilder optionsBuilder = new RuntimeOptionsBuilder()
-                    .addGlue(testCase.getGlue());
-            testCase.getFeatures().forEach(optionsBuilder::addFeature);
+                    .addGlue(testCase.getGlue())
+                    .addFeature(testCase.getFeatures());
             Runtime.builder()
                     .withRuntimeOptions(optionsBuilder.build())
                     .withAdditionalPlugins(
