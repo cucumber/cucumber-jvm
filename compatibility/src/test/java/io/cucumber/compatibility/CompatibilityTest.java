@@ -43,8 +43,7 @@ public class CompatibilityTest {
             Runtime.builder()
                     .withRuntimeOptions(new RuntimeOptionsBuilder()
                             .addGlue(testCase.getGlue())
-                            .addFeature(testCase.getFeature())
-                            .build())
+                            .addFeature(testCase.getFeatures()).build())
                     .withAdditionalPlugins(
                         new MessageFormatter(newOutputStream(outputNdjson)))
                     .build()
