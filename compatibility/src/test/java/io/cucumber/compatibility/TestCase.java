@@ -19,14 +19,10 @@ final class TestCase {
     private static final Path FEATURES_DIRECTORY = Paths.get("src/test/resources/features");
     private static final String FEATURES_PACKAGE = "io.cucumber.compatibility";
 
-    private final String packageName;
     private final String id;
-    private final FeatureWithLines features;
 
-    private TestCase(String packageName, String id, FeatureWithLines features) {
-        this.packageName = packageName;
+    private TestCase(String id) {
         this.id = id;
-        this.features = features;
     }
 
     static List<TestCase> testCases() throws IOException {
@@ -34,9 +30,7 @@ final class TestCase {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(FEATURES_DIRECTORY)) {
             for (Path path : stream) {
                 if (path.toFile().isDirectory()) {
-                    String id = path.getFileName().toString();
-                    String packageName = id.replace("-", "");
-                    testCases.add(new TestCase(packageName, id, FeatureWithLines.parse(path.toString())));
+                    testCases.add(new TestCase(path.getFileName().toString()));
                 }
             }
         }
@@ -49,11 +43,11 @@ final class TestCase {
     }
 
     URI getGlue() {
-        return GluePath.parse(FEATURES_PACKAGE + "." + packageName);
+        return GluePath.parse(FEATURES_PACKAGE + "." + id.replace("-", ""));
     }
 
     FeatureWithLines getFeatures() {
-        return features;
+        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id);
     }
 
     Path getExpectedFile() {
