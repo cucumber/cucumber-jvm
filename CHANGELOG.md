@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Format time in JUnit XML report as `xs:float` ([junit-xml-formatter/#83](https://github.com/cucumber/junit-xml-formatter/pull/83) M.P. Korstanje)
 - [Core] Replace concurrent hashmap with regular hashmap ([query/#89](https://github.com/cucumber/query/pull/89) M.P. Korstanje)
+- [Core] Fixed Afrikaans translation for "rule" ([gherkin/#428](https://github.com/cucumber/gherkin/pull/428))
+- [Java] Optimize `GherkinLine.substringTrimmed` ([#gherkin/444](https://github.com/cucumber/gherkin/pull/444))
+- [Java] Improve performance with a generated keyword matcher ([#gherkin/445](https://github.com/cucumber/gherkin/pull/445))
 
 ## [7.27.0] - 2025-07-27
 ### Changed
