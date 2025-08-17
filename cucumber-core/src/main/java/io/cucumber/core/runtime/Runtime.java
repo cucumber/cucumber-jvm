@@ -173,12 +173,12 @@ public final class Runtime {
             CucumberExecutionContext context = new CucumberExecutionContext(eventBus, exitStatus, runnerSupplier);
             Predicate<Pickle> filter = new Filters(runtimeOptions);
             int limit = runtimeOptions.getLimitCount();
-            FeatureSupplier featureSupplier = createFeatureSupplier();
+            FeatureSupplier featureSupplier = createFeatureSupplier(eventBus);
             ExecutorService executor = createExecutorService();
             PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
             return new Runtime(exitStatus, context, filter, limit, featureSupplier, executor, pickleOrder);
         }
-        
+
         private ExitStatus createPluginsAndExitStatus(EventBus eventBus) {
             Plugins plugins = createPlugins();
             ExitStatus exitStatus = new ExitStatus(runtimeOptions);
@@ -192,7 +192,6 @@ public final class Runtime {
             return exitStatus;
         }
 
-
         private RunnerSupplier createRunnerSupplier(EventBus eventBus) {
             ObjectFactorySupplier objectFactorySupplier = createObjectFactorySupplier();
             BackendSupplier backendSupplier = createBackendSupplier(objectFactorySupplier);
@@ -200,12 +199,13 @@ public final class Runtime {
                     ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier)
                     : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier);
         }
-        
+
         private ObjectFactorySupplier createObjectFactorySupplier() {
             if (this.objectFactorySupplier != null) {
                 return objectFactorySupplier;
             }
-            ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader, runtimeOptions);
+            ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+                runtimeOptions);
             return runtimeOptions.isMultiThreaded()
                     ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
                     : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
@@ -233,7 +233,7 @@ public final class Runtime {
             }
         }
 
-        private FeatureSupplier createFeatureSupplier() {
+        private FeatureSupplier createFeatureSupplier(EventBus eventBus) {
             if (this.featureSupplier != null) {
                 return this.featureSupplier;
             }
@@ -246,7 +246,6 @@ public final class Runtime {
                     ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                     : new SameThreadExecutorService();
         }
-
 
         private Plugins createPlugins() {
             Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
