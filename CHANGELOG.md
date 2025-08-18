@@ -12,8 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [7.27.2] - 2025-08-18
-
-## Fixed
+### Fixed
+- [Core] Intellij prints summary printed when executing concurrently ([#3049](https://github.com/cucumber/cucumber-jvm/pull/3049) M.P. Korstanje)
 
 ## [7.27.1] - 2025-08-17
 ### Fixed
