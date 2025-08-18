@@ -114,6 +114,8 @@ public class TeamCityPlugin implements EventListener {
     private final List<SnippetsSuggestedEvent> suggestions = new ArrayList<>();
     private final TeamCityCommandWriter out;
 
+    // TODO: Does not work with concurrency
+    // https://github.com/cucumber/cucumber-jvm/issues/3042
     private List<TreeNode> currentPath = new ArrayList<>();
     private Pickle currentPickle;
 
@@ -494,6 +496,8 @@ public class TeamCityPlugin implements EventListener {
             if (source == null) {
                 return "";
             }
+            // https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+Values
+            // TODO: Missing \\uXXXX 
             return source
                     .replace("|", "||")
                     .replace("'", "|'")
