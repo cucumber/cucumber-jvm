@@ -34,6 +34,8 @@ import static io.cucumber.core.cli.CommandlineOptions.GLUE_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.HELP;
 import static io.cucumber.core.cli.CommandlineOptions.HELP_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.I18N;
+import static io.cucumber.core.cli.CommandlineOptions.I18N_KEYWORDS;
+import static io.cucumber.core.cli.CommandlineOptions.I18N_LANGUAGES;
 import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME;
 import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.NAME;
@@ -100,7 +102,14 @@ public final class CommandlineOptionsParser {
                 out.println(CORE_VERSION);
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals(I18N)) {
+            } else if (arg.equals(I18N_LANGUAGES)) {
+                exitCode = printI18nLanguages();
+                return parsedOptions;
+            } else if (arg.equals(I18N_KEYWORDS)) {
+                String nextArg = removeArgFor(arg, args);
+                exitCode = printI18nKeywords(nextArg);
+                return parsedOptions;
+            } else if (arg.equals(I18N) || arg.equals(I18N_KEYWORDS)) {
                 String nextArg = removeArgFor(arg, args);
                 exitCode = printI18n(nextArg);
                 return parsedOptions;
@@ -197,18 +206,25 @@ public final class CommandlineOptionsParser {
 
     private byte printI18n(String language) {
         if (language.equalsIgnoreCase("help")) {
-            Collection<GherkinDialect> dialects = GherkinDialects.getDialects();
-
-            int widestLanguage = findWidest(dialects, GherkinDialect::getLanguage);
-            int widestName = findWidest(dialects, GherkinDialect::getName);
-            int widestNativeName = findWidest(dialects, GherkinDialect::getNativeName);
-
-            for (GherkinDialect dialect : dialects) {
-                printDialect(dialect, widestLanguage, widestName, widestNativeName);
-            }
-            return 0x0;
+            return printI18nLanguages();
         }
+        return printI18nKeywords(language);
+    }
 
+    private byte printI18nLanguages() {
+        Collection<GherkinDialect> dialects = GherkinDialects.getDialects();
+
+        int widestLanguage = findWidest(dialects, GherkinDialect::getLanguage);
+        int widestName = findWidest(dialects, GherkinDialect::getName);
+        int widestNativeName = findWidest(dialects, GherkinDialect::getNativeName);
+
+        for (GherkinDialect dialect : dialects) {
+            printDialect(dialect, widestLanguage, widestName, widestNativeName);
+        }
+        return 0x0;
+    }
+
+    private byte printI18nKeywords(String language) {
         Optional<GherkinDialect> dialect = GherkinDialects.getDialect(language);
         if (dialect.isPresent()) {
             printKeywordsFor(dialect.get());
