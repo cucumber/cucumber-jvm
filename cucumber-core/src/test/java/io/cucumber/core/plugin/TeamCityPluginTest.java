@@ -20,11 +20,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.UUID;
 
-import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE;
 import static io.cucumber.core.plugin.Bytes.bytes;
-import static io.cucumber.core.plugin.TeamCityPluginTestStepDefinition.getAnnotationSourceReference;
-import static io.cucumber.core.plugin.TeamCityPluginTestStepDefinition.getStackSourceReference;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.Clock.fixed;
 import static java.time.Instant.EPOCH;
 import static java.time.ZoneId.of;
@@ -76,7 +72,7 @@ class TeamCityPluginTest {
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
                 + "path/test.feature:5' name = 'examples name']\n" +
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
-                + "path/test.feature:7' name = '#1.1: name 1']\n" +
+                + "path/test.feature:7' name = 'Example #1.1']\n" +
                 "##teamcity[customProgressStatus type = 'testStarted' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
                 + "path/test.feature:3' captureStandardOutput = 'true' name = 'first step']\n" +
@@ -87,10 +83,9 @@ class TeamCityPluginTest {
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' name = 'second step']\n"
                 +
                 "##teamcity[customProgressStatus type = 'testFinished' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
-                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = '#1.1: name 1']\n"
-                +
+                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Example #1.1']\n" +
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
-                + "path/test.feature:8' name = '#1.2: name 2']\n" +
+                + "path/test.feature:8' name = 'Example #1.2']\n" +
                 "##teamcity[customProgressStatus type = 'testStarted' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
                 "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '" + location
                 + "path/test.feature:3' captureStandardOutput = 'true' name = 'first step']\n" +
@@ -101,8 +96,7 @@ class TeamCityPluginTest {
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' name = 'third step']\n"
                 +
                 "##teamcity[customProgressStatus type = 'testFinished' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
-                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = '#1.2: name 2']\n"
-                +
+                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'Example #1.2']\n" +
                 "##teamcity[customProgressStatus testsCategory = '' count = '0' timestamp = '1970-01-01T12:00:00.000+0000']\n"
                 +
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:00.000+0000' name = 'examples name']\n" +
@@ -127,7 +121,7 @@ class TeamCityPluginTest {
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(
-                        (TestCaseState state) -> state.attach("A message".getBytes(UTF_8), "text/plain", null))),
+                        (TestCaseState state) -> state.attach("A message", "text/plain", null))),
                     singletonList(new StubStepDefinition("first step")),
                     emptyList()))
                 .build()
@@ -174,8 +168,7 @@ class TeamCityPluginTest {
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(new StubHookDefinition(
-                        (TestCaseState state) -> state.attach("A message".getBytes(UTF_8), "text/plain",
-                            "message.txt"))),
+                        (TestCaseState state) -> state.attach("A message", "text/plain", "message.txt"))),
                     singletonList(new StubStepDefinition("first step")),
                     emptyList()))
                 .build()
@@ -265,7 +258,7 @@ class TeamCityPluginTest {
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     singletonList(
-                        new StubHookDefinition(getAnnotationSourceReference(), BEFORE, new StubException()
+                        new StubHookDefinition(new StubException("Step failed")
                                 .withStacktrace("the stack trace"))),
                     singletonList(new StubStepDefinition("first step")),
                     emptyList()))
@@ -273,9 +266,9 @@ class TeamCityPluginTest {
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://io.cucumber.core.plugin.TeamCityPluginTestStepDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before(beforeHook)']\n"
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = '{stubbed location with details}' captureStandardOutput = 'true' name = 'Before']\n"
                 +
-                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'stub exception|n\tthe stack trace|n' name = 'Before(beforeHook)']")));
+                "##teamcity[testFailed timestamp = '1970-01-01T12:00:00.000+0000' duration = '0' message = 'Step failed' details = 'Step failed|n\tthe stack trace|n' name = 'Before']")));
     }
 
     @Test
@@ -291,14 +284,14 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(getAnnotationSourceReference(), BEFORE)),
+                    singletonList(new StubHookDefinition("com.example.HookDefinition.beforeHook()")),
                     singletonList(new StubStepDefinition("first step")),
                     emptyList()))
                 .build()
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://io.cucumber.core.plugin.TeamCityPluginTestStepDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before(beforeHook)']\n")));
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/beforeHook' captureStandardOutput = 'true' name = 'Before(beforeHook)']\n")));
     }
 
     @Test
@@ -314,14 +307,14 @@ class TeamCityPluginTest {
                 .withAdditionalPlugins(new TeamCityPlugin(new PrintStream(out)))
                 .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
-                    singletonList(new StubHookDefinition(getStackSourceReference(), BEFORE)),
+                    singletonList(new StubHookDefinition("com.example.HookDefinition.<init>(HookDefinition.java:12)")),
                     singletonList(new StubStepDefinition("first step")),
                     emptyList()))
                 .build()
                 .run();
 
         assertThat(out, bytes(containsString("" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://io.cucumber.core.plugin.TeamCityPluginTestStepDefinition/TeamCityPluginTestStepDefinition' captureStandardOutput = 'true' name = 'Before(TeamCityPluginTestStepDefinition)']\n")));
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'java:test://com.example.HookDefinition/HookDefinition' captureStandardOutput = 'true' name = 'Before(HookDefinition)']\n")));
     }
 
     @Test
@@ -404,5 +397,4 @@ class TeamCityPluginTest {
         assertThat(out,
             bytes(containsString("expected = 'one value' actual = 'another value' name = 'first step']")));
     }
-
 }
