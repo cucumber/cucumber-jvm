@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Core] Use a [message based Cucumber JSON Formatter](https://github.com/cucumber/cucumber-json-formatter) ([##2888](https://github.com/cucumber/cucumber-jvm/pull/#2888) M.P. Korstanje)
 
+## [7.27.2] - 2025-08-18
+### Fixed
+- [Core] Intellij prints summary printed when executing concurrently ([#3049](https://github.com/cucumber/cucumber-jvm/pull/3049) M.P. Korstanje)
+
+## [7.27.1] - 2025-08-17
+### Fixed
+- [Core] Format time in JUnit XML report as `xs:float` ([junit-xml-formatter/#83](https://github.com/cucumber/junit-xml-formatter/pull/83) M.P. Korstanje)
+- [Core] Replace concurrent hashmap with regular hashmap ([query/#89](https://github.com/cucumber/query/pull/89) M.P. Korstanje)
+- [Core] Fixed Afrikaans translation for "rule" ([gherkin/#428](https://github.com/cucumber/gherkin/pull/428))
+- [Java] Optimize `GherkinLine.substringTrimmed` ([#gherkin/444](https://github.com/cucumber/gherkin/pull/444))
+- [Java] Improve performance with a generated keyword matcher ([#gherkin/445](https://github.com/cucumber/gherkin/pull/445))
+
 ## [7.27.0] - 2025-07-27
 ### Changed
 - [Core] Show both steps and hooks in progress formatter ([#3029](https://github.com/cucumber/cucumber-jvm/pull/3029) M.P. Korstanje)
@@ -455,7 +467,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.2...HEAD
+[7.27.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.1...v7.27.2
+[7.27.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.0...v7.27.1
 [7.27.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.26.0...v7.27.0
 [7.26.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.25.0...v7.26.0
 [7.25.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.24.0...v7.25.0
@@ -505,3 +519,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [7.1.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
 [7.0.0-RC1]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
+/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1

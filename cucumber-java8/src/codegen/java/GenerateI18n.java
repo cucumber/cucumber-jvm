@@ -3,7 +3,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.gherkin.GherkinDialectProvider;
+import io.cucumber.gherkin.GherkinDialects;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +23,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.util.stream.Collectors.toList;
 
 /* This class generates the cucumber-java Interfaces and package-info
- * based on the languages and keywords from the GherkinDialectProvider
+ * based on the languages and keywords from the GherkinDialects
  * using the FreeMarker template engine and provided templates.
  */
 public class GenerateI18n {
@@ -39,12 +39,8 @@ public class GenerateI18n {
         DialectWriter dialectWriter = new DialectWriter(args[0], args[1]);
 
         // Generate annotation files for each dialect
-        GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        dialectProvider.getLanguages()
+        GherkinDialects.getDialects()
                 .stream()
-                .map(dialectProvider::getDialect)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .filter(dialect -> !unsupported.contains(dialect.getLanguage()))
                 .forEach(dialectWriter::writeDialect);
     }

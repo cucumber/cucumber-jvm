@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.27.1-SNAPSHOT</version>
+        <version>7.27.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-archetype</artifactId>
@@ -16,7 +16,7 @@
 
     <properties>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
-        <assertj.version>3.27.3</assertj.version>
+        <assertj.version>3.27.4</assertj.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     </properties>
