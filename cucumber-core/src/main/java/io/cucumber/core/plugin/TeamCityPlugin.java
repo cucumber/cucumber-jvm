@@ -497,7 +497,7 @@ public class TeamCityPlugin implements EventListener {
                 return "";
             }
             // https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+Values
-            // TODO: Missing \\uXXXX 
+            // TODO: Missing \\uXXXX
             return source
                     .replace("|", "||")
                     .replace("'", "|'")
