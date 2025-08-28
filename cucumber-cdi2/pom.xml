@@ -7,7 +7,7 @@
         <openwebbeans.version>2.0.28</openwebbeans.version>
         <weld-se-core.version>3.1.9.Final</weld-se-core.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
-        <junit-jupiter.version>5.13.4</junit-jupiter.version>
+        <junit-jupiter.version>6.0.0-SNAPSHOT</junit-jupiter.version>
         <hamcrest.version>2.2</hamcrest.version>
     </properties>
 

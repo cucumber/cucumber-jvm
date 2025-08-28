@@ -8,7 +8,7 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
@@ -204,7 +204,7 @@ class CucumberTestEngineTest {
 
     @Test
     void classpathResourceSelectorThrowIfDuplicateResources() {
-        class TestResource implements Resource {
+        class TestResource implements org.junit.platform.commons.io.Resource {
 
             private final String name;
             private final File source;
@@ -224,7 +224,7 @@ class CucumberTestEngineTest {
                 return source.toURI();
             }
         }
-        Set<Resource> resources = new LinkedHashSet<>(Arrays.asList(
+        Set<org.junit.platform.commons.io.Resource> resources = new LinkedHashSet<>(Arrays.asList(
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
                 new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature")),
             new TestResource("io/cucumber/junit/platform/engine/single.feature",

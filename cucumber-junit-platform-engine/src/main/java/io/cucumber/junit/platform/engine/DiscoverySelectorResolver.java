@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.FeatureIdentifier;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
@@ -14,7 +15,7 @@ class DiscoverySelectorResolver {
             .addSelectorResolver(context -> new FileContainerSelectorResolver( //
                 FeatureIdentifier::isFeature //
             ))
-            .addResourceContainerSelectorResolver(resource -> isFeature(resource.getName()))
+            .addResourceContainerSelectorResolver((Resource resource) -> isFeature(resource.getName()))
             .addSelectorResolver(context -> new FeatureResolver(
                 context.getEngineDescriptor().getConfiguration(), //
                 context.getPackageFilter(), //
