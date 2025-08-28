@@ -5,7 +5,7 @@ import io.cucumber.core.gherkin.FeatureParser;
 import io.cucumber.core.gherkin.FeatureParserException;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.gherkin.GherkinDialectProvider;
+import io.cucumber.gherkin.GherkinDialects;
 import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.GherkinDocument;
@@ -67,9 +67,8 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                 .map(feature -> {
                     CucumberQuery cucumberQuery = new CucumberQuery();
                     cucumberQuery.update(feature);
-                    GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
                     String language = feature.getLanguage();
-                    GherkinDialect dialect = dialectProvider.getDialect(language)
+                    GherkinDialect dialect = GherkinDialects.getDialect(language)
                             // Can't happen, we just parsed the feature.
                             .orElseThrow(() -> new IllegalStateException(language + "was not a known gherkin Dialect"));
 
