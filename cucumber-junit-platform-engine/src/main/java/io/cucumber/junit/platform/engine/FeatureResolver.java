@@ -32,19 +32,19 @@ import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.discovery.SelectorResolver;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static io.cucumber.core.feature.FeatureIdentifier.isFeature;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElement;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementAt;
+import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementsAt;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementsOf;
-import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectFeature;
 import static io.cucumber.junit.platform.engine.FeatureOrigin.EXAMPLES_SEGMENT_TYPE;
 import static io.cucumber.junit.platform.engine.FeatureOrigin.EXAMPLE_SEGMENT_TYPE;
 import static io.cucumber.junit.platform.engine.FeatureOrigin.FEATURE_SEGMENT_TYPE;
@@ -117,12 +117,7 @@ final class FeatureResolver implements SelectorResolver {
         Set<DiscoverySelector> selectors = featureScanner
                 .scanForResourcesUri(uri)
                 .stream()
-                .flatMap(feature -> selector.getFilePositions()
-                        .map(filePositions -> filePositions.stream()
-                                .map(position -> selectElementAt(feature, position))
-                                .filter(Optional::isPresent)
-                                .map(Optional::get))
-                        .orElseGet(() -> Stream.of(selectFeature(feature))))
+                .flatMap(feature -> selectElementsAt(feature, selector::getFilePositions, issueReporter))
                 .collect(toSet());
 
         return toResolution(selectors);
@@ -130,10 +125,13 @@ final class FeatureResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(FileSelector selector, Context context) {
-        Set<FeatureElementSelector> selectors = featureParser.parseResource(selector.getPath())
-                .flatMap(feature -> selector.getPosition()
-                        .map(position -> selectElementAt(feature, position))
-                        .orElseGet(() -> Optional.of(selectFeature(feature))))
+        Path path = selector.getPath();
+        if (!isFeature(path)) {
+            return Resolution.unresolved();
+        }
+
+        Set<FeatureElementSelector> selectors = featureParser.parseResource(path)
+                .map(feature -> selectElementAt(feature, selector::getPosition, issueReporter))
                 .map(Collections::singleton)
                 .orElseGet(Collections::emptySet);
 
@@ -154,12 +152,9 @@ final class FeatureResolver implements SelectorResolver {
         }
         return resources.stream()
                 .findFirst()
+                .filter(resource -> isFeature(resource.getName()))
                 .flatMap(featureParser::parseResource)
-                .map(feature -> selector.getPosition()
-                        .map(position -> selectElementAt(feature, position))
-                        .orElseGet(() -> Optional.of(selectFeature(feature))))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(feature -> selectElementAt(feature, selector::getPosition, issueReporter))
                 .map(Collections::singleton)
                 .map(FeatureResolver::toResolution)
                 .orElseGet(Resolution::unresolved);
@@ -171,11 +166,7 @@ final class FeatureResolver implements SelectorResolver {
         Set<DiscoverySelector> selectors = featureScanner
                 .scanForClasspathResource(selector.getClasspathResourceName(), packageFilter)
                 .stream()
-                .map(feature -> selector.getPosition()
-                        .map(position -> selectElementAt(feature, position))
-                        .orElseGet(() -> Optional.of(selectFeature(feature))))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(feature -> selectElementAt(feature, selector::getPosition, issueReporter))
                 .collect(toSet());
 
         warnClasspathResourceSelectorUsedForPackage(selector);
