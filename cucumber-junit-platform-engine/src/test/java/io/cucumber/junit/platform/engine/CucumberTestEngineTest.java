@@ -71,6 +71,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
@@ -161,6 +162,7 @@ class CucumberTestEngineTest {
         DiscoveryIssue discoveryIssue = results.getDiscoveryIssues().get(0);
         assertThat(discoveryIssue.message())
                 .isEqualTo("The @Cucumber annotation has been deprecated. See the Javadoc for more details.");
+        assertThat(discoveryIssue.severity()).isEqualTo(WARNING);
     }
 
     @Test
@@ -187,6 +189,7 @@ class CucumberTestEngineTest {
                     "The classpath resource selector 'io/cucumber/junit/platform/engine' should not be " +
                             "used to select features in a package. Use the package selector with " +
                             "'io.cucumber.junit.platform.engine' instead");
+        assertThat(discoveryIssue.severity()).isEqualTo(WARNING);
 
         // It should also still work
         selectors
@@ -258,6 +261,29 @@ class CucumberTestEngineTest {
                 .allEvents()
                 .assertThatEvents()
                 .haveExactly(2, event(scenario("scenario:5", "An example of this rule")));
+    }
+
+    @Test
+    void reportsClasspathResourceSelectorWithInvalidFilePosition() {
+        EngineTestKit.Builder selectors = EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/single.feature", //
+                    FilePosition.from(10)));
+
+        EngineDiscoveryResults discoveryResults = selectors.discover();
+        DiscoveryIssue discoveryIssue = discoveryResults.getDiscoveryIssues().get(0);
+        assertThat(discoveryIssue.message())
+                .isEqualTo(
+                    "Feature file classpath:io/cucumber/junit/platform/engine/single.feature does not have a feature, rule, scenario, or example element at line 10. Selecting the whole feature instead");
+        assertThat(discoveryIssue.severity()).isEqualTo(WARNING);
+
+        // It should also still work
+        selectors
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(1, event( //
+                    scenario("scenario:3", "A single scenario"), //
+                    finishedSuccessfully()));
     }
 
     @Test
@@ -595,6 +621,7 @@ class CucumberTestEngineTest {
         assertThat(discoveryIssue.message())
                 .startsWith(
                     "Discovering tests using the cucumber.features property. Other discovery selectors are ignored!");
+        assertThat(discoveryIssue.severity()).isEqualTo(WARNING);
     }
 
     @Test
