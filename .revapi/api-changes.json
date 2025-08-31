@@ -71,22 +71,12 @@
   ],
   "internal": [
     {
-      "extension": "revapi.differences",
-      "id": "internal-api-issues",
       "ignore": true,
-      "configuration": {
-        "differences": [
-          {
-            "ignore": true,
-            "code": "java.method.visibilityIncreased",
-            "old": "method io.cucumber.core.eventbus.UuidGenerator io.cucumber.core.runtime.UuidGeneratorServiceLoader::loadUuidGenerator()",
-            "new": "method io.cucumber.core.eventbus.UuidGenerator io.cucumber.core.runtime.UuidGeneratorServiceLoader::loadUuidGenerator()",
-            "oldVisibility": "package",
-            "newVisibility": "public",
-            "justification": "Expose internal API to other internal components"
-          }
-        ]
-      }
+      "code": "java.class.nowImplementsInterface",
+      "old": "class io.cucumber.core.plugin.JsonFormatter",
+      "new": "class io.cucumber.core.plugin.JsonFormatter",
+      "interface": "io.cucumber.plugin.ConcurrentEventListener",
+      "justification": "The JsonFormatter is consumed by Cucumber"
     }
   ],
   "testng": [
