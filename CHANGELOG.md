@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [Core] Add `--i18n-keywords` and `--i18n-languages` options ([#3053](https://github.com/cucumber/cucumber-jvm/pull/3053) M.P. Korstanje)
 - [JUnit Platform Engine] Warn when selected line does not exist ([#3056](https://github.com/cucumber/cucumber-jvm/pull/3056) M.P. Korstanje)
+- [JUnit Platform Engine] Support rerun files ([#3057](https://github.com/cucumber/cucumber-jvm/pull/3057) M.P. Korstanje)
 
 ### Deprecated
 - [Core] Deprecate `--i18n` options ([#3053](https://github.com/cucumber/cucumber-jvm/pull/3053) M.P. Korstanje)
