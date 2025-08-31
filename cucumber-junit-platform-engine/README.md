@@ -764,7 +764,7 @@ Note: any files written by Cucumber will be overwritten while retrying.
 
 ### Using the JUnit Platform Launcher API
 
-The JUnit Platform Launcher API provides a method to programmatically run and
+The [JUnit Platform Launcher API](https://docs.junit.org/current/user-guide/#launcher-api) provides a method to programmatically run and
 re-run tests. For example:
 
 ```java
