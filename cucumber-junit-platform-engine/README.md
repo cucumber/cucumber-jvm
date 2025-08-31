@@ -646,26 +646,29 @@ public class RpnCalculatorSteps {
 
 ## Rerunning Failed Scenarios ##
 
-Failed scenarios can be rerun with either a rerun file, Maven, Gradle or the JUnit Platform Launcher API.
+Failed scenarios can be rerun with either a rerun file, Maven, Gradle or the
+JUnit Platform Launcher API.
 
 ### Using a Rerun file
 
-The JUnit Platform test supports rerun files. To create a rerun file, enable the `rerun` plugin:
+The JUnit Platform Engine supports rerun files. Rerun files must have the
+`*.txt` suffix.  To create a rerun file, enable the `rerun` plugin:
 
 ```java
 @Suite
 @IncludeEngines("cucumber")
 @SelectPackages("com.example")
-// Writes the failed tests to rerun-txt
+// Writes the failed tests to rerun.txt
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "rerun:target/rerun.txt")
 public class RunCucumber { 
 }
 ```
 
-After the `RunCucumberTest` has executed and produced a rerun file, this file can be executed with:
+After the `RunCucumberTest` has executed and produced a rerun file, this file
+can be selected for execution:
 
 ```java
-@Suite(failIfNoTests = false) // Allows the suite to fail if all tests in RunCucumberTest passed
+@Suite(failIfNoTests = false) // Allows the suite have no tests to rerun if all tests in RunCucumber passed
 @IncludeEngines("cucumber")
 @SelectFile("target/rerun.txt") // Selects the rerun file, must end with .txt 
 public class RerunRunCucumber {
@@ -676,7 +679,7 @@ Because the JUnit platform creates a test plan before any tests are executed,
 the `RunCucumber` and `RerunRunCucumber` must be in separate test executions.
 If they are in the same execution, `RerunRunCucumber` will not find any tests.
 
-With Maven Surefire you could configure this as follows:
+With Maven Surefire you could configure multiple executions as follows:
 
 ```xml
 <plugin>
@@ -694,12 +697,13 @@ With Maven Surefire you could configure this as follows:
             </goals>
             <configuration>
                 <includes>
-                <!-- Intentionally avoid using *Test suffix, this avoids
-                     inclusion in the default-test execution -->
+                    <!-- Intentionally avoid using *Test suffix, this avoids
+                         inclusion in the default-test execution. See:
+                         https://maven.apache.org/surefire/maven-surefire-plugin/examples/inclusion-exclusion.html -->
                     <include>**/RunCucumber.java</include>
                 </includes>
-                <!-- allow test to fail, otherwise rerun-cucumber
-                     will not be executed -->
+                <!-- allow test run to fail, otherwise rerun-cucumber
+                     will not be executed. -->
                 <testFailureIgnore>true</testFailureIgnore>
             </configuration>
         </execution>
@@ -712,7 +716,8 @@ With Maven Surefire you could configure this as follows:
             <configuration>
                 <includes>
                     <!-- Intentionally avoid using *Test suffix, this avoids
-                         inclusion in the default-test execution -->
+                         inclusion in the default-test execution. See:
+                         https://maven.apache.org/surefire/maven-surefire-plugin/examples/inclusion-exclusion.html -->
                     <include>**/RerunCucumber.java</include>
                 </includes>
             </configuration>
@@ -758,6 +763,9 @@ plugin.
 Note: any files written by Cucumber will be overwritten while retrying.
 
 ### Using the JUnit Platform Launcher API
+
+The JUnit Platform Launcher API provides a method to programmatically run and
+re-run tests. For example:
 
 ```java
 package com.example;
