@@ -652,7 +652,7 @@ JUnit Platform Launcher API.
 ### Using a Rerun file
 
 The JUnit Platform Engine supports rerun files. Rerun files must have the
-`*.txt` suffix.  To create a rerun file, enable the `rerun` plugin:
+`*.txt` suffix. To create a rerun file, enable the `rerun` plugin:
 
 ```java
 @Suite
