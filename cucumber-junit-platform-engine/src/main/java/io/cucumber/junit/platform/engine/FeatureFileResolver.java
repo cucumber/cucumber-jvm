@@ -56,7 +56,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 
-final class FeatureResolver implements SelectorResolver {
+final class FeatureFileResolver implements SelectorResolver {
     private final ResourceScanner<Feature> featureScanner;
 
     private final CucumberConfiguration configuration;
@@ -64,7 +64,7 @@ final class FeatureResolver implements SelectorResolver {
     private final Predicate<String> packageFilter;
     private final DiscoveryIssueReporter issueReporter;
 
-    FeatureResolver(
+    FeatureFileResolver(
             CucumberConfiguration configuration, Predicate<String> packageFilter, DiscoveryIssueReporter issueReporter
     ) {
         this.configuration = configuration;
@@ -80,7 +80,7 @@ final class FeatureResolver implements SelectorResolver {
     private static FeatureParserWithCaching createFeatureParser(
             CucumberConfiguration options, DiscoveryIssueReporter issueReporter
     ) {
-        Supplier<ClassLoader> classLoader = FeatureResolver.class::getClassLoader;
+        Supplier<ClassLoader> classLoader = FeatureFileResolver.class::getClassLoader;
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
         UuidGenerator uuidGenerator = uuidGeneratorServiceLoader.loadUuidGenerator();
         FeatureParser featureParser = new FeatureParser(uuidGenerator::generateId);
@@ -156,7 +156,7 @@ final class FeatureResolver implements SelectorResolver {
                 .flatMap(featureParser::parseResource)
                 .map(feature -> selectElementAt(feature, selector::getPosition, issueReporter))
                 .map(Collections::singleton)
-                .map(FeatureResolver::toResolution)
+                .map(FeatureFileResolver::toResolution)
                 .orElseGet(Resolution::unresolved);
     }
 

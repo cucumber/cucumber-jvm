@@ -10,16 +10,16 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.core.feature.FeatureWithLines.parseFile;
 
-final class RerunResolver implements SelectorResolver {
+final class FeatureWithLinesFileResolver implements SelectorResolver {
 
-    static boolean isRerun(Path path) {
+    static boolean isTxtFile(Path path) {
         return path.getFileName().toString().endsWith(".txt");
     }
 
     @Override
     public Resolution resolve(FileSelector selector, Context context) {
         Path path = selector.getPath();
-        if (!isRerun(path)) {
+        if (!isTxtFile(path)) {
             return Resolution.unresolved();
         }
 
