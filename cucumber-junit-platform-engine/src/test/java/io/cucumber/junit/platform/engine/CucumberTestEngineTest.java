@@ -1099,4 +1099,29 @@ class CucumberTestEngineTest {
                 .extracting(Node::getExecutionMode)
                 .containsOnly(SAME_THREAD);
     }
+
+    @Test
+    void supportsRerunFile() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(
+                    selectFile("src/test/resources/rerun/rerun.txt"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(2, event(feature("single.feature", "A feature with a single scenario")))
+                .haveExactly(2, event(scenario("scenario:3", "A single scenario")));
+    }
+
+    @Test
+    void supportsRerunFileDirectory() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(
+                    selectDirectory("src/test/resources/rerun"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(2, event(feature("single.feature", "A feature with a single scenario")))
+                .haveExactly(2, event(scenario("scenario:3", "A single scenario")));
+    }
+
 }

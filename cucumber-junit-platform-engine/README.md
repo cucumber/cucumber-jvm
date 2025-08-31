@@ -646,9 +646,80 @@ public class RpnCalculatorSteps {
 
 ## Rerunning Failed Scenarios ##
 
-When using `cucumber-junit-platform-engine` rerun files are not supported.
-Use either Maven, Gradle or the JUnit Platform Launcher API.
+Failed scenarios can be rerun with either a rerun file, Maven, Gradle or the JUnit Platform Launcher API.
 
+### Using a Rerun file
+
+The JUnit Platform test supports rerun files. To create a rerun file, enable the `rerun` plugin:
+
+```java
+@Suite
+@IncludeEngines("cucumber")
+@SelectPackages("com.example")
+// Writes the failed tests to rerun-txt
+@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "rerun:target/rerun.txt")
+public class RunCucumber { 
+}
+```
+
+After the `RunCucumberTest` has executed and produced a rerun file, this file can be executed with:
+
+```java
+@Suite(failIfNoTests = false) // Allows the suite to fail if all tests in RunCucumberTest passed
+@IncludeEngines("cucumber")
+@SelectFile("target/rerun.txt") // Selects the rerun file, must end with .txt 
+public class RerunRunCucumber {
+}
+```
+
+Because the JUnit platform creates a test plan before any tests are executed,
+the `RunCucumber` and `RerunRunCucumber` must be in separate test executions.
+If they are in the same execution, `RerunRunCucumber` will not find any tests.
+
+With Maven Surefire you could configure this as follows:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <configuration>
+        ...
+    </configuration>
+    <executions>
+        <execution>
+            <id>run-cucumber</id>
+            <phase>test</phase>
+            <goals>
+                <goal>test</goal>
+            </goals>
+            <configuration>
+                <includes>
+                <!-- Intentionally avoid using *Test suffix, this avoids
+                     inclusion in the default-test execution -->
+                    <include>**/RunCucumber.java</include>
+                </includes>
+                <!-- allow test to fail, otherwise rerun-cucumber
+                     will not be executed -->
+                <testFailureIgnore>true</testFailureIgnore>
+            </configuration>
+        </execution>
+        <execution>
+            <id>rerun-cucumber</id>
+            <phase>test</phase>
+            <goals>
+                <goal>test</goal>
+            </goals>
+            <configuration>
+                <includes>
+                    <!-- Intentionally avoid using *Test suffix, this avoids
+                         inclusion in the default-test execution -->
+                    <include>**/RerunCucumber.java</include>
+                </includes>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
 ### Using Maven
 
 When running Cucumber through the [JUnit Platform Suite Engine](use-the-jUnit-platform-suite-engine)
