@@ -4,19 +4,24 @@ import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.commons.util.ToStringBuilder;
+import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.FilePosition;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
+import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 
 class CucumberDiscoverySelectors {
 
@@ -126,10 +131,49 @@ class CucumberDiscoverySelectors {
             return new FeatureElementSelector(feature, element);
         }
 
-        static Optional<FeatureElementSelector> selectElementAt(Feature feature, FilePosition filePosition) {
+        static Stream<FeatureElementSelector> selectElementsAt(
+                Feature feature, Supplier<Optional<Set<FilePosition>>> filePositions,
+                DiscoveryIssueReporter issueReporter
+        ) {
+            return filePositions.get()
+                    .map(positions -> selectElementsAt(feature, positions, issueReporter))
+                    .orElseGet(() -> Stream.of(selectFeature(feature)));
+        }
+
+        private static Stream<FeatureElementSelector> selectElementsAt(
+                Feature feature, Set<FilePosition> filePositions, DiscoveryIssueReporter issueReporter
+        ) {
+            return filePositions.stream().map(filePosition -> selectElementAt(feature, filePosition, issueReporter));
+        }
+
+        static FeatureElementSelector selectElementAt(
+                Feature feature, Supplier<Optional<FilePosition>> filePosition, DiscoveryIssueReporter issueReporter
+        ) {
+            return filePosition.get()
+                    .map(position -> selectElementAt(feature, position, issueReporter))
+                    .orElseGet(() -> selectFeature(feature));
+        }
+
+        static FeatureElementSelector selectElementAt(
+                Feature feature, FilePosition filePosition, DiscoveryIssueReporter issueReporter
+        ) {
             return feature.findPathTo(candidate -> candidate.getLocation().getLine() == filePosition.getLine())
                     .map(nodes -> nodes.get(nodes.size() - 1))
-                    .map(node -> new FeatureElementSelector(feature, node));
+                    .map(node -> new FeatureElementSelector(feature, node))
+                    .orElseGet(() -> {
+                        reportInvalidFilePosition(feature, filePosition, issueReporter);
+                        return selectFeature(feature);
+                    });
+        }
+
+        private static void reportInvalidFilePosition(
+                Feature feature, FilePosition filePosition, DiscoveryIssueReporter issueReporter
+        ) {
+            issueReporter.reportIssue(DiscoveryIssue.create(WARNING,
+                "Feature file " + feature.getUri()
+                        + " does not have a feature, rule, scenario, or example element at line "
+                        + filePosition.getLine() +
+                        ". Selecting the whole feature instead"));
         }
 
         static Set<FeatureElementSelector> selectElementsOf(Feature feature, Node selected) {

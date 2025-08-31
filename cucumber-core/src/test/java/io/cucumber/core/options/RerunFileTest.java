@@ -132,6 +132,42 @@ class RerunFileTest {
     }
 
     @Test
+    void entries_can_be_space_separated() throws Exception {
+        mockFileResource(
+            "classpath:path/bar.feature:2 classpath:path/foo.feature:4");
+
+        RuntimeOptions runtimeOptions = parser
+                .parse("@" + rerunPath)
+                .build();
+
+        assertAll(
+            () -> assertThat(runtimeOptions.getFeaturePaths(),
+                contains(URI.create("classpath:path/bar.feature"), URI.create("classpath:path/foo.feature"))),
+            () -> assertThat(runtimeOptions.getLineFilters(),
+                hasEntry(URI.create("classpath:path/bar.feature"), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(),
+                hasEntry(URI.create("classpath:path/foo.feature"), singleton(4))));
+    }
+
+    @Test
+    void entries_can_be_colon_line_separated() throws Exception {
+        mockFileResource(
+            "classpath:path/bar.feature:2classpath:path/foo.feature:4");
+
+        RuntimeOptions runtimeOptions = parser
+                .parse("@" + rerunPath)
+                .build();
+
+        assertAll(
+            () -> assertThat(runtimeOptions.getFeaturePaths(),
+                contains(URI.create("classpath:path/bar.feature"), URI.create("classpath:path/foo.feature"))),
+            () -> assertThat(runtimeOptions.getLineFilters(),
+                hasEntry(URI.create("classpath:path/bar.feature"), singleton(2))),
+            () -> assertThat(runtimeOptions.getLineFilters(),
+                hasEntry(URI.create("classpath:path/foo.feature"), singleton(4))));
+    }
+
+    @Test
     @DisabledOnOs(OS.WINDOWS)
     void understands_whitespace_in_rerun_filepath() throws Exception {
         mockFileResource(

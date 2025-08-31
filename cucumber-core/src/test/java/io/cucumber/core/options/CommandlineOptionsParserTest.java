@@ -113,14 +113,26 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void prints_supported_languages() {
+    void prints_supported_languages_deprecated() {
         parser.parse("--i18n", "help");
         assertThat(output(), startsWith("af              Afrikaans                 Afrikaans"));
     }
 
     @Test
-    void prints_supported_keywords() {
+    void prints_supported_languages() {
+        parser.parse("--i18n-languages");
+        assertThat(output(), startsWith("af              Afrikaans                 Afrikaans"));
+    }
+
+    @Test
+    void prints_supported_keywords_deprecated() {
         parser.parse("--i18n", "en");
+        assertThat(output(), startsWith("      | feature          | \"Feature\", \"Business Need\", \"Ability\"   |"));
+    }
+
+    @Test
+    void prints_supported_keywords() {
+        parser.parse("--i18n-keywords", "en");
         assertThat(output(), startsWith("      | feature          | \"Feature\", \"Business Need\", \"Ability\"   |"));
     }
 

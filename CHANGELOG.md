@@ -10,12 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [Core] Add `--i18n-keywords` and `--i18n-languages` options ([#3053](https://github.com/cucumber/cucumber-jvm/pull/3053) M.P. Korstanje)
+- [JUnit Platform Engine] Warn when selected line does not exist ([#3056](https://github.com/cucumber/cucumber-jvm/pull/3056) M.P. Korstanje)
+- [JUnit Platform Engine] Support rerun files ([#3057](https://github.com/cucumber/cucumber-jvm/pull/3057) M.P. Korstanje)
+
+### Deprecated
+- [Core] Deprecate `--i18n` options ([#3053](https://github.com/cucumber/cucumber-jvm/pull/3053) M.P. Korstanje)
+
 ### Changed
 - [Core] Use a [message based Cucumber JSON Formatter](https://github.com/cucumber/cucumber-json-formatter) ([##2888](https://github.com/cucumber/cucumber-jvm/pull/#2888) M.P. Korstanje)
 
 ## [7.27.2] - 2025-08-18
 ### Fixed
 - [Core] Intellij prints summary printed when executing concurrently ([#3049](https://github.com/cucumber/cucumber-jvm/pull/3049) M.P. Korstanje)
+
+### Added
+- [Core] Add custom UuidGenerator to Runtime.Builder ([#3039](https://github.com/cucumber/junit-xml-formatter/pull/3039) Christoph Läubrich, M.P. Korstanje)
 
 ## [7.27.1] - 2025-08-17
 ### Fixed
