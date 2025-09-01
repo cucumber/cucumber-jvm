@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.28.0] - 2025-09-01
 ### Added
+- [Core] Add custom UuidGenerator to Runtime.Builder ([#3039](https://github.com/cucumber/junit-xml-formatter/pull/3039) Christoph Läubrich, M.P. Korstanje)
 - [Core] Add `--i18n-keywords` and `--i18n-languages` options ([#3053](https://github.com/cucumber/cucumber-jvm/pull/3053) M.P. Korstanje)
 - [JUnit Platform Engine] Warn when selected line does not exist ([#3056](https://github.com/cucumber/cucumber-jvm/pull/3056) M.P. Korstanje)
 - [JUnit Platform Engine] Support rerun files ([#3057](https://github.com/cucumber/cucumber-jvm/pull/3057) M.P. Korstanje)
@@ -24,11 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Deprecate `--i18n` options ([#3053](https://github.com/cucumber/cucumber-jvm/pull/3053) M.P. Korstanje)
 
 ## [7.27.2] - 2025-08-18
-### Added
-- [Core] Add custom UuidGenerator to Runtime.Builder ([#3039](https://github.com/cucumber/junit-xml-formatter/pull/3039) Christoph Läubrich, M.P. Korstanje)
-
 ### Fixed
-- [Core] Intellij prints summary printed when executing concurrently ([#3049](https://github.com/cucumber/cucumber-jvm/pull/3049) M.P. Korstanje)
+- [Core] Intellij does not print summary when executing concurrently ([#3049](https://github.com/cucumber/cucumber-jvm/pull/3049) M.P. Korstanje)
 
 ## [7.27.1] - 2025-08-17
 ### Fixed
