@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.28.1] - 2025-09-03
 ### Fixed
 - [Core] Fix NPE for optional arguments when using the Cucumber JSON Formatter ([cucumber-json-formatter/#7](https://github.com/cucumber/cucumber-json-formatter/pull/7), [#3060](https://github.com/cucumber/cucumber-jvm/pull/3060) M.P. Korstanje)
 
@@ -480,7 +482,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.1...HEAD
+[7.28.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.0...v7.28.1
 [7.28.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.2...v7.28.0
 [7.27.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.1...v7.27.2
 [7.27.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.0...v7.27.1
