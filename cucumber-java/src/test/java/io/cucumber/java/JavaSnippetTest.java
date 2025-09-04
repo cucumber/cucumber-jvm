@@ -434,6 +434,31 @@ class JavaSnippetTest {
         return String.join("\n", snippet);
     }
 
+    @Test
+    void generatesEmojiSnippet() {
+        String expected = "" +
+                "@NeutralFace(\"\uD83C\uDFB8\")\n" +
+                "public void step_without_java_identifiers() {\n" +
+                "    // Write code here that turns the phrase above into concrete actions\n" +
+                "    throw new io.cucumber.java.PendingException();\n" +
+                "}";
+        String source = "" +
+                "# language: em\n" +
+                "\uD83D\uDCDA: \uD83D\uDE48\uD83D\uDE49\uD83D\uDE4A\n" +
+                "\n" +
+                "  \uD83D\uDCD5: \uD83D\uDC83\n" +
+                "    \uD83D\uDE10\uD83C\uDFB8\n";
+
+        Feature feature = TestFeatureParser.parse(source);
+        Step step = feature.getPickles().get(0).getSteps().get(0);
+        String language = "em";
+        ParameterTypeRegistry registry = new ParameterTypeRegistry(new Locale(language));
+        JavaSnippet snippet = new JavaSnippet();
+        SnippetGenerator generator = new SnippetGenerator(language, snippet, registry);
+        List<String> snippets = generator.getSnippet(step, snippetType);
+        assertThat(String.join("\n", snippets), is(equalTo(expected)));
+    }
+
     private static class Size {
         // Dummy. Makes the test readable
     }

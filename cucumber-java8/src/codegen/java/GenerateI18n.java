@@ -11,15 +11,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.nio.file.Files.newBufferedWriter;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /* This class generates the cucumber-java Interfaces and package-info
@@ -28,8 +29,8 @@ import static java.util.stream.Collectors.toList;
  */
 public class GenerateI18n {
 
-    // The generated files for and Emoij do not compile :(
-    private static final List<String> unsupported = Arrays.asList("em", "en-tx");
+    // For any language that does not compile
+    private static final List<String> unsupported = Collections.emptyList();
 
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
@@ -95,14 +96,37 @@ public class GenerateI18n {
             return dialect.getStepKeywords().stream()
                     .sorted()
                     .filter(it -> !it.contains(String.valueOf('*')))
-                    .filter(it -> !it.matches("^\\d.*")).distinct()
-                    .map(keyword -> keyword.replaceAll("[\\s',!\u00AD]", ""))
-                    .map(DialectWriter::normalize)
+                    .filter(it -> !it.matches("^\\d.*"))
+                    .distinct()
+                    .map(keyword -> getNormalizedKeyWord(dialect, keyword))
                     .collect(toList());
         }
 
         private static String capitalize(String str) {
             return str.substring(0, 1).toUpperCase() + str.substring(1);
+        }
+
+        private static String getNormalizedKeyWord(GherkinDialect dialect, String keyword) {
+            // Exception: Use the symbol names for the Emoj language. 
+            // Emoji are not legal identifiers in Java.
+            if (dialect.getLanguage().equals("em")) {
+                return getNormalizedEmojiKeyWord(keyword);
+            }
+            return getNormalizedKeyWord(keyword);
+        }
+
+        private static String getNormalizedEmojiKeyWord(String keyword) {
+            String titleCasedName = keyword.codePoints().mapToObj(Character::getName)
+                    .map(s -> s.split(" "))
+                    .flatMap(Arrays::stream)
+                    .map(String::toLowerCase)
+                    .map(DialectWriter::capitalize)
+                    .collect(joining(" "));
+            return getNormalizedKeyWord(titleCasedName);
+        }
+
+        private static String getNormalizedKeyWord(String keyword) {
+            return normalize(keyword.replaceAll("[\\s',!\u00AD’]", ""));
         }
 
         static String normalize(CharSequence s) {
