@@ -1,65 +1,100 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.feature.FeatureWithLines;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.Pickle;
+import io.cucumber.messages.types.TestCaseFinished;
+import io.cucumber.messages.types.TestRunFinished;
+import io.cucumber.messages.types.TestStepResult;
+import io.cucumber.messages.types.TestStepResultStatus;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.TestCase;
-import io.cucumber.plugin.event.TestCaseFinished;
-import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.query.Query;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.TreeSet;
 
-import static io.cucumber.core.feature.FeatureWithLines.create;
+import static io.cucumber.messages.types.TestStepResultStatus.PASSED;
+import static io.cucumber.messages.types.TestStepResultStatus.SKIPPED;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toCollection;
 
 /**
- * Formatter for reporting all failed test cases and print their locations
- * Failed means: results that make the exit code non-zero.
+ * Formatter for reporting all failed test cases and print their locations.
  */
 public final class RerunFormatter implements ConcurrentEventListener {
 
-    private final UTF8PrintWriter out;
-    private final Map<URI, Collection<Integer>> featureAndFailedLinesMapping = new LinkedHashMap<>();
+    private final Query query = new Query();
+    private final PrintWriter writer;
 
     public RerunFormatter(OutputStream out) {
-        this.out = new UTF8PrintWriter(out);
+        this.writer = createPrintWriter(out);
+    }
+
+    private static PrintWriter createPrintWriter(OutputStream out) {
+        return new PrintWriter(
+                new OutputStreamWriter(
+                        requireNonNull(out),
+                        StandardCharsets.UTF_8));
     }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestCaseFinished.class, this::handleTestCaseFinished);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
+        publisher.registerHandlerFor(Envelope.class, event -> {
+            query.update(event);
+            event.getTestRunFinished().ifPresent(this::handleTestRunFinished);
+        });
     }
 
-    private void handleTestCaseFinished(TestCaseFinished event) {
-        if (!event.getResult().getStatus().isOk()) {
-            recordTestFailed(event.getTestCase());
+    private void handleTestRunFinished(TestRunFinished testRunFinished) {
+        query.findAllTestCaseFinished()
+                .stream()
+                .filter(this::shouldBeRerun)
+                .map(query::findPickleBy)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(this::createPickleWithLineEntry)
+                // TreeSet makes the lines sorted and unique.
+                .collect(groupingBy(Entry::getKey, mapping(Entry::getValue, toCollection(TreeSet::new))))
+                .forEach((uri, lines) -> writer.println(renderFeatureWithLines(uri, lines)));
+        writer.close();
+    }
+
+    private String renderFeatureWithLines(String feature, TreeSet<Long> lines) {
+        URI uri = relativize(URI.create(feature));
+        StringBuilder builder = new StringBuilder(uri.toString());
+        for (Long line : lines) {
+            builder.append(':');
+            builder.append(line);
         }
+        return builder.toString();
     }
 
-    private void finishReport() {
-        for (Map.Entry<URI, Collection<Integer>> entry : featureAndFailedLinesMapping.entrySet()) {
-            FeatureWithLines featureWithLines = create(relativize(entry.getKey()), entry.getValue());
-            out.println(featureWithLines.toString());
-        }
-
-        out.close();
+    private Entry<String, Long> createPickleWithLineEntry(Pickle pickle) {
+        String uri = pickle.getUri();
+        Long line = query.findLocationOf(pickle)
+                .map(Location::getLine)
+                .orElse(null);
+        return new SimpleEntry<>(uri, line);
     }
 
-    private void recordTestFailed(TestCase testCase) {
-        URI uri = testCase.getUri();
-        Collection<Integer> failedTestCaseLines = getFailedTestCaseLines(uri);
-        failedTestCaseLines.add(testCase.getLocation().getLine());
-    }
-
-    private Collection<Integer> getFailedTestCaseLines(URI uri) {
-        return featureAndFailedLinesMapping.computeIfAbsent(uri, k -> new ArrayList<>());
+    private boolean shouldBeRerun(TestCaseFinished testCaseFinished) {
+        TestStepResultStatus status = query.findMostSevereTestStepResultBy(testCaseFinished)
+                .map(TestStepResult::getStatus)
+                // By definition
+                .orElse(PASSED);
+        return !(status == PASSED || status == SKIPPED);
     }
 
     static URI relativize(URI uri) {
@@ -69,7 +104,6 @@ public final class RerunFormatter implements ConcurrentEventListener {
         if (!uri.isAbsolute()) {
             return uri;
         }
-
         try {
             URI root = new File("").toURI();
             URI relative = root.relativize(uri);
