@@ -454,6 +454,7 @@ final class CachingGlue implements Glue {
             return null;
         }
         if (matches.size() > 1) {
+            // TODO: Don't use exceptions for control flow
             throw new AmbiguousStepDefinitionsException(step, matches);
         }
 
