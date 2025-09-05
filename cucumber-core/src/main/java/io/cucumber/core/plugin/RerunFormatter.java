@@ -1,16 +1,15 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Pickle;
-import io.cucumber.messages.types.TestCase;
 import io.cucumber.messages.types.TestCaseFinished;
-import io.cucumber.messages.types.TestCaseStarted;
 import io.cucumber.messages.types.TestRunFinished;
-import io.cucumber.messages.types.TestStepFinished;
+import io.cucumber.messages.types.TestStepResult;
 import io.cucumber.messages.types.TestStepResultStatus;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.query.Query;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -19,22 +18,17 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
+import java.util.TreeSet;
 
-import static io.cucumber.core.feature.FeatureWithLines.create;
 import static io.cucumber.messages.types.TestStepResultStatus.PASSED;
 import static io.cucumber.messages.types.TestStepResultStatus.SKIPPED;
-import static java.util.Collections.emptyList;
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * Formatter for reporting all failed test cases and print their locations.
@@ -42,7 +36,6 @@ import static java.util.Objects.requireNonNull;
 public final class RerunFormatter implements ConcurrentEventListener {
 
     private final Query query = new Query();
-    private final Map<String, Set<Integer>> featureAndFailedLinesMapping = new HashMap<>();
     private final PrintWriter writer;
 
     public RerunFormatter(OutputStream out) {
@@ -51,9 +44,57 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private static PrintWriter createPrintWriter(OutputStream out) {
         return new PrintWriter(
-            new OutputStreamWriter(
-                requireNonNull(out),
-                StandardCharsets.UTF_8));
+                new OutputStreamWriter(
+                        requireNonNull(out),
+                        StandardCharsets.UTF_8));
+    }
+
+    @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(Envelope.class, event -> {
+            query.update(event);
+            event.getTestRunFinished().ifPresent(this::handleTestRunFinished);
+        });
+    }
+
+    private void handleTestRunFinished(TestRunFinished testRunFinished) {
+        query.findAllTestCaseFinished()
+                .stream()
+                .filter(this::shouldBeRerun)
+                .map(query::findPickleBy)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(this::createPickleWithLineEntry)
+                // TreeSet makes the lines sorted and unique.
+                .collect(groupingBy(Entry::getKey, mapping(Entry::getValue, toCollection(TreeSet::new))))
+                .forEach((uri, lines) -> writer.println(renderFeatureWithLines(uri, lines)));
+        writer.close();
+    }
+
+    private String renderFeatureWithLines(String feature, TreeSet<Long> lines) {
+        URI uri = relativize(URI.create(feature));
+        StringBuilder builder = new StringBuilder(uri.toString());
+        for (Long line : lines) {
+            builder.append(':');
+            builder.append(line);
+        }
+        return builder.toString();
+    }
+
+    private Entry<String, Long> createPickleWithLineEntry(Pickle pickle) {
+        String uri = pickle.getUri();
+        Long line = query.findLocationOf(pickle)
+                .map(Location::getLine)
+                .orElse(null);
+        return new SimpleEntry<>(uri, line);
+    }
+
+    private boolean shouldBeRerun(TestCaseFinished testCaseFinished) {
+        TestStepResultStatus status = query.findMostSevereTestStepResultBy(testCaseFinished)
+                .map(TestStepResult::getStatus)
+                // By definition
+                .orElse(PASSED);
+        return !(status == PASSED || status == SKIPPED);
     }
 
     static URI relativize(URI uri) {
@@ -63,7 +104,6 @@ public final class RerunFormatter implements ConcurrentEventListener {
         if (!uri.isAbsolute()) {
             return uri;
         }
-
         try {
             URI root = new File("").toURI();
             URI relative = root.relativize(uri);
@@ -73,105 +113,4 @@ public final class RerunFormatter implements ConcurrentEventListener {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
-
-    @Override
-    public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(Envelope.class, event -> {
-            query.update(event);
-            event.getTestCaseFinished().ifPresent(this::handleTestCaseFinished);
-            event.getTestRunFinished().ifPresent(this::handleTestRunFinished);
-        });
-    }
-
-
-    private void handleTestCaseFinished(TestCaseFinished event) {
-        TestStepResultStatus status = query.findMostSevereTestStepResultBy(event)
-                // By definition
-                .orElse(PASSED);
-        if (status == PASSED || status == SKIPPED) {
-            return;
-        }
-        query.findPickleBy(event).ifPresent(pickle -> {
-            // Adds the entire feature for rerunning
-            Set<Integer> lines = featureAndFailedLinesMapping.computeIfAbsent(pickle.getUri(), s -> new HashSet<>());
-            pickle.getLocation().ifPresent(location -> {
-                // Adds the specific scenarios
-                // TODO: Messages are silly
-                lines.add((int) (long) location.getLine());
-            });
-        });
-    }
-
-    private void handleTestRunFinished(TestRunFinished testRunFinished) {
-        for (Map.Entry<String, Set<Integer>> entry : featureAndFailedLinesMapping.entrySet()) {
-            String key = entry.getKey();
-            // TODO: Should these be relative?
-            FeatureWithLines featureWithLines = create(relativize(URI.create(key)), entry.getValue());
-            writer.println(featureWithLines);
-        }
-
-        writer.close();
-    }
-
-    /**
-     * Miniaturized version of Cucumber Query.
-     * <p>
-     * The rerun plugin only needs a few things.
-     */
-    private static class Query {
-
-        private final Map<String, TestCase> testCaseById = new HashMap<>();
-        private final Map<String, List<TestStepResultStatus>> testStepsResultStatusByTestCaseStartedId = new HashMap<>();
-        private final Map<String, TestCaseStarted> testCaseStartedById = new HashMap<>();
-        private final Map<String, Pickle> pickleById = new HashMap<>();
-
-        void update(Envelope envelope) {
-            envelope.getPickle().ifPresent(this::updatePickle);
-            envelope.getTestCase().ifPresent(this::updateTestCase);
-            envelope.getTestCaseStarted().ifPresent(this::updateTestCaseStarted);
-            envelope.getTestStepFinished().ifPresent(this::updateTestStepFinished);
-        }
-
-        private void updatePickle(Pickle event) {
-            pickleById.put(event.getId(), event);
-        }
-
-        private void updateTestCase(TestCase event) {
-            testCaseById.put(event.getId(), event);
-        }
-
-        private void updateTestCaseStarted(TestCaseStarted testCaseStarted) {
-            testCaseStartedById.put(testCaseStarted.getId(), testCaseStarted);
-        }
-
-        private void updateTestStepFinished(TestStepFinished event) {
-            String testCaseStartedId = event.getTestCaseStartedId();
-            testStepsResultStatusByTestCaseStartedId.computeIfAbsent(testCaseStartedId, s -> new ArrayList<>())
-                    .add(event.getTestStepResult().getStatus());
-        }
-
-        public Optional<TestStepResultStatus> findMostSevereTestStepResultBy(TestCaseFinished testCaseFinished) {
-            List<TestStepResultStatus> statuses = testStepsResultStatusByTestCaseStartedId
-                    .getOrDefault(testCaseFinished.getTestCaseStartedId(), emptyList());
-            if (statuses.isEmpty()) {
-                return Optional.empty();
-            }
-            return Optional.of(Collections.max(statuses, comparing(Enum::ordinal)));
-        }
-
-        public Optional<Pickle> findPickleBy(TestCaseFinished testCaseFinished) {
-            String testCaseStartedId = testCaseFinished.getTestCaseStartedId();
-            TestCaseStarted testCaseStarted = testCaseStartedById.get(testCaseStartedId);
-            if (testCaseStarted == null) {
-                return Optional.empty();
-            }
-            TestCase testCase = testCaseById.get(testCaseStarted.getTestCaseId());
-            if (testCase == null) {
-                return Optional.empty();
-            }
-            return Optional.ofNullable(pickleById.get(testCase.getPickleId()));
-        }
-
-    }
-
 }
