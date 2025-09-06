@@ -45,7 +45,7 @@ class FeaturesPropertyResolver {
             DiscoveryIssueReporter issueReporter
     ) {
         ConfigurationParameters configuration = request.getConfigurationParameters();
-        CucumberConfiguration options = new CucumberConfiguration(configuration);
+        CucumberConfiguration options = new CucumberConfiguration(configuration, issueReporter);
         Set<FeatureWithLinesSelector> selectors = options.featuresWithLines();
 
         if (selectors.isEmpty()) {
