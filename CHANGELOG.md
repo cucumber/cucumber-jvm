@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### [Core] Fix attachment rendering when using the Cucumber JSON Formatter ([cucumber-json-formatter/#12](https://github.com/cucumber/cucumber-json-formatter/pull/12), [#3069](https://github.com/cucumber/cucumber-jvm/pull/3069) M.P. Korstanje)
 
 ## [7.28.1] - 2025-09-03
 ### Fixed
