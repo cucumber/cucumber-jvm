@@ -16,7 +16,6 @@ import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Snippet;
 import io.cucumber.plugin.event.HookType;
-import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
@@ -116,9 +114,9 @@ public final class Runner {
             hookDefinition.execute();
         } catch (CucumberBackendException e) {
             CucumberException exception = new CucumberException(String.format("" +
-                            "Could not invoke hook defined at '%s'.\n" +
-                            "It appears there was a problem with the hook definition.",
-                    hookDefinition.getLocation()), e);
+                    "Could not invoke hook defined at '%s'.\n" +
+                    "It appears there was a problem with the hook definition.",
+                hookDefinition.getLocation()), e);
             throwAsUncheckedException(exception);
         } catch (CucumberInvocationTargetException e) {
             Throwable throwable = removeFrameworkFrames(e);
@@ -144,7 +142,7 @@ public final class Runner {
     private TestCase createTestCaseForPickle(Pickle pickle) {
         if (pickle.getSteps().isEmpty()) {
             return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle,
-                    runnerOptions.isDryRun());
+                runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
@@ -168,7 +166,7 @@ public final class Runner {
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
             testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps,
-                    afterStepHookSteps, match));
+                afterStepHookSteps, match));
         }
 
         return testSteps;
@@ -202,25 +200,22 @@ public final class Runner {
         }
 
         bus.send(new SnippetsSuggestedEvent(
-                bus.getInstant(),
-                pickle.getUri(),
-                pickle.getLocation(),
-                step.getLocation(),
-                new Suggestion(
-                        step.getText(),
-                        snippets.stream()
-                                .map(Snippet::getCode)
-                                .collect(toList()))
-        ));
+            bus.getInstant(),
+            pickle.getUri(),
+            pickle.getLocation(),
+            step.getLocation(),
+            new Suggestion(
+                step.getText(),
+                snippets.stream()
+                        .map(Snippet::getCode)
+                        .collect(toList()))));
 
         bus.send(
-                Envelope.of(
-                        new io.cucumber.messages.types.Suggestion(
-                                bus.generateId().toString(),
-                                step.getId(),
-                                snippets
-                        )
-                ));
+            Envelope.of(
+                new io.cucumber.messages.types.Suggestion(
+                    bus.generateId().toString(),
+                    step.getId(),
+                    snippets)));
     }
 
     private List<HookTestStep> createAfterStepHooks(List<String> tags) {

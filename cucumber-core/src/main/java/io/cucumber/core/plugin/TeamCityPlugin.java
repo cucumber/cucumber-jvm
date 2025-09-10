@@ -27,7 +27,7 @@ import io.cucumber.messages.types.TestStepResult;
 import io.cucumber.messages.types.TestStepResultStatus;
 import io.cucumber.messages.types.TestStepStarted;
 import io.cucumber.messages.types.Timestamp;
-import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.query.LineageReducer;
 import io.cucumber.query.Query;
@@ -59,7 +59,7 @@ import static java.util.stream.Collectors.joining;
  *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
  *      - Service Messages</a>
  */
-public class TeamCityPlugin implements EventListener {
+public class TeamCityPlugin implements ConcurrentEventListener {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
 
@@ -376,7 +376,7 @@ public class TeamCityPlugin implements EventListener {
         return query.findPickleBy(event)
                 .map(query::findSuggestionsBy)
                 .map(TeamCityPlugin::createMessage);
-        
+
     }
 
     private static String createMessage(Collection<Suggestion> suggestions) {

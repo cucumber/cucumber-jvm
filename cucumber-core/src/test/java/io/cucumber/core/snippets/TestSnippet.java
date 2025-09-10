@@ -13,7 +13,7 @@ public class TestSnippet implements Snippet {
     public Optional<String> language() {
         return Optional.of("test");
     }
-    
+
     private int i;
 
     @Override

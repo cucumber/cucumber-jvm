@@ -10,10 +10,10 @@ import java.util.Optional;
 @API(status = API.Status.STABLE)
 public interface Snippet {
 
-    default Optional<String> language(){
+    default Optional<String> language() {
         return Optional.empty();
     }
-    
+
     /**
      * @return a {@link java.text.MessageFormat} template used to generate a
      *         snippet. The template can access the following variables:
