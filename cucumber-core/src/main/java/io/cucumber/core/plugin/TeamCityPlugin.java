@@ -10,12 +10,13 @@ import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.Hook;
 import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.JavaStackTraceElement;
-import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Pickle;
 import io.cucumber.messages.types.PickleStep;
 import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.Snippet;
 import io.cucumber.messages.types.SourceReference;
+import io.cucumber.messages.types.Suggestion;
 import io.cucumber.messages.types.TableRow;
 import io.cucumber.messages.types.TestCaseFinished;
 import io.cucumber.messages.types.TestCaseStarted;
@@ -28,14 +29,11 @@ import io.cucumber.messages.types.TestStepStarted;
 import io.cucumber.messages.types.Timestamp;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.SnippetsSuggestedEvent;
-import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import io.cucumber.query.LineageReducer;
 import io.cucumber.query.Query;
 
 import java.io.Closeable;
 import java.io.PrintStream;
-import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,7 +51,6 @@ import static io.cucumber.query.LineageReducer.descending;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Outputs Teamcity services messages to std out.
@@ -111,13 +108,11 @@ public class TeamCityPlugin implements EventListener {
 
     private final LineageReducer<List<TreeNode>> pathCollector = descending(PathCollector::new);
     private final Query query = new Query();
-    private final List<SnippetsSuggestedEvent> suggestions = new ArrayList<>();
     private final TeamCityCommandWriter out;
 
     // TODO: Does not work with concurrency
     // https://github.com/cucumber/cucumber-jvm/issues/3042
     private List<TreeNode> currentPath = new ArrayList<>();
-    private Pickle currentPickle;
 
     @SuppressWarnings("unused") // Used by PluginFactory
     public TeamCityPlugin() {
@@ -144,8 +139,6 @@ public class TeamCityPlugin implements EventListener {
             event.getTestRunFinished().ifPresent(this::printTestRunFinished);
             event.getAttachment().ifPresent(this::handleEmbedEvent);
         });
-        // TODO: Replace with messages
-        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetSuggested);
     }
 
     private void printTestRunStarted(TestRunStarted event) {
@@ -157,15 +150,14 @@ public class TeamCityPlugin implements EventListener {
 
     private void printTestCaseStarted(TestCaseStarted event) {
         query.findPickleBy(event)
-                .ifPresent(pickle -> findPathTo(pickle)
-                        .ifPresent(path -> {
-                            String timestamp = formatTimeStamp(event.getTimestamp());
-                            poppedNodes(path).forEach(node -> finishNode(timestamp, node));
-                            pushedNodes(path).forEach(node -> startNode(timestamp, node));
-                            this.currentPath = path;
-                            this.currentPickle = pickle;
-                            out.print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
-                        }));
+                .flatMap(this::findPathTo)
+                .ifPresent(path -> {
+                    String timestamp = formatTimeStamp(event.getTimestamp());
+                    poppedNodes(path).forEach(node -> finishNode(timestamp, node));
+                    pushedNodes(path).forEach(node -> startNode(timestamp, node));
+                    this.currentPath = path;
+                    out.print(TEMPLATE_PROGRESS_TEST_STARTED, timestamp);
+                });
     }
 
     private Optional<List<TreeNode>> findPathTo(Pickle pickle) {
@@ -286,7 +278,7 @@ public class TeamCityPlugin implements EventListener {
                     break;
                 }
                 case UNDEFINED: {
-                    String snippets = findSnippets(currentPickle).orElse("");
+                    String snippets = findSnippets(event).orElse("");
                     out.print(TEMPLATE_TEST_FAILED, timeStamp, duration, "Step undefined", snippets, name);
                     break;
                 }
@@ -380,20 +372,11 @@ public class TeamCityPlugin implements EventListener {
             }).orElse("Unknown");
     }
 
-    private Optional<String> findSnippets(Pickle pickle) {
-        return query.findLocationOf(pickle)
-                .map(location -> {
-                    URI uri = URI.create(pickle.getUri());
-                    List<Suggestion> suggestionForTestCase = suggestions.stream()
-                            .filter(suggestion -> isSuggestionForPickleAt(suggestion, uri, location))
-                            .map(SnippetsSuggestedEvent::getSuggestion)
-                            .collect(toList());
-                    return createMessage(suggestionForTestCase);
-                });
-    }
-
-    private static boolean isSuggestionForPickleAt(SnippetsSuggestedEvent suggestion, URI uri, Location location) {
-        return suggestion.getUri().equals(uri) && suggestion.getTestCaseLocation().getLine() == location.getLine();
+    private Optional<String> findSnippets(TestStepFinished event) {
+        return query.findPickleBy(event)
+                .map(query::findSuggestionsBy)
+                .map(TeamCityPlugin::createMessage);
+        
     }
 
     private static String createMessage(Collection<Suggestion> suggestions) {
@@ -409,6 +392,7 @@ public class TeamCityPlugin implements EventListener {
                 .stream()
                 .map(Suggestion::getSnippets)
                 .flatMap(Collection::stream)
+                .map(Snippet::getCode)
                 .distinct()
                 .collect(joining("\n", "", "\n"));
         sb.append(snippets);
@@ -419,7 +403,6 @@ public class TeamCityPlugin implements EventListener {
         String timestamp = formatTimeStamp(event.getTimestamp());
         out.print(TEMPLATE_PROGRESS_TEST_FINISHED, timestamp);
         finishNode(timestamp, currentPath.remove(currentPath.size() - 1));
-        this.currentPickle = null;
     }
 
     private void printTestRunFinished(io.cucumber.messages.types.TestRunFinished event) {
@@ -445,10 +428,6 @@ public class TeamCityPlugin implements EventListener {
         String details = error.flatMap(Exception::getStackTrace).orElse("");
         out.print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FAILED, timestamp, "Before All/After All failed", details, name);
         out.print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FINISHED, timestamp, name);
-    }
-
-    private void handleSnippetSuggested(SnippetsSuggestedEvent event) {
-        suggestions.add(event);
     }
 
     private void handleEmbedEvent(Attachment event) {

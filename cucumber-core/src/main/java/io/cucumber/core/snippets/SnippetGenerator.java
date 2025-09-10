@@ -11,10 +11,12 @@ import io.cucumber.plugin.event.DataTableArgument;
 import io.cucumber.plugin.event.DocStringArgument;
 import io.cucumber.plugin.event.StepArgument;
 
+import javax.swing.text.html.Option;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +37,10 @@ public final class SnippetGenerator {
     public SnippetGenerator(Snippet snippet, ParameterTypeRegistry parameterTypeRegistry) {
         this.snippet = snippet;
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
+    }
+    
+    public Optional<String> getLanguage(){
+        return snippet.language();
     }
 
     public List<String> getSnippet(Step step, SnippetType snippetType) {

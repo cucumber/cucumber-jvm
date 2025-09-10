@@ -13,6 +13,8 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Snippet;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 public final class Runner {
 
@@ -113,9 +116,9 @@ public final class Runner {
             hookDefinition.execute();
         } catch (CucumberBackendException e) {
             CucumberException exception = new CucumberException(String.format("" +
-                    "Could not invoke hook defined at '%s'.\n" +
-                    "It appears there was a problem with the hook definition.",
-                hookDefinition.getLocation()), e);
+                            "Could not invoke hook defined at '%s'.\n" +
+                            "It appears there was a problem with the hook definition.",
+                    hookDefinition.getLocation()), e);
             throwAsUncheckedException(exception);
         } catch (CucumberInvocationTargetException e) {
             Throwable throwable = removeFrameworkFrames(e);
@@ -128,7 +131,7 @@ public final class Runner {
                 .map(Backend::getSnippet)
                 .filter(Objects::nonNull)
                 .map(s -> new SnippetGenerator(s, stepTypeRegistry.parameterTypeRegistry()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private void buildBackendWorlds() {
@@ -141,7 +144,7 @@ public final class Runner {
     private TestCase createTestCaseForPickle(Pickle pickle) {
         if (pickle.getSteps().isEmpty()) {
             return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle,
-                runnerOptions.isDryRun());
+                    runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
@@ -165,7 +168,7 @@ public final class Runner {
             List<HookTestStep> afterStepHookSteps = createAfterStepHooks(pickle.getTags());
             List<HookTestStep> beforeStepHookSteps = createBeforeStepHooks(pickle.getTags());
             testSteps.add(new PickleStepTestStep(bus.generateId(), pickle.getUri(), step, beforeStepHookSteps,
-                afterStepHookSteps, match));
+                    afterStepHookSteps, match));
         }
 
         return testSteps;
@@ -193,16 +196,31 @@ public final class Runner {
     }
 
     private void emitSnippetSuggestedEvent(Pickle pickle, Step step) {
-        List<String> snippets = generateSnippetsForStep(step);
+        List<Snippet> snippets = generateSnippetsForStep(step);
         if (snippets.isEmpty()) {
             return;
         }
-        Suggestion suggestion = new Suggestion(step.getText(), snippets);
-        Location scenarioLocation = pickle.getLocation();
-        Location stepLocation = step.getLocation();
-        SnippetsSuggestedEvent event = new SnippetsSuggestedEvent(bus.getInstant(), pickle.getUri(), scenarioLocation,
-            stepLocation, suggestion);
-        bus.send(event);
+
+        bus.send(new SnippetsSuggestedEvent(
+                bus.getInstant(),
+                pickle.getUri(),
+                pickle.getLocation(),
+                step.getLocation(),
+                new Suggestion(
+                        step.getText(),
+                        snippets.stream()
+                                .map(Snippet::getCode)
+                                .collect(toList()))
+        ));
+
+        bus.send(
+                Envelope.of(
+                        new io.cucumber.messages.types.Suggestion(
+                                bus.generateId().toString(),
+                                step.getId(),
+                                snippets
+                        )
+                ));
     }
 
     private List<HookTestStep> createAfterStepHooks(List<String> tags) {
@@ -219,16 +237,18 @@ public final class Runner {
         return hooks.stream()
                 .filter(hook -> hook.matches(tags))
                 .map(hook -> new HookTestStep(bus.generateId(), hookType, new HookDefinitionMatch(hook)))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
-    private List<String> generateSnippetsForStep(Step step) {
-        List<String> snippets = new ArrayList<>();
-        for (SnippetGenerator snippetGenerator : snippetGenerators) {
-            List<String> snippet = snippetGenerator.getSnippet(step, runnerOptions.getSnippetType());
-            snippets.addAll(snippet);
-        }
-        return snippets;
+    private List<Snippet> generateSnippetsForStep(Step step) {
+        return snippetGenerators.stream()
+                .flatMap(generator -> {
+                    String language = generator.getLanguage().orElse("unknown");
+                    return generator.getSnippet(step, runnerOptions.getSnippetType())
+                            .stream()
+                            .map(code -> new Snippet(language, code));
+                })
+                .collect(toList());
     }
 
 }
