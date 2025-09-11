@@ -37,13 +37,13 @@ public class CompatibilityTest {
     @ParameterizedTest
     @MethodSource("io.cucumber.compatibility.TestCase#testCases")
     void produces_expected_output_for(TestCase testCase) throws IOException {
-        Path parentDir = Files.createDirectories(Paths.get("target", "messages",  testCase.getId()));
+        Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
         Path outputNdjson = parentDir.resolve("out.ndjson");
 
         try {
             PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
             if ("multiple-features-reversed".equals(testCase.getId())) {
-                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder(); 
+                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
             }
             Runtime.builder()
                     .withRuntimeOptions(new RuntimeOptionsBuilder()
@@ -78,11 +78,10 @@ public class CompatibilityTest {
         }
 
         // exception: Cucumber JVM does not support messages for global hooks
-        if (
-                "global-hooks".equals(testCase.getId())
-                        || "global-hooks-afterall-error".equals(testCase.getId())
-                        || "global-hooks-attachments".equals(testCase.getId())
-                        || "global-hooks-beforeall-error".equals(testCase.getId())
+        if ("global-hooks".equals(testCase.getId())
+                || "global-hooks-afterall-error".equals(testCase.getId())
+                || "global-hooks-attachments".equals(testCase.getId())
+                || "global-hooks-beforeall-error".equals(testCase.getId())
 
         ) {
             return;

@@ -6,12 +6,12 @@ public class UnusedSteps {
 
     @Given("a step that is used")
     public void a_step_that_is_used() {
-        
+
     }
-    
+
     @Given("a step that is not used")
     public void a_step_that_is_not_used() {
-        
+
     }
 
 }

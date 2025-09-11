@@ -15,6 +15,7 @@ public class RulesBackgrounds {
     public void action() {
 
     }
+
     @Then("an outcome")
     public void outcome() {
 

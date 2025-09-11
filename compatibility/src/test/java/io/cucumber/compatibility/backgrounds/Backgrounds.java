@@ -13,11 +13,12 @@ public class Backgrounds {
 
     @When("an action")
     public void action() {
-        
+
     }
+
     @Then("an outcome")
     public void outcome() {
-        
+
     }
 
 }
