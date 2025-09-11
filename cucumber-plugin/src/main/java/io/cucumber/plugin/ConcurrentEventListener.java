@@ -37,10 +37,9 @@ public interface ConcurrentEventListener extends Plugin {
      * @param publisher the event publisher
      */
     void setEventPublisher(EventPublisher publisher);
-    
+
     default void setEventPublisher(EventPublisher publisher, boolean isMultiThreaded) {
         setEventPublisher(publisher);
     }
-    
 
 }

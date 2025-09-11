@@ -153,7 +153,8 @@ public class TeamCityPlugin implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher, boolean isMultiThreaded) {
-        publisher.registerHandlerFor(Envelope.class, isMultiThreaded ? this::printTestCasesAfterTestRun : this::printTestCasesRealTime);
+        publisher.registerHandlerFor(Envelope.class,
+            isMultiThreaded ? this::printTestCasesAfterTestRun : this::printTestCasesRealTime);
     }
 
     private void printTestCasesRealTime(Envelope event) {
@@ -232,7 +233,6 @@ public class TeamCityPlugin implements ConcurrentEventListener {
                 .filter(testStepFinished -> testStepFinished.getTestStepId().equals(testStepStarted.getTestStepId()))
                 .findFirst();
     }
-    
 
     private void storeStepAttachments(Attachment event) {
         Optional<String> testStepId = event.getTestStepId();
