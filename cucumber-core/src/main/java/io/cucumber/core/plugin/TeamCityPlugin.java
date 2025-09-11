@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
 
 import static io.cucumber.messages.Convertor.toDuration;
 import static io.cucumber.query.LineageReducer.descending;
-import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENT;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_HOOKS;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_STEP_DEFINITIONS;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_SUGGESTIONS;
@@ -113,7 +113,7 @@ public class TeamCityPlugin implements ConcurrentEventListener {
 
     private final LineageReducer<List<TreeNode>> pathCollector = descending(PathCollector::new);
     private final Repository repository = Repository.builder()
-            .feature(INCLUDE_GHERKIN_DOCUMENT, true)
+            .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
             .feature(INCLUDE_STEP_DEFINITIONS, true)
             .feature(INCLUDE_HOOKS, true)
             .feature(INCLUDE_SUGGESTIONS, true)

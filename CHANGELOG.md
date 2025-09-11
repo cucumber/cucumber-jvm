@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
+
+### Changed
+- [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.2.0
+- [Core] Update dependency io.cucumber:gherkin to v35.0.0
+- [Core] Update dependency io.cucumber:html-formatter to v21.15.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.9.0
+- [Core] Update dependency io.cucumber:messages to v29.0.1 
+- [Core] Update dependency io.cucumber:pretty-formatter to v2.2.0
+- [Core] Update dependency io.cucumber:query to v14.0.1
+- [Core] Update dependency io.cucumber:testng-xml-formatter to v0.6.0
 
 ## [7.28.2] - 2025-09-09
 ### Fixed
