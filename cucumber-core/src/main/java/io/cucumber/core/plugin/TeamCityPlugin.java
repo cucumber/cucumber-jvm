@@ -10,6 +10,7 @@ import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.Hook;
 import io.cucumber.messages.types.JavaMethod;
 import io.cucumber.messages.types.JavaStackTraceElement;
+import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.Pickle;
 import io.cucumber.messages.types.PickleStep;
 import io.cucumber.messages.types.Rule;
@@ -20,6 +21,7 @@ import io.cucumber.messages.types.Suggestion;
 import io.cucumber.messages.types.TableRow;
 import io.cucumber.messages.types.TestCaseFinished;
 import io.cucumber.messages.types.TestCaseStarted;
+import io.cucumber.messages.types.TestRunFinished;
 import io.cucumber.messages.types.TestRunStarted;
 import io.cucumber.messages.types.TestStep;
 import io.cucumber.messages.types.TestStepFinished;
@@ -217,7 +219,7 @@ public class TeamCityPlugin implements ConcurrentEventListener {
         return newStack.subList(currentPath.size(), newStack.size());
     }
 
-    private void printTestStepStarted(io.cucumber.messages.types.TestStepStarted event) {
+    private void printTestStepStarted(TestStepStarted event) {
         String timestamp = formatTimeStamp(event.getTimestamp());
         query.findTestStepBy(event).ifPresent(testStep -> {
             String name = formatTestStepName(testStep);
@@ -416,7 +418,7 @@ public class TeamCityPlugin implements ConcurrentEventListener {
         finishNode(timestamp, currentPath.remove(currentPath.size() - 1));
     }
 
-    private void printTestRunFinished(io.cucumber.messages.types.TestRunFinished event) {
+    private void printTestRunFinished(TestRunFinished event) {
         String timestamp = formatTimeStamp(event.getTimestamp());
         out.print(TEMPLATE_PROGRESS_COUNTING_FINISHED, timestamp);
 
@@ -428,7 +430,7 @@ public class TeamCityPlugin implements ConcurrentEventListener {
         out.print(TEMPLATE_TEST_RUN_FINISHED, timestamp);
     }
 
-    private void printBeforeAfterAllResult(io.cucumber.messages.types.TestRunFinished event, String timestamp) {
+    private void printBeforeAfterAllResult(TestRunFinished event, String timestamp) {
         Optional<Exception> error = event.getException();
         if (!error.isPresent()) {
             return;
@@ -564,9 +566,9 @@ public class TeamCityPlugin implements ConcurrentEventListener {
     private static final class TreeNode {
         private final String name;
         private final String uri;
-        private final io.cucumber.messages.types.Location location;
+        private final Location location;
 
-        private TreeNode(String name, String uri, io.cucumber.messages.types.Location location) {
+        private TreeNode(String name, String uri, Location location) {
             this.name = name;
             this.uri = uri;
             this.location = location;
@@ -580,7 +582,7 @@ public class TeamCityPlugin implements ConcurrentEventListener {
             return uri;
         }
 
-        public io.cucumber.messages.types.Location getLocation() {
+        public Location getLocation() {
             return location;
         }
 
