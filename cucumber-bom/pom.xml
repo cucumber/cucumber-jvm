@@ -17,7 +17,7 @@
         <cucumber-expressions.version>18.0.1</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.2.0</cucumber-json-formatter.version>
         <gherkin.version>35.0.0</gherkin.version>
-        <html-formatter.version>21.15.0</html-formatter.version>
+        <html-formatter.version>21.15.1</html-formatter.version>
         <junit-xml-formatter.version>0.9.0</junit-xml-formatter.version>
         <messages.version>29.0.1</messages.version>
         <pretty-formatter.version>2.2.0</pretty-formatter.version>
