@@ -1,5 +1,6 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
@@ -68,7 +69,7 @@ public final class Plugins {
     public void setEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
         for (Plugin plugin : plugins) {
             if (plugin instanceof ConcurrentEventListener) {
-                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher);
+                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher, false);
             } else if (plugin instanceof EventListener) {
                 ((EventListener) plugin).setEventPublisher(eventPublisher);
             }
@@ -78,7 +79,7 @@ public final class Plugins {
     public void setSerialEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
         for (Plugin plugin : plugins) {
             if (plugin instanceof ConcurrentEventListener) {
-                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher);
+                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher, true);
             } else if (plugin instanceof EventListener) {
                 EventPublisher orderedEventPublisher = getOrderedEventPublisher(eventPublisher);
                 ((EventListener) plugin).setEventPublisher(orderedEventPublisher);
@@ -98,6 +99,8 @@ public final class Plugins {
     private static EventPublisher createCanonicalOrderEventPublisher(EventPublisher eventPublisher) {
         final CanonicalOrderEventPublisher canonicalOrderEventPublisher = new CanonicalOrderEventPublisher();
         eventPublisher.registerHandlerFor(Event.class, canonicalOrderEventPublisher::handle);
+        // Pass through for messages
+        eventPublisher.registerHandlerFor(Envelope.class, canonicalOrderEventPublisher::handle);
         return canonicalOrderEventPublisher;
     }
 

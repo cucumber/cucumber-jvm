@@ -43,11 +43,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static io.cucumber.messages.Convertor.toDuration;
 import static io.cucumber.query.LineageReducer.descending;
@@ -56,6 +61,8 @@ import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_HOOKS;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_STEP_DEFINITIONS;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_SUGGESTIONS;
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
@@ -122,10 +129,9 @@ public class TeamCityPlugin implements ConcurrentEventListener {
             .build();
     private final Query query = new Query(repository);
     private final TeamCityCommandWriter out;
-
-    // TODO: Does not work with concurrency
-    // https://github.com/cucumber/cucumber-jvm/issues/3042
     private List<TreeNode> currentPath = new ArrayList<>();
+    // Only used when executing concurrently.
+    private final Map<String, List<String>> attachmentMessagesByStepId = new HashMap<>();
 
     @SuppressWarnings("unused") // Used by PluginFactory
     public TeamCityPlugin() {
@@ -142,16 +148,111 @@ public class TeamCityPlugin implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(Envelope.class, event -> {
-            repository.update(event);
-            event.getTestRunStarted().ifPresent(this::printTestRunStarted);
-            event.getTestCaseStarted().ifPresent(this::printTestCaseStarted);
-            event.getTestStepStarted().ifPresent(this::printTestStepStarted);
-            event.getTestStepFinished().ifPresent(this::printTestStepFinished);
-            event.getTestCaseFinished().ifPresent(this::printTestCaseFinished);
-            event.getTestRunFinished().ifPresent(this::printTestRunFinished);
-            event.getAttachment().ifPresent(this::handleEmbedEvent);
-        });
+        setEventPublisher(publisher, true);
+    }
+
+    @Override
+    public void setEventPublisher(EventPublisher publisher, boolean isMultiThreaded) {
+        publisher.registerHandlerFor(Envelope.class, isMultiThreaded ? this::printTestCasesAfterTestRun : this::printTestCasesRealTime);
+    }
+
+    private void printTestCasesRealTime(Envelope event) {
+        repository.update(event);
+        event.getTestRunStarted().ifPresent(this::printTestRunStarted);
+        event.getTestCaseStarted().ifPresent(this::printTestCaseStarted);
+        event.getTestStepStarted().ifPresent(this::printTestStepStarted);
+        event.getTestStepFinished().ifPresent(this::printTestStepFinished);
+        event.getTestCaseFinished().ifPresent(this::printTestCaseFinished);
+        event.getTestRunFinished().ifPresent(this::printTestRunFinished);
+        event.getAttachment().ifPresent(this::handleAttachment);
+    }
+
+    private void printTestCasesAfterTestRun(Envelope event) {
+        repository.update(event);
+        event.getTestRunStarted().ifPresent(this::printTestRunStarted);
+        event.getTestRunFinished().ifPresent(this::printCompleteTestRun);
+        event.getAttachment().ifPresent(this::storeStepAttachments);
+    }
+
+    private void printCompleteTestRun(TestRunFinished event) {
+        findTestCasesInCanonicalOrder()
+                .forEach(this::printCompleteTestCase);
+        printTestRunFinished(event);
+    }
+
+    private Stream<TestCaseStarted> findTestCasesInCanonicalOrder() {
+        Comparator<Orderable<TestCaseStarted>> comparing = Comparator
+                .comparing((Orderable<TestCaseStarted> ord) -> ord.uri, nullsFirst(naturalOrder()))
+                .thenComparing(ord -> ord.line, nullsFirst(naturalOrder()));
+        return query.findAllTestCaseStarted().stream()
+                .map(testCaseStarted -> {
+                    Optional<Pickle> pickle = query.findPickleBy(testCaseStarted);
+                    String uri = pickle.map(Pickle::getUri).orElse(null);
+                    Long line = pickle.flatMap(query::findLocationOf).map(Location::getLine).orElse(null);
+                    return new Orderable<>(testCaseStarted, uri, line);
+                })
+                .sorted(comparing)
+                .map(ord -> ord.event);
+    }
+
+    private static final class Orderable<T> {
+        private final T event;
+        private final String uri;
+        private final Long line;
+
+        private Orderable(T event, String uri, Long line) {
+            this.event = event;
+            this.uri = uri;
+            this.line = line;
+        }
+    }
+
+    private void printCompleteTestCase(TestCaseStarted testCaseStarted) {
+        printTestCaseStarted(testCaseStarted);
+
+        query.findTestStepsStartedBy(testCaseStarted)
+                .forEach(testStepStarted -> {
+                    printTestStepStarted(testStepStarted);
+                    findAttachmentBy(testStepStarted).forEach(this::handleAttachment);
+                    findTestStepFinishedBy(testCaseStarted, testStepStarted).ifPresent(this::printTestStepFinished);
+                });
+
+        query.findTestCaseFinishedBy(testCaseStarted)
+                .ifPresent(this::printTestCaseFinished);
+    }
+
+    private List<String> findAttachmentBy(TestStepStarted testStepStarted) {
+        return attachmentMessagesByStepId.getOrDefault(testStepStarted.getTestStepId(), emptyList());
+    }
+
+    private Optional<TestStepFinished> findTestStepFinishedBy(
+            TestCaseStarted testCaseStarted, TestStepStarted testStepStarted
+    ) {
+        return query.findTestStepsFinishedBy(testCaseStarted).stream()
+                .filter(testStepFinished -> testStepFinished.getTestStepId().equals(testStepStarted.getTestStepId()))
+                .findFirst();
+    }
+    
+
+    private void storeStepAttachments(Attachment event) {
+        Optional<String> testStepId = event.getTestStepId();
+        if (testStepId.isPresent()) {
+            attachmentMessagesByStepId.compute(testStepId.get(), updateList(extractAttachmentMessage(event)));
+        } else {
+            handleAttachment(event);
+        }
+    }
+
+    private <K, E> BiFunction<K, List<E>, List<E>> updateList(E element) {
+        return (key, existing) -> {
+            if (existing != null) {
+                existing.add(element);
+                return existing;
+            }
+            List<E> list = new ArrayList<>();
+            list.add(element);
+            return list;
+        };
     }
 
     private void printTestRunStarted(TestRunStarted event) {
@@ -443,19 +544,27 @@ public class TeamCityPlugin implements ConcurrentEventListener {
         out.print(TEMPLATE_BEFORE_ALL_AFTER_ALL_FINISHED, timestamp, name);
     }
 
-    private void handleEmbedEvent(Attachment event) {
+    private void handleAttachment(Attachment event) {
+        String message = extractAttachmentMessage(event);
+        if (message != null) {
+            handleAttachment(message);
+        }
+    }
+
+    private void handleAttachment(String message) {
+        out.print(TEMPLATE_ATTACH_WRITE_EVENT, message);
+    }
+
+    private static String extractAttachmentMessage(Attachment event) {
         switch (event.getContentEncoding()) {
             case IDENTITY:
-                out.print(TEMPLATE_ATTACH_WRITE_EVENT, "Write event:\n" + event.getBody() + "\n");
-                return;
+                return "Write event:\n" + event.getBody() + "\n";
             case BASE64:
                 String name = event.getFileName().map(s -> s + " ").orElse("");
-                out.print(TEMPLATE_ATTACH_WRITE_EVENT,
-                    "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
-                            + " bytes]\n");
-                return;
+                return "Embed event: " + name + "[" + event.getMediaType() + " " + (event.getBody().length() / 4) * 3
+                        + " bytes]\n";
             default:
-                // Ignore.
+                return null;
         }
     }
 
