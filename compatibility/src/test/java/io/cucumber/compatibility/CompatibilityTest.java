@@ -49,7 +49,8 @@ public class CompatibilityTest {
                     .build()
                     .run();
         } catch (Exception e) {
-            // exception: Scenario with unknown parameter types fails by throwing an exceptions
+            // exception: Scenario with unknown parameter types fails by
+            // throwing an exceptions
             if (!"unknown-parameter-type".equals(testCase.getId())) {
                 throw e;
             }

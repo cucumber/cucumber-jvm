@@ -25,7 +25,10 @@ public final class CommandlineOptions {
     public static final String VERSION = "--version";
     public static final String VERSION_SHORT = "-v";
 
+    @Deprecated
     public static final String I18N = "--i18n";
+    public static final String I18N_LANGUAGES = "--i18n-languages";
+    public static final String I18N_KEYWORDS = "--i18n-keywords";
 
     public static final String THREADS = "--threads";
 

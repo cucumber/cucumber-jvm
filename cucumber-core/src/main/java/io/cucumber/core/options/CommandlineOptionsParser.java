@@ -7,7 +7,7 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.gherkin.GherkinDialect;
-import io.cucumber.gherkin.GherkinDialectProvider;
+import io.cucumber.gherkin.GherkinDialects;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import java.io.BufferedReader;
@@ -18,10 +18,10 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,6 +34,8 @@ import static io.cucumber.core.cli.CommandlineOptions.GLUE_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.HELP;
 import static io.cucumber.core.cli.CommandlineOptions.HELP_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.I18N;
+import static io.cucumber.core.cli.CommandlineOptions.I18N_KEYWORDS;
+import static io.cucumber.core.cli.CommandlineOptions.I18N_LANGUAGES;
 import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME;
 import static io.cucumber.core.cli.CommandlineOptions.MONOCHROME_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.NAME;
@@ -100,7 +102,14 @@ public final class CommandlineOptionsParser {
                 out.println(CORE_VERSION);
                 exitCode = 0;
                 return parsedOptions;
-            } else if (arg.equals(I18N)) {
+            } else if (arg.equals(I18N_LANGUAGES)) {
+                exitCode = printI18nLanguages();
+                return parsedOptions;
+            } else if (arg.equals(I18N_KEYWORDS)) {
+                String nextArg = removeArgFor(arg, args);
+                exitCode = printI18nKeywords(nextArg);
+                return parsedOptions;
+            } else if (arg.equals(I18N) || arg.equals(I18N_KEYWORDS)) {
                 String nextArg = removeArgFor(arg, args);
                 exitCode = printI18n(nextArg);
                 return parsedOptions;
@@ -196,30 +205,30 @@ public final class CommandlineOptionsParser {
     }
 
     private byte printI18n(String language) {
-        GherkinDialectProvider dialectProvider = new GherkinDialectProvider();
-        Set<String> languages = dialectProvider.getLanguages();
-
         if (language.equalsIgnoreCase("help")) {
-            if (language.equalsIgnoreCase("help")) {
-                List<GherkinDialect> dialects = languages.stream()
-                        .map(dialectProvider::getDialect)
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.toList());
-
-                int widestLanguage = findWidest(dialects, GherkinDialect::getLanguage);
-                int widestName = findWidest(dialects, GherkinDialect::getName);
-                int widestNativeName = findWidest(dialects, GherkinDialect::getNativeName);
-
-                for (GherkinDialect dialect : dialects) {
-                    printDialect(dialect, widestLanguage, widestName, widestNativeName);
-                }
-                return 0x0;
-            }
+            return printI18nLanguages();
         }
-        if (languages.contains(language)) {
-            dialectProvider.getDialect(language)
-                    .ifPresent(this::printKeywordsFor);
+        return printI18nKeywords(language);
+    }
+
+    private byte printI18nLanguages() {
+        Collection<GherkinDialect> dialects = GherkinDialects.getDialects();
+
+        int widestLanguage = findWidest(dialects, GherkinDialect::getLanguage);
+        int widestName = findWidest(dialects, GherkinDialect::getName);
+        int widestNativeName = findWidest(dialects, GherkinDialect::getNativeName);
+
+        for (GherkinDialect dialect : dialects) {
+            printDialect(dialect, widestLanguage, widestName, widestNativeName);
+        }
+        return 0x0;
+    }
+
+    private byte printI18nKeywords(String language) {
+        Optional<GherkinDialect> dialect = GherkinDialects.getDialect(language);
+        if (dialect.isPresent()) {
+            printKeywordsFor(dialect.get());
+            return 0x0;
         }
 
         out.println("Unrecognised ISO language code");
@@ -236,7 +245,7 @@ public final class CommandlineOptionsParser {
         }
     }
 
-    private int findWidest(List<GherkinDialect> dialects, Function<GherkinDialect, String> getNativeName) {
+    private int findWidest(Collection<GherkinDialect> dialects, Function<GherkinDialect, String> getNativeName) {
         return dialects.stream()
                 .map(getNativeName)
                 .mapToInt(String::length)
@@ -252,7 +261,7 @@ public final class CommandlineOptionsParser {
         out.println(langCode + name + nativeName);
     }
 
-    private byte printKeywordsFor(GherkinDialect dialect) {
+    private void printKeywordsFor(GherkinDialect dialect) {
         StringBuilder builder = new StringBuilder();
         List<List<String>> table = new ArrayList<>();
         addKeywordRow(table, "feature", dialect.getFeatureKeywords());
@@ -275,7 +284,6 @@ public final class CommandlineOptionsParser {
                 .build()
                 .formatTo(DataTable.create(table), builder);
         out.println(builder);
-        return 0x0;
     }
 
     private String rightPad(String text, int maxWidth) {
