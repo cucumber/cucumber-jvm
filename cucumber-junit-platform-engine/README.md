@@ -64,15 +64,34 @@ To improve the readability of the reports use the
 `cucumber.junit-platform.naming-strategy` configuration parameter. This  will
 include the feature name, scenario name, example number, etc. in the report.
 
+For `3.5.2` and below use:
+
 ```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.2.5</version>
+    <version>3.5.2</version>
     <configuration>
         <properties>
             <configurationParameters>
                 cucumber.junit-platform.naming-strategy=surefire
+            </configurationParameters>
+        </properties>
+    </configuration>
+</plugin>
+```
+
+For `3.5.4` and above use:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.5.2</version>
+    <configuration>
+        <properties>
+            <configurationParameters>
+                cucumber.junit-platform.naming-strategy=long
             </configurationParameters>
         </properties>
     </configuration>
@@ -456,7 +475,9 @@ cucumber.junit-platform.discovery.as-root-engine               # true or false
 cucumber.junit-platform.naming-strategy=                       # long, short or surefire.
                                                                # default: short
                                                                # long: include parent descriptor names in test descriptor.
-                                                               # surefire: Workaround to make test names appear nicely with Surefire.
+                                                               # surefire: Workaround to make test names appear nicely
+                                                               # with Surefire < 3.5.3. For 3.5.4 and above use the long
+                                                               # strategy. 
 
 cucumber.junit-platform.naming-strategy.short.example-name=    # number, number-and-pickle-if-parameterized or pickle.
                                                                # default: number-and-pickle-if-parameterized
@@ -736,7 +757,7 @@ Note: any files written by Cucumber will be overwritten during the rerun.
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.2.5</version>
+    <version>3.5.4</version>
     <configuration>
         <rerunFailingTestsCount>2</rerunFailingTestsCount>
         <properties>
@@ -744,7 +765,7 @@ Note: any files written by Cucumber will be overwritten during the rerun.
                  information to disambiguate between different
                  examples and scenarios. -->
             <configurationParameters>
-                cucumber.junit-platform.naming-strategy=surefire
+                cucumber.junit-platform.naming-strategy=long
             </configurationParameters>
         </properties>
     </configuration>
