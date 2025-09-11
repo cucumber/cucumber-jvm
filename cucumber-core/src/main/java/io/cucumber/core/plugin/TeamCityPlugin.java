@@ -31,6 +31,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.query.LineageReducer;
 import io.cucumber.query.Query;
+import io.cucumber.query.Repository;
 
 import java.io.Closeable;
 import java.io.PrintStream;
@@ -48,6 +49,10 @@ import java.util.regex.Pattern;
 
 import static io.cucumber.messages.Convertor.toDuration;
 import static io.cucumber.query.LineageReducer.descending;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENT;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_HOOKS;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_STEP_DEFINITIONS;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_SUGGESTIONS;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
@@ -107,7 +112,13 @@ public class TeamCityPlugin implements ConcurrentEventListener {
     private static final String TEMPLATE_ATTACH_WRITE_EVENT = TEAMCITY_PREFIX + "[message text='%s' status='NORMAL']";
 
     private final LineageReducer<List<TreeNode>> pathCollector = descending(PathCollector::new);
-    private final Query query = new Query();
+    private final Repository repository = Repository.builder()
+            .feature(INCLUDE_GHERKIN_DOCUMENT, true)
+            .feature(INCLUDE_STEP_DEFINITIONS, true)
+            .feature(INCLUDE_HOOKS, true)
+            .feature(INCLUDE_SUGGESTIONS, true)
+            .build();
+    private final Query query = new Query(repository);
     private final TeamCityCommandWriter out;
 
     // TODO: Does not work with concurrency
@@ -130,7 +141,7 @@ public class TeamCityPlugin implements ConcurrentEventListener {
     @Override
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(Envelope.class, event -> {
-            query.update(event);
+            repository.update(event);
             event.getTestRunStarted().ifPresent(this::printTestRunStarted);
             event.getTestCaseStarted().ifPresent(this::printTestCaseStarted);
             event.getTestStepStarted().ifPresent(this::printTestStepStarted);
