@@ -1,0 +1,27 @@
+{"meta":{"protocolVersion":"28.0.0","implementation":{"name":"fake-cucumber","version":"123.45.6"},"cpu":{"name":"arm64"},"os":{"name":"darwin","version":"24.5.0"},"runtime":{"name":"Node.js","version":"24.4.1"},"ci":{"name":"GitHub Actions","url":"https://github.com/cucumber-ltd/shouty.rb/actions/runs/154666429","buildNumber":"154666429","git":{"revision":"99684bcacf01d95875834d87903dcb072306c9ad","remote":"https://github.com/cucumber-ltd/shouty.rb.git","branch":"main"}}}}
+{"source":{"data":"Feature: Global hooks - AfterAll error\n  Errors in AfterAll hooks cause the whole test run to fail. The remaining AfterAll hooks will still run, in an\n  effort to clean up resources as well as possible.\n\n  Scenario: A passing scenario\n    When a step passes\n","uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.feature","mediaType":"text/x.cucumber.gherkin+plain"}}
+{"gherkinDocument":{"feature":{"tags":[],"location":{"line":1,"column":1},"language":"en","keyword":"Feature","name":"Global hooks - AfterAll error","description":"  Errors in AfterAll hooks cause the whole test run to fail. The remaining AfterAll hooks will still run, in an\n  effort to clean up resources as well as possible.","children":[{"scenario":{"id":"1","tags":[],"location":{"line":5,"column":3},"keyword":"Scenario","name":"A passing scenario","description":"","steps":[{"id":"0","location":{"line":6,"column":5},"keyword":"When ","keywordType":"Action","text":"a step passes"}],"examples":[]}}]},"comments":[],"uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.feature"}}
+{"pickle":{"id":"3","uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.feature","astNodeIds":["1"],"tags":[],"name":"A passing scenario","language":"en","steps":[{"id":"2","text":"a step passes","type":"Action","astNodeIds":["0"]}]}}
+{"stepDefinition":{"id":"6","pattern":{"type":"CUCUMBER_EXPRESSION","source":"a step passes"},"sourceReference":{"uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.ts","location":{"line":11}}}}
+{"hook":{"id":"4","type":"BEFORE_TEST_RUN","sourceReference":{"uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.ts","location":{"line":3}}}}
+{"hook":{"id":"5","type":"BEFORE_TEST_RUN","sourceReference":{"uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.ts","location":{"line":7}}}}
+{"hook":{"id":"7","type":"AFTER_TEST_RUN","sourceReference":{"uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.ts","location":{"line":15}}}}
+{"hook":{"id":"8","type":"AFTER_TEST_RUN","sourceReference":{"uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.ts","location":{"line":19}}}}
+{"hook":{"id":"9","type":"AFTER_TEST_RUN","sourceReference":{"uri":"samples/global-hooks-afterall-error/global-hooks-afterall-error.ts","location":{"line":23}}}}
+{"testRunStarted":{"id":"10","timestamp":{"seconds":0,"nanos":0}}}
+{"testRunHookStarted":{"testRunStartedId":"10","id":"11","hookId":"4","timestamp":{"seconds":0,"nanos":1000000}}}
+{"testRunHookFinished":{"testRunHookStartedId":"11","timestamp":{"seconds":0,"nanos":2000000},"result":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}}}}
+{"testRunHookStarted":{"testRunStartedId":"10","id":"12","hookId":"5","timestamp":{"seconds":0,"nanos":3000000}}}
+{"testRunHookFinished":{"testRunHookStartedId":"12","timestamp":{"seconds":0,"nanos":4000000},"result":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}}}}
+{"testCase":{"id":"13","pickleId":"3","testSteps":[{"id":"14","pickleStepId":"2","stepDefinitionIds":["6"],"stepMatchArgumentsLists":[{"stepMatchArguments":[]}]}],"testRunStartedId":"10"}}
+{"testCaseStarted":{"id":"15","testCaseId":"13","timestamp":{"seconds":0,"nanos":5000000},"attempt":0}}
+{"testStepStarted":{"testCaseStartedId":"15","testStepId":"14","timestamp":{"seconds":0,"nanos":6000000}}}
+{"testStepFinished":{"testCaseStartedId":"15","testStepId":"14","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":7000000}}}
+{"testCaseFinished":{"testCaseStartedId":"15","timestamp":{"seconds":0,"nanos":8000000},"willBeRetried":false}}
+{"testRunHookStarted":{"testRunStartedId":"10","id":"16","hookId":"9","timestamp":{"seconds":0,"nanos":9000000}}}
+{"testRunHookFinished":{"testRunHookStartedId":"16","timestamp":{"seconds":0,"nanos":10000000},"result":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}}}}
+{"testRunHookStarted":{"testRunStartedId":"10","id":"17","hookId":"8","timestamp":{"seconds":0,"nanos":11000000}}}
+{"testRunHookFinished":{"testRunHookStartedId":"17","timestamp":{"seconds":0,"nanos":12000000},"result":{"message":"AfterAll hook went wrong","exception":{"type":"Error","message":"AfterAll hook went wrong","stackTrace":"Error: AfterAll hook went wrong\nsamples/global-hooks-afterall-error/global-hooks-afterall-error.ts:19"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}}}}
+{"testRunHookStarted":{"testRunStartedId":"10","id":"18","hookId":"7","timestamp":{"seconds":0,"nanos":13000000}}}
+{"testRunHookFinished":{"testRunHookStartedId":"18","timestamp":{"seconds":0,"nanos":14000000},"result":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}}}}
+{"testRunFinished":{"testRunStartedId":"10","timestamp":{"seconds":0,"nanos":15000000},"success":false}}

@@ -1,0 +1,20 @@
+{"meta":{"protocolVersion":"28.0.0","implementation":{"name":"fake-cucumber","version":"123.45.6"},"cpu":{"name":"arm64"},"os":{"name":"darwin","version":"24.5.0"},"runtime":{"name":"Node.js","version":"24.4.1"},"ci":{"name":"GitHub Actions","url":"https://github.com/cucumber-ltd/shouty.rb/actions/runs/154666429","buildNumber":"154666429","git":{"revision":"99684bcacf01d95875834d87903dcb072306c9ad","remote":"https://github.com/cucumber-ltd/shouty.rb.git","branch":"main"}}}}
+{"source":{"data":"Feature: Global hooks with attachments\n  Attachments can be captured in BeforeAll and AfterAll hooks.\n\n  Scenario: A scenario\n    When a step passes\n","uri":"samples/global-hooks-attachments/global-hooks-attachments.feature","mediaType":"text/x.cucumber.gherkin+plain"}}
+{"gherkinDocument":{"feature":{"tags":[],"location":{"line":1,"column":1},"language":"en","keyword":"Feature","name":"Global hooks with attachments","description":"  Attachments can be captured in BeforeAll and AfterAll hooks.","children":[{"scenario":{"id":"1","tags":[],"location":{"line":4,"column":3},"keyword":"Scenario","name":"A scenario","description":"","steps":[{"id":"0","location":{"line":5,"column":5},"keyword":"When ","keywordType":"Action","text":"a step passes"}],"examples":[]}}]},"comments":[],"uri":"samples/global-hooks-attachments/global-hooks-attachments.feature"}}
+{"pickle":{"id":"3","uri":"samples/global-hooks-attachments/global-hooks-attachments.feature","astNodeIds":["1"],"tags":[],"name":"A scenario","language":"en","steps":[{"id":"2","text":"a step passes","type":"Action","astNodeIds":["0"]}]}}
+{"stepDefinition":{"id":"5","pattern":{"type":"CUCUMBER_EXPRESSION","source":"a step passes"},"sourceReference":{"uri":"samples/global-hooks-attachments/global-hooks-attachments.ts","location":{"line":7}}}}
+{"hook":{"id":"4","type":"BEFORE_TEST_RUN","sourceReference":{"uri":"samples/global-hooks-attachments/global-hooks-attachments.ts","location":{"line":3}}}}
+{"hook":{"id":"6","type":"AFTER_TEST_RUN","sourceReference":{"uri":"samples/global-hooks-attachments/global-hooks-attachments.ts","location":{"line":11}}}}
+{"testRunStarted":{"id":"7","timestamp":{"seconds":0,"nanos":0}}}
+{"testRunHookStarted":{"testRunStartedId":"7","id":"8","hookId":"4","timestamp":{"seconds":0,"nanos":1000000}}}
+{"attachment":{"testRunHookStartedId":"8","body":"Attachment from BeforeAll hook","contentEncoding":"IDENTITY","mediaType":"text/plain","timestamp":{"seconds":0,"nanos":2000000}}}
+{"testRunHookFinished":{"testRunHookStartedId":"8","timestamp":{"seconds":0,"nanos":3000000},"result":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}}}}
+{"testCase":{"id":"9","pickleId":"3","testSteps":[{"id":"10","pickleStepId":"2","stepDefinitionIds":["5"],"stepMatchArgumentsLists":[{"stepMatchArguments":[]}]}],"testRunStartedId":"7"}}
+{"testCaseStarted":{"id":"11","testCaseId":"9","timestamp":{"seconds":0,"nanos":4000000},"attempt":0}}
+{"testStepStarted":{"testCaseStartedId":"11","testStepId":"10","timestamp":{"seconds":0,"nanos":5000000}}}
+{"testStepFinished":{"testCaseStartedId":"11","testStepId":"10","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":6000000}}}
+{"testCaseFinished":{"testCaseStartedId":"11","timestamp":{"seconds":0,"nanos":7000000},"willBeRetried":false}}
+{"testRunHookStarted":{"testRunStartedId":"7","id":"12","hookId":"6","timestamp":{"seconds":0,"nanos":8000000}}}
+{"attachment":{"testRunHookStartedId":"12","body":"Attachment from AfterAll hook","contentEncoding":"IDENTITY","mediaType":"text/plain","timestamp":{"seconds":0,"nanos":9000000}}}
+{"testRunHookFinished":{"testRunHookStartedId":"12","timestamp":{"seconds":0,"nanos":10000000},"result":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}}}}
+{"testRunFinished":{"testRunStartedId":"7","timestamp":{"seconds":0,"nanos":11000000},"success":true}}

@@ -47,7 +47,7 @@
 {"testStepStarted":{"testCaseStartedId":"108","testStepId":"80","timestamp":{"seconds":0,"nanos":20000000}}}
 {"testStepFinished":{"testCaseStartedId":"108","testStepId":"80","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":21000000}}}
 {"testStepStarted":{"testCaseStartedId":"108","testStepId":"81","timestamp":{"seconds":0,"nanos":22000000}}}
-{"testStepFinished":{"testCaseStartedId":"108","testStepId":"81","testStepResult":{"message":"AssertionError: Expected values to be strictly equal:\n\n-8 !== 0\n\nsamples/examples-tables/examples-tables.feature:14","exception":{"type":"AssertionError","message":"Expected values to be strictly equal:\n\n-8 !== 0\n","stackTrace":"samples/examples-tables/examples-tables.feature:14"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":23000000}}}
+{"testStepFinished":{"testCaseStartedId":"108","testStepId":"81","testStepResult":{"message":"Expected values to be strictly equal:\n\n-8 !== 0\n","exception":{"type":"AssertionError","message":"Expected values to be strictly equal:\n\n-8 !== 0\n","stackTrace":"AssertionError: Expected values to be strictly equal:\n\n-8 !== 0\n\nsamples/examples-tables/examples-tables.feature:14"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":23000000}}}
 {"testCaseFinished":{"testCaseStartedId":"108","timestamp":{"seconds":0,"nanos":24000000},"willBeRetried":false}}
 {"testCaseStarted":{"id":"109","testCaseId":"82","timestamp":{"seconds":0,"nanos":25000000},"attempt":0}}
 {"testStepStarted":{"testCaseStartedId":"109","testStepId":"83","timestamp":{"seconds":0,"nanos":26000000}}}
@@ -55,7 +55,7 @@
 {"testStepStarted":{"testCaseStartedId":"109","testStepId":"84","timestamp":{"seconds":0,"nanos":28000000}}}
 {"testStepFinished":{"testCaseStartedId":"109","testStepId":"84","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":29000000}}}
 {"testStepStarted":{"testCaseStartedId":"109","testStepId":"85","timestamp":{"seconds":0,"nanos":30000000}}}
-{"testStepFinished":{"testCaseStartedId":"109","testStepId":"85","testStepResult":{"message":"AssertionError: Expected values to be strictly equal:\n\n-1 !== 0\n\nsamples/examples-tables/examples-tables.feature:14","exception":{"type":"AssertionError","message":"Expected values to be strictly equal:\n\n-1 !== 0\n","stackTrace":"samples/examples-tables/examples-tables.feature:14"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":31000000}}}
+{"testStepFinished":{"testCaseStartedId":"109","testStepId":"85","testStepResult":{"message":"Expected values to be strictly equal:\n\n-1 !== 0\n","exception":{"type":"AssertionError","message":"Expected values to be strictly equal:\n\n-1 !== 0\n","stackTrace":"AssertionError: Expected values to be strictly equal:\n\n-1 !== 0\n\nsamples/examples-tables/examples-tables.feature:14"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":31000000}}}
 {"testCaseFinished":{"testCaseStartedId":"109","timestamp":{"seconds":0,"nanos":32000000},"willBeRetried":false}}
 {"testCaseStarted":{"id":"110","testCaseId":"86","timestamp":{"seconds":0,"nanos":33000000},"attempt":0}}
 {"testStepStarted":{"testCaseStartedId":"110","testStepId":"87","timestamp":{"seconds":0,"nanos":34000000}}}
