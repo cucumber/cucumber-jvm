@@ -16,20 +16,20 @@
 {"testStepStarted":{"testCaseStartedId":"39","testStepId":"31","timestamp":{"seconds":0,"nanos":4000000}}}
 {"testStepFinished":{"testCaseStartedId":"39","testStepId":"31","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":5000000}}}
 {"testStepStarted":{"testCaseStartedId":"39","testStepId":"32","timestamp":{"seconds":0,"nanos":6000000}}}
-{"attachment":{"testCaseStartedId":"39","testStepId":"32","body":"We are logging some plain text (fail)","contentEncoding":"IDENTITY","mediaType":"text/x.cucumber.log+plain"}}
-{"testStepFinished":{"testCaseStartedId":"39","testStepId":"32","testStepResult":{"message":"Error: You asked me to fail\nsamples/markdown/markdown.feature.md:24","exception":{"type":"Error","message":"You asked me to fail","stackTrace":"samples/markdown/markdown.feature.md:24"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":7000000}}}
-{"testStepStarted":{"testCaseStartedId":"39","testStepId":"33","timestamp":{"seconds":0,"nanos":8000000}}}
-{"testStepFinished":{"testCaseStartedId":"39","testStepId":"33","testStepResult":{"status":"SKIPPED","duration":{"seconds":0,"nanos":0}},"timestamp":{"seconds":0,"nanos":9000000}}}
-{"testCaseFinished":{"testCaseStartedId":"39","timestamp":{"seconds":0,"nanos":10000000},"willBeRetried":false}}
-{"testCaseStarted":{"id":"40","testCaseId":"34","timestamp":{"seconds":0,"nanos":11000000},"attempt":0}}
-{"testStepStarted":{"testCaseStartedId":"40","testStepId":"35","timestamp":{"seconds":0,"nanos":12000000}}}
-{"testStepFinished":{"testCaseStartedId":"40","testStepId":"35","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":13000000}}}
-{"testStepStarted":{"testCaseStartedId":"40","testStepId":"36","timestamp":{"seconds":0,"nanos":14000000}}}
-{"testStepFinished":{"testCaseStartedId":"40","testStepId":"36","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":15000000}}}
-{"testStepStarted":{"testCaseStartedId":"40","testStepId":"37","timestamp":{"seconds":0,"nanos":16000000}}}
-{"attachment":{"testCaseStartedId":"40","testStepId":"37","body":"We are logging some plain text (pass)","contentEncoding":"IDENTITY","mediaType":"text/x.cucumber.log+plain"}}
-{"testStepFinished":{"testCaseStartedId":"40","testStepId":"37","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":17000000}}}
-{"testStepStarted":{"testCaseStartedId":"40","testStepId":"38","timestamp":{"seconds":0,"nanos":18000000}}}
-{"testStepFinished":{"testCaseStartedId":"40","testStepId":"38","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":19000000}}}
-{"testCaseFinished":{"testCaseStartedId":"40","timestamp":{"seconds":0,"nanos":20000000},"willBeRetried":false}}
-{"testRunFinished":{"testRunStartedId":"28","timestamp":{"seconds":0,"nanos":21000000},"success":false}}
+{"attachment":{"testCaseStartedId":"39","testStepId":"32","body":"We are logging some plain text (fail)","contentEncoding":"IDENTITY","mediaType":"text/x.cucumber.log+plain","timestamp":{"seconds":0,"nanos":7000000}}}
+{"testStepFinished":{"testCaseStartedId":"39","testStepId":"32","testStepResult":{"message":"You asked me to fail","exception":{"type":"Error","message":"You asked me to fail","stackTrace":"Error: You asked me to fail\nsamples/markdown/markdown.feature.md:24"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":8000000}}}
+{"testStepStarted":{"testCaseStartedId":"39","testStepId":"33","timestamp":{"seconds":0,"nanos":9000000}}}
+{"testStepFinished":{"testCaseStartedId":"39","testStepId":"33","testStepResult":{"status":"SKIPPED","duration":{"seconds":0,"nanos":0}},"timestamp":{"seconds":0,"nanos":10000000}}}
+{"testCaseFinished":{"testCaseStartedId":"39","timestamp":{"seconds":0,"nanos":11000000},"willBeRetried":false}}
+{"testCaseStarted":{"id":"40","testCaseId":"34","timestamp":{"seconds":0,"nanos":12000000},"attempt":0}}
+{"testStepStarted":{"testCaseStartedId":"40","testStepId":"35","timestamp":{"seconds":0,"nanos":13000000}}}
+{"testStepFinished":{"testCaseStartedId":"40","testStepId":"35","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":14000000}}}
+{"testStepStarted":{"testCaseStartedId":"40","testStepId":"36","timestamp":{"seconds":0,"nanos":15000000}}}
+{"testStepFinished":{"testCaseStartedId":"40","testStepId":"36","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":16000000}}}
+{"testStepStarted":{"testCaseStartedId":"40","testStepId":"37","timestamp":{"seconds":0,"nanos":17000000}}}
+{"attachment":{"testCaseStartedId":"40","testStepId":"37","body":"We are logging some plain text (pass)","contentEncoding":"IDENTITY","mediaType":"text/x.cucumber.log+plain","timestamp":{"seconds":0,"nanos":18000000}}}
+{"testStepFinished":{"testCaseStartedId":"40","testStepId":"37","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":19000000}}}
+{"testStepStarted":{"testCaseStartedId":"40","testStepId":"38","timestamp":{"seconds":0,"nanos":20000000}}}
+{"testStepFinished":{"testCaseStartedId":"40","testStepId":"38","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":21000000}}}
+{"testCaseFinished":{"testCaseStartedId":"40","timestamp":{"seconds":0,"nanos":22000000},"willBeRetried":false}}
+{"testRunFinished":{"testRunStartedId":"28","timestamp":{"seconds":0,"nanos":23000000},"success":false}}

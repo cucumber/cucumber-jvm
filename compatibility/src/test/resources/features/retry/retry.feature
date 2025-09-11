@@ -17,5 +17,11 @@ Feature: Retry
   Scenario: Test cases won't retry after failing more than the --retry limit
     Given a step that always fails
 
+  Scenario: Test cases won't retry when the status is AMBIGUOUS
+    Given an ambiguous step
+
+  Scenario: Test cases won't retry when the status is PENDING
+    Given a pending step
+
   Scenario: Test cases won't retry when the status is UNDEFINED
     Given a non-existent step
