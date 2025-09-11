@@ -1,21 +1,37 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Snippet;
+import io.cucumber.messages.types.Suggestion;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.query.Query;
+import io.cucumber.query.Repository;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENT;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_SUGGESTIONS;
 
 public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventListener {
 
-    private final Set<String> snippets = new LinkedHashSet<>();
+    private final Repository repository = Repository.builder()
+            .feature(INCLUDE_GHERKIN_DOCUMENT, true)
+            .feature(INCLUDE_SUGGESTIONS, true)
+            .build();
+    private final Query query = new Query(repository);
+
     private final Stats stats;
     private final PrintStream out;
 
@@ -25,18 +41,13 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
 
     DefaultSummaryPrinter(OutputStream out, Locale locale) {
         this.out = new PrintStream(out);
-        this.stats = new Stats(locale);
+        this.stats = new Stats(query, locale);
     }
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        stats.setEventPublisher(publisher);
-        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetsSuggestedEvent);
+        publisher.registerHandlerFor(Envelope.class, repository::update);
         publisher.registerHandlerFor(TestRunFinished.class, event -> print());
-    }
-
-    private void handleSnippetsSuggestedEvent(SnippetsSuggestedEvent event) {
-        this.snippets.addAll(event.getSuggestion().getSnippets());
     }
 
     private void print() {
@@ -65,6 +76,16 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
     }
 
     private void printSnippets() {
+        Set<Snippet> snippets = query.findAllTestCaseFinished().stream()
+                .map(query::findPickleBy)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(query::findSuggestionsBy)
+                .flatMap(Collection::stream)
+                .map(Suggestion::getSnippets)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
         if (snippets.isEmpty()) {
             return;
         }
@@ -72,8 +93,8 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
         out.println();
         out.println("You can implement missing steps with the snippets below:");
         out.println();
-        for (String snippet : snippets) {
-            out.println(snippet);
+        for (Snippet snippet : snippets) {
+            out.println(snippet.getCode());
             out.println();
         }
     }
