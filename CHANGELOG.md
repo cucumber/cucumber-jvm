@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
 
 ### Changed
+- [Core] Use a message based TeamCity plugin ([#3050](https://github.com/cucumber/cucumber-jvm/pull/3050) M.P. Korstanje)
 - [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.2.0
 - [Core] Update dependency io.cucumber:gherkin to v35.0.0
 - [Core] Update dependency io.cucumber:html-formatter to v21.15.0
