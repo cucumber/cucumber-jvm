@@ -10,10 +10,6 @@ import java.util.Optional;
 @API(status = API.Status.STABLE)
 public interface Snippet {
 
-    default Optional<String> language() {
-        return Optional.empty();
-    }
-
     /**
      * The language of the generated snippet.
      * 
