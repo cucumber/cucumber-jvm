@@ -6,6 +6,7 @@ import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.teamcityformatter.MessagesToTeamCityWriter;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import static io.cucumber.teamcityformatter.MessagesToTeamCityWriter.TeamCityFeature.PRINT_TEST_CASES_AFTER_TEST_RUN;
@@ -19,7 +20,7 @@ import static io.cucumber.teamcityformatter.MessagesToTeamCityWriter.TeamCityFea
  */
 public class TeamCityPlugin implements ConcurrentEventListener {
 
-    private final PrintStream out;
+    private final OutputStream out;
     private MessagesToTeamCityWriter writer;
 
     @SuppressWarnings("unused") // Used by PluginFactory
@@ -28,10 +29,15 @@ public class TeamCityPlugin implements ConcurrentEventListener {
         // allows them to associate the output to specific test cases. Printing
         // to system out - and potentially mixing with other formatters - is
         // intentional.
-        this(System.out);
+        this(new PrintStream(System.out) {
+            @Override
+            public void close() {
+                // Don't close System.out
+            }
+        });
     }
 
-    TeamCityPlugin(PrintStream out) {
+    TeamCityPlugin(OutputStream out) {
         this.out = out;
     }
 
@@ -53,6 +59,17 @@ public class TeamCityPlugin implements ConcurrentEventListener {
             writer.write(event);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        }
+
+        // TODO: Plugins should implement the closable interface
+        // and be closed by Cucumber
+        if (event.getTestRunFinished().isPresent()) {
+            try {
+                // Does not close System.out but will flush the intermediate writers
+                writer.close();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 
