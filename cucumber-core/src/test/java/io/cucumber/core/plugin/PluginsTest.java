@@ -57,7 +57,17 @@ class PluginsTest {
         ConcurrentEventListener plugin = mock(ConcurrentEventListener.class);
         plugins.addPlugin(plugin);
         plugins.setEventBusOnEventListenerPlugins(rootEventPublisher);
-        verify(plugin, times(1)).setEventPublisher(rootEventPublisher);
+        verify(plugin, times(1)).setEventPublisher(rootEventPublisher, false);
+    }
+
+    @Test
+    void shouldSetSerialEventBusOnConcurrentEventListener() {
+        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
+        Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
+        ConcurrentEventListener plugin = mock(ConcurrentEventListener.class);
+        plugins.addPlugin(plugin);
+        plugins.setSerialEventBusOnEventListenerPlugins(rootEventPublisher);
+        verify(plugin, times(1)).setEventPublisher(rootEventPublisher, true);
     }
 
     @Test

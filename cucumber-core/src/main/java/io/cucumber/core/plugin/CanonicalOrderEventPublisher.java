@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.core.eventbus.AbstractEventPublisher;
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.TestRunFinished;
 
@@ -20,4 +21,7 @@ final class CanonicalOrderEventPublisher extends AbstractEventPublisher {
         }
     }
 
+    public void handle(final Envelope event) {
+        send(event);
+    }
 }
