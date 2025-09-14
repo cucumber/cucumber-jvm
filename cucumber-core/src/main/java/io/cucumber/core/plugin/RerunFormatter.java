@@ -1,8 +1,9 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.messages.types.Envelope;
-import io.cucumber.messages.types.TestCaseFinished;
+import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.Pickle;
+import io.cucumber.messages.types.TestCaseStarted;
 import io.cucumber.messages.types.TestStepResult;
 import io.cucumber.messages.types.TestStepResultStatus;
 import io.cucumber.plugin.ConcurrentEventListener;
@@ -17,14 +18,16 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collector;
 
-import static io.cucumber.core.feature.FeatureWithLines.create;
-import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENT;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * Formatter for reporting all failed test cases and print their locations.
@@ -32,9 +35,8 @@ import static java.util.Objects.requireNonNull;
 public final class RerunFormatter implements ConcurrentEventListener {
 
     private final PrintWriter writer;
-    private final Map<String, Set<Integer>> featureAndFailedLinesMapping = new LinkedHashMap<>();
     private final Repository repository = Repository.builder()
-            .feature(INCLUDE_GHERKIN_DOCUMENT, true)
+            .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
             .build();
     private final Query query = new Query(repository);
 
@@ -71,41 +73,77 @@ public final class RerunFormatter implements ConcurrentEventListener {
     public void setEventPublisher(EventPublisher publisher) {
         publisher.registerHandlerFor(Envelope.class, event -> {
             repository.update(event);
-            event.getTestCaseFinished().ifPresent(this::handleTestCaseFinished);
             event.getTestRunFinished().ifPresent(testRunFinished -> finishReport());
         });
     }
 
-    private void handleTestCaseFinished(TestCaseFinished event) {
-        TestStepResultStatus testStepResultStatus = query.findMostSevereTestStepResultBy(event)
-                .map(TestStepResult::getStatus)
-                // By definition
-                .orElse(TestStepResultStatus.PASSED);
+    private static final class UriAndLine {
+        private final String uri;
+        private final Long line;
 
-        if (testStepResultStatus == TestStepResultStatus.PASSED
-                || testStepResultStatus == TestStepResultStatus.SKIPPED) {
-            return;
+        private UriAndLine(String uri, Long line) {
+            this.uri = uri;
+            this.line = line;
         }
 
-        query.findPickleBy(event).ifPresent(pickle -> {
-            Set<Integer> lines = featureAndFailedLinesMapping
-                    .computeIfAbsent(pickle.getUri(), s -> new HashSet<>());
-            query.findLocationOf(pickle).ifPresent(location -> {
-                // TODO: Messages are silly
-                lines.add((int) (long) location.getLine());
-            });
-        });
+        public String getUri() {
+            return uri;
+        }
+
+        public Long getLine() {
+            return line;
+        }
     }
 
     private void finishReport() {
-        for (Map.Entry<String, Set<Integer>> entry : featureAndFailedLinesMapping.entrySet()) {
-            String key = entry.getKey();
-            // TODO: Should these be relative?
-            FeatureWithLines featureWithLines = create(relativize(URI.create(key)), entry.getValue());
-            writer.println(featureWithLines);
-        }
-
+        query.findAllTestCaseStarted().stream()
+                .filter(this::isNotPassingOrSkipped)
+                .map(query::findPickleBy)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(this::createUriAndLine)
+                .collect(groupByUriAndThenCollectLines())
+                .forEach(this::printUriWithLines);
         writer.close();
+    }
+
+    private void printUriWithLines(String uri, TreeSet<Long> lines) {
+        writer.println(renderFeatureWithLines(uri, lines));
+    }
+
+    private static Collector<UriAndLine, ?, TreeMap<String, TreeSet<Long>>> groupByUriAndThenCollectLines() {
+        return groupingBy(
+            UriAndLine::getUri,
+            // Sort URIs
+            TreeMap::new,
+            mapping(
+                UriAndLine::getLine,
+                // Sort lines
+                toCollection(TreeSet::new)));
+    }
+
+    private static StringBuilder renderFeatureWithLines(String uri, TreeSet<Long> lines) {
+        String path = relativize(URI.create(uri)).toString();
+        StringBuilder builder = new StringBuilder(path);
+        for (Long line : lines) {
+            builder.append(':');
+            builder.append(line);
+        }
+        return builder;
+    }
+
+    private UriAndLine createUriAndLine(Pickle pickle) {
+        String uri = pickle.getUri();
+        Long line = query.findLocationOf(pickle).map(Location::getLine).orElse(null);
+        return new UriAndLine(uri, line);
+    }
+
+    private boolean isNotPassingOrSkipped(TestCaseStarted event) {
+        return query.findMostSevereTestStepResultBy(event)
+                .map(TestStepResult::getStatus)
+                .filter(status -> status != TestStepResultStatus.PASSED)
+                .filter(status -> status != TestStepResultStatus.SKIPPED)
+                .isPresent();
     }
 
 }

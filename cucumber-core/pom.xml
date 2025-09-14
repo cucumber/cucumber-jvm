@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.28.3-SNAPSHOT</version>
+        <version>7.29.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-core</artifactId>
@@ -17,7 +17,7 @@
         <jackson.version>2.20.0</jackson.version>
         <jsoup.version>1.21.2</jsoup.version>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
-        <xmlunit.version>2.10.3</xmlunit.version>
+        <xmlunit.version>2.10.4</xmlunit.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
         <mockito.version>5.19.0</mockito.version>
@@ -67,6 +67,10 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>pretty-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>teamcity-formatter</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>

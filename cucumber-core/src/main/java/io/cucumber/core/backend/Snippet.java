@@ -5,9 +5,20 @@ import org.apiguardian.api.API;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.Map;
+import java.util.Optional;
 
 @API(status = API.Status.STABLE)
 public interface Snippet {
+
+    /**
+     * The language of the generated snippet.
+     * 
+     * @see    io.cucumber.messages.types.Snippet#getLanguage()
+     * @return the language of the generated snippet.
+     */
+    default Optional<String> language() {
+        return Optional.empty();
+    }
 
     /**
      * @return a {@link java.text.MessageFormat} template used to generate a
