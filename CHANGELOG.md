@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [Core] Emit Suggestion message ([#3073](https://github.com/cucumber/cucumber-jvm/pull/3073) M.P. Korstanje)
 - [JUnit Platform Engine] Warn when surefire naming strategy is used ([#3067](https://github.com/cucumber/cucumber-jvm/pull/3067) M.P. Korstanje)
+- [Java] Generate annotations for Emoji dialect ([#3062](https://github.com/cucumber/cucumber-jvm/pull/3062) M.P. Korstanje)
 
 ### Fixed
 - [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
@@ -556,6 +557,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [7.2.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
-[7.0.0-RC1]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
-hub.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
 [7.0.0-RC1]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
