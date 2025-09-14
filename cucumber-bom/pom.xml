@@ -23,7 +23,7 @@
         <pretty-formatter.version>2.2.0</pretty-formatter.version>
         <query.version>14.0.1</query.version>
         <tag-expressions.version>6.1.2</tag-expressions.version>
-        <teamcity-formatter.version>0.1.0</teamcity-formatter.version>
+        <teamcity-formatter.version>0.1.1</teamcity-formatter.version>
         <testng-xml-formatter.version>0.6.0</testng-xml-formatter.version>
     </properties>
 
