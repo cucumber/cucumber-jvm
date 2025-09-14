@@ -72,7 +72,7 @@ public final class Runner {
             buildBackendWorlds();
 
             glue.prepareGlue(localeForPickle(pickle));
-            snippetGenerators = createSnippetGeneratorsForPickle(glue.getStepTypeRegistry());
+            snippetGenerators = createSnippetGeneratorsForPickle(pickle.getLanguage(), glue.getStepTypeRegistry());
 
             TestCase testCase = createTestCaseForPickle(pickle);
             testCase.run(bus);
@@ -124,11 +124,13 @@ public final class Runner {
         }
     }
 
-    private List<SnippetGenerator> createSnippetGeneratorsForPickle(StepTypeRegistry stepTypeRegistry) {
+    private List<SnippetGenerator> createSnippetGeneratorsForPickle(
+            String language, StepTypeRegistry stepTypeRegistry
+    ) {
         return backends.stream()
                 .map(Backend::getSnippet)
                 .filter(Objects::nonNull)
-                .map(s -> new SnippetGenerator(s, stepTypeRegistry.parameterTypeRegistry()))
+                .map(s -> new SnippetGenerator(language, s, stepTypeRegistry.parameterTypeRegistry()))
                 .collect(toList());
     }
 

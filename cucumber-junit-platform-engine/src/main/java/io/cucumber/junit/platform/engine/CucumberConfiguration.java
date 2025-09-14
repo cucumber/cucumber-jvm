@@ -16,6 +16,7 @@ import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
 import java.net.URI;
@@ -47,7 +48,10 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_QUIET_P
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.DefaultNamingStrategyProvider.SUREFIRE;
 import static java.util.Objects.requireNonNull;
+import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
+import static org.junit.platform.engine.DiscoveryIssue.create;
 
 class CucumberConfiguration implements
         io.cucumber.core.plugin.Options,
@@ -56,9 +60,11 @@ class CucumberConfiguration implements
         io.cucumber.core.eventbus.Options {
 
     private final ConfigurationParameters configurationParameters;
+    private final DiscoveryIssueReporter issueReporter;
 
-    CucumberConfiguration(ConfigurationParameters configurationParameters) {
+    CucumberConfiguration(ConfigurationParameters configurationParameters, DiscoveryIssueReporter issueReporter) {
         this.configurationParameters = requireNonNull(configurationParameters);
+        this.issueReporter = requireNonNull(issueReporter);
     }
 
     @Override
@@ -180,8 +186,20 @@ class CucumberConfiguration implements
     NamingStrategy namingStrategy() {
         return configurationParameters
                 .get(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, DefaultNamingStrategyProvider::getStrategyProvider)
+                .map(this::reportIssueIfSurefireStrategyIsUsed)
                 .orElse(DefaultNamingStrategyProvider.SHORT)
                 .create(configurationParameters);
+    }
+
+    private DefaultNamingStrategyProvider reportIssueIfSurefireStrategyIsUsed(DefaultNamingStrategyProvider strategy) {
+        if (strategy == SUREFIRE) {
+            issueReporter.reportIssue(create(
+                WARNING,
+                String.format(
+                    "The '%s=surefire' naming strategy does not work as expected on Surefire 3.5.4 and above. Upgrade Surefire to at least 3.5.4 and use the 'long' strategy instead.",
+                    JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME)));
+        }
+        return strategy;
     }
 
     Set<FeatureWithLinesSelector> featuresWithLines() {

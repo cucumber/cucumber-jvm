@@ -47,13 +47,12 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
     public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
         ConfigurationParameters configurationParameters = discoveryRequest.getConfigurationParameters();
         TestSource testSource = createEngineTestSource(configurationParameters);
-        CucumberConfiguration configuration = new CucumberConfiguration(configurationParameters);
-        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, configuration, testSource);
-
         DiscoveryIssueReporter issueReporter = deduplicating(forwarding( //
             discoveryRequest.getDiscoveryListener(), //
-            engineDescriptor.getUniqueId() //
+            uniqueId //
         ));
+        CucumberConfiguration configuration = new CucumberConfiguration(configurationParameters, issueReporter);
+        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, configuration, testSource);
 
         // Early out if Cucumber is the root engine and discovery has been
         // explicitly disabled. Workaround for:
