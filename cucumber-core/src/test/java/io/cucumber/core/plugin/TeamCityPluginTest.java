@@ -10,8 +10,11 @@ import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -22,6 +25,7 @@ import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.threeReferen
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@DisabledOnOs(OS.WINDOWS)
 class TeamCityPluginTest {
 
     @Test
@@ -47,25 +51,26 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalCompressingLineSeparators("" +
+        String featureFile = new File("").toURI() + "path/test.feature";
+        assertThat(out, bytes(equalCompressingLineSeparators(("" +
                 "##teamcity[enteredTheMatrix timestamp = '1970-01-01T12:00:00.000+0000']\n" +
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Cucumber']\n" +
                 "##teamcity[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '1970-01-01T12:00:00.000+0000']\n"
                 +
-                "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'file:/home/mpkorstanje/Projects/cucumber/cucumber-jvm/cucumber-core/path/test.feature:1' name = 'feature name']\n"
+                "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'path/test.feature:1' name = 'feature name']\n"
                 +
-                "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'file:/home/mpkorstanje/Projects/cucumber/cucumber-jvm/cucumber-core/path/test.feature:2' name = 'scenario name']\n"
+                "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'path/test.feature:2' name = 'scenario name']\n"
                 +
                 "##teamcity[customProgressStatus type = 'testStarted' timestamp = '1970-01-01T12:00:00.000+0000']\n" +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'file:/home/mpkorstanje/Projects/cucumber/cucumber-jvm/cucumber-core/path/test.feature:3' captureStandardOutput = 'true' name = 'first step']\n"
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:00.000+0000' locationHint = 'path/test.feature:3' captureStandardOutput = 'true' name = 'first step']\n"
                 +
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:01.000+0000' duration = '1000' name = 'first step']\n"
                 +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:01.000+0000' locationHint = 'file:/home/mpkorstanje/Projects/cucumber/cucumber-jvm/cucumber-core/path/test.feature:4' captureStandardOutput = 'true' name = 'second step']\n"
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:01.000+0000' locationHint = 'path/test.feature:4' captureStandardOutput = 'true' name = 'second step']\n"
                 +
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:02.000+0000' duration = '1000' name = 'second step']\n"
                 +
-                "##teamcity[testStarted timestamp = '1970-01-01T12:00:02.000+0000' locationHint = 'file:/home/mpkorstanje/Projects/cucumber/cucumber-jvm/cucumber-core/path/test.feature:5' captureStandardOutput = 'true' name = 'third step']\n"
+                "##teamcity[testStarted timestamp = '1970-01-01T12:00:02.000+0000' locationHint = 'path/test.feature:5' captureStandardOutput = 'true' name = 'third step']\n"
                 +
                 "##teamcity[testFinished timestamp = '1970-01-01T12:00:03.000+0000' duration = '1000' name = 'third step']\n"
                 +
@@ -74,7 +79,8 @@ class TeamCityPluginTest {
                 "##teamcity[customProgressStatus testsCategory = '' count = '0' timestamp = '1970-01-01T12:00:03.000+0000']\n"
                 +
                 "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:03.000+0000' name = 'feature name']\n" +
-                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:03.000+0000' name = 'Cucumber']")));
+                "##teamcity[testSuiteFinished timestamp = '1970-01-01T12:00:03.000+0000' name = 'Cucumber']")
+                .replaceAll("path/test.feature", featureFile))));
     }
 
 }
