@@ -87,7 +87,7 @@ For `3.5.4` and above use:
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>3.5.2</version>
+    <version>3.5.4</version>
     <configuration>
         <properties>
             <configurationParameters>
