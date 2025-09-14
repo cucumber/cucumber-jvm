@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -112,60 +113,34 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
     }
 
     private void printScenarioCounts() {
-        List<TestCaseFinished> allTestCaseFinished = query.findAllTestCaseFinished();
-        if (allTestCaseFinished.isEmpty()) {
-            out.println("0 Scenarios");
-            return;
-        }
-        Map<TestStepResultStatus, Long> scenarioSubCounts = allTestCaseFinished
-                .stream()
-                .collect(countTestStepResultStatusByTestCaseFinished());
+        out.println(formatSubCounts(
+                "Scenarios", 
+                query.findAllTestCaseFinished(), 
+                countTestStepResultStatusByTestCaseFinished()));
 
-        out.print(allTestCaseFinished.size());
-        out.print(" Scenarios (");
-        printSubCounts(scenarioSubCounts);
-        out.println(")");
     }
 
     private void printStepCounts() {
-        List<TestStepFinished> testStepsFinished = query.findAllTestStepFinished();
-        if (testStepsFinished.isEmpty()) {
-            out.println("0 Steps");
-            return;
-        }
-
-        Map<TestStepResultStatus, Long> testStepResultStatus = testStepsFinished.stream()
-                .collect(countTestStepResultStatusByTestStepFinished());
-
-        out.print(testStepsFinished.size());
-        out.print(" Steps (");
-        printSubCounts(testStepResultStatus);
-        out.println(")");
+        out.println(formatSubCounts(
+                "Steps", 
+                query.findAllTestStepFinished(), 
+                countTestStepResultStatusByTestStepFinished()));
     }
 
-    private void printSubCounts(Map<TestStepResultStatus, Long> subCounts) {
-        boolean addComma = false;
-        addComma = printSubCount(out, subCounts, TestStepResultStatus.FAILED, addComma);
-        addComma = printSubCount(out, subCounts, TestStepResultStatus.AMBIGUOUS, addComma);
-        addComma = printSubCount(out, subCounts, TestStepResultStatus.SKIPPED, addComma);
-        addComma = printSubCount(out, subCounts, TestStepResultStatus.PENDING, addComma);
-        addComma = printSubCount(out, subCounts, TestStepResultStatus.UNDEFINED, addComma);
-        addComma = printSubCount(out, subCounts, TestStepResultStatus.PASSED, addComma);
-    }
-
-    private boolean printSubCount(
-            PrintStream out, Map<TestStepResultStatus, Long> subCounts, TestStepResultStatus type, boolean addComma
-    ) {
-        long count = subCounts.getOrDefault(type, 0L);
-        if (count != 0) {
-            if (addComma) {
-                out.print(", ");
+    private <T> String formatSubCounts(String itemName, List<T> finishedItems, Collector<T, ?, Map<TestStepResultStatus, Long>> countTestStepResultStatusByItem) {
+        String countAndName = finishedItems.size() + " " + itemName;
+        StringJoiner joiner = new StringJoiner(",", countAndName + " (",")");
+        joiner.setEmptyValue(countAndName);
+        Map<TestStepResultStatus, Long> subCounts = finishedItems.stream()
+                .collect(countTestStepResultStatusByItem);
+        for (TestStepResultStatus value : TestStepResultStatus.values()) {
+            long count = subCounts.getOrDefault(value, 0L);
+            if (count != 0) {
+                Format format = formats.get(value.name().toLowerCase(ROOT));
+                joiner.add(format.text(count + " " + value.name().toLowerCase(ROOT)));
             }
-            Format format = formats.get(type.name().toLowerCase(ROOT));
-            out.print(format.text(count + " " + type.name().toLowerCase(ROOT)));
-            addComma = true;
         }
-        return addComma;
+        return joiner.toString();
     }
 
     private void printDuration() {
