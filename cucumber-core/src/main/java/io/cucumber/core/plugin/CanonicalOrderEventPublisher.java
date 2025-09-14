@@ -19,4 +19,5 @@ final class CanonicalOrderEventPublisher extends AbstractEventPublisher {
             queue.clear();
         }
     }
+
 }
