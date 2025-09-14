@@ -3,6 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Exception;
 import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.Pickle;
 import io.cucumber.messages.types.Snippet;
 import io.cucumber.messages.types.Suggestion;
 import io.cucumber.messages.types.TestCaseFinished;
@@ -102,14 +103,16 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
         }
         for (TestCaseFinished testCaseFinished : scenarios) {
             query.findPickleBy(testCaseFinished).ifPresent(pickle -> {
-                String location = pickle.getUri()
-                        + query.findLocationOf(pickle).map(Location::getLine).map(line -> ":" + line).orElse("");
-                out.println(location + " # " + pickle.getName());
+                out.println(formatLocation(pickle) + " # " + pickle.getName());
             });
         }
         if (!scenarios.isEmpty()) {
             out.println();
         }
+    }
+
+    private String formatLocation(Pickle pickle) {
+        return pickle.getUri() + query.findLocationOf(pickle).map(Location::getLine).map(line -> ":" + line).orElse("");
     }
 
     private void printScenarioCounts() {
