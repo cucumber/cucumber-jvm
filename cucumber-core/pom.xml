@@ -17,7 +17,7 @@
         <jackson.version>2.20.0</jackson.version>
         <jsoup.version>1.21.2</jsoup.version>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
-        <xmlunit.version>2.10.3</xmlunit.version>
+        <xmlunit.version>2.10.4</xmlunit.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
         <mockito.version>5.19.0</mockito.version>
