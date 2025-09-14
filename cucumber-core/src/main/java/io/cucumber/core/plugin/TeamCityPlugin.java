@@ -65,7 +65,8 @@ public class TeamCityPlugin implements ConcurrentEventListener {
         // and be closed by Cucumber
         if (event.getTestRunFinished().isPresent()) {
             try {
-                // Does not close System.out but will flush the intermediate writers
+                // Does not close System.out but will flush the intermediate
+                // writers
                 writer.close();
             } catch (IOException e) {
                 throw new IllegalStateException(e);
