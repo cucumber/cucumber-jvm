@@ -2,9 +2,12 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.gherkin.Step;
+import io.cucumber.plugin.event.Argument;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatch {
 
@@ -25,4 +28,10 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
         throw exception;
     }
 
+    List<List<Argument>> getDefinitionArguments() {
+        return exception.getMatches().stream()
+                .map(Match::getArguments)
+                .map(DefinitionArgument::createArguments)
+                .collect(Collectors.toList());
+    }
 }

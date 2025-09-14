@@ -5,10 +5,16 @@ import io.cucumber.datatable.DataTable;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.joining;
 
 abstract class AbstractJavaSnippet implements Snippet {
+
+    @Override
+    public Optional<String> language() {
+        return Optional.of("java");
+    }
 
     @Override
     public final String tableHint() {
