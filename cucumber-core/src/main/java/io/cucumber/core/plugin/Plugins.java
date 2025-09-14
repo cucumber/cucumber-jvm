@@ -99,8 +99,6 @@ public final class Plugins {
     private static EventPublisher createCanonicalOrderEventPublisher(EventPublisher eventPublisher) {
         final CanonicalOrderEventPublisher canonicalOrderEventPublisher = new CanonicalOrderEventPublisher();
         eventPublisher.registerHandlerFor(Event.class, canonicalOrderEventPublisher::handle);
-        // Pass through for messages
-        eventPublisher.registerHandlerFor(Envelope.class, canonicalOrderEventPublisher::handle);
         return canonicalOrderEventPublisher;
     }
 
