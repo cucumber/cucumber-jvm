@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -46,6 +47,10 @@ public final class SnippetGenerator {
         this.language = language;
         this.snippet = snippet;
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
+    }
+
+    public Optional<String> getLanguage() {
+        return snippet.language();
     }
 
     public List<String> getSnippet(Step step, SnippetType snippetType) {

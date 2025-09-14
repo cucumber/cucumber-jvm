@@ -6,6 +6,7 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.StepMatchArgument;
 import io.cucumber.messages.types.StepMatchArgumentsList;
+import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.Group;
 import io.cucumber.plugin.event.Location;
 import io.cucumber.plugin.event.Result;
@@ -199,14 +200,25 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     public List<StepMatchArgumentsList> getStepMatchArguments(PickleStepTestStep pickleStep) {
-        if (pickleStep.getDefinitionMatch() instanceof UndefinedPickleStepDefinitionMatch) {
+        PickleStepDefinitionMatch definitionMatch = pickleStep.getDefinitionMatch();
+        if (definitionMatch instanceof UndefinedPickleStepDefinitionMatch) {
             return emptyList();
         }
 
-        return singletonList(pickleStep.getDefinitionArgument()
-                .stream()
+        if (definitionMatch instanceof AmbiguousPickleStepDefinitionsMatch) {
+            AmbiguousPickleStepDefinitionsMatch ambiguousPickleStepDefinitionsMatch = (AmbiguousPickleStepDefinitionsMatch) definitionMatch;
+            return ambiguousPickleStepDefinitionsMatch.getDefinitionArguments().stream()
+                    .map(TestCase::createStepMatchArgumentList)
+                    .collect(toList());
+        }
+
+        return singletonList(createStepMatchArgumentList(pickleStep.getDefinitionArgument()));
+    }
+
+    private static StepMatchArgumentsList createStepMatchArgumentList(List<Argument> arguments) {
+        return arguments.stream()
                 .map(arg -> new StepMatchArgument(makeMessageGroup(arg.getGroup()), arg.getParameterTypeName()))
-                .collect(Collectors.collectingAndThen(toList(), StepMatchArgumentsList::new)));
+                .collect(Collectors.collectingAndThen(toList(), StepMatchArgumentsList::new));
     }
 
     private void emitTestCaseStarted(EventBus bus, Instant start, UUID executionId) {

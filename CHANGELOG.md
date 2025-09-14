@@ -11,7 +11,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- [Core] Emit Suggestion message ([#3073](https://github.com/cucumber/cucumber-jvm/pull/3073) M.P. Korstanje)
+- [JUnit Platform Engine] Warn when surefire naming strategy is used ([#3067](https://github.com/cucumber/cucumber-jvm/pull/3067) M.P. Korstanje)
 - [Java] Generate annotations for Emoji dialect ([#3062](https://github.com/cucumber/cucumber-jvm/pull/3062) M.P. Korstanje)
+
+### Fixed
+- [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
+
+### Changed
+- [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.2.0
+- [Core] Update dependency io.cucumber:gherkin to v35.0.0
+- [Core] Update dependency io.cucumber:html-formatter to v21.15.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.9.0
+- [Core] Update dependency io.cucumber:messages to v29.0.1 
+- [Core] Update dependency io.cucumber:pretty-formatter to v2.2.0
+- [Core] Update dependency io.cucumber:query to v14.0.1
+- [Core] Update dependency io.cucumber:testng-xml-formatter to v0.6.0
+
+## [7.28.2] - 2025-09-09
+### Fixed
+- [Core] Fix attachment rendering when using the Cucumber JSON Formatter ([cucumber-json-formatter/#12](https://github.com/cucumber/cucumber-json-formatter/pull/12), [#3069](https://github.com/cucumber/cucumber-jvm/pull/3069) M.P. Korstanje)
 
 ## [7.28.1] - 2025-09-03
 ### Fixed
@@ -484,7 +503,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.1...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.2...HEAD
+[7.28.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.1...v7.28.2
 [7.28.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.0...v7.28.1
 [7.28.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.2...v7.28.0
 [7.27.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.1...v7.27.2
