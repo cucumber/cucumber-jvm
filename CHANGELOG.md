@@ -18,14 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Core] Use a message based TeamCity plugin ([#3050](https://github.com/cucumber/cucumber-jvm/pull/3050) M.P. Korstanje)
-- [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.2.0
-- [Core] Update dependency io.cucumber:gherkin to v35.0.0
-- [Core] Update dependency io.cucumber:html-formatter to v21.15.0
-- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.9.0
-- [Core] Update dependency io.cucumber:messages to v29.0.1 
-- [Core] Update dependency io.cucumber:pretty-formatter to v2.2.0
-- [Core] Update dependency io.cucumber:query to v14.0.1
-- [Core] Update dependency io.cucumber:testng-xml-formatter to v0.6.0
+- [Core] Update dependency `io.cucumber:cucumber-json-formatter` to v0.2.1
+- [Core] Update dependency `io.cucumber:gherkin` to v35.0.0
+- [Core] Update dependency `io.cucumber:html-formatter` to v21.15.0
+- [Core] Update dependency `io.cucumber:junit-xml-formatter` to v0.9.0
+- [Core] Update dependency `io.cucumber:messages` to v29.0.1 
+- [Core] Update dependency `io.cucumber:pretty-formatter` to v2.2.0
+- [Core] Update dependency `io.cucumber:query` to v14.0.1
+- [Core] Update dependency `io.cucumber:testng-xml-formatter` to v0.6.0
 
 ## [7.28.2] - 2025-09-09
 ### Fixed
