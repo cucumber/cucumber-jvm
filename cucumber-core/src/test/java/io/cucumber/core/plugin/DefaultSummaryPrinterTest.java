@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
-import java.util.Locale;
 import java.util.UUID;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
@@ -39,7 +38,7 @@ class DefaultSummaryPrinterTest {
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withAdditionalPlugins(timeService, new DefaultSummaryPrinter(out, Locale.US))
+                .withAdditionalPlugins(timeService, new DefaultSummaryPrinter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step", oneReference()),

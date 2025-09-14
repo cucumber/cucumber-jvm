@@ -17,15 +17,14 @@ import io.cucumber.query.Repository;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -35,31 +34,26 @@ import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOC
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_SUGGESTIONS;
 import static java.util.Collections.emptyList;
 import static java.util.Locale.ROOT;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventListener {
-    private static final long ONE_SECOND = SECONDS.toNanos(1);
-    private static final long ONE_MINUTE = 60 * ONE_SECOND;
 
     private final Repository repository = Repository.builder()
             .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
             .feature(INCLUDE_SUGGESTIONS, true)
             .build();
     private final Query query = new Query(repository);
-
     private final PrintStream out;
-    private final Locale locale;
     private Formats formats = ansi();
 
     public DefaultSummaryPrinter() {
-        this(System.out, Locale.getDefault());
+        this(System.out);
     }
 
-    DefaultSummaryPrinter(OutputStream out, Locale locale) {
+    DefaultSummaryPrinter(OutputStream out) {
         this.out = new PrintStream(out);
-        this.locale = locale;
     }
 
     @Override
@@ -175,11 +169,16 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
     }
 
     private void printDuration() {
-        query.findTestRunDuration().ifPresent(duration -> {
-            out.printf("%dm", (duration.toNanos() / ONE_MINUTE));
-            DecimalFormat format = new DecimalFormat("0.000", new DecimalFormatSymbols(locale));
-            out.println(format.format(((double) (duration.toNanos() % ONE_MINUTE) / ONE_SECOND)) + "s");
-        });
+        query.findTestRunDuration()
+                .map(DefaultSummaryPrinter::formatDuration)
+                .ifPresent(out::println);
+    }
+
+    private static String formatDuration(Duration duration) {
+        long minutes = duration.toMinutes();
+        long seconds = duration.minusMinutes(minutes).getSeconds();
+        long milliseconds = TimeUnit.NANOSECONDS.toMillis(duration.getNano());
+        return String.format("%sm%s.%ss", minutes, seconds, milliseconds);
     }
 
     private void printErrors() {
@@ -189,7 +188,8 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
                 .map(TestStepResult::getException)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
+                .collect(toList());
+        
         if (errors.isEmpty()) {
             return;
         }
