@@ -28,7 +28,7 @@ class Stats implements ColorAware {
 
     private static final long ONE_SECOND = SECONDS.toNanos(1);
     private static final long ONE_MINUTE = 60 * ONE_SECOND;
-    private final Query query;
+     final Query query;
     private final Locale locale;
     private final List<Throwable> errors = new ArrayList<>();
     private Formats formats = ansi();
