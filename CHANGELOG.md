@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [Core] Emit Suggestion message ([#3073](https://github.com/cucumber/cucumber-jvm/pull/3073) M.P. Korstanje)
+- [JUnit Platform Engine] Warn when surefire naming strategy is used ([#3067](https://github.com/cucumber/cucumber-jvm/pull/3067) M.P. Korstanje)
 
 ### Fixed
 - [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
