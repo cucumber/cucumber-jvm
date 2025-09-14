@@ -12,7 +12,6 @@ import io.cucumber.messages.types.TestStepResultStatus;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.query.Query;
 import io.cucumber.query.Repository;
 
@@ -21,7 +20,6 @@ import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -66,8 +64,10 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(Envelope.class, repository::update);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> print());
+        publisher.registerHandlerFor(Envelope.class, envelope -> {
+            repository.update(envelope);
+            envelope.getTestRunFinished().ifPresent(testRunFinished -> print());
+        });
     }
 
     private void print() {
@@ -75,7 +75,6 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
         printStats();
         printErrors();
         printSnippets();
-        out.println();
     }
 
     private void printStats() {
@@ -83,9 +82,8 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
         printScenarioCounts();
         printStepCounts();
         printDuration();
-        out.println();
     }
-    
+
     private void printNonPassingScenarios() {
         Map<TestStepResultStatus, List<TestCaseFinished>> testCaseFinishedByStatus = query
                 .findAllTestCaseFinished()
@@ -109,7 +107,8 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
         }
         for (TestCaseFinished testCaseFinished : scenarios) {
             query.findPickleBy(testCaseFinished).ifPresent(pickle -> {
-                String location = pickle.getUri() + query.findLocationOf(pickle).map(Location::getLine).map(line -> ":" + line).orElse("");
+                String location = pickle.getUri()
+                        + query.findLocationOf(pickle).map(Location::getLine).map(line -> ":" + line).orElse("");
                 out.println(location + " # " + pickle.getName());
             });
         }
@@ -117,7 +116,7 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
             out.println();
         }
     }
-    
+
     private void printScenarioCounts() {
         List<TestCaseFinished> allTestCaseFinished = query.findAllTestCaseFinished();
         if (allTestCaseFinished.isEmpty()) {
@@ -134,14 +133,13 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
         out.println(")");
     }
 
-
     private void printStepCounts() {
         List<TestStepFinished> testStepsFinished = query.findAllTestStepFinished();
         if (testStepsFinished.isEmpty()) {
             out.println("0 Steps");
             return;
         }
-        
+
         Map<TestStepResultStatus, Long> testStepResultStatus = testStepsFinished.stream()
                 .collect(countTestStepResultStatusByTestStepFinished());
 
@@ -229,14 +227,14 @@ public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventL
     private Collector<TestCaseFinished, ?, Map<TestStepResultStatus, Long>> countTestStepResultStatusByTestCaseFinished() {
         return groupingBy(this::getTestStepResultStatusBy, counting());
     }
-    
+
     private TestStepResultStatus getTestStepResultStatusBy(TestCaseFinished testCaseFinished) {
         return query.findMostSevereTestStepResultBy(testCaseFinished)
                 .map(TestStepResult::getStatus)
                 // By definition
                 .orElse(TestStepResultStatus.PASSED);
     }
-    
+
     private static Collector<TestStepFinished, ?, Map<TestStepResultStatus, Long>> countTestStepResultStatusByTestStepFinished() {
         return groupingBy(DefaultSummaryPrinter::getTestStepResultStatusBy, counting());
     }
