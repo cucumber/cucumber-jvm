@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
+- [Core] Restore `TestSourcesModel` ([#3076](https://github.com/cucumber/cucumber-jvm/pull/3076) M.P. Korstanje)
 
 ### Changed
 - [Core] Use a message based `RerunFormatter` ([#3075](https://github.com/cucumber/cucumber-jvm/pull/3075) M.P. Korstanje)
