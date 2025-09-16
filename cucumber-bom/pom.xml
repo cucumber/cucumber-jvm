@@ -21,7 +21,7 @@
         <junit-xml-formatter.version>0.9.0</junit-xml-formatter.version>
         <messages.version>29.0.1</messages.version>
         <pretty-formatter.version>2.2.0</pretty-formatter.version>
-        <query.version>14.0.1</query.version>
+        <query.version>14.1.0</query.version>
         <tag-expressions.version>6.1.2</tag-expressions.version>
         <teamcity-formatter.version>0.1.1</teamcity-formatter.version>
         <testng-xml-formatter.version>0.6.0</testng-xml-formatter.version>
