@@ -21,13 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Core] Use a message based `RerunFormatter` ([#3075](https://github.com/cucumber/cucumber-jvm/pull/3075) M.P. Korstanje)
 - [Core] Use a message based `TeamCityPlugin` ([#3050](https://github.com/cucumber/cucumber-jvm/pull/3050) M.P. Korstanje)
+- [Core] Use a message based `DefaultSummaryPrinter` ([#3028](https://github.com/cucumber/cucumber-jvm/pull/3028) M.P. Korstanje)
+- [Core] Use a message based `ProgressFormatter` ([#3028](https://github.com/cucumber/cucumber-jvm/pull/3028) M.P. Korstanje)
 - [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.2.0
 - [Core] Update dependency io.cucumber:gherkin to v35.0.0
 - [Core] Update dependency io.cucumber:html-formatter to v21.15.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter to v0.9.0
 - [Core] Update dependency io.cucumber:messages to v29.0.1 
-- [Core] Update dependency io.cucumber:pretty-formatter to v2.2.0
-- [Core] Update dependency io.cucumber:query to v14.0.1
+- [Core] Update dependency io.cucumber:pretty-formatter to v2.3.0
+- [Core] Update dependency io.cucumber:query to v14.3.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter to v0.6.0
 
 ## [7.28.2] - 2025-09-09

@@ -49,9 +49,9 @@ class DefaultSummaryPrinterTest {
 
         assertThat(out, bytes(equalCompressingLineSeparators("" +
                 "\n" +
-                "1 Scenarios (1 passed)\n" +
-                "3 Steps (3 passed)\n" +
-                "0m3.384s\n")));
+                "1 scenarios (1 passed)\n" +
+                "3 steps (3 passed)\n" +
+                "0m 3.384s\n")));
     }
 
 }
