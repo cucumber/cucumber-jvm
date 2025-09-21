@@ -10,16 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.29.0] - 2025-09-21
 ### Added
 - [Core] Emit Suggestion message ([#3073](https://github.com/cucumber/cucumber-jvm/pull/3073) M.P. Korstanje)
 - [JUnit Platform Engine] Warn when surefire naming strategy is used ([#3067](https://github.com/cucumber/cucumber-jvm/pull/3067) M.P. Korstanje)
 - [Java] Generate annotations for Emoji dialect ([#3062](https://github.com/cucumber/cucumber-jvm/pull/3062) M.P. Korstanje)
-
-### Fixed
-- [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
-- [Core] Restore `TestSourcesModel` ([#3076](https://github.com/cucumber/cucumber-jvm/pull/3076) M.P. Korstanje)
-- [Core] Optimize `StringUtils.isWhitespace` ([gherkin/#468](https://github.com/cucumber/gherkin/pull/468) Julien Kronegg,  M.P. Korstanje)
-
 
 ### Changed
 - [Core] Use a message based `RerunFormatter` ([#3075](https://github.com/cucumber/cucumber-jvm/pull/3075) M.P. Korstanje)
@@ -30,10 +26,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:gherkin to v35.1.0
 - [Core] Update dependency io.cucumber:html-formatter to v21.15.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter to v0.9.0
-- [Core] Update dependency io.cucumber:messages to v29.0.1 
+- [Core] Update dependency io.cucumber:messages to v29.0.1
 - [Core] Update dependency io.cucumber:pretty-formatter to v2.3.0
 - [Core] Update dependency io.cucumber:query to v14.3.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter to v0.6.0
+
+### Fixed
+- [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
+- [Core] Restore `TestSourcesModel` ([#3076](https://github.com/cucumber/cucumber-jvm/pull/3076) M.P. Korstanje)
+- [Core] Optimize `StringUtils.isWhitespace` ([gherkin/#468](https://github.com/cucumber/gherkin/pull/468) Julien Kronegg,  M.P. Korstanje)
 
 ## [7.28.2] - 2025-09-09
 ### Fixed
@@ -510,7 +511,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.2...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.29.0...HEAD
+[7.29.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.2...v7.29.0
 [7.28.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.1...v7.28.2
 [7.28.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.0...v7.28.1
 [7.28.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.27.2...v7.28.0
