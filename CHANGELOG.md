@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Emit StepMatchArgumentsList for ambiguous steps ([#3066](https://github.com/cucumber/cucumber-jvm/pull/3066) M.P. Korstanje)
 - [Core] Restore `TestSourcesModel` ([#3076](https://github.com/cucumber/cucumber-jvm/pull/3076) M.P. Korstanje)
+- [Core] Optimize `StringUtils.isWhitespace` ([gherkin/#468](https://github.com/cucumber/gherkin/pull/468) Julien Kronegg,  M.P. Korstanje)
+
 
 ### Changed
 - [Core] Use a message based `RerunFormatter` ([#3075](https://github.com/cucumber/cucumber-jvm/pull/3075) M.P. Korstanje)
@@ -25,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Use a message based `DefaultSummaryPrinter` ([#3028](https://github.com/cucumber/cucumber-jvm/pull/3028) M.P. Korstanje)
 - [Core] Use a message based `ProgressFormatter` ([#3028](https://github.com/cucumber/cucumber-jvm/pull/3028) M.P. Korstanje)
 - [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.2.0
-- [Core] Update dependency io.cucumber:gherkin to v35.0.0
+- [Core] Update dependency io.cucumber:gherkin to v35.1.0
 - [Core] Update dependency io.cucumber:html-formatter to v21.15.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter to v0.9.0
 - [Core] Update dependency io.cucumber:messages to v29.0.1 
