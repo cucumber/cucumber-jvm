@@ -16,7 +16,7 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDe
 import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.ScenarioOutlineDescriptor;
 import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor;
 import io.cucumber.plugin.event.Node;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
@@ -140,7 +140,7 @@ final class FeatureFileResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
-        Set<Resource> resources = selector.getClasspathResources();
+        Set<org.junit.platform.commons.io.Resource> resources = selector.getResources();
         if (!resources.stream().allMatch(resource -> isFeature(resource.getName()))) {
             return resolveClasspathResourceSelectorAsPackageSelector(selector);
         }

@@ -8,7 +8,7 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -75,6 +76,7 @@ import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResourceByName;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
@@ -226,17 +228,30 @@ class CucumberTestEngineTest {
             public URI getUri() {
                 return source.toURI();
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o == null || getClass() != o.getClass())
+                    return false;
+                TestResource that = (TestResource) o;
+                return Objects.equals(name, that.name) && Objects.equals(source, that.source);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(name, source);
+            }
         }
         Set<Resource> resources = new LinkedHashSet<>(Arrays.asList(
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature")),
+                new File("duplicate1.feature")),
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature")),
+                new File("duplicate2.feature")),
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))));
+                new File("duplicate3.feature"))));
 
         Throwable exception = EngineTestKit.engine(ENGINE_ID) //
-                .selectors(selectClasspathResource(resources)) //
+                .selectors(selectClasspathResourceByName(resources)) //
                 .discover() //
                 .getDiscoveryIssues() //
                 .get(0) //
