@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,7 @@ import java.util.Map;
 import static java.nio.file.Files.newBufferedWriter;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.util.stream.Collectors.joining;
 
 /* This class generates the cucumber-java Interfaces and package-info
  * based on the languages and keywords from the GherkinDialects
@@ -26,8 +28,8 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  */
 public class GenerateI18n {
 
-    // The generated files for and Emoij do not compile :(
-    private static final List<String> unsupported = Arrays.asList("em", "en-tx");
+    // For any language that does not compile
+    private static final List<String> unsupported = Collections.emptyList();
 
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
@@ -78,7 +80,7 @@ public class GenerateI18n {
 
         private void writeKeyWordAnnotation(GherkinDialect dialect, String keyword) {
             String normalizedLanguage = getNormalizedLanguage(dialect);
-            String normalizedKeyword = getNormalizedKeyWord(keyword);
+            String normalizedKeyword = getNormalizedKeyWord(dialect, keyword);
 
             Map<String, String> binding = new LinkedHashMap<>();
             binding.put("lang", normalizedLanguage);
@@ -101,8 +103,31 @@ public class GenerateI18n {
             }
         }
 
+        private static String capitalize(String s) {
+            return s.substring(0, 1).toUpperCase() + s.substring(1);
+        }
+
+        private static String getNormalizedKeyWord(GherkinDialect dialect, String keyword) {
+            // Exception: Use the symbol names for the Emoj language. 
+            // Emoji are not legal identifiers in Java.
+            if (dialect.getLanguage().equals("em")) {
+                return getNormalizedEmojiKeyWord(keyword);
+            }
+            return getNormalizedKeyWord(keyword);
+        }
+        
+        private static String getNormalizedEmojiKeyWord(String keyword) {
+            String titleCasedName = keyword.codePoints().mapToObj(Character::getName)
+                    .map(s -> s.split(" "))
+                    .flatMap(Arrays::stream)
+                    .map(String::toLowerCase)
+                    .map(DialectWriter::capitalize)
+                    .collect(joining(" "));
+            return getNormalizedKeyWord(titleCasedName);
+        }
+
         private static String getNormalizedKeyWord(String keyword) {
-            return normalize(keyword.replaceAll("[\\s',!\u00AD]", ""));
+            return normalize(keyword.replaceAll("[\\s',!\u00AD’]", ""));
         }
 
         private static String normalize(CharSequence s) {
@@ -133,5 +158,6 @@ public class GenerateI18n {
         private static String getNormalizedLanguage(GherkinDialect dialect) {
             return dialect.getLanguage().replaceAll("[\\s-]", "_").toLowerCase();
         }
+
     }
 }
