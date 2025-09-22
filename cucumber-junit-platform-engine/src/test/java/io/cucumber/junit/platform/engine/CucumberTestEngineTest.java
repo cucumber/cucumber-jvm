@@ -34,7 +34,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -209,46 +208,13 @@ class CucumberTestEngineTest {
 
     @Test
     void classpathResourceSelectorThrowIfDuplicateResources() {
-        class TestResource implements Resource {
-
-            private final String name;
-            private final File source;
-
-            TestResource(String name, File source) {
-                this.name = name;
-                this.source = source;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public URI getUri() {
-                return source.toURI();
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (o == null || getClass() != o.getClass())
-                    return false;
-                TestResource that = (TestResource) o;
-                return Objects.equals(name, that.name) && Objects.equals(source, that.source);
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(name, source);
-            }
-        }
         Set<Resource> resources = new LinkedHashSet<>(Arrays.asList(
-            new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("duplicate1.feature")),
-            new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("duplicate2.feature")),
-            new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("duplicate3.feature"))));
+            Resource.of("io/cucumber/junit/platform/engine/single.feature",
+                new File("duplicate1.feature").toURI()),
+            Resource.of("io/cucumber/junit/platform/engine/single.feature",
+                new File("duplicate2.feature").toURI()),
+            Resource.of("io/cucumber/junit/platform/engine/single.feature",
+                new File("duplicate3.feature").toURI())));
 
         Throwable exception = EngineTestKit.engine(ENGINE_ID) //
                 .selectors(selectClasspathResourceByName(resources)) //
