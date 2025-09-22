@@ -140,6 +140,7 @@
                                 <java classname="org.junit.platform.console.ConsoleLauncher" fork="true"
                                       failonerror="true" newenvironment="true" maxmemory="512m"
                                       classpathref="maven.test.classpath">
+                                    <arg value="execute"/>
                                     <arg value="--include-engine"/>
                                     <arg value="cucumber"/>
                                     <arg value="--scan-classpath"/>
