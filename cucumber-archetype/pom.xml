@@ -15,9 +15,9 @@
     <description>Cucumber JVM: Maven Archetype</description>
 
     <properties>
-        <junit-jupiter.version>6.0.0-RC3</junit-jupiter.version>
-        <assertj.version>3.27.5</assertj.version>
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <junit-jupiter.version>5.14.0-RC1</junit-jupiter.version>
+        <assertj.version>3.27.6</assertj.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     </properties>
 

@@ -31,7 +31,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>6.0.0-RC3</version>
+                <version>5.14.0-RC1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -140,7 +140,6 @@
                                 <java classname="org.junit.platform.console.ConsoleLauncher" fork="true"
                                       failonerror="true" newenvironment="true" maxmemory="512m"
                                       classpathref="maven.test.classpath">
-                                    <arg value="execute"/>
                                     <arg value="--include-engine"/>
                                     <arg value="cucumber"/>
                                     <arg value="--scan-classpath"/>
