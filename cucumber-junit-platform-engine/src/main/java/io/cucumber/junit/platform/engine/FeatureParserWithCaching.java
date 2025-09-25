@@ -31,14 +31,14 @@ class FeatureParserWithCaching {
         return parseResource(new PathAdapter(resource));
     }
 
-    Optional<Feature> parseResource(org.junit.platform.commons.support.Resource resource) {
+    Optional<Feature> parseResource(org.junit.platform.commons.io.Resource resource) {
         return parseResource(new ResourceAdapter(resource));
     }
 
     private static class ResourceAdapter implements Resource {
-        private final org.junit.platform.commons.support.Resource resource;
+        private final org.junit.platform.commons.io.Resource resource;
 
-        public ResourceAdapter(org.junit.platform.commons.support.Resource resource) {
+        public ResourceAdapter(org.junit.platform.commons.io.Resource resource) {
             this.resource = resource;
         }
 

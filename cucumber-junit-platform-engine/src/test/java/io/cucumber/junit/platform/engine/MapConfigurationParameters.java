@@ -30,11 +30,6 @@ class MapConfigurationParameters implements ConfigurationParameters {
     }
 
     @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
     public Set<String> keySet() {
         return parameters.keySet();
     }
