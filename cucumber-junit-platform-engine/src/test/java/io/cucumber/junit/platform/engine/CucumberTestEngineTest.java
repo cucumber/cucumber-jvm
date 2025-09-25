@@ -229,11 +229,11 @@ class CucumberTestEngineTest {
         }
         Set<Resource> resources = new LinkedHashSet<>(Arrays.asList(
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature")),
+                new File("duplicate1.feature")),
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature")),
+                new File("duplicate2.feature")),
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))));
+                new File("duplicate3.feature"))));
 
         Throwable exception = EngineTestKit.engine(ENGINE_ID) //
                 .selectors(selectClasspathResource(resources)) //
