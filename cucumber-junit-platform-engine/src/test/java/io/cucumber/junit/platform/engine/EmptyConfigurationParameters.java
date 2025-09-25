@@ -19,11 +19,6 @@ class EmptyConfigurationParameters implements ConfigurationParameters {
     }
 
     @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
     public Set<String> keySet() {
         return Collections.emptySet();
     }
