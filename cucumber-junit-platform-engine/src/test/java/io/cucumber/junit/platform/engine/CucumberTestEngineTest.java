@@ -8,7 +8,7 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
@@ -75,6 +75,7 @@ import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResourceByName;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
@@ -207,36 +208,16 @@ class CucumberTestEngineTest {
 
     @Test
     void classpathResourceSelectorThrowIfDuplicateResources() {
-        class TestResource implements Resource {
-
-            private final String name;
-            private final File source;
-
-            TestResource(String name, File source) {
-                this.name = name;
-                this.source = source;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public URI getUri() {
-                return source.toURI();
-            }
-        }
         Set<Resource> resources = new LinkedHashSet<>(Arrays.asList(
-            new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("duplicate1.feature")),
-            new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("duplicate2.feature")),
-            new TestResource("io/cucumber/junit/platform/engine/single.feature",
-                new File("duplicate3.feature"))));
+            Resource.of("io/cucumber/junit/platform/engine/single.feature",
+                new File("duplicate1.feature").toURI()),
+            Resource.of("io/cucumber/junit/platform/engine/single.feature",
+                new File("duplicate2.feature").toURI()),
+            Resource.of("io/cucumber/junit/platform/engine/single.feature",
+                new File("duplicate3.feature").toURI())));
 
         Throwable exception = EngineTestKit.engine(ENGINE_ID) //
-                .selectors(selectClasspathResource(resources)) //
+                .selectors(selectClasspathResourceByName(resources)) //
                 .discover() //
                 .getDiscoveryIssues() //
                 .get(0) //
