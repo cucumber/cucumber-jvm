@@ -15,7 +15,7 @@
 {"testCase":{"id":"27","pickleId":"14","testSteps":[{"id":"28","hookId":"15"},{"id":"29","pickleStepId":"13","stepDefinitionIds":["17"],"stepMatchArgumentsLists":[{"stepMatchArguments":[]}]},{"id":"30","hookId":"19"}],"testRunStartedId":"20"}}
 {"testCaseStarted":{"id":"31","testCaseId":"21","timestamp":{"seconds":0,"nanos":1000000},"attempt":0}}
 {"testStepStarted":{"testCaseStartedId":"31","testStepId":"22","timestamp":{"seconds":0,"nanos":2000000}}}
-{"testStepFinished":{"testCaseStartedId":"31","testStepId":"22","testStepResult":{"message":"Error: Exception in conditional hook\nsamples/hooks-conditional/hooks-conditional.feature:7","exception":{"type":"Error","message":"Exception in conditional hook","stackTrace":"samples/hooks-conditional/hooks-conditional.feature:7"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":3000000}}}
+{"testStepFinished":{"testCaseStartedId":"31","testStepId":"22","testStepResult":{"message":"Exception in conditional hook","exception":{"type":"Error","message":"Exception in conditional hook","stackTrace":"Error: Exception in conditional hook\nsamples/hooks-conditional/hooks-conditional.feature:7"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":3000000}}}
 {"testStepStarted":{"testCaseStartedId":"31","testStepId":"23","timestamp":{"seconds":0,"nanos":4000000}}}
 {"testStepFinished":{"testCaseStartedId":"31","testStepId":"23","testStepResult":{"status":"SKIPPED","duration":{"seconds":0,"nanos":0}},"timestamp":{"seconds":0,"nanos":5000000}}}
 {"testCaseFinished":{"testCaseStartedId":"31","timestamp":{"seconds":0,"nanos":6000000},"willBeRetried":false}}
@@ -23,7 +23,7 @@
 {"testStepStarted":{"testCaseStartedId":"32","testStepId":"25","timestamp":{"seconds":0,"nanos":8000000}}}
 {"testStepFinished":{"testCaseStartedId":"32","testStepId":"25","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":9000000}}}
 {"testStepStarted":{"testCaseStartedId":"32","testStepId":"26","timestamp":{"seconds":0,"nanos":10000000}}}
-{"testStepFinished":{"testCaseStartedId":"32","testStepId":"26","testStepResult":{"message":"Error: Exception in conditional hook\nsamples/hooks-conditional/hooks-conditional.feature:11","exception":{"type":"Error","message":"Exception in conditional hook","stackTrace":"samples/hooks-conditional/hooks-conditional.feature:11"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":11000000}}}
+{"testStepFinished":{"testCaseStartedId":"32","testStepId":"26","testStepResult":{"message":"Exception in conditional hook","exception":{"type":"Error","message":"Exception in conditional hook","stackTrace":"Error: Exception in conditional hook\nsamples/hooks-conditional/hooks-conditional.feature:11"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":11000000}}}
 {"testCaseFinished":{"testCaseStartedId":"32","timestamp":{"seconds":0,"nanos":12000000},"willBeRetried":false}}
 {"testCaseStarted":{"id":"33","testCaseId":"27","timestamp":{"seconds":0,"nanos":13000000},"attempt":0}}
 {"testStepStarted":{"testCaseStartedId":"33","testStepId":"28","timestamp":{"seconds":0,"nanos":14000000}}}

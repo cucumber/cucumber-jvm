@@ -24,7 +24,7 @@
 {"testStepStarted":{"testCaseStartedId":"30","testStepId":"22","timestamp":{"seconds":0,"nanos":10000000}}}
 {"testStepFinished":{"testCaseStartedId":"30","testStepId":"22","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":11000000}}}
 {"testStepStarted":{"testCaseStartedId":"30","testStepId":"23","timestamp":{"seconds":0,"nanos":12000000}}}
-{"testStepFinished":{"testCaseStartedId":"30","testStepId":"23","testStepResult":{"message":"Error: Exception in step\nsamples/hooks/hooks.feature:8","exception":{"type":"Error","message":"Exception in step","stackTrace":"samples/hooks/hooks.feature:8"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":13000000}}}
+{"testStepFinished":{"testCaseStartedId":"30","testStepId":"23","testStepResult":{"message":"Exception in step","exception":{"type":"Error","message":"Exception in step","stackTrace":"Error: Exception in step\nsamples/hooks/hooks.feature:8"},"status":"FAILED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":13000000}}}
 {"testStepStarted":{"testCaseStartedId":"30","testStepId":"24","timestamp":{"seconds":0,"nanos":14000000}}}
 {"testStepFinished":{"testCaseStartedId":"30","testStepId":"24","testStepResult":{"status":"PASSED","duration":{"seconds":0,"nanos":1000000}},"timestamp":{"seconds":0,"nanos":15000000}}}
 {"testCaseFinished":{"testCaseStartedId":"30","timestamp":{"seconds":0,"nanos":16000000},"willBeRetried":false}}
