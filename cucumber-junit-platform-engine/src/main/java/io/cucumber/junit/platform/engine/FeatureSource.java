@@ -10,6 +10,7 @@ import org.junit.platform.engine.support.descriptor.UriSource;
 
 import java.net.URI;
 
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static org.junit.platform.engine.support.descriptor.ClasspathResourceSource.CLASSPATH_SCHEME;
 
 abstract class FeatureSource {
@@ -20,6 +21,11 @@ abstract class FeatureSource {
 
     static FeatureSource of(URI uri) {
         if (CLASSPATH_SCHEME.equals(uri.getScheme())) {
+            if (!uri.getSchemeSpecificPart().startsWith("/")) {
+                // ClasspathResourceSource.from expects all resources to start
+                // with a forward slash
+                uri = URI.create(CLASSPATH_SCHEME_PREFIX + "/" + uri.getRawSchemeSpecificPart());
+            }
             ClasspathResourceSource source = ClasspathResourceSource.from(uri);
             return new FeatureClasspathSource(source);
         }
