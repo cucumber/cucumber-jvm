@@ -3,24 +3,16 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureIdentifier;
 import io.cucumber.core.feature.FeatureParser;
-import io.cucumber.core.gherkin.Feature;
-import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.core.resource.ResourceScanner;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
-import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureDescriptor;
-import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.ExamplesDescriptor;
-import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.RuleDescriptor;
-import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.ScenarioOutlineDescriptor;
-import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.commons.support.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.ClasspathResourceSelector;
@@ -45,11 +37,6 @@ import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.Featu
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementAt;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementsAt;
 import static io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector.selectElementsOf;
-import static io.cucumber.junit.platform.engine.FeatureOrigin.EXAMPLES_SEGMENT_TYPE;
-import static io.cucumber.junit.platform.engine.FeatureOrigin.EXAMPLE_SEGMENT_TYPE;
-import static io.cucumber.junit.platform.engine.FeatureOrigin.FEATURE_SEGMENT_TYPE;
-import static io.cucumber.junit.platform.engine.FeatureOrigin.RULE_SEGMENT_TYPE;
-import static io.cucumber.junit.platform.engine.FeatureOrigin.SCENARIO_SEGMENT_TYPE;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -57,17 +44,16 @@ import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 
 final class FeatureFileResolver implements SelectorResolver {
-    private final ResourceScanner<Feature> featureScanner;
+    private final ResourceScanner<FeatureWithSource> featureScanner;
 
-    private final CucumberConfiguration configuration;
     private final FeatureParserWithCaching featureParser;
     private final Predicate<String> packageFilter;
     private final DiscoveryIssueReporter issueReporter;
+    private final CucumberTestDescriptor.Builder testDescriptorBuilder;
 
     FeatureFileResolver(
             CucumberConfiguration configuration, Predicate<String> packageFilter, DiscoveryIssueReporter issueReporter
     ) {
-        this.configuration = configuration;
         this.packageFilter = packageFilter;
         this.issueReporter = issueReporter;
         this.featureParser = createFeatureParser(configuration, issueReporter);
@@ -75,6 +61,7 @@ final class FeatureFileResolver implements SelectorResolver {
             ClassLoaders::getDefaultClassLoader,
             FeatureIdentifier::isFeature,
             featureParser::parseResource);
+        this.testDescriptorBuilder = CucumberTestDescriptor.builder(configuration);
     }
 
     private static FeatureParserWithCaching createFeatureParser(
@@ -84,8 +71,9 @@ final class FeatureFileResolver implements SelectorResolver {
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
         UuidGenerator uuidGenerator = uuidGeneratorServiceLoader.loadUuidGenerator();
         FeatureParser featureParser = new FeatureParser(uuidGenerator::generateId);
+        FeatureParserWithSource featureParserWithSource = new FeatureParserWithSource(featureParser);
         FeatureParserWithIssueReporting featureParserWithIssueReporting = new FeatureParserWithIssueReporting(
-            featureParser, issueReporter);
+            featureParserWithSource, issueReporter);
         return new FeatureParserWithCaching(featureParserWithIssueReporting);
     }
 
@@ -101,7 +89,7 @@ final class FeatureFileResolver implements SelectorResolver {
     }
 
     public Resolution resolve(FeatureElementSelector selector, Context context) {
-        Feature feature = selector.getFeature();
+        FeatureWithSource feature = selector.getFeature();
         Node selected = selector.getElement();
         return selected.getParent()
                 .map(parent -> context.addToParent(() -> selectElement(feature, parent),
@@ -110,6 +98,12 @@ final class FeatureFileResolver implements SelectorResolver {
                 .map(descriptor -> Match.exact(descriptor, () -> selectElementsOf(feature, selected)))
                 .map(Resolution::match)
                 .orElseGet(Resolution::unresolved);
+    }
+
+    private Function<TestDescriptor, Optional<TestDescriptor>> createTestDescriptor(
+            FeatureWithSource feature, Node selected
+    ) {
+        return parent -> testDescriptorBuilder.build(parent, feature, selected);
     }
 
     public Resolution resolve(FeatureWithLinesSelector selector) {
@@ -218,76 +212,6 @@ final class FeatureFileResolver implements SelectorResolver {
         UniqueId uniqueId = selector.getUniqueId();
         Set<FeatureWithLinesSelector> selectors = FeatureWithLinesSelector.from(uniqueId);
         return toResolution(selectors);
-    }
-
-    private Function<TestDescriptor, Optional<TestDescriptor>> createTestDescriptor(Feature feature, Node node) {
-        return parent -> {
-            NamingStrategy namingStrategy = configuration.namingStrategy();
-            FeatureOrigin source = FeatureOrigin.fromUri(feature.getUri());
-            String name = namingStrategy.name(node);
-            TestSource testSource = source.nodeSource(node);
-            if (node instanceof Node.Feature) {
-                return Optional.of(new FeatureDescriptor(
-                    parent.getUniqueId().append(FEATURE_SEGMENT_TYPE, feature.getUri().toString()),
-                    name,
-                    testSource,
-                    feature));
-            }
-
-            int line = node.getLocation().getLine();
-
-            if (node instanceof Node.Rule) {
-                return Optional.of(new RuleDescriptor(
-                    configuration,
-                    parent.getUniqueId().append(RULE_SEGMENT_TYPE,
-                        String.valueOf(line)),
-                    name,
-                    testSource,
-                    node));
-            }
-
-            if (node instanceof Node.Scenario) {
-                return Optional.of(new PickleDescriptor(
-                    configuration,
-                    parent.getUniqueId().append(SCENARIO_SEGMENT_TYPE,
-                        String.valueOf(line)),
-                    name,
-                    testSource,
-                    feature.getPickleAt(node)));
-            }
-
-            if (node instanceof Node.ScenarioOutline) {
-                return Optional.of(new ScenarioOutlineDescriptor(
-                    configuration,
-                    parent.getUniqueId().append(SCENARIO_SEGMENT_TYPE,
-                        String.valueOf(line)),
-                    name,
-                    testSource,
-                    node));
-            }
-
-            if (node instanceof Node.Examples) {
-                return Optional.of(new ExamplesDescriptor(
-                    configuration,
-                    parent.getUniqueId().append(EXAMPLES_SEGMENT_TYPE,
-                        String.valueOf(line)),
-                    name,
-                    testSource,
-                    node));
-            }
-
-            if (node instanceof Node.Example) {
-                Pickle pickle = feature.getPickleAt(node);
-                return Optional.of(new PickleDescriptor(
-                    configuration,
-                    parent.getUniqueId().append(EXAMPLE_SEGMENT_TYPE,
-                        String.valueOf(line)),
-                    namingStrategy.nameExample(node, pickle),
-                    testSource,
-                    pickle));
-            }
-            throw new IllegalStateException("Got a " + node.getClass() + " but didn't have a case to handle it");
-        };
     }
 
     private static Resolution toResolution(Set<? extends DiscoverySelector> selectors) {
