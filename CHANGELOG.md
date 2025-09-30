@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [JUnit Platform Engine] Use `FileSource.withPosition` ([#3084](https://github.com/cucumber/cucumber-jvm/pull/3084) M.P. Korstanje)
 
+### Changed
+- [JUnit Platform Engine] Use JUnit Platform 1.14.0 (JUnit Jupiter 5.14.0)
+
 ## [7.29.0] - 2025-09-21
 ### Added
 - [Core] Emit Suggestion message ([#3073](https://github.com/cucumber/cucumber-jvm/pull/3073) M.P. Korstanje)

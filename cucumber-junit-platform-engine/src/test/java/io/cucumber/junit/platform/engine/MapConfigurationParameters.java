@@ -29,7 +29,6 @@ class MapConfigurationParameters implements ConfigurationParameters {
         return get(key, Boolean::valueOf);
     }
 
-    @Override
     public int size() {
         return 0;
     }
