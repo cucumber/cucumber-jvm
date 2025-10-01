@@ -18,7 +18,6 @@ class EmptyConfigurationParameters implements ConfigurationParameters {
         return Optional.empty();
     }
 
-    @Override
     public int size() {
         return 0;
     }

@@ -1,7 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.exception.CucumberException;
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.resource.Resource;
 
 import java.io.IOException;
@@ -16,22 +15,22 @@ import java.util.Optional;
 
 class FeatureParserWithCaching {
 
-    private final Map<URI, Optional<Feature>> cache = new HashMap<>();
+    private final Map<URI, Optional<FeatureWithSource>> cache = new HashMap<>();
     private final FeatureParserWithIssueReporting delegate;
 
     FeatureParserWithCaching(FeatureParserWithIssueReporting delegate) {
         this.delegate = delegate;
     }
 
-    Optional<Feature> parseResource(Resource resource) {
+    Optional<FeatureWithSource> parseResource(Resource resource) {
         return cache.computeIfAbsent(resource.getUri(), uri -> delegate.parseResource(resource));
     }
 
-    Optional<Feature> parseResource(Path resource) {
+    Optional<FeatureWithSource> parseResource(Path resource) {
         return parseResource(new PathAdapter(resource));
     }
 
-    Optional<Feature> parseResource(org.junit.platform.commons.support.Resource resource) {
+    Optional<FeatureWithSource> parseResource(org.junit.platform.commons.support.Resource resource) {
         return parseResource(new ResourceAdapter(resource));
     }
 

@@ -6,8 +6,12 @@ import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.DiscoveryIssue;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
@@ -22,20 +26,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CucumberConfigurationTest {
 
+    private final List<DiscoveryIssue> issues = new ArrayList<>();
+    private final DiscoveryIssueReporter issueReporter = DiscoveryIssueReporter.collecting(issues);
+
     @Test
     void getPluginNames() {
         ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PROPERTY_NAME,
             "html:path/to/report.html");
 
-        assertThat(new CucumberConfiguration(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config, issueReporter).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             hasItem("html:path/to/report.html"));
 
         CucumberConfiguration htmlAndJson = new CucumberConfiguration(
             new MapConfigurationParameters(Constants.PLUGIN_PROPERTY_NAME,
-                "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson"));
+                "html:path/with spaces/to/report.html, message:path/with spaces/to/report.ndjson"),
+            issueReporter);
 
         assertThat(htmlAndJson.plugins().stream()
                 .map(Options.Plugin::pluginString)
@@ -48,7 +56,7 @@ class CucumberConfigurationTest {
         ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/token");
 
-        assertThat(new CucumberConfiguration(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config, issueReporter).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             hasItem("io.cucumber.core.plugin.PublishFormatter:some/token"));
@@ -58,7 +66,7 @@ class CucumberConfigurationTest {
     void getPluginNamesWithNothingEnabled() {
         ConfigurationParameters config = new EmptyConfigurationParameters();
 
-        assertThat(new CucumberConfiguration(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config, issueReporter).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             empty());
@@ -69,7 +77,7 @@ class CucumberConfigurationTest {
         ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME, "true");
 
-        assertThat(new CucumberConfiguration(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config, issueReporter).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             empty());
@@ -80,7 +88,7 @@ class CucumberConfigurationTest {
         ConfigurationParameters config = new MapConfigurationParameters(
             Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "true");
 
-        assertThat(new CucumberConfiguration(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config, issueReporter).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             hasItem("io.cucumber.core.plugin.PublishFormatter"));
@@ -92,7 +100,7 @@ class CucumberConfigurationTest {
             Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, "false",
             Constants.PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME, "some/token"));
 
-        assertThat(new CucumberConfiguration(config).plugins().stream()
+        assertThat(new CucumberConfiguration(config, issueReporter).plugins().stream()
                 .map(Options.Plugin::pluginString)
                 .collect(toList()),
             empty());
@@ -103,12 +111,12 @@ class CucumberConfigurationTest {
         MapConfigurationParameters ansiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,
             "true");
-        assertTrue(new CucumberConfiguration(ansiColors).isMonochrome());
+        assertTrue(new CucumberConfiguration(ansiColors, issueReporter).isMonochrome());
 
         MapConfigurationParameters noAnsiColors = new MapConfigurationParameters(
             Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME,
             "false");
-        assertFalse(new CucumberConfiguration(noAnsiColors).isMonochrome());
+        assertFalse(new CucumberConfiguration(noAnsiColors, issueReporter).isMonochrome());
     }
 
     @Test
@@ -117,7 +125,7 @@ class CucumberConfigurationTest {
             Constants.GLUE_PROPERTY_NAME,
             "com.example.app, com.example.glue");
 
-        assertThat(new CucumberConfiguration(config).getGlue(),
+        assertThat(new CucumberConfiguration(config, issueReporter).getGlue(),
             contains(
                 URI.create("classpath:/com/example/app"),
                 URI.create("classpath:/com/example/glue")));
@@ -128,12 +136,12 @@ class CucumberConfigurationTest {
         ConfigurationParameters dryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
             "true");
-        assertTrue(new CucumberConfiguration(dryRun).isDryRun());
+        assertTrue(new CucumberConfiguration(dryRun, issueReporter).isDryRun());
 
         ConfigurationParameters noDryRun = new MapConfigurationParameters(
             Constants.EXECUTION_DRY_RUN_PROPERTY_NAME,
             "false");
-        assertFalse(new CucumberConfiguration(noDryRun).isDryRun());
+        assertFalse(new CucumberConfiguration(noDryRun, issueReporter).isDryRun());
     }
 
     @Test
@@ -142,12 +150,12 @@ class CucumberConfigurationTest {
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
             "underscore");
 
-        assertThat(new CucumberConfiguration(underscore).getSnippetType(), is(SnippetType.UNDERSCORE));
+        assertThat(new CucumberConfiguration(underscore, issueReporter).getSnippetType(), is(SnippetType.UNDERSCORE));
 
         ConfigurationParameters camelcase = new MapConfigurationParameters(
             Constants.SNIPPET_TYPE_PROPERTY_NAME,
             "camelcase");
-        assertThat(new CucumberConfiguration(camelcase).getSnippetType(), is(SnippetType.CAMELCASE));
+        assertThat(new CucumberConfiguration(camelcase, issueReporter).getSnippetType(), is(SnippetType.CAMELCASE));
     }
 
     @Test
@@ -155,15 +163,15 @@ class CucumberConfigurationTest {
         ConfigurationParameters enabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
             "true");
-        assertTrue(new CucumberConfiguration(enabled).isParallelExecutionEnabled());
+        assertTrue(new CucumberConfiguration(enabled, issueReporter).isParallelExecutionEnabled());
 
         ConfigurationParameters disabled = new MapConfigurationParameters(
             Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME,
             "false");
-        assertFalse(new CucumberConfiguration(disabled).isParallelExecutionEnabled());
+        assertFalse(new CucumberConfiguration(disabled, issueReporter).isParallelExecutionEnabled());
         ConfigurationParameters absent = new MapConfigurationParameters(
             "some key", "some value");
-        assertFalse(new CucumberConfiguration(absent).isParallelExecutionEnabled());
+        assertFalse(new CucumberConfiguration(absent, issueReporter).isParallelExecutionEnabled());
     }
 
     @Test
@@ -172,7 +180,7 @@ class CucumberConfigurationTest {
             Constants.OBJECT_FACTORY_PROPERTY_NAME,
             DefaultObjectFactory.class.getName());
 
-        assertThat(new CucumberConfiguration(configurationParameters).getObjectFactoryClass(),
+        assertThat(new CucumberConfiguration(configurationParameters, issueReporter).getObjectFactoryClass(),
             is(DefaultObjectFactory.class));
     }
 
@@ -182,7 +190,7 @@ class CucumberConfigurationTest {
             Constants.UUID_GENERATOR_PROPERTY_NAME,
             IncrementingUuidGenerator.class.getName());
 
-        assertThat(new CucumberConfiguration(configurationParameters).getUuidGeneratorClass(),
+        assertThat(new CucumberConfiguration(configurationParameters, issueReporter).getUuidGeneratorClass(),
             is(IncrementingUuidGenerator.class));
     }
 }

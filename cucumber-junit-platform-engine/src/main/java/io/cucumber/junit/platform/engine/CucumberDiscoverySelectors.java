@@ -1,7 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.FeatureWithLines;
-import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.Node;
 import org.junit.platform.commons.util.ToStringBuilder;
 import org.junit.platform.engine.DiscoveryIssue;
@@ -44,7 +43,7 @@ class CucumberDiscoverySelectors {
         static Set<FeatureWithLinesSelector> from(UniqueId uniqueId) {
             return uniqueId.getSegments()
                     .stream()
-                    .filter(FeatureOrigin::isFeatureSegment)
+                    .filter(CucumberTestDescriptor::isFeatureSegment)
                     .map(featureSegment -> {
                         URI uri = URI.create(featureSegment.getValue());
                         Set<FilePosition> filePosition = getFilePosition(uniqueId.getLastSegment());
@@ -69,7 +68,7 @@ class CucumberDiscoverySelectors {
         }
 
         private static Set<FilePosition> getFilePosition(UniqueId.Segment segment) {
-            if (FeatureOrigin.isFeatureSegment(segment)) {
+            if (CucumberTestDescriptor.isFeatureSegment(segment)) {
                 return Collections.emptySet();
             }
 
@@ -111,28 +110,28 @@ class CucumberDiscoverySelectors {
 
     static class FeatureElementSelector implements DiscoverySelector {
 
-        private final Feature feature;
+        private final FeatureWithSource feature;
         private final Node element;
 
-        private FeatureElementSelector(Feature feature) {
-            this(feature, feature);
+        private FeatureElementSelector(FeatureWithSource feature) {
+            this(feature, feature.getFeature());
         }
 
-        private FeatureElementSelector(Feature feature, Node element) {
+        private FeatureElementSelector(FeatureWithSource feature, Node element) {
             this.feature = requireNonNull(feature);
             this.element = requireNonNull(element);
         }
 
-        static FeatureElementSelector selectFeature(Feature feature) {
+        static FeatureElementSelector selectFeature(FeatureWithSource feature) {
             return new FeatureElementSelector(feature);
         }
 
-        static FeatureElementSelector selectElement(Feature feature, Node element) {
+        static FeatureElementSelector selectElement(FeatureWithSource feature, Node element) {
             return new FeatureElementSelector(feature, element);
         }
 
         static Stream<FeatureElementSelector> selectElementsAt(
-                Feature feature, Supplier<Optional<Set<FilePosition>>> filePositions,
+                FeatureWithSource feature, Supplier<Optional<Set<FilePosition>>> filePositions,
                 DiscoveryIssueReporter issueReporter
         ) {
             return filePositions.get()
@@ -141,13 +140,14 @@ class CucumberDiscoverySelectors {
         }
 
         private static Stream<FeatureElementSelector> selectElementsAt(
-                Feature feature, Set<FilePosition> filePositions, DiscoveryIssueReporter issueReporter
+                FeatureWithSource feature, Set<FilePosition> filePositions, DiscoveryIssueReporter issueReporter
         ) {
             return filePositions.stream().map(filePosition -> selectElementAt(feature, filePosition, issueReporter));
         }
 
         static FeatureElementSelector selectElementAt(
-                Feature feature, Supplier<Optional<FilePosition>> filePosition, DiscoveryIssueReporter issueReporter
+                FeatureWithSource feature, Supplier<Optional<FilePosition>> filePosition,
+                DiscoveryIssueReporter issueReporter
         ) {
             return filePosition.get()
                     .map(position -> selectElementAt(feature, position, issueReporter))
@@ -155,9 +155,10 @@ class CucumberDiscoverySelectors {
         }
 
         static FeatureElementSelector selectElementAt(
-                Feature feature, FilePosition filePosition, DiscoveryIssueReporter issueReporter
+                FeatureWithSource feature, FilePosition filePosition, DiscoveryIssueReporter issueReporter
         ) {
-            return feature.findPathTo(candidate -> candidate.getLocation().getLine() == filePosition.getLine())
+            return feature.getFeature()
+                    .findPathTo(candidate -> candidate.getLocation().getLine() == filePosition.getLine())
                     .map(nodes -> nodes.get(nodes.size() - 1))
                     .map(node -> new FeatureElementSelector(feature, node))
                     .orElseGet(() -> {
@@ -167,7 +168,7 @@ class CucumberDiscoverySelectors {
         }
 
         private static void reportInvalidFilePosition(
-                Feature feature, FilePosition filePosition, DiscoveryIssueReporter issueReporter
+                FeatureWithSource feature, FilePosition filePosition, DiscoveryIssueReporter issueReporter
         ) {
             issueReporter.reportIssue(DiscoveryIssue.create(WARNING,
                 "Feature file " + feature.getUri()
@@ -176,7 +177,7 @@ class CucumberDiscoverySelectors {
                         ". Selecting the whole feature instead"));
         }
 
-        static Set<FeatureElementSelector> selectElementsOf(Feature feature, Node selected) {
+        static Set<FeatureElementSelector> selectElementsOf(FeatureWithSource feature, Node selected) {
             if (selected instanceof Node.Container) {
                 Node.Container<?> container = (Node.Container<?>) selected;
                 return container.elements().stream()
@@ -186,7 +187,7 @@ class CucumberDiscoverySelectors {
             return Collections.emptySet();
         }
 
-        Feature getFeature() {
+        FeatureWithSource getFeature() {
             return feature;
         }
 

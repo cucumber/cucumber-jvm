@@ -2,7 +2,11 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.ExamplesDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.RuleDescriptor;
+import io.cucumber.junit.platform.engine.CucumberTestDescriptor.FeatureElementDescriptor.ScenarioOutlineDescriptor;
 import io.cucumber.plugin.event.Location;
+import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
@@ -17,14 +21,111 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toSet;
 
 abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
 
-    protected CucumberTestDescriptor(UniqueId uniqueId, String displayName, TestSource source) {
+    private static final String RULE_SEGMENT_TYPE = "rule";
+    private static final String FEATURE_SEGMENT_TYPE = "feature";
+    private static final String SCENARIO_SEGMENT_TYPE = "scenario";
+    private static final String EXAMPLES_SEGMENT_TYPE = "examples";
+    private static final String EXAMPLE_SEGMENT_TYPE = "example";
+
+    private CucumberTestDescriptor(UniqueId uniqueId, String displayName, TestSource source) {
         super(uniqueId, displayName, source);
+    }
+
+    static Builder builder(CucumberConfiguration configuration) {
+        return new Builder(configuration, configuration.namingStrategy());
+    }
+
+    static class Builder {
+        private final CucumberConfiguration configuration;
+        private final NamingStrategy namingStrategy;
+
+        Builder(CucumberConfiguration configuration, NamingStrategy namingStrategy) {
+            this.configuration = requireNonNull(configuration);
+            this.namingStrategy = requireNonNull(namingStrategy);
+        }
+
+        Optional<TestDescriptor> build(
+                TestDescriptor parent, FeatureWithSource feature, io.cucumber.plugin.event.Node node
+        ) {
+            requireNonNull(parent);
+            requireNonNull(feature);
+            requireNonNull(node);
+
+            FeatureSource source = feature.getSource();
+            if (node instanceof io.cucumber.plugin.event.Node.Feature) {
+                return Optional.of(new FeatureDescriptor(
+                    createUniqueId(parent, FEATURE_SEGMENT_TYPE, feature.getUri()),
+                    namingStrategy.name(node),
+                    source.nodeSource(node),
+                    feature.getFeature()));
+            }
+
+            if (node instanceof io.cucumber.plugin.event.Node.Rule) {
+                return Optional.of(new RuleDescriptor(
+                    configuration,
+                    createUniqueId(parent, RULE_SEGMENT_TYPE, node.getLocation()),
+                    namingStrategy.name(node),
+                    source.nodeSource(node),
+                    node));
+            }
+
+            if (node instanceof io.cucumber.plugin.event.Node.Scenario) {
+                return Optional.of(new PickleDescriptor(
+                    configuration,
+                    createUniqueId(parent, SCENARIO_SEGMENT_TYPE, node.getLocation()),
+                    namingStrategy.name(node),
+                    source.nodeSource(node),
+                    feature.getFeature().getPickleAt(node)));
+            }
+
+            if (node instanceof io.cucumber.plugin.event.Node.ScenarioOutline) {
+                return Optional.of(new ScenarioOutlineDescriptor(
+                    configuration,
+                    createUniqueId(parent, SCENARIO_SEGMENT_TYPE, node.getLocation()),
+                    namingStrategy.name(node),
+                    source.nodeSource(node),
+                    node));
+            }
+
+            if (node instanceof io.cucumber.plugin.event.Node.Examples) {
+                return Optional.of(new ExamplesDescriptor(
+                    configuration,
+                    createUniqueId(parent, EXAMPLES_SEGMENT_TYPE, node.getLocation()),
+                    namingStrategy.name(node),
+                    source.nodeSource(node),
+                    node));
+            }
+
+            if (node instanceof io.cucumber.plugin.event.Node.Example) {
+                Pickle pickle = feature.getFeature().getPickleAt(node);
+                return Optional.of(new PickleDescriptor(
+                    configuration,
+                    createUniqueId(parent, EXAMPLE_SEGMENT_TYPE, node.getLocation()),
+                    namingStrategy.nameExample(node, pickle),
+                    source.nodeSource(node),
+                    pickle));
+            }
+            throw new IllegalStateException("Got a " + node.getClass() + " but didn't have a case to handle it");
+        }
+
+        private static UniqueId createUniqueId(TestDescriptor parent, String segmentType, Location line) {
+            return createUniqueId(parent, segmentType, String.valueOf(line.getLine()));
+        }
+
+        private static UniqueId createUniqueId(TestDescriptor parent, String segmentType, String line) {
+            return parent.getUniqueId().append(segmentType, line);
+        }
+    }
+
+    static boolean isFeatureSegment(UniqueId.Segment segment) {
+        return FEATURE_SEGMENT_TYPE.equals(segment.getType());
     }
 
     protected abstract URI getUri();
