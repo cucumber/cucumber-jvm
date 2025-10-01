@@ -13,7 +13,11 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.newBufferedReader;
 import static java.nio.file.Files.newOutputStream;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,6 +43,8 @@ public class CompatibilityTest {
     @ParameterizedTest
     @MethodSource("io.cucumber.compatibility.TestCase#testCases")
     void produces_expected_output_for(TestCase testCase) throws IOException {
+
+
         Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
         Path outputNdjson = parentDir.resolve("out.ndjson");
 
@@ -51,7 +59,7 @@ public class CompatibilityTest {
                             .setPickleOrder(pickleOrder)
                             .addFeature(testCase.getFeatures()).build())
                     .withAdditionalPlugins(
-                        new MessageFormatter(newOutputStream(outputNdjson)))
+                            new MessageFormatter(newOutputStream(outputNdjson)))
                     .build()
                     .run();
         } catch (Exception e) {
@@ -88,7 +96,7 @@ public class CompatibilityTest {
         }
 
         List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
-        List<JsonNode> actual = readAllMessages(outputNdjson);
+        List<JsonNode> actual = readAllMessages(Files.newInputStream(outputNdjson));
 
         Map<String, List<JsonNode>> expectedEnvelopes = openEnvelopes(expected);
         Map<String, List<JsonNode>> actualEnvelopes = openEnvelopes(actual);
@@ -120,19 +128,19 @@ public class CompatibilityTest {
         }
 
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
-            actualEnvelopes,
-            hasEntry(is(messageType),
-                containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
+                actualEnvelopes,
+                hasEntry(is(messageType),
+                        containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
     }
 
-    private static List<JsonNode> readAllMessages(Path output) throws IOException {
+    private static List<JsonNode> readAllMessages(InputStream output) throws IOException {
         List<JsonNode> expectedEnvelopes = new ArrayList<>();
 
         ObjectMapper mapper = new ObjectMapper()
                 .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        Files.readAllLines(output).forEach(s -> {
+        readAllLines(output).forEach(s -> {
             try {
                 expectedEnvelopes.add(mapper.readTree(s));
             } catch (JsonProcessingException e) {
@@ -141,6 +149,17 @@ public class CompatibilityTest {
         });
 
         return expectedEnvelopes;
+    }
+
+    public static List<String> readAllLines(InputStream is) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, UTF_8))) {
+            List<String> lines = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+            return lines;
+        }
     }
 
     @SuppressWarnings("unchecked")
