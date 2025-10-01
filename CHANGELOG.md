@@ -10,11 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [JUnit Platform Engine] Use `FileSource.withPosition` ([#3084](https://github.com/cucumber/cucumber-jvm/pull/3084) M.P. Korstanje)
 
+## [7.30.0] - 2025-10-01
 ### Changed
 - [JUnit Platform Engine] Use JUnit Platform 1.14.0 (JUnit Jupiter 5.14.0)
+
+### Fixed
+- [JUnit Platform Engine] Use `FileSource.withPosition` ([#3084](https://github.com/cucumber/cucumber-jvm/pull/3084) M.P. Korstanje)
 
 ## [7.29.0] - 2025-09-21
 ### Added
@@ -516,7 +518,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.29.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...HEAD
+[7.30.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.29.0...v7.30.0
 [7.29.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.2...v7.29.0
 [7.28.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.1...v7.28.2
 [7.28.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.0...v7.28.1
