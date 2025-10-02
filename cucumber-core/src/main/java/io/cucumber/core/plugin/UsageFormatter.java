@@ -4,7 +4,9 @@ import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.PickleStep;
+import io.cucumber.messages.types.SourceReference;
 import io.cucumber.messages.types.StepDefinition;
+import io.cucumber.messages.types.StepDefinitionPattern;
 import io.cucumber.messages.types.TestStepFinished;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
@@ -23,8 +25,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import static io.cucumber.messages.types.StepDefinitionPatternType.CUCUMBER_EXPRESSION;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_STEP_DEFINITIONS;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsFirst;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -66,52 +71,56 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     }
 
     void finishReport() {
-        Map<StepDefinition, List<StepDuration>> testStepsFinishedByStepDefinition = query.findAllTestStepFinished()
+        Map<StepDefinition, List<StepUsage>> testStepsFinishedByStepDefinition = query.findAllTestStepFinished()
                 .stream()
                 .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
                     mapping(createStepDuration(), toList())));
 
-        // Include unused
-        query.findAllStepDefinitions().forEach(stepDefinition -> testStepsFinishedByStepDefinition
-                .computeIfAbsent(stepDefinition, stepDefinition1 -> new ArrayList<>()));
+        testStepsFinishedByStepDefinition.values()
+                .forEach((stepUsages) -> stepUsages.sort(comparing(StepUsage::getDuration).reversed()));
 
-        List<StepContainer> stepContainers = testStepsFinishedByStepDefinition.entrySet()
+        // Add unused step definitions
+        query.findAllStepDefinitions().forEach(stepDefinition -> testStepsFinishedByStepDefinition
+                .computeIfAbsent(stepDefinition, sd -> new ArrayList<>()));
+
+        List<StepDefinitionUsage> stepDefinitionContainers = testStepsFinishedByStepDefinition.entrySet()
                 .stream()
-                .map(entry -> {
-                    StepDefinition stepDefinition = entry.getKey();
-                    List<StepDuration> stepDurations = entry.getValue();
-                    DurationStatistics aggregatedDurations = createDurationStatistics(stepDurations);
-                    String pattern = stepDefinition.getPattern().getSource();
-                    String location = sourceReferenceFormatter.format(stepDefinition.getSourceReference()).orElse("");
-                    return new StepContainer(pattern, location, aggregatedDurations, stepDurations);
-                })
+                .map(entry -> createStepContainer(entry.getKey(), entry.getValue()))
+                .sorted(comparing(StepDefinitionUsage::getStatistics, nullsFirst(comparing(Statistics::getAverage))).reversed())
                 .collect(toList());
 
         try {
-            Jackson.OBJECT_MAPPER.writeValue(out, stepContainers);
+            Jackson.OBJECT_MAPPER.writeValue(out, stepDefinitionContainers);
             out.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static DurationStatistics createDurationStatistics(List<StepDuration> stepDurations) {
-        if (stepDurations.isEmpty()) {
-            return null;
-        }
-        DoubleSummaryStatistics stats = stepDurations.stream()
-                .mapToDouble(StepDuration::getDuration)
-                .summaryStatistics();
-        double median = getMedian(stepDurations);
-        return new DurationStatistics(stats.getSum(), stats.getAverage(), median, stats.getMin(), stats.getMax());
+    private StepDefinitionUsage createStepContainer(StepDefinition stepDefinition, List<StepUsage> stepUsages) {
+        Statistics aggregatedDurations = createDurationStatistics(stepUsages);
+        String pattern = stepDefinition.getPattern().getSource();
+        String location = sourceReferenceFormatter.format(stepDefinition.getSourceReference()).orElse("");
+        return new StepDefinitionUsage(pattern, location, aggregatedDurations, stepUsages);
     }
 
-    private static double getMedian(List<StepDuration> stepDurations) {
-        long size = stepDurations.size();
+    private static Statistics createDurationStatistics(List<StepUsage> stepUsages) {
+        if (stepUsages.isEmpty()) {
+            return null;
+        }
+        DoubleSummaryStatistics stats = stepUsages.stream()
+                .mapToDouble(StepUsage::getDuration)
+                .summaryStatistics();
+        double median = getMedian(stepUsages);
+        return new Statistics(stats.getSum(), stats.getAverage(), median, stats.getMin(), stats.getMax());
+    }
+
+    private static double getMedian(List<StepUsage> stepUsages) {
+        long size = stepUsages.size();
         long medianItems = size % 2 == 0 ? 2 : 1;
         long medianIndex = size % 2 == 0 ? (size / 2) - 1 : size / 2;
-        return stepDurations.stream()
-                .mapToDouble(StepDuration::getDuration)
+        return stepUsages.stream()
+                .mapToDouble(StepUsage::getDuration)
                 .sorted()
                 .skip(medianIndex)
                 .limit(medianItems)
@@ -119,19 +128,19 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                 .orElse(0.0);
     }
 
-    private Function<TestStepFinished, StepDuration> createStepDuration() {
+    private Function<TestStepFinished, StepUsage> createStepDuration() {
         return testStepFinished -> query
                 .findTestStepBy(testStepFinished)
                 .flatMap(query::findPickleStepBy)
                 .map(pickleStep -> createStepDuration(testStepFinished, pickleStep))
-                .orElseGet(() -> new StepDuration("", Duration.ZERO, ""));
+                .orElseGet(() -> new StepUsage("", Duration.ZERO, ""));
     }
 
-    private StepDuration createStepDuration(TestStepFinished testStepFinished, PickleStep pickleStep) {
+    private StepUsage createStepDuration(TestStepFinished testStepFinished, PickleStep pickleStep) {
         String text = pickleStep.getText();
         String location = findLocationOf(testStepFinished);
         Duration duration = Convertor.toDuration(testStepFinished.getTestStepResult().getDuration());
-        return new StepDuration(text, duration, location);
+        return new StepUsage(text, duration, location);
     }
 
     private String findLocationOf(TestStepFinished testStepFinished) {
@@ -146,38 +155,42 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     private Function<TestStepFinished, StepDefinition> findUnambiguousStepDefinitionBy() {
         return testStepFinished -> query.findTestStepBy(testStepFinished)
                 .flatMap(query::findUnambiguousStepDefinitionBy)
-                .get();
+                .orElseGet(UsageFormatter::createDummyStepDefinition);
+    }
+
+    private static StepDefinition createDummyStepDefinition() {
+        return new StepDefinition("", new StepDefinitionPattern("", CUCUMBER_EXPRESSION), SourceReference.of(""));
     }
 
     /**
      * Container for usage-entries of steps
      */
-    static class StepContainer {
+    static final class StepDefinitionUsage {
 
-        private final String name;
+        private final String expression;
         private final String location;
-        private final DurationStatistics durationStatistics;
-        private final List<StepDuration> durations;
+        private final Statistics statistics;
+        private final List<StepUsage> usages;
 
-        StepContainer(
-                String name, String location, DurationStatistics durationStatistics, List<StepDuration> durations
+        StepDefinitionUsage(
+                String expression, String location, Statistics statistics, List<StepUsage> usages
         ) {
-            this.name = requireNonNull(name);
+            this.expression = requireNonNull(expression);
             this.location = requireNonNull(location);
-            this.durationStatistics = durationStatistics;
-            this.durations = requireNonNull(durations);
+            this.statistics = statistics;
+            this.usages = requireNonNull(usages);
         }
 
-        public String getName() {
-            return name;
+        public String getExpression() {
+            return expression;
         }
 
-        public DurationStatistics getDurationStatistics() {
-            return durationStatistics;
+        public Statistics getStatistics() {
+            return statistics;
         }
 
-        public List<StepDuration> getDurations() {
-            return durations;
+        public List<StepUsage> getUsages() {
+            return usages;
         }
 
         public String getLocation() {
@@ -185,14 +198,14 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         }
     }
 
-    static class DurationStatistics {
+    static final class Statistics {
         private final double sum;
         private final double average;
         private final double median;
         private final double min;
         private final double max;
 
-        DurationStatistics(double sum, double average, double median, double min, double max) {
+        Statistics(double sum, double average, double median, double min, double max) {
             this.sum = sum;
             this.average = average;
             this.median = median;
@@ -225,13 +238,13 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         return (double) duration.toNanos() / TimeUnit.SECONDS.toNanos(1);
     }
 
-    static class StepDuration {
+    static final class StepUsage {
 
         private final String text;
         private final double duration;
         private final String location;
 
-        StepDuration(String text, Duration duration, String location) {
+        StepUsage(String text, Duration duration, String location) {
             this.text = text;
             this.duration = durationToSeconds(duration);
             this.location = location;
