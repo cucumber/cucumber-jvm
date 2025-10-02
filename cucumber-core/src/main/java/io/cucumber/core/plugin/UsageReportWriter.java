@@ -11,15 +11,14 @@ import io.cucumber.query.Query;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static io.cucumber.messages.types.StepDefinitionPatternType.CUCUMBER_EXPRESSION;
 import static java.util.Comparator.comparing;
+import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
@@ -38,12 +37,11 @@ final class UsageReportWriter {
         this.sourceReferenceFormatter = new SourceReferenceFormatter(uriFormatter);
     }
 
-
     List<StepDefinitionUsage> createUsageReport() {
         Map<StepDefinition, List<StepUsage>> testStepsFinishedByStepDefinition = query.findAllTestStepFinished()
                 .stream()
                 .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
-                        mapping(createStepDuration(), toList())));
+                    mapping(createStepDuration(), toList())));
 
         testStepsFinishedByStepDefinition.values()
                 .forEach((stepUsages) -> stepUsages.sort(comparing(StepUsage::getDuration).reversed()));
@@ -55,7 +53,8 @@ final class UsageReportWriter {
         return testStepsFinishedByStepDefinition.entrySet()
                 .stream()
                 .map(entry -> createStepContainer(entry.getKey(), entry.getValue()))
-                .sorted(comparing(StepDefinitionUsage::getStatistics, nullsFirst(comparing(Statistics::getAverage))).reversed())
+                .sorted(comparing(StepDefinitionUsage::getStatistics, nullsFirst(comparing(Statistics::getAverage)))
+                        .reversed())
                 .collect(toList());
     }
 
@@ -70,24 +69,43 @@ final class UsageReportWriter {
         if (stepUsages.isEmpty()) {
             return null;
         }
-        DoubleSummaryStatistics stats = stepUsages.stream()
-                .mapToDouble(StepUsage::getDuration)
-                .summaryStatistics();
-        double median = getMedian(stepUsages);
-        return new Statistics(stats.getSum(), stats.getAverage(), median, stats.getMin(), stats.getMax());
+        Duration sum = stepUsages.stream()
+                .map(StepUsage::getDuration)
+                .reduce(Duration::plus)
+                // Can't happen
+                .orElse(Duration.ZERO);
+
+        Duration min = stepUsages.stream()
+                .map(StepUsage::getDuration)
+                .min(naturalOrder())
+                // Can't happen
+                .orElse(Duration.ZERO);
+
+        Duration max = stepUsages.stream()
+                .map(StepUsage::getDuration)
+                .max(naturalOrder())
+                // Can't happen
+                .orElse(Duration.ZERO);
+
+        Duration average = sum.dividedBy(stepUsages.size());
+
+        Duration median = getMedian(stepUsages);
+
+        return new Statistics(sum, average, median, min, max);
     }
 
-    private static double getMedian(List<StepUsage> stepUsages) {
+    private static Duration getMedian(List<StepUsage> stepUsages) {
         long size = stepUsages.size();
         long medianItems = size % 2 == 0 ? 2 : 1;
         long medianIndex = size % 2 == 0 ? (size / 2) - 1 : size / 2;
         return stepUsages.stream()
-                .mapToDouble(StepUsage::getDuration)
+                .map(StepUsage::getDuration)
                 .sorted()
                 .skip(medianIndex)
                 .limit(medianItems)
-                .average()
-                .orElse(0.0);
+                .reduce(Duration::plus)
+                .orElse(Duration.ZERO)
+                .dividedBy(medianItems);
     }
 
     private Function<TestStepFinished, StepUsage> createStepDuration() {
@@ -161,13 +179,13 @@ final class UsageReportWriter {
     }
 
     static final class Statistics {
-        private final double sum;
-        private final double average;
-        private final double median;
-        private final double min;
-        private final double max;
+        private final Duration sum;
+        private final Duration average;
+        private final Duration median;
+        private final Duration min;
+        private final Duration max;
 
-        Statistics(double sum, double average, double median, double min, double max) {
+        Statistics(Duration sum, Duration average, Duration median, Duration min, Duration max) {
             this.sum = sum;
             this.average = average;
             this.median = median;
@@ -175,44 +193,40 @@ final class UsageReportWriter {
             this.max = max;
         }
 
-        public double getSum() {
+        public Duration getSum() {
             return sum;
         }
 
-        public double getAverage() {
+        public Duration getAverage() {
             return average;
         }
 
-        public double getMedian() {
+        public Duration getMedian() {
             return median;
         }
 
-        public double getMin() {
+        public Duration getMin() {
             return min;
         }
 
-        public double getMax() {
+        public Duration getMax() {
             return max;
         }
-    }
-
-    private static double durationToSeconds(Duration duration) {
-        return (double) duration.toNanos() / TimeUnit.SECONDS.toNanos(1);
     }
 
     static final class StepUsage {
 
         private final String text;
-        private final double duration;
+        private final Duration duration;
         private final String location;
 
         StepUsage(String text, Duration duration, String location) {
-            this.text = text;
-            this.duration = durationToSeconds(duration);
-            this.location = location;
+            this.text = requireNonNull(text);
+            this.duration = requireNonNull(duration);
+            this.location = requireNonNull(location);
         }
 
-        public double getDuration() {
+        public Duration getDuration() {
             return duration;
         }
 

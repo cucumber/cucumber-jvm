@@ -29,7 +29,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
             .build();
     private final Query query = new Query(repository);
     private final UTF8OutputStreamWriter out;
-    
+
     /**
      * Constructor
      *
@@ -45,7 +45,8 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         publisher.registerHandlerFor(Envelope.class, envelope -> {
             repository.update(envelope);
             envelope.getTestRunFinished().ifPresent(testRunFinished -> {
-                List<UsageReportWriter.StepDefinitionUsage> usageReport = new UsageReportWriter(query, uriFormatter).createUsageReport();
+                List<UsageReportWriter.StepDefinitionUsage> usageReport = new UsageReportWriter(query, uriFormatter)
+                        .createUsageReport();
 
                 try {
                     Jackson.OBJECT_MAPPER.writeValue(out, usageReport);
@@ -53,7 +54,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                
+
             });
         });
 
