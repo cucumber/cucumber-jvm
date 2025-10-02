@@ -1,24 +1,34 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.messages.Convertor;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Location;
+import io.cucumber.messages.types.PickleStep;
+import io.cucumber.messages.types.StepDefinition;
+import io.cucumber.messages.types.TestStepFinished;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestRunFinished;
-import io.cucumber.plugin.event.TestStepFinished;
+import io.cucumber.query.Query;
+import io.cucumber.query.Repository;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.DoubleSummaryStatistics;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
+import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_STEP_DEFINITIONS;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Formatter to measure performance of steps. Includes average and median step
@@ -26,8 +36,15 @@ import java.util.concurrent.TimeUnit;
  */
 public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
-    final Map<String, List<StepContainer>> usageMap = new LinkedHashMap<>();
+    // TODO: Make uri formatter configurable.
+    public final Function<String, String> uriFormatter = s -> s;
+    private final Repository repository = Repository.builder()
+            .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
+            .feature(INCLUDE_STEP_DEFINITIONS, true)
+            .build();
+    private final Query query = new Query(repository);
     private final UTF8OutputStreamWriter out;
+    private final SourceReferenceFormatter sourceReferenceFormatter = new SourceReferenceFormatter(uriFormatter);
 
     /**
      * Constructor
@@ -41,141 +58,95 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestStepFinished.class, this::handleTestStepFinished);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> finishReport());
-    }
+        publisher.registerHandlerFor(Envelope.class, envelope -> {
+            repository.update(envelope);
+            envelope.getTestRunFinished().ifPresent(testRunFinished -> finishReport());
+        });
 
-    void handleTestStepFinished(TestStepFinished event) {
-        if (event.getTestStep() instanceof PickleStepTestStep && event.getResult().getStatus().is(Status.PASSED)) {
-            PickleStepTestStep testStep = (PickleStepTestStep) event.getTestStep();
-            addUsageEntry(event.getResult(), testStep);
-        }
     }
 
     void finishReport() {
-        List<StepDefContainer> stepDefContainers = new ArrayList<>();
-        for (Map.Entry<String, List<StepContainer>> usageEntry : usageMap.entrySet()) {
-            StepDefContainer stepDefContainer = new StepDefContainer(
-                usageEntry.getKey(),
-                createStepContainers(usageEntry.getValue()));
-            stepDefContainers.add(stepDefContainer);
-        }
+        Map<StepDefinition, List<StepDuration>> testStepsFinishedByStepDefinition = query.findAllTestStepFinished()
+                .stream()
+                .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
+                    mapping(createStepDuration(), toList())));
+
+        // Include unused
+        query.findAllStepDefinitions().forEach(stepDefinition -> testStepsFinishedByStepDefinition
+                .computeIfAbsent(stepDefinition, stepDefinition1 -> new ArrayList<>()));
+
+        List<StepContainer> stepContainers = testStepsFinishedByStepDefinition.entrySet()
+                .stream()
+                .map(entry -> {
+                    StepDefinition stepDefinition = entry.getKey();
+                    List<StepDuration> stepDurations = entry.getValue();
+                    DurationStatistics aggregatedDurations = createDurationStatistics(stepDurations);
+                    String pattern = stepDefinition.getPattern().getSource();
+                    String location = sourceReferenceFormatter.format(stepDefinition.getSourceReference()).orElse("");
+                    return new StepContainer(pattern, location, aggregatedDurations, stepDurations);
+                })
+                .collect(toList());
 
         try {
-            Jackson.OBJECT_MAPPER.writeValue(out, stepDefContainers);
+            Jackson.OBJECT_MAPPER.writeValue(out, stepContainers);
             out.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void addUsageEntry(Result result, PickleStepTestStep testStep) {
-        List<StepContainer> stepContainers = usageMap.computeIfAbsent(testStep.getPattern(), k -> new ArrayList<>());
-        StepContainer stepContainer = findOrCreateStepContainer(testStep.getStepText(), stepContainers);
-        StepDuration stepDuration = new StepDuration(result.getDuration(),
-            testStep.getUri() + ":" + testStep.getStepLine());
-        stepContainer.getDurations().add(stepDuration);
+    private static DurationStatistics createDurationStatistics(List<StepDuration> stepDurations) {
+        if (stepDurations.isEmpty()) {
+            return null;
+        }
+        DoubleSummaryStatistics stats = stepDurations.stream()
+                .mapToDouble(StepDuration::getDuration)
+                .summaryStatistics();
+        double median = getMedian(stepDurations);
+        return new DurationStatistics(stats.getSum(), stats.getAverage(), median, stats.getMin(), stats.getMax());
     }
 
-    private List<StepContainer> createStepContainers(List<StepContainer> stepContainers) {
-        for (StepContainer stepContainer : stepContainers) {
-            stepContainer.putAllAggregatedDurations(createAggregatedDurations(stepContainer));
-        }
-        return stepContainers;
+    private static double getMedian(List<StepDuration> stepDurations) {
+        long size = stepDurations.size();
+        long medianItems = size % 2 == 0 ? 2 : 1;
+        long medianIndex = size % 2 == 0 ? (size / 2) - 1 : size / 2;
+        return stepDurations.stream()
+                .mapToDouble(StepDuration::getDuration)
+                .sorted()
+                .skip(medianIndex)
+                .limit(medianItems)
+                .average()
+                .orElse(0.0);
     }
 
-    private StepContainer findOrCreateStepContainer(String stepNameWithArgs, List<StepContainer> stepContainers) {
-        for (StepContainer container : stepContainers) {
-            if (stepNameWithArgs.equals(container.getName())) {
-                return container;
-            }
-        }
-        StepContainer stepContainer = new StepContainer(stepNameWithArgs);
-        stepContainers.add(stepContainer);
-        return stepContainer;
+    private Function<TestStepFinished, StepDuration> createStepDuration() {
+        return testStepFinished -> query
+                .findTestStepBy(testStepFinished)
+                .flatMap(query::findPickleStepBy)
+                .map(pickleStep -> createStepDuration(testStepFinished, pickleStep))
+                .orElseGet(() -> new StepDuration("", Duration.ZERO, ""));
     }
 
-    private Map<String, Double> createAggregatedDurations(StepContainer stepContainer) {
-        Map<String, Double> aggregatedResults = new LinkedHashMap<>();
-        List<Double> rawDurations = getRawDurations(stepContainer.getDurations());
-
-        Double average = calculateAverage(rawDurations);
-        aggregatedResults.put("average", average);
-
-        Double median = calculateMedian(rawDurations);
-        aggregatedResults.put("median", median);
-
-        return aggregatedResults;
+    private StepDuration createStepDuration(TestStepFinished testStepFinished, PickleStep pickleStep) {
+        String text = pickleStep.getText();
+        String location = findLocationOf(testStepFinished);
+        Duration duration = Convertor.toDuration(testStepFinished.getTestStepResult().getDuration());
+        return new StepDuration(text, duration, location);
     }
 
-    private List<Double> getRawDurations(List<StepDuration> stepDurations) {
-        List<Double> rawDurations = new ArrayList<>();
-
-        for (StepDuration stepDuration : stepDurations) {
-            rawDurations.add(stepDuration.duration);
-        }
-        return rawDurations;
+    private String findLocationOf(TestStepFinished testStepFinished) {
+        return query.findPickleBy(testStepFinished)
+                .map(pickle -> uriFormatter.apply(pickle.getUri()) + query.findLocationOf(pickle)
+                        .map(Location::getLine)
+                        .map(line -> ":" + line)
+                        .orElse(""))
+                .orElse("");
     }
 
-    /**
-     * Calculate the average of a list of duration entries
-     */
-    Double calculateAverage(List<Double> durationEntries) {
-        double sum = 0.0;
-        for (Double duration : durationEntries) {
-            sum = sum + duration;
-        }
-        if (sum == 0) {
-            return 0.0;
-        }
-
-        return sum / durationEntries.size();
-    }
-
-    /**
-     * Calculate the median of a list of duration entries
-     */
-    Double calculateMedian(List<Double> durationEntries) {
-        if (durationEntries.isEmpty()) {
-            return 0.0;
-        }
-        Collections.sort(durationEntries);
-        int middle = durationEntries.size() / 2;
-        if (durationEntries.size() % 2 == 1) {
-            return durationEntries.get(middle);
-        } else {
-            double total = durationEntries.get(middle - 1) + durationEntries.get(middle);
-            return total / 2;
-        }
-    }
-
-    /**
-     * Container of Step Definitions (patterns)
-     */
-    static class StepDefContainer {
-
-        private final String source;
-        private final List<StepContainer> steps;
-
-        StepDefContainer(String source, List<StepContainer> steps) {
-            this.source = source;
-            this.steps = steps;
-        }
-
-        /**
-         * The StepDefinition (pattern)
-         */
-        public String getSource() {
-            return source;
-        }
-
-        /**
-         * A list of Steps
-         */
-        public List<StepContainer> getSteps() {
-            return steps;
-        }
-
+    private Function<TestStepFinished, StepDefinition> findUnambiguousStepDefinitionBy() {
+        return testStepFinished -> query.findTestStepBy(testStepFinished)
+                .flatMap(query::findUnambiguousStepDefinitionBy)
+                .get();
     }
 
     /**
@@ -184,29 +155,70 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     static class StepContainer {
 
         private final String name;
-        private final Map<String, Double> aggregatedDurations = new HashMap<>();
-        private final List<StepDuration> durations = new ArrayList<>();
+        private final String location;
+        private final DurationStatistics durationStatistics;
+        private final List<StepDuration> durations;
 
-        StepContainer(String name) {
-            this.name = name;
+        StepContainer(
+                String name, String location, DurationStatistics durationStatistics, List<StepDuration> durations
+        ) {
+            this.name = requireNonNull(name);
+            this.location = requireNonNull(location);
+            this.durationStatistics = durationStatistics;
+            this.durations = requireNonNull(durations);
         }
 
         public String getName() {
             return name;
         }
 
-        void putAllAggregatedDurations(Map<String, Double> aggregatedDurations) {
-            this.aggregatedDurations.putAll(aggregatedDurations);
+        public DurationStatistics getDurationStatistics() {
+            return durationStatistics;
         }
 
-        public Map<String, Double> getAggregatedDurations() {
-            return aggregatedDurations;
-        }
-
-        List<StepDuration> getDurations() {
+        public List<StepDuration> getDurations() {
             return durations;
         }
 
+        public String getLocation() {
+            return location;
+        }
+    }
+
+    static class DurationStatistics {
+        private final double sum;
+        private final double average;
+        private final double median;
+        private final double min;
+        private final double max;
+
+        DurationStatistics(double sum, double average, double median, double min, double max) {
+            this.sum = sum;
+            this.average = average;
+            this.median = median;
+            this.min = min;
+            this.max = max;
+        }
+
+        public double getSum() {
+            return sum;
+        }
+
+        public double getAverage() {
+            return average;
+        }
+
+        public double getMedian() {
+            return median;
+        }
+
+        public double getMin() {
+            return min;
+        }
+
+        public double getMax() {
+            return max;
+        }
     }
 
     private static double durationToSeconds(Duration duration) {
@@ -215,10 +227,12 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     static class StepDuration {
 
+        private final String text;
         private final double duration;
         private final String location;
 
-        StepDuration(Duration duration, String location) {
+        StepDuration(String text, Duration duration, String location) {
+            this.text = text;
             this.duration = durationToSeconds(duration);
             this.location = location;
         }
@@ -231,6 +245,9 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
             return location;
         }
 
+        public String getText() {
+            return text;
+        }
     }
 
 }
