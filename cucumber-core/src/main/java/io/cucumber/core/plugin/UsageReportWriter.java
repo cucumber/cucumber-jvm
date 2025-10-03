@@ -17,9 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static io.cucumber.messages.types.StepDefinitionPatternType.CUCUMBER_EXPRESSION;
-import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -28,34 +26,29 @@ import static java.util.stream.Collectors.toList;
 final class UsageReportWriter {
 
     private final Query query;
-    private final Function<String, String> uriFormatter;
+    private final Function<String, String> uriFormatter = s -> s;
     private final SourceReferenceFormatter sourceReferenceFormatter;
 
-    UsageReportWriter(Query query, Function<String, String> uriFormatter) {
+    UsageReportWriter(Query query) {
         this.query = query;
-        this.uriFormatter = uriFormatter;
         this.sourceReferenceFormatter = new SourceReferenceFormatter(uriFormatter);
     }
 
-    List<StepDefinitionUsage> createUsageReport() {
+    UsageReport createUsageReport() {
         Map<StepDefinition, List<StepUsage>> testStepsFinishedByStepDefinition = query.findAllTestStepFinished()
                 .stream()
                 .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
                     mapping(createStepDuration(), toList())));
 
-        testStepsFinishedByStepDefinition.values()
-                .forEach((stepUsages) -> stepUsages.sort(comparing(StepUsage::getDuration).reversed()));
-
         // Add unused step definitions
         query.findAllStepDefinitions().forEach(stepDefinition -> testStepsFinishedByStepDefinition
                 .computeIfAbsent(stepDefinition, sd -> new ArrayList<>()));
 
-        return testStepsFinishedByStepDefinition.entrySet()
+        List<StepDefinitionUsage> stepDefinitionUsages = testStepsFinishedByStepDefinition.entrySet()
                 .stream()
                 .map(entry -> createStepContainer(entry.getKey(), entry.getValue()))
-                .sorted(comparing(StepDefinitionUsage::getStatistics, nullsFirst(comparing(Statistics::getAverage)))
-                        .reversed())
                 .collect(toList());
+        return new UsageReport(stepDefinitionUsages);
     }
 
     private StepDefinitionUsage createStepContainer(StepDefinition stepDefinition, List<StepUsage> stepUsages) {
@@ -142,6 +135,18 @@ final class UsageReportWriter {
         return new StepDefinition("", new StepDefinitionPattern("", CUCUMBER_EXPRESSION), SourceReference.of(""));
     }
 
+    static final class UsageReport {
+        private final List<StepDefinitionUsage> stepDefinitions;
+
+        UsageReport(List<StepDefinitionUsage> stepDefinitions) {
+            this.stepDefinitions = requireNonNull(stepDefinitions);
+        }
+
+        public List<StepDefinitionUsage> getStepDefinitions() {
+            return stepDefinitions;
+        }
+    }
+
     /**
      * Container for usage-entries of steps
      */
@@ -149,28 +154,28 @@ final class UsageReportWriter {
 
         private final String expression;
         private final String location;
-        private final Statistics statistics;
-        private final List<StepUsage> usages;
+        private final Statistics duration;
+        private final List<StepUsage> steps;
 
         StepDefinitionUsage(
-                String expression, String location, Statistics statistics, List<StepUsage> usages
+                String expression, String location, Statistics duration, List<StepUsage> steps
         ) {
             this.expression = requireNonNull(expression);
             this.location = requireNonNull(location);
-            this.statistics = statistics;
-            this.usages = requireNonNull(usages);
+            this.duration = duration;
+            this.steps = requireNonNull(steps);
         }
 
         public String getExpression() {
             return expression;
         }
 
-        public Statistics getStatistics() {
-            return statistics;
+        public Statistics getDuration() {
+            return duration;
         }
 
-        public List<StepUsage> getUsages() {
-            return usages;
+        public List<StepUsage> getSteps() {
+            return steps;
         }
 
         public String getLocation() {
