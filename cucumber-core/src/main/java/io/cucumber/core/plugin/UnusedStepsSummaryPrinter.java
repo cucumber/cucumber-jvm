@@ -67,7 +67,7 @@ public final class UnusedStepsSummaryPrinter implements Plugin, ConcurrentEventL
      * closed.
      */
     static final class MessagesToUnusedWriter implements AutoCloseable {
-    
+
         private final OutputStreamWriter out;
         private final Repository repository = Repository.builder()
                 .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
@@ -76,25 +76,25 @@ public final class UnusedStepsSummaryPrinter implements Plugin, ConcurrentEventL
         private final Query query = new Query(repository);
         private final Function<String, String> uriFormatter;
         private boolean streamClosed = false;
-    
+
         public MessagesToUnusedWriter(OutputStream out, Function<String, String> uriFormatter) {
             this.out = new OutputStreamWriter(
                 requireNonNull(out),
                 StandardCharsets.UTF_8);
             this.uriFormatter = requireNonNull(uriFormatter);
         }
-    
+
         public void write(Envelope envelope) throws IOException {
             if (streamClosed) {
                 throw new IOException("Stream closed");
             }
             repository.update(envelope);
         }
-    
+
         static Builder builder() {
             return new Builder();
         }
-    
+
         static final class Builder {
             private Function<String, String> uriFormatter = Function.identity();
 
@@ -107,7 +107,7 @@ public final class UnusedStepsSummaryPrinter implements Plugin, ConcurrentEventL
                     return s;
                 };
             }
-            
+
             /**
              * Removes a given prefix from all URI locations.
              * <p>
@@ -119,13 +119,13 @@ public final class UnusedStepsSummaryPrinter implements Plugin, ConcurrentEventL
                 this.uriFormatter = removePrefix(requireNonNull(prefix));
                 return this;
             }
-            
+
             public MessagesToUnusedWriter build(OutputStream out) {
                 requireNonNull(out);
                 return new MessagesToUnusedWriter(out, uriFormatter);
             }
         }
-    
+
         @Override
         public void close() throws IOException {
             if (streamClosed) {
@@ -137,7 +137,6 @@ public final class UnusedStepsSummaryPrinter implements Plugin, ConcurrentEventL
                 List<UsageReportWriter.StepDefinitionUsage> unusedSteps = stepDefinitions.stream()
                         .filter(stepDefinitionUsage -> stepDefinitionUsage.getSteps().isEmpty())
                         .collect(Collectors.toList());
-
 
                 PrintWriter printWriter = new PrintWriter(out);
                 printWriter.println(unusedSteps.size() + " Unused steps:");

@@ -65,7 +65,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
      * closed.
      */
     static final class MessagesToUsageWriter implements AutoCloseable {
-    
+
         private final OutputStreamWriter out;
         private final Repository repository = Repository.builder()
                 .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
@@ -75,7 +75,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         private final Serializer serializer;
         private final Function<String, String> uriFormatter;
         private boolean streamClosed = false;
-    
+
         MessagesToUsageWriter(OutputStream out, Serializer serializer, Function<String, String> uriFormatter) {
             this.out = new OutputStreamWriter(
                 requireNonNull(out),
@@ -83,18 +83,18 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
             this.serializer = requireNonNull(serializer);
             this.uriFormatter = requireNonNull(uriFormatter);
         }
-    
+
         public void write(Envelope envelope) throws IOException {
             if (streamClosed) {
                 throw new IOException("Stream closed");
             }
             repository.update(envelope);
         }
-    
+
         public static Builder builder(Serializer serializer) {
             return new Builder(serializer);
         }
-    
+
         static final class Builder {
             private final Serializer serializer;
             private Function<String, String> uriFormatter = Function.identity();
@@ -112,7 +112,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                     return s;
                 };
             }
-            
+
             /**
              * Removes a given prefix from all URI locations.
              * <p>
@@ -124,13 +124,13 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                 this.uriFormatter = removePrefix(requireNonNull(prefix));
                 return this;
             }
-            
+
             public MessagesToUsageWriter build(OutputStream out) {
                 requireNonNull(out);
                 return new MessagesToUsageWriter(out, serializer, uriFormatter);
             }
         }
-    
+
         @Override
         public void close() throws IOException {
             if (streamClosed) {
@@ -147,12 +147,12 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                 }
             }
         }
-    
+
         @FunctionalInterface
         interface Serializer {
-    
+
             void writeValue(Writer writer, Object value) throws IOException;
-    
+
         }
     }
 }
