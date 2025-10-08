@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.messages.types.Envelope;
+import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
@@ -25,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  * Formatter to measure performance of steps. Includes average and median step
  * duration.
  */
-public final class UnusedStepsSummaryPrinter implements Plugin, ConcurrentEventListener {
+public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener {
 
     private final MessagesToUnusedWriter writer;
 
@@ -58,6 +59,11 @@ public final class UnusedStepsSummaryPrinter implements Plugin, ConcurrentEventL
                 throw new IllegalStateException(e);
             }
         }
+    }
+
+    @Override
+    public void setMonochrome(boolean monochrome) {
+        // no-op, no colors printed
     }
 
     /**
