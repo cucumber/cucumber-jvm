@@ -7,11 +7,13 @@ import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.query.Query;
 import io.cucumber.query.Repository;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_STEP_DEFINITIONS;
@@ -27,7 +29,9 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public UsageFormatter(OutputStream out) {
+        String cwdUri = new File("").toURI().toString();
         this.writer = MessagesToUsageWriter.builder(Jackson.OBJECT_MAPPER::writeValue)
+                .removeUriPrefix(cwdUri)
                 .build(out);
     }
 
@@ -69,13 +73,15 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                 .build();
         private final Query query = new Query(repository);
         private final Serializer serializer;
+        private final Function<String, String> uriFormatter;
         private boolean streamClosed = false;
     
-        public MessagesToUsageWriter(OutputStream out, Serializer serializer) {
+        public MessagesToUsageWriter(OutputStream out, Serializer serializer, Function<String, String> uriFormatter) {
             this.out = new OutputStreamWriter(
                 requireNonNull(out),
                 StandardCharsets.UTF_8);
             this.serializer = requireNonNull(serializer);
+            this.uriFormatter = requireNonNull(uriFormatter);
         }
     
         public void write(Envelope envelope) throws IOException {
@@ -91,14 +97,37 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     
         public static final class Builder {
             private final Serializer serializer;
-    
+            private Function<String, String> uriFormatter = Function.identity();
+
             private Builder(Serializer serializer) {
                 this.serializer = requireNonNull(serializer);
             }
-    
+
+            private static Function<String, String> removePrefix(String prefix) {
+                // TODO: Needs coverage
+                return s -> {
+                    if (s.startsWith(prefix)) {
+                        return s.substring(prefix.length());
+                    }
+                    return s;
+                };
+            }
+            
+            /**
+             * Removes a given prefix from all URI locations.
+             * <p>
+             * The typical usage would be to trim the current working directory.
+             * This makes the report more readable.
+             */
+            public Builder removeUriPrefix(String prefix) {
+                // TODO: Needs coverage
+                this.uriFormatter = removePrefix(requireNonNull(prefix));
+                return this;
+            }
+            
             public MessagesToUsageWriter build(OutputStream out) {
                 requireNonNull(out);
-                return new MessagesToUsageWriter(out, serializer);
+                return new MessagesToUsageWriter(out, serializer, uriFormatter);
             }
         }
     
@@ -108,7 +137,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                 return;
             }
             try {
-                UsageReportWriter.UsageReport report = new UsageReportWriter(query).createUsageReport();
+                UsageReportWriter.UsageReport report = new UsageReportWriter(query, uriFormatter).createUsageReport();
                 serializer.writeValue(out, report);
             } finally {
                 try {

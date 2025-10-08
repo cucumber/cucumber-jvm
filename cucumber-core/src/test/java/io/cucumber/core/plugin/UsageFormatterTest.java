@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -67,7 +66,6 @@ class UsageFormatterTest {
                 .build()
                 .run();
 
-        String featureFile = new File("").toURI() + "path/test.feature";
         String expected = "" +
                 "{\n" +
                 "  \"stepDefinitions\": [\n" +
@@ -96,7 +94,7 @@ class UsageFormatterTest {
                 "    }\n" +
                 "  ]\n" +
                 "}";
-        assertJsonEquals(expected.replaceAll("path/test.feature", featureFile), out);
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -118,7 +116,6 @@ class UsageFormatterTest {
                 .build()
                 .run();
 
-        String featureFile = new File("").toURI() + "path/test.feature";
         String expected = "" +
                 "{" +
                 "  \"stepDefinitions\": [\n" +
@@ -142,7 +139,7 @@ class UsageFormatterTest {
                 "    }\n" +
                 "  ]\n" +
                 "}";
-        assertJsonEquals(expected.replaceAll("path/test.feature", featureFile), out);
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -171,7 +168,6 @@ class UsageFormatterTest {
                 .build()
                 .run();
 
-        String featureFile = new File("").toURI() + "path/test.feature";
         String expected = "" +
                 "{\n" +
                 "  \"stepDefinitions\": [\n" +
@@ -205,7 +201,7 @@ class UsageFormatterTest {
                 "    }\n" +
                 "  ]\n" +
                 "}";
-        assertJsonEquals(expected.replaceAll("path/test.feature", featureFile), out);
+        assertJsonEquals(expected, out);
     }
 
     @Test
@@ -231,7 +227,6 @@ class UsageFormatterTest {
                 .build()
                 .run();
 
-        String featureFile = new File("").toURI() + "path/test.feature";
         String expected = "" +
                 "{\n" +
                 "  \"stepDefinitions\": [\n" +
@@ -260,7 +255,7 @@ class UsageFormatterTest {
                 "    }\n" +
                 "  ]\n" +
                 "}";
-        assertJsonEquals(expected.replaceAll("path/test.feature", featureFile), out);
+        assertJsonEquals(expected, out);
     }
 
     private void assertJsonEquals(String expected, ByteArrayOutputStream actual) throws JSONException {

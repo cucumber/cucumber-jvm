@@ -26,11 +26,12 @@ import static java.util.stream.Collectors.toList;
 final class UsageReportWriter {
 
     private final Query query;
-    private final Function<String, String> uriFormatter = s -> s;
+    private final Function<String, String> uriFormatter;
     private final SourceReferenceFormatter sourceReferenceFormatter;
 
-    UsageReportWriter(Query query) {
-        this.query = query;
+    UsageReportWriter(Query query, Function<String, String> uriFormatter) {
+        this.query = requireNonNull(query);
+        this.uriFormatter = requireNonNull(uriFormatter);
         this.sourceReferenceFormatter = new SourceReferenceFormatter(uriFormatter);
     }
 
