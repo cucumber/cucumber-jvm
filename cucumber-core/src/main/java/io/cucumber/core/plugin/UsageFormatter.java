@@ -64,7 +64,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
      * Note: Messages are first collected and only written once the stream is
      * closed.
      */
-    public static final class MessagesToUsageWriter implements AutoCloseable {
+    static final class MessagesToUsageWriter implements AutoCloseable {
     
         private final OutputStreamWriter out;
         private final Repository repository = Repository.builder()
@@ -76,7 +76,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         private final Function<String, String> uriFormatter;
         private boolean streamClosed = false;
     
-        public MessagesToUsageWriter(OutputStream out, Serializer serializer, Function<String, String> uriFormatter) {
+        MessagesToUsageWriter(OutputStream out, Serializer serializer, Function<String, String> uriFormatter) {
             this.out = new OutputStreamWriter(
                 requireNonNull(out),
                 StandardCharsets.UTF_8);
@@ -95,7 +95,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
             return new Builder(serializer);
         }
     
-        public static final class Builder {
+        static final class Builder {
             private final Serializer serializer;
             private Function<String, String> uriFormatter = Function.identity();
 
@@ -149,7 +149,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         }
     
         @FunctionalInterface
-        public interface Serializer {
+        interface Serializer {
     
             void writeValue(Writer writer, Object value) throws IOException;
     
