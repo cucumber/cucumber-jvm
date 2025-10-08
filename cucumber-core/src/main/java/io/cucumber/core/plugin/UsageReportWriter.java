@@ -3,9 +3,7 @@ package io.cucumber.core.plugin;
 import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Location;
 import io.cucumber.messages.types.PickleStep;
-import io.cucumber.messages.types.SourceReference;
 import io.cucumber.messages.types.StepDefinition;
-import io.cucumber.messages.types.StepDefinitionPattern;
 import io.cucumber.messages.types.TestStepFinished;
 import io.cucumber.query.Query;
 
@@ -14,9 +12,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
-import static io.cucumber.messages.types.StepDefinitionPatternType.CUCUMBER_EXPRESSION;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
@@ -36,18 +34,24 @@ final class UsageReportWriter {
     }
 
     UsageReport createUsageReport() {
-        Map<StepDefinition, List<StepUsage>> testStepsFinishedByStepDefinition = query.findAllTestStepFinished()
+        Map<Optional<StepDefinition>, List<StepUsage>> testStepsFinishedByStepDefinition = query
+                .findAllTestStepFinished()
                 .stream()
                 .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
                     mapping(createStepDuration(), toList())));
 
         // Add unused step definitions
-        query.findAllStepDefinitions().forEach(stepDefinition -> testStepsFinishedByStepDefinition
-                .computeIfAbsent(stepDefinition, sd -> new ArrayList<>()));
+        query.findAllStepDefinitions().stream()
+                .map(Optional::of)
+                .forEach(stepDefinition -> testStepsFinishedByStepDefinition
+                        .computeIfAbsent(stepDefinition, sd -> new ArrayList<>()));
 
         List<StepDefinitionUsage> stepDefinitionUsages = testStepsFinishedByStepDefinition.entrySet()
                 .stream()
-                .map(entry -> createStepContainer(entry.getKey(), entry.getValue()))
+                // Filter out steps with without a step definition or with an
+                // ambiguous step definition. These can't be represented.
+                .filter(entry -> entry.getKey().isPresent())
+                .map(entry -> createStepContainer(entry.getKey().get(), entry.getValue()))
                 .collect(toList());
         return new UsageReport(stepDefinitionUsages);
     }
@@ -126,14 +130,9 @@ final class UsageReportWriter {
                 .orElse("");
     }
 
-    private Function<TestStepFinished, StepDefinition> findUnambiguousStepDefinitionBy() {
+    private Function<TestStepFinished, Optional<StepDefinition>> findUnambiguousStepDefinitionBy() {
         return testStepFinished -> query.findTestStepBy(testStepFinished)
-                .flatMap(query::findUnambiguousStepDefinitionBy)
-                .orElseGet(UsageReportWriter::createDummyStepDefinition);
-    }
-
-    private static StepDefinition createDummyStepDefinition() {
-        return new StepDefinition("", new StepDefinitionPattern("", CUCUMBER_EXPRESSION), SourceReference.of(""));
+                .flatMap(query::findUnambiguousStepDefinitionBy);
     }
 
     static final class UsageReport {
