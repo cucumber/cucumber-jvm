@@ -3,7 +3,6 @@ package io.cucumber.core.plugin;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.query.Query;
 import io.cucumber.query.Repository;
