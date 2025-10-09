@@ -22,20 +22,20 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
-final class UsageReportWriter {
+final class UsageReportBuilder {
 
     private final Query query;
     private final Function<String, String> uriFormatter;
     private final SourceReferenceFormatter sourceReferenceFormatter;
 
-    UsageReportWriter(Query query, Function<String, String> uriFormatter) {
+    UsageReportBuilder(Query query, Function<String, String> uriFormatter) {
         this.query = requireNonNull(query);
         this.uriFormatter = requireNonNull(uriFormatter);
         this.sourceReferenceFormatter = new SourceReferenceFormatter(uriFormatter);
     }
 
-    UsageReport createUsageReport() {
-        Map<Optional<StepDefinition>, List<StepUsage>> testStepsFinishedByStepDefinition = query
+    UsageReport build() {
+        Map<Optional<StepDefinition>, List<UsageReport.StepUsage>> testStepsFinishedByStepDefinition = query
                 .findAllTestStepFinished()
                 .stream()
                 .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
@@ -47,7 +47,7 @@ final class UsageReportWriter {
                 .forEach(stepDefinition -> testStepsFinishedByStepDefinition
                         .computeIfAbsent(stepDefinition, sd -> new ArrayList<>()));
 
-        List<StepDefinitionUsage> stepDefinitionUsages = testStepsFinishedByStepDefinition.entrySet()
+        List<UsageReport.StepDefinitionUsage> stepDefinitionUsages = testStepsFinishedByStepDefinition.entrySet()
                 .stream()
                 // Filter out steps with without a step definition or with an
                 // ambiguous step definition. These can't be represented.
@@ -57,35 +57,35 @@ final class UsageReportWriter {
         return new UsageReport(stepDefinitionUsages);
     }
 
-    private StepDefinitionUsage createStepContainer(StepDefinition stepDefinition, List<StepUsage> stepUsages) {
-        Statistics aggregatedDurations = createDurationStatistics(stepUsages);
+    private UsageReport.StepDefinitionUsage createStepContainer(StepDefinition stepDefinition, List<UsageReport.StepUsage> stepUsages) {
+        UsageReport.Statistics aggregatedDurations = createDurationStatistics(stepUsages);
         String pattern = stepDefinition.getPattern().getSource();
         String location = sourceReferenceFormatter.format(stepDefinition.getSourceReference()).orElse("");
-        return new StepDefinitionUsage(pattern, location, aggregatedDurations, stepUsages);
+        return new UsageReport.StepDefinitionUsage(pattern, location, aggregatedDurations, stepUsages);
     }
 
-    private static Statistics createDurationStatistics(List<StepUsage> stepUsages) {
+    private static UsageReport.Statistics createDurationStatistics(List<UsageReport.StepUsage> stepUsages) {
         if (stepUsages.isEmpty()) {
             return null;
         }
         Duration sum = stepUsages.stream()
-                .map(StepUsage::getDuration)
+                .map(UsageReport.StepUsage::getDuration)
                 .reduce(Duration::plus)
                 // Can't happen
                 .orElse(Duration.ZERO);
         Duration mean = sum.dividedBy(stepUsages.size());
         Duration moe95 = calculateMarginOfError95(stepUsages, mean);
-        return new Statistics(sum, mean, moe95);
+        return new UsageReport.Statistics(sum, mean, moe95);
     }
 
     /**
      * Calculate the margin of error with a 0.95% confidence interval.
      */
-    private static Duration calculateMarginOfError95(List<StepUsage> stepUsages, Duration mean) {
+    private static Duration calculateMarginOfError95(List<UsageReport.StepUsage> stepUsages, Duration mean) {
         BigDecimal meanSeconds = toBigDecimalSeconds(mean);
         BigDecimal variance = stepUsages.stream()
-                .map(StepUsage::getDuration)
-                .map(UsageReportWriter::toBigDecimalSeconds)
+                .map(UsageReport.StepUsage::getDuration)
+                .map(UsageReportBuilder::toBigDecimalSeconds)
                 .map(durationSeconds -> durationSeconds.subtract(meanSeconds).pow(2))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
@@ -101,19 +101,19 @@ final class UsageReportWriter {
         return BigDecimal.valueOf(duration.getSeconds()).add(BigDecimal.valueOf(duration.getNano(), 9));
     }
 
-    private Function<TestStepFinished, StepUsage> createStepDuration() {
+    private Function<TestStepFinished, UsageReport.StepUsage> createStepDuration() {
         return testStepFinished -> query
                 .findTestStepBy(testStepFinished)
                 .flatMap(query::findPickleStepBy)
                 .map(pickleStep -> createStepDuration(testStepFinished, pickleStep))
-                .orElseGet(() -> new StepUsage("", Duration.ZERO, ""));
+                .orElseGet(() -> new UsageReport.StepUsage("", Duration.ZERO, ""));
     }
 
-    private StepUsage createStepDuration(TestStepFinished testStepFinished, PickleStep pickleStep) {
+    private UsageReport.StepUsage createStepDuration(TestStepFinished testStepFinished, PickleStep pickleStep) {
         String text = pickleStep.getText();
         String location = findLocationOf(testStepFinished);
         Duration duration = Convertor.toDuration(testStepFinished.getTestStepResult().getDuration());
-        return new StepUsage(text, duration, location);
+        return new UsageReport.StepUsage(text, duration, location);
     }
 
     private String findLocationOf(TestStepFinished testStepFinished) {
@@ -128,103 +128,6 @@ final class UsageReportWriter {
     private Function<TestStepFinished, Optional<StepDefinition>> findUnambiguousStepDefinitionBy() {
         return testStepFinished -> query.findTestStepBy(testStepFinished)
                 .flatMap(query::findUnambiguousStepDefinitionBy);
-    }
-
-    static final class UsageReport {
-        private final List<StepDefinitionUsage> stepDefinitions;
-
-        UsageReport(List<StepDefinitionUsage> stepDefinitions) {
-            this.stepDefinitions = requireNonNull(stepDefinitions);
-        }
-
-        public List<StepDefinitionUsage> getStepDefinitions() {
-            return stepDefinitions;
-        }
-    }
-
-    /**
-     * Container for usage-entries of steps
-     */
-    static final class StepDefinitionUsage {
-
-        private final String expression;
-        private final String location;
-        private final Statistics duration;
-        private final List<StepUsage> steps;
-
-        StepDefinitionUsage(
-                String expression, String location, Statistics duration, List<StepUsage> steps
-        ) {
-            this.expression = requireNonNull(expression);
-            this.location = requireNonNull(location);
-            this.duration = duration;
-            this.steps = requireNonNull(steps);
-        }
-
-        public String getExpression() {
-            return expression;
-        }
-
-        public Statistics getDuration() {
-            return duration;
-        }
-
-        public List<StepUsage> getSteps() {
-            return steps;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-    }
-
-    static final class Statistics {
-        private final Duration sum;
-        private final Duration mean;
-        private final Duration moe95;
-
-        Statistics(Duration sum, Duration mean, Duration moe95) {
-            this.sum = sum;
-            this.mean = mean;
-            this.moe95 = moe95;
-        }
-
-        public Duration getSum() {
-            return sum;
-        }
-
-        public Duration getMean() {
-            return mean;
-        }
-
-        public Duration getMoe95() {
-            return moe95;
-        }
-    }
-
-    static final class StepUsage {
-
-        private final String text;
-        private final Duration duration;
-        private final String location;
-
-        StepUsage(String text, Duration duration, String location) {
-            this.text = requireNonNull(text);
-            this.duration = requireNonNull(duration);
-            this.location = requireNonNull(location);
-        }
-
-        public Duration getDuration() {
-            return duration;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-
-        public String getText() {
-            return text;
-        }
     }
 
 }

@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
@@ -137,8 +138,9 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
                 return;
             }
             try {
-                UsageReportWriter.UsageReport report = new UsageReportWriter(query, uriFormatter).createUsageReport();
-                serializer.writeValue(out, report);
+                UsageReport report = new UsageReportBuilder(query, uriFormatter).build();
+                String formatted = UsageReportFormatter.format(report);
+                out.write(formatted);
             } finally {
                 try {
                     out.close();

@@ -137,9 +137,9 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
                 return;
             }
             try {
-                UsageReportWriter.UsageReport report = new UsageReportWriter(query, uriFormatter).createUsageReport();
-                List<UsageReportWriter.StepDefinitionUsage> stepDefinitions = report.getStepDefinitions();
-                List<UsageReportWriter.StepDefinitionUsage> unusedSteps = stepDefinitions.stream()
+                UsageReport report = new UsageReportBuilder(query, uriFormatter).build();
+                List<UsageReport.StepDefinitionUsage> stepDefinitions = report.getStepDefinitions();
+                List<UsageReport.StepDefinitionUsage> unusedSteps = stepDefinitions.stream()
                         .filter(stepDefinitionUsage -> stepDefinitionUsage.getSteps().isEmpty())
                         .collect(Collectors.toList());
 
@@ -147,7 +147,7 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
                 printWriter.println(unusedSteps.size() + " Unused steps:");
 
                 // Output results when done
-                for (UsageReportWriter.StepDefinitionUsage entry : unusedSteps) {
+                for (UsageReport.StepDefinitionUsage entry : unusedSteps) {
                     String location = entry.getLocation();
                     String pattern = entry.getExpression();
                     printWriter.println(location + " # " + pattern);
