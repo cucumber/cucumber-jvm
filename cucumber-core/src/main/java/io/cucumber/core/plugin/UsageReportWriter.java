@@ -74,14 +74,14 @@ final class UsageReportWriter {
                 // Can't happen
                 .orElse(Duration.ZERO);
         Duration mean = sum.dividedBy(stepUsages.size());
-        Duration moe = calculateMarginOfError(stepUsages, mean);
-        return new Statistics(sum, mean, moe);
+        Duration moe95 = calculateMarginOfError95(stepUsages, mean);
+        return new Statistics(sum, mean, moe95);
     }
 
     /**
      * Calculate the margin of error with a 0.95% confidence interval.
      */
-    private static Duration calculateMarginOfError(List<StepUsage> stepUsages, Duration mean) {
+    private static Duration calculateMarginOfError95(List<StepUsage> stepUsages, Duration mean) {
         BigDecimal meanSeconds = toBigDecimalSeconds(mean);
         BigDecimal variance = stepUsages.stream()
                 .map(StepUsage::getDuration)
@@ -181,12 +181,12 @@ final class UsageReportWriter {
     static final class Statistics {
         private final Duration sum;
         private final Duration mean;
-        private final Duration moe;
+        private final Duration moe95;
 
-        Statistics(Duration sum, Duration mean, Duration moe) {
+        Statistics(Duration sum, Duration mean, Duration moe95) {
             this.sum = sum;
             this.mean = mean;
-            this.moe = moe;
+            this.moe95 = moe95;
         }
 
         public Duration getSum() {
@@ -197,8 +197,8 @@ final class UsageReportWriter {
             return mean;
         }
 
-        public Duration getMoe() {
-            return moe;
+        public Duration getMoe95() {
+            return moe95;
         }
     }
 
