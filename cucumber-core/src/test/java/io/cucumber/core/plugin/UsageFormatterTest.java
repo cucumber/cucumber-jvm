@@ -74,10 +74,8 @@ class UsageFormatterTest {
                 "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
                 "      \"duration\": {\n" +
                 "        \"sum\": 1.000000000,\n" +
-                "        \"average\": 1.000000000,\n" +
-                "        \"median\": 1.000000000,\n" +
-                "        \"min\": 1.000000000,\n" +
-                "        \"max\": 1.000000000\n" +
+                "        \"mean\": 1.000000000,\n" +
+                "        \"moe\": 0.000000000\n" +
                 "      },\n" +
                 "      \"steps\": [\n" +
                 "        {\n" +
@@ -124,10 +122,8 @@ class UsageFormatterTest {
                 "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
                 "      \"duration\": {\n" +
                 "        \"sum\": 1.000000000,\n" +
-                "        \"average\": 1.000000000,\n" +
-                "        \"median\": 1.000000000,\n" +
-                "        \"min\": 1.000000000,\n" +
-                "        \"max\": 1.000000000\n" +
+                "        \"mean\": 1.000000000,\n" +
+                "        \"moe\": 0.000000000\n" +
                 "      },\n" +
                 "      \"steps\": [\n" +
                 "        {\n" +
@@ -143,7 +139,7 @@ class UsageFormatterTest {
     }
 
     @Test
-    void writes_usage_with_median() throws JSONException {
+    void writes_usage_with_standard_deviation() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario 1\n" +
@@ -176,10 +172,8 @@ class UsageFormatterTest {
                 "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
                 "      \"duration\": {\n" +
                 "        \"sum\": 7.000000000,\n" +
-                "        \"average\": 2.333333333,\n" +
-                "        \"median\": 2.000000000,\n" +
-                "        \"min\": 1.000000000,\n" +
-                "        \"max\": 4.000000000\n" +
+                "        \"mean\": 2.333333333,\n" +
+                "        \"moe\": 1.440164599\n" +
                 "      },\n" +
                 "      \"steps\": [\n" +
                 "        {\n" +
@@ -205,7 +199,7 @@ class UsageFormatterTest {
     }
 
     @Test
-    void writes_usage_with_median_of_two() throws JSONException {
+    void writes_usage_with_standard_deviation__two_samples() throws JSONException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario 1\n" +
@@ -235,10 +229,8 @@ class UsageFormatterTest {
                 "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
                 "      \"duration\": {\n" +
                 "        \"sum\": 5.000000000,\n" +
-                "        \"average\": 2.500000000,\n" +
-                "        \"median\": 2.500000000,\n" +
-                "        \"min\": 2.000000000,\n" +
-                "        \"max\": 3.000000000\n" +
+                "        \"mean\": 2.500000000,\n" +
+                "        \"moe\": 0.707106781\n" +
                 "      },\n" +
                 "      \"steps\": [\n" +
                 "        {\n" +

@@ -7,15 +7,16 @@ import io.cucumber.messages.types.StepDefinition;
 import io.cucumber.messages.types.TestStepFinished;
 import io.cucumber.query.Query;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import static java.util.Comparator.naturalOrder;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -38,7 +39,7 @@ final class UsageReportWriter {
                 .findAllTestStepFinished()
                 .stream()
                 .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
-                    mapping(createStepDuration(), toList())));
+                        mapping(createStepDuration(), toList())));
 
         // Add unused step definitions
         query.findAllStepDefinitions().stream()
@@ -72,38 +73,30 @@ final class UsageReportWriter {
                 .reduce(Duration::plus)
                 // Can't happen
                 .orElse(Duration.ZERO);
-
-        Duration min = stepUsages.stream()
+        Duration mean = sum.dividedBy(stepUsages.size());
+        Duration moe = calculateMarginOfError(stepUsages, mean);
+        return new Statistics(sum, mean, moe);
+    }
+    /**
+     * Calculate the margin of error with a 0.95% confidence interval.
+     */
+    private static Duration calculateMarginOfError(List<StepUsage> stepUsages, Duration mean) {
+        BigDecimal meanSeconds = toBigDecimalSeconds(mean);
+        BigDecimal variance = stepUsages.stream()
                 .map(StepUsage::getDuration)
-                .min(naturalOrder())
-                // Can't happen
-                .orElse(Duration.ZERO);
-
-        Duration max = stepUsages.stream()
-                .map(StepUsage::getDuration)
-                .max(naturalOrder())
-                // Can't happen
-                .orElse(Duration.ZERO);
-
-        Duration average = sum.dividedBy(stepUsages.size());
-
-        Duration median = getMedian(stepUsages);
-
-        return new Statistics(sum, average, median, min, max);
+                .map(UsageReportWriter::toBigDecimalSeconds)
+                .map(durationSeconds -> durationSeconds.subtract(meanSeconds).pow(2))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+        // TODO: With Java 17, use BigDecimal.sqrt and BigDecimal.divideAndRemainder for seconds and nos
+        double marginOfError = 2 * Math.sqrt(variance.doubleValue()) / stepUsages.size();
+        long seconds = (long) Math.floor(marginOfError);
+        long nanos = (long) Math.floor((marginOfError - seconds) * TimeUnit.SECONDS.toNanos(1));
+        return Duration.ofSeconds(seconds, nanos);
     }
 
-    private static Duration getMedian(List<StepUsage> stepUsages) {
-        long size = stepUsages.size();
-        long medianItems = size % 2 == 0 ? 2 : 1;
-        long medianIndex = size % 2 == 0 ? (size / 2) - 1 : size / 2;
-        return stepUsages.stream()
-                .map(StepUsage::getDuration)
-                .sorted()
-                .skip(medianIndex)
-                .limit(medianItems)
-                .reduce(Duration::plus)
-                .orElse(Duration.ZERO)
-                .dividedBy(medianItems);
+    private static BigDecimal toBigDecimalSeconds(Duration duration) {
+        return BigDecimal.valueOf(duration.getSeconds()).add(BigDecimal.valueOf(duration.getNano(), 9));
     }
 
     private Function<TestStepFinished, StepUsage> createStepDuration() {
@@ -185,37 +178,25 @@ final class UsageReportWriter {
 
     static final class Statistics {
         private final Duration sum;
-        private final Duration average;
-        private final Duration median;
-        private final Duration min;
-        private final Duration max;
+        private final Duration mean;
+        private final Duration moe;
 
-        Statistics(Duration sum, Duration average, Duration median, Duration min, Duration max) {
+        Statistics(Duration sum, Duration mean, Duration moe) {
             this.sum = sum;
-            this.average = average;
-            this.median = median;
-            this.min = min;
-            this.max = max;
+            this.mean = mean;
+            this.moe = moe;
         }
 
         public Duration getSum() {
             return sum;
         }
 
-        public Duration getAverage() {
-            return average;
+        public Duration getMean() {
+            return mean;
         }
-
-        public Duration getMedian() {
-            return median;
-        }
-
-        public Duration getMin() {
-            return min;
-        }
-
-        public Duration getMax() {
-            return max;
+        
+        public Duration getMoe() {
+            return moe;
         }
     }
 
