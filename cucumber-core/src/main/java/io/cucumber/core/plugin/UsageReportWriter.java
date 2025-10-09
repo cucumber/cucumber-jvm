@@ -39,7 +39,7 @@ final class UsageReportWriter {
                 .findAllTestStepFinished()
                 .stream()
                 .collect(groupingBy(findUnambiguousStepDefinitionBy(), LinkedHashMap::new,
-                        mapping(createStepDuration(), toList())));
+                    mapping(createStepDuration(), toList())));
 
         // Add unused step definitions
         query.findAllStepDefinitions().stream()
@@ -77,6 +77,7 @@ final class UsageReportWriter {
         Duration moe = calculateMarginOfError(stepUsages, mean);
         return new Statistics(sum, mean, moe);
     }
+
     /**
      * Calculate the margin of error with a 0.95% confidence interval.
      */
@@ -88,7 +89,8 @@ final class UsageReportWriter {
                 .map(durationSeconds -> durationSeconds.subtract(meanSeconds).pow(2))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
-        // TODO: With Java 17, use BigDecimal.sqrt and BigDecimal.divideAndRemainder for seconds and nos
+        // TODO: With Java 17, use BigDecimal.sqrt and
+        // BigDecimal.divideAndRemainder for seconds and nos
         double marginOfError = 2 * Math.sqrt(variance.doubleValue()) / stepUsages.size();
         long seconds = (long) Math.floor(marginOfError);
         long nanos = (long) Math.floor((marginOfError - seconds) * TimeUnit.SECONDS.toNanos(1));
@@ -194,7 +196,7 @@ final class UsageReportWriter {
         public Duration getMean() {
             return mean;
         }
-        
+
         public Duration getMoe() {
             return moe;
         }
