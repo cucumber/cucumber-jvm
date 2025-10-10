@@ -19,14 +19,29 @@ final class UsageReportFormatter {
     public static final int MAX_NUMBER_OF_STEPS = 5;
 
     public static String format(UsageReport usageReport) {
+        List<StepDefinitionUsage> stepDefinitions = usageReport.getStepDefinitions();
+
+        if (stepDefinitions.isEmpty()) {
+            return "";
+        }
 
         List<List<String>> table = new ArrayList<>();
         table.add(Arrays.asList("Expression/Text", "Duration", "Mean", "±", "Error", "Location"));
 
-        usageReport.getStepDefinitions()
+        stepDefinitions
                 .stream()
                 .sorted(comparing(StepDefinitionUsage::getDuration, nullsFirst(comparing(Statistics::getMean))).reversed())
                 .forEach(stepDefinitionUsage -> {
+                    Statistics duration = stepDefinitionUsage.getDuration();
+                    table.add(Arrays.asList(
+                            stepDefinitionUsage.getExpression(),
+                            duration == null ?  "" : formatDuration(duration.getSum()),
+                            duration == null ?  "" : formatDuration(duration.getMean()),
+                            duration == null ?  "" : "±",
+                            duration == null ?  "" : formatDuration(duration.getMoe95()),
+                            stepDefinitionUsage.getLocation()
+                    ));
+                    
                     if (stepDefinitionUsage.getSteps().isEmpty()) {
                         table.add(Arrays.asList(
                                 "  UNUSED",
@@ -37,14 +52,6 @@ final class UsageReportFormatter {
                                 ""
                         ));
                     } else {
-                        table.add(Arrays.asList(
-                                stepDefinitionUsage.getExpression(),
-                                formatDuration(stepDefinitionUsage.getDuration().getSum()),
-                                formatDuration(stepDefinitionUsage.getDuration().getMean()),
-                                "±",
-                                formatDuration(stepDefinitionUsage.getDuration().getMoe95()),
-                                stepDefinitionUsage.getLocation()
-                        ));
                         stepDefinitionUsage.getSteps().stream()
                                 .sorted(comparing(UsageReport.StepUsage::getDuration).reversed())
                                 .limit(5)
@@ -74,7 +81,7 @@ final class UsageReportFormatter {
 
                 });
 
-        StringJoiner joiner = new StringJoiner(System.lineSeparator());
+        StringJoiner joiner = new StringJoiner(System.lineSeparator(), System.lineSeparator(), System.lineSeparator());
         int[] longestCellLengthInColumn = findLongestCellLengthInColumn(table);
         for (List<String> row : table) {
             StringJoiner rowJoiner = new StringJoiner(" ");

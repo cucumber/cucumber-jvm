@@ -9,22 +9,21 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.util.UUID;
 
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UsageFormatterTest {
 
     @Test
-    void writes_empty_report() throws JSONException {
+    void writes_empty_report() throws UnsupportedEncodingException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n");
 
@@ -39,15 +38,11 @@ class UsageFormatterTest {
                 .build()
                 .run();
 
-        String expected = "" +
-                "{\n" +
-                " \"stepDefinitions\": []\n" +
-                "}";
-        assertJsonEquals(expected, out);
+        assertThat(out.toString("UTF-8")).isEmpty();
     }
 
     @Test
-    void writes_unused_report() throws JSONException {
+    void writes_unused_report() throws UnsupportedEncodingException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
@@ -61,42 +56,23 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference()),
-                    new StubStepDefinition("second step", twoReference())))
+                        new StubStepDefinition("first step", oneReference()),
+                        new StubStepDefinition("second step", twoReference())))
                 .build()
                 .run();
 
-        String expected = "" +
-                "{\n" +
-                "  \"stepDefinitions\": [\n" +
-                "    {\n" +
-                "      \"expression\": \"first step\",\n" +
-                "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
-                "      \"duration\": {\n" +
-                "        \"sum\": 1.000000000,\n" +
-                "        \"mean\": 1.000000000,\n" +
-                "        \"moe95\": 0.000000000\n" +
-                "      },\n" +
-                "      \"steps\": [\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": 1.000000000,\n" +
-                "          \"location\": \"path/test.feature:2\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"expression\": \"second step\",\n" +
-                "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\",\n" +
-                "      \"steps\": []\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-        assertJsonEquals(expected, out);
+        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
+                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
+                "first step      1.000    1.000 ± 0.000 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
+                "  first step    1.000                  path/test.feature:2                                        \n" +
+                "second step                            io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
+                "  UNUSED                                                                                          \n"
+        );
+
     }
 
     @Test
-    void writes_usage_report() throws JSONException {
+    void writes_usage_report() throws UnsupportedEncodingException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario name\n" +
@@ -110,36 +86,19 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference())))
+                        new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
-        String expected = "" +
-                "{" +
-                "  \"stepDefinitions\": [\n" +
-                "    {\n" +
-                "      \"expression\": \"first step\",\n" +
-                "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
-                "      \"duration\": {\n" +
-                "        \"sum\": 1.000000000,\n" +
-                "        \"mean\": 1.000000000,\n" +
-                "        \"moe95\": 0.000000000\n" +
-                "      },\n" +
-                "      \"steps\": [\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": 1.000000000,\n" +
-                "          \"location\": \"path/test.feature:2\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-        assertJsonEquals(expected, out);
+        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
+                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
+                "first step      1.000    1.000 ± 0.000 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
+                "  first step    1.000                  path/test.feature:2                                        \n");
+
     }
 
     @Test
-    void writes_usage_with_standard_deviation() throws JSONException {
+    void writes_usage_with_standard_deviation() throws UnsupportedEncodingException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario 1\n" +
@@ -150,9 +109,9 @@ class UsageFormatterTest {
                 "    Given first step\n");
 
         StepDurationTimeService timeService = new StepDurationTimeService(
-            Duration.ofMillis(1000),
-            Duration.ofMillis(2000),
-            Duration.ofMillis(4000));
+                Duration.ofMillis(1000),
+                Duration.ofMillis(2000),
+                Duration.ofMillis(4000));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -160,46 +119,21 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference())))
+                        new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
-        String expected = "" +
-                "{\n" +
-                "  \"stepDefinitions\": [\n" +
-                "    {\n" +
-                "      \"expression\": \"first step\",\n" +
-                "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
-                "      \"duration\": {\n" +
-                "        \"sum\": 7.000000000,\n" +
-                "        \"mean\": 2.333333333,\n" +
-                "        \"moe95\": 1.440164599\n" +
-                "      },\n" +
-                "      \"steps\": [\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": 1.000000000,\n" +
-                "          \"location\": \"path/test.feature:2\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": 2.000000000,\n" +
-                "          \"location\": \"path/test.feature:4\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": 4.000000000,\n" +
-                "          \"location\": \"path/test.feature:6\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-        assertJsonEquals(expected, out);
+        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
+                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
+                "first step      7.000    2.333 ± 1.440 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
+                "  first step    4.000                  path/test.feature:6                                        \n" +
+                "  first step    2.000                  path/test.feature:4                                        \n" +
+                "  first step    1.000                  path/test.feature:2                                        \n");
+
     }
 
     @Test
-    void writes_usage_with_standard_deviation__two_samples() throws JSONException {
+    void writes_usage_with_standard_deviation__two_samples() throws UnsupportedEncodingException {
         Feature feature = TestFeatureParser.parse("path/test.feature", "" +
                 "Feature: feature name\n" +
                 "  Scenario: scenario 1\n" +
@@ -208,8 +142,8 @@ class UsageFormatterTest {
                 "    Given first step\n");
 
         StepDurationTimeService timeService = new StepDurationTimeService(
-            Duration.ofMillis(2000),
-            Duration.ofMillis(3000));
+                Duration.ofMillis(2000),
+                Duration.ofMillis(3000));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -217,41 +151,14 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                    new StubStepDefinition("first step", oneReference())))
+                        new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
-        String expected = "" +
-                "{\n" +
-                "  \"stepDefinitions\": [\n" +
-                "    {\n" +
-                "      \"expression\": \"first step\",\n" +
-                "      \"location\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\",\n" +
-                "      \"duration\": {\n" +
-                "        \"sum\": 5.000000000,\n" +
-                "        \"mean\": 2.500000000,\n" +
-                "        \"moe95\": 0.707106781\n" +
-                "      },\n" +
-                "      \"steps\": [\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": 2.000000000,\n" +
-                "          \"location\": \"path/test.feature:2\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": 3.000000000,\n" +
-                "          \"location\": \"path/test.feature:4\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-        assertJsonEquals(expected, out);
+        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
+                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
+                "first step      5.000    2.500 ± 0.707 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
+                "  first step    3.000                  path/test.feature:4                                        \n" +
+                "  first step    2.000                  path/test.feature:2                                        \n");
     }
-
-    private void assertJsonEquals(String expected, ByteArrayOutputStream actual) throws JSONException {
-        assertEquals(expected, new String(actual.toByteArray(), UTF_8), true);
-    }
-
 }
