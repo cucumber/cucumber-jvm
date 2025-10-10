@@ -57,7 +57,9 @@ final class UsageReportBuilder {
         return new UsageReport(stepDefinitionUsages);
     }
 
-    private UsageReport.StepDefinitionUsage createStepContainer(StepDefinition stepDefinition, List<UsageReport.StepUsage> stepUsages) {
+    private UsageReport.StepDefinitionUsage createStepContainer(
+            StepDefinition stepDefinition, List<UsageReport.StepUsage> stepUsages
+    ) {
         UsageReport.Statistics aggregatedDurations = createDurationStatistics(stepUsages);
         String pattern = stepDefinition.getPattern().getSource();
         String location = sourceReferenceFormatter.format(stepDefinition.getSourceReference()).orElse("");

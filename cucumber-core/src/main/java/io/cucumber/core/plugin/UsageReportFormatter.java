@@ -30,27 +30,26 @@ final class UsageReportFormatter {
 
         stepDefinitions
                 .stream()
-                .sorted(comparing(StepDefinitionUsage::getDuration, nullsFirst(comparing(Statistics::getMean))).reversed())
+                .sorted(
+                    comparing(StepDefinitionUsage::getDuration, nullsFirst(comparing(Statistics::getMean))).reversed())
                 .forEach(stepDefinitionUsage -> {
                     Statistics duration = stepDefinitionUsage.getDuration();
                     table.add(Arrays.asList(
-                            stepDefinitionUsage.getExpression(),
-                            duration == null ?  "" : formatDuration(duration.getSum()),
-                            duration == null ?  "" : formatDuration(duration.getMean()),
-                            duration == null ?  "" : "±",
-                            duration == null ?  "" : formatDuration(duration.getMoe95()),
-                            stepDefinitionUsage.getLocation()
-                    ));
-                    
+                        stepDefinitionUsage.getExpression(),
+                        duration == null ? "" : formatDuration(duration.getSum()),
+                        duration == null ? "" : formatDuration(duration.getMean()),
+                        duration == null ? "" : "±",
+                        duration == null ? "" : formatDuration(duration.getMoe95()),
+                        stepDefinitionUsage.getLocation()));
+
                     if (stepDefinitionUsage.getSteps().isEmpty()) {
                         table.add(Arrays.asList(
-                                "  UNUSED",
-                                "",
-                                "",
-                                "",
-                                "",
-                                ""
-                        ));
+                            "  UNUSED",
+                            "",
+                            "",
+                            "",
+                            "",
+                            ""));
                     } else {
                         stepDefinitionUsage.getSteps().stream()
                                 .sorted(comparing(UsageReport.StepUsage::getDuration).reversed())
@@ -58,24 +57,22 @@ final class UsageReportFormatter {
                                 .forEach(stepUsage -> {
 
                                     table.add(Arrays.asList(
-                                            "  " + stepUsage.getText(),
-                                            formatDuration(stepUsage.getDuration()),
-                                            "",
-                                            "",
-                                            "",
-                                            stepUsage.getLocation()
-                                    ));
+                                        "  " + stepUsage.getText(),
+                                        formatDuration(stepUsage.getDuration()),
+                                        "",
+                                        "",
+                                        "",
+                                        stepUsage.getLocation()));
 
                                 });
                         if (stepDefinitionUsage.getSteps().size() > MAX_NUMBER_OF_STEPS) {
                             table.add(Arrays.asList(
-                                    "  " + (stepDefinitionUsage.getSteps().size() - 5) + " more",
-                                    "",
-                                    "",
-                                    "",
-                                    "",
-                                    ""
-                            ));
+                                "  " + (stepDefinitionUsage.getSteps().size() - 5) + " more",
+                                "",
+                                "",
+                                "",
+                                "",
+                                ""));
                         }
                     }
 
@@ -98,7 +95,7 @@ final class UsageReportFormatter {
     }
 
     private static String formatDuration(Duration duration) {
-        return toBigDecimalSeconds(duration).setScale(3, HALF_EVEN).toPlainString();
+        return toBigDecimalSeconds(duration).setScale(3, HALF_EVEN).toPlainString() + "s";
     }
 
     private static BigDecimal toBigDecimalSeconds(Duration duration) {

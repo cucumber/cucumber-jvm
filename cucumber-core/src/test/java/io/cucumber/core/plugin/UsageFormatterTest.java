@@ -56,18 +56,21 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", oneReference()),
-                        new StubStepDefinition("second step", twoReference())))
+                    new StubStepDefinition("first step", oneReference()),
+                    new StubStepDefinition("second step", twoReference())))
                 .build()
                 .run();
 
         assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
-                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
-                "first step      1.000    1.000 ± 0.000 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
-                "  first step    1.000                  path/test.feature:2                                        \n" +
-                "second step                            io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
-                "  UNUSED                                                                                          \n"
-        );
+                "Expression/Text Duration Mean   ± Error  Location                                                   \n"
+                +
+                "first step      1.000s   1.000s ± 0.000s io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n"
+                +
+                "  first step    1.000s                   path/test.feature:2                                        \n"
+                +
+                "second step                              io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n"
+                +
+                "  UNUSED                                                                                            \n");
 
     }
 
@@ -86,14 +89,16 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", oneReference())))
+                    new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
         assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
-                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
-                "first step      1.000    1.000 ± 0.000 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
-                "  first step    1.000                  path/test.feature:2                                        \n");
+                "Expression/Text Duration Mean   ± Error  Location                                                   \n"
+                +
+                "first step      1.000s   1.000s ± 0.000s io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n"
+                +
+                "  first step    1.000s                   path/test.feature:2                                        \n");
 
     }
 
@@ -109,9 +114,9 @@ class UsageFormatterTest {
                 "    Given first step\n");
 
         StepDurationTimeService timeService = new StepDurationTimeService(
-                Duration.ofMillis(1000),
-                Duration.ofMillis(2000),
-                Duration.ofMillis(4000));
+            Duration.ofMillis(1000),
+            Duration.ofMillis(2000),
+            Duration.ofMillis(4000));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -119,16 +124,20 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", oneReference())))
+                    new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
         assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
-                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
-                "first step      7.000    2.333 ± 1.440 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
-                "  first step    4.000                  path/test.feature:6                                        \n" +
-                "  first step    2.000                  path/test.feature:4                                        \n" +
-                "  first step    1.000                  path/test.feature:2                                        \n");
+                "Expression/Text Duration Mean   ± Error  Location                                                   \n"
+                +
+                "first step      7.000s   2.333s ± 1.440s io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n"
+                +
+                "  first step    4.000s                   path/test.feature:6                                        \n"
+                +
+                "  first step    2.000s                   path/test.feature:4                                        \n"
+                +
+                "  first step    1.000s                   path/test.feature:2                                        \n");
 
     }
 
@@ -142,8 +151,8 @@ class UsageFormatterTest {
                 "    Given first step\n");
 
         StepDurationTimeService timeService = new StepDurationTimeService(
-                Duration.ofMillis(2000),
-                Duration.ofMillis(3000));
+            Duration.ofMillis(2000),
+            Duration.ofMillis(3000));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -151,14 +160,17 @@ class UsageFormatterTest {
                 .withAdditionalPlugins(timeService, new UsageFormatter(out))
                 .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
                 .withBackendSupplier(new StubBackendSupplier(
-                        new StubStepDefinition("first step", oneReference())))
+                    new StubStepDefinition("first step", oneReference())))
                 .build()
                 .run();
 
         assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
-                "Expression/Text Duration Mean  ± Error Location                                                   \n" +
-                "first step      5.000    2.500 ± 0.707 io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
-                "  first step    3.000                  path/test.feature:4                                        \n" +
-                "  first step    2.000                  path/test.feature:2                                        \n");
+                "Expression/Text Duration Mean   ± Error  Location                                                   \n"
+                +
+                "first step      5.000s   2.500s ± 0.707s io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n"
+                +
+                "  first step    3.000s                   path/test.feature:4                                        \n"
+                +
+                "  first step    2.000s                   path/test.feature:2                                        \n");
     }
 }
