@@ -25,9 +25,9 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
     public UsageFormatter(OutputStream out) {
         String cwdUri = new File("").toPath().toUri().toString();
         this.writer = MessagesToUsageWriter.builder(UsageReportSerializer.builder()
-                        .feature(INCLUDE_STEPS, true)
-                        .maxStepsPerStepDefinition(5)
-                        .build())
+                .feature(INCLUDE_STEPS, true)
+                .maxStepsPerStepDefinition(5)
+                .build())
                 .removeUriPrefix(cwdUri)
                 .build(out);
     }

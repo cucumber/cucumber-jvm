@@ -7,7 +7,6 @@ import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
