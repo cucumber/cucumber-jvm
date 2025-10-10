@@ -82,7 +82,7 @@ class TestCaseStateTest {
 
         TestCaseState state = createTestCaseState(feature);
 
-        assertThat(state.getUri() + ":" + state.getLine(), is(new File("path/file.feature:2").toURI().toString()));
+        assertThat(state.getUri() + ":" + state.getLine(), is(new File("path/file.feature:2").toPath().toUri().toString()));
     }
 
     @Test
@@ -96,7 +96,7 @@ class TestCaseStateTest {
                 "       | cuke  | \n");
         TestCaseState state = createTestCaseState(feature);
 
-        assertThat(state.getUri() + ":" + state.getLine(), is(new File("path/file.feature:6").toURI().toString()));
+        assertThat(state.getUri() + ":" + state.getLine(), is(new File("path/file.feature:6").toPath().toUri().toString()));
     }
 
     @Test

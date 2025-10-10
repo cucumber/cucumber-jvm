@@ -29,7 +29,7 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public UsageFormatter(OutputStream out) {
-        String cwdUri = new File("").toURI().toString();
+        String cwdUri = new File("").toPath().toUri().toString();
         this.writer = MessagesToUsageWriter.builder(Jackson.OBJECT_MAPPER::writeValue)
                 .removeUriPrefix(cwdUri)
                 .build(out);

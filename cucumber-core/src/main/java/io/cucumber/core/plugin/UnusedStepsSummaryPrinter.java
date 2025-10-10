@@ -31,7 +31,7 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
     public UnusedStepsSummaryPrinter(OutputStream out) {
-        String cwdUri = new File("").toURI().toString();
+        String cwdUri = new File("").toPath().toUri().toString();
         this.writer = MessagesToUnusedWriter.builder()
                 .removeUriPrefix(cwdUri)
                 .build(out);
