@@ -86,6 +86,10 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
+            <artifactId>usage-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
             <artifactId>tag-expressions</artifactId>
         </dependency>
         <dependency>

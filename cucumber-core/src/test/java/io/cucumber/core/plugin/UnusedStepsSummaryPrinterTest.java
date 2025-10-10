@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UnusedStepsSummaryPrinterTest {
 
@@ -36,9 +37,8 @@ class UnusedStepsSummaryPrinterTest {
                 .build()
                 .run();
 
-        String expected = "" +
-                "1 Unused steps:\n" +
-                "io.cucumber.core.plugin.PrettyFormatterStepDefinition.two() # second step\n";
-        Assertions.assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines(expected);
+        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
+                "1 unused step definition(s):\n" +
+                "io.cucumber.core.plugin.PrettyFormatterStepDefinition.two() # second step\n");
     }
 }
