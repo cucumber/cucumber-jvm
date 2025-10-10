@@ -9,16 +9,19 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
 
 public class StepDurationTimeService extends Clock implements ConcurrentEventListener {
 
     private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
-    private final Duration stepDuration;
+    private final List<Duration> stepDuration;
+    private int currentStepDurationIndex;
 
     private final EventHandler<TestStepStarted> stepStartedHandler = event -> handleTestStepStarted();
 
-    public StepDurationTimeService(Duration stepDuration) {
-        this.stepDuration = stepDuration;
+    public StepDurationTimeService(Duration... stepDuration) {
+        this.stepDuration = Arrays.asList(stepDuration);
     }
 
     @Override
@@ -28,7 +31,8 @@ public class StepDurationTimeService extends Clock implements ConcurrentEventLis
 
     private void handleTestStepStarted() {
         Instant timeInstant = instant();
-        currentInstant.set(timeInstant.plus(stepDuration));
+        currentInstant.set(timeInstant.plus(stepDuration.get(currentStepDurationIndex)));
+        currentStepDurationIndex = (currentStepDurationIndex + 1) % stepDuration.size();
     }
 
     @Override

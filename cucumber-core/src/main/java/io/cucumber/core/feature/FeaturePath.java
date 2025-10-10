@@ -2,6 +2,8 @@ package io.cucumber.core.feature;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
@@ -69,8 +71,8 @@ public class FeaturePath {
     }
 
     private static URI parseAssumeFileScheme(String featureIdentifier) {
-        File featureFile = new File(featureIdentifier);
-        return featureFile.toURI();
+        Path featureFile = Paths.get(featureIdentifier);
+        return featureFile.toUri();
     }
 
     private static boolean isWindowsOS() {

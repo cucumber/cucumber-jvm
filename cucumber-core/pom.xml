@@ -14,6 +14,7 @@
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
+        <assertj.version>3.27.6</assertj.version>
         <jackson.version>2.20.0</jackson.version>
         <jsoup.version>1.21.2</jsoup.version>
         <junit-jupiter.version>5.14.0</junit-jupiter.version>
@@ -48,6 +49,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-bom</artifactId>
+                <version>${assertj.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -75,6 +83,10 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>testng-xml-formatter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>usage-formatter</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -124,6 +136,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
         <dependency>
@@ -189,9 +205,22 @@
         </dependency>
 
         <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <version>1.5.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -260,6 +289,7 @@
                                     <include>com.fasterxml.jackson.core:jackson-core</include>
                                     <include>com.fasterxml.jackson.core:jackson-annotations</include>
                                     <include>com.fasterxml.jackson.datatype:jackson-datatype-jdk8</include>
+                                    <include>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -297,6 +327,14 @@
                                 </filter>
                                 <filter>
                                     <artifact>com.fasterxml.jackson.datatype:jackson-datatype-jdk8</artifact>
+                                    <excludes>
+                                        <exclude>**/module-info.class</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/services/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</artifact>
                                     <excludes>
                                         <exclude>**/module-info.class</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
