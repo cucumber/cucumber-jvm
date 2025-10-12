@@ -1,10 +1,11 @@
 package io.cucumber.core.plugin;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
@@ -30,6 +31,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_ABSENT;
+import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -47,10 +50,11 @@ class TimelineFormatterTest {
     private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Paths
             .get("src/main/resources/io/cucumber/core/plugin/timeline");
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .setSerializationInclusion(Include.NON_NULL)
+    private final ObjectMapper objectMapper = JsonMapper.builder()
+            .defaultPropertyInclusion(construct(NON_ABSENT, NON_ABSENT))
             .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+            .build();
 
     // private final Gson gson = new GsonBuilder().registerTypeAdapter(
     // Instant.class,
@@ -164,7 +168,7 @@ class TimelineFormatterTest {
         runFormatterWithPlugin();
 
         // Have to ignore actual thread id and just checknot null
-        final TestData[] expectedTests = getExpectedTestData(0L);
+        final TestData[] expectedTests = getExpectedTestData();
 
         final ActualReportOutput actualOutput = readReport();
 
@@ -191,14 +195,14 @@ class TimelineFormatterTest {
             false);
     }
 
-    private TestData[] getExpectedTestData(Long groupId) throws JsonProcessingException {
+    private TestData[] getExpectedTestData() throws JsonProcessingException {
         String expectedJson = ("[\n" +
                 " {\n" +
                 " \"feature\": \"Failing Feature\",\n" +
                 " \"scenario\": \"Scenario 1\",\n" +
                 " \"start\": 0,\n" +
                 " \"end\": 6000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"@taga,\",\n" +
                 " \"className\": \"failed\"\n" +
@@ -208,7 +212,7 @@ class TimelineFormatterTest {
                 " \"scenario\": \"Scenario 2\",\n" +
                 " \"start\": 6000,\n" +
                 " \"end\": 12000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"\",\n" +
                 " \"className\": \"failed\"\n" +
@@ -218,7 +222,7 @@ class TimelineFormatterTest {
                 " \"scenario\": \"Scenario 3\",\n" +
                 " \"start\": 18000,\n" +
                 " \"end\": 24000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"@tagb,@tagc,\",\n" +
                 " \"className\": \"passed\"\n" +
@@ -228,12 +232,12 @@ class TimelineFormatterTest {
                 " \"feature\": \"Pending Feature\",\n" +
                 " \"start\": 12000,\n" +
                 " \"end\": 18000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"\",\n" +
                 " \"className\": \"undefined\"\n" +
                 " }\n" +
-                "]").replaceAll("groupId", groupId.toString());
+                "]");
 
         return objectMapper.readValue(expectedJson, TestData[].class);
     }
@@ -315,19 +319,17 @@ class TimelineFormatterTest {
 
         assertTrue(Files.exists(reportJsFile));
 
-        Long groupId = Thread.currentThread().getId();
-        String groupName = Thread.currentThread().toString();
+        String groupName = Thread.currentThread().getName();
 
-        TestData[] expectedTests = getExpectedTestData(groupId);
+        TestData[] expectedTests = getExpectedTestData();
 
         GroupData[] expectedGroups = objectMapper.readValue(
             ("[\n" +
                     " {\n" +
-                    " \"id\": groupId,\n" +
+                    " \"id\": 1,\n" +
                     " \"content\": \"groupName\"\n" +
                     " }\n" +
                     "]")
-                    .replaceAll("groupId", groupId.toString())
                     .replaceAll("groupName", groupName),
             GroupData[].class);
 
