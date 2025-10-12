@@ -71,7 +71,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
             .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 
-    @SuppressWarnings({"unused", "RedundantThrows"}) // Used by PluginFactory
+    @SuppressWarnings({ "unused", "RedundantThrows" }) // Used by PluginFactory
     public TimelineFormatter(File reportDir) throws FileNotFoundException {
         reportDir.mkdirs();
         if (!reportDir.isDirectory()) {
