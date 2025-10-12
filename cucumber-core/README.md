@@ -51,6 +51,7 @@ cucumber.glue=                  # comma separated package names.
   
 cucumber.plugin=                # comma separated plugin strings. 
                                 # example: pretty, json:path/to/report.json
+                                # example: com.example.MyCustomPlugin:path/to/report.xml
 
 cucumber.object-factory=        # object factory class name.
                                 # example: com.example.MyObjectFactory
@@ -104,9 +105,27 @@ The performance gain on real projects depends on the feature size.
 
 When not specified, the `RandomUuidGenerator` is used.
 
-## Plugin ##
+## Built in plugins ##
 
-By implementing the Plugin interface, classes can listen to execution events 
+Cucumber comes with several built-in plugins. See the configuration options or the CLIs `--help` command for guidance on
+activating them.
+
+* [html](https://github.com/cucumber/html-formatter): Renders a html report of the text execution
+* [json](https://github.com/cucumber/cucumber-json-formatter): Renders a json report of the text execution. In maintenance mode.
+* [junit](https://github.com/cucumber/junit-xml-formatter): Renders a JUnit xml report of the text execution.
+* [progress](https://github.com/cucumber/pretty-formatter): Renders sequence of dots indicating test execution progress.
+* [message](https://github.com/cucumber/messages): Logs cucumbers execution as a stream of json messages.
+* rerun: Creates a file with scenarios that should be rerun.
+* [summary](https://github.com/cucumber/pretty-formatter): Renders summary report of the test execution.
+* [testng](https://github.com/cucumber/testng-xml-formatter): Renders a TestNG xml report of the text execution.
+* timeline: Renders a timeline of the test execution.
+* [unused](https://github.com/cucumber/usage-formatter): Renders a plain text report of unused step definitions.
+* [usage](https://github.com/cucumber/usage-formatter): Renders a plain text report of step definition usage statistics.
+* [teamcity](https://github.com/cucumber/teamcity-formatter/):  Interspaces Cucumbers output with TeamCity Service Messages
+
+## Custom Plugins ##
+
+By implementing the `Plugin` interface, classes can listen to execution events 
 inside Cucumber JVM. Consider using a Plugin when creating test execution reports.
 
 ## FileSystem ##
