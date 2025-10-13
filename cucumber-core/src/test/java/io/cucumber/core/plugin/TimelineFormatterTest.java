@@ -9,7 +9,7 @@ import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.TimelineFormatter.TimeLineGroupData;
+import io.cucumber.core.plugin.TimelineFormatter.TimeLineGroup;
 import io.cucumber.core.plugin.TimelineFormatter.TimeLineItem;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runtime.Runtime;
@@ -175,7 +175,7 @@ class TimelineFormatterTest {
         // guaranteed in Travis CI
         assertThat(actualOutput.groups, not(empty()));
         for (int i = 0; i < actualOutput.groups.size(); i++) {
-            final TimeLineGroupData actual = actualOutput.groups.get(i);
+            final TimeLineGroup actual = actualOutput.groups.get(i);
 
             final int idx = i;
             assertAll(
@@ -253,7 +253,7 @@ class TimelineFormatterTest {
             }
         }
         TimeLineItem[] tests = objectMapper.readValue(itemLines, TimeLineItem[].class);
-        TimeLineGroupData[] groups = objectMapper.readValue(groupLines, TimeLineGroupData[].class);
+        TimeLineGroup[] groups = objectMapper.readValue(groupLines, TimeLineGroup[].class);
         return new ActualReportOutput(tests, groups);
     }
 
@@ -322,7 +322,7 @@ class TimelineFormatterTest {
 
         TimeLineItem[] expectedTests = getExpectedTestData();
 
-        TimeLineGroupData[] expectedGroups = objectMapper.readValue(
+        TimeLineGroup[] expectedGroups = objectMapper.readValue(
             ("[\n" +
                     " {\n" +
                     " \"id\": 1,\n" +
@@ -330,7 +330,7 @@ class TimelineFormatterTest {
                     " }\n" +
                     "]")
                     .replaceAll("groupName", groupName),
-            TimeLineGroupData[].class);
+            TimeLineGroup[].class);
 
         ActualReportOutput actualOutput = readReport();
 
@@ -346,14 +346,14 @@ class TimelineFormatterTest {
     }
 
     private void assertTimelineGroupDataIsAsExpected(
-            TimeLineGroupData[] expectedGroups,
-            List<TimeLineGroupData> actualOutput
+            TimeLineGroup[] expectedGroups,
+            List<TimeLineGroup> actualOutput
     ) {
         assertThat("Number of groups was not as expected", actualOutput.size(),
             is(equalTo(expectedGroups.length)));
         for (int i = 0; i < expectedGroups.length; i++) {
-            TimeLineGroupData expected = expectedGroups[i];
-            TimeLineGroupData actual = actualOutput.get(i);
+            TimeLineGroup expected = expectedGroups[i];
+            TimeLineGroup actual = actualOutput.get(i);
 
             int idx = i;
             assertAll(
@@ -369,9 +369,9 @@ class TimelineFormatterTest {
     private static class ActualReportOutput {
 
         private final List<TimeLineItem> tests;
-        private final List<TimeLineGroupData> groups;
+        private final List<TimeLineGroup> groups;
 
-        ActualReportOutput(TimeLineItem[] tests, TimeLineGroupData[] groups) {
+        ActualReportOutput(TimeLineItem[] tests, TimeLineGroup[] groups) {
             this.tests = Arrays.asList(tests);
             this.groups = Arrays.asList(groups);
         }

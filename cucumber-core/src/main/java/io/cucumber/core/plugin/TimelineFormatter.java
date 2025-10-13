@@ -106,7 +106,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void writeTimeLineReport() throws IOException {
-        Map<String, TimeLineGroupData> timeLineGroups = new HashMap<>();
+        Map<String, TimeLineGroup> timeLineGroups = new HashMap<>();
         AtomicInteger nextGroupId = new AtomicInteger();
         List<TimeLineItem> timeLineItems = query.findAllTestCaseFinished().stream()
                 .map(testCaseFinished -> query.findTestCaseStartedBy(testCaseFinished)
@@ -122,17 +122,17 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         writeTimeLineReport(timeLineGroups, timeLineItems);
     }
 
-    private Function<String, TimeLineGroupData> createTimeLineGroup(
-            Map<String, TimeLineGroupData> timeLineGroups,
+    private Function<String, TimeLineGroup> createTimeLineGroup(
+            Map<String, TimeLineGroup> timeLineGroups,
             AtomicInteger nextGroupId
     ) {
 
         return workerId -> timeLineGroups.computeIfAbsent(workerId, createTimeLineGroup(nextGroupId::incrementAndGet));
     }
 
-    private Function<String, TimeLineGroupData> createTimeLineGroup(Supplier<Integer> nextGroupId) {
+    private Function<String, TimeLineGroup> createTimeLineGroup(Supplier<Integer> nextGroupId) {
         return workerId -> {
-            TimeLineGroupData timeLineGroup = new TimeLineGroupData();
+            TimeLineGroup timeLineGroup = new TimeLineGroup();
             timeLineGroup.setContent(workerId);
             timeLineGroup.setId(nextGroupId.get());
             return timeLineGroup;
@@ -141,15 +141,15 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     private TimeLineItem createTestData(
             TestCaseFinished testCaseFinished, TestCaseStarted testCaseStarted,
-            Function<String, TimeLineGroupData> timeLineGroupCreator
+            Function<String, TimeLineGroup> timeLineGroupCreator
     ) {
         String workerId = testCaseStarted.getWorkerId().orElse("");
-        TimeLineGroupData timeLineGroupData = timeLineGroupCreator.apply(workerId);
-        return createTestData(testCaseFinished, testCaseStarted, timeLineGroupData);
+        TimeLineGroup timeLineGroup = timeLineGroupCreator.apply(workerId);
+        return createTestData(testCaseFinished, testCaseStarted, timeLineGroup);
     }
 
     private TimeLineItem createTestData(
-            TestCaseFinished testCaseFinished, TestCaseStarted testCaseStarted, TimeLineGroupData timeLineGroupData
+            TestCaseFinished testCaseFinished, TestCaseStarted testCaseStarted, TimeLineGroup timeLineGroup
     ) {
         TimeLineItem data = new TimeLineItem();
         data.setId(testCaseStarted.getTestCaseId());
@@ -157,7 +157,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         data.setScenario(getPickleName(testCaseStarted));
         data.setStart(Convertor.toInstant(testCaseStarted.getTimestamp()).toEpochMilli());
         data.setTags(getTagsValue(testCaseStarted));
-        data.setGroup(timeLineGroupData.getId());
+        data.setGroup(timeLineGroup.getId());
         data.setEnd(Convertor.toInstant(testCaseFinished.getTimestamp()).toEpochMilli());
         data.setClassName(getTestStepStatusResult(testCaseFinished));
         return data;
@@ -196,13 +196,13 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 }).orElse("");
     }
 
-    private void writeTimeLineReport(Map<String, TimeLineGroupData> timeLineGroups, List<TimeLineItem> timeLineItems)
+    private void writeTimeLineReport(Map<String, TimeLineGroup> timeLineGroups, List<TimeLineItem> timeLineItems)
             throws IOException {
         writeReportJs(timeLineGroups, timeLineItems);
         copyReportFiles();
     }
 
-    private void writeReportJs(Map<String, TimeLineGroupData> timeLineGroups, List<TimeLineItem> timeLineItems)
+    private void writeReportJs(Map<String, TimeLineGroup> timeLineGroups, List<TimeLineItem> timeLineItems)
             throws IOException {
         File reportJsFile = new File(reportDir, "report.js");
         try (BufferedWriter reportJs = Files.newBufferedWriter(reportJsFile.toPath(), StandardCharsets.UTF_8)) {
@@ -252,7 +252,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
     }
 
-    static class TimeLineGroupData {
+    static class TimeLineGroup {
 
         private long id;
         private String content;
