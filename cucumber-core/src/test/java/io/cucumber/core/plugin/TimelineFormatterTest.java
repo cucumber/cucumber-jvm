@@ -1,16 +1,16 @@
 package io.cucumber.core.plugin;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.TimelineFormatter.GroupData;
-import io.cucumber.core.plugin.TimelineFormatter.TestData;
+import io.cucumber.core.plugin.TimelineFormatter.TimeLineGroup;
+import io.cucumber.core.plugin.TimelineFormatter.TimeLineItem;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
@@ -30,6 +30,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_ABSENT;
+import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -41,16 +43,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TimelineFormatterTest {
 
-    private static final Comparator<TestData> TEST_DATA_COMPARATOR = Comparator
-            .comparing(TestData::getScenario);
+    private static final Comparator<TimeLineItem> TEST_DATA_COMPARATOR = Comparator
+            .comparing(TimeLineItem::getScenario);
 
     private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Paths
             .get("src/main/resources/io/cucumber/core/plugin/timeline");
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .setSerializationInclusion(Include.NON_NULL)
+    private final ObjectMapper objectMapper = JsonMapper.builder()
+            .defaultPropertyInclusion(construct(NON_ABSENT, NON_ABSENT))
             .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+            .build();
 
     // private final Gson gson = new GsonBuilder().registerTypeAdapter(
     // Instant.class,
@@ -164,7 +167,7 @@ class TimelineFormatterTest {
         runFormatterWithPlugin();
 
         // Have to ignore actual thread id and just checknot null
-        final TestData[] expectedTests = getExpectedTestData(0L);
+        final TimeLineItem[] expectedTests = getExpectedTestData();
 
         final ActualReportOutput actualOutput = readReport();
 
@@ -172,7 +175,7 @@ class TimelineFormatterTest {
         // guaranteed in Travis CI
         assertThat(actualOutput.groups, not(empty()));
         for (int i = 0; i < actualOutput.groups.size(); i++) {
-            final GroupData actual = actualOutput.groups.get(i);
+            final TimeLineGroup actual = actualOutput.groups.get(i);
 
             final int idx = i;
             assertAll(
@@ -191,14 +194,14 @@ class TimelineFormatterTest {
             false);
     }
 
-    private TestData[] getExpectedTestData(Long groupId) throws JsonProcessingException {
+    private TimeLineItem[] getExpectedTestData() throws JsonProcessingException {
         String expectedJson = ("[\n" +
                 " {\n" +
                 " \"feature\": \"Failing Feature\",\n" +
                 " \"scenario\": \"Scenario 1\",\n" +
                 " \"start\": 0,\n" +
                 " \"end\": 6000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"@taga,\",\n" +
                 " \"className\": \"failed\"\n" +
@@ -208,7 +211,7 @@ class TimelineFormatterTest {
                 " \"scenario\": \"Scenario 2\",\n" +
                 " \"start\": 6000,\n" +
                 " \"end\": 12000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"\",\n" +
                 " \"className\": \"failed\"\n" +
@@ -218,7 +221,7 @@ class TimelineFormatterTest {
                 " \"scenario\": \"Scenario 3\",\n" +
                 " \"start\": 18000,\n" +
                 " \"end\": 24000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"@tagb,@tagc,\",\n" +
                 " \"className\": \"passed\"\n" +
@@ -228,14 +231,14 @@ class TimelineFormatterTest {
                 " \"feature\": \"Pending Feature\",\n" +
                 " \"start\": 12000,\n" +
                 " \"end\": 18000,\n" +
-                " \"group\": groupId,\n" +
+                " \"group\": 1,\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"\",\n" +
                 " \"className\": \"undefined\"\n" +
                 " }\n" +
-                "]").replaceAll("groupId", groupId.toString());
+                "]");
 
-        return objectMapper.readValue(expectedJson, TestData[].class);
+        return objectMapper.readValue(expectedJson, TimeLineItem[].class);
     }
 
     private ActualReportOutput readReport() throws IOException {
@@ -249,22 +252,22 @@ class TimelineFormatterTest {
                 groupLines = line.substring("CucumberHTML.timelineGroups.pushArray(".length(), line.length() - 2);
             }
         }
-        TestData[] tests = objectMapper.readValue(itemLines, TestData[].class);
-        GroupData[] groups = objectMapper.readValue(groupLines, GroupData[].class);
+        TimeLineItem[] tests = objectMapper.readValue(itemLines, TimeLineItem[].class);
+        TimeLineGroup[] groups = objectMapper.readValue(groupLines, TimeLineGroup[].class);
         return new ActualReportOutput(tests, groups);
     }
 
     private void assertTimelineTestDataIsAsExpected(
-            final TestData[] expectedTests,
-            final List<TestData> actualOutput,
+            final TimeLineItem[] expectedTests,
+            final List<TimeLineItem> actualOutput,
             final boolean checkActualThreadData,
             final boolean checkActualTimeStamps
     ) {
         assertThat("Number of tests was not as expected", actualOutput.size(),
             is(equalTo(expectedTests.length)));
         for (int i = 0; i < expectedTests.length; i++) {
-            final TestData expected = expectedTests[i];
-            final TestData actual = actualOutput.get(i);
+            final TimeLineItem expected = expectedTests[i];
+            final TimeLineItem actual = actualOutput.get(i);
             final int idx = i;
 
             assertAll(
@@ -315,21 +318,19 @@ class TimelineFormatterTest {
 
         assertTrue(Files.exists(reportJsFile));
 
-        Long groupId = Thread.currentThread().getId();
-        String groupName = Thread.currentThread().toString();
+        String groupName = Thread.currentThread().getName();
 
-        TestData[] expectedTests = getExpectedTestData(groupId);
+        TimeLineItem[] expectedTests = getExpectedTestData();
 
-        GroupData[] expectedGroups = objectMapper.readValue(
+        TimeLineGroup[] expectedGroups = objectMapper.readValue(
             ("[\n" +
                     " {\n" +
-                    " \"id\": groupId,\n" +
+                    " \"id\": 1,\n" +
                     " \"content\": \"groupName\"\n" +
                     " }\n" +
                     "]")
-                    .replaceAll("groupId", groupId.toString())
                     .replaceAll("groupName", groupName),
-            GroupData[].class);
+            TimeLineGroup[].class);
 
         ActualReportOutput actualOutput = readReport();
 
@@ -345,14 +346,14 @@ class TimelineFormatterTest {
     }
 
     private void assertTimelineGroupDataIsAsExpected(
-            GroupData[] expectedGroups,
-            List<GroupData> actualOutput
+            TimeLineGroup[] expectedGroups,
+            List<TimeLineGroup> actualOutput
     ) {
         assertThat("Number of groups was not as expected", actualOutput.size(),
             is(equalTo(expectedGroups.length)));
         for (int i = 0; i < expectedGroups.length; i++) {
-            GroupData expected = expectedGroups[i];
-            GroupData actual = actualOutput.get(i);
+            TimeLineGroup expected = expectedGroups[i];
+            TimeLineGroup actual = actualOutput.get(i);
 
             int idx = i;
             assertAll(
@@ -367,10 +368,10 @@ class TimelineFormatterTest {
 
     private static class ActualReportOutput {
 
-        private final List<TestData> tests;
-        private final List<GroupData> groups;
+        private final List<TimeLineItem> tests;
+        private final List<TimeLineGroup> groups;
 
-        ActualReportOutput(TestData[] tests, GroupData[] groups) {
+        ActualReportOutput(TimeLineItem[] tests, TimeLineGroup[] groups) {
             this.tests = Arrays.asList(tests);
             this.groups = Arrays.asList(groups);
         }
