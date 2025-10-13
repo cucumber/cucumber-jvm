@@ -9,8 +9,8 @@ import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.plugin.TimelineFormatter.GroupData;
-import io.cucumber.core.plugin.TimelineFormatter.TestData;
+import io.cucumber.core.plugin.TimelineFormatter.TimeLineGroupData;
+import io.cucumber.core.plugin.TimelineFormatter.TimeLineItem;
 import io.cucumber.core.runner.StepDurationTimeService;
 import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
@@ -43,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TimelineFormatterTest {
 
-    private static final Comparator<TestData> TEST_DATA_COMPARATOR = Comparator
-            .comparing(TestData::getScenario);
+    private static final Comparator<TimeLineItem> TEST_DATA_COMPARATOR = Comparator
+            .comparing(TimeLineItem::getScenario);
 
     private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Paths
             .get("src/main/resources/io/cucumber/core/plugin/timeline");
@@ -167,7 +167,7 @@ class TimelineFormatterTest {
         runFormatterWithPlugin();
 
         // Have to ignore actual thread id and just checknot null
-        final TestData[] expectedTests = getExpectedTestData();
+        final TimeLineItem[] expectedTests = getExpectedTestData();
 
         final ActualReportOutput actualOutput = readReport();
 
@@ -175,7 +175,7 @@ class TimelineFormatterTest {
         // guaranteed in Travis CI
         assertThat(actualOutput.groups, not(empty()));
         for (int i = 0; i < actualOutput.groups.size(); i++) {
-            final GroupData actual = actualOutput.groups.get(i);
+            final TimeLineGroupData actual = actualOutput.groups.get(i);
 
             final int idx = i;
             assertAll(
@@ -194,7 +194,7 @@ class TimelineFormatterTest {
             false);
     }
 
-    private TestData[] getExpectedTestData() throws JsonProcessingException {
+    private TimeLineItem[] getExpectedTestData() throws JsonProcessingException {
         String expectedJson = ("[\n" +
                 " {\n" +
                 " \"feature\": \"Failing Feature\",\n" +
@@ -238,7 +238,7 @@ class TimelineFormatterTest {
                 " }\n" +
                 "]");
 
-        return objectMapper.readValue(expectedJson, TestData[].class);
+        return objectMapper.readValue(expectedJson, TimeLineItem[].class);
     }
 
     private ActualReportOutput readReport() throws IOException {
@@ -252,22 +252,22 @@ class TimelineFormatterTest {
                 groupLines = line.substring("CucumberHTML.timelineGroups.pushArray(".length(), line.length() - 2);
             }
         }
-        TestData[] tests = objectMapper.readValue(itemLines, TestData[].class);
-        GroupData[] groups = objectMapper.readValue(groupLines, GroupData[].class);
+        TimeLineItem[] tests = objectMapper.readValue(itemLines, TimeLineItem[].class);
+        TimeLineGroupData[] groups = objectMapper.readValue(groupLines, TimeLineGroupData[].class);
         return new ActualReportOutput(tests, groups);
     }
 
     private void assertTimelineTestDataIsAsExpected(
-            final TestData[] expectedTests,
-            final List<TestData> actualOutput,
+            final TimeLineItem[] expectedTests,
+            final List<TimeLineItem> actualOutput,
             final boolean checkActualThreadData,
             final boolean checkActualTimeStamps
     ) {
         assertThat("Number of tests was not as expected", actualOutput.size(),
             is(equalTo(expectedTests.length)));
         for (int i = 0; i < expectedTests.length; i++) {
-            final TestData expected = expectedTests[i];
-            final TestData actual = actualOutput.get(i);
+            final TimeLineItem expected = expectedTests[i];
+            final TimeLineItem actual = actualOutput.get(i);
             final int idx = i;
 
             assertAll(
@@ -320,9 +320,9 @@ class TimelineFormatterTest {
 
         String groupName = Thread.currentThread().getName();
 
-        TestData[] expectedTests = getExpectedTestData();
+        TimeLineItem[] expectedTests = getExpectedTestData();
 
-        GroupData[] expectedGroups = objectMapper.readValue(
+        TimeLineGroupData[] expectedGroups = objectMapper.readValue(
             ("[\n" +
                     " {\n" +
                     " \"id\": 1,\n" +
@@ -330,7 +330,7 @@ class TimelineFormatterTest {
                     " }\n" +
                     "]")
                     .replaceAll("groupName", groupName),
-            GroupData[].class);
+            TimeLineGroupData[].class);
 
         ActualReportOutput actualOutput = readReport();
 
@@ -346,14 +346,14 @@ class TimelineFormatterTest {
     }
 
     private void assertTimelineGroupDataIsAsExpected(
-            GroupData[] expectedGroups,
-            List<GroupData> actualOutput
+            TimeLineGroupData[] expectedGroups,
+            List<TimeLineGroupData> actualOutput
     ) {
         assertThat("Number of groups was not as expected", actualOutput.size(),
             is(equalTo(expectedGroups.length)));
         for (int i = 0; i < expectedGroups.length; i++) {
-            GroupData expected = expectedGroups[i];
-            GroupData actual = actualOutput.get(i);
+            TimeLineGroupData expected = expectedGroups[i];
+            TimeLineGroupData actual = actualOutput.get(i);
 
             int idx = i;
             assertAll(
@@ -368,10 +368,10 @@ class TimelineFormatterTest {
 
     private static class ActualReportOutput {
 
-        private final List<TestData> tests;
-        private final List<GroupData> groups;
+        private final List<TimeLineItem> tests;
+        private final List<TimeLineGroupData> groups;
 
-        ActualReportOutput(TestData[] tests, GroupData[] groups) {
+        ActualReportOutput(TimeLineItem[] tests, TimeLineGroupData[] groups) {
             this.tests = Arrays.asList(tests);
             this.groups = Arrays.asList(groups);
         }

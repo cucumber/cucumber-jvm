@@ -21,7 +21,6 @@ import io.cucumber.query.Query;
 import io.cucumber.query.Repository;
 
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,12 +36,18 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static java.util.Locale.ROOT;
 
+/**
+ * Writes a timeline of scenario execution.
+ * <p>
+ * Note: The report is only written once the test run is finished.
+ */
 public final class TimelineFormatter implements ConcurrentEventListener {
 
     private static final String[] TEXT_ASSETS = new String[] {
@@ -73,7 +78,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     @SuppressWarnings({ "unused", "RedundantThrows" }) // Used by PluginFactory
     public TimelineFormatter(File reportDir) throws FileNotFoundException {
-        reportDir.mkdirs();
+        boolean dontCare = reportDir.mkdirs();
         if (!reportDir.isDirectory()) {
             throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s",
                 getClass().getName(), reportDir.getAbsolutePath()));
@@ -92,55 +97,67 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         // TODO: Plugins should implement the closable interface
         // and be closed by Cucumber
         if (event.getTestRunFinished().isPresent()) {
-            writeTimeLineReport();
+            try {
+                writeTimeLineReport();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 
-    private void writeTimeLineReport() {
-        Map<String, GroupData> threadGroups = new HashMap<>();
-        List<TestData> testData = query.findAllTestCaseFinished().stream()
-                .map(handleTestCaseFinished(threadGroups))
+    private void writeTimeLineReport() throws IOException {
+        Map<String, TimeLineGroupData> timeLineGroups = new HashMap<>();
+
+        List<TimeLineItem> timeLineItems = query.findAllTestCaseFinished().stream()
+                .map(testCaseFinished -> query.findTestCaseStartedBy(testCaseFinished)
+                        .map(testCaseStarted -> createTestData(
+                            testCaseFinished, //
+                            testCaseStarted, //
+                            createTimeLineGroup(timeLineGroups) //
+                        )))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
-        writeReport(threadGroups, testData);
+        writeTimeLineReport(timeLineGroups, timeLineItems);
     }
 
-    private Function<TestCaseFinished, Optional<TestData>> handleTestCaseFinished(
-            Map<String, GroupData> threadGroupsAccumulator
+    private Function<String, TimeLineGroupData> createTimeLineGroup(
+            Map<String, TimeLineGroupData> timeLineGroups
     ) {
-        return testCaseFinished -> query.findTestCaseStartedBy(testCaseFinished)
-                .map(testCaseStarted -> createTestData(testCaseFinished, testCaseStarted, threadGroupsAccumulator));
-
+        // Incremented in the closure.
+        AtomicInteger nextGroupId = new AtomicInteger();
+        return workerId -> timeLineGroups.computeIfAbsent(workerId, createTimeLineGroup(nextGroupId::incrementAndGet));
     }
 
-    private final AtomicInteger nextGroupId = new AtomicInteger();
+    private Function<String, TimeLineGroupData> createTimeLineGroup(Supplier<Integer> nextGroupId) {
+        return workerId -> {
+            TimeLineGroupData timeLineGroup = new TimeLineGroupData();
+            timeLineGroup.setContent(workerId);
+            timeLineGroup.setId(nextGroupId.get());
+            return timeLineGroup;
+        };
+    }
 
-    private TestData createTestData(
+    private TimeLineItem createTestData(
             TestCaseFinished testCaseFinished, TestCaseStarted testCaseStarted,
-            Map<String, GroupData> threadGroupsAccumulator
+            Function<String, TimeLineGroupData> timeLineGroupCreator
     ) {
         String workerId = testCaseStarted.getWorkerId().orElse("");
-        GroupData groupData = threadGroupsAccumulator.computeIfAbsent(workerId, threadId -> {
-            GroupData group = new GroupData();
-            group.setContent(workerId);
-            group.setId(nextGroupId.incrementAndGet());
-            return group;
-        });
-        return createTestData(testCaseFinished, testCaseStarted, groupData);
+        TimeLineGroupData timeLineGroupData = timeLineGroupCreator.apply(workerId);
+        return createTestData(testCaseFinished, testCaseStarted, timeLineGroupData);
     }
 
-    private TestData createTestData(
-            TestCaseFinished testCaseFinished, TestCaseStarted testCaseStarted, GroupData groupData
+    private TimeLineItem createTestData(
+            TestCaseFinished testCaseFinished, TestCaseStarted testCaseStarted, TimeLineGroupData timeLineGroupData
     ) {
-        TestData data = new TestData();
+        TimeLineItem data = new TimeLineItem();
         data.setId(testCaseStarted.getTestCaseId());
         data.setFeature(getFeatureName(testCaseStarted));
         data.setScenario(getPickleName(testCaseStarted));
         data.setStart(Convertor.toInstant(testCaseStarted.getTimestamp()).toEpochMilli());
         data.setTags(getTagsValue(testCaseStarted));
-        data.setGroup(groupData.getId());
+        data.setGroup(timeLineGroupData.getId());
         data.setEnd(Convertor.toInstant(testCaseFinished.getTimestamp()).toEpochMilli());
         data.setClassName(getTestStepStatusResult(testCaseFinished));
         return data;
@@ -179,25 +196,25 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 }).orElse("");
     }
 
-    private void writeReport(Map<String, GroupData> threadGroups, List<TestData> allTests) {
-        writeReportJs(threadGroups, allTests);
+    private void writeTimeLineReport(Map<String, TimeLineGroupData> timeLineGroups, List<TimeLineItem> timeLineItems)
+            throws IOException {
+        writeReportJs(timeLineGroups, timeLineItems);
         copyReportFiles();
     }
 
-    private void writeReportJs(Map<String, GroupData> threadGroups, List<TestData> allTests) {
+    private void writeReportJs(Map<String, TimeLineGroupData> timeLineGroups, List<TimeLineItem> timeLineItems)
+            throws IOException {
         File reportJsFile = new File(reportDir, "report.js");
         try (BufferedWriter reportJs = Files.newBufferedWriter(reportJsFile.toPath(), StandardCharsets.UTF_8)) {
             reportJs.append("$(document).ready(function() {");
             reportJs.append("\n");
-            appendAsJsonToJs(reportJs, "timelineItems", allTests);
+            appendAsJsonToJs(reportJs, "timelineItems", timeLineItems);
             reportJs.append("\n");
             // Need to sort groups by id, so can guarantee output of order in
             // rendered timeline
-            appendAsJsonToJs(reportJs, "timelineGroups", new TreeMap<>(threadGroups).values());
+            appendAsJsonToJs(reportJs, "timelineGroups", new TreeMap<>(timeLineGroups).values());
             reportJs.append("\n");
             reportJs.append("});");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -209,49 +226,33 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         out.append(");");
     }
 
-    private void copyReportFiles() {
+    private void copyReportFiles() throws IOException {
         if (reportDir == null) {
             return;
         }
         File outputDir = new File(reportDir.getPath());
         for (String textAsset : TEXT_ASSETS) {
-            InputStream textAssetStream = getClass().getResourceAsStream(textAsset);
-            if (textAssetStream == null) {
-                throw new CucumberException("Couldn't find " + textAsset);
+            try (InputStream textAssetStream = getClass().getResourceAsStream(textAsset)) {
+                if (textAssetStream == null) {
+                    throw new CucumberException("Couldn't find " + textAsset);
+                }
+                String fileName = new File(textAsset).getName();
+                copyFile(textAssetStream, new File(outputDir, fileName));
             }
-            String fileName = new File(textAsset).getName();
-            copyFile(textAssetStream, new File(outputDir, fileName));
-            closeQuietly(textAssetStream);
         }
     }
 
-    private static void copyFile(InputStream source, File dest) throws CucumberException {
-        OutputStream os = null;
-        try {
-            os = Files.newOutputStream(dest.toPath());
+    private static void copyFile(InputStream source, File dest) throws IOException {
+        try (OutputStream os = Files.newOutputStream(dest.toPath())) {
             byte[] buffer = new byte[1024];
             int length;
             while ((length = source.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
-        } catch (IOException e) {
-            throw new CucumberException("Unable to write to report file item: ", e);
-        } finally {
-            closeQuietly(os);
         }
     }
 
-    private static void closeQuietly(Closeable out) {
-        try {
-            if (out != null) {
-                out.close();
-            }
-        } catch (IOException ignored) {
-            // go gentle into that good night
-        }
-    }
-
-    static class GroupData {
+    static class TimeLineGroupData {
 
         private long id;
         private String content;
@@ -274,7 +275,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     }
 
-    static class TestData {
+    static class TimeLineItem {
 
         private String id;
         private String feature;
