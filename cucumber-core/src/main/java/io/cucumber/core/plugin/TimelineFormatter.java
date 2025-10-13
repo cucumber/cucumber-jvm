@@ -107,13 +107,13 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     private void writeTimeLineReport() throws IOException {
         Map<String, TimeLineGroupData> timeLineGroups = new HashMap<>();
-
+        AtomicInteger nextGroupId = new AtomicInteger();
         List<TimeLineItem> timeLineItems = query.findAllTestCaseFinished().stream()
                 .map(testCaseFinished -> query.findTestCaseStartedBy(testCaseFinished)
                         .map(testCaseStarted -> createTestData(
                             testCaseFinished, //
                             testCaseStarted, //
-                            createTimeLineGroup(timeLineGroups) //
+                            createTimeLineGroup(timeLineGroups, nextGroupId) //
                         )))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -123,10 +123,10 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private Function<String, TimeLineGroupData> createTimeLineGroup(
-            Map<String, TimeLineGroupData> timeLineGroups
+            Map<String, TimeLineGroupData> timeLineGroups,
+            AtomicInteger nextGroupId
     ) {
-        // Incremented in the closure.
-        AtomicInteger nextGroupId = new AtomicInteger();
+
         return workerId -> timeLineGroups.computeIfAbsent(workerId, createTimeLineGroup(nextGroupId::incrementAndGet));
     }
 
