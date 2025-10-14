@@ -8,14 +8,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.ConstructorDetector;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 
 final class Jackson {
     public static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
             .addModule(new Jdk8Module())
-            .addModule(new JavaTimeModule())
             .defaultPropertyInclusion(construct(
                 Include.NON_ABSENT,
                 Include.NON_ABSENT))

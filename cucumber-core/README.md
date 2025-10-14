@@ -121,6 +121,7 @@ activating them.
 * timeline: Renders a timeline of the test execution.
 * [unused](https://github.com/cucumber/usage-formatter): Renders a plain text report of unused step definitions.
 * [usage](https://github.com/cucumber/usage-formatter): Renders a plain text report of step definition usage statistics.
+* [usage-json](https://github.com/cucumber/usage-formatter): Renders a json text report of step definition usage statistics.
 * [teamcity](https://github.com/cucumber/teamcity-formatter/):  Interspaces Cucumbers output with TeamCity Service Messages
 
 ## Custom Plugins ##

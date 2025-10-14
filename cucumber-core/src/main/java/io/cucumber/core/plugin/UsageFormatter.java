@@ -27,8 +27,8 @@ public final class UsageFormatter implements Plugin, ConcurrentEventListener {
         this.writer = MessagesToUsageWriter.builder(UsageReportSerializer.builder()
                 .feature(INCLUDE_STEPS, true)
                 .maxStepsPerStepDefinition(5)
-                .build())
                 .removeUriPrefix(cwdUri)
+                .build())
                 .build(out);
     }
 

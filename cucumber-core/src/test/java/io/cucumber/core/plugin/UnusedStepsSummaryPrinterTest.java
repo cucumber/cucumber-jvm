@@ -37,7 +37,9 @@ class UnusedStepsSummaryPrinterTest {
                 .run();
 
         assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
-                "1 unused step definition(s):\n" +
+                "1 unused step definition(s)\n" +
+                "\n" +
+                "Location                                                    Expression   \n" +
                 "io.cucumber.core.plugin.PrettyFormatterStepDefinition.two() # second step\n");
     }
 }

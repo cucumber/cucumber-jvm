@@ -1,26 +1,24 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.messages.types.Envelope;
-import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
+import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.usageformatter.MessagesToUsageWriter;
-import io.cucumber.usageformatter.UnusedReportSerializer;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Formatter to measure performance of steps. Includes average and median step
- * duration.
+ * Formatter to measure performance of steps as json.
  */
-public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEventListener {
+public final class UsageJsonFormatter implements Plugin, ConcurrentEventListener {
 
     private final MessagesToUsageWriter writer;
 
     @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public UnusedStepsSummaryPrinter(OutputStream out) {
-        this.writer = MessagesToUsageWriter.builder(new UnusedReportSerializer())
+    public UsageJsonFormatter(OutputStream out) {
+        this.writer = MessagesToUsageWriter.builder(Jackson.OBJECT_MAPPER::writeValue)
                 .build(out);
     }
 
@@ -47,8 +45,4 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
         }
     }
 
-    @Override
-    public void setMonochrome(boolean monochrome) {
-        // no-op, no colors printed
-    }
 }
