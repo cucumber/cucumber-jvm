@@ -106,7 +106,7 @@ public final class ClasspathScanner {
         try {
             return Optional.ofNullable(getClassLoader().loadClass(fqn));
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            log.warn(e, () -> "Failed to load class '" + fqn + "'.\n" + classPathScanningExplanation());
+            log.debug(e, () -> "Could not to load class '" + fqn + "'. If this is not a Glue class you can ignore this exception.\n");
         }
         return Optional.empty();
     }
