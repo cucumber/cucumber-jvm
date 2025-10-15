@@ -1,4 +1,4 @@
-~~# Changelog
+# Changelog
 
 All notable changes to the current version this project will be documented in
 this file. For previous versions see the [release-notes archive](release-notes).
