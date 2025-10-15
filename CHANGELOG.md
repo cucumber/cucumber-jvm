@@ -1,4 +1,4 @@
-~~# Changelog
+# Changelog
 
 All notable changes to the current version this project will be documented in
 this file. For previous versions see the [release-notes archive](release-notes).
@@ -13,8 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Prefer URIs with authority ([#3098](https://github.com/cucumber/cucumber-jvm/pull/3098) M.P. Korstanje)
 
+### Added
+- [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
+
 ### Changed
 - [Core] Use a message based `TimeLineFormatter` ([#3095](https://github.com/cucumber/cucumber-jvm/pull/3095) M.P. Korstanje)
+- [Core] Use a message based `UsageFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
+- [Core] Use a message based `UnusedFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
+
 
 ## [7.30.0] - 2025-10-01
 ### Changed
@@ -579,4 +585,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [7.2.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
-[7.0.0-RC1]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1~~
+[7.0.0-RC1]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1

@@ -25,6 +25,7 @@
         <tag-expressions.version>8.0.0</tag-expressions.version>
         <teamcity-formatter.version>0.1.1</teamcity-formatter.version>
         <testng-xml-formatter.version>0.6.0</testng-xml-formatter.version>
+        <usage-formatter.version>0.1.0</usage-formatter.version>
     </properties>
 
     <dependencyManagement>
@@ -89,6 +90,11 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>testng-xml-formatter</artifactId>
                 <version>${testng-xml-formatter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>usage-formatter</artifactId>
+                <version>${usage-formatter.version}</version>
             </dependency>
 
             <!-- Modules in cucumber-jvm -->
