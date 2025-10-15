@@ -83,7 +83,7 @@ class TestCaseStateTest {
         TestCaseState state = createTestCaseState(feature);
 
         assertThat(state.getUri() + ":" + state.getLine(),
-            is(new File("path/file.feature:2").toPath().toUri().toString()));
+            is(new File("path/file.feature").toPath().toUri() + ":2"));
     }
 
     @Test
