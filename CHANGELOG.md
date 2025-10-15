@@ -13,8 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Core] Prefer URIs with authority ([#3098](https://github.com/cucumber/cucumber-jvm/pull/3098) M.P. Korstanje)
 
+### Added
+- [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
+
 ### Changed
 - [Core] Use a message based `TimeLineFormatter` ([#3095](https://github.com/cucumber/cucumber-jvm/pull/3095) M.P. Korstanje)
+- [Core] Use a message based `UsageFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
+- [Core] Use a message based `UnusedFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
+
 
 ## [7.30.0] - 2025-10-01
 ### Changed
