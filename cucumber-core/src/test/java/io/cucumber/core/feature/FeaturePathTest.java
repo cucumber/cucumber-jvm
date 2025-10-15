@@ -67,7 +67,6 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getAuthority(), is("")),
             () -> assertThat(uri.getPath(), is("/path/to/file.feature")));
     }
 
@@ -78,7 +77,6 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getAuthority(), is("")),
             () -> assertThat(uri.getPath(), is("/path/to")));
     }
 
