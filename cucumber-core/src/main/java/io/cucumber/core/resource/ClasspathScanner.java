@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
 import static io.cucumber.core.resource.ClasspathSupport.determineFullyQualifiedClassName;
 import static io.cucumber.core.resource.ClasspathSupport.getUrisForPackage;
 import static io.cucumber.core.resource.ClasspathSupport.requireValidPackageName;
@@ -106,7 +105,8 @@ public final class ClasspathScanner {
         try {
             return Optional.ofNullable(getClassLoader().loadClass(fqn));
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            log.debug(e, () -> "Could not to load class '" + fqn + "'. If this is not a Glue class you can ignore this exception.\n");
+            log.debug(e, () -> "Could not to load class '" + fqn
+                    + "'. If this is not a Glue class you can ignore this exception.\n");
         }
         return Optional.empty();
     }
