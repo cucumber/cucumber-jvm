@@ -32,7 +32,7 @@ public final class PrettyFormatter implements ConcurrentEventListener, ColorAwar
     }
 
     private static MessagesToPrettyWriter.Builder createBuilder() {
-        String cwdUri = new File("").toURI().toString();
+        String cwdUri = new File("").toPath().toUri().toString();
         return MessagesToPrettyWriter.builder()
                 .feature(INCLUDE_FEATURE_LINE, false)
                 .feature(INCLUDE_RULE_LINE, false)

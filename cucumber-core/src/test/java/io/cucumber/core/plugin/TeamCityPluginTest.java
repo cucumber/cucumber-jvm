@@ -51,7 +51,7 @@ class TeamCityPluginTest {
                 .build()
                 .run();
 
-        String featureFile = new File("").toURI() + "path/test.feature";
+        String featureFile = new File("").toPath().toUri() + "path/test.feature";
         assertThat(out, bytes(equalCompressingLineSeparators(("" +
                 "##teamcity[enteredTheMatrix timestamp = '1970-01-01T12:00:00.000+0000']\n" +
                 "##teamcity[testSuiteStarted timestamp = '1970-01-01T12:00:00.000+0000' name = 'Cucumber']\n" +

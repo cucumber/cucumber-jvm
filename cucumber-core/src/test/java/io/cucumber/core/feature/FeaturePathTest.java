@@ -67,7 +67,8 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to/file.feature")));
+            () -> assertThat(uri.getAuthority(), is("")),
+            () -> assertThat(uri.getPath(), is("/path/to/file.feature")));
     }
 
     @Test
@@ -77,7 +78,8 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to")));
+            () -> assertThat(uri.getAuthority(), is("")),
+            () -> assertThat(uri.getPath(), is("/path/to")));
     }
 
     @Test
@@ -95,7 +97,7 @@ class FeaturePathTest {
         assertThat(uri.getScheme(), is(is("file")));
         // Use File to work out the drive letter on windows.
         File file = new File("/path/to/file.feature");
-        assertThat(uri.getSchemeSpecificPart(), is(file.toURI().getSchemeSpecificPart()));
+        assertThat(uri.getPath(), is(file.toURI().getPath()));
     }
 
     @Test
