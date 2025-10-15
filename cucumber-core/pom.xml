@@ -285,7 +285,6 @@
                                     <include>com.fasterxml.jackson.core:jackson-core</include>
                                     <include>com.fasterxml.jackson.core:jackson-annotations</include>
                                     <include>com.fasterxml.jackson.datatype:jackson-datatype-jdk8</include>
-                                    <include>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</include>
                                 </includes>
                             </artifactSet>
                             <relocations>

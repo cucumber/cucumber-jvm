@@ -579,4 +579,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [7.2.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.0.0-RC1...v7.0.0
-[7.0.0-RC1]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1~~
+[7.0.0-RC1]: https://github.com/cucumber/cucumber-jvm/compare/v6.11.0...v7.0.0-RC1
