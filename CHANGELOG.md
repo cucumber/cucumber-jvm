@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [Core] Prefer URIs with authority ([#3098](https://github.com/cucumber/cucumber-jvm/pull/3098) M.P. Korstanje)
+- [Core] Reduce classpath scanner logging ([#3099](https://github.com/cucumber/cucumber-jvm/pull/3099) M.P. Korstanje)
 
 ### Added
 - [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
