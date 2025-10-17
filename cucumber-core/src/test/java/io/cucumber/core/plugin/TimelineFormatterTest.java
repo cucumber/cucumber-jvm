@@ -180,8 +180,8 @@ class TimelineFormatterTest {
             final int idx = i;
             assertAll(
                 () -> assertThat(String.format("id on group %s, was not as expected", idx),
-                    actual.getId() > 0,
-                    is(equalTo(true))),
+                    actual.getId(),
+                    is(notNullValue())),
                 () -> assertThat(String.format("content on group %s, was not as expected",
                     idx), actual.getContent(),
                     is(notNullValue())));
@@ -201,7 +201,7 @@ class TimelineFormatterTest {
                 " \"scenario\": \"Scenario 1\",\n" +
                 " \"start\": 0,\n" +
                 " \"end\": 6000,\n" +
-                " \"group\": 1,\n" +
+                " \"group\": \"main\",\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"@taga,\",\n" +
                 " \"className\": \"failed\"\n" +
@@ -211,7 +211,7 @@ class TimelineFormatterTest {
                 " \"scenario\": \"Scenario 2\",\n" +
                 " \"start\": 6000,\n" +
                 " \"end\": 12000,\n" +
-                " \"group\": 1,\n" +
+                " \"group\": \"main\",\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"\",\n" +
                 " \"className\": \"failed\"\n" +
@@ -221,7 +221,7 @@ class TimelineFormatterTest {
                 " \"scenario\": \"Scenario 3\",\n" +
                 " \"start\": 18000,\n" +
                 " \"end\": 24000,\n" +
-                " \"group\": 1,\n" +
+                " \"group\": \"main\",\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"@tagb,@tagc,\",\n" +
                 " \"className\": \"passed\"\n" +
@@ -231,7 +231,7 @@ class TimelineFormatterTest {
                 " \"feature\": \"Pending Feature\",\n" +
                 " \"start\": 12000,\n" +
                 " \"end\": 18000,\n" +
-                " \"group\": 1,\n" +
+                " \"group\": \"main\",\n" +
                 " \"content\": \"\",\n" +
                 " \"tags\": \"\",\n" +
                 " \"className\": \"undefined\"\n" +
@@ -325,7 +325,7 @@ class TimelineFormatterTest {
         TimeLineGroup[] expectedGroups = objectMapper.readValue(
             ("[\n" +
                     " {\n" +
-                    " \"id\": 1,\n" +
+                    " \"id\": \"main\",\n" +
                     " \"content\": \"groupName\"\n" +
                     " }\n" +
                     "]")

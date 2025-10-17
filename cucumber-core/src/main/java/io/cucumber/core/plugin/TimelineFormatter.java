@@ -33,14 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
+import static java.util.Comparator.comparing;
 import static java.util.Locale.ROOT;
 
 /**
@@ -106,35 +104,37 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void writeTimeLineReport() throws IOException {
-        Map<String, TimeLineGroup> timeLineGroups = new HashMap<>();
-        AtomicInteger nextGroupId = new AtomicInteger();
+        Map<String, TimeLineGroup> timeLineGroupsById = new HashMap<>();
         List<TimeLineItem> timeLineItems = query.findAllTestCaseFinished().stream()
                 .map(testCaseFinished -> query.findTestCaseStartedBy(testCaseFinished)
                         .map(testCaseStarted -> createTestData(
                             testCaseFinished, //
                             testCaseStarted, //
-                            createTimeLineGroup(timeLineGroups, nextGroupId) //
+                            createTimeLineGroup(timeLineGroupsById) //
                         )))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .collect(Collectors.toList());
+
+        List<TimeLineGroup> timeLineGroups = timeLineGroupsById.values().stream()
+                .sorted(comparing(TimeLineGroup::getId))
                 .collect(Collectors.toList());
 
         writeTimeLineReport(timeLineGroups, timeLineItems);
     }
 
     private Function<String, TimeLineGroup> createTimeLineGroup(
-            Map<String, TimeLineGroup> timeLineGroups,
-            AtomicInteger nextGroupId
+            Map<String, TimeLineGroup> timeLineGroups
     ) {
 
-        return workerId -> timeLineGroups.computeIfAbsent(workerId, createTimeLineGroup(nextGroupId::incrementAndGet));
+        return workerId -> timeLineGroups.computeIfAbsent(workerId, createTimeLineGroup());
     }
 
-    private Function<String, TimeLineGroup> createTimeLineGroup(Supplier<Integer> nextGroupId) {
+    private Function<String, TimeLineGroup> createTimeLineGroup() {
         return workerId -> {
             TimeLineGroup timeLineGroup = new TimeLineGroup();
             timeLineGroup.setContent(workerId);
-            timeLineGroup.setId(nextGroupId.get());
+            timeLineGroup.setId(workerId);
             return timeLineGroup;
         };
     }
@@ -196,13 +196,13 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 }).orElse("");
     }
 
-    private void writeTimeLineReport(Map<String, TimeLineGroup> timeLineGroups, List<TimeLineItem> timeLineItems)
+    private void writeTimeLineReport(List<TimeLineGroup> timeLineGroups, List<TimeLineItem> timeLineItems)
             throws IOException {
         writeReportJs(timeLineGroups, timeLineItems);
         copyReportFiles();
     }
 
-    private void writeReportJs(Map<String, TimeLineGroup> timeLineGroups, List<TimeLineItem> timeLineItems)
+    private void writeReportJs(List<TimeLineGroup> timeLineGroups, List<TimeLineItem> timeLineItems)
             throws IOException {
         File reportJsFile = new File(reportDir, "report.js");
         try (BufferedWriter reportJs = Files.newBufferedWriter(reportJsFile.toPath(), StandardCharsets.UTF_8)) {
@@ -212,7 +212,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             reportJs.append("\n");
             // Need to sort groups by id, so can guarantee output of order in
             // rendered timeline
-            appendAsJsonToJs(reportJs, "timelineGroups", new TreeMap<>(timeLineGroups).values());
+            appendAsJsonToJs(reportJs, "timelineGroups", timeLineGroups);
             reportJs.append("\n");
             reportJs.append("});");
         }
@@ -254,10 +254,10 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     static class TimeLineGroup {
 
-        private long id;
+        private String id;
         private String content;
 
-        public void setId(long id) {
+        public void setId(String id) {
             this.id = id;
         }
 
@@ -265,7 +265,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.content = content;
         }
 
-        public long getId() {
+        public String getId() {
             return id;
         }
 
@@ -281,7 +281,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         private String feature;
         private String scenario;
         private long start;
-        private long group;
+        private String group;
         private String content = ""; // Replaced in JS file
         private String tags;
         private long end;
@@ -303,7 +303,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.start = start;
         }
 
-        public void setGroup(long group) {
+        public void setGroup(String group) {
             this.group = group;
         }
 
@@ -339,7 +339,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             return start;
         }
 
-        public long getGroup() {
+        public String getGroup() {
             return group;
         }
 
