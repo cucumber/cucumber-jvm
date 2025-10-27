@@ -10,31 +10,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Core] Prefer URIs with authority ([#3098](https://github.com/cucumber/cucumber-jvm/pull/3098) M.P. Korstanje)
-- [Core] Reduce classpath scanner logging ([#3099](https://github.com/cucumber/cucumber-jvm/pull/3099) M.P. Korstanje)
 
+## [7.31.0] - 2025-10-27
 ### Added
 - [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
 
 ### Changed
 - [Core] Update dependency io.cucumber:ci-environment to v12.0.0
 - [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.3.0
-- [Core] Update dependency io.cucumber:gherkin to v36.0.0 
+- [Core] Update dependency io.cucumber:gherkin to v36.0.0
 - [Core] Update dependency io.cucumber:html-formatter to v22.0.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter to v0.10.0
 - [Core] Update dependency io.cucumber:messages to v30.1.0
-- [Core] Update dependency io.cucumber:pretty-formatter to v2.4.0 
+- [Core] Update dependency io.cucumber:pretty-formatter to v2.4.0
 - [Core] Update dependency io.cucumber:query to v14.6.0
 - [Core] Update dependency io.cucumber:tag-expressions to v8.0.0
 - [Core] Update dependency io.cucumber:teamcity-formatter to v0.2.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter to v0.7.0
-
-### Changed
 - [Core] Use a message based `TimeLineFormatter` ([#3095](https://github.com/cucumber/cucumber-jvm/pull/3095) M.P. Korstanje)
 - [Core] Use a message based `UsageFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
 - [Core] Use a message based `UnusedFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
 
+### Fixed
+- [Core] Prefer URIs with authority ([#3098](https://github.com/cucumber/cucumber-jvm/pull/3098) M.P. Korstanje)
+- [Core] Reduce classpath scanner logging ([#3099](https://github.com/cucumber/cucumber-jvm/pull/3099) M.P. Korstanje)
 
 ## [7.30.0] - 2025-10-01
 ### Changed
@@ -543,7 +542,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...HEAD
+[7.31.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...v7.31.0
 [7.30.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.29.0...v7.30.0
 [7.29.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.2...v7.29.0
 [7.28.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.1...v7.28.2
