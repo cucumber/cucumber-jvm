@@ -18,6 +18,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
 
 ### Changed
+- [Core] Update dependency io.cucumber:ci-environment to v12.0.0
+- [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.3.0
+- [Core] Update dependency io.cucumber:gherkin to v36.0.0 
+- [Core] Update dependency io.cucumber:html-formatter to v22.0.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.10.0
+- [Core] Update dependency io.cucumber:messages to v30.1.0
+- [Core] Update dependency io.cucumber:pretty-formatter to v2.4.0 
+- [Core] Update dependency io.cucumber:query to v14.6.0
+- [Core] Update dependency io.cucumber:tag-expressions to v8.0.0
+- [Core] Update dependency io.cucumber:teamcity-formatter to v0.2.0
+- [Core] Update dependency io.cucumber:testng-xml-formatter to v0.7.0
+
+### Changed
 - [Core] Use a message based `TimeLineFormatter` ([#3095](https://github.com/cucumber/cucumber-jvm/pull/3095) M.P. Korstanje)
 - [Core] Use a message based `UsageFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
 - [Core] Use a message based `UnusedFormatter` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
