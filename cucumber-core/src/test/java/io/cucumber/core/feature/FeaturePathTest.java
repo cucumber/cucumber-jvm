@@ -29,7 +29,7 @@ class FeaturePathTest {
         URI uri = FeaturePath.parse("classpath:/");
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/")));
+            () -> assertThat(uri.getPath(), is("/")));
     }
 
     @Test
@@ -39,7 +39,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/")));
+            () -> assertThat(uri.getPath(), is("/")));
     }
 
     @Test
@@ -48,7 +48,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to/file.feature")));
+            () -> assertThat(uri.getPath(), is("/path/to/file.feature")));
     }
 
     @Test
@@ -57,7 +57,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("classpath")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to")));
+            () -> assertThat(uri.getPath(), is("/path/to")));
     }
 
     @Test
@@ -67,7 +67,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to/file.feature")));
+            () -> assertThat(uri.getPath(), is("/path/to/file.feature")));
     }
 
     @Test
@@ -77,7 +77,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/path/to")));
+            () -> assertThat(uri.getPath(), is("/path/to")));
     }
 
     @Test
@@ -86,7 +86,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature")));
+            () -> assertThat(uri.getPath(), endsWith("path/to/file.feature")));
     }
 
     @Test
@@ -95,7 +95,7 @@ class FeaturePathTest {
         assertThat(uri.getScheme(), is(is("file")));
         // Use File to work out the drive letter on windows.
         File file = new File("/path/to/file.feature");
-        assertThat(uri.getSchemeSpecificPart(), is(file.toURI().getSchemeSpecificPart()));
+        assertThat(uri.getPath(), is(file.toURI().getPath()));
     }
 
     @Test
@@ -104,7 +104,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature")));
+            () -> assertThat(uri.getPath(), endsWith("path/to/file.feature")));
     }
 
     @Test
@@ -114,7 +114,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to/file.feature")));
+            () -> assertThat(uri.getPath(), endsWith("path/to/file.feature")));
     }
 
     @Test
@@ -124,7 +124,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is(is("file"))),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature")));
+            () -> assertThat(uri.getPath(), is("/C:/path/to/file.feature")));
     }
 
     @Test
@@ -133,7 +133,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is(is("file"))),
-            () -> assertThat(uri.getSchemeSpecificPart(), endsWith("path/to the/file.feature")));
+            () -> assertThat(uri.getPath(), endsWith("path/to the/file.feature")));
     }
 
     @Test
@@ -143,7 +143,7 @@ class FeaturePathTest {
 
         assertAll(
             () -> assertThat(uri.getScheme(), is("file")),
-            () -> assertThat(uri.getSchemeSpecificPart(), is("/C:/path/to/file.feature")));
+            () -> assertThat(uri.getPath(), is("/C:/path/to/file.feature")));
     }
 
 }

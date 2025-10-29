@@ -1,7 +1,11 @@
 package io.cucumber.core.feature;
 
+import io.cucumber.core.exception.CucumberException;
+
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +16,9 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+import static java.nio.file.Files.readAllLines;
 
 /**
  * Identifies either a directory containing feature files, a specific feature
@@ -24,6 +31,7 @@ import java.util.stream.Collectors;
 public class FeatureWithLines implements Serializable {
 
     private static final long serialVersionUID = 20190126L;
+    private static final Pattern FEATURE_WITH_LINES_FILE_FORMAT = Pattern.compile("(?m:^| |)(.*?\\.feature(?::\\d+)*)");
     private static final Pattern FEATURE_COLON_LINE_PATTERN = Pattern.compile("^(.*?):([\\d:]+)$");
     private static final String INVALID_PATH_MESSAGE = " is not valid. Try <uri or path>/<name>.feature[:LINE]*";
 
@@ -33,6 +41,21 @@ public class FeatureWithLines implements Serializable {
     private FeatureWithLines(URI uri, Collection<Integer> lines) {
         this.uri = uri;
         this.lines = Collections.unmodifiableSortedSet(new TreeSet<>(lines));
+    }
+
+    public static Collection<FeatureWithLines> parseFile(Path path) {
+        try {
+            List<FeatureWithLines> featurePaths = new ArrayList<>();
+            readAllLines(path).forEach(line -> {
+                Matcher matcher = FEATURE_WITH_LINES_FILE_FORMAT.matcher(line);
+                while (matcher.find()) {
+                    featurePaths.add(parse(matcher.group(1)));
+                }
+            });
+            return featurePaths;
+        } catch (Exception e) {
+            throw new CucumberException(format("Failed to parse '%s'", path), e);
+        }
     }
 
     public static FeatureWithLines parse(String featurePath) {

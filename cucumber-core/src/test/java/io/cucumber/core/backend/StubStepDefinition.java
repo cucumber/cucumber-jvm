@@ -3,6 +3,7 @@ package io.cucumber.core.backend;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,21 +18,29 @@ public class StubStepDefinition implements StepDefinition {
     private final Located location;
 
     public StubStepDefinition(String pattern, String location, Type... types) {
-        this(pattern, location, null, types);
+        this(pattern, new StubLocation(location), null, types);
+    }
+
+    public StubStepDefinition(String pattern, SourceReference location, Type... types) {
+        this(pattern, new StubLocation(location), null, types);
     }
 
     public StubStepDefinition(String pattern, Type... types) {
-        this(pattern, STUBBED_LOCATION_WITH_DETAILS, null, types);
+        this(pattern, new StubLocation(STUBBED_LOCATION_WITH_DETAILS), null, types);
     }
 
     public StubStepDefinition(String pattern, Throwable exception, Type... types) {
-        this(pattern, STUBBED_LOCATION_WITH_DETAILS, exception, types);
+        this(pattern, new StubLocation(STUBBED_LOCATION_WITH_DETAILS), exception, types);
     }
 
-    public StubStepDefinition(String pattern, String location, Throwable exception, Type... types) {
+    public StubStepDefinition(String pattern, SourceReference location, Throwable exception, Type... types) {
+        this(pattern, new StubLocation(location), exception, types);
+    }
+
+    private StubStepDefinition(String pattern, StubLocation location, Throwable exception, Type... types) {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
-        this.location = new StubLocation(location);
+        this.location = location;
         this.exception = exception;
     }
 
@@ -68,6 +77,11 @@ public class StubStepDefinition implements StepDefinition {
     @Override
     public String getPattern() {
         return expression;
+    }
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        return location.getSourceReference();
     }
 
     private static final class StubParameterInfo implements ParameterInfo {

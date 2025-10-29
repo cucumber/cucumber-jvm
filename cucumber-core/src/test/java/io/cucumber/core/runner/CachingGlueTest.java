@@ -37,6 +37,7 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CachingGlueTest {
 
-    private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
+    private final Locale language = ENGLISH;
     private final CachingGlue glue = new CachingGlue(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
 
     @Test
@@ -68,7 +69,7 @@ class CachingGlueTest {
 
         DuplicateStepDefinitionException exception = assertThrows(
             DuplicateStepDefinitionException.class,
-            () -> glue.prepareGlue(stepTypeRegistry));
+            () -> glue.prepareGlue(language));
         assertThat(exception.getMessage(), equalTo("Duplicate step definitions in foo.bf:10 and bar.bf:90"));
     }
 
@@ -79,7 +80,7 @@ class CachingGlueTest {
 
         DuplicateDefaultParameterTransformers exception = assertThrows(
             DuplicateDefaultParameterTransformers.class,
-            () -> glue.prepareGlue(stepTypeRegistry));
+            () -> glue.prepareGlue(language));
         assertThat(exception.getMessage(), equalTo("" +
                 "There may not be more then one default parameter transformer. Found:\n" +
                 " - mocked default parameter transformer\n" +
@@ -93,7 +94,7 @@ class CachingGlueTest {
 
         DuplicateDefaultDataTableEntryTransformers exception = assertThrows(
             DuplicateDefaultDataTableEntryTransformers.class,
-            () -> glue.prepareGlue(stepTypeRegistry));
+            () -> glue.prepareGlue(language));
         assertThat(exception.getMessage(), equalTo("" +
                 "There may not be more then one default data table entry. Found:\n" +
                 " - mocked default data table entry transformer\n" +
@@ -107,7 +108,7 @@ class CachingGlueTest {
 
         DuplicateDefaultDataTableCellTransformers exception = assertThrows(
             DuplicateDefaultDataTableCellTransformers.class,
-            () -> glue.prepareGlue(stepTypeRegistry));
+            () -> glue.prepareGlue(language));
         assertThat(exception.getMessage(), equalTo("" +
                 "There may not be more then one default table cell transformers. Found:\n" +
                 " - mocked default data table cell transformer\n" +
@@ -133,7 +134,7 @@ class CachingGlueTest {
         glue.addDefaultDataTableCellTransformer(new MockedDefaultDataTableCellTransformer());
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
 
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         assertAll(
             () -> assertThat(glue.getStepDefinitions().size(), is(equalTo(1))),
@@ -189,7 +190,7 @@ class CachingGlueTest {
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2");
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
@@ -217,7 +218,7 @@ class CachingGlueTest {
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2", DataTable.class);
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
@@ -258,7 +259,7 @@ class CachingGlueTest {
         StepDefinition stepDefinition2 = new MockedStepDefinition("^pattern2", String.class);
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         URI uri = URI.create("file:path/to.feature");
         String stepText = "pattern1";
@@ -302,7 +303,7 @@ class CachingGlueTest {
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition1);
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(((CoreStepDefinition) pickleStepDefinitionMatch.getStepDefinition()).getStepDefinition(),
@@ -312,7 +313,7 @@ class CachingGlueTest {
 
         StepDefinition stepDefinition2 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition2);
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(((CoreStepDefinition) pickleStepDefinitionMatch2.getStepDefinition()).getStepDefinition(),
@@ -345,7 +346,7 @@ class CachingGlueTest {
         MockedDefaultParameterTransformer defaultParameterTransformer = new MockedDefaultParameterTransformer();
         glue.addDefaultParameterTransformer(defaultParameterTransformer);
 
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
         glue.removeScenarioScopedGlue();
 
         assertThat(stepDefinition.isDisposed(), is(true));
@@ -369,7 +370,7 @@ class CachingGlueTest {
 
         StepDefinition stepDefinition1 = new MockedScenarioScopedStepDefinition("^pattern1");
         glue.addStepDefinition(stepDefinition1);
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(((CoreStepDefinition) pickleStepDefinitionMatch.getStepDefinition()).getStepDefinition(),
@@ -377,7 +378,7 @@ class CachingGlueTest {
 
         glue.removeScenarioScopedGlue();
 
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         PickleStepDefinitionMatch pickleStepDefinitionMatch2 = glue.stepDefinitionMatch(uri, pickleStep1);
         assertThat(pickleStepDefinitionMatch2, nullValue());
@@ -391,7 +392,7 @@ class CachingGlueTest {
         glue.addStepDefinition(stepDefinition1);
         glue.addStepDefinition(stepDefinition2);
         glue.addStepDefinition(stepDefinition3);
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         URI uri = URI.create("file:path/to.feature");
 
@@ -478,7 +479,7 @@ class CachingGlueTest {
         glue.addBeforeStepHook(new MockedScenarioScopedHookDefinition());
         glue.addAfterStepHook(new MockedScenarioScopedHookDefinition());
 
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
         assertThat(events.size(), is(4));
     }
 
@@ -495,7 +496,7 @@ class CachingGlueTest {
         glue.addParameterType(new MockedParameterTypeDefinition());
 
         // When
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         // Then
         assertThat(events.size(), is(1));
@@ -517,13 +518,101 @@ class CachingGlueTest {
         glue.addParameterType(new MockedParameterTypeDefinitionWithSourceReference());
 
         // When
-        glue.prepareGlue(stepTypeRegistry);
+        glue.prepareGlue(language);
 
         // Then
         assertThat(events.size(), is(1));
         io.cucumber.messages.types.SourceReference sourceReference = events.get(0).getParameterType().get()
                 .getSourceReference().get();
         assertNotNull(sourceReference.getJavaStackTraceElement());
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_language_changes() {
+        // Given
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.prepareGlue(Locale.FRENCH);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_not_evicted_when_language_remains() {
+        // Given
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1 == stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_stepDefinition_added() {
+        // Given
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addStepDefinition(new MockedStepDefinition("mock"));
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_parameterType_added() {
+        // Given
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addParameterType(new MockedParameterTypeDefinition());
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1 != stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_dataTableType_added() {
+        // Given
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addDataTableType(new MockedDataTableTypeDefinition());
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1 == stepTypeRegistry2, is(true));
+    }
+
+    @Test
+    void prepareGlue_cache_evicted_when_docString_added() {
+        // Given
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry1 = glue.getStepTypeRegistry();
+
+        // When
+        glue.addDocStringType(new MockedDocStringTypeDefinition());
+        glue.prepareGlue(language);
+        StepTypeRegistry stepTypeRegistry2 = glue.getStepTypeRegistry();
+
+        // Then
+        assertThat(stepTypeRegistry1 == stepTypeRegistry2, is(true));
     }
 
     private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {

@@ -1,0 +1,4 @@
+# SVG files are plain text. So git will change line endings on windows.
+# Because we expect the image to have been encoded in base64 with lf rather than
+# crlf this is not desirable.
+cucumber.svg eol=lf

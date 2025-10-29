@@ -9,10 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ExamplesTable {
 
     private int count;
+    private int friends;
 
     @Given("there are {int} cucumbers")
     public void thereAreStartCucumbers(int cucumbers) {
         this.count = cucumbers;
+    }
+
+    @Given("there are {int} friends")
+    public void thereAreFriends(int initialFriends) {
+        this.friends = initialFriends;
     }
 
     @When("I eat {int} cucumbers")
@@ -25,4 +31,9 @@ public class ExamplesTable {
         assertEquals(expectedCount, this.count);
     }
 
+    @Then("each person can eat {int} cucumbers")
+    public void eachPersonCanEatCucumbers(int expectedShare) {
+        int share = this.count / (1 + this.friends);
+        assertEquals(expectedShare, share);
+    }
 }

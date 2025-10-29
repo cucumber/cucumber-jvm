@@ -9,13 +9,16 @@ import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorService;
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_PREFIX;
-import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
+import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.deduplicating;
+import static org.junit.platform.engine.support.discovery.DiscoveryIssueReporter.forwarding;
 
 /**
  * The Cucumber {@link org.junit.platform.engine.TestEngine TestEngine}.
@@ -42,20 +45,44 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
-        TestSource testSource = createEngineTestSource(discoveryRequest);
-        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, testSource);
-        new DiscoverySelectorResolver().resolveSelectors(discoveryRequest, engineDescriptor);
+        ConfigurationParameters configurationParameters = discoveryRequest.getConfigurationParameters();
+        TestSource testSource = createEngineTestSource(configurationParameters);
+        DiscoveryIssueReporter issueReporter = deduplicating(forwarding( //
+            discoveryRequest.getDiscoveryListener(), //
+            uniqueId //
+        ));
+        CucumberConfiguration configuration = new CucumberConfiguration(configurationParameters, issueReporter);
+        CucumberEngineDescriptor engineDescriptor = new CucumberEngineDescriptor(uniqueId, configuration, testSource);
+
+        // Early out if Cucumber is the root engine and discovery has been
+        // explicitly disabled. Workaround for:
+        // https://github.com/sbt/sbt-jupiter-interface/issues/142
+        if (!supportsDiscoveryAsRootEngine(configurationParameters) && isRootEngine(uniqueId)) {
+            return engineDescriptor;
+        }
+
+        FeaturesPropertyResolver resolver = new FeaturesPropertyResolver(new DiscoverySelectorResolver());
+        resolver.resolveSelectors(discoveryRequest, engineDescriptor, issueReporter);
         return engineDescriptor;
     }
 
-    private static TestSource createEngineTestSource(EngineDiscoveryRequest discoveryRequest) {
+    private static boolean supportsDiscoveryAsRootEngine(ConfigurationParameters configurationParameters) {
+        return configurationParameters.getBoolean(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME)
+                .orElse(true);
+    }
+
+    private boolean isRootEngine(UniqueId uniqueId) {
+        UniqueId cucumberRootEngineId = UniqueId.forEngine(getId());
+        return uniqueId.hasPrefix(cucumberRootEngineId);
+    }
+
+    private static TestSource createEngineTestSource(ConfigurationParameters configurationParameters) {
         // Workaround. Test Engines do not normally have test source.
         // Maven does not count tests that do not have a ClassSource somewhere
         // in the test descriptor tree.
         // Gradle will report all tests as coming from an "Unknown Class"
         // See: https://github.com/cucumber/cucumber-jvm/pull/2498
-        ConfigurationParameters configuration = discoveryRequest.getConfigurationParameters();
-        if (configuration.get(FEATURES_PROPERTY_NAME).isPresent()) {
+        if (configurationParameters.get(FEATURES_PROPERTY_NAME).isPresent()) {
             return ClassSource.from(CucumberTestEngine.class);
         }
         return null;
@@ -63,17 +90,23 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
 
     @Override
     protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {
-        ConfigurationParameters config = request.getConfigurationParameters();
-        if (config.getBoolean(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME).orElse(false)) {
+        CucumberConfiguration configuration = getCucumberConfiguration(request);
+        if (configuration.isParallelExecutionEnabled()) {
             return new ForkJoinPoolHierarchicalTestExecutorService(
-                new PrefixedConfigurationParameters(config, PARALLEL_CONFIG_PREFIX));
+                new PrefixedConfigurationParameters(request.getConfigurationParameters(), PARALLEL_CONFIG_PREFIX));
         }
         return super.createExecutorService(request);
     }
 
     @Override
     protected CucumberEngineExecutionContext createExecutionContext(ExecutionRequest request) {
-        return new CucumberEngineExecutionContext(request.getConfigurationParameters());
+        CucumberConfiguration configuration = getCucumberConfiguration(request);
+        return new CucumberEngineExecutionContext(configuration);
+    }
+
+    private CucumberConfiguration getCucumberConfiguration(ExecutionRequest request) {
+        CucumberEngineDescriptor engineDescriptor = (CucumberEngineDescriptor) request.getRootTestDescriptor();
+        return engineDescriptor.getConfiguration();
     }
 
 }

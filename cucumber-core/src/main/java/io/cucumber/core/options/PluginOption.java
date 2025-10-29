@@ -16,6 +16,7 @@ import io.cucumber.core.plugin.TestNGFormatter;
 import io.cucumber.core.plugin.TimelineFormatter;
 import io.cucumber.core.plugin.UnusedStepsSummaryPrinter;
 import io.cucumber.core.plugin.UsageFormatter;
+import io.cucumber.core.plugin.UsageJsonFormatter;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
@@ -55,6 +56,7 @@ public class PluginOption implements Options.Plugin {
         plugins.put("timeline", TimelineFormatter.class);
         plugins.put("unused", UnusedStepsSummaryPrinter.class);
         plugins.put("usage", UsageFormatter.class);
+        plugins.put("usage-json", UsageJsonFormatter.class);
         plugins.put("teamcity", TeamCityPlugin.class);
         PLUGIN_CLASSES = unmodifiableMap(plugins);
     }

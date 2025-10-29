@@ -68,7 +68,7 @@ public final class Plugins {
     public void setEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
         for (Plugin plugin : plugins) {
             if (plugin instanceof ConcurrentEventListener) {
-                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher);
+                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher, false);
             } else if (plugin instanceof EventListener) {
                 ((EventListener) plugin).setEventPublisher(eventPublisher);
             }
@@ -78,7 +78,7 @@ public final class Plugins {
     public void setSerialEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
         for (Plugin plugin : plugins) {
             if (plugin instanceof ConcurrentEventListener) {
-                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher);
+                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher, true);
             } else if (plugin instanceof EventListener) {
                 EventPublisher orderedEventPublisher = getOrderedEventPublisher(eventPublisher);
                 ((EventListener) plugin).setEventPublisher(orderedEventPublisher);

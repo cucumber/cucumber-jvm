@@ -1,7 +1,8 @@
 Cucumber Java
 =============
 
-Provides annotation-based step definitions. To use, add the `cucumber-java` dependency to your pom.xml:
+Provides annotation-based step definitions. To use, add the `cucumber-java` dependency to your `pom.xml`
+and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
 
 ```xml
 <dependencies>
@@ -9,7 +10,6 @@ Provides annotation-based step definitions. To use, add the `cucumber-java` depe
     <dependency>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-java</artifactId>
-        <version>${cucumber.version}</version>
         <scope>test</scope>
     </dependency>
   [...]
@@ -418,7 +418,7 @@ For example, a table with the fields for a User and a data table type to create 
  Given the user is
     | firstname	    | Roberto	|
     | lastname	    | Lo Giacco |
-    | nationality	| Italian	|
+    | nationality   | Italian	|
  ```
 
 ```java 

@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.20.2-SNAPSHOT</version>
+        <version>7.31.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-junit</artifactId>
@@ -14,8 +14,9 @@
     <properties>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.11.2</junit-jupiter.version>
+        <junit-jupiter.version>5.14.0</junit-jupiter.version>
         <junit.version>4.13.2</junit.version>
+        <mockito.version>5.20.0</mockito.version>
         <project.Automatic-Module-Name>io.cucumber.junit</project.Automatic-Module-Name>
     </properties>
 
@@ -61,6 +62,12 @@
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

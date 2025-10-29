@@ -6,7 +6,13 @@ package io.cucumber.core.backend;
  * Instances of scenario scoped glue can not be used between scenarios and will
  * be removed from the glue. This is useful when the glue holds a reference to a
  * scenario scoped object (e.g. a method closure).
+ *
+ * @deprecated backend with scenario scoped glue should hide this complexity
+ *             from Cucumber by updating the registered glue during
+ *             {@link Backend#buildWorld()} and transparently dispose of any
+ *             closures during {@link Backend#disposeWorld()}.
  */
+@Deprecated
 public interface ScenarioScoped {
 
     /**

@@ -8,6 +8,7 @@ import io.cucumber.datatable.DataTable.TableConverter;
 import org.junit.jupiter.api.Test;
 
 import java.beans.ConstructorProperties;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -30,6 +32,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
+import static java.util.stream.Collectors.toMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -93,7 +96,11 @@ class DataTableTypeRegistryTableConverterTest {
     }.getType();
     private static final Type MAP_OF_STRING_TO_MAP_OF_INTEGER_TO_PIECE = new TypeReference<Map<String, Map<Integer, Piece>>>() {
     }.getType();
-    public static final Type OPTIONAL_CHESS_BOARD_TYPE = new TypeReference<Optional<ChessBoard>>() {
+    private static final Type OPTIONAL_CHESS_BOARD_TYPE = new TypeReference<Optional<ChessBoard>>() {
+    }.getType();
+    private static final Type NUMBERED_AUTHOR = new TypeReference<NumberedObject<Author>>() {
+    }.getType();
+    private static final Type LIST_OF_NUMBERED_AUTHOR = new TypeReference<List<NumberedObject<Author>>>() {
     }.getType();
     private static final TableTransformer<ChessBoard> CHESS_BOARD_TABLE_TRANSFORMER = table -> new ChessBoard(
         table.subTable(1, 1).values());
@@ -120,10 +127,29 @@ class DataTableTypeRegistryTableConverterTest {
     };
     private static final TableEntryByTypeTransformer JACKSON_TABLE_ENTRY_BY_TYPE_CONVERTER = (entry, type,
             cellTransformer) -> objectMapper.convertValue(entry, objectMapper.constructType(type));
+    private static final TableEntryByTypeTransformer JACKSON_NUMBERED_OBJECT_TABLE_ENTRY_CONVERTER = (entry, type,
+            cellTransformer) -> {
+        if (!(type instanceof ParameterizedType)) {
+            throw new IllegalArgumentException("Unsupported type " + type);
+        }
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        if (!NumberedObject.class.equals(parameterizedType.getRawType())) {
+            throw new IllegalArgumentException("Unsupported type " + parameterizedType);
+        }
+        return convertToNumberedObject(entry, parameterizedType.getActualTypeArguments()[0]);
+    };
     private static final TableCellByTypeTransformer JACKSON_TABLE_CELL_BY_TYPE_CONVERTER = (value,
             cellType) -> objectMapper.convertValue(value, objectMapper.constructType(cellType));
     private static final DataTableType DATE_TABLE_CELL_TRANSFORMER = new DataTableType(Date.class,
         (TableCellTransformer<Date>) SIMPLE_DATE_FORMAT::parse);
+
+    private static Object convertToNumberedObject(Map<String, String> numberedEntry, Type type) {
+        int number = Integer.parseInt(numberedEntry.get("#"));
+        Map<String, String> entry = numberedEntry.entrySet().stream()
+                .filter(e -> !"#".equals(e.getKey()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new NumberedObject<>(number, objectMapper.convertValue(entry, objectMapper.constructType(type)));
+    }
 
     static {
         SIMPLE_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -425,6 +451,26 @@ class DataTableTypeRegistryTableConverterTest {
                 "   Please increase the table height to use this converter.\n" +
                 "\n" +
                 "Note: Usually solving one is enough"));
+    }
+
+    @Test
+    void convert_to_list_of_parameterized_object__using_default_converter() {
+        DataTable table = parse("",
+            "| # | firstName   | lastName | birthDate  |",
+            "| 1 | Annie M. G. | Schmidt  | 1911-03-20 |",
+            "| 2 | Roald       | Dahl     | 1916-09-13 |",
+            "| 3 | Astrid      | Lindgren | 1907-11-14 |");
+
+        registry.setDefaultDataTableEntryTransformer(JACKSON_NUMBERED_OBJECT_TABLE_ENTRY_CONVERTER);
+        registry.setDefaultDataTableCellTransformer(TABLE_CELL_BY_TYPE_CONVERTER_SHOULD_NOT_BE_USED);
+
+        List<NumberedObject<Author>> expected = asList(
+            new NumberedObject<>(1, new Author("Annie M. G.", "Schmidt", "1911-03-20")),
+            new NumberedObject<>(2, new Author("Roald", "Dahl", "1916-09-13")),
+            new NumberedObject<>(3, new Author("Astrid", "Lindgren", "1907-11-14")));
+
+        assertEquals(expected, converter.toList(table, NUMBERED_AUTHOR));
+        assertEquals(expected, converter.convert(table, LIST_OF_NUMBERED_AUTHOR));
     }
 
     @Test
@@ -1223,6 +1269,20 @@ class DataTableTypeRegistryTableConverterTest {
     }
 
     @Test
+    void convert_to_parameterized_object__using_default_converter() {
+        DataTable table = parse("",
+            "| # | firstName   | lastName | birthDate  |",
+            "| 1 | Annie M. G. | Schmidt  | 1911-03-20 |");
+
+        registry.setDefaultDataTableEntryTransformer(JACKSON_NUMBERED_OBJECT_TABLE_ENTRY_CONVERTER);
+        registry.setDefaultDataTableCellTransformer(TABLE_CELL_BY_TYPE_CONVERTER_SHOULD_NOT_BE_USED);
+
+        NumberedObject<Author> expected = new NumberedObject<>(1, new Author("Annie M. G.", "Schmidt", "1911-03-20"));
+
+        assertEquals(expected, converter.convert(table, NUMBERED_AUTHOR));
+    }
+
+    @Test
     void convert_to_table__table_transformer_takes_precedence_over_identity_transform() {
         DataTable table = parse("",
             "  |   | 1 | 2 | 3 |",
@@ -1711,6 +1771,28 @@ class DataTableTypeRegistryTableConverterTest {
                 "   Please consider registering a table cell transformer.\n" +
                 "\n" +
                 "Note: Usually solving one is enough"));
+    }
+
+    private static class NumberedObject<T> {
+        private final int number;
+        private final T value;
+
+        private NumberedObject(int number, T value) {
+            this.number = number;
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof NumberedObject
+                    && ((NumberedObject<?>) obj).number == number
+                    && Objects.equals(((NumberedObject<?>) obj).value, value);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d: %s", number, value);
+        }
     }
 
     private enum Piece {

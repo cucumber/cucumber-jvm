@@ -28,11 +28,11 @@ class DocStringTest {
             "application/json");
 
         assertThat(docString.toString(), is("" +
-                "      \"\"\"application/json\n" +
-                "      {\n" +
-                "        \"hello\":\"world\"\n" +
-                "      }\n" +
-                "      \"\"\""));
+                "\"\"\"application/json\n" +
+                "{\n" +
+                "  \"hello\":\"world\"\n" +
+                "}\n" +
+                "\"\"\"\n"));
     }
 
     @Test
@@ -60,9 +60,9 @@ class DocStringTest {
             "application/json");
 
         assertThat(docString.toString(), is("" +
-                "      \"\"\"application/json\n" +
-                "      \n" +
-                "      \"\"\""));
+                "\"\"\"application/json\n" +
+                "\n" +
+                "\"\"\"\n"));
     }
 
 }

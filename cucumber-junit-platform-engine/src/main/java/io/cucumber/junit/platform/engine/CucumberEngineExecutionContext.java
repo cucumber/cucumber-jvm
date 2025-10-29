@@ -21,7 +21,6 @@ import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
-import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
@@ -34,41 +33,43 @@ import static io.cucumber.junit.platform.engine.TestCaseResultObserver.observe;
 public final class CucumberEngineExecutionContext implements EngineExecutionContext {
 
     private static final Logger log = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
-    private final CucumberEngineOptions options;
+    private final CucumberConfiguration configuration;
 
     private CucumberExecutionContext context;
 
-    CucumberEngineExecutionContext(ConfigurationParameters configurationParameters) {
-        options = new CucumberEngineOptions(configurationParameters);
+    CucumberEngineExecutionContext(CucumberConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    CucumberEngineOptions getOptions() {
-        return options;
+    CucumberConfiguration getConfiguration() {
+        return configuration;
     }
 
     private CucumberExecutionContext createCucumberExecutionContext() {
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
-        UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader, options);
+        UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader,
+            configuration);
         EventBus bus = synchronize(
             new TimeServiceEventBus(Clock.systemUTC(), uuidGeneratorServiceLoader.loadUuidGenerator()));
-        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader, options);
-        Plugins plugins = new Plugins(new PluginFactory(), options);
-        ExitStatus exitStatus = new ExitStatus(options);
+        ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+            configuration);
+        Plugins plugins = new Plugins(new PluginFactory(), configuration);
+        ExitStatus exitStatus = new ExitStatus(configuration);
         plugins.addPlugin(exitStatus);
 
         RunnerSupplier runnerSupplier;
-        if (options.isParallelExecutionEnabled()) {
+        if (configuration.isParallelExecutionEnabled()) {
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
             ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(
                 objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-            runnerSupplier = new ThreadLocalRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier);
+            runnerSupplier = new ThreadLocalRunnerSupplier(configuration, bus, backendSupplier, objectFactorySupplier);
         } else {
             plugins.setEventBusOnEventListenerPlugins(bus);
             ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(
                 objectFactoryServiceLoader);
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
-            runnerSupplier = new SingletonRunnerSupplier(options, bus, backendSupplier, objectFactorySupplier);
+            runnerSupplier = new SingletonRunnerSupplier(configuration, bus, backendSupplier, objectFactorySupplier);
         }
         return new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
     }

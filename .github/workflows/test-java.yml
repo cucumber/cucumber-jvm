@@ -17,33 +17,32 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: true
       matrix:
         os: [ ubuntu-latest, windows-latest ]
         version: [ 17, 21 ]
     name: 'Build Java ${{ matrix.version }} - ${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: ${{ matrix.version }}
           cache: 'maven'
       - name: Install dependencies
         run: ./mvnw install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -D"archetype.test.skip=true" -D"maven.javadoc.skip=true" --batch-mode -D"style.color=always" --show-version
       - name: Test
         run: ./mvnw verify -Pinclude-extra-modules -D"style.color=always"
-        env:
-          CUCUMBER_PUBLISH_TOKEN: ${{ secrets.CUCUMBER_PUBLISH_TOKEN }}
 
   javadoc:
     name: 'Javadoc'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
       - name: Install dependencies
@@ -55,10 +54,10 @@ jobs:
     name: 'Semver'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
       - name: Install dependencies

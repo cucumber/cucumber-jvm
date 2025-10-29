@@ -7,6 +7,7 @@ import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.messages.types.GherkinDocument;
+import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.RuleChild;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Source;
@@ -21,8 +22,18 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+/**
+ * Internal class, still used by Serenity.
+ *
+ * @see        <a href=
+ *             "https://github.com/cucumber/cucumber-jvm/issues/3076">cucumber/cucumber-jvm#3076</a>
+ * @deprecated for removal, use messages + query.
+ */
+@SuppressWarnings("unused")
+@Deprecated
 final class TestSourcesModel {
 
     private final Map<URI, TestSourceRead> pathToReadEventMap = new HashMap<>();
@@ -43,6 +54,9 @@ final class TestSourcesModel {
 
     static String calculateId(AstNode astNode) {
         Object node = astNode.node;
+        if (node instanceof Rule) {
+            return calculateId(astNode.parent) + ";" + convertToId(((Rule) node).getName());
+        }
         if (node instanceof Scenario) {
             return calculateId(astNode.parent) + ";" + convertToId(((Scenario) node).getName());
         }
@@ -61,8 +75,10 @@ final class TestSourcesModel {
         return "";
     }
 
+    private static final Pattern replacementPattern = Pattern.compile("[\\s'_,!]");
+
     static String convertToId(String name) {
-        return name.replaceAll("[\\s'_,!]", "-").toLowerCase();
+        return replacementPattern.matcher(name).replaceAll("-").toLowerCase();
     }
 
     static URI relativize(URI uri) {

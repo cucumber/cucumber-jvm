@@ -19,11 +19,9 @@ final class TestCase {
     private static final String FEATURES_DIRECTORY = "src/test/resources/features";
     private static final String FEATURES_PACKAGE = "io.cucumber.compatibility";
 
-    private final String packageName;
     private final String id;
 
-    private TestCase(String packageName, String id) {
-        this.packageName = packageName;
+    private TestCase(String id) {
         this.id = id;
     }
 
@@ -33,8 +31,7 @@ final class TestCase {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path path : stream) {
                 if (path.toFile().isDirectory()) {
-                    String id = path.getFileName().toString();
-                    testCases.add(new TestCase(id.replace("-", ""), id));
+                    testCases.add(new TestCase(path.getFileName().toString()));
                 }
             }
         }
@@ -47,11 +44,11 @@ final class TestCase {
     }
 
     URI getGlue() {
-        return GluePath.parse(FEATURES_PACKAGE + "." + packageName);
+        return GluePath.parse(FEATURES_PACKAGE + "." + id.replace("-", ""));
     }
 
-    FeatureWithLines getFeature() {
-        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id + "/" + id + ".feature");
+    FeatureWithLines getFeatures() {
+        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id);
     }
 
     Path getExpectedFile() {

@@ -4,11 +4,11 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>4.2.0</version>
+        <version>4.5.0</version>
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.20.2-SNAPSHOT</version>
+    <version>7.31.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
@@ -18,7 +18,7 @@
         <!-- Tool chains, ect -->
         <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
-        <project.build.outputTimestamp>1728495848</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1761582949</project.build.outputTimestamp>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -42,7 +42,6 @@
         <module>cucumber-java</module>
         <module>cucumber-junit</module>
         <module>cucumber-junit-platform-engine</module>
-        <module>cucumber-kotlin-java8</module>
         <module>cucumber-openejb</module>
         <module>cucumber-picocontainer</module>
         <module>cucumber-plugin</module>
@@ -60,8 +59,9 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>examples</module>
                 <module>compatibility</module>
+                <module>cucumber-kotlin-java8</module>
+                <module>examples</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -92,8 +92,9 @@
                  these modules. -->
             <id>include-extra-modules</id>
             <modules>
-                <module>examples</module>
                 <module>compatibility</module>
+                <module>cucumber-kotlin-java8</module>
+                <module>examples</module>
             </modules>
         </profile>
 
@@ -226,17 +227,12 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
 
         <pluginManagement>
             <plugins>
                 <!-- Standard plugins - alphabetically -->
-                <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>groovy-maven-plugin</artifactId>
-                    <version>2.1.1</version>
-                </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -328,18 +324,7 @@
                                 </packages>
                             </group>
                         </groups>
-                        <stylesheet>java</stylesheet>
                     </configuration>
-                </plugin>
-
-                <!-- Need the 3.0.0+ release for Junit5 + Before/After hooks -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
                 </plugin>
 
                 <!-- Determine project root for revapi and spotless  -->
@@ -363,12 +348,12 @@
                 <plugin>
                     <groupId>org.revapi</groupId>
                     <artifactId>revapi-maven-plugin</artifactId>
-                    <version>0.15.0</version>
+                    <version>0.15.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.revapi</groupId>
                             <artifactId>revapi-java</artifactId>
-                            <version>0.28.1</version>
+                            <version>0.28.4</version>
                         </dependency>
                     </dependencies>
                     <configuration>
@@ -435,7 +420,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.18.2</version>
+                            <version>12.1.1</version>
                         </dependency>
                     </dependencies>
                     <configuration>

@@ -330,20 +330,82 @@
         "differences": [
           {
             "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"1.14\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeChanged",
+            "old": "parameter org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, ===org.junit.platform.engine.reporting.OutputDirectoryProvider===, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
+            "new": "parameter org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, ===org.junit.platform.engine.OutputDirectoryCreator===, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
+            "parameterIndex": "3",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"1.14\"",
+            "justification": "API consumed from JUnit 5"
+          },
+          {
+            "ignore": true,
             "code": "java.class.externalClassExposedInAPI",
-            "new": "class org.junit.platform.engine.support.hierarchical.ExclusiveResource",
+            "new": "interface org.junit.platform.engine.OutputDirectoryCreator",
             "justification": "API consumed from JUnit 5"
           },
           {
             "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method java.util.List<org.junit.platform.engine.support.hierarchical.ExclusiveResource> org.junit.platform.engine.support.hierarchical.ResourceLock::getResources()",
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
             "justification": "API consumed from JUnit 5"
           },
           {
             "ignore": true,
-            "code": "java.method.addedToInterface",
-            "new": "method boolean org.junit.platform.engine.support.hierarchical.ResourceLock::isExclusive()",
+            "code": "java.annotation.attributeValueChanged",
+            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"1.14\"",
             "justification": "API consumed from JUnit 5"
           }
         ]

@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.20.2-SNAPSHOT</version>
+        <version>7.31.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-archetype</artifactId>
@@ -15,9 +15,10 @@
     <description>Cucumber JVM: Maven Archetype</description>
 
     <properties>
-        <junit-jupiter.version>5.11.2</junit-jupiter.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
+        <junit-jupiter.version>5.14.0</junit-jupiter.version>
+        <assertj.version>3.27.6</assertj.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -36,6 +37,16 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Not used by this module. But ensures the assertj.version
+                 in the archetype template is also automatically updated by renovate
+                 bot. -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-bom</artifactId>
+                <version>${assertj.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -123,7 +134,7 @@
             <extension>
                 <groupId>org.apache.maven.archetype</groupId>
                 <artifactId>archetype-packaging</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
             </extension>
         </extensions>
     </build>

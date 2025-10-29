@@ -126,15 +126,22 @@ public final class Constants {
     /**
      * Property name used to configure the naming strategy: {@value}
      * <p>
-     * Value must be one of {@code long} or {@code short}. By default, short
-     * names are used.
+     * Value must be one of {@code long}, {@code short}, or {@code surefire}. By
+     * default, short names are used.
      * <p>
-     * When long names are used the parent descriptor names are included into
-     * each test descriptor name. So for example a single example would be
-     * named:
+     * When the {@code long} naming strategy is used all parent descriptor names
+     * are included in each test descriptor name. So for example a single
+     * example would be named:
      * {@code Feature Name - Rule Name - Scenario Name - Examples Name - Example #N }.
-     * This is useful for tools that only report the test name such as Maven and
-     * Gradle.
+     * This is useful for tools that only report the test name such as Gradle.
+     * <p>
+     * When the {@code surefire} naming strategy is used with Surefire <= 3.5.2,
+     * nodes are named such the output makes sense. The feature name will be
+     * rendered as the class name. The long name without the feature will be
+     * rendered as the test method name. For example:
+     * {@code Feature Name.Rule Name - Scenario Name - Examples Name - Example #N}.
+     * <p>
+     * For Surefire >= 3.5.4 use the {@code long} strategy instead.
      */
     @API(status = Status.EXPERIMENTAL, since = "7.0.0")
     public static final String JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy";
@@ -143,39 +150,84 @@ public final class Constants {
      * Property name used to configure the naming strategy of examples in case
      * of short naming strategy: {@value}
      * <p>
-     * Value must be one of {@code number} or {@code pickle}. By default,
-     * numbers are used.
-     * <p>
-     * When set to {@code pickle} the pickle name is used. So for scenario name
-     * {@code Adding <a> and <b>} and example with params {@code a = 10} and
-     * {@code b = 20} the following name would be produced:
+     * Value must be one of {@code number}, {@code pickle}, or
+     * {@code number-and-pickle-if-parameterized}. By default,
+     * {@code number-and-pickle-if-parameterized} is used.
+     * <ul>
+     * <li>When set to {@code number} examples are numbered. So the first
+     * example of the first examples section would be named {@code #1.1}
+     * <li>When set to {@code pickle} the pickle name is used. So for scenario
+     * name {@code Adding <a> and <b>} and example with params {@code a = 10}
+     * and {@code b = 20} the following name would be produced:
      * {@code Adding 10 and 20}.
-     * <p>
-     * Using example numbers works well in all scenarios, but if parameterized
-     * scenario names are used consistently, the pickle name provides more
-     * clarity.
+     * <li>When set to {@code number-and-pickle-if-parameterized} the name would
+     * be rendered as {@code #1.1: Adding 10 and 20}.
+     * </ul>
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.short.example-name";
 
     /**
      * Property name used to configure the naming strategy of examples in case
+     * of surefire naming strategy: {@value}
+     * <p>
+     * Value must be one of {@code number}, {@code pickle}, or
+     * {@code number-and-pickle-if-parameterized}. By default,
+     * {@code number-and-pickle-if-parameterized} is used.
+     * <ul>
+     * <li>When set to {@code number} examples are numbered. So the first
+     * example of the first examples section would be named {@code #1.1}
+     * <li>When set to {@code pickle} the pickle name is used. So for scenario
+     * name {@code Adding <a> and <b>} and example with params {@code a = 10}
+     * and {@code b = 20} the following name would be produced:
+     * {@code Adding 10 and 20}.
+     * <li>When set to {@code number-and-pickle-if-parameterized} the name would
+     * be rendered as {@code #1.1: Adding 10 and 20}.
+     * </ul>
+     */
+    @API(status = Status.EXPERIMENTAL, since = "7.23.0")
+    public static final String JUNIT_PLATFORM_SUREFIRE_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.surefire.example-name";
+
+    /**
+     * Property name used to configure the naming strategy of examples in case
      * of long naming strategy: {@value}
      * <p>
-     * Value must be one of {@code number} or {@code pickle}. By default,
-     * numbers are used.
-     * <p>
-     * When set to {@code pickle} the pickle name is used. So for scenario name
-     * {@code Adding <a> and <b>} and example with params {@code a = 10} and
-     * {@code b = 20} the following name would be produced:
-     * {@code Feature Name - Rule Name - Adding <a> and <b> - Examples Name - Adding 10 and 20}.
-     * <p>
-     * Using example numbers works well in all scenarios, but if parameterized
-     * scenario names are used consistently, the pickle name provides more
-     * clarity.
+     * Value must be one of {@code number}, {@code pickle}, or
+     * {@code number-and-pickle-if-parameterized}. By default,
+     * {@code number-and-pickle-if-parameterized} is used.
+     * <ul>
+     * <li>When set to {@code number} examples are numbered. So the first
+     * example of the first examples section would be named {@code #1.1}
+     * <li>When set to {@code pickle} the pickle name is used. So for scenario
+     * name {@code Adding <a> and <b>} and example with params {@code a = 10}
+     * and {@code b = 20} the following name would be produced:
+     * {@code Adding 10 and 20}.
+     * <li>When set to {@code number-and-pickle-if-parameterized} the name would
+     * be rendered as {@code #1.1: Adding 10 and 20}.
+     * </ul>
      */
     @API(status = Status.EXPERIMENTAL, since = "7.16.2")
     public static final String JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME = "cucumber.junit-platform.naming-strategy.long.example-name";
+
+    /**
+     * Property name used to enable discovery as a root engine: {@value}
+     * <p>
+     * Valid values are {@code true}, {@code false}. Default: {@code true}.
+     * <p>
+     * As an engine on the JUnit Platform, Cucumber can participate in discovery
+     * directly as a "root" engine. Or indirectly when used through the JUnit
+     * Platform Suite Engine.
+     * <p>
+     * Some build tools assume that all root engines produce class based tests.
+     * This is not the case for Cucumber. Running Cucumber through the JUnit
+     * Platform Suite Engine. Disabling discovery as a root engine resolves
+     * this.
+     * <p>
+     * Note: If a build tool supports JUnits include/exclude Engine
+     * configuration that option should be preferred over this property.
+     */
+    @API(status = Status.EXPERIMENTAL, since = "7.26.0")
+    public static final String JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME = "cucumber.junit-platform.discovery.as-root-engine";
 
     /**
      * Property name to enable plugins: {@value}
@@ -242,7 +294,7 @@ public final class Constants {
      * <p>
      * Valid values are {@code underscore} or {@code camelcase}.
      * <p>
-     * By defaults are generated using the under score naming convention.
+     * By defaults are generated using the underscore naming convention.
      */
     public static final String SNIPPET_TYPE_PROPERTY_NAME = io.cucumber.core.options.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 
@@ -260,6 +312,27 @@ public final class Constants {
      * @see #PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME
      */
     public static final String EXECUTION_MODE_FEATURE_PROPERTY_NAME = "cucumber.execution.execution-mode.feature";
+
+    /**
+     * Property name used to set execution order: {@value}
+     * <p>
+     * Valid values are {@code lexical}, {@code reverse} or {@code random}.
+     * <p>
+     * By default, features are executed in lexical file name order and
+     * scenarios in a feature from top to bottom.
+     */
+    public static final String EXECUTION_ORDER_PROPERTY_NAME = io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
+
+    /**
+     * Property name used to set the seed for random execution order: {@value}
+     * <p>
+     * Valid values are any value understood by {@link Long#decode(String)}. If
+     * omitted a random seed is used instead. The exact value can be obtained by
+     * <a
+     * href=https://junit.org/junit5/docs/snapshot/user-guide/#running-tests-discovery-issues>
+     * listening for discovery issues</a>.
+     */
+    public static final String EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME = "cucumber.execution.order.random.seed";
 
     /**
      * Property name used to enable parallel test execution: {@value}

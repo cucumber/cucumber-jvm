@@ -1,86 +1,66 @@
 package io.cucumber.core.plugin;
 
+import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.SnippetsSuggestedEvent;
-import io.cucumber.plugin.event.TestRunFinished;
+import io.cucumber.prettyformatter.MessagesToSummaryWriter;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+
+import static io.cucumber.prettyformatter.Theme.cucumber;
+import static io.cucumber.prettyformatter.Theme.plain;
 
 public final class DefaultSummaryPrinter implements ColorAware, ConcurrentEventListener {
 
-    private final Set<String> snippets = new LinkedHashSet<>();
-    private final Stats stats;
-    private final PrintStream out;
+    private final OutputStream out;
+    private MessagesToSummaryWriter writer;
 
     public DefaultSummaryPrinter() {
-        this(System.out, Locale.getDefault());
+        this(new PrintStream(System.out) {
+            @Override
+            public void close() {
+                // Don't close System.out
+            }
+        });
     }
 
-    DefaultSummaryPrinter(OutputStream out, Locale locale) {
-        this.out = new PrintStream(out);
-        this.stats = new Stats(locale);
+    DefaultSummaryPrinter(OutputStream out) {
+        this.out = out;
+        this.writer = createBuilder().build(out);
     }
 
-    @Override
-    public void setEventPublisher(EventPublisher publisher) {
-        stats.setEventPublisher(publisher);
-        publisher.registerHandlerFor(SnippetsSuggestedEvent.class, this::handleSnippetsSuggestedEvent);
-        publisher.registerHandlerFor(TestRunFinished.class, event -> print());
-    }
-
-    private void handleSnippetsSuggestedEvent(SnippetsSuggestedEvent event) {
-        this.snippets.addAll(event.getSuggestion().getSnippets());
-    }
-
-    private void print() {
-        out.println();
-        printStats();
-        printErrors();
-        printSnippets();
-        out.println();
-    }
-
-    private void printStats() {
-        stats.printStats(out);
-        out.println();
-    }
-
-    private void printErrors() {
-        List<Throwable> errors = stats.getErrors();
-        if (errors.isEmpty()) {
-            return;
-        }
-        out.println();
-        for (Throwable error : errors) {
-            error.printStackTrace(out);
-            out.println();
-        }
-    }
-
-    private void printSnippets() {
-        if (snippets.isEmpty()) {
-            return;
-        }
-
-        out.println();
-        out.println("You can implement missing steps with the snippets below:");
-        out.println();
-        for (String snippet : snippets) {
-            out.println(snippet);
-            out.println();
-        }
+    private static MessagesToSummaryWriter.Builder createBuilder() {
+        return MessagesToSummaryWriter.builder()
+                .theme(cucumber());
     }
 
     @Override
     public void setMonochrome(boolean monochrome) {
-        stats.setMonochrome(monochrome);
+        if (monochrome) {
+            writer = createBuilder().theme(plain()).build(out);
+        }
+    }
+
+    @Override
+    public void setEventPublisher(EventPublisher publisher) {
+        publisher.registerHandlerFor(Envelope.class, this::write);
+    }
+
+    private void write(Envelope event) {
+        try {
+            writer.write(event);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
+        // TODO: Plugins should implement the closable interface
+        // and be closed by Cucumber
+        if (event.getTestRunFinished().isPresent()) {
+            writer.close();
+        }
     }
 
 }

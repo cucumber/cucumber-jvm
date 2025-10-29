@@ -1,6 +1,5 @@
 package io.cucumber.junit.platform.engine;
 
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
@@ -9,18 +8,22 @@ import org.junit.platform.engine.support.hierarchical.Node;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.util.Objects.requireNonNull;
+
 class CucumberEngineDescriptor extends EngineDescriptor implements Node<CucumberEngineExecutionContext> {
 
     static final String ENGINE_ID = "cucumber";
+    private final CucumberConfiguration configuration;
     private final TestSource source;
 
-    CucumberEngineDescriptor(UniqueId uniqueId) {
-        this(uniqueId, null);
+    CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration, TestSource source) {
+        super(uniqueId, "Cucumber");
+        this.configuration = requireNonNull(configuration);
+        this.source = source;
     }
 
-    CucumberEngineDescriptor(UniqueId uniqueId, TestSource source) {
-        super(uniqueId, "Cucumber");
-        this.source = source;
+    public CucumberConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override
@@ -65,18 +68,4 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
         return context;
     }
 
-    void mergeFeature(FeatureDescriptor descriptor) {
-        recursivelyMerge(descriptor, this);
-    }
-
-    private static void recursivelyMerge(TestDescriptor descriptor, TestDescriptor parent) {
-        Optional<? extends TestDescriptor> byUniqueId = parent.findByUniqueId(descriptor.getUniqueId());
-        if (!byUniqueId.isPresent()) {
-            parent.addChild(descriptor);
-        } else {
-            byUniqueId.ifPresent(
-                existingParent -> descriptor.getChildren()
-                        .forEach(child -> recursivelyMerge(child, existingParent)));
-        }
-    }
 }

@@ -151,9 +151,9 @@ class DocStringTypeRegistryDocStringConverterTest {
             () -> converter.convert(docString, JsonNode.class));
         assertThat(exception.getMessage(), is(equalToCompressingWhiteSpace("" +
                 "'json' could not transform\n" +
-                "      \"\"\"json\n" +
-                "      {\"hello\":\"world\"}\n" +
-                "      \"\"\"")));
+                " \"\"\"json\n" +
+                " {\"hello\":\"world\"}\n" +
+                " \"\"\"")));
     }
 
     @Test

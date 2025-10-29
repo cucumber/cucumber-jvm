@@ -3,9 +3,11 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.messages.types.HookType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Objects.requireNonNull;
@@ -14,9 +16,11 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     private final String tagExpression;
     private final int order;
+    private final HookType hookType;
 
-    JavaHookDefinition(Method method, String tagExpression, int order, Lookup lookup) {
+    JavaHookDefinition(HookType hookType, Method method, String tagExpression, int order, Lookup lookup) {
         super(requireValidMethod(method), lookup);
+        this.hookType = requireNonNull(hookType);
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
     }
@@ -74,4 +78,8 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         return order;
     }
 
+    @Override
+    public Optional<HookType> getHookType() {
+        return Optional.of(hookType);
+    }
 }

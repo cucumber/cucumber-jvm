@@ -6,7 +6,7 @@ import io.cucumber.java.en.When;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DateStepDefinitions {
 
@@ -25,6 +25,6 @@ public class DateStepDefinitions {
 
     @Then("^the result should be (yes|no)$")
     public void the_result_should_be(String expectedResult) {
-        assertEquals(expectedResult, result);
+        assertThat(result).isEqualTo(expectedResult);
     }
 }

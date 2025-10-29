@@ -6,6 +6,7 @@ import io.cucumber.datatable.TypeFactory.ListType;
 import io.cucumber.datatable.TypeFactory.MapType;
 import io.cucumber.datatable.TypeFactory.OptionalType;
 import io.cucumber.datatable.TypeFactory.OtherType;
+import io.cucumber.datatable.TypeFactory.Parameterized;
 import org.apiguardian.api.API;
 
 import java.lang.reflect.Type;
@@ -87,7 +88,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return (T) Optional.ofNullable(singleton);
         }
 
-        if (javaType instanceof OtherType) {
+        if (javaType instanceof OtherType || javaType instanceof Parameterized) {
             return toSingleton(dataTable, javaType);
         }
 
@@ -106,7 +107,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return (T) toLists(dataTable, listElement.getElementType());
         }
 
-        assert listElementType instanceof OtherType || listElementType instanceof OptionalType;
+        assert listElementType instanceof OtherType || listElementType instanceof OptionalType
+                || listElementType instanceof Parameterized;
         return (T) toList(dataTable, listElementType);
     }
 

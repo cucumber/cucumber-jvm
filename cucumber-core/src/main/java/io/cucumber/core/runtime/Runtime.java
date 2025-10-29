@@ -1,6 +1,7 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
@@ -117,96 +118,141 @@ public final class Runtime {
         private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
         private BackendSupplier backendSupplier;
+        private ObjectFactorySupplier objectFactorySupplier;
         private FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = emptyList();
+        private Supplier<UuidGenerator> uuidGeneratorSupplier;
 
         private Builder() {
         }
 
-        public Builder withRuntimeOptions(final RuntimeOptions runtimeOptions) {
+        public Builder withRuntimeOptions(RuntimeOptions runtimeOptions) {
             this.runtimeOptions = runtimeOptions;
             return this;
         }
 
-        public Builder withClassLoader(final Supplier<ClassLoader> classLoader) {
+        public Builder withClassLoader(Supplier<ClassLoader> classLoader) {
             this.classLoader = classLoader;
             return this;
         }
 
-        public Builder withBackendSupplier(final BackendSupplier backendSupplier) {
+        public Builder withBackendSupplier(BackendSupplier backendSupplier) {
             this.backendSupplier = backendSupplier;
             return this;
         }
 
-        public Builder withFeatureSupplier(final FeatureSupplier featureSupplier) {
+        public Builder withObjectFactorySupplier(ObjectFactorySupplier objectFactorySupplier) {
+            this.objectFactorySupplier = objectFactorySupplier;
+            return this;
+        }
+
+        public Builder withFeatureSupplier(FeatureSupplier featureSupplier) {
             this.featureSupplier = featureSupplier;
             return this;
         }
 
-        public Builder withAdditionalPlugins(final Plugin... plugins) {
+        public Builder withUuidGeneratorSupplier(Supplier<UuidGenerator> uuidGenerator) {
+            this.uuidGeneratorSupplier = uuidGenerator;
+            return this;
+        }
+
+        public Builder withAdditionalPlugins(Plugin... plugins) {
             this.additionalPlugins = Arrays.asList(plugins);
             return this;
         }
 
-        public Builder withEventBus(final EventBus eventBus) {
+        public Builder withEventBus(EventBus eventBus) {
             this.eventBus = eventBus;
             return this;
         }
 
         public Runtime build() {
-            final ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
-                runtimeOptions);
+            EventBus eventBus = synchronize(createEventBus());
+            ExitStatus exitStatus = createPluginsAndExitStatus(eventBus);
+            RunnerSupplier runnerSupplier = createRunnerSupplier(eventBus);
+            CucumberExecutionContext context = new CucumberExecutionContext(eventBus, exitStatus, runnerSupplier);
+            Predicate<Pickle> filter = new Filters(runtimeOptions);
+            int limit = runtimeOptions.getLimitCount();
+            FeatureSupplier featureSupplier = createFeatureSupplier(eventBus);
+            ExecutorService executor = createExecutorService();
+            PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
+            return new Runtime(exitStatus, context, filter, limit, featureSupplier, executor, pickleOrder);
+        }
 
-            final ObjectFactorySupplier objectFactorySupplier = runtimeOptions.isMultiThreaded()
-                    ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
-                    : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
-
-            final BackendSupplier backendSupplier = this.backendSupplier != null
-                    ? this.backendSupplier
-                    : new BackendServiceLoader(this.classLoader, objectFactorySupplier);
-
-            final Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-            for (final Plugin plugin : additionalPlugins) {
-                plugins.addPlugin(plugin);
-            }
-            final ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+        private ExitStatus createPluginsAndExitStatus(EventBus eventBus) {
+            Plugins plugins = createPlugins();
+            ExitStatus exitStatus = new ExitStatus(runtimeOptions);
             plugins.addPlugin(exitStatus);
-
-            if (this.eventBus == null) {
-                final UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(
-                    classLoader,
-                    runtimeOptions);
-                this.eventBus = new TimeServiceEventBus(Clock.systemUTC(),
-                    uuidGeneratorServiceLoader.loadUuidGenerator());
-            }
-            final EventBus eventBus = synchronize(this.eventBus);
 
             if (runtimeOptions.isMultiThreaded()) {
                 plugins.setSerialEventBusOnEventListenerPlugins(eventBus);
             } else {
                 plugins.setEventBusOnEventListenerPlugins(eventBus);
             }
+            return exitStatus;
+        }
 
-            final RunnerSupplier runnerSupplier = runtimeOptions.isMultiThreaded()
+        private RunnerSupplier createRunnerSupplier(EventBus eventBus) {
+            ObjectFactorySupplier objectFactorySupplier = createObjectFactorySupplier();
+            BackendSupplier backendSupplier = createBackendSupplier(objectFactorySupplier);
+            return runtimeOptions.isMultiThreaded()
                     ? new ThreadLocalRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier)
                     : new SingletonRunnerSupplier(runtimeOptions, eventBus, backendSupplier, objectFactorySupplier);
+        }
 
-            final ExecutorService executor = runtimeOptions.isMultiThreaded()
+        private ObjectFactorySupplier createObjectFactorySupplier() {
+            if (this.objectFactorySupplier != null) {
+                return objectFactorySupplier;
+            }
+            ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
+                runtimeOptions);
+            return runtimeOptions.isMultiThreaded()
+                    ? new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader)
+                    : new SingletonObjectFactorySupplier(objectFactoryServiceLoader);
+        }
+
+        private BackendSupplier createBackendSupplier(ObjectFactorySupplier objectFactorySupplier) {
+            return this.backendSupplier != null
+                    ? this.backendSupplier
+                    : new BackendServiceLoader(this.classLoader, objectFactorySupplier);
+        }
+
+        private EventBus createEventBus() {
+            if (this.eventBus != null) {
+                return this.eventBus;
+            }
+            UuidGenerator uuidGenerator = createUuidGenerator();
+            return new TimeServiceEventBus(Clock.systemUTC(), uuidGenerator);
+        }
+
+        private UuidGenerator createUuidGenerator() {
+            if (uuidGeneratorSupplier != null) {
+                return uuidGeneratorSupplier.get();
+            } else {
+                return new UuidGeneratorServiceLoader(classLoader, runtimeOptions).loadUuidGenerator();
+            }
+        }
+
+        private FeatureSupplier createFeatureSupplier(EventBus eventBus) {
+            if (this.featureSupplier != null) {
+                return this.featureSupplier;
+            }
+            FeatureParser parser = new FeatureParser(eventBus::generateId);
+            return new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+        }
+
+        private ExecutorService createExecutorService() {
+            return runtimeOptions.isMultiThreaded()
                     ? Executors.newFixedThreadPool(runtimeOptions.getThreads(), new CucumberThreadFactory())
                     : new SameThreadExecutorService();
+        }
 
-            final FeatureParser parser = new FeatureParser(eventBus::generateId);
-
-            final FeatureSupplier featureSupplier = this.featureSupplier != null
-                    ? this.featureSupplier
-                    : new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
-
-            final Predicate<Pickle> filter = new Filters(runtimeOptions);
-            final int limit = runtimeOptions.getLimitCount();
-            final PickleOrder pickleOrder = runtimeOptions.getPickleOrder();
-            final CucumberExecutionContext context = new CucumberExecutionContext(eventBus, exitStatus, runnerSupplier);
-
-            return new Runtime(exitStatus, context, filter, limit, featureSupplier, executor, pickleOrder);
+        private Plugins createPlugins() {
+            Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
+            for (Plugin plugin : additionalPlugins) {
+                plugins.addPlugin(plugin);
+            }
+            return plugins;
         }
 
     }

@@ -179,7 +179,7 @@ public final class ClasspathSupport {
     public static String configurationExamples() {
         return "Examples:\n" +
                 " - @CucumberOptions(glue = \"com.example.application\")\n" +
-                " - @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = \"com.example.application\")" +
+                " - @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = \"com.example.application\")\n" +
                 " - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application\n" +
                 " - src/test/resources/cucumber.properties         cucumber.glue=com.example.application\n";
     }

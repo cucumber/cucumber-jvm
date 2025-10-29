@@ -1,251 +1,88 @@
 package io.cucumber.core.plugin;
 
-import io.cucumber.plugin.event.PickleStepTestStep;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestStep;
-import io.cucumber.plugin.event.TestStepFinished;
-import org.json.JSONException;
-import org.junit.jupiter.api.Disabled;
+import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.runner.StepDurationTimeService;
+import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.runtime.StubBackendSupplier;
+import io.cucumber.core.runtime.StubFeatureSupplier;
+import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.time.Duration;
-import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.number.IsCloseTo.closeTo;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
+import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UsageFormatterTest {
 
-    public static final double EPSILON = 0.001;
-
     @Test
-    void resultWithPassedStep() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        TestStep testStep = new StubPickleStepTestStep("stepDef", "step");
-        Result result = new Result(Status.PASSED, Duration.ofMillis(12345L), null);
+    void writes_empty_report() throws UnsupportedEncodingException {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n");
 
-        usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new StubTestCase(), testStep, result));
+        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofMillis(1000));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new UsageFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier())
+                .build()
+                .run();
 
-        Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertThat(usageMap.size(), is(equalTo(1)));
-        List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertThat(durationEntries.size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
-        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(closeTo(12.345, EPSILON)));
+        assertThat(out.toString("UTF-8")).isEmpty();
     }
 
     @Test
-    void resultWithPassedAndFailedStep() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        TestStep testStep = new StubPickleStepTestStep("stepDef", "step");
+    void writes_usage_report() throws UnsupportedEncodingException {
+        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario 1\n" +
+                "    Given first step\n" +
+                "  Scenario: scenario 2\n" +
+                "    Given first step\n" +
+                "  Scenario: scenario 3\n" +
+                "    Given first step\n");
 
-        Result passed = new Result(Status.PASSED, Duration.ofSeconds(12345L), null);
-        usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new StubTestCase(), testStep, passed));
+        StepDurationTimeService timeService = new StepDurationTimeService(
+            Duration.ofMillis(1000),
+            Duration.ofMillis(2000),
+            Duration.ofMillis(4000));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Runtime.builder()
+                .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withAdditionalPlugins(timeService, new UsageFormatter(out))
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setMonochrome().build())
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step", oneReference()),
+                    new StubStepDefinition("second step", twoReference())))
+                .build()
+                .run();
 
-        Result failed = new Result(Status.FAILED, Duration.ZERO, null);
-        usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new StubTestCase(), testStep, failed));
+        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("" +
+                "\n" +
+                "Expression/Text Duration   Mean ±  Error Location                                                   \n"
+                +
+                "first step        7.000s 2.333s ± 1.440s io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n"
+                +
+                "  first step      4.000s                 path/test.feature:6                                        \n"
+                +
+                "  first step      2.000s                 path/test.feature:4                                        \n"
+                +
+                "  first step      1.000s                 path/test.feature:2                                        \n"
+                +
+                "second step                              io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n"
+                +
+                "  UNUSED                                                                                            \n");
 
-        Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertThat(usageMap.size(), is(equalTo(1)));
-        List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertThat(durationEntries.size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
-        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(closeTo(12345.0, EPSILON)));
     }
-
-    @Test
-    void resultWithZeroDuration() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        TestStep testStep = new StubPickleStepTestStep("stepDef", "step");
-        Result result = new Result(Status.PASSED, Duration.ZERO, null);
-
-        usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new StubTestCase(), testStep, result));
-
-        Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertThat(usageMap.size(), is(equalTo(1)));
-        List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertThat(durationEntries.size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
-        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(0.0)));
-    }
-
-    // Note: Duplicate of above test
-    @Test
-    void resultWithNullDuration() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        PickleStepTestStep testStep = new StubPickleStepTestStep("stepDef", "step");
-        Result result = new Result(Status.PASSED, Duration.ZERO, null);
-
-        usageFormatter
-                .handleTestStepFinished(new TestStepFinished(Instant.EPOCH, new StubTestCase(), testStep, result));
-
-        Map<String, List<UsageFormatter.StepContainer>> usageMap = usageFormatter.usageMap;
-        assertThat(usageMap.size(), is(equalTo(1)));
-        List<UsageFormatter.StepContainer> durationEntries = usageMap.get("stepDef");
-        assertThat(durationEntries.size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getName(), is(equalTo("step")));
-        assertThat(durationEntries.get(0).getDurations().size(), is(equalTo(1)));
-        assertThat(durationEntries.get(0).getDurations().get(0).getDuration(), is(equalTo(0.0)));
-    }
-
-    @Test
-    @Disabled("TODO")
-    void doneWithoutUsageStatisticStrategies() throws JSONException {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
-        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(1234567800L),
-            "location.feature");
-        stepContainer.getDurations().addAll(singletonList(stepDuration));
-        usageFormatter.usageMap.put("a (.*)", singletonList(stepContainer));
-
-        usageFormatter.finishReport();
-
-        String json = "" +
-                "[\n" +
-                "  {\n" +
-                "    \"source\": \"a (.*)\",\n" +
-                "    \"steps\": [\n" +
-                "      {\n" +
-                "        \"name\": \"a step\",\n" +
-                "        \"aggregatedDurations\": {\n" +
-                "          \"median\": 1.2345678,\n" +
-                "          \"average\": 1.2345678\n" +
-                "        },\n" +
-                "        \"durations\": [\n" +
-                "          {\n" +
-                "            \"duration\": 1.2345678,\n" +
-                "            \"location\": \"location.feature\"\n" +
-                "          }\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    ]\n" +
-                "  }\n" +
-                "]";
-
-        assertEquals(json, out.toString(), true);
-    }
-
-    @Test
-    @Disabled("TODO")
-    void doneWithUsageStatisticStrategies() throws JSONException {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-
-        UsageFormatter.StepContainer stepContainer = new UsageFormatter.StepContainer("a step");
-        UsageFormatter.StepDuration stepDuration = new UsageFormatter.StepDuration(Duration.ofNanos(12345678L),
-            "location.feature");
-        stepContainer.getDurations().addAll(singletonList(stepDuration));
-
-        usageFormatter.usageMap.put("a (.*)", singletonList(stepContainer));
-
-        usageFormatter.finishReport();
-
-        assertThat(out.toString(), containsString("0.012345678"));
-        String json = "[\n" +
-                "  {\n" +
-                "    \"source\": \"a (.*)\",\n" +
-                "    \"steps\": [\n" +
-                "      {\n" +
-                "        \"name\": \"a step\",\n" +
-                "        \"aggregatedDurations\": {\n" +
-                "          \"median\": 0.012345678,\n" +
-                "          \"average\": 0.012345678\n" +
-                "        },\n" +
-                "        \"durations\": [\n" +
-                "          {\n" +
-                "            \"duration\": 0.012345678,\n" +
-                "            \"location\": \"location.feature\"\n" +
-                "          }\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    ]\n" +
-                "  }\n" +
-                "]";
-
-        assertEquals(json, out.toString(), true);
-    }
-
-    @Test
-    void calculateAverageFromList() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        Double result = usageFormatter
-                .calculateAverage(asList(1.0, 2.0, 3.0));
-        assertThat(result, is(closeTo(2.0, EPSILON)));
-    }
-
-    @Test
-    void calculateAverageOf() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        Double result = usageFormatter.calculateAverage(asList(1.0, 1.0, 2.0));
-        assertThat(result, is(closeTo(1.33, 0.01)));
-    }
-
-    @Test
-    void calculateAverageOfEmptylist() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        Double result = usageFormatter.calculateAverage(Collections.emptyList());
-        assertThat(result, is(equalTo(0.0)));
-    }
-
-    @Test
-    void calculateMedianOfOddNumberOfEntries() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        Double result = usageFormatter
-                .calculateMedian(asList(1.0, 2.0, 3.0));
-        assertThat(result, is(closeTo(2.0, EPSILON)));
-    }
-
-    @Test
-    void calculateMedianOfEvenNumberOfEntries() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        Double result = usageFormatter.calculateMedian(
-            asList(1.0, 3.0, 10.0, 5.0));
-        assertThat(result, is(closeTo(4.0, EPSILON)));
-    }
-
-    @Test
-    void calculateMedianOf() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        Double result = usageFormatter.calculateMedian(asList(2.0, 9.0));
-        assertThat(result, is(closeTo(5.5, EPSILON)));
-    }
-
-    @Test
-    void calculateMedianOfEmptyList() {
-        OutputStream out = new ByteArrayOutputStream();
-        UsageFormatter usageFormatter = new UsageFormatter(out);
-        Double result = usageFormatter.calculateMedian(Collections.emptyList());
-        assertThat(result, is(equalTo(0.0)));
-    }
-
 }

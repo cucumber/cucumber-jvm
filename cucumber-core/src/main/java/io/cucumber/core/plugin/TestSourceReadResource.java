@@ -9,6 +9,14 @@ import java.net.URI;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Internal class, potentially still used by others.
+ *
+ * @see        <a href=
+ *             "https://github.com/cucumber/cucumber-jvm/issues/3076">cucumber/cucumber-jvm#3076</a>
+ * @deprecated for removal, use messages + query.
+ */
+@Deprecated
 final class TestSourceReadResource implements Resource {
 
     private final TestSourceRead event;

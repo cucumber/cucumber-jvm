@@ -2,6 +2,11 @@ package io.cucumber.java8;
 
 import org.apiguardian.api.API;
 
+import static io.cucumber.core.backend.HookDefinition.HookType.AFTER;
+import static io.cucumber.core.backend.HookDefinition.HookType.AFTER_STEP;
+import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE;
+import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE_STEP;
+
 @API(status = API.Status.STABLE)
 public interface LambdaGlue {
 
@@ -17,7 +22,8 @@ public interface LambdaGlue {
      */
     default void Before(final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeHookDefinition(
+                    new Java8HookDefinition(BEFORE, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -30,7 +36,7 @@ public interface LambdaGlue {
      */
     default void Before(String tagExpression, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeHookDefinition(new Java8HookDefinition(BEFORE, tagExpression, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -42,7 +48,7 @@ public interface LambdaGlue {
      */
     default void Before(int order, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addBeforeHookDefinition(new Java8HookDefinition(BEFORE, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -56,7 +62,8 @@ public interface LambdaGlue {
      *                      argument
      */
     default void Before(String tagExpression, int order, final HookBody body) {
-        LambdaGlueRegistry.INSTANCE.get().addBeforeHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+        LambdaGlueRegistry.INSTANCE.get()
+                .addBeforeHookDefinition(new Java8HookDefinition(BEFORE, tagExpression, order, body));
     }
 
     /**
@@ -66,7 +73,8 @@ public interface LambdaGlue {
      */
     default void Before(final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeHookDefinition(
+                    new Java8HookDefinition(BEFORE, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -78,7 +86,7 @@ public interface LambdaGlue {
      */
     default void Before(String tagExpression, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeHookDefinition(new Java8HookDefinition(BEFORE, tagExpression, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -90,7 +98,7 @@ public interface LambdaGlue {
      */
     default void Before(int order, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addBeforeHookDefinition(new Java8HookDefinition(BEFORE, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -103,7 +111,8 @@ public interface LambdaGlue {
      * @param body          lambda to execute
      */
     default void Before(String tagExpression, int order, final HookNoArgsBody body) {
-        LambdaGlueRegistry.INSTANCE.get().addBeforeHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+        LambdaGlueRegistry.INSTANCE.get()
+                .addBeforeHookDefinition(new Java8HookDefinition(BEFORE, tagExpression, order, body));
     }
 
     /**
@@ -113,7 +122,8 @@ public interface LambdaGlue {
      */
     default void BeforeStep(final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeStepHookDefinition(
+                    new Java8HookDefinition(BEFORE_STEP, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -126,7 +136,8 @@ public interface LambdaGlue {
      */
     default void BeforeStep(String tagExpression, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeStepHookDefinition(
+                    new Java8HookDefinition(BEFORE_STEP, tagExpression, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -138,7 +149,7 @@ public interface LambdaGlue {
      */
     default void BeforeStep(int order, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addBeforeStepHookDefinition(new Java8HookDefinition(BEFORE_STEP, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -153,7 +164,7 @@ public interface LambdaGlue {
      */
     default void BeforeStep(String tagExpression, int order, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+                .addBeforeStepHookDefinition(new Java8HookDefinition(BEFORE_STEP, tagExpression, order, body));
     }
 
     /**
@@ -163,7 +174,8 @@ public interface LambdaGlue {
      */
     default void BeforeStep(final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeStepHookDefinition(
+                    new Java8HookDefinition(BEFORE_STEP, EMPTY_TAG_EXPRESSION, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -175,7 +187,8 @@ public interface LambdaGlue {
      */
     default void BeforeStep(String tagExpression, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_BEFORE_ORDER, body));
+                .addBeforeStepHookDefinition(
+                    new Java8HookDefinition(BEFORE_STEP, tagExpression, DEFAULT_BEFORE_ORDER, body));
     }
 
     /**
@@ -187,7 +200,7 @@ public interface LambdaGlue {
      */
     default void BeforeStep(int order, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addBeforeStepHookDefinition(new Java8HookDefinition(BEFORE_STEP, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -201,7 +214,7 @@ public interface LambdaGlue {
      */
     default void BeforeStep(String tagExpression, int order, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addBeforeStepHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+                .addBeforeStepHookDefinition(new Java8HookDefinition(BEFORE_STEP, tagExpression, order, body));
     }
 
     /**
@@ -211,7 +224,8 @@ public interface LambdaGlue {
      */
     default void After(final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
+                .addAfterHookDefinition(
+                    new Java8HookDefinition(AFTER, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -224,7 +238,7 @@ public interface LambdaGlue {
      */
     default void After(String tagExpression, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_AFTER_ORDER, body));
+                .addAfterHookDefinition(new Java8HookDefinition(AFTER, tagExpression, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -236,7 +250,7 @@ public interface LambdaGlue {
      */
     default void After(int order, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addAfterHookDefinition(new Java8HookDefinition(AFTER, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -250,7 +264,8 @@ public interface LambdaGlue {
      *                      argument
      */
     default void After(String tagExpression, int order, final HookBody body) {
-        LambdaGlueRegistry.INSTANCE.get().addAfterHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+        LambdaGlueRegistry.INSTANCE.get()
+                .addAfterHookDefinition(new Java8HookDefinition(AFTER, tagExpression, order, body));
     }
 
     /**
@@ -260,7 +275,8 @@ public interface LambdaGlue {
      */
     default void After(final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
+                .addAfterHookDefinition(
+                    new Java8HookDefinition(AFTER, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -272,7 +288,7 @@ public interface LambdaGlue {
      */
     default void After(String tagExpression, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_AFTER_ORDER, body));
+                .addAfterHookDefinition(new Java8HookDefinition(AFTER, tagExpression, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -284,7 +300,7 @@ public interface LambdaGlue {
      */
     default void After(int order, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addAfterHookDefinition(new Java8HookDefinition(AFTER, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -297,7 +313,8 @@ public interface LambdaGlue {
      * @param body          lambda to execute
      */
     default void After(String tagExpression, int order, final HookNoArgsBody body) {
-        LambdaGlueRegistry.INSTANCE.get().addAfterHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+        LambdaGlueRegistry.INSTANCE.get()
+                .addAfterHookDefinition(new Java8HookDefinition(AFTER, tagExpression, order, body));
     }
 
     /**
@@ -307,7 +324,8 @@ public interface LambdaGlue {
      */
     default void AfterStep(final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
+                .addAfterStepHookDefinition(
+                    new Java8HookDefinition(AFTER_STEP, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -320,7 +338,8 @@ public interface LambdaGlue {
      */
     default void AfterStep(String tagExpression, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_AFTER_ORDER, body));
+                .addAfterStepHookDefinition(
+                    new Java8HookDefinition(AFTER_STEP, tagExpression, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -332,7 +351,7 @@ public interface LambdaGlue {
      */
     default void AfterStep(int order, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addAfterStepHookDefinition(new Java8HookDefinition(AFTER_STEP, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -347,7 +366,7 @@ public interface LambdaGlue {
      */
     default void AfterStep(String tagExpression, int order, final HookBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+                .addAfterStepHookDefinition(new Java8HookDefinition(AFTER_STEP, tagExpression, order, body));
     }
 
     /**
@@ -357,7 +376,8 @@ public interface LambdaGlue {
      */
     default void AfterStep(final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
+                .addAfterStepHookDefinition(
+                    new Java8HookDefinition(AFTER_STEP, EMPTY_TAG_EXPRESSION, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -369,7 +389,8 @@ public interface LambdaGlue {
      */
     default void AfterStep(String tagExpression, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, DEFAULT_AFTER_ORDER, body));
+                .addAfterStepHookDefinition(
+                    new Java8HookDefinition(AFTER_STEP, tagExpression, DEFAULT_AFTER_ORDER, body));
     }
 
     /**
@@ -381,7 +402,7 @@ public interface LambdaGlue {
      */
     default void AfterStep(int order, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(EMPTY_TAG_EXPRESSION, order, body));
+                .addAfterStepHookDefinition(new Java8HookDefinition(AFTER_STEP, EMPTY_TAG_EXPRESSION, order, body));
     }
 
     /**
@@ -395,7 +416,7 @@ public interface LambdaGlue {
      */
     default void AfterStep(String tagExpression, int order, final HookNoArgsBody body) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addAfterStepHookDefinition(new Java8HookDefinition(tagExpression, order, body));
+                .addAfterStepHookDefinition(new Java8HookDefinition(AFTER_STEP, tagExpression, order, body));
     }
 
     /**
@@ -639,7 +660,7 @@ public interface LambdaGlue {
      */
     default void DefaultParameterTransformer(DefaultParameterTransformerBody definitionBody) {
         LambdaGlueRegistry.INSTANCE.get()
-                .addDefaultParameterTransformer(new Java8DefaultParameterTypeDefinition(definitionBody));
+                .addDefaultParameterTransformer(new Java8DefaultParameterTransformerDefinition(definitionBody));
     }
 
     /**
