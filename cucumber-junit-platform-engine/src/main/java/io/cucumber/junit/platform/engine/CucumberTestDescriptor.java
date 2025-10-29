@@ -165,6 +165,11 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
         protected Location getLocation() {
             return feature.getLocation();
         }
+
+        @Override
+        public boolean isGlobalReadLockRequired() {
+            return false;
+        }
     }
 
     abstract static class FeatureElementDescriptor extends CucumberTestDescriptor
@@ -197,6 +202,16 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
             return element.getUri();
         }
 
+        @Override
+        public Type getType() {
+            return Type.CONTAINER;
+        }
+
+        @Override
+        public boolean isGlobalReadLockRequired() {
+            return false;
+        }
+
         static final class ExamplesDescriptor extends FeatureElementDescriptor {
 
             ExamplesDescriptor(
@@ -204,11 +219,6 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
                     io.cucumber.plugin.event.Node element
             ) {
                 super(configuration, uniqueId, name, source, element);
-            }
-
-            @Override
-            public Type getType() {
-                return Type.CONTAINER;
             }
 
         }
@@ -222,11 +232,6 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
                 super(configuration, uniqueId, name, source, element);
             }
 
-            @Override
-            public Type getType() {
-                return Type.CONTAINER;
-            }
-
         }
 
         static final class ScenarioOutlineDescriptor extends FeatureElementDescriptor {
@@ -236,11 +241,6 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
                     TestSource source, io.cucumber.plugin.event.Node element
             ) {
                 super(configuration, uniqueId, name, source, element);
-            }
-
-            @Override
-            public Type getType() {
-                return Type.CONTAINER;
             }
 
         }
