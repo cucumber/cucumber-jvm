@@ -20,7 +20,7 @@
         <html-formatter.version>22.0.0</html-formatter.version>
         <junit-xml-formatter.version>0.10.0</junit-xml-formatter.version>
         <messages.version>30.1.0</messages.version>
-        <pretty-formatter.version>2.4.0</pretty-formatter.version>
+        <pretty-formatter.version>2.4.1</pretty-formatter.version>
         <query.version>14.6.0</query.version>
         <tag-expressions.version>8.0.0</tag-expressions.version>
         <teamcity-formatter.version>0.2.0</teamcity-formatter.version>
