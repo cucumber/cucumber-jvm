@@ -4,16 +4,17 @@ import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.EmbedEvent;
+import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.WriteEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static io.cucumber.core.backend.Status.FAILED;
@@ -26,12 +27,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class TestCaseStateResultTest {
 
@@ -39,7 +38,7 @@ class TestCaseStateResultTest {
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n");
-    private final EventBus bus = mock(EventBus.class);
+    private final MockEventBus bus = new MockEventBus();
     private final TestCaseState s = new TestCaseState(
         bus,
         UUID.randomUUID(),
@@ -53,7 +52,6 @@ class TestCaseStateResultTest {
 
     @BeforeEach
     void setup() {
-        when(bus.getInstant()).thenReturn(Instant.now());
         s.setCurrentTestStepId(UUID.randomUUID());
     }
 
@@ -117,21 +115,28 @@ class TestCaseStateResultTest {
     @SuppressWarnings("deprecation")
     @Test
     void embeds_data() {
+        bus.events.clear();
         byte[] data = new byte[] { 1, 2, 3 };
+
         s.attach(data, "bytes/foo", null);
-        verify(bus).send(argThat(new EmbedEventMatcher(data, "bytes/foo")));
+
+        assertInstanceOf(EmbedEvent.class, bus.events.get(0));
+        assertEquals("bytes/foo", ((EmbedEvent) bus.events.get(0)).getMediaType());
+        assertEquals(data, ((EmbedEvent) bus.events.get(0)).getData());
     }
 
     @Test
     void prints_output() {
+        bus.events.clear();
         s.log("Hi");
-        verify(bus).send(argThat(new WriteEventMatcher("Hi")));
+        assertInstanceOf(WriteEvent.class, bus.events.get(0));
+        assertEquals("Hi", ((WriteEvent) bus.events.get(0)).getText());
     }
 
     @Test
     void failed_followed_by_pending_yields_failed_error() {
-        Throwable failedError = mock(Throwable.class);
-        Throwable pendingError = mock(Throwable.class);
+        Throwable failedError = new Throwable();
+        Throwable pendingError = new Throwable();
 
         s.add(new Result(Status.FAILED, ZERO, failedError));
         s.add(new Result(Status.PENDING, ZERO, pendingError));
@@ -141,8 +146,8 @@ class TestCaseStateResultTest {
 
     @Test
     void pending_followed_by_failed_yields_failed_error() {
-        Throwable pendingError = mock(Throwable.class);
-        Throwable failedError = mock(Throwable.class);
+        Throwable pendingError = new Throwable();
+        Throwable failedError = new Throwable();
 
         s.add(new Result(Status.PENDING, ZERO, pendingError));
         s.add(new Result(Status.FAILED, ZERO, failedError));
@@ -150,37 +155,36 @@ class TestCaseStateResultTest {
         assertThat(s.getError(), sameInstance(failedError));
     }
 
-    private static final class EmbedEventMatcher implements ArgumentMatcher<EmbedEvent> {
+    private static class MockEventBus implements EventBus {
+        List<Object> events = new ArrayList<>();
 
-        private final byte[] data;
-        private final String mediaType;
-
-        EmbedEventMatcher(byte[] data, String mediaType) {
-            this.data = data;
-            this.mediaType = mediaType;
+        @Override
+        public Instant getInstant() {
+            return Instant.now();
         }
 
         @Override
-        public boolean matches(EmbedEvent argument) {
-            return (argument != null &&
-                    Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType));
-        }
-
-    }
-
-    private static final class WriteEventMatcher implements ArgumentMatcher<WriteEvent> {
-
-        private final String text;
-
-        WriteEventMatcher(String text) {
-            this.text = text;
+        public UUID generateId() {
+            return null;
         }
 
         @Override
-        public boolean matches(WriteEvent argument) {
-            return (argument != null && argument.getText().equals(text));
+        public <T> void send(T event) {
+            this.events.add(event);
         }
 
-    }
+        @Override
+        public <T> void sendAll(Iterable<T> queue) {
+        }
 
+        @Override
+        public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+
+        }
+
+        @Override
+        public <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+
+        }
+    }
 }
