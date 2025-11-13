@@ -66,7 +66,7 @@ public final class CucumberExecutionContext {
             ProtocolVersion.getVersion(),
             new Product("cucumber-jvm", VERSION),
             new Product(System.getProperty("java.vm.name"), System.getProperty("java.vm.version")),
-            new Product(System.getProperty("os.name"), null),
+            new Product(System.getProperty("os.name"), System.getProperty("os.version")),
             new Product(System.getProperty("os.arch"), null),
             detectCiEnvironment(System.getenv()).map(ci -> new Ci(
                 ci.getName(),
