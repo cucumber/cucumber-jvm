@@ -14,8 +14,8 @@
     <properties>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.14.1</junit-jupiter.version>
-        <spring.version>6.2.13</spring.version>
+        <junit-jupiter.version>6.0.1</junit-jupiter.version>
+        <spring.version>7.0.0</spring.version>
         <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
         <mockito.version>5.20.0</mockito.version>
     </properties>
@@ -97,5 +97,17 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
