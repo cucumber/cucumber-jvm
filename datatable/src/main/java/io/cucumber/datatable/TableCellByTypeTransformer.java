@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -22,5 +23,5 @@ public interface TableCellByTypeTransformer {
      * @return             an instance of type
      * @throws Throwable   when unable to transform
      */
-    Object transform(String cellValue, Type toValueType) throws Throwable;
+    @Nullable Object transform(@Nullable String cellValue, Type toValueType) throws Throwable;
 }

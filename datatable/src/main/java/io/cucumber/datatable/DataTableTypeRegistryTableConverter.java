@@ -8,6 +8,7 @@ import io.cucumber.datatable.TypeFactory.OptionalType;
 import io.cucumber.datatable.TypeFactory.OtherType;
 import io.cucumber.datatable.TypeFactory.Parameterized;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
+    public <T> @Nullable T convert(DataTable dataTable, Type type, boolean transposed) {
         requireNonNull(dataTable, "dataTable may not be null");
         requireNonNull(type, "type may not be null");
 
@@ -77,15 +78,13 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
             return (T) dataTable;
         }
 
-        if (javaType instanceof MapType) {
-            MapType mapType = (MapType) javaType;
+        if (javaType instanceof MapType mapType) {
             return (T) toMap(dataTable, mapType.getKeyType(), mapType.getValueType());
         }
 
-        if (javaType instanceof OptionalType) {
-            OptionalType optionalType = (OptionalType) javaType;
+        if (javaType instanceof OptionalType optionalType) {
             Object singleton = toSingleton(dataTable, optionalType.getElementType());
-            return (T) Optional.ofNullable(singleton);
+            return (T) Optional.of(singleton);
         }
 
         if (javaType instanceof OtherType || javaType instanceof Parameterized) {
@@ -97,13 +96,11 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         ListType listType = (ListType) javaType;
         JavaType listElementType = listType.getElementType();
 
-        if (listElementType instanceof MapType) {
-            MapType mapElement = (MapType) listElementType;
+        if (listElementType instanceof MapType mapElement) {
             return (T) toMaps(dataTable, mapElement.getKeyType(), mapElement.getValueType());
         }
 
-        if (listElementType instanceof ListType) {
-            ListType listElement = (ListType) listElementType;
+        if (listElementType instanceof ListType listElement) {
             return (T) toLists(dataTable, listElement.getElementType());
         }
 
@@ -112,14 +109,14 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         return (T) toList(dataTable, listElementType);
     }
 
-    private <T> T toSingleton(DataTable dataTable, Type type) {
+    private <T> @Nullable T toSingleton(DataTable dataTable, Type type) {
         if (dataTable.isEmpty()) {
             return null;
         }
 
         ListOrProblems<T> result = toListOrProblems(dataTable, type);
         if (result.hasList()) {
-            List<T> singletonList = result.getList();
+            List<@Nullable T> singletonList = result.getList();
             if (singletonList.size() == 1) {
                 return singletonList.get(0);
             }
@@ -144,8 +141,8 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         }
 
         throw listNoConverterDefined(
-            itemType,
-            result.getProblems());
+                itemType,
+                result.getProblems());
     }
 
     @SuppressWarnings("unchecked")
@@ -199,36 +196,6 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         return ListOrProblems.problems(problems);
     }
 
-    private static final class ListOrProblems<T> {
-        private final List<T> list;
-        private final List<String> problems;
-
-        private ListOrProblems(List<T> list, List<String> problems) {
-            this.list = list;
-            this.problems = problems;
-        }
-
-        private static <T> ListOrProblems<T> problems(List<String> problems) {
-            return new ListOrProblems<>(null, problems);
-        }
-
-        private static <T> ListOrProblems<T> list(List<T> list) {
-            return new ListOrProblems<>(list, null);
-        }
-
-        public boolean hasList() {
-            return list != null;
-        }
-
-        public List<T> getList() {
-            return list;
-        }
-
-        public List<String> getProblems() {
-            return problems;
-        }
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
@@ -258,7 +225,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
     }
 
     @Override
-    public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
+    public <K, V> Map<@Nullable K, @Nullable V> toMap(DataTable dataTable, Type keyType, Type valueType) {
         requireNonNull(dataTable, "dataTable may not be null");
         requireNonNull(keyType, "keyType may not be null");
         requireNonNull(valueType, "valueType may not be null");
@@ -287,7 +254,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         return createMap(keyType, keys, valueType, values);
     }
 
-    private static <K, V> Map<K, V> createMap(Type keyType, List<K> keys, Type valueType, List<V> values) {
+    private static <K, V> Map<@Nullable K, @Nullable V> createMap(Type keyType, List<@Nullable K> keys, Type valueType, List<@Nullable V> values) {
         Iterator<K> keyIterator = keys.iterator();
         Iterator<V> valueIterator = values.iterator();
         Map<K, V> result = new LinkedHashMap<>();
@@ -377,8 +344,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         JavaType javaType = constructType(valueType);
 
         // Handle case #1.
-        if (javaType instanceof ListType) {
-            ListType listType = (ListType) javaType;
+        if (javaType instanceof ListType listType) {
             // Table cell types take priority over default converters
             DataTableType cellValueConverter = registry.lookupCellTypeByType(listType.getElementType());
             if (cellValueConverter == null) {
@@ -393,8 +359,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         }
 
         // Handle case #2
-        if (javaType instanceof MapType) {
-            MapType mapType = (MapType) javaType;
+        if (javaType instanceof MapType mapType) {
             return (List<V>) toMaps(dataTable, mapType.getKeyType(), mapType.getValueType());
         }
 
@@ -479,12 +444,43 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
         return unmodifiableList(result);
     }
 
-    private static <T> List<T> unpack(List<List<T>> cells) {
-        List<T> unpacked = new ArrayList<>(cells.size());
-        for (List<T> row : cells) {
+    private static <T> List<@Nullable T> unpack(List<List<@Nullable T>> cells) {
+        List<@Nullable T> unpacked = new ArrayList<>(cells.size());
+        for (List<@Nullable T> row : cells) {
             unpacked.addAll(row);
         }
         return unpacked;
+    }
+
+
+    private static final class ListOrProblems<T> {
+        private final @Nullable List<@Nullable T> list;
+        private final @Nullable List<String> problems;
+
+        private ListOrProblems(@Nullable List<@Nullable T> list, @Nullable List<String> problems) {
+            this.list = list;
+            this.problems = problems;
+        }
+
+        private static <T> ListOrProblems<T> problems(List<String> problems) {
+            return new ListOrProblems<>(null, problems);
+        }
+
+        private static <T> ListOrProblems<T> list(List<@Nullable T> list) {
+            return new ListOrProblems<>(list, null);
+        }
+
+        public boolean hasList() {
+            return list != null;
+        }
+
+        public List<@Nullable T> getList() {
+            return requireNonNull(list);
+        }
+
+        public List<String> getProblems() {
+            return requireNonNull(problems);
+        }
     }
 
 }

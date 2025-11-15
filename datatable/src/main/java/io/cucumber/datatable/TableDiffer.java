@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @API(status = API.Status.INTERNAL)
-public class TableDiffer {
+public final class TableDiffer {
 
     private final DataTable from;
     private final DataTable to;

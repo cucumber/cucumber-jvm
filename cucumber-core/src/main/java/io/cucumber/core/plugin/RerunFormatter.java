@@ -23,7 +23,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collector;
 
-import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -36,7 +35,6 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private final PrintWriter writer;
     private final Repository repository = Repository.builder()
-            .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
             .build();
     private final Query query = new Query(repository);
 
@@ -79,9 +77,9 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private static final class UriAndLine {
         private final String uri;
-        private final Long line;
+        private final Integer line;
 
-        private UriAndLine(String uri, Long line) {
+        private UriAndLine(String uri, Integer line) {
             this.uri = uri;
             this.line = line;
         }
@@ -90,7 +88,7 @@ public final class RerunFormatter implements ConcurrentEventListener {
             return uri;
         }
 
-        public Long getLine() {
+        public Integer getLine() {
             return line;
         }
     }
@@ -107,11 +105,11 @@ public final class RerunFormatter implements ConcurrentEventListener {
         writer.close();
     }
 
-    private void printUriWithLines(String uri, TreeSet<Long> lines) {
+    private void printUriWithLines(String uri, TreeSet<Integer> lines) {
         writer.println(renderFeatureWithLines(uri, lines));
     }
 
-    private static Collector<UriAndLine, ?, TreeMap<String, TreeSet<Long>>> groupByUriAndThenCollectLines() {
+    private static Collector<UriAndLine, ?, TreeMap<String, TreeSet<Integer>>> groupByUriAndThenCollectLines() {
         return groupingBy(
             UriAndLine::getUri,
             // Sort URIs
@@ -122,10 +120,10 @@ public final class RerunFormatter implements ConcurrentEventListener {
                 toCollection(TreeSet::new)));
     }
 
-    private static StringBuilder renderFeatureWithLines(String uri, TreeSet<Long> lines) {
+    private static StringBuilder renderFeatureWithLines(String uri, TreeSet<Integer> lines) {
         String path = relativize(URI.create(uri)).toString();
         StringBuilder builder = new StringBuilder(path);
-        for (Long line : lines) {
+        for (Integer line : lines) {
             builder.append(':');
             builder.append(line);
         }
@@ -134,7 +132,7 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private UriAndLine createUriAndLine(Pickle pickle) {
         String uri = pickle.getUri();
-        Long line = query.findLocationOf(pickle).map(Location::getLine).orElse(null);
+        Integer line = pickle.getLocation().map(Location::getLine).orElse(null);
         return new UriAndLine(uri, line);
     }
 

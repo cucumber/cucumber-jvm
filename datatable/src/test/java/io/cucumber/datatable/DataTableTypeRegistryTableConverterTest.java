@@ -1773,7 +1773,7 @@ class DataTableTypeRegistryTableConverterTest {
                 "Note: Usually solving one is enough"));
     }
 
-    private static class NumberedObject<T> {
+    private static final class NumberedObject<T> {
         private final int number;
         private final T value;
 
@@ -1783,10 +1783,14 @@ class DataTableTypeRegistryTableConverterTest {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            return obj instanceof NumberedObject
-                    && ((NumberedObject<?>) obj).number == number
-                    && Objects.equals(((NumberedObject<?>) obj).value, value);
+        public boolean equals(Object o) {
+            if (!(o instanceof NumberedObject<?> that)) return false;
+            return number == that.number && Objects.equals(value, that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(number, value);
         }
 
         @Override
@@ -1826,7 +1830,7 @@ class DataTableTypeRegistryTableConverterTest {
         private final String code;
 
         @ConstructorProperties("code")
-        public AirPortCode(String code) {
+        AirPortCode(String code) {
             this.code = code;
         }
 
@@ -1864,8 +1868,8 @@ class DataTableTypeRegistryTableConverterTest {
     private static final class Author {
 
         private String firstName;
-        public String lastName;
-        public String birthDate;
+        String lastName;
+        String birthDate;
 
         private Author(String firstName, String lastName, String birthDate) {
             this.firstName = firstName;
@@ -1873,7 +1877,7 @@ class DataTableTypeRegistryTableConverterTest {
             this.birthDate = birthDate;
         }
 
-        public Author() {
+        Author() {
         }
 
         public void setFirstName(String firstName) {
@@ -1920,7 +1924,7 @@ class DataTableTypeRegistryTableConverterTest {
         public double lat;
         public double lon;
 
-        public Coordinate() {
+        Coordinate() {
         }
 
         private Coordinate(double lat, double lon) {
@@ -1930,35 +1934,13 @@ class DataTableTypeRegistryTableConverterTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            Coordinate that = (Coordinate) o;
-
-            if (Double.compare(that.lat, lat) != 0)
-                return false;
-            return Double.compare(that.lon, lon) == 0;
+            if (!(o instanceof Coordinate that)) return false;
+            return Double.compare(lat, that.lat) == 0 && Double.compare(lon, that.lon) == 0;
         }
 
         @Override
         public int hashCode() {
-            int result;
-            long temp;
-            temp = Double.doubleToLongBits(lat);
-            result = (int) (temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(lon);
-            result = 31 * result + (int) (temp ^ (temp >>> 32));
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "Coordinate{" +
-                    "lat=" + lat +
-                    ", lon=" + lon +
-                    '}';
+            return Objects.hash(lat, lon);
         }
     }
 

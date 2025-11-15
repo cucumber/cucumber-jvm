@@ -38,7 +38,7 @@ public interface Node {
 
     default URI getUri() {
         throw new UnsupportedOperationException("Not yet implemented");
-    };
+    }
 
     Location getLocation();
 
@@ -76,24 +76,23 @@ public interface Node {
             BiFunction<Examples, T, T> mapExamples,
             BiFunction<Example, T, T> mapExample
     ) {
-        if (this instanceof Scenario) {
-            return mapScenario.apply((Scenario) this, parent);
-        } else if (this instanceof Example) {
-            return mapExample.apply((Example) this, parent);
-        } else if (this instanceof Container) {
+        if (this instanceof Scenario scenario) {
+            return mapScenario.apply(scenario, parent);
+        } else if (this instanceof Example example) {
+            return mapExample.apply(example, parent);
+        } else if (this instanceof Container<?> container) {
             final T mapped;
-            if (this instanceof Feature) {
-                mapped = mapFeature.apply((Feature) this, parent);
-            } else if (this instanceof Rule) {
-                mapped = mapRule.apply((Rule) this, parent);
-            } else if (this instanceof ScenarioOutline) {
-                mapped = mapScenarioOutline.apply((ScenarioOutline) this, parent);
-            } else if (this instanceof Examples) {
-                mapped = mapExamples.apply((Examples) this, parent);
+            if (this instanceof Feature feature) {
+                mapped = mapFeature.apply(feature, parent);
+            } else if (this instanceof Rule rule) {
+                mapped = mapRule.apply(rule, parent);
+            } else if (this instanceof ScenarioOutline scenarioOutline) {
+                mapped = mapScenarioOutline.apply(scenarioOutline, parent);
+            } else if (this instanceof Examples examples) {
+                mapped = mapExamples.apply(examples, parent);
             } else {
                 throw new IllegalArgumentException(this.getClass().getName());
             }
-            Container<?> container = (Container<?>) this;
             container.elements().forEach(node -> node.map(mapped, mapFeature, mapRule, mapScenario, mapScenarioOutline,
                 mapExamples, mapExample));
             return mapped;
@@ -142,9 +141,8 @@ public interface Node {
                     path.add(candidate);
                     return Optional.of(path);
                 }
-                if (candidate instanceof Container) {
+                if (candidate instanceof Container<?> container) {
                     path.add(candidate);
-                    Container<?> container = (Container<?>) candidate;
                     toSearch.addLast(new ArrayDeque<>(container.elements()));
                 }
             }

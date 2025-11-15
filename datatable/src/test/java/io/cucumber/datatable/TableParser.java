@@ -3,7 +3,7 @@ package io.cucumber.datatable;
 import java.util.ArrayList;
 import java.util.List;
 
-class TableParser {
+final class TableParser {
 
     private TableParser() {
     }

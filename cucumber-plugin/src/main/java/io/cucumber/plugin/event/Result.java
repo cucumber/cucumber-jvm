@@ -1,6 +1,7 @@
 package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -15,7 +16,7 @@ public final class Result {
 
     private final Status status;
     private final Duration duration;
-    private final Throwable error;
+    private final @Nullable Throwable error;
 
     /**
      * Creates a new result.
@@ -24,7 +25,7 @@ public final class Result {
      * @param duration the duration
      * @param error    the error that caused the failure if any
      */
-    public Result(Status status, Duration duration, Throwable error) {
+    public Result(Status status, Duration duration, @Nullable Throwable error) {
         this.status = requireNonNull(status);
         this.duration = requireNonNull(duration);
         this.error = error;
@@ -47,7 +48,7 @@ public final class Result {
      *
      * @return the error encountered while executing a step or scenario or null.
      */
-    public Throwable getError() {
+    public @Nullable Throwable getError() {
         return error;
     }
 
@@ -72,7 +73,7 @@ public final class Result {
     public String toString() {
         return "Result{" +
                 "status=" + status +
-                ", duration=" + duration.getSeconds() +
+                ", duration=" + duration.toSeconds() +
                 ", error=" + error +
                 '}';
     }

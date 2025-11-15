@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>4.5.0</version>
+        <version>5.0.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
@@ -151,68 +151,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-maven-3-6-3-plus</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <fail>true</fail>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>3.6.3</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>enforce-java</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>[11,)</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-
-            <!-- enable Java 9,10,11 compilation -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>java9</id>
-                        <phase>compile</phase>
-                    </execution>
-                    <execution>
-                        <id>java10</id>
-                        <phase>compile</phase>
-                    </execution>
-                    <execution>
-                        <id>java11</id>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Check style -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -227,79 +165,19 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
 
         <pluginManagement>
             <plugins>
-                <!-- Standard plugins - alphabetically -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>${base.java.version}</source>
-                        <target>${base.java.version}</target>
-                    </configuration>
-                    <executions>
-                        <!-- for Java 9 -->
-                        <execution>
-                            <id>java9</id>
-                            <phase>none</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <release>9</release>
-                                <compileSourceRoots>
-                                    <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
-                                </compileSourceRoots>
-                                <multiReleaseOutput>true</multiReleaseOutput>
-                            </configuration>
-                        </execution>
-
-                        <!-- for Java 10 -->
-                        <execution>
-                            <id>java10</id>
-                            <phase>none</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <release>10</release>
-                                <compileSourceRoots>
-                                    <compileSourceRoot>${project.basedir}/src/main/java10</compileSourceRoot>
-                                </compileSourceRoots>
-                                <multiReleaseOutput>true</multiReleaseOutput>
-                            </configuration>
-                        </execution>
-
-                        <!-- for Java 11 -->
-                        <execution>
-                            <id>java11</id>
-                            <phase>none</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <release>11</release>
-                                <compileSourceRoots>
-                                    <compileSourceRoot>${project.basedir}/src/main/java11</compileSourceRoot>
-                                </compileSourceRoots>
-                                <multiReleaseOutput>true</multiReleaseOutput>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <doclint>none</doclint>
-                        <source>${javadoc.java.version}</source>
                         <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
                         <links>
                             <link>https://junit.org/junit4/javadoc/latest/</link>
+                            <!-- TODO: Fix-->
                             <!-- javadoc plugin can't port docs for modularized code to
                                non-modularized code -->
                             <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
@@ -409,47 +287,6 @@
                                 <file>${main.basedir}/.spotless/intellij-idea.importorder</file>
                             </importOrder>
                         </java>
-                    </configuration>
-                </plugin>
-
-                <!-- Check style -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>12.1.1</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        <checkstyleRules>
-                            <module name="Checker">
-                                <property name="severity" value="error"/>
-                                <module name="TreeWalker">
-                                    <module name="AvoidStarImport"/>
-                                    <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true"/>
-                                        <property name="allowMissingReturnTag" value="true"/>
-                                    </module>
-                                    <module name="NonEmptyAtclauseDescription"/>
-                                    <module name="SuppressWarningsHolder"/>
-                                    <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true"/>
-                                    </module>
-                                </module>
-                                <module name="SuppressWarningsFilter"/>
-                                <module name="RegexpSingleline">
-                                    <property name="format" value="@author"/>
-                                    <property name="message" value="Please do not use @author tags"/>
-                                    <property name="fileExtensions" value="java,groovy,kt"/>
-                                </module>
-                            </module>
-                        </checkstyleRules>
                     </configuration>
                 </plugin>
             </plugins>

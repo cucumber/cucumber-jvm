@@ -42,10 +42,11 @@ class DataTableFormatterTest {
             asList("1", "1", "1"),
             asList("4", "5", "6"),
             asList("7", "8", "9")));
-        assertEquals("" +
-                "| 1 | 1 | 1 |\n" +
-                "| 4 | 5 | 6 |\n" +
-                "| 7 | 8 | 9 |\n",
+        assertEquals("""
+                        | 1 | 1 | 1 |
+                        | 4 | 5 | 6 |
+                        | 7 | 8 | 9 |
+                        """,
             formatter.format(table));
     }
 
@@ -67,11 +68,12 @@ class DataTableFormatterTest {
             singletonList("|"),
             singletonList("\\"),
             singletonList("\n")));
-        ;
-        assertEquals("" +
-                "| \\| |\n" +
-                "| \\\\ |\n" +
-                "| \\n |\n",
+        
+        assertEquals("""
+                        | \\| |
+                        | \\\\ |
+                        | \\n |
+                        """,
             formatter.format(table));
     }
 
@@ -94,10 +96,11 @@ class DataTableFormatterTest {
         DataTableFormatter formatter = builder()
                 .prefixRow(rowIndex -> prefix[rowIndex])
                 .build();
-        assertEquals("" +
-                "+ | 1 | 1 | 1 |\n" +
-                "- | 4 | 5 | 6 |\n" +
-                "  | 7 | 8 | 9 |\n",
+        assertEquals("""
+                        + | 1 | 1 | 1 |
+                        - | 4 | 5 | 6 |
+                          | 7 | 8 | 9 |
+                        """,
             formatter.format(table));
     }
 

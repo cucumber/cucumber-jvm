@@ -1,5 +1,7 @@
 package io.cucumber.datatable;
 
+import org.jspecify.annotations.Nullable;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -33,8 +35,8 @@ final class TypeFactory {
     }
 
     private static JavaType constructTypeInner(Type type) {
-        if (type instanceof JavaType) {
-            return (JavaType) type;
+        if (type instanceof JavaType javaType) {
+            return javaType;
         }
 
         if (Optional.class.equals(type)) {
@@ -57,12 +59,12 @@ final class TypeFactory {
             throw new IllegalArgumentException("Type contained a type variable " + type + ". Types must explicit.");
         }
 
-        if (type instanceof WildcardType) {
-            return constructWildCardType((WildcardType) type);
+        if (type instanceof WildcardType wildcardType) {
+            return constructWildCardType(wildcardType);
         }
 
-        if (type instanceof ParameterizedType) {
-            return constructParameterizedType((ParameterizedType) type);
+        if (type instanceof ParameterizedType parameterizedType) {
+            return constructParameterizedType(parameterizedType);
         }
 
         return new OtherType(type);
@@ -127,7 +129,7 @@ final class TypeFactory {
 
     interface JavaType extends Type {
 
-        Type getOriginal();
+        @Nullable Type getOriginal();
     }
 
     static final class OtherType implements JavaType {
@@ -158,6 +160,7 @@ final class TypeFactory {
             return original.getTypeName();
         }
 
+        @Override
         public Type getOriginal() {
             return original;
         }
@@ -168,7 +171,7 @@ final class TypeFactory {
         }
     }
 
-    static class Parameterized implements JavaType {
+    static final class Parameterized implements JavaType {
         private final Type original;
         private final Class<?> rawClass;
         private final JavaType[] elementTypes;
@@ -219,11 +222,11 @@ final class TypeFactory {
 
     static final class ListType implements JavaType {
 
-        private final Type original;
+        private final @Nullable Type original;
         private final Class<?> rawClass;
         private final JavaType elementType;
 
-        ListType(Type original, Class<?> rawClass, JavaType elementType) {
+        ListType(@Nullable Type original, Class<?> rawClass, JavaType elementType) {
             this.original = original;
             this.rawClass = rawClass;
             this.elementType = elementType;
@@ -231,13 +234,8 @@ final class TypeFactory {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            ListType listType = (ListType) o;
-            return rawClass.equals(listType.rawClass) &&
-                    elementType.equals(listType.elementType);
+            if (!(o instanceof ListType listType)) return false;
+            return Objects.equals(rawClass, listType.rawClass) && Objects.equals(elementType, listType.elementType);
         }
 
         @Override
@@ -260,7 +258,7 @@ final class TypeFactory {
         }
 
         @Override
-        public Type getOriginal() {
+        public @Nullable Type getOriginal() {
             return original;
         }
 
@@ -272,11 +270,11 @@ final class TypeFactory {
 
     static final class OptionalType implements JavaType {
 
-        private final Type original;
+        private final @Nullable Type original;
         private final Class<?> rawClass;
         private final JavaType elementType;
 
-        OptionalType(Type original, Class<?> rawClass, JavaType elementType) {
+        OptionalType(@Nullable Type original, Class<?> rawClass, JavaType elementType) {
             this.original = original;
             this.rawClass = rawClass;
             this.elementType = elementType;
@@ -313,7 +311,7 @@ final class TypeFactory {
         }
 
         @Override
-        public Type getOriginal() {
+        public @Nullable Type getOriginal() {
             return original;
         }
 

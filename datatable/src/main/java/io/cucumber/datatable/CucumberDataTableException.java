@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -13,8 +14,8 @@ public class CucumberDataTableException extends RuntimeException {
         super(message);
     }
 
-    CucumberDataTableException(String s, Throwable throwable) {
-        super(s, throwable);
+    CucumberDataTableException(@Nullable String message, Throwable throwable) {
+        super(message, throwable);
     }
 
     static CucumberDataTableException cantConvertTo(Type type, String message) {
@@ -28,7 +29,7 @@ public class CucumberDataTableException extends RuntimeException {
     }
 
     static <K, V> CucumberDataTableException duplicateKeyException(
-            Type keyType, Type valueType, K key, V value, V replaced
+            Type keyType, Type valueType, @Nullable K key, @Nullable V value, @Nullable V replaced
     ) {
         return cantConvertToMap(keyType, valueType,
             format("Encountered duplicate key %s with values %s and %s", key, replaced, value));
@@ -63,17 +64,16 @@ public class CucumberDataTableException extends RuntimeException {
 
     static CucumberDataTableException keysImplyTableEntryTransformer(Type keyType, Type valueType) {
         return cantConvertToMap(keyType, valueType,
-            format("The first cell was either blank or you have registered a TableEntryTransformer for the key type.\n"
-                    +
-                    "\n" +
-                    "This requires that there is a TableEntryTransformer for the value type but I couldn't find any.\n"
-                    +
-                    "\n" +
-                    "You can either:\n" +
-                    "\n" +
-                    "  1) Use a DataTableType that uses a TableEntryTransformer for %s\n" +
-                    "\n" +
-                    "  2) Add a key to the first cell and use a DataTableType that uses a TableEntryTransformer for %s",
+            format("""
+                            The first cell was either blank or you have registered a TableEntryTransformer for the key type.
+                            
+                            This requires that there is a TableEntryTransformer for the value type but I couldn't find any.
+                            
+                            You can either:
+                            
+                              1) Use a DataTableType that uses a TableEntryTransformer for %s
+                            
+                              2) Add a key to the first cell and use a DataTableType that uses a TableEntryTransformer for %s""",
                 valueType, keyType));
     }
 
