@@ -24,13 +24,13 @@ class DataTableTypeTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void shouldTransformATableEntry() {
         DataTableType tableType = new DataTableType(
             Place.class,
             (Map<String, String> entry) -> new Place(entry.get("place")));
 
         String here = "here";
-        // noinspection unchecked
         List<Place> transform = (List<Place>) tableType
                 .transform(Arrays.asList(singletonList("place"), singletonList(here)));
 

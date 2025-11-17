@@ -972,7 +972,7 @@ public final class DataTable {
         }
 
         @Override
-        public List<@Nullable  String> get(final int row) {
+        public List<@Nullable String> get(final int row) {
             rangeCheckRow(row, size());
             return new AbstractList<>() {
                 @Override
@@ -1032,7 +1032,8 @@ public final class DataTable {
         }
     }
 
-    private final class TransposedRawDataTableView extends AbstractList<List<@Nullable String>> implements RandomAccess {
+    private final class TransposedRawDataTableView extends AbstractList<List<@Nullable String>>
+            implements RandomAccess {
 
         DataTable dataTable() {
             return DataTable.this;

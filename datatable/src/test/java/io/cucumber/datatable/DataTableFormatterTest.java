@@ -1,18 +1,18 @@
 package io.cucumber.datatable;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static io.cucumber.datatable.DataTableFormatter.builder;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DataTableFormatterTest {
 
-    final DataTableFormatter formatter = builder().build();
+    final DataTableFormatter formatter = DataTableFormatter.builder().build();
 
     @Test
     void should_print() {
@@ -43,10 +43,10 @@ class DataTableFormatterTest {
             asList("4", "5", "6"),
             asList("7", "8", "9")));
         assertEquals("""
-                        | 1 | 1 | 1 |
-                        | 4 | 5 | 6 |
-                        | 7 | 8 | 9 |
-                        """,
+                | 1 | 1 | 1 |
+                | 4 | 5 | 6 |
+                | 7 | 8 | 9 |
+                """,
             formatter.format(table));
     }
 
@@ -68,19 +68,19 @@ class DataTableFormatterTest {
             singletonList("|"),
             singletonList("\\"),
             singletonList("\n")));
-        
+
         assertEquals("""
-                        | \\| |
-                        | \\\\ |
-                        | \\n |
-                        """,
+                | \\| |
+                | \\\\ |
+                | \\n |
+                """,
             formatter.format(table));
     }
 
     @Test
     void should_add_indent() {
         DataTable table = tableOf("Hello");
-        DataTableFormatter formatter = builder()
+        DataTableFormatter formatter = DataTableFormatter.builder()
                 .prefixRow("    ")
                 .build();
         assertEquals("    | Hello |\n", formatter.format(table));
@@ -93,28 +93,28 @@ class DataTableFormatterTest {
             asList("4", "5", "6"),
             asList("7", "8", "9")));
         String[] prefix = new String[] { "+ ", "- ", "  " };
-        DataTableFormatter formatter = builder()
+        DataTableFormatter formatter = DataTableFormatter.builder()
                 .prefixRow(rowIndex -> prefix[rowIndex])
                 .build();
         assertEquals("""
-                        + | 1 | 1 | 1 |
-                        - | 4 | 5 | 6 |
-                          | 7 | 8 | 9 |
-                        """,
+                + | 1 | 1 | 1 |
+                - | 4 | 5 | 6 |
+                  | 7 | 8 | 9 |
+                """,
             formatter.format(table));
     }
 
     @Test
     void should_disable_escape_of_table_delimiter() {
         DataTable table = tableOf("|");
-        DataTableFormatter formatter = builder()
+        DataTableFormatter formatter = DataTableFormatter.builder()
                 .escapeDelimiters(false)
                 .build();
         assertEquals("| | |\n", formatter.format(table));
     }
 
-    private DataTable tableOf(String hello) {
-        List<List<String>> cells = singletonList(singletonList(hello));
+    private DataTable tableOf(@Nullable String hello) {
+        List<List<@Nullable String>> cells = singletonList(singletonList(hello));
         return DataTable.create(cells);
     }
 

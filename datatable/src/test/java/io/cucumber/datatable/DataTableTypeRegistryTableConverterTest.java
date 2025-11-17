@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import io.cucumber.datatable.DataTable.TableConverter;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.beans.ConstructorProperties;
@@ -15,7 +17,6 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Locale.ENGLISH;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@NullMarked
 class DataTableTypeRegistryTableConverterTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -106,15 +109,14 @@ class DataTableTypeRegistryTableConverterTest {
         table.subTable(1, 1).values());
     private static final TableCellTransformer<Piece> PIECE_TABLE_CELL_TRANSFORMER = Piece::fromString;
     private static final TableCellTransformer<AirPortCode> AIR_PORT_CODE_TABLE_CELL_TRANSFORMER = AirPortCode::new;
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final TableEntryTransformer<Coordinate> COORDINATE_TABLE_ENTRY_TRANSFORMER = tableEntry -> new Coordinate(
         parseDouble(tableEntry.get("lat")),
         parseDouble(tableEntry.get("lon")));
     private static final TableEntryTransformer<Author> AUTHOR_TABLE_ENTRY_TRANSFORMER = tableEntry -> new Author(
         tableEntry.get("firstName"), tableEntry.get("lastName"), tableEntry.get("birthDate"));
-    private static final TableRowTransformer<Coordinate> COORDINATE_TABLE_ROW_TRANSFORMER = tableRow -> new Coordinate(
-        Double.parseDouble(tableRow.get(0)),
-        Double.parseDouble(tableRow.get(1)));
+    private static final TableRowTransformer<Coordinate> COORDINATE_TABLE_ROW_TRANSFORMER = (List<@Nullable String> tableRow) -> new Coordinate(
+        Double.parseDouble(requireNonNull(tableRow.get(0))),
+        Double.parseDouble(requireNonNull(tableRow.get(1))));
     private static final TableEntryTransformer<AirPortCode> AIR_PORT_CODE_TABLE_ENTRY_TRANSFORMER = tableEntry -> new AirPortCode(
         tableEntry.get("code"));
     private static final TableEntryByTypeTransformer TABLE_ENTRY_BY_TYPE_CONVERTER_SHOULD_NOT_BE_USED = (
@@ -129,10 +131,9 @@ class DataTableTypeRegistryTableConverterTest {
             cellTransformer) -> objectMapper.convertValue(entry, objectMapper.constructType(type));
     private static final TableEntryByTypeTransformer JACKSON_NUMBERED_OBJECT_TABLE_ENTRY_CONVERTER = (entry, type,
             cellTransformer) -> {
-        if (!(type instanceof ParameterizedType)) {
+        if (!(type instanceof ParameterizedType parameterizedType)) {
             throw new IllegalArgumentException("Unsupported type " + type);
         }
-        ParameterizedType parameterizedType = (ParameterizedType) type;
         if (!NumberedObject.class.equals(parameterizedType.getRawType())) {
             throw new IllegalArgumentException("Unsupported type " + parameterizedType);
         }
@@ -141,7 +142,7 @@ class DataTableTypeRegistryTableConverterTest {
     private static final TableCellByTypeTransformer JACKSON_TABLE_CELL_BY_TYPE_CONVERTER = (value,
             cellType) -> objectMapper.convertValue(value, objectMapper.constructType(cellType));
     private static final DataTableType DATE_TABLE_CELL_TRANSFORMER = new DataTableType(Date.class,
-        (TableCellTransformer<Date>) SIMPLE_DATE_FORMAT::parse);
+        (String source) -> new SimpleDateFormat("yyyy-MM-dd").parse(source));
 
     private static Object convertToNumberedObject(Map<String, String> numberedEntry, Type type) {
         int number = Integer.parseInt(numberedEntry.get("#"));
@@ -152,7 +153,7 @@ class DataTableTypeRegistryTableConverterTest {
     }
 
     static {
-        SIMPLE_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+        new SimpleDateFormat("yyyy-MM-dd").setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     private final DataTableTypeRegistry registry = new DataTableTypeRegistry(ENGLISH);
@@ -249,12 +250,9 @@ class DataTableTypeRegistryTableConverterTest {
             "| header1   | header2   |",
             "| 311       | 12299     |");
 
-        Map<Optional<String>, Optional<BigInteger>> expectedMap = new HashMap<Optional<String>, Optional<BigInteger>>() {
-            {
-                put(Optional.of("header1"), Optional.of(new BigInteger("311")));
-                put(Optional.of("header2"), Optional.of(new BigInteger("12299")));
-            }
-        };
+        Map<Optional<String>, Optional<BigInteger>> expectedMap = Map.of(
+            Optional.of("header1"), Optional.of(new BigInteger("311")),
+            Optional.of("header2"), Optional.of(new BigInteger("12299")));
         List<Map<Optional<String>, Optional<BigInteger>>> expected = singletonList(expectedMap);
         assertEquals(expected, converter.toMaps(table, OPTIONAL_STRING, OPTIONAL_BIG_INTEGER));
     }
@@ -282,20 +280,21 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toList(table, Integer.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<java.lang.Integer>.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was a table cell transformer for java.lang.Integer but the table was too wide to use it.\n" +
-                "   Please reduce the table width to use this converter.\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for java.lang.Integer.\n" +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no default table entry transformer registered to transform java.lang.Integer.\n" +
-                "   Please consider registering a default table entry transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(), is(
+            """
+                    Can't convert DataTable to List<java.lang.Integer>.
+                    Please review these problems:
+
+                     - There was a table cell transformer for java.lang.Integer but the table was too wide to use it.
+                       Please reduce the table width to use this converter.
+
+                     - There was no table entry or table row transformer registered for java.lang.Integer.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no default table entry transformer registered to transform java.lang.Integer.
+                       Please consider registering a default table entry transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -306,17 +305,17 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toList(table, Integer.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<java.lang.Integer>.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was a table cell transformer for java.lang.Integer but the table was too wide to use it.\n" +
-                "   Please reduce the table width to use this converter.\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for java.lang.Integer.\n" +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to List<java.lang.Integer>.
+                Please review these problems:
+
+                 - There was a table cell transformer for java.lang.Integer but the table was too wide to use it.
+                   Please reduce the table width to use this converter.
+
+                 - There was no table entry or table row transformer registered for java.lang.Integer.
+                   Please consider registering a table entry or row transformer.
+
+                Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -327,28 +326,19 @@ class DataTableTypeRegistryTableConverterTest {
             "| Roald       | Dahl     | 1916-09-13 |",
             "| Astrid      | Lindgren | 1907-11-14 |");
 
-        List<HashMap<String, String>> expected = asList(
-            new HashMap<String, String>() {
-                {
-                    put("firstName", "Annie M. G.");
-                    put("lastName", "Schmidt");
-                    put("birthDate", "1911-03-20");
-                }
-            },
-            new HashMap<String, String>() {
-                {
-                    put("firstName", "Roald");
-                    put("lastName", "Dahl");
-                    put("birthDate", "1916-09-13");
-                }
-            },
-            new HashMap<String, String>() {
-                {
-                    put("firstName", "Astrid");
-                    put("lastName", "Lindgren");
-                    put("birthDate", "1907-11-14");
-                }
-            });
+        List<Map<String, String>> expected = asList(
+            Map.of(
+                "firstName", "Annie M. G.",
+                "lastName", "Schmidt",
+                "birthDate", "1911-03-20"),
+            Map.of(
+                "firstName", "Roald",
+                "lastName", "Dahl",
+                "birthDate", "1916-09-13"),
+            Map.of(
+                "firstName", "Astrid",
+                "lastName", "Lindgren",
+                "birthDate", "1907-11-14"));
 
         assertEquals(expected, converter.convert(table, LIST_OF_MAP));
     }
@@ -433,24 +423,21 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, LIST_OF_AUTHOR));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was a default table cell transformer that could be used but the table was too wide to use it.\n"
-                +
-                "   Please reduce the table width to use this converter.\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was a default table entry transformer that could be used but the table was too short use it.\n"
-                +
-                "   Please increase the table height to use this converter.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>.
+                    Please review these problems:
+
+                     - There was a default table cell transformer that could be used but the table was too wide to use it.
+                       Please reduce the table width to use this converter.
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was a default table entry transformer that could be used but the table was too short use it.
+                       Please increase the table height to use this converter.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -532,20 +519,18 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, LIST_OF_AUTHOR));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a default table entry transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>.
+                    Please review these problems:
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a default table entry transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -587,17 +572,17 @@ class DataTableTypeRegistryTableConverterTest {
             CucumberDataTableException.class,
             () -> converter.convert(table, LIST_OF_LIST_OF_DATE));
 
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<List<java.util.Date>>.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table cell transformer registered for java.util.Date.\n" +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform java.util.Date.\n" +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to List<List<java.util.Date>>.
+                Please review these problems:
+
+                 - There was no table cell transformer registered for java.util.Date.
+                   Please consider registering a table cell transformer.
+
+                 - There was no default table cell transformer registered to transform java.util.Date.
+                   Please consider registering a default table cell transformer.
+
+                Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -606,13 +591,9 @@ class DataTableTypeRegistryTableConverterTest {
             "| 3 | 4 |",
             "| 5 | 6 |");
 
-        Map<String, String> expected = new HashMap<String, String>() {
-            {
-                put("3", "4");
-                put("5", "6");
-            }
-        };
-
+        Map<String, String> expected = Map.of(
+            "3", "4",
+            "5", "6");
         assertEquals(expected, converter.toMap(table, String.class, String.class));
         assertEquals(expected, converter.convert(table, Map.class));
     }
@@ -626,12 +607,9 @@ class DataTableTypeRegistryTableConverterTest {
             "| 3 | 4 |",
             "| 5 | 6 |");
 
-        Map<String, String> expected = new HashMap<String, String>() {
-            {
-                put("3", "4");
-                put("5", "6");
-            }
-        };
+        Map<String, String> expected = Map.of(
+            "3", "4",
+            "5", "6");
 
         assertEquals(expected, converter.toMap(table, String.class, String.class));
         assertEquals(expected, converter.convert(table, Map.class));
@@ -641,11 +619,8 @@ class DataTableTypeRegistryTableConverterTest {
     void convert_to_map__single_column() {
         DataTable table = parse("| 1 |");
 
-        Map<Integer, String> expected = new HashMap<Integer, String>() {
-            {
-                put(1, null);
-            }
-        };
+        var expected = NullMap.of(
+            1, null);
 
         assertEquals(expected, converter.toMap(table, Integer.class, Integer.class));
         assertEquals(expected, converter.convert(table, MAP_OF_INT_TO_INT));
@@ -660,14 +635,12 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<AirPortCode, Coordinate> expected = new HashMap<AirPortCode, Coordinate>() {
-            {
-                put(new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056));
-                put(new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375));
-                put(new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444));
-                put(new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
-            }
-        };
+        Map<AirPortCode, Coordinate> expected = Map.of(
+
+            new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056),
+            new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375),
+            new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444),
+            new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
 
         registry.defineDataTableType(new DataTableType(Coordinate.class, COORDINATE_TABLE_ENTRY_TRANSFORMER));
         registry.defineDataTableType(new DataTableType(AirPortCode.class, AIR_PORT_CODE_TABLE_CELL_TRANSFORMER));
@@ -685,14 +658,11 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<AirPortCode, Coordinate> expected = new HashMap<AirPortCode, Coordinate>() {
-            {
-                put(new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056));
-                put(new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375));
-                put(new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444));
-                put(new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
-            }
-        };
+        Map<AirPortCode, Coordinate> expected = Map.of(
+            new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056),
+            new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375),
+            new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444),
+            new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
 
         registry.defineDataTableType(new DataTableType(Coordinate.class, COORDINATE_TABLE_ENTRY_TRANSFORMER));
         registry.defineDataTableType(new DataTableType(AirPortCode.class, AIR_PORT_CODE_TABLE_ENTRY_TRANSFORMER));
@@ -713,14 +683,11 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<AirPortCode, Coordinate> expected = new HashMap<AirPortCode, Coordinate>() {
-            {
-                put(new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056));
-                put(new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375));
-                put(new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444));
-                put(new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
-            }
-        };
+        Map<AirPortCode, Coordinate> expected = Map.of(
+            new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056),
+            new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375),
+            new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444),
+            new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
 
         registry.defineDataTableType(new DataTableType(Coordinate.class, COORDINATE_TABLE_ENTRY_TRANSFORMER));
         registry.defineDataTableType(new DataTableType(AirPortCode.class, AIR_PORT_CODE_TABLE_CELL_TRANSFORMER));
@@ -738,19 +705,17 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<AirPortCode, Coordinate> expected = new HashMap<AirPortCode, Coordinate>() {
-            {
-                put(new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056));
-                put(new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375));
-                put(new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444));
-                put(new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
-            }
-        };
+        Map<AirPortCode, Coordinate> expected = Map.of(
+            new AirPortCode("KMSY"), new Coordinate(29.993333, -90.258056),
+            new AirPortCode("KSFO"), new Coordinate(37.618889, -122.375),
+            new AirPortCode("KSEA"), new Coordinate(47.448889, -122.309444),
+            new AirPortCode("KJFK"), new Coordinate(40.639722, -73.778889));
 
         registry.setDefaultDataTableEntryTransformer(JACKSON_TABLE_ENTRY_BY_TYPE_CONVERTER);
         registry.setDefaultDataTableCellTransformer(JACKSON_TABLE_CELL_BY_TYPE_CONVERTER);
 
         assertEquals(expected, converter.toMap(table, AirPortCode.class, Coordinate.class));
+
         assertEquals(expected, converter.convert(table, MAP_OF_AIR_PORT_CODE_TO_COORDINATE));
     }
 
@@ -762,14 +727,11 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | KJFK |",
             "| KJFK | AMS  |");
 
-        Map<AirPortCode, AirPortCode> expected = new HashMap<AirPortCode, AirPortCode>() {
-            {
-                put(new AirPortCode("KMSY"), new AirPortCode("KSFO"));
-                put(new AirPortCode("KSFO"), new AirPortCode("KSEA"));
-                put(new AirPortCode("KSEA"), new AirPortCode("KJFK"));
-                put(new AirPortCode("KJFK"), new AirPortCode("AMS"));
-            }
-        };
+        Map<AirPortCode, AirPortCode> expected = Map.of(
+            new AirPortCode("KMSY"), new AirPortCode("KSFO"),
+            new AirPortCode("KSFO"), new AirPortCode("KSEA"),
+            new AirPortCode("KSEA"), new AirPortCode("KJFK"),
+            new AirPortCode("KJFK"), new AirPortCode("AMS"));
         registry.setDefaultDataTableCellTransformer(JACKSON_TABLE_CELL_BY_TYPE_CONVERTER);
 
         assertEquals(expected, converter.toMap(table, AirPortCode.class, AirPortCode.class));
@@ -784,14 +746,11 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | KJFK |",
             "| KJFK | AMS  |");
 
-        Map<AirPortCode, AirPortCode> expected = new HashMap<AirPortCode, AirPortCode>() {
-            {
-                put(new AirPortCode("KMSY"), new AirPortCode("KSFO"));
-                put(new AirPortCode("KSFO"), new AirPortCode("KSEA"));
-                put(new AirPortCode("KSEA"), new AirPortCode("KJFK"));
-                put(new AirPortCode("KJFK"), new AirPortCode("AMS"));
-            }
-        };
+        Map<AirPortCode, AirPortCode> expected = Map.of(
+            new AirPortCode("KMSY"), new AirPortCode("KSFO"),
+            new AirPortCode("KSFO"), new AirPortCode("KSEA"),
+            new AirPortCode("KSEA"), new AirPortCode("KJFK"),
+            new AirPortCode("KJFK"), new AirPortCode("AMS"));
 
         registry.setDefaultDataTableCellTransformer(JACKSON_TABLE_CELL_BY_TYPE_CONVERTER);
 
@@ -806,14 +765,11 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<String, List<Double>> expected = new HashMap<String, List<Double>>() {
-            {
-                put("KMSY", asList(29.993333, -90.258056));
-                put("KSFO", asList(37.618889, -122.375));
-                put("KSEA", asList(47.448889, -122.309444));
-                put("KJFK", asList(40.639722, -73.778889));
-            }
-        };
+        Map<String, List<Double>> expected = Map.of(
+            "KMSY", asList(29.993333, -90.258056),
+            "KSFO", asList(37.618889, -122.375),
+            "KSEA", asList(47.448889, -122.309444),
+            "KJFK", asList(40.639722, -73.778889));
 
         assertEquals(expected, converter.convert(table, MAP_OF_STRING_TO_LIST_OF_DOUBLE));
     }
@@ -825,14 +781,10 @@ class DataTableTypeRegistryTableConverterTest {
             " | Roald       | 1990-09-13 | 1916-09-13 |",
             " | Astrid      | 1907-10-14 | 1907-11-14 |");
 
-        Map<String, List<Date>> expected = new HashMap<String, List<Date>>() {
-            {
-                put("Annie M. G.",
-                    asList(SIMPLE_DATE_FORMAT.parse("1995-03-21"), SIMPLE_DATE_FORMAT.parse("1911-03-20")));
-                put("Roald", asList(SIMPLE_DATE_FORMAT.parse("1990-09-13"), SIMPLE_DATE_FORMAT.parse("1916-09-13")));
-                put("Astrid", asList(SIMPLE_DATE_FORMAT.parse("1907-10-14"), SIMPLE_DATE_FORMAT.parse("1907-11-14")));
-            }
-        };
+        Map<String, List<Date>> expected = Map.of(
+            "Annie M. G.", asList(new SimpleDateFormat("yyyy-MM-dd").parse("1995-03-21"), new SimpleDateFormat("yyyy-MM-dd").parse("1911-03-20")),
+            "Roald", asList(new SimpleDateFormat("yyyy-MM-dd").parse("1990-09-13"), new SimpleDateFormat("yyyy-MM-dd").parse("1916-09-13")),
+            "Astrid", asList(new SimpleDateFormat("yyyy-MM-dd").parse("1907-10-14"), new SimpleDateFormat("yyyy-MM-dd").parse("1907-11-14")));
 
         registry.defineDataTableType(DATE_TABLE_CELL_TRANSFORMER);
 
@@ -846,14 +798,10 @@ class DataTableTypeRegistryTableConverterTest {
             " | Roald       | 1990-09-13 | 1916-09-13 |",
             " | Astrid      | 1907-10-14 | 1907-11-14 |");
 
-        Map<String, List<Date>> expected = new HashMap<String, List<Date>>() {
-            {
-                put("Annie M. G.",
-                    asList(SIMPLE_DATE_FORMAT.parse("1995-03-21"), SIMPLE_DATE_FORMAT.parse("1911-03-20")));
-                put("Roald", asList(SIMPLE_DATE_FORMAT.parse("1990-09-13"), SIMPLE_DATE_FORMAT.parse("1916-09-13")));
-                put("Astrid", asList(SIMPLE_DATE_FORMAT.parse("1907-10-14"), SIMPLE_DATE_FORMAT.parse("1907-11-14")));
-            }
-        };
+        Map<String, List<Date>> expected = Map.of(
+            "Annie M. G.", asList(new SimpleDateFormat("yyyy-MM-dd").parse("1995-03-21"), new SimpleDateFormat("yyyy-MM-dd").parse("1911-03-20")),
+            "Roald", asList(new SimpleDateFormat("yyyy-MM-dd").parse("1990-09-13"), new SimpleDateFormat("yyyy-MM-dd").parse("1916-09-13")),
+            "Astrid", asList(new SimpleDateFormat("yyyy-MM-dd").parse("1907-10-14"), new SimpleDateFormat("yyyy-MM-dd").parse("1907-11-14")));
 
         registry.setDefaultDataTableCellTransformer(JACKSON_TABLE_CELL_BY_TYPE_CONVERTER);
 
@@ -871,14 +819,11 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<String, List<Double>> expected = new HashMap<String, List<Double>>() {
-            {
-                put("KMSY", asList(29.993333, -90.258056));
-                put("KSFO", asList(37.618889, -122.375));
-                put("KSEA", asList(47.448889, -122.309444));
-                put("KJFK", asList(40.639722, -73.778889));
-            }
-        };
+        Map<String, List<Double>> expected = Map.of(
+            "KMSY", asList(29.993333, -90.258056),
+            "KSFO", asList(37.618889, -122.375),
+            "KSEA", asList(47.448889, -122.309444),
+            "KJFK", asList(40.639722, -73.778889));
 
         assertEquals(expected, converter.convert(table, MAP_OF_STRING_TO_LIST_OF_DOUBLE));
     }
@@ -893,31 +838,20 @@ class DataTableTypeRegistryTableConverterTest {
 
         registry.defineDataTableType(new DataTableType(Piece.class, PIECE_TABLE_CELL_TRANSFORMER));
 
-        Map<String, Map<Integer, Piece>> expected = new HashMap<String, Map<Integer, Piece>>() {
-            {
-                put("A", new HashMap<Integer, Piece>() {
-                    {
-                        put(1, Piece.WHITE_KNIGHT);
-                        put(2, null);
-                        put(3, Piece.BLACK_BISHOP);
-                    }
-                });
-                put("B", new HashMap<Integer, Piece>() {
-                    {
-                        put(1, null);
-                        put(2, null);
-                        put(3, null);
-                    }
-                });
-                put("C", new HashMap<Integer, Piece>() {
-                    {
-                        put(1, null);
-                        put(2, Piece.BLACK_BISHOP);
-                        put(3, null);
-                    }
-                });
-            }
-        };
+        var expected = Map.of(
+            "A", NullMap.of(
+                1, Piece.WHITE_KNIGHT,
+                2, null,
+                3, Piece.BLACK_BISHOP),
+
+            "B", NullMap.of(
+                1, null,
+                2, null,
+                3, null),
+            "C", NullMap.of(
+                1, null,
+                2, Piece.BLACK_BISHOP,
+                3, null));
 
         assertEquals(expected, converter.convert(table, MAP_OF_STRING_TO_MAP_OF_INTEGER_TO_PIECE));
     }
@@ -931,35 +865,20 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<String, Map<String, Double>> expected = new HashMap<String, Map<String, Double>>() {
-            {
-                put("KMSY", new HashMap<String, Double>() {
-                    {
-                        put("lat", 29.993333);
-                        put("lon", -90.258056);
-                    }
-                });
-                put("KSFO", new HashMap<String, Double>() {
-                    {
-                        put("lat", 37.618889);
-                        put("lon", -122.375);
-                    }
-                });
-                put("KSEA", new HashMap<String, Double>() {
-                    {
-                        put("lat", 47.448889);
-                        put("lon", -122.309444);
-                    }
-                });
-                put("KJFK", new HashMap<String, Double>() {
-                    {
-                        put("lat", 40.639722);
-                        put("lon", -73.778889);
-                    }
-                });
-            }
-        };
+        Map<String, Map<String, Double>> expected = Map.of(
+            "KMSY", Map.of(
 
+                "lat", 29.993333,
+                "lon", -90.258056),
+            "KSFO", Map.of(
+                "lat", 37.618889,
+                "lon", -122.375),
+            "KSEA", Map.of(
+                "lat", 47.448889,
+                "lon", -122.309444),
+            "KJFK", Map.of(
+                "lat", 40.639722,
+                "lon", -73.778889));
         assertEquals(expected, converter.convert(table, MAP_OF_STRING_TO_MAP_OF_STRING_DOUBLE));
     }
 
@@ -972,14 +891,11 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<String, Coordinate> expected = new HashMap<String, Coordinate>() {
-            {
-                put("KMSY", new Coordinate(29.993333, -90.258056));
-                put("KSFO", new Coordinate(37.618889, -122.375));
-                put("KSEA", new Coordinate(47.448889, -122.309444));
-                put("KJFK", new Coordinate(40.639722, -73.778889));
-            }
-        };
+        Map<String, Coordinate> expected = Map.of(
+            "KMSY", new Coordinate(29.993333, -90.258056),
+            "KSFO", new Coordinate(37.618889, -122.375),
+            "KSEA", new Coordinate(47.448889, -122.309444),
+            "KJFK", new Coordinate(40.639722, -73.778889));
 
         registry.defineDataTableType(new DataTableType(Coordinate.class, COORDINATE_TABLE_ENTRY_TRANSFORMER));
 
@@ -994,13 +910,10 @@ class DataTableTypeRegistryTableConverterTest {
             "| 74 | Roald Dahl          |",
             "| 94 | Astrid Lindgren     |");
 
-        Map<Integer, String> expected = new HashMap<Integer, String>() {
-            {
-                put(84, "Annie M. G. Schmidt");
-                put(74, "Roald Dahl");
-                put(94, "Astrid Lindgren");
-            }
-        };
+        Map<Integer, String> expected = Map.of(
+            84, "Annie M. G. Schmidt",
+            74, "Roald Dahl",
+            94, "Astrid Lindgren");
 
         assertEquals(expected, converter.toMap(table, Integer.class, String.class));
         assertEquals(expected, converter.convert(table, MAP_OF_INT_TO_STRING));
@@ -1015,35 +928,21 @@ class DataTableTypeRegistryTableConverterTest {
             "| KSEA | 47.448889 | -122.309444 |",
             "| KJFK | 40.639722 | -73.778889  |");
 
-        Map<String, Map<String, String>> expected = new HashMap<String, Map<String, String>>() {
-            {
-                put("KMSY", new HashMap<String, String>() {
-                    {
-                        put("lat", "29.993333");
-                        put("lon", "-90.258056");
-                    }
-                });
-                put("KSFO", new HashMap<String, String>() {
-                    {
-                        put("lat", "37.618889");
-                        put("lon", "-122.375");
-                    }
-                });
-                put("KSEA", new HashMap<String, String>() {
-                    {
-                        put("lat", "47.448889");
-                        put("lon", "-122.309444");
-                    }
-                });
-                put("KJFK", new HashMap<String, String>() {
-                    {
-                        put("lat", "40.639722");
-                        put("lon", "-73.778889");
-                    }
-                });
-            }
-        };
+        Map<String, Map<String, String>> expected = Map.of(
+            "KMSY", Map.of(
+                "lat", "29.993333",
+                "lon", "-90.258056"),
 
+            "KSFO", Map.of(
+                "lat", "37.618889",
+                "lon", "-122.375"),
+            "KSEA", Map.of(
+                "lat", "47.448889",
+                "lon", "-122.309444"),
+
+            "KJFK", Map.of(
+                "lat", "40.639722",
+                "lon", "-73.778889"));
         assertEquals(expected, converter.convert(table, MAP_OF_STRING_TO_MAP));
     }
 
@@ -1058,11 +957,11 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, MAP_OF_STRING_TO_LIST_OF_DOUBLE));
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "There are more values then keys. " +
-                "The first header cell was left blank. " +
-                "You can add a value there",
+        assertThat(exception.getMessage(), is(format("""
+                Can't convert DataTable to Map<%s, %s>.
+                There are more values then keys. \
+                The first header cell was left blank. \
+                You can add a value there""",
             typeName(String.class), LIST_OF_DOUBLE)));
     }
 
@@ -1077,10 +976,10 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, MAP_OF_STRING_TO_STRING));
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "There is more then one value per key. " +
-                "Did you mean to transform to Map<%s, List<%s>> instead?",
+        assertThat(exception.getMessage(), is(format("""
+                Can't convert DataTable to Map<%s, %s>.
+                There is more then one value per key. \
+                Did you mean to transform to Map<%s, List<%s>> instead?""",
             typeName(String.class), typeName(String.class), typeName(String.class), typeName(String.class))));
     }
 
@@ -1091,23 +990,18 @@ class DataTableTypeRegistryTableConverterTest {
             "| 4 | 5 | 6 |",
             "| 7 | 8 | 9 |");
 
-        List<HashMap<Integer, Integer>> expected = asList(
-            new HashMap<Integer, Integer>() {
-                {
-                    put(1, 4);
-                    put(2, 5);
-                    put(3, 6);
-                }
-            },
-            new HashMap<Integer, Integer>() {
-                {
-                    put(1, 7);
-                    put(2, 8);
-                    put(3, 9);
-                }
-            });
+        var expected = asList(
+            Map.of(
+                1, 4,
+                2, 5,
+                3, 6),
+            Map.of(
+                1, 7,
+                2, 8,
+                3, 9));
 
         assertEquals(expected, converter.toMaps(table, Integer.class, Integer.class));
+
         assertEquals(expected, converter.convert(table, LIST_OF_MAP_OF_INT_TO_INT));
     }
 
@@ -1117,15 +1011,13 @@ class DataTableTypeRegistryTableConverterTest {
             "| 1 | 2 |",
             "|   |   |");
 
-        List<HashMap<Integer, Integer>> expected = singletonList(
-            new HashMap<Integer, Integer>() {
-                {
-                    put(1, null);
-                    put(2, null);
-                }
-            });
+        var expected = singletonList(
+            NullMap.of(
+                1, null,
+                2, null));
 
         assertEquals(expected, converter.toMaps(table, Integer.class, Integer.class));
+
         assertEquals(expected, converter.convert(table, LIST_OF_MAP_OF_INT_TO_INT));
     }
 
@@ -1159,20 +1051,18 @@ class DataTableTypeRegistryTableConverterTest {
         UndefinedDataTableTypeException exception = assertThrows(
             UndefinedDataTableTypeException.class,
             () -> converter.convert(table, OPTIONAL_CHESS_BOARD_TYPE));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$ChessBoard.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$ChessBoard.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$ChessBoard.\n"
-                +
-                "   Please consider registering a default table entry transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$ChessBoard.
+                    Please review these problems:
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$ChessBoard.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$ChessBoard.
+                       Please consider registering a default table entry transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1197,9 +1087,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, Piece.class));
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to %s. " +
-                "The table contained more then one item: [♘, ♝]",
+        assertThat(exception.getMessage(), is(format("""
+                Can't convert DataTable to %s. \
+                The table contained more then one item: [♘, ♝]""",
             typeName(Piece.class))));
     }
 
@@ -1213,19 +1103,18 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, Piece.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was a table cell transformer for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece but the table was too wide to use it.\n"
-                +
-                "   Please reduce the table width to use this converter.\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                    Please review these problems:
+
+                     - There was a table cell transformer for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece but the table was too wide to use it.
+                       Please reduce the table width to use this converter.
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table entry or row transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1315,23 +1204,21 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, Piece.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                    Please review these problems:
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table cell transformer.
+
+                     - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a default table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1341,23 +1228,21 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, Piece.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                    Please review these problems:
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table cell transformer.
+
+                     - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a default table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1369,28 +1254,24 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toList(table, Piece.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a default table entry transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece>.
+                    Please review these problems:
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table cell transformer.
+
+                     - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a default table entry transformer.
+
+                     - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a default table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1404,20 +1285,18 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toList(table, Author.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a default table entry transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>.
+                    Please review these problems:
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a default table entry transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1430,20 +1309,18 @@ class DataTableTypeRegistryTableConverterTest {
 
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class, () -> converter.toLists(table, Author.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to List<List<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author>>.
+                    Please review these problems:
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a table cell transformer.
+
+                     - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a default table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1462,9 +1339,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, Coordinate.class));
-        assertThat(exception.getMessage(), startsWith(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "Encountered duplicate key",
+        assertThat(exception.getMessage(), startsWith(format("""
+                Can't convert DataTable to Map<%s, %s>.
+                Encountered duplicate key""",
             typeName(AirPortCode.class), typeName(Coordinate.class))));
     }
 
@@ -1482,18 +1359,18 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, String.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode, java.lang.String>.\n"
-                +
-                "The first cell was either blank or you have registered a TableEntryTransformer for the key type.\n" +
-                "\n" +
-                "This requires that there is a TableEntryTransformer for the value type but I couldn't find any.\n" +
-                "\n" +
-                "You can either:\n" +
-                "\n" +
-                "  1) Use a DataTableType that uses a TableEntryTransformer for class java.lang.String\n" +
-                "\n" +
-                "  2) Add a key to the first cell and use a DataTableType that uses a TableEntryTransformer for class io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode, java.lang.String>.
+                    The first cell was either blank or you have registered a TableEntryTransformer for the key type.
+
+                    This requires that there is a TableEntryTransformer for the value type but I couldn't find any.
+
+                    You can either:
+
+                      1) Use a DataTableType that uses a TableEntryTransformer for class java.lang.String
+
+                      2) Add a key to the first cell and use a DataTableType that uses a TableEntryTransformer for class io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode"""));
     }
 
     @Test
@@ -1510,11 +1387,11 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, Coordinate.class));
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "There are more values then keys. " +
-                "Did you use a TableEntryTransformer for the key " +
-                "while using a TableRow or TableCellTransformer for the value?",
+        assertThat(exception.getMessage(), is(format("""
+                Can't convert DataTable to Map<%s, %s>.
+                There are more values then keys. \
+                Did you use a TableEntryTransformer for the key \
+                while using a TableRow or TableCellTransformer for the value?""",
             typeName(AirPortCode.class), typeName(Coordinate.class))));
     }
 
@@ -1532,9 +1409,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, Coordinate.class));
-        assertThat(exception.getMessage(), startsWith(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "The first cell was either blank or you have registered a TableEntryTransformer for the key type.",
+        assertThat(exception.getMessage(), startsWith(format("""
+                Can't convert DataTable to Map<%s, %s>.
+                The first cell was either blank or you have registered a TableEntryTransformer for the key type.""",
             typeName(AirPortCode.class), typeName(Coordinate.class))));
     }
 
@@ -1552,11 +1429,11 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, String.class, Coordinate.class));
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "There are more keys than values. " +
-                "Did you use a TableEntryTransformer for the value " +
-                "while using a TableRow or TableCellTransformer for the keys?",
+        assertThat(exception.getMessage(), is(format("""
+                Can't convert DataTable to Map<%s, %s>.
+                There are more keys than values. \
+                Did you use a TableEntryTransformer for the value \
+                while using a TableRow or TableCellTransformer for the keys?""",
             typeName(String.class), typeName(Coordinate.class))));
     }
 
@@ -1571,9 +1448,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, String.class, String.class));
-        assertThat(exception.getMessage(), startsWith(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "The first cell was either blank or you have registered a TableEntryTransformer for the key type.",
+        assertThat(exception.getMessage(), startsWith(format("""
+                Can't convert DataTable to Map<%s, %s>.
+                The first cell was either blank or you have registered a TableEntryTransformer for the key type.""",
             typeName(String.class), typeName(String.class))));
     }
 
@@ -1588,28 +1465,24 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, Author.class, String.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author, java.lang.String>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a table entry or row transformer.\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a default table entry transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.\n"
-                +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author, java.lang.String>.
+                    Please review these problems:
+
+                     - There was no table entry or table row transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a table entry or row transformer.
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a table cell transformer.
+
+                     - There was no default table entry transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a default table entry transformer.
+
+                     - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Author.
+                       Please consider registering a default table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1626,20 +1499,18 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, Coordinate.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode, io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Coordinate>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode.\n"
-                +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode, io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Coordinate>.
+                    Please review these problems:
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode.
+                       Please consider registering a table cell transformer.
+
+                     - There was no default table cell transformer registered to transform io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$AirPortCode.
+                       Please consider registering a default table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1651,20 +1522,20 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, String.class, Date.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to Map<java.lang.String, java.util.Date>.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table entry transformer registered for java.util.Date.\n" +
-                "   Please consider registering a table entry transformer.\n" +
-                "\n" +
-                " - There was no table cell transformer registered for java.util.Date.\n" +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform java.util.Date.\n" +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to Map<java.lang.String, java.util.Date>.
+                Please review these problems:
+
+                 - There was no table entry transformer registered for java.util.Date.
+                   Please consider registering a table entry transformer.
+
+                 - There was no table cell transformer registered for java.util.Date.
+                   Please consider registering a table cell transformer.
+
+                 - There was no default table cell transformer registered to transform java.util.Date.
+                   Please consider registering a default table cell transformer.
+
+                Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1677,17 +1548,17 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, MAP_OF_STRING_TO_LIST_OF_DATE));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to Map<java.lang.String, java.util.List<java.util.Date>>.\n" +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table cell transformer registered for java.util.Date.\n" +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                " - There was no default table cell transformer registered to transform java.util.Date.\n" +
-                "   Please consider registering a default table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to Map<java.lang.String, java.util.List<java.util.Date>>.
+                Please review these problems:
+
+                 - There was no table cell transformer registered for java.util.Date.
+                   Please consider registering a table cell transformer.
+
+                 - There was no default table cell transformer registered to transform java.util.Date.
+                   Please consider registering a default table cell transformer.
+
+                Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1700,8 +1571,7 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, Integer.class, Integer.class));
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
+        assertThat(exception.getMessage(), is(format("Can't convert DataTable to Map<%s, %s>.\n" +
                 "Encountered duplicate key 1 with values 4 and 5",
             typeName(Integer.class), typeName(Integer.class))));
     }
@@ -1715,8 +1585,7 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, Integer.class, Integer.class));
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
+        assertThat(exception.getMessage(), is(format("Can't convert DataTable to Map<%s, %s>.\n" +
                 "Encountered duplicate key null with values 1 and 2",
             typeName(Integer.class), typeName(Integer.class))));
     }
@@ -1733,16 +1602,15 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, String.class, Coordinate.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<Map<java.lang.String, io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Coordinate>>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Coordinate.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to List<Map<java.lang.String, io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Coordinate>>.
+                    Please review these problems:
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Coordinate.
+                       Please consider registering a table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
     @Test
@@ -1761,41 +1629,22 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, Piece.class, String.class));
-        assertThat(exception.getMessage(), is("" +
-                "Can't convert DataTable to List<Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece, java.lang.String>>.\n"
-                +
-                "Please review these problems:\n" +
-                "\n" +
-                " - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.\n"
-                +
-                "   Please consider registering a table cell transformer.\n" +
-                "\n" +
-                "Note: Usually solving one is enough"));
+        assertThat(exception.getMessage(),
+            is("""
+                    Can't convert DataTable to List<Map<io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece, java.lang.String>>.
+                    Please review these problems:
+
+                     - There was no table cell transformer registered for io.cucumber.datatable.DataTableTypeRegistryTableConverterTest$Piece.
+                       Please consider registering a table cell transformer.
+
+                    Note: Usually solving one is enough"""));
     }
 
-    private static final class NumberedObject<T> {
-        private final int number;
-        private final T value;
-
-        private NumberedObject(int number, T value) {
-            this.number = number;
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof NumberedObject<?> that)) return false;
-            return number == that.number && Objects.equals(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(number, value);
-        }
+    private record NumberedObject<T>(int number, T value) {
 
         @Override
         public String toString() {
-            return String.format("%d: %s", number, value);
+            return format("%d: %s", number, value);
         }
     }
 
@@ -1811,7 +1660,7 @@ class DataTableTypeRegistryTableConverterTest {
             this.glyp = glyp;
         }
 
-        public static Piece fromString(String glyp) {
+        public static @Nullable Piece fromString(String glyp) {
             for (Piece piece : values()) {
                 if (piece.glyp.equals(glyp)) {
                     return piece;
@@ -1867,8 +1716,10 @@ class DataTableTypeRegistryTableConverterTest {
     @SuppressWarnings("unused")
     private static final class Author {
 
-        private String firstName;
+        private @Nullable String firstName;
+        @Nullable
         String lastName;
+        @Nullable
         String birthDate;
 
         private Author(String firstName, String lastName, String birthDate) {
@@ -1886,26 +1737,15 @@ class DataTableTypeRegistryTableConverterTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
+            if (!(o instanceof Author author))
                 return false;
-
-            Author author = (Author) o;
-
-            if (!firstName.equals(author.firstName))
-                return false;
-            if (!lastName.equals(author.lastName))
-                return false;
-            return birthDate.equals(author.birthDate);
+            return Objects.equals(firstName, author.firstName) && Objects.equals(lastName, author.lastName)
+                    && Objects.equals(birthDate, author.birthDate);
         }
 
         @Override
         public int hashCode() {
-            int result = firstName.hashCode();
-            result = 31 * result + lastName.hashCode();
-            result = 31 * result + birthDate.hashCode();
-            return result;
+            return Objects.hash(firstName, lastName, birthDate);
         }
 
         @Override
@@ -1934,7 +1774,8 @@ class DataTableTypeRegistryTableConverterTest {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof Coordinate that)) return false;
+            if (!(o instanceof Coordinate that))
+                return false;
             return Double.compare(lat, that.lat) == 0 && Double.compare(lon, that.lon) == 0;
         }
 

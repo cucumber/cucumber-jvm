@@ -129,7 +129,8 @@ final class TypeFactory {
 
     interface JavaType extends Type {
 
-        @Nullable Type getOriginal();
+        @Nullable
+        Type getOriginal();
     }
 
     static final class OtherType implements JavaType {
@@ -234,7 +235,8 @@ final class TypeFactory {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof ListType listType)) return false;
+            if (!(o instanceof ListType listType))
+                return false;
             return Objects.equals(rawClass, listType.rawClass) && Objects.equals(elementType, listType.elementType);
         }
 

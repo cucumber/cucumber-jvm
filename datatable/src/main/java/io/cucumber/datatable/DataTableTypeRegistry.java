@@ -78,31 +78,34 @@ public final class DataTableTypeRegistry {
         DataTableType existing = tableTypeByType.get(dataTableType.getTargetType());
         if (existing != null && !existing.isReplaceable()) {
             throw new DuplicateTypeException(format("""
-                            There already is a data table type registered that can supply %s.
-                            You are trying to register a %s for %s.
-                            The existing data table type registered a %s for %s.
-                            """,
-                    dataTableType.getElementType(),
-                    dataTableType.getTransformerType().getSimpleName(),
-                    dataTableType.getElementType(),
-                    existing.getTransformerType().getSimpleName(),
-                    existing.getElementType()));
+                    There already is a data table type registered that can supply %s.
+                    You are trying to register a %s for %s.
+                    The existing data table type registered a %s for %s.
+                    """,
+                dataTableType.getElementType(),
+                dataTableType.getTransformerType().getSimpleName(),
+                dataTableType.getElementType(),
+                existing.getTransformerType().getSimpleName(),
+                existing.getElementType()));
         }
         tableTypeByType.put(dataTableType.getTargetType(), dataTableType);
     }
 
-    @Nullable DataTableType lookupCellTypeByType(Type type) {
+    @Nullable
+    DataTableType lookupCellTypeByType(Type type) {
         return lookupTableTypeByType(type, javaType -> aListOf(aListOf(javaType)));
     }
 
-    @Nullable DataTableType lookupRowTypeByType(Type type) {
+    @Nullable
+    DataTableType lookupRowTypeByType(Type type) {
         return lookupTableTypeByType(type, TypeFactory::aListOf);
     }
 
-    @Nullable DataTableType lookupTableTypeByType(Type type) {
+    @Nullable
+    DataTableType lookupTableTypeByType(Type type) {
         return lookupTableTypeByType(type, Function.identity());
     }
-    
+
     private @Nullable DataTableType lookupTableTypeByType(Type type, Function<JavaType, JavaType> toTableType) {
         JavaType elementType = constructType(type);
         JavaType tableType = toTableType.apply(elementType);
@@ -131,7 +134,8 @@ public final class DataTableTypeRegistry {
         return null;
     }
 
-    @Nullable DataTableType getDefaultTableCellTransformer(Type tableType) {
+    @Nullable
+    DataTableType getDefaultTableCellTransformer(Type tableType) {
         if (defaultDataTableCellTransformer == null) {
             return null;
         }
@@ -141,11 +145,12 @@ public final class DataTableTypeRegistry {
         }
 
         return DataTableType.defaultCell(
-                tableType,
-                defaultDataTableCellTransformer);
+            tableType,
+            defaultDataTableCellTransformer);
     }
 
-    @Nullable DataTableType getDefaultTableEntryTransformer(Type tableType) {
+    @Nullable
+    DataTableType getDefaultTableEntryTransformer(Type tableType) {
         if (defaultDataTableEntryTransformer == null) {
             return null;
         }
@@ -155,9 +160,9 @@ public final class DataTableTypeRegistry {
         }
 
         return DataTableType.defaultEntry(
-                tableType,
-                defaultDataTableEntryTransformer,
-                tableCellByTypeTransformer);
+            tableType,
+            defaultDataTableEntryTransformer,
+            tableCellByTypeTransformer);
     }
 
     public void setDefaultDataTableEntryTransformer(TableEntryByTypeTransformer defaultDataTableEntryTransformer) {

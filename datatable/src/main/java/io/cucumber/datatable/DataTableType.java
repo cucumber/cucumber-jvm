@@ -212,7 +212,8 @@ public final class DataTableType {
     interface RawTableTransformer<T> {
         Class<?> getOriginalTransformerType();
 
-        @Nullable T transform(List<List<@Nullable String>> raw) throws Throwable;
+        @Nullable
+        T transform(List<List<@Nullable String>> raw) throws Throwable;
 
         RawTableTransformer<?> asOptional();
 

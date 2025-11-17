@@ -23,5 +23,6 @@ public interface TableCellByTypeTransformer {
      * @return             an instance of type
      * @throws Throwable   when unable to transform
      */
-    @Nullable Object transform(@Nullable String cellValue, Type toValueType) throws Throwable;
+    @Nullable
+    Object transform(@Nullable String cellValue, Type toValueType) throws Throwable;
 }

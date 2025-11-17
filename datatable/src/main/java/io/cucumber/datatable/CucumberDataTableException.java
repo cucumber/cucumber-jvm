@@ -64,16 +64,17 @@ public class CucumberDataTableException extends RuntimeException {
 
     static CucumberDataTableException keysImplyTableEntryTransformer(Type keyType, Type valueType) {
         return cantConvertToMap(keyType, valueType,
-            format("""
-                            The first cell was either blank or you have registered a TableEntryTransformer for the key type.
-                            
-                            This requires that there is a TableEntryTransformer for the value type but I couldn't find any.
-                            
-                            You can either:
-                            
-                              1) Use a DataTableType that uses a TableEntryTransformer for %s
-                            
-                              2) Add a key to the first cell and use a DataTableType that uses a TableEntryTransformer for %s""",
+            format(
+                """
+                        The first cell was either blank or you have registered a TableEntryTransformer for the key type.
+
+                        This requires that there is a TableEntryTransformer for the value type but I couldn't find any.
+
+                        You can either:
+
+                          1) Use a DataTableType that uses a TableEntryTransformer for %s
+
+                          2) Add a key to the first cell and use a DataTableType that uses a TableEntryTransformer for %s""",
                 valueType, keyType));
     }
 
