@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.31.0] - 2025-10-27
 ### Added
 - [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
+- [Core] Add OS version to `Meta` message ([#3108](https://github.com/cucumber/cucumber-jvm/pull/3108))
 
 ### Changed
 - [Core] Update dependency io.cucumber:ci-environment to v12.0.0
