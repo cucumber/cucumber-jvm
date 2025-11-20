@@ -496,6 +496,7 @@ cucumber.junit-platform.naming-strategy.surefire.example-name= # number or pickl
 
 cucumber.plugin=                                               # comma separated plugin strings.
                                                                # example: pretty, json:path/to/report.json
+                                                               # example: com.example.MyCustomPlugin:path/to/report.xml
 
 cucumber.uuid-generator                                        # uuid generator class name of a registered service provider.
                                                                # default: io.cucumber.core.eventbus.RandomUuidGenerator
