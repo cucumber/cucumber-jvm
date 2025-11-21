@@ -235,28 +235,6 @@ public class CompatibilityTest {
             return;
         }
 
-        try {
-            PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
-            if ("multiple-features-reversed".equals(testCase.getId())) {
-                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
-            }
-            Runtime.builder()
-                    .withRuntimeOptions(new RuntimeOptionsBuilder()
-                            .addGlue(testCase.getGlue())
-                            .setPickleOrder(pickleOrder)
-                            .addFeature(testCase.getFeatures()).build())
-                    .withAdditionalPlugins(
-                        new MessageFormatter(newOutputStream(actualNdjson)))
-                    .build()
-                    .run();
-        } catch (Exception e) {
-            // exception: Scenario with unknown parameter types fails by
-            // throwing an exceptions
-            if (!"unknown-parameter-type".equals(testCase.getId())) {
-                throw e;
-            }
-        }
-
         // exception: Cucumber JVM does not support named hooks
         if ("hooks-named".equals(testCase.getId())) {
             return;
@@ -288,6 +266,28 @@ public class CompatibilityTest {
 
         ) {
             return;
+        }
+
+        try {
+            PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
+            if ("multiple-features-reversed".equals(testCase.getId())) {
+                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
+            }
+            Runtime.builder()
+                    .withRuntimeOptions(new RuntimeOptionsBuilder()
+                            .addGlue(testCase.getGlue())
+                            .setPickleOrder(pickleOrder)
+                            .addFeature(testCase.getFeatures()).build())
+                    .withAdditionalPlugins(
+                        new MessageFormatter(newOutputStream(actualNdjson)))
+                    .build()
+                    .run();
+        } catch (Exception e) {
+            // exception: Scenario with unknown parameter types fails by
+            // throwing an exceptions
+            if (!"unknown-parameter-type".equals(testCase.getId())) {
+                throw e;
+            }
         }
 
         List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
