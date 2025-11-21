@@ -17,6 +17,8 @@ import io.cucumber.core.runtime.Runtime;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.io.ResourceFilter;
+import org.junit.platform.commons.support.ResourceSupport;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -39,6 +42,7 @@ import static java.nio.file.Files.newOutputStream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Comparator.comparing;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,9 +52,29 @@ import static org.hamcrest.core.Is.isA;
 
 public class CompatibilityTest {
 
-    private static final Map<String, Map<Pattern, Matcher<?>>> exceptions = createExceptions();
+    private static final List<String> unsupportedTestCases = Arrays.asList(
+        // exception: not applicable
+        "test-run-exception",
+        // exception: Cucumber JVM does not support named hooks
+        "hooks-named",
+        // exception: Cucumber executes all hooks,
+        // but skipped hooks can skip a scenario
+        "hooks-skipped",
+        // exception: Cucumber JVM does not support markdown features
+        "markdown",
+        // exception: Cucumber JVM does not support retrying features
+        "retry",
+        "retry-ambiguous",
+        "retry-pending",
+        // exception: Cucumber JVM does not support messages for global hooks
+        "global-hooks",
+        "global-hooks-afterall-error",
+        "global-hooks-attachments",
+        "global-hooks-beforeall-error");
 
-    private static Map<String, Map<Pattern, Matcher<?>>> createExceptions() {
+    private static final Map<String, Map<Pattern, Matcher<?>>> divergingExpectations = createDivergingExpectations();
+
+    private static Map<String, Map<Pattern, Matcher<?>>> createDivergingExpectations() {
         Map<String, Map<Pattern, Matcher<?>>> exceptions = new LinkedHashMap<>();
 
         Map<Pattern, Matcher<?>> attachment = new LinkedHashMap<>();
@@ -222,73 +246,20 @@ public class CompatibilityTest {
         return exceptions;
     }
 
+    static List<TestCase> acceptance() {
+        ResourceFilter ndjson = ResourceFilter.of(resource -> resource.getName().endsWith(".ndjson"));
+        return ResourceSupport.findAllResourcesInPackage(TestCase.TEST_CASES_PACKAGE, ndjson)
+                .stream()
+                .map(TestCase::new)
+                .filter(testCase -> !unsupportedTestCases.contains(testCase.getId()))
+                .sorted(comparing(TestCase::getId))
+                .collect(Collectors.toList());
+    }
+
     @ParameterizedTest
-    @MethodSource("io.cucumber.compatibility.TestCase#testCases")
-    void produces_expected_output_for(TestCase testCase) throws IOException {
-        Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
-        Path actualNdjson = parentDir.resolve("actual.ndjson");
-        Path expectedNdjson = parentDir.resolve("expected.ndjson");
-        Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
-
-        // exception: not applicable
-        if ("test-run-exception".equals(testCase.getId())) {
-            return;
-        }
-
-        // exception: Cucumber JVM does not support named hooks
-        if ("hooks-named".equals(testCase.getId())) {
-            return;
-        }
-
-        // exception: Cucumber executes all hooks, but skipped hooks can skip a
-        // scenario
-        if ("hooks-skipped".equals(testCase.getId())) {
-            return;
-        }
-
-        // exception: Cucumber JVM does not support markdown features
-        if ("markdown".equals(testCase.getId())) {
-            return;
-        }
-
-        // exception: Cucumber JVM does not support retrying features
-        if ("retry".equals(testCase.getId())
-                || "retry-ambiguous".equals(testCase.getId())
-                || "retry-pending".equals(testCase.getId())) {
-            return;
-        }
-
-        // exception: Cucumber JVM does not support messages for global hooks
-        if ("global-hooks".equals(testCase.getId())
-                || "global-hooks-afterall-error".equals(testCase.getId())
-                || "global-hooks-attachments".equals(testCase.getId())
-                || "global-hooks-beforeall-error".equals(testCase.getId())
-
-        ) {
-            return;
-        }
-
-        try {
-            PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
-            if ("multiple-features-reversed".equals(testCase.getId())) {
-                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
-            }
-            Runtime.builder()
-                    .withRuntimeOptions(new RuntimeOptionsBuilder()
-                            .addGlue(testCase.getGlue())
-                            .setPickleOrder(pickleOrder)
-                            .addFeature(testCase.getFeatures()).build())
-                    .withAdditionalPlugins(
-                        new MessageFormatter(newOutputStream(actualNdjson)))
-                    .build()
-                    .run();
-        } catch (Exception e) {
-            // exception: Scenario with unknown parameter types fails by
-            // throwing an exceptions
-            if (!"unknown-parameter-type".equals(testCase.getId())) {
-                throw e;
-            }
-        }
+    @MethodSource("acceptance")
+    void test(TestCase testCase) throws IOException {
+        Path actualNdjson = writeNdjsonReport(testCase);
 
         List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
         List<JsonNode> actual = readAllMessages(Files.newInputStream(actualNdjson));
@@ -337,6 +308,36 @@ public class CompatibilityTest {
             actualEnvelopes,
             hasEntry(is(messageType),
                 containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
+    }
+
+    private static Path writeNdjsonReport(TestCase testCase) throws IOException {
+        Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
+        Path actualNdjson = parentDir.resolve("actual.ndjson");
+        Path expectedNdjson = parentDir.resolve("expected.ndjson");
+        Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
+
+        try {
+            PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
+            if ("multiple-features-reversed".equals(testCase.getId())) {
+                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
+            }
+            Runtime.builder()
+                    .withRuntimeOptions(new RuntimeOptionsBuilder()
+                            .addGlue(testCase.getGlue())
+                            .setPickleOrder(pickleOrder)
+                            .addFeature(testCase.getFeatures()).build())
+                    .withAdditionalPlugins(
+                        new MessageFormatter(newOutputStream(actualNdjson)))
+                    .build()
+                    .run();
+        } catch (Exception e) {
+            // exception: Scenario with unknown parameter types fails by
+            // throwing an exceptions
+            if (!"unknown-parameter-type".equals(testCase.getId())) {
+                throw e;
+            }
+        }
+        return actualNdjson;
     }
 
     private static List<JsonNode> readAllMessages(InputStream output) throws IOException {
@@ -403,7 +404,7 @@ public class CompatibilityTest {
     private static List<Matcher<? super JsonNode>> aComparableMessage(String messageType, List<JsonNode> messages) {
         return messages.stream()
                 .map(jsonNode -> new AComparableMessage(messageType, jsonNode,
-                    exceptions.getOrDefault(messageType, emptyMap())))
+                    divergingExpectations.getOrDefault(messageType, emptyMap())))
                 .collect(Collectors.toList());
     }
 
