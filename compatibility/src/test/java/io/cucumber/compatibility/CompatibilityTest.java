@@ -231,6 +231,11 @@ public class CompatibilityTest {
         Path expectedNdjson = parentDir.resolve("expected.ndjson");
         Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
 
+        // exception: not applicable
+        if ("test-run-exception".equals(testCase.getId())) {
+            return;
+        }
+
         try {
             PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
             if ("multiple-features-reversed".equals(testCase.getId())) {
