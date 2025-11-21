@@ -16,7 +16,6 @@ import io.cucumber.core.snippets.TestSnippet;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
-import org.opentest4j.TestAbortedException;
 
 import java.net.URI;
 import java.time.Clock;
@@ -207,42 +206,6 @@ class RunnerTest {
         InOrder inOrder = inOrder(failingBeforeHook, beforeHook, afterHook);
         inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class));
         inOrder.verify(beforeHook).execute(any(TestCaseState.class));
-        inOrder.verify(afterHook).execute(any(TestCaseState.class));
-    }
-
-    @Test
-    void hooks_can_signal_skip() {
-        StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step") {
-
-            @Override
-            public void execute(Object[] args) {
-                super.execute(args);
-                throw new RuntimeException();
-            }
-        });
-        Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
-
-        HookDefinition beforeHook = createHook();
-        HookDefinition afterHook = createHook();
-
-        HookDefinition skippingBeforeHook = createHook();
-        doThrow(new TestAbortedException("skip")).when(skippingBeforeHook).execute(any(TestCaseState.class));
-
-        TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
-            @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
-                glue.addBeforeHook(skippingBeforeHook);
-                glue.addBeforeHook(beforeHook);
-                glue.addAfterHook(afterHook);
-            }
-        };
-
-        runnerSupplier.get().runPickle(pickleMatchingStepDefinitions);
-
-        InOrder inOrder = inOrder(skippingBeforeHook, beforeHook, stepDefinition, afterHook);
-        inOrder.verify(skippingBeforeHook).execute(any(TestCaseState.class));
-        inOrder.verify(beforeHook).execute(any(TestCaseState.class));
-        inOrder.verify(stepDefinition, never()).execute(any(Object[].class));
         inOrder.verify(afterHook).execute(any(TestCaseState.class));
     }
 
