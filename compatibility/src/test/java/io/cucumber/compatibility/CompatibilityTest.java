@@ -225,7 +225,6 @@ public class CompatibilityTest {
     @ParameterizedTest
     @MethodSource("io.cucumber.compatibility.TestCase#testCases")
     void produces_expected_output_for(TestCase testCase) throws IOException {
-
         Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
         Path actualNdjson = parentDir.resolve("actual.ndjson");
         Path expectedNdjson = parentDir.resolve("expected.ndjson");
@@ -260,6 +259,11 @@ public class CompatibilityTest {
 
         // exception: Cucumber JVM does not support named hooks
         if ("hooks-named".equals(testCase.getId())) {
+            return;
+        }
+        
+        // exception: Cucumber executes all hooks, but skipped hooks can skip a scenario
+        if ("hooks-skipped".equals(testCase.getId())) {
             return;
         }
 

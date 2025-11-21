@@ -77,9 +77,8 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         TestCaseState state = new TestCaseState(bus, executionId, this);
 
         for (HookTestStep before : beforeHooks) {
-            nextExecutionMode = before
-                    .run(this, bus, state, nextExecutionMode)
-                    .next(nextExecutionMode);
+            ExecutionMode current = before.run(this, bus, state, this.executionMode);
+            nextExecutionMode = nextExecutionMode.next(current);
         }
 
         for (PickleStepTestStep step : testSteps) {
@@ -89,9 +88,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         }
 
         for (HookTestStep after : afterHooks) {
-            nextExecutionMode = after
-                    .run(this, bus, state, executionMode)
-                    .next(nextExecutionMode);
+            after.run(this, bus, state, executionMode);
         }
 
         Instant stop = bus.getInstant();
