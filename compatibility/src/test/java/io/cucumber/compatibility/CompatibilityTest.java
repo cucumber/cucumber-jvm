@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -58,8 +57,8 @@ public class CompatibilityTest {
         attachment.put(Pattern.compile("/testCaseStartedId"), isA(TextNode.class));
         attachment.put(Pattern.compile("/testStepId"), isA(TextNode.class));
         // exception: timestamps and durations are not predictable
-        attachment.put(Pattern.compile("/timestamp/seconds"),  isA(NumericNode.class));
-        attachment.put(Pattern.compile("/timestamp/nanos"),  isA(NumericNode.class));
+        attachment.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
+        attachment.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
         exceptions.put("attachment", attachment);
 
         Map<Pattern, Matcher<?>> meta = new LinkedHashMap<>();
@@ -95,8 +94,8 @@ public class CompatibilityTest {
         gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/id"), isA(TextNode.class));
         gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/tags/.*/id"), isA(TextNode.class));
         gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/tags/.*/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/id"),  isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/steps/.*/id"),  isA(TextNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/id"), isA(TextNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/steps/.*/id"), isA(TextNode.class));
         // exception: the CCK uses relative paths as uris
         gherkinDocument.put(Pattern.compile("/uri"), isA(TextNode.class));
         exceptions.put("gherkinDocument", gherkinDocument);
@@ -211,12 +210,12 @@ public class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> suggestion = new LinkedHashMap<>();
         // exception: ids are not predictable
-        suggestion.put(Pattern.compile("/id"),  isA(TextNode.class));
-        suggestion.put(Pattern.compile("/pickleStepId"),  isA(TextNode.class));
+        suggestion.put(Pattern.compile("/id"), isA(TextNode.class));
+        suggestion.put(Pattern.compile("/pickleStepId"), isA(TextNode.class));
         // exception: language is implementation specific
-        suggestion.put(Pattern.compile("/snippets/.*/language"),  isA(TextNode.class));
+        suggestion.put(Pattern.compile("/snippets/.*/language"), isA(TextNode.class));
         // exception: code is implementation specific
-        suggestion.put(Pattern.compile("/snippets/.*/code"),  isA(TextNode.class));
+        suggestion.put(Pattern.compile("/snippets/.*/code"), isA(TextNode.class));
 
         exceptions.put("suggestion", suggestion);
 
@@ -266,9 +265,8 @@ public class CompatibilityTest {
 
         // exception: Cucumber JVM does not support retrying features
         if ("retry".equals(testCase.getId())
-            || "retry-ambiguous".equals(testCase.getId())
-            || "retry-pending".equals(testCase.getId())
-        ) {
+                || "retry-ambiguous".equals(testCase.getId())
+                || "retry-pending".equals(testCase.getId())) {
             return;
         }
 
@@ -314,7 +312,7 @@ public class CompatibilityTest {
             expectedEnvelopes.remove("testCaseFinished");
             expectedEnvelopes.remove("suggestion");
         }
-         
+
         if ("undefined".equals(testCase.getId())) {
             // bug: Cucumber JVM doesn't produce a suggestion that matches float
             ((ArrayNode) expectedEnvelopes.get("suggestion").get(3).get("snippets")).remove(1);
@@ -324,8 +322,6 @@ public class CompatibilityTest {
             // https://github.com/cucumber/cucumber-jvm/issues/3006
             expectedEnvelopes.remove("testCase");
         }
-        
-        
 
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
             actualEnvelopes,

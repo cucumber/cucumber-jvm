@@ -1,17 +1,10 @@
 package io.cucumber.compatibility.attachments;
 
-import io.cucumber.compatibility.Resources;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.When;
-import io.cucumber.messages.types.Attachment;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static io.cucumber.compatibility.Resources.read;
 
@@ -37,7 +30,7 @@ public class Attachments {
     @When("text with ANSI escapes is logged")
     public void theTextWithANSIEscapesIsLogged() {
         scenario.log(
-                "This displays a \u001b[31mr\u001b[0m\u001b[91ma\u001b[0m\u001b[33mi\u001b[0m\u001b[32mn\u001b[0m\u001b[34mb\u001b[0m\u001b[95mo\u001b[0m\u001b[35mw\u001b[0m");
+            "This displays a \u001b[31mr\u001b[0m\u001b[91ma\u001b[0m\u001b[33mi\u001b[0m\u001b[32mn\u001b[0m\u001b[34mb\u001b[0m\u001b[95mo\u001b[0m\u001b[35mw\u001b[0m");
     }
 
     @When("the following string is attached as {string}:")
@@ -59,7 +52,6 @@ public class Attachments {
         byte[] bytes = read("/io/cucumber/compatibilitykit/features/attachments/document.pdf");
         scenario.attach(bytes, "application/pdf", "renamed.pdf");
     }
-
 
     @When("a link to {string} is attached")
     public void aLinkToIsAttached(String uri) {

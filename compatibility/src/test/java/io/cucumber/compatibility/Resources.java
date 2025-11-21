@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class Resources {
-    
-    private Resources(){
+
+    private Resources() {
         // utility class
     }
 
