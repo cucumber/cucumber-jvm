@@ -1,15 +1,11 @@
 package io.cucumber.docstring;
 
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -53,34 +49,41 @@ class DocStringTypeRegistryDocStringConverterTest {
     void doc_string_is_not_converted() {
         DocString docString = DocString.create("{\"hello\":\"world\"}");
         DocString converted = converter.convert(docString, DocString.class);
-        assertThat(converted, is(docString));
+        assertThat(converted).isEqualTo(docString);
     }
 
     @Test
     void anonymous_to_string_uses_default() {
         DocString docString = DocString.create("hello world");
-        assertThat(converter.convert(docString, String.class), is("hello world"));
+        String converted = converter.convert(docString, String.class);
+        assertThat(converted).isEqualTo("hello world");
     }
 
     @Test
     void unregistered_to_string_uses_default() {
         DocString docString = DocString.create("hello world", "unregistered");
-        assertThat(converter.convert(docString, String.class), is("hello world"));
+        String converted = converter.convert(docString, String.class);
+        assertThat(converted).isEqualTo("hello world");
     }
 
     @Test
     void anonymous_to_json_node_uses_registered() {
         registry.defineDocStringType(jsonNodeForJson);
         DocString docString = DocString.create("{\"hello\":\"world\"}");
-        JsonNode converted = converter.convert(docString, JsonNode.class);
-        assertThat(converted.get("hello").textValue(), is("world"));
+        TreeNode converted = converter.convert(docString, JsonNode.class);
+        assertThat(converted)
+                .extracting(jsonNode -> jsonNode.get("hello"))
+                .extracting(JsonNode.class::cast)
+                .extracting(JsonNode::textValue)
+                .isEqualTo("world");
     }
 
     @Test
     void json_to_string_with_registered_json_for_json_node_uses_default() {
         registry.defineDocStringType(jsonNodeForJson);
         DocString docString = DocString.create("hello world", "json");
-        assertThat(converter.convert(docString, String.class), is("hello world"));
+        String converted = converter.convert(docString, String.class);
+        assertThat(converted).isEqualTo("hello world");
     }
 
     @Test
@@ -90,8 +93,8 @@ class DocStringTypeRegistryDocStringConverterTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> converter.convert(docString, Object.class));
-        assertThat(exception.getMessage(), is("" +
-                "It appears you did not register docstring type for 'json' or java.lang.Object"));
+        assertThat(exception)
+                .hasMessage("It appears you did not register docstring type for 'json' or java.lang.Object");
     }
 
     @Test
@@ -102,11 +105,11 @@ class DocStringTypeRegistryDocStringConverterTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> converter.convert(docString, String.class));
-        assertThat(exception.getMessage(),
-            is("Multiple converters found for type java.lang.String, and the content type 'json' " +
+        assertThat(exception).hasMessage(
+            "Multiple converters found for type java.lang.String, and the content type 'json' " +
                     "did not match any of the registered types [[anonymous], text]. Change the content type of the docstring "
                     +
-                    "or register a docstring type for 'json'"));
+                    "or register a docstring type for 'json'");
     }
 
     @Test
@@ -115,8 +118,8 @@ class DocStringTypeRegistryDocStringConverterTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
-        assertThat(exception.getMessage(), is("" +
-                "It appears you did not register docstring type for 'application/json' or com.fasterxml.jackson.databind.JsonNode"));
+        assertThat(exception).hasMessage(
+            "It appears you did not register docstring type for 'application/json' or com.fasterxml.jackson.databind.JsonNode");
     }
 
     @Test
@@ -125,8 +128,8 @@ class DocStringTypeRegistryDocStringConverterTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
-        assertThat(exception.getMessage(), is("" +
-                "It appears you did not register docstring type for com.fasterxml.jackson.databind.JsonNode"));
+        assertThat(exception).hasMessage(
+            "It appears you did not register docstring type for com.fasterxml.jackson.databind.JsonNode");
     }
 
     @Test
@@ -137,9 +140,9 @@ class DocStringTypeRegistryDocStringConverterTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
-        assertThat(exception.getMessage(), is("" +
-                "Multiple converters found for type com.fasterxml.jackson.databind.JsonNode, " +
-                "add one of the following content types to your docstring [json, xml]"));
+        assertThat(exception).hasMessage(
+            "Multiple converters found for type com.fasterxml.jackson.databind.JsonNode, " +
+                    "add one of the following content types to your docstring [json, xml]");
     }
 
     @Test
@@ -149,11 +152,12 @@ class DocStringTypeRegistryDocStringConverterTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
-        assertThat(exception.getMessage(), is(equalToCompressingWhiteSpace("" +
-                "'json' could not transform\n" +
-                " \"\"\"json\n" +
-                " {\"hello\":\"world\"}\n" +
-                " \"\"\"")));
+        assertThat(exception).hasMessage("""
+                'json' could not transform
+                ""\"json
+                {"hello":"world"}
+                ""\"
+                """);
     }
 
     @Test
@@ -166,9 +170,9 @@ class DocStringTypeRegistryDocStringConverterTest {
         DocString docStringYml = DocString.create("content: hello world", "yml");
 
         assertAll(
-            () -> assertThat(docStringJson.getContent(), equalTo(converter.convert(docStringJson, String.class))),
-            () -> assertThat(docStringXml.getContent(), equalTo(converter.convert(docStringXml, String.class))),
-            () -> assertThat(docStringYml.getContent(), equalTo(converter.convert(docStringYml, String.class))));
+            () -> assertThat(docStringJson.getContent()).isEqualTo(converter.convert(docStringJson, String.class)),
+            () -> assertThat(docStringXml.getContent()).isEqualTo(converter.convert(docStringXml, String.class)),
+            () -> assertThat(docStringYml.getContent()).isEqualTo(converter.convert(docStringYml, String.class)));
     }
 
     @Test
@@ -199,96 +203,20 @@ class DocStringTypeRegistryDocStringConverterTest {
         Meet expectedMeet = new Meet(docStringMeet.getContent());
         Leave expectedLeave = new Leave(docStringLeave.getContent());
 
-        assertThat(converter.convert(docStringGreet, Greet.class), equalTo(expectedGreet));
-        assertThat(converter.convert(docStringMeet, Meet.class), equalTo(expectedMeet));
-        assertThat(converter.convert(docStringLeave, Leave.class), equalTo(expectedLeave));
+        assertThat((Greet) converter.convert(docStringGreet, Greet.class)).isEqualTo(expectedGreet);
+        assertThat((Meet) converter.convert(docStringMeet, Meet.class)).isEqualTo(expectedMeet);
+        assertThat((Leave) converter.convert(docStringLeave, Leave.class)).isEqualTo(expectedLeave);
     }
 
-    private static class Greet {
-        private final String message;
-
-        Greet(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Greet greet = (Greet) o;
-            return Objects.equals(message, greet.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
-        }
+    private record Greet(String message) {
 
     }
 
-    private static class Meet {
-        private final String message;
-
-        Meet(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Meet meet = (Meet) o;
-            return Objects.equals(message, meet.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
-        }
+    private record Meet(String message) {
 
     }
 
-    private static class Leave {
-        private final String message;
-
-        Leave(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Leave leave = (Leave) o;
-            return Objects.equals(message, leave.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
-        }
-
+    private record Leave(String message) {
     }
 
 }

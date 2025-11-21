@@ -18,7 +18,7 @@
         <cucumber-json-formatter.version>0.4.0-SNAPSHOT</cucumber-json-formatter.version>
         <gherkin.version>38.0.0-SNAPSHOT</gherkin.version>
         <html-formatter.version>23.0.0-SNAPSHOT</html-formatter.version>
-        <junit-xml-formatter.version>0.11.0-SNAPSHOT</junit-xml-formatter.version>
+        <junit-xml-formatter.version>0.12.0-SNAPSHOT</junit-xml-formatter.version>
         <messages.version>32.0.0-SNAPSHOT</messages.version>
         <pretty-formatter.version>3.0.0-SNAPSHOT</pretty-formatter.version>
         <query.version>15.0.0-SNAPSHOT</query.version>

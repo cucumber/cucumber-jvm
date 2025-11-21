@@ -16,7 +16,8 @@
         <junit-jupiter.version>5.14.1</junit-jupiter.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <project.Automatic-Module-Name>io.cucumber.docstring</project.Automatic-Module-Name>
-        <hamcrest.version>3.0</hamcrest.version>
+        <assertj.version>3.27.6</assertj.version>
+        <jspecify.version>1.0.0</jspecify.version>
     </properties>
 
     <dependencyManagement>
@@ -42,6 +43,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-bom</artifactId>
+                <version>${assertj.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -54,7 +62,7 @@
         <dependency>
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>
-            <version>1.0.0</version>
+            <version>${jspecify.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -62,9 +70,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
