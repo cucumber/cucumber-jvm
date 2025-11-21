@@ -10,15 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Core] Add OS version to `Meta` message ([#3108](https://github.com/cucumber/cucumber-jvm/pull/3108))
-- [Core] Fix interpolated data tables and doc string arguments in Json report ([#29](https://github.com/cucumber/cucumber-json-formatter/pull/29))
 
+## [7.32.0] - 2025-11-21
 ### Changed
 - [Core] Update dependency io.cucumber:gherkin to v36.1.0
 - [Core] Update dependency io.cucumber:html-formatter to v22.1.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter to v0.11.0
 - [Core] Update dependency io.cucumber:pretty-formatter to v2.4.1
+
+### Fixed
+- [Core] Add OS version to `Meta` message ([#3108](https://github.com/cucumber/cucumber-jvm/pull/3108))
+- [Core] Fix interpolated data tables and doc string arguments in Json report ([#29](https://github.com/cucumber/cucumber-json-formatter/pull/29))
 
 ## [7.31.0] - 2025-10-27
 ### Added
@@ -551,7 +553,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.32.0...HEAD
+[7.32.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...v7.32.0
 [7.31.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...v7.31.0
 [7.30.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.29.0...v7.30.0
 [7.29.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.2...v7.29.0
