@@ -29,8 +29,9 @@ final class TestCase {
         this.id = testCaseResourceName.substring(testCaseResourceName.lastIndexOf('/') + 1);
     }
 
-    static List<TestCase> testCases() throws IOException {
-        List<Resource> expectedFiles = findAllResourcesInPackage(TEST_CASES_PACKAGE, resource -> resource.getName().endsWith(".ndjson"));
+    static List<TestCase> testCases() {
+        List<Resource> expectedFiles = findAllResourcesInPackage(TEST_CASES_PACKAGE,
+            resource -> resource.getName().endsWith(".ndjson"));
         List<TestCase> testCases = new ArrayList<>();
         for (Resource expected : expectedFiles) {
             testCases.add(new TestCase(expected));

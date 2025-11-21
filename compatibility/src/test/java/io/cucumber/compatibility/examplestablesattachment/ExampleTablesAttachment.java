@@ -5,9 +5,8 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.When;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import static io.cucumber.compatibility.Resources.read;
 
 public class ExampleTablesAttachment {
 
@@ -20,18 +19,14 @@ public class ExampleTablesAttachment {
 
     @When("a JPEG image is attached")
     public void aJPEGImageIsAttached() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/cucumber.jpeg");
-        byte[] bytes = Files.readAllBytes(path);
-        String fileName = path.getFileName().toString();
-        scenario.attach(bytes, "image/jpeg", fileName);
+        byte[] bytes = read("/io/cucumber/compatibilitykit/features/examples-tables-attachment/cucumber.jpeg");
+        scenario.attach(bytes, "image/jpeg", "cucumber.jpeg");
     }
 
     @When("a PNG image is attached")
     public void aPNGImageIsAttached() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/cucumber.png");
-        byte[] bytes = Files.readAllBytes(path);
-        String fileName = path.getFileName().toString();
-        scenario.attach(bytes, "image/png", fileName);
+        byte[] bytes = read("/io/cucumber/compatibilitykit/features/examples-tables-attachment/cucumber.png");
+        scenario.attach(bytes, "image/png", "cucumber.jpeg");
     }
 
 }
