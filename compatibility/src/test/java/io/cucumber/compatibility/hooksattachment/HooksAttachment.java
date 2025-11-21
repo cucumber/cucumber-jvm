@@ -6,9 +6,8 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.When;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import static io.cucumber.compatibility.Resources.read;
 
 public class HooksAttachment {
 
@@ -27,9 +26,7 @@ public class HooksAttachment {
     }
 
     private static void attachImage(Scenario scenario) throws IOException {
-        Path path = Paths.get("src/test/resources/features/hooks-attachment/cucumber.svg");
-        byte[] bytes = Files.readAllBytes(path);
-
+        byte[] bytes = read("/io/cucumber/compatibilitykit/features/hooks-attachment/cucumber.svg");
         scenario.attach(bytes, "image/svg+xml", null);
     }
 

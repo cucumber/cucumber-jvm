@@ -97,9 +97,8 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<JsonNode> {
                         .appendText(pointer.toString()).appendText(" ")
                         .appendText(actual.toString()).appendText(" ");
                 // Copy and paste needed to suppress this finding.
-                // System.out.printf("%s.put(Pattern.compile(\"%s\"),
-                // isA(%s.class));%n", messageType, key,
-                // actual.getClass().getSimpleName());
+                System.out.printf("%s.put(Pattern.compile(\"%s\"),  isA(%s.class));%n", messageType, pointer,
+                    actual.getClass().getSimpleName());
                 return false;
             }
         }

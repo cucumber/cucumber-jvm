@@ -4,22 +4,31 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.order.PickleOrder;
+import io.cucumber.core.order.StandardPickleOrders;
 import io.cucumber.core.plugin.MessageFormatter;
 import io.cucumber.core.runtime.Runtime;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.io.ResourceFilter;
+import org.junit.platform.commons.support.ResourceSupport;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -28,9 +37,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.newOutputStream;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Comparator.comparing;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,14 +52,37 @@ import static org.hamcrest.core.Is.isA;
 
 public class CompatibilityTest {
 
-    private static final Map<String, Map<Pattern, Matcher<?>>> exceptions = createExceptions();
+    private static final List<String> unsupportedTestCases = Arrays.asList(
+        // exception: not applicable
+        "test-run-exception",
+        // exception: Cucumber JVM does not support named hooks
+        "hooks-named",
+        // exception: Cucumber executes all hooks,
+        // but skipped hooks can skip a scenario
+        "hooks-skipped",
+        // exception: Cucumber JVM does not support markdown features
+        "markdown",
+        // exception: Cucumber JVM does not support retrying features
+        "retry",
+        "retry-ambiguous",
+        "retry-pending",
+        // exception: Cucumber JVM does not support messages for global hooks
+        "global-hooks",
+        "global-hooks-afterall-error",
+        "global-hooks-attachments",
+        "global-hooks-beforeall-error");
 
-    private static Map<String, Map<Pattern, Matcher<?>>> createExceptions() {
+    private static final Map<String, Map<Pattern, Matcher<?>>> divergingExpectations = createDivergingExpectations();
+
+    private static Map<String, Map<Pattern, Matcher<?>>> createDivergingExpectations() {
         Map<String, Map<Pattern, Matcher<?>>> exceptions = new LinkedHashMap<>();
 
         Map<Pattern, Matcher<?>> attachment = new LinkedHashMap<>();
         attachment.put(Pattern.compile("/testCaseStartedId"), isA(TextNode.class));
         attachment.put(Pattern.compile("/testStepId"), isA(TextNode.class));
+        // exception: timestamps and durations are not predictable
+        attachment.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
+        attachment.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
         exceptions.put("attachment", attachment);
 
         Map<Pattern, Matcher<?>> meta = new LinkedHashMap<>();
@@ -76,15 +111,17 @@ public class CompatibilityTest {
         exceptions.put("source", source);
 
         Map<Pattern, Matcher<?>> gherkinDocument = new LinkedHashMap<>();
+        // exception: ids are not predictable
         gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/id"), isA(TextNode.class));
         gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/steps/.*/id"), isA(TextNode.class));
         gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/examples/.*/id"), isA(TextNode.class));
         gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/id"), isA(TextNode.class));
         gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/tags/.*/id"), isA(TextNode.class));
         gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/tags/.*/id"), isA(TextNode.class));
-
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/id"), isA(TextNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/steps/.*/id"), isA(TextNode.class));
+        // exception: the CCK uses relative paths as uris
         gherkinDocument.put(Pattern.compile("/uri"), isA(TextNode.class));
-
         exceptions.put("gherkinDocument", gherkinDocument);
 
         Map<Pattern, Matcher<?>> pickle = new LinkedHashMap<>();
@@ -94,7 +131,6 @@ public class CompatibilityTest {
         pickle.put(Pattern.compile("/astNodeIds/.*"), isA(TextNode.class));
         pickle.put(Pattern.compile("/steps/.*/id"), isA(TextNode.class));
         pickle.put(Pattern.compile("/steps/.*/astNodeIds/.*"), isA(TextNode.class));
-
         pickle.put(Pattern.compile("/tags/.*/astNodeId"), isA(TextNode.class));
         pickle.put(Pattern.compile("/name"), isA(TextNode.class));
         exceptions.put("pickle", pickle);
@@ -196,50 +232,37 @@ public class CompatibilityTest {
         parameterType.put(Pattern.compile("/sourceReference/location/line"), isA(MissingNode.class));
         exceptions.put("parameterType", parameterType);
 
+        Map<Pattern, Matcher<?>> suggestion = new LinkedHashMap<>();
+        // exception: ids are not predictable
+        suggestion.put(Pattern.compile("/id"), isA(TextNode.class));
+        suggestion.put(Pattern.compile("/pickleStepId"), isA(TextNode.class));
+        // exception: language is implementation specific
+        suggestion.put(Pattern.compile("/snippets/.*/language"), isA(TextNode.class));
+        // exception: code is implementation specific
+        suggestion.put(Pattern.compile("/snippets/.*/code"), isA(TextNode.class));
+
+        exceptions.put("suggestion", suggestion);
+
         return exceptions;
     }
 
+    static List<TestCase> acceptance() {
+        ResourceFilter ndjson = ResourceFilter.of(resource -> resource.getName().endsWith(".ndjson"));
+        return ResourceSupport.findAllResourcesInPackage(TestCase.TEST_CASES_PACKAGE, ndjson)
+                .stream()
+                .map(TestCase::new)
+                .filter(testCase -> !unsupportedTestCases.contains(testCase.getId()))
+                .sorted(comparing(TestCase::getId))
+                .collect(Collectors.toList());
+    }
+
     @ParameterizedTest
-    @MethodSource("io.cucumber.compatibility.TestCase#testCases")
-    void produces_expected_output_for(TestCase testCase) throws IOException {
-        Path parentDir = Files.createDirectories(Paths.get("target", "messages",
-            testCase.getId()));
-        Path outputNdjson = parentDir.resolve("out.ndjson");
-
-        try {
-            Runtime.builder()
-                    .withRuntimeOptions(new RuntimeOptionsBuilder()
-                            .addGlue(testCase.getGlue())
-                            .addFeature(testCase.getFeatures()).build())
-                    .withAdditionalPlugins(
-                        new MessageFormatter(newOutputStream(outputNdjson)))
-                    .build()
-                    .run();
-        } catch (Exception e) {
-            // exception: Scenario with unknown parameter types fails by
-            // throwing an exceptions
-            if (!"unknown-parameter-type".equals(testCase.getId())) {
-                throw e;
-            }
-        }
-
-        // exception: Cucumber JVM does not support named hooks
-        if ("hooks-named".equals(testCase.getId())) {
-            return;
-        }
-
-        // exception: Cucumber JVM does not support markdown features
-        if ("markdown".equals(testCase.getId())) {
-            return;
-        }
-
-        // exception: Cucumber JVM does not support retrying features
-        if ("retry".equals(testCase.getId())) {
-            return;
-        }
+    @MethodSource("acceptance")
+    void test(TestCase testCase) throws IOException {
+        Path actualNdjson = writeNdjsonReport(testCase);
 
         List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
-        List<JsonNode> actual = readAllMessages(outputNdjson);
+        List<JsonNode> actual = readAllMessages(Files.newInputStream(actualNdjson));
 
         Map<String, List<JsonNode>> expectedEnvelopes = openEnvelopes(expected);
         Map<String, List<JsonNode>> actualEnvelopes = openEnvelopes(actual);
@@ -268,6 +291,17 @@ public class CompatibilityTest {
             expectedEnvelopes.remove("testStepStarted");
             expectedEnvelopes.remove("testStepFinished");
             expectedEnvelopes.remove("testCaseFinished");
+            expectedEnvelopes.remove("suggestion");
+        }
+
+        if ("undefined".equals(testCase.getId())) {
+            // bug: Cucumber JVM doesn't produce a suggestion that matches float
+            ((ArrayNode) expectedEnvelopes.get("suggestion").get(3).get("snippets")).remove(1);
+        }
+        if ("ambiguous".equals(testCase.getId())) {
+            // bug: Cucumber JVM doesn't include the ambiguous step definitions
+            // https://github.com/cucumber/cucumber-jvm/issues/3006
+            expectedEnvelopes.remove("testCase");
         }
 
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
@@ -276,14 +310,44 @@ public class CompatibilityTest {
                 containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
     }
 
-    private static List<JsonNode> readAllMessages(Path output) throws IOException {
+    private static Path writeNdjsonReport(TestCase testCase) throws IOException {
+        Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
+        Path actualNdjson = parentDir.resolve("actual.ndjson");
+        Path expectedNdjson = parentDir.resolve("expected.ndjson");
+        Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
+
+        try {
+            PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
+            if ("multiple-features-reversed".equals(testCase.getId())) {
+                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
+            }
+            Runtime.builder()
+                    .withRuntimeOptions(new RuntimeOptionsBuilder()
+                            .addGlue(testCase.getGlue())
+                            .setPickleOrder(pickleOrder)
+                            .addFeature(testCase.getFeatures()).build())
+                    .withAdditionalPlugins(
+                        new MessageFormatter(newOutputStream(actualNdjson)))
+                    .build()
+                    .run();
+        } catch (Exception e) {
+            // exception: Scenario with unknown parameter types fails by
+            // throwing an exceptions
+            if (!"unknown-parameter-type".equals(testCase.getId())) {
+                throw e;
+            }
+        }
+        return actualNdjson;
+    }
+
+    private static List<JsonNode> readAllMessages(InputStream output) throws IOException {
         List<JsonNode> expectedEnvelopes = new ArrayList<>();
 
         ObjectMapper mapper = new ObjectMapper()
                 .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        Files.readAllLines(output).forEach(s -> {
+        readAllLines(output).forEach(s -> {
             try {
                 expectedEnvelopes.add(mapper.readTree(s));
             } catch (JsonProcessingException e) {
@@ -292,6 +356,17 @@ public class CompatibilityTest {
         });
 
         return expectedEnvelopes;
+    }
+
+    public static List<String> readAllLines(InputStream is) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, UTF_8))) {
+            List<String> lines = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+            return lines;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -329,7 +404,7 @@ public class CompatibilityTest {
     private static List<Matcher<? super JsonNode>> aComparableMessage(String messageType, List<JsonNode> messages) {
         return messages.stream()
                 .map(jsonNode -> new AComparableMessage(messageType, jsonNode,
-                    exceptions.getOrDefault(messageType, emptyMap())))
+                    divergingExpectations.getOrDefault(messageType, emptyMap())))
                 .collect(Collectors.toList());
     }
 
