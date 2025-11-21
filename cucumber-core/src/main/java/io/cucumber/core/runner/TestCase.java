@@ -78,7 +78,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
 
         for (HookTestStep before : beforeHooks) {
             nextExecutionMode = before
-                    .run(this, bus, state, nextExecutionMode)
+                    .run(this, bus, state, executionMode)
                     .next(nextExecutionMode);
         }
 
