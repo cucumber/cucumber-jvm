@@ -10,13 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Core] Add OS version to `Meta` message ([#3108](https://github.com/cucumber/cucumber-jvm/pull/3108))
+- [Core] Fix interpolated data tables and doc string arguments in Json report ([#29](https://github.com/cucumber/cucumber-json-formatter/pull/29))
+
+### Changed
+- [Core] Update dependency io.cucumber:gherkin to v36.1.0
+- [Core] Update dependency io.cucumber:html-formatter to v22.1.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.11.0
+- [Core] Update dependency io.cucumber:pretty-formatter to v2.4.1
 
 ## [7.31.0] - 2025-10-27
 ### Added
 - [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
-
-### Fixed
-- [Core] Add OS version to `Meta` message ([#3108](https://github.com/cucumber/cucumber-jvm/pull/3108))
 
 ### Changed
 - [Core] Update dependency io.cucumber:ci-environment to v12.0.0
