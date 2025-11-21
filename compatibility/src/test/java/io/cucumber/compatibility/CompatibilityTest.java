@@ -261,8 +261,9 @@ public class CompatibilityTest {
         if ("hooks-named".equals(testCase.getId())) {
             return;
         }
-        
-        // exception: Cucumber executes all hooks, but skipped hooks can skip a scenario
+
+        // exception: Cucumber executes all hooks, but skipped hooks can skip a
+        // scenario
         if ("hooks-skipped".equals(testCase.getId())) {
             return;
         }
