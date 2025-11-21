@@ -450,7 +450,7 @@ class DataTableTest {
         var expected = List.of(Map.of(
             "1", "2",
             "100", "1000"));
-        assertEquals(singletonList(expected), table.asMaps());
+        assertEquals(expected, table.asMaps());
     }
 
     @Test

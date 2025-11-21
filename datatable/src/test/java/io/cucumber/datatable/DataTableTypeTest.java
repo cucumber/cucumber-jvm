@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DataTableTypeTest {
 
@@ -28,12 +30,13 @@ class DataTableTypeTest {
     void shouldTransformATableEntry() {
         DataTableType tableType = new DataTableType(
             Place.class,
-            (Map<String, String> entry) -> new Place(entry.get("place")));
+            (Map<String, String> entry) -> new Place(requireNonNull(entry.get("place"))));
 
         String here = "here";
         List<Place> transform = (List<Place>) tableType
                 .transform(Arrays.asList(singletonList("place"), singletonList(here)));
 
+        assertNotNull(transform);
         assertEquals(1, transform.size());
         assertEquals(here, transform.get(0).name);
     }

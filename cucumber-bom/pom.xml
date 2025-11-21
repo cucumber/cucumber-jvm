@@ -16,10 +16,10 @@
         <ci-environment.version>13.0.0-SNAPSHOT</ci-environment.version>
         <cucumber-expressions.version>19.0.0-SNAPSHOT</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.4.0-SNAPSHOT</cucumber-json-formatter.version>
-        <gherkin.version>37.0.0-SNAPSHOT</gherkin.version>
+        <gherkin.version>38.0.0-SNAPSHOT</gherkin.version>
         <html-formatter.version>23.0.0-SNAPSHOT</html-formatter.version>
         <junit-xml-formatter.version>0.11.0-SNAPSHOT</junit-xml-formatter.version>
-        <messages.version>31.0.0-SNAPSHOT</messages.version>
+        <messages.version>32.0.0-SNAPSHOT</messages.version>
         <pretty-formatter.version>3.0.0-SNAPSHOT</pretty-formatter.version>
         <query.version>15.0.0-SNAPSHOT</query.version>
         <tag-expressions.version>9.0.0-SNAPSHOT</tag-expressions.version>
