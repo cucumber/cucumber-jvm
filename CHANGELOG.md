@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:html-formatter to v22.1.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter to v0.11.0
 - [Core] Update dependency io.cucumber:pretty-formatter to v2.4.1
+- [Java] Any custom method declared as `@DefaultParameterTransformer` can now have a `Locale` argument to optionally consider the locale declaration of the current Feature ([cucumber/cucumber-expressions#376](https://github.com/cucumber/cucumber-expressions/issues/376) Stefan Gasterstädt)
 
 ### Fixed
 - [Core] Add OS version to `Meta` message ([#3108](https://github.com/cucumber/cucumber-jvm/pull/3108))

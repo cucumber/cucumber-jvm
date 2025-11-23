@@ -112,6 +112,8 @@ class JavaDefaultParameterTransformerDefinitionTest {
                 "A @DefaultParameterTransformer annotated method must have one of these signatures:\n" +
                 " * public Object defaultDataTableEntry(String fromValue, Type toValueType)\n" +
                 " * public Object defaultDataTableEntry(Object fromValue, Type toValueType)\n" +
+                " * public Object defaultDataTableEntry(Object fromValue, Type toValueType, Locale locale)\n" +
+                " * public Object defaultDataTableEntry(Object fromValue, Type toValueType, Locale locale)\n" +
                 "at io.cucumber.java.JavaDefaultParameterTransformerDefinitionTest.transforms_string_to_void(java.lang.String,java.lang.reflect.Type)"));
     }
 

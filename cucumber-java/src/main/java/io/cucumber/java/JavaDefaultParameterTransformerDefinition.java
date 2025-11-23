@@ -59,6 +59,8 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
                 .addAnnotation(DefaultParameterTransformer.class)
                 .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")
                 .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
+                .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType, Locale locale)")
+                .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType, Locale locale)")
                 .build();
     }
 
