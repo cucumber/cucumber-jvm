@@ -79,7 +79,7 @@ class JavaDefaultParameterTransformerDefinitionTest {
     }
 
     public Object one_argument(String fromValue) {
-        return "one_arguments";
+        return "one_argument";
     }
 
     public Object three_arguments(String fromValue, Type toValueType, Object extra) {
