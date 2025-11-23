@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -33,8 +34,32 @@ class JavaDefaultParameterTransformerDefinitionTest {
         assertThat(transformed, is("transform_string_to_type"));
     }
 
+    @Test
+    void can_transform_string_to_type_ignoring_locale() throws Throwable {
+        Method method = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("transform_string_to_type",
+            String.class, Type.class);
+        JavaDefaultParameterTransformerDefinition definition = new JavaDefaultParameterTransformerDefinition(method,
+            lookup);
+        Object transformed = definition.parameterByTypeTransformer(Locale.ENGLISH).transform("something", String.class);
+        assertThat(transformed, is("transform_string_to_type"));
+    }
+
     public Object transform_string_to_type(String fromValue, Type toValueType) {
         return "transform_string_to_type";
+    }
+
+    @Test
+    void can_transform_string_to_type_using_locale() throws Throwable {
+        Method method = JavaDefaultParameterTransformerDefinitionTest.class.getMethod(
+            "transform_string_to_type_with_locale", String.class, Type.class, Locale.class);
+        JavaDefaultParameterTransformerDefinition definition = new JavaDefaultParameterTransformerDefinition(method,
+            lookup);
+        Object transformed = definition.parameterByTypeTransformer(Locale.ENGLISH).transform("something", String.class);
+        assertThat(transformed, is("transform_string_to_type_with_locale_en"));
+    }
+
+    public Object transform_string_to_type_with_locale(String fromValue, Type toValueType, Locale locale) {
+        return "transform_string_to_type_with_locale_" + locale.getLanguage();
     }
 
     @Test
@@ -47,8 +72,34 @@ class JavaDefaultParameterTransformerDefinitionTest {
         assertThat(transformed, is("transform_object_to_type"));
     }
 
+    @Test
+    void can_transform_object_to_type_ignoring_locale() throws Throwable {
+        Method method = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("transform_object_to_type",
+            Object.class, Type.class);
+        JavaDefaultParameterTransformerDefinition definition = new JavaDefaultParameterTransformerDefinition(method,
+            lookup);
+        String transformed = (String) definition.parameterByTypeTransformer(Locale.ENGLISH).transform("something",
+            String.class);
+        assertThat(transformed, is("transform_object_to_type"));
+    }
+
     public Object transform_object_to_type(Object fromValue, Type toValueType) {
         return "transform_object_to_type";
+    }
+
+    @Test
+    void can_transform_object_to_type_using_locale() throws Throwable {
+        Method method = JavaDefaultParameterTransformerDefinitionTest.class.getMethod(
+            "transform_object_to_type_with_locale", Object.class, Type.class, Locale.class);
+        JavaDefaultParameterTransformerDefinition definition = new JavaDefaultParameterTransformerDefinition(method,
+            lookup);
+        String transformed = (String) definition.parameterByTypeTransformer(Locale.ENGLISH).transform("something",
+            String.class);
+        assertThat(transformed, is("transform_object_to_type_with_locale_en"));
+    }
+
+    public Object transform_object_to_type_with_locale(Object fromValue, Type toValueType, Locale locale) {
+        return "transform_object_to_type_with_locale_" + locale.getLanguage();
     }
 
     @Test
@@ -68,22 +119,22 @@ class JavaDefaultParameterTransformerDefinitionTest {
     }
 
     @Test
-    void must_have_two_arguments() throws Throwable {
+    void must_have_two_or_three_arguments() throws Throwable {
         Method oneArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("one_argument", String.class);
         assertThrows(InvalidMethodSignatureException.class,
             () -> new JavaDefaultParameterTransformerDefinition(oneArg, lookup));
-        Method threeArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("three_arguments", String.class,
+        Method fourArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("four_arguments", String.class,
             Type.class, Object.class);
         assertThrows(InvalidMethodSignatureException.class,
-            () -> new JavaDefaultParameterTransformerDefinition(threeArg, lookup));
+            () -> new JavaDefaultParameterTransformerDefinition(fourArg, lookup));
     }
 
     public Object one_argument(String fromValue) {
         return "one_argument";
     }
 
-    public Object three_arguments(String fromValue, Type toValueType, Object extra) {
-        return "three_arguments";
+    public Object four_arguments(String fromValue, Type toValueType, Locale locale, Object extra) {
+        return "four_arguments";
     }
 
     @Test
@@ -92,10 +143,18 @@ class JavaDefaultParameterTransformerDefinitionTest {
             Type.class);
         assertThrows(InvalidMethodSignatureException.class,
             () -> new JavaDefaultParameterTransformerDefinition(twoArg, lookup));
+        Method threeArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("map_as_from_value_with_locale",
+            Map.class, Type.class, Locale.class);
+        assertThrows(InvalidMethodSignatureException.class,
+            () -> new JavaDefaultParameterTransformerDefinition(threeArg, lookup));
     }
 
     public Object map_as_from_value(Map<String, String> fromValue, Type toValueType) {
         return "map_as_from_value";
+    }
+
+    public Object map_as_from_value_with_locale(Map<String, String> fromValue, Type toValueType, Locale locale) {
+        return "map_as_from_value_with_locale";
     }
 
     @Test
@@ -104,10 +163,18 @@ class JavaDefaultParameterTransformerDefinitionTest {
             String.class, Object.class);
         assertThrows(InvalidMethodSignatureException.class,
             () -> new JavaDefaultParameterTransformerDefinition(twoArg, lookup));
+        Method threeArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod(
+            "object_as_to_value_type_with_locale", String.class, Object.class, Locale.class);
+        assertThrows(InvalidMethodSignatureException.class,
+            () -> new JavaDefaultParameterTransformerDefinition(threeArg, lookup));
     }
 
     public Object object_as_to_value_type(String fromValue, Object toValueType) {
         return "object_as_to_value_type";
+    }
+
+    public Object object_as_to_value_type_with_locale(String fromValue, Object toValueType, Locale locale) {
+        return "object_as_to_value_type_with_locale";
     }
 
 }

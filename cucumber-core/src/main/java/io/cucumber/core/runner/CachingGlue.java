@@ -277,7 +277,7 @@ final class CachingGlue implements Glue {
 
         if (defaultParameterTransformers.size() == 1) {
             DefaultParameterTransformerDefinition definition = defaultParameterTransformers.get(0);
-            ParameterByTypeTransformer transformer = definition.parameterByTypeTransformer();
+            ParameterByTypeTransformer transformer = definition.parameterByTypeTransformer(locale);
             stepTypeRegistry.setDefaultParameterTransformer(transformer);
         } else if (defaultParameterTransformers.size() > 1) {
             throw new DuplicateDefaultParameterTransformers(defaultParameterTransformers);
