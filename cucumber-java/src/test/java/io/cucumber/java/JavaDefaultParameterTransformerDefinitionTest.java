@@ -88,10 +88,10 @@ class JavaDefaultParameterTransformerDefinitionTest {
 
     @Test
     void must_have_string_or_object_as_from_value() throws Throwable {
-        Method threeArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("map_as_from_value", Map.class,
+        Method twoArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("map_as_from_value", Map.class,
             Type.class);
         assertThrows(InvalidMethodSignatureException.class,
-            () -> new JavaDefaultParameterTransformerDefinition(threeArg, lookup));
+            () -> new JavaDefaultParameterTransformerDefinition(twoArg, lookup));
     }
 
     public Object map_as_from_value(Map<String, String> fromValue, Type toValueType) {
@@ -100,10 +100,10 @@ class JavaDefaultParameterTransformerDefinitionTest {
 
     @Test
     void must_have_type_as_to_value_type() throws Throwable {
-        Method threeArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("object_as_to_value_type",
+        Method twoArg = JavaDefaultParameterTransformerDefinitionTest.class.getMethod("object_as_to_value_type",
             String.class, Object.class);
         assertThrows(InvalidMethodSignatureException.class,
-            () -> new JavaDefaultParameterTransformerDefinition(threeArg, lookup));
+            () -> new JavaDefaultParameterTransformerDefinition(twoArg, lookup));
     }
 
     public Object object_as_to_value_type(String fromValue, Object toValueType) {
