@@ -22,10 +22,8 @@ import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
@@ -42,7 +40,6 @@ public final class Runner {
     private final Collection<? extends Backend> backends;
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
-    private final Map<String, Locale> localeCache = new HashMap<>();
     private List<SnippetGenerator> snippetGenerators;
 
     public Runner(
@@ -84,7 +81,7 @@ public final class Runner {
 
     private Locale localeForPickle(Pickle pickle) {
         String language = pickle.getLanguage();
-        return localeCache.computeIfAbsent(language, (lang) -> new Locale(language));
+        return new Locale.Builder().setLanguage(language).build();
     }
 
     public void runBeforeAllHooks() {
