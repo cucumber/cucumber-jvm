@@ -12,6 +12,7 @@ import io.cucumber.tagexpressions.Expression;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -22,6 +23,7 @@ public final class RuntimeOptionsBuilder {
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
+    private final Set<String> parsedGlueClasses = new HashSet<>();
     private final List<Options.Plugin> plugins = new ArrayList<>();
     private List<FeatureWithLines> parsedRerunPaths = null;
     private Integer parsedThreads = null;
@@ -56,6 +58,12 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder addGlue(URI glue) {
         parsedGlue.add(glue);
+        return this;
+    }
+
+    public RuntimeOptionsBuilder addGlueClass(String glueClassName) {
+        // TODO: Support Class<?> ?
+        parsedGlueClasses.add(glueClassName);
         return this;
     }
 
@@ -126,6 +134,10 @@ public final class RuntimeOptionsBuilder {
 
         if (!this.parsedGlue.isEmpty()) {
             runtimeOptions.setGlue(this.parsedGlue);
+        }
+
+        if (!this.parsedGlueClasses.isEmpty()) {
+            runtimeOptions.setGlueClasses(this.parsedGlueClasses);
         }
 
         runtimeOptions.addPlugins(this.plugins);

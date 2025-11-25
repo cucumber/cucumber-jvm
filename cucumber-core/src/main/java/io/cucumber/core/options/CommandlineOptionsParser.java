@@ -30,6 +30,7 @@ import static io.cucumber.core.cli.CommandlineOptions.COUNT;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE;
+import static io.cucumber.core.cli.CommandlineOptions.GLUE_CLASS;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.HELP;
 import static io.cucumber.core.cli.CommandlineOptions.HELP_SHORT;
@@ -125,6 +126,9 @@ public final class CommandlineOptionsParser {
                 String gluePath = removeArgFor(arg, args);
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
+            } else if (arg.equals(GLUE_CLASS)) {
+                String glueClassName = removeArgFor(arg, args);
+                parsedOptions.addGlueClass(glueClassName);
             } else if (arg.equals(TAGS) || arg.equals(TAGS_SHORT)) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals(PUBLISH)) {
