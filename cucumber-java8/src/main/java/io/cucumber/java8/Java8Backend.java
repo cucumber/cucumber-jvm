@@ -53,6 +53,7 @@ final class Java8Backend implements Backend {
     private void loadGlueClassesImpl(Glue glue, Set<Class<?>> glueClasses) {
         this.glue = new ClosureAwareGlueRegistry(glue);
         glueClasses.stream()
+                // Filter Java8 style glue (lambdas)
                 .filter(aClass -> !LambdaGlue.class.equals(aClass) && LambdaGlue.class.isAssignableFrom(aClass))
                 .map(aClass -> (Class<? extends LambdaGlue>) aClass.asSubclass(LambdaGlue.class))
                 .filter(glueClass -> !glueClass.isInterface())
@@ -64,7 +65,6 @@ final class Java8Backend implements Backend {
         return gluePaths.stream()
                 .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
-                // Scan for Java8 style glue (lambdas)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
