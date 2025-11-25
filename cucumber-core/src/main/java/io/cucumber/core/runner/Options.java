@@ -6,7 +6,9 @@ import io.cucumber.core.snippets.SnippetType;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public interface Options {
 
@@ -22,4 +24,7 @@ public interface Options {
     @Nullable
     Class<? extends UuidGenerator> getUuidGeneratorClass();
 
+    default Set<String> getGlueClasses() {
+        return Collections.emptySet();
+    }
 }
