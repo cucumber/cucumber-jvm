@@ -162,8 +162,8 @@ class TestCaseStateResultTest {
 
         @Override
         public boolean matches(EmbedEvent argument) {
-            return (argument != null &&
-                    Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType));
+            return argument != null &&
+                    Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType);
         }
 
     }
@@ -178,7 +178,7 @@ class TestCaseStateResultTest {
 
         @Override
         public boolean matches(WriteEvent argument) {
-            return (argument != null && argument.getText().equals(text));
+            return argument != null && argument.getText().equals(text);
         }
 
     }

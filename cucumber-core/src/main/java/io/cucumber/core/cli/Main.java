@@ -24,8 +24,12 @@ import java.util.Optional;
  * {@link CommandlineOptions}.
  */
 @API(status = API.Status.STABLE)
-public class Main {
+public final class Main {
 
+    private Main(){
+        /* no-op */
+    }
+    
     public static void main(String... argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
         System.exit(exitStatus);

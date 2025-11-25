@@ -617,7 +617,9 @@ class CachingGlueTest {
         assertThat(stepTypeRegistry1 == stepTypeRegistry2, is(true));
     }
 
-    private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
+    private static final class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
+
+        private boolean disposed;
 
         MockedScenarioScopedStepDefinition(String pattern, Type... types) {
             super(pattern, types);
@@ -626,7 +628,6 @@ class CachingGlueTest {
         MockedScenarioScopedStepDefinition(String pattern, boolean transposed, Type... types) {
             super(pattern, transposed, types);
         }
-        private boolean disposed;
 
         @Override
         public void dispose() {
@@ -639,7 +640,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
+    private static final class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
 
         @Override
         public DataTableType dataTableType() {
@@ -669,7 +670,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
+    private static final class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
 
         @Override
         public ParameterType<?> parameterType() {
@@ -699,7 +700,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedParameterTypeDefinitionWithSourceReference extends MockedParameterTypeDefinition {
+    private static final class MockedParameterTypeDefinitionWithSourceReference extends MockedParameterTypeDefinition {
         @Override
         public Optional<SourceReference> getSourceReference() {
             return Optional.of(SourceReference.fromStackTraceElement(new StackTraceElement(
@@ -710,7 +711,7 @@ class CachingGlueTest {
         }
     }
 
-    private static class MockedHookDefinition implements HookDefinition {
+    private static final class MockedHookDefinition implements HookDefinition {
 
         private final int order;
 
@@ -749,7 +750,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
+    private static final class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
         private final int order;
 
@@ -815,7 +816,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDefaultParameterTransformer
+    private static final class MockedDefaultParameterTransformer
             implements DefaultParameterTransformerDefinition, ScenarioScoped {
 
         @Override
@@ -846,7 +847,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDefaultDataTableCellTransformer
+    private static final class MockedDefaultDataTableCellTransformer
             implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
 
         @Override
@@ -877,7 +878,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDefaultDataTableEntryTransformer
+    private static final class MockedDefaultDataTableEntryTransformer
             implements DefaultDataTableEntryTransformerDefinition, ScenarioScoped {
 
         @Override
@@ -913,7 +914,7 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {
+    private static final class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {
 
         @Override
         public DocStringType docStringType() {

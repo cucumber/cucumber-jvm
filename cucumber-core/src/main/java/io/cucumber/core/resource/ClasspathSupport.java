@@ -70,7 +70,8 @@ public final class ClasspathSupport {
     static String determinePackageName(Path baseDir, String basePackageName, Path classFile) {
         String subPackageName = determineSubpackageName(baseDir, classFile);
         return of(basePackageName, subPackageName)
-                .filter(value -> !value.isEmpty()) // default package
+                // default package
+                .filter(value -> !value.isEmpty()) 
                 .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
@@ -84,7 +85,8 @@ public final class ClasspathSupport {
         String subPackageName = determineSubpackagePath(baseDir, resource);
         String resourceName = resource.getFileName().toString();
         String classpathResourcePath = of(basePackagePath, subPackageName, resourceName)
-                .filter(value -> !value.isEmpty()) // default package .
+                // default package .
+                .filter(value -> !value.isEmpty()) 
                 .collect(joining(RESOURCE_SEPARATOR_STRING));
         return classpathResourceUri(classpathResourcePath);
     }

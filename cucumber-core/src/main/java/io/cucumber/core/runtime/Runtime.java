@@ -112,7 +112,7 @@ public final class Runtime {
         return exitStatus.exitStatus();
     }
 
-    public static class Builder {
+    public static final class Builder {
 
         private EventBus eventBus;
         private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;

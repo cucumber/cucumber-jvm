@@ -215,13 +215,15 @@ class StepDefinitionMatchTest {
             "itemQuantity",
             "(few|some|lots of) (cukes|gherkins)",
             ItemQuantity.class,
-            (String s) -> null // Wrong number of capture groups
+            // Wrong number of capture groups
+            (String s) -> null 
         ));
 
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some cukes in my belly
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);

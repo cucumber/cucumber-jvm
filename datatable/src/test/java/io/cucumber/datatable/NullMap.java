@@ -8,7 +8,7 @@ import java.util.Map;
 final class NullMap {
 
     private NullMap() {
-        // utility class
+        /* no-op */
     }
 
     static Map<@Nullable Object, @Nullable Object> of(@Nullable Object... values) {

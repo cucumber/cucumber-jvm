@@ -7,9 +7,13 @@ import io.cucumber.core.logging.LoggerFactory;
  * @deprecated use {@link io.cucumber.core.cli.Main} instead.
  */
 @Deprecated
-public class Main {
+public final class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
+    
+    private Main(){
+        /* no-op */
+    }
 
     public static void main(String[] argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());

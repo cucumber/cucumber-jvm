@@ -14,19 +14,19 @@ class StubException extends RuntimeException {
         this.stacktrace = stacktrace;
     }
 
-    public StubException() {
+    StubException() {
         this("stub exception");
     }
 
-    public StubException(String message) {
+    StubException(String message) {
         this(null, message, null);
     }
 
-    public StubException withClassName() {
+    StubException withClassName() {
         return new StubException(StubException.class.getName(), getMessage(), stacktrace);
     }
 
-    public StubException withStacktrace(String stacktrace) {
+    StubException withStacktrace(String stacktrace) {
         return new StubException(className, getMessage(), stacktrace);
     }
 
@@ -51,7 +51,7 @@ class StubException extends RuntimeException {
         }
     }
 
-    private static class PrintWriterOrStream {
+    private static final class PrintWriterOrStream {
         private final PrintWriter writer;
         private final PrintStream stream;
 

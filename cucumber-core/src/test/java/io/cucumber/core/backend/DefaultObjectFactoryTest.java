@@ -50,13 +50,13 @@ class DefaultObjectFactoryTest {
                 " * ...etc\n"));
     }
 
-    public static class StepDefinition {
+    public static final class StepDefinition {
         // we just test the instances
     }
 
-    public static class NoAccessibleConstructor {
+    public static final class NoAccessibleConstructor {
         private NoAccessibleConstructor() {
-
+            /* no-op */
         }
 
     }

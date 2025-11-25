@@ -14,6 +14,10 @@ final class PickleOrderParser {
     private static final Logger log = LoggerFactory.getLogger(PickleOrderParser.class);
 
     private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
+    
+    private PickleOrderParser(){
+        /* no-op */
+    }
 
     static PickleOrder parse(String argument) {
         if ("reverse".equals(argument)) {

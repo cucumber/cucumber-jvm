@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StubStepDefinition implements StepDefinition {
+public final class StubStepDefinition implements StepDefinition {
 
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final List<ParameterInfo> parameterInfos;

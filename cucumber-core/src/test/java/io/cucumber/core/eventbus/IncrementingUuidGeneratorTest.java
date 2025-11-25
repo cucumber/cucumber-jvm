@@ -321,7 +321,7 @@ class IncrementingUuidGeneratorTest {
      */
     private static class NonCachingClassLoader extends ClassLoader {
 
-        public NonCachingClassLoader() {
+        NonCachingClassLoader() {
         }
 
         @Override

@@ -55,15 +55,6 @@ class TimelineFormatterTest {
             .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
             .build();
 
-    // private final Gson gson = new GsonBuilder().registerTypeAdapter(
-    // Instant.class,
-    // (JsonDeserializer<Instant>) (json, type, jsonDeserializationContext) ->
-    // json.isJsonObject()
-    // ?
-    // Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong())
-    // : Instant.ofEpochMilli(json.getAsLong()))
-    // .create();
-
     private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
             "Feature: Failing Feature\n" +
             " Background:\n" +
@@ -80,28 +71,28 @@ class TimelineFormatterTest {
             " When step_02\n" +
             " Then step_03");
 
-    private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
-            "Feature: Successful Feature\n" +
-            " Background:\n" +
-            " Given bg_1\n" +
-            " When bg_2\n" +
-            " Then bg_3\n" +
-            " @TagB @TagC\n" +
-            " Scenario: Scenario 3\n" +
-            " Given step_10\n" +
-            " When step_20\n" +
-            " Then step_30");
+    private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", """
+            Feature: Successful Feature
+             Background:
+             Given bg_1
+             When bg_2
+             Then bg_3
+             @TagB @TagC
+             Scenario: Scenario 3
+             Given step_10
+             When step_20
+             Then step_30""");
 
-    private final Feature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
-            "Feature: Pending Feature\n" +
-            " Background:\n" +
-            " Given bg_1\n" +
-            " When bg_2\n" +
-            " Then bg_3\n" +
-            " Scenario: Scenario 4\n" +
-            " Given step_10\n" +
-            " When step_20\n" +
-            " Then step_50");
+    private final Feature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", """
+            Feature: Pending Feature
+             Background:
+             Given bg_1
+             When bg_2
+             Then bg_3
+             Scenario: Scenario 4
+             Given step_10
+             When step_20
+             Then step_50""");
 
     @TempDir
     Path reportDir;
@@ -195,48 +186,49 @@ class TimelineFormatterTest {
     }
 
     private TimeLineItem[] getExpectedTestData() throws JsonProcessingException {
-        String expectedJson = ("[\n" +
-                " {\n" +
-                " \"feature\": \"Failing Feature\",\n" +
-                " \"scenario\": \"Scenario 1\",\n" +
-                " \"start\": 0,\n" +
-                " \"end\": 6000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"@taga,\",\n" +
-                " \"className\": \"failed\"\n" +
-                " },\n" +
-                " {\n" +
-                " \"feature\": \"Failing Feature\",\n" +
-                " \"scenario\": \"Scenario 2\",\n" +
-                " \"start\": 6000,\n" +
-                " \"end\": 12000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"\",\n" +
-                " \"className\": \"failed\"\n" +
-                " },\n" +
-                " {\n" +
-                " \"feature\": \"Successful Feature\",\n" +
-                " \"scenario\": \"Scenario 3\",\n" +
-                " \"start\": 18000,\n" +
-                " \"end\": 24000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"@tagb,@tagc,\",\n" +
-                " \"className\": \"passed\"\n" +
-                " },\n" +
-                " {\n" +
-                " \"scenario\": \"Scenario 4\",\n" +
-                " \"feature\": \"Pending Feature\",\n" +
-                " \"start\": 12000,\n" +
-                " \"end\": 18000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"\",\n" +
-                " \"className\": \"undefined\"\n" +
-                " }\n" +
-                "]");
+        String expectedJson = """
+                [
+                 {
+                 "feature": "Failing Feature",
+                 "scenario": "Scenario 1",
+                 "start": 0,
+                 "end": 6000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "@taga,",
+                 "className": "failed"
+                 },
+                 {
+                 "feature": "Failing Feature",
+                 "scenario": "Scenario 2",
+                 "start": 6000,
+                 "end": 12000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "",
+                 "className": "failed"
+                 },
+                 {
+                 "feature": "Successful Feature",
+                 "scenario": "Scenario 3",
+                 "start": 18000,
+                 "end": 24000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "@tagb,@tagc,",
+                 "className": "passed"
+                 },
+                 {
+                 "scenario": "Scenario 4",
+                 "feature": "Pending Feature",
+                 "start": 12000,
+                 "end": 18000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "",
+                 "className": "undefined"
+                 }
+                ]""";
 
         return objectMapper.readValue(expectedJson, TimeLineItem[].class);
     }
@@ -323,12 +315,13 @@ class TimelineFormatterTest {
         TimeLineItem[] expectedTests = getExpectedTestData();
 
         TimeLineGroup[] expectedGroups = objectMapper.readValue(
-            ("[\n" +
-                    " {\n" +
-                    " \"id\": \"main\",\n" +
-                    " \"content\": \"groupName\"\n" +
-                    " }\n" +
-                    "]")
+            """
+                    [
+                     {
+                     "id": "main",
+                     "content": "groupName"
+                     }
+                    ]"""
                     .replaceAll("groupName", groupName),
             TimeLineGroup[].class);
 

@@ -28,7 +28,7 @@ import static java.nio.file.Files.readAllLines;
  * a {@link FeatureIdentifier} followed by a sequence of line numbers each
  * preceded by a colon.
  */
-public class FeatureWithLines implements Serializable {
+public final class FeatureWithLines implements Serializable {
 
     private static final long serialVersionUID = 20190126L;
     private static final Pattern FEATURE_WITH_LINES_FILE_FORMAT = Pattern.compile("(?m:^| |)(.*?\\.feature(?::\\d+)*)");

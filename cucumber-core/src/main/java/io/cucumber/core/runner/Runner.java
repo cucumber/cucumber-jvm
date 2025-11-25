@@ -84,7 +84,7 @@ public final class Runner {
 
     private Locale localeForPickle(Pickle pickle) {
         String language = pickle.getLanguage();
-        return localeCache.computeIfAbsent(language, (lang) -> new Locale(language));
+        return localeCache.computeIfAbsent(language, lang -> new Locale(language));
     }
 
     public void runBeforeAllHooks() {

@@ -600,7 +600,7 @@ class RuntimeTest {
 
     }
 
-    private static class MockedStaticHookDefinition implements StaticHookDefinition {
+    private final static class MockedStaticHookDefinition implements StaticHookDefinition {
 
         private final Runnable runnable;
 
@@ -629,7 +629,7 @@ class RuntimeTest {
         }
     }
 
-    private static class FormatterSpy implements EventListener {
+    private static final class FormatterSpy implements EventListener {
 
         private final StringBuilder calls = new StringBuilder();
 

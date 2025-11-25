@@ -2,6 +2,10 @@ package io.cucumber.core.options;
 
 final class BooleanString {
 
+    private BooleanString(){
+        /* no-op */
+    }
+    
     static boolean parseBoolean(String s) {
         if (s == null) {
             return false;

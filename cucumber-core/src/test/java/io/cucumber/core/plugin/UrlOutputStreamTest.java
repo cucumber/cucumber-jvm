@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith(VertxExtension.class)
-public class UrlOutputStreamTest {
+class UrlOutputStreamTest {
 
     private static final int TIMEOUT_SECONDS = 15;
     private int port;
@@ -154,7 +154,7 @@ public class UrlOutputStreamTest {
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
-    public static class TestServer extends AbstractVerticle {
+    static final class TestServer extends AbstractVerticle {
 
         private final int port;
         private final VertxTestContext testContext;
@@ -166,7 +166,7 @@ public class UrlOutputStreamTest {
         private final String responseBody;
         private final Buffer receivedBody = Buffer.buffer(0);
 
-        public TestServer(
+        TestServer(
                 int port,
                 VertxTestContext testContext,
                 String expectedBody,

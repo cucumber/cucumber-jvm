@@ -5,7 +5,7 @@ import io.cucumber.plugin.event.Location;
 final class GherkinMessagesLocation {
 
     private GherkinMessagesLocation() {
-        // utility class
+        /* no-op */
     }
 
     static Location from(io.cucumber.messages.types.Location location) {

@@ -16,7 +16,7 @@ import java.util.function.Function;
 import static io.cucumber.core.resource.ClasspathSupport.nestedJarEntriesExplanation;
 import static java.util.Collections.emptyMap;
 
-class JarUriFileSystemService {
+final class JarUriFileSystemService {
 
     private static final String FILE_URI_SCHEME = "file";
     private static final String JAR_URI_SCHEME = "jar";
@@ -27,6 +27,10 @@ class JarUriFileSystemService {
     private static final Map<URI, FileSystem> openFiles = new HashMap<>();
     private static final Map<URI, AtomicInteger> referenceCount = new HashMap<>();
 
+    private JarUriFileSystemService(){
+        /* no-op */
+    }
+    
     private static CloseablePath open(URI jarUri, Function<FileSystem, Path> pathProvider)
             throws IOException {
         FileSystem fileSystem = openFileSystem(jarUri);

@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static io.cucumber.core.options.TestPluginOption.parse;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.nio.file.Files.readAllLines;
 import static java.time.Duration.ZERO;
@@ -48,6 +47,10 @@ class PluginFactoryTest {
 
     @TempDir
     Path tmp;
+
+    public static PluginOption parse(String pluginArgumentPattern) {
+        return PluginOption.parse(pluginArgumentPattern);
+    }
 
     @AfterEach
     void cleanUp() {
@@ -261,70 +264,81 @@ class PluginFactoryTest {
             "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL:DIR|FILE|URL")));
     }
 
-    public static class WantsOutputStream extends StubFormatter {
+    private void releaseResources(Object plugin) {
+        FakeTestRunEventsPublisher fakeTestRun = new FakeTestRunEventsPublisher();
+        if (plugin instanceof EventListener eventListener) {
+            eventListener.setEventPublisher(fakeTestRun);
+            fakeTestRun.fakeTestRunEvents();
+        } else if (plugin instanceof ConcurrentEventListener concurrentEventListener) {
+            concurrentEventListener.setEventPublisher(fakeTestRun);
+            fakeTestRun.fakeTestRunEvents();
+        }
+    }
 
-        public OutputStream out;
+    static class WantsOutputStream extends StubFormatter {
 
-        public WantsOutputStream(OutputStream out) {
+        OutputStream out;
+
+        WantsOutputStream(OutputStream out) {
             this.out = Objects.requireNonNull(out);
         }
 
     }
 
-    public static class WantsFileOrEmpty extends StubFormatter {
+    static class WantsFileOrEmpty extends StubFormatter {
 
-        public File out = null;
+        File out = null;
 
-        public WantsFileOrEmpty(File out) {
+        WantsFileOrEmpty(File out) {
             this.out = Objects.requireNonNull(out);
         }
 
-        public WantsFileOrEmpty() {
+        WantsFileOrEmpty() {
         }
 
     }
 
-    public static class WantsFile extends StubFormatter {
+    static class WantsFile extends StubFormatter {
 
-        public final File out;
+        final File out;
 
-        public WantsFile(File out) {
+        WantsFile(File out) {
             this.out = Objects.requireNonNull(out);
         }
 
     }
 
-    public static class WantsFileOrURL extends StubFormatter {
+    static class WantsFileOrURL extends StubFormatter {
 
-        public WantsFileOrURL(File out) {
+        WantsFileOrURL(File out) {
             Objects.requireNonNull(out);
         }
 
-        public WantsFileOrURL(URL out) {
+        WantsFileOrURL(URL out) {
             Objects.requireNonNull(out);
         }
 
     }
 
-    public static class WantsString extends StubFormatter {
+    static class WantsString extends StubFormatter {
 
-        public final String arg;
+        final String arg;
 
-        public WantsString(String arg) {
+        WantsString(String arg) {
             this.arg = Objects.requireNonNull(arg);
         }
 
     }
 
-    public static class WantsAppendable extends StubFormatter {
+    static class WantsAppendable extends StubFormatter {
 
-        public final Appendable out;
+        final Appendable out;
 
-        public WantsAppendable(Appendable out) {
+        WantsAppendable(Appendable out) {
             this.out = Objects.requireNonNull(out);
         }
 
-        public void writeAndClose(String s) throws IOException {
+        void writeAndClose(String s) throws IOException {
             out.append(s);
             if (out instanceof Closeable) {
                 Closeable closeable = (Closeable) out;
@@ -334,18 +348,18 @@ class PluginFactoryTest {
 
     }
 
-    public static class WantsNothing extends StubFormatter {
+    static class WantsNothing extends StubFormatter {
 
     }
 
-    public static class WantsTooMuch extends StubFormatter {
+    static class WantsTooMuch extends StubFormatter {
 
-        public WantsTooMuch(String too, String much) {
+        WantsTooMuch(String too, String much) {
         }
 
     }
 
-    private static class FakeTestRunEventsPublisher implements EventPublisher {
+    private static final class FakeTestRunEventsPublisher implements EventPublisher {
         private EventHandler<TestRunStarted> startHandler;
         private EventHandler<TestRunFinished> finishedHandler;
         private EventHandler<Envelope> envelopeHandler;
@@ -353,13 +367,13 @@ class PluginFactoryTest {
         @Override
         public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
             if (eventType == TestRunStarted.class) {
-                startHandler = ((EventHandler<TestRunStarted>) handler);
+                startHandler = (EventHandler<TestRunStarted>) handler;
             }
             if (eventType == TestRunFinished.class) {
-                finishedHandler = ((EventHandler<TestRunFinished>) handler);
+                finishedHandler = (EventHandler<TestRunFinished>) handler;
             }
             if (eventType == Envelope.class) {
-                envelopeHandler = ((EventHandler<Envelope>) handler);
+                envelopeHandler = (EventHandler<Envelope>) handler;
             }
         }
 
@@ -367,7 +381,7 @@ class PluginFactoryTest {
         public <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
         }
 
-        public void fakeTestRunEvents() {
+        void fakeTestRunEvents() {
             if (startHandler != null) {
                 startHandler.receive(new TestRunStarted(now()));
             }
@@ -383,15 +397,5 @@ class PluginFactoryTest {
 
     }
 
-    private void releaseResources(Object plugin) {
-        FakeTestRunEventsPublisher fakeTestRun = new FakeTestRunEventsPublisher();
-        if (plugin instanceof EventListener) {
-            ((EventListener) plugin).setEventPublisher(fakeTestRun);
-            fakeTestRun.fakeTestRunEvents();
-        } else if (plugin instanceof ConcurrentEventListener) {
-            ((ConcurrentEventListener) plugin).setEventPublisher(fakeTestRun);
-            fakeTestRun.fakeTestRunEvents();
-        }
-    }
 
 }

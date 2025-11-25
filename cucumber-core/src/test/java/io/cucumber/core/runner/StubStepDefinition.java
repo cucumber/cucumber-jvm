@@ -63,6 +63,17 @@ class StubStepDefinition implements StepDefinition {
         return "{stubbed location with details}";
     }
 
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        try {
+            Method method = getClass().getMethod("getSourceReference");
+            return Optional.of(SourceReference.fromMethod(method));
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private final class StubParameterInfo implements ParameterInfo {
 
         private final Type type;
@@ -86,16 +97,6 @@ class StubStepDefinition implements StepDefinition {
             return () -> type;
         }
 
-    }
-
-    @Override
-    public Optional<SourceReference> getSourceReference() {
-        try {
-            Method method = getClass().getMethod("getSourceReference");
-            return Optional.of(SourceReference.fromMethod(method));
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
 }

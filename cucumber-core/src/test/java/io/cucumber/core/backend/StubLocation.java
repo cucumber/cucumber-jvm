@@ -3,7 +3,7 @@ package io.cucumber.core.backend;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class StubLocation implements Located {
+public final class StubLocation implements Located {
 
     private final String location;
     private final SourceReference sourceReference;

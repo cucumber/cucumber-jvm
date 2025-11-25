@@ -34,7 +34,7 @@ interface Format {
 
     }
 
-    class Monochrome implements Format {
+    final class Monochrome implements Format {
 
         private Monochrome() {
 

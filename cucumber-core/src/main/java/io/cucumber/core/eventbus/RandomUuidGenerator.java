@@ -6,7 +6,12 @@ import java.util.UUID;
  * UUID generator based on random numbers. The generator is thread-safe and
  * supports multi-jvm usage of Cucumber.
  */
-public class RandomUuidGenerator implements UuidGenerator {
+public final class RandomUuidGenerator implements UuidGenerator {
+
+    public RandomUuidGenerator(){
+        /* no-op */
+    }
+    
     @Override
     public UUID generateId() {
         return UUID.randomUUID();

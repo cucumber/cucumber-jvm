@@ -3,7 +3,7 @@ package io.cucumber.core.backend;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class StubHookDefinition implements HookDefinition {
+public final class StubHookDefinition implements HookDefinition {
 
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final Located location;

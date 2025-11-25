@@ -18,12 +18,13 @@ import static io.cucumber.teamcityformatter.MessagesToTeamCityWriter.TeamCityFea
  *      href=https://www.jetbrains.com/help/teamcity/service-messages.html>TeamCity
  *      - Service Messages</a>
  */
-public class TeamCityPlugin implements ConcurrentEventListener {
+public final class TeamCityPlugin implements ConcurrentEventListener {
 
     private final OutputStream out;
     private MessagesToTeamCityWriter writer;
 
-    @SuppressWarnings("unused") // Used by PluginFactory
+    // Used by PluginFactory
+    @SuppressWarnings("unused") 
     public TeamCityPlugin() {
         // This plugin prints markers for Team City and IntelliJ IDEA that
         // allows them to associate the output to specific test cases. Printing

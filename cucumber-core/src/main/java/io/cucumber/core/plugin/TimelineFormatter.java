@@ -74,9 +74,10 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
             .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 
-    @SuppressWarnings({ "unused", "RedundantThrows" }) // Used by PluginFactory
+    // Used by PluginFactory
+    @SuppressWarnings({"unused", "RedundantThrows", "ResultOfMethodCallIgnored"}) 
     public TimelineFormatter(File reportDir) throws FileNotFoundException {
-        boolean dontCare = reportDir.mkdirs();
+        reportDir.mkdirs();
         if (!reportDir.isDirectory()) {
             throw new CucumberException(String.format("The %s needs an existing directory. Not a directory: %s",
                 getClass().getName(), reportDir.getAbsolutePath()));
@@ -282,7 +283,8 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         private String scenario;
         private long start;
         private String group;
-        private String content = ""; // Replaced in JS file
+        // Replaced in JS file
+        private String content = ""; 
         private String tags;
         private long end;
         private String className;

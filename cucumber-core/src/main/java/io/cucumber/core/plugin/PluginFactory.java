@@ -69,7 +69,8 @@ public final class PluginFactory {
     private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String argument)
             throws IOException, URISyntaxException {
         Map<Class<?>, Constructor<T>> singleArgConstructors = findSingleArgConstructors(pluginClass);
-        if (argument == null) {// No argument passed
+        // No argument passed
+        if (argument == null) {
             Constructor<T> outputStreamConstructor = singleArgConstructors.get(OutputStream.class);
             if (outputStreamConstructor != null) {
                 return newInstance(outputStreamConstructor, defaultOutOrFailIfAlreadyUsed(pluginString));
@@ -105,7 +106,8 @@ public final class PluginFactory {
         for (Class<?> ctorArgClass : CTOR_PARAMETERS) {
             try {
                 result.put(ctorArgClass, pluginClass.getConstructor(ctorArgClass));
-            } catch (NoSuchMethodException ignore) {
+            } catch (NoSuchMethodException ignored) {
+                /* no-op */
             }
         }
         return result;

@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  */
 class TestCaseFailed extends RuntimeException {
 
-    public TestCaseFailed(Throwable throwable) {
+    TestCaseFailed(Throwable throwable) {
         super(throwable);
     }
 

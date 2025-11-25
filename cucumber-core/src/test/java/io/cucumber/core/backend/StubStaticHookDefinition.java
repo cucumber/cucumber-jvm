@@ -1,6 +1,6 @@
 package io.cucumber.core.backend;
 
-public class StubStaticHookDefinition implements StaticHookDefinition {
+public final class StubStaticHookDefinition implements StaticHookDefinition {
 
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final String location;

@@ -47,11 +47,6 @@ public final class CucumberExecutionContext {
         this.runnerSupplier = runnerSupplier;
     }
 
-    @FunctionalInterface
-    public interface ThrowingRunnable {
-        void run() throws Throwable;
-    }
-
     public void startTestRun() {
         emitMeta();
         emitTestRunStarted();
@@ -165,5 +160,11 @@ public final class CucumberExecutionContext {
             rethrowIfUnrecoverable(t);
         }
     }
+
+    @FunctionalInterface
+    public interface ThrowingRunnable {
+        void run() throws Throwable;
+    }
+
 
 }

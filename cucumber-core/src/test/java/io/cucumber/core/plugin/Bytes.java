@@ -9,6 +9,10 @@ import java.io.ByteArrayOutputStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class Bytes {
+    
+    private Bytes(){
+        /* no-op */
+    }
 
     static DiagnosingMatcher<ByteArrayOutputStream> bytes(Matcher<String> expected) {
         return new DiagnosingMatcher<ByteArrayOutputStream>() {

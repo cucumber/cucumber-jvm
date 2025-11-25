@@ -133,7 +133,8 @@ public final class LoggerFactory {
             for (StackTraceElement element : stack) {
                 String className = element.getClassName();
                 if (THIS_LOGGER_CLASS.equals(className)) {
-                    found = true; // Next element is calling this logger
+                    // Next element is calling this logger
+                    found = true; 
                 } else if (found) {
                     sourceClassName = className;
                     sourceMethodName = element.getMethodName();

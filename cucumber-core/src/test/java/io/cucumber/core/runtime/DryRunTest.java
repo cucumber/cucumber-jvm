@@ -237,7 +237,7 @@ class DryRunTest {
                 "    PASSED\n"));
     }
 
-    private static class StepStatusSpy implements EventListener {
+    private static final class StepStatusSpy implements EventListener {
 
         private final StringBuilder calls = new StringBuilder();
 

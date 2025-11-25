@@ -11,45 +11,13 @@ import static java.util.Comparator.comparingInt;
 
 final class Banner {
     private final boolean monochrome;
-
-    static final class Line {
-        private final List<Span> spans;
-
-        Line(Span... spans) {
-            this.spans = asList(spans);
-        }
-
-        Line(String text, AnsiEscapes... escapes) {
-            this(new Span(text, escapes));
-        }
-
-        int length() {
-            return spans.stream().map(span -> span.text.length()).mapToInt(Integer::intValue).sum();
-        }
-    }
-
-    static final class Span {
-        private final String text;
-        private final AnsiEscapes[] escapes;
-
-        Span(String text) {
-            this.text = text;
-            this.escapes = new AnsiEscapes[0];
-        }
-
-        Span(String text, AnsiEscapes... escapes) {
-            this.text = text;
-            this.escapes = escapes;
-        }
-    }
-
     private final PrintStream out;
 
     Banner(PrintStream out, boolean monochrome) {
         this.out = out;
         this.monochrome = monochrome;
     }
-
+    
     void print(List<Line> lines, AnsiEscapes... border) {
         int maxLength = lines.stream().map(Line::length).max(comparingInt(a -> a))
                 .orElseThrow(NoSuchElementException::new);
@@ -82,4 +50,36 @@ final class Banner {
     private String times(char c, int count) {
         return new String(new char[count]).replace('\0', c);
     }
+
+    static final class Line {
+        private final List<Span> spans;
+
+        Line(Span... spans) {
+            this.spans = asList(spans);
+        }
+
+        Line(String text, AnsiEscapes... escapes) {
+            this(new Span(text, escapes));
+        }
+
+        int length() {
+            return spans.stream().map(span -> span.text.length()).mapToInt(Integer::intValue).sum();
+        }
+    }
+
+    static final class Span {
+        private final String text;
+        private final AnsiEscapes[] escapes;
+
+        Span(String text) {
+            this.text = text;
+            this.escapes = new AnsiEscapes[0];
+        }
+
+        Span(String text, AnsiEscapes... escapes) {
+            this.text = text;
+            this.escapes = escapes;
+        }
+    }
+
 }

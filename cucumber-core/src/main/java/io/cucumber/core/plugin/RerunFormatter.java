@@ -44,9 +44,9 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private static PrintWriter createPrintWriter(OutputStream out) {
         return new PrintWriter(
-            new OutputStreamWriter(
-                requireNonNull(out),
-                StandardCharsets.UTF_8));
+                new OutputStreamWriter(
+                        requireNonNull(out),
+                        StandardCharsets.UTF_8));
     }
 
     static URI relativize(URI uri) {
@@ -75,23 +75,6 @@ public final class RerunFormatter implements ConcurrentEventListener {
         });
     }
 
-    private static final class UriAndLine {
-        private final String uri;
-        private final Integer line;
-
-        private UriAndLine(String uri, Integer line) {
-            this.uri = uri;
-            this.line = line;
-        }
-
-        public String getUri() {
-            return uri;
-        }
-
-        public Integer getLine() {
-            return line;
-        }
-    }
 
     private void finishReport() {
         query.findAllTestCaseStarted().stream()
@@ -111,13 +94,13 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private static Collector<UriAndLine, ?, TreeMap<String, TreeSet<Integer>>> groupByUriAndThenCollectLines() {
         return groupingBy(
-            UriAndLine::getUri,
-            // Sort URIs
-            TreeMap::new,
-            mapping(
-                UriAndLine::getLine,
-                // Sort lines
-                toCollection(TreeSet::new)));
+                UriAndLine::getUri,
+                // Sort URIs
+                TreeMap::new,
+                mapping(
+                        UriAndLine::getLine,
+                        // Sort lines
+                        toCollection(TreeSet::new)));
     }
 
     private static StringBuilder renderFeatureWithLines(String uri, TreeSet<Integer> lines) {
@@ -142,6 +125,24 @@ public final class RerunFormatter implements ConcurrentEventListener {
                 .filter(status -> status != TestStepResultStatus.PASSED)
                 .filter(status -> status != TestStepResultStatus.SKIPPED)
                 .isPresent();
+    }
+
+    private static final class UriAndLine {
+        private final String uri;
+        private final Integer line;
+
+        private UriAndLine(String uri, Integer line) {
+            this.uri = uri;
+            this.line = line;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public Integer getLine() {
+            return line;
+        }
     }
 
 }

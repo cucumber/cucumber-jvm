@@ -7,7 +7,7 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Optional;
 
-public class TestSnippet implements Snippet {
+public final class TestSnippet implements Snippet {
 
     @Override
     public Optional<String> language() {

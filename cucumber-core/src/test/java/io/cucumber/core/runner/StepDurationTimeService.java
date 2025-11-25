@@ -12,7 +12,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
-public class StepDurationTimeService extends Clock implements ConcurrentEventListener {
+public final class StepDurationTimeService extends Clock implements ConcurrentEventListener {
 
     private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
     private final List<Duration> stepDuration;

@@ -20,7 +20,6 @@ import io.cucumber.core.plugin.UsageJsonFormatter;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.SummaryPrinter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +34,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-public class PluginOption implements Options.Plugin {
+public final class PluginOption implements Options.Plugin {
 
     private static final Logger log = LoggerFactory.getLogger(PluginOption.class);
 
@@ -202,10 +201,6 @@ public class PluginOption implements Options.Plugin {
     boolean isEventListener() {
         return EventListener.class.isAssignableFrom(pluginClass)
                 || ConcurrentEventListener.class.isAssignableFrom(pluginClass);
-    }
-
-    boolean isSummaryPrinter() {
-        return SummaryPrinter.class.isAssignableFrom(pluginClass);
     }
 
     @Override

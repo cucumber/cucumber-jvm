@@ -130,7 +130,8 @@ public class IncrementingUuidGenerator implements UuidGenerator {
                         " capacity. Please generate using a new instance or use another " +
                         UuidGenerator.class.getSimpleName() + "implementation.");
         }
-        long leastSigBits = counterValue | 0x8000000000000000L; // set variant
+        // set variant
+        long leastSigBits = counterValue | 0x8000000000000000L; 
         return new UUID(msb, leastSigBits);
     }
 }

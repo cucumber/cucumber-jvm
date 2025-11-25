@@ -32,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * It is recommended to always use the package name form.
  */
-public class GluePath {
+public final class GluePath {
 
     private static final Logger log = LoggerFactory.getLogger(GluePath.class);
 
@@ -133,6 +133,7 @@ public class GluePath {
                 && !gluePath.contains(RESOURCE_SEPARATOR_STRING);
     }
 
+    @SuppressWarnings("UnnecessaryParentheses")
     private static boolean isValidIdentifier(String schemeSpecificPart) {
         for (String part : schemeSpecificPart.split("/")) {
             for (int i = 0; i < part.length(); i++) {

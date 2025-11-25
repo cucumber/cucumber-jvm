@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  * Testing classloader for ServiceLoader. This classloader overrides the
  * META-INF/services/interface-class-name file with a custom definition.
  */
-public class ServiceLoaderTestClassLoader extends URLClassLoader {
+final class ServiceLoaderTestClassLoader extends URLClassLoader {
     Class<?> metaInfInterface;
     Class<?>[] implementingClasses;
 
@@ -25,7 +25,7 @@ public class ServiceLoaderTestClassLoader extends URLClassLoader {
      *
      * @param metaInfInterface ServiceLoader interface
      */
-    public ServiceLoaderTestClassLoader(Class<?> metaInfInterface) {
+    ServiceLoaderTestClassLoader(Class<?> metaInfInterface) {
         this(metaInfInterface, (Class<?>[]) null);
     }
 
@@ -39,7 +39,7 @@ public class ServiceLoaderTestClassLoader extends URLClassLoader {
      * @param implementingClasses potential subclasses of the ServiceLoader
      *                            metaInfInterface
      */
-    public ServiceLoaderTestClassLoader(Class<?> metaInfInterface, Class<?>... implementingClasses) {
+    ServiceLoaderTestClassLoader(Class<?> metaInfInterface, Class<?>... implementingClasses) {
         super(new URL[0], metaInfInterface.getClassLoader());
         if (!metaInfInterface.isInterface()) {
             throw new IllegalArgumentException("the META-INF service " + metaInfInterface + " should be an interface");

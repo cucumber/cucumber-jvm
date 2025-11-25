@@ -15,7 +15,9 @@ public interface Backend {
      * @param glue      Glue that provides the steps to be executed.
      * @param gluePaths The locations for the glue to be loaded.
      */
-    void loadGlue(Glue glue, List<URI> gluePaths);
+    default void loadGlue(Glue glue, List<URI> gluePaths){
+        
+    }
 
     /**
      * Invoked before a new scenario starts. Implementations should do any
@@ -23,13 +25,19 @@ public interface Backend {
      * step definitions can be loaded here. These step definitions should
      * implement {@link ScenarioScoped}
      */
-    void buildWorld();
+    default void buildWorld() {
+        
+    }
 
     /**
      * Invoked at the end of a scenario, after hooks
      */
-    void disposeWorld();
+    default void disposeWorld(){
+        
+    }
 
-    Snippet getSnippet();
+    default Snippet getSnippet(){
+        return null;
+    }
 
 }
