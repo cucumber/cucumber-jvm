@@ -14,13 +14,17 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.zip.GZIPInputStream;
 
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -100,7 +104,6 @@ public class UrlOutputStreamTest {
         if (exception != null) {
             throw exception;
         }
-        assertThat(testServer.receivedBody.toString("utf-8"), is(equalTo(requestBody)));
     }
 
     @Test
@@ -225,11 +228,10 @@ public class UrlOutputStreamTest {
 
                     ctx.request().handler(receivedBody::appendBuffer);
                     ctx.request().endHandler(e -> {
-                        String receivedBodyString = receivedBody.toString("utf-8");
                         ctx.response().setChunked(true);
                         ctx.response().write(responseBody);
                         ctx.response().end();
-                        testContext.verify(() -> assertThat(receivedBodyString, is(equalTo(expectedBody))));
+                        testContext.verify(() -> assertThat(unzipBody(), is(equalTo(expectedBody))));
                     });
                 });
             });
@@ -237,6 +239,21 @@ public class UrlOutputStreamTest {
                     .createHttpServer()
                     .requestHandler(router)
                     .listen(port, e -> startPromise.complete());
+        }
+
+        private String unzipBody() {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayInputStream compressedIn = new ByteArrayInputStream(receivedBody.getBytes());
+            byte[] buffer = new byte[4096];
+            try (GZIPInputStream uncompressedIn = new GZIPInputStream(compressedIn)) {
+                int read;
+                while ((read = uncompressedIn.read(buffer, 0, buffer.length)) != -1) {
+                    out.write(buffer, 0, read);
+                }
+            } catch (IOException ex) {
+                throw new IllegalStateException(ex);
+            }
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
         }
 
     }
