@@ -4,7 +4,6 @@ import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
 
@@ -40,20 +39,12 @@ public final class Plugins {
     private void addPlugin(List<Plugin> plugins, Plugin plugin) {
         plugins.add(plugin);
         setMonochromeOnColorAwarePlugins(plugin);
-        setStrictOnStrictAwarePlugins(plugin);
     }
 
     private void setMonochromeOnColorAwarePlugins(Plugin plugin) {
         if (plugin instanceof ColorAware) {
             ColorAware colorAware = (ColorAware) plugin;
             colorAware.setMonochrome(pluginOptions.isMonochrome());
-        }
-    }
-
-    private void setStrictOnStrictAwarePlugins(Plugin plugin) {
-        if (plugin instanceof StrictAware) {
-            StrictAware strictAware = (StrictAware) plugin;
-            strictAware.setStrict(true);
         }
     }
 

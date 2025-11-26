@@ -1,6 +1,7 @@
 package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.List;
@@ -36,6 +37,7 @@ public interface Backend {
         
     }
 
+    @Nullable
     default Snippet getSnippet(){
         return null;
     }

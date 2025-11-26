@@ -57,7 +57,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private static io.cucumber.messages.types.Group makeMessageGroup(
             Group group
     ) {
-        long start = group.getStart();
+        int start = group.getStart();
         return new io.cucumber.messages.types.Group(
             group.getChildren().stream()
                     .map(TestCase::makeMessageGroup)

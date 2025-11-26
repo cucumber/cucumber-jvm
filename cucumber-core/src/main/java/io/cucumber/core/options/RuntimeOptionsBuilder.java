@@ -66,7 +66,7 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder addPluginName(String pluginSpecification) {
         PluginOption pluginOption = PluginOption.parse(pluginSpecification);
-        if (pluginOption.isEventListener() || pluginOption.isSummaryPrinter()) {
+        if (pluginOption.isEventListener()) {
             plugins.add(pluginOption);
         } else {
             throw new CucumberException("Unrecognized plugin: " + pluginSpecification);

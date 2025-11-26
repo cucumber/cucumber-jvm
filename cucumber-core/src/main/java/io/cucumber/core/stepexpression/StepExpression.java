@@ -42,11 +42,7 @@ public final class StepExpression {
     }
 
     public List<Argument> match(String text, Type... types) {
-        List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text, types);
-        if (match == null) {
-            return null;
-        }
-        return wrapPlusOne(match);
+        return expression.match(text, types).map(StepExpression::wrapPlusOne).orElse(null);
     }
 
     private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {

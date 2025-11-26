@@ -396,7 +396,7 @@ final class CachingGlue implements Glue {
                 // source file
                 stackReference.fileName().orElse("Unknown"),
                 stackReference.methodName());
-            Location location = new Location((long) stackReference.lineNumber(), null);
+            Location location = new Location(stackReference.lineNumber(), null);
             return new SourceReference(null, null, stackTraceElement, location);
         }
         return emptySourceReference();
