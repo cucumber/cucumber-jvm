@@ -101,7 +101,7 @@ public final class ClasspathScanner {
         };
     }
 
-    private Optional<Class<?>> safelyLoadClass(String fqn) {
+    public Optional<Class<?>> safelyLoadClass(String fqn) {
         try {
             return Optional.ofNullable(getClassLoader().loadClass(fqn));
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
