@@ -58,12 +58,13 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
     }
 
     private Object execute(String fromValue, Type toValueType, Locale locale) {
-        if (method.getParameterTypes().length == 2) {
-            return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
+        Object[] args;
+        if (method.getParameterTypes().length == 3) {
+            args = new Object[] { fromValue, toValueType, locale };
         } else {
-            return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType,
-                locale);
+            args = new Object[] { fromValue, toValueType };
         }
+        return invokeMethod(args);
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
