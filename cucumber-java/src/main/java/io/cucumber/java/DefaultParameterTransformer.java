@@ -14,8 +14,11 @@ import java.lang.annotation.Target;
  * <ul>
  * <li>{@code String, Type -> Object}</li>
  * <li>{@code Object, Type -> Object}</li>
+ * <li>{@code String, Type, Locale -> Object}</li>
+ * <li>{@code Object, Type, Locale -> Object}</li>
  * </ul>
  *
+ * @see io.cucumber.cucumberexpressions.LocaleParameterByTypeTransformer
  * @see io.cucumber.cucumberexpressions.ParameterByTypeTransformer
  * @see io.cucumber.cucumberexpressions.ParameterType
  */

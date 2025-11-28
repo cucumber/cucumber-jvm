@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [Core] Upload Cucumber Reports with Gzip encoding ([#3115](https://github.com/cucumber/cucumber-jvm/pull/3115))
+- [Java] Any custom method declared as `@DefaultParameterTransformer` can now have a `Locale` argument to optionally consider the locale declaration of the current Feature ([cucumber/cucumber-expressions#376](https://github.com/cucumber/cucumber-expressions/issues/376) Stefan Gasterstädt)
 
 ## [7.32.0] - 2025-11-21
 ### Changed

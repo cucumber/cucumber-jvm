@@ -2,10 +2,11 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
+import io.cucumber.cucumberexpressions.LocaleParameterByTypeTransformer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 import static io.cucumber.java.InvalidMethodSignatureException.builder;
 
@@ -13,12 +14,22 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
         implements DefaultParameterTransformerDefinition {
 
     private final Lookup lookup;
-    private final ParameterByTypeTransformer transformer;
+    private final LocaleParameterByTypeTransformer transformer;
 
     JavaDefaultParameterTransformerDefinition(Method method, Lookup lookup) {
         super(requireValidMethod(method), lookup);
         this.lookup = lookup;
-        this.transformer = this::execute;
+        this.transformer = new LocaleParameterByTypeTransformer() {
+            @Override
+            public Object transform(String fromValue, Type toValueType) throws Throwable {
+                return this.transform(fromValue, toValueType, null);
+            }
+
+            @Override
+            public Object transform(String fromValue, Type toValueType, Locale locale) throws Throwable {
+                return JavaDefaultParameterTransformerDefinition.this.execute(fromValue, toValueType, locale);
+            }
+        };
     }
 
     private static Method requireValidMethod(Method method) {
@@ -28,7 +39,7 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
         }
 
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length != 2) {
+        if ((parameterTypes.length != 2) && (parameterTypes.length != 3)) {
             throw createInvalidSignatureException(method);
         }
 
@@ -40,11 +51,19 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
             throw createInvalidSignatureException(method);
         }
 
+        if ((parameterTypes.length == 3) && !Locale.class.equals(parameterTypes[2])) {
+            throw createInvalidSignatureException(method);
+        }
         return method;
     }
 
-    private Object execute(String fromValue, Type toValueType) {
-        return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
+    private Object execute(String fromValue, Type toValueType, Locale locale) {
+        if (method.getParameterTypes().length == 2) {
+            return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
+        } else {
+            return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType,
+                locale);
+        }
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
@@ -52,11 +71,13 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
                 .addAnnotation(DefaultParameterTransformer.class)
                 .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")
                 .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
+                .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType, Locale locale)")
+                .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType, Locale locale)")
                 .build();
     }
 
     @Override
-    public ParameterByTypeTransformer parameterByTypeTransformer() {
+    public LocaleParameterByTypeTransformer parameterByTypeTransformer() {
         return transformer;
     }
 
