@@ -1,4 +1,6 @@
 name: Test Java
+  
+permissions: { }  
 
 on:
   pull_request:
