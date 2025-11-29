@@ -131,6 +131,11 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
+    public String getLanguage() {
+        return pickle.getLanguage();
+    }
+
+    @Override
     public List<String> getTags() {
         return pickle.getTags();
     }
