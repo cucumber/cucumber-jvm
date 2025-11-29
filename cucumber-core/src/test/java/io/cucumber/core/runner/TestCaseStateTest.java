@@ -36,6 +36,27 @@ class TestCaseStateTest {
         assertThat(state.getUri(), is(new File("path/file.feature").toURI()));
     }
 
+    @Test
+    void provides_the_language_of_the_feature_file_without_language_declaration() {
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given I have 4 cukes in my belly\n");
+        TestCaseState state = createTestCaseState(feature);
+        assertThat(state.getLanguage(), is("en"));
+    }
+
+    @Test
+    void provides_the_language_of_the_feature_file_with_language_declaration() {
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
+                "#language: en\n" +
+                "Feature: Test feature\n" +
+                "  Scenario: Test scenario\n" +
+                "     Given I have 4 cukes in my belly\n");
+        TestCaseState state = createTestCaseState(feature);
+        assertThat(state.getLanguage(), is("en"));
+    }
+
     private TestCaseState createTestCaseState(Feature feature) {
         return new TestCaseState(bus,
             UUID.randomUUID(),

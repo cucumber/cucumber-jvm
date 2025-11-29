@@ -146,6 +146,11 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
+    public String getLanguage() {
+        return testCase.getLanguage();
+    }
+
+    @Override
     public Integer getLine() {
         return testCase.getLocation().getLine();
     }
