@@ -68,6 +68,11 @@ class TestCaseResultObserverTest {
         }
 
         @Override
+        public String getLanguage() {
+            return "en";
+        }
+
+        @Override
         public List<String> getTags() {
             return emptyList();
         }
