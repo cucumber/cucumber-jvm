@@ -129,6 +129,13 @@ public final class Scenario {
     }
 
     /**
+     * @return the language of the Scenario.
+     */
+    public String getLanguage() {
+        return delegate.getLanguage();
+    }
+
+    /**
      * Returns the line in the feature file of the Scenario.
      * <p>
      * If this is a Scenario from Scenario Outlines this will return the line of
