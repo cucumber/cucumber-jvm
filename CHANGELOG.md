@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [Core] Upload Cucumber Reports with Gzip encoding ([#3115](https://github.com/cucumber/cucumber-jvm/pull/3115))
-- [Java] Add a getter to `Scenario` to return the current language ([cucumber/cucumber-expressions#376](https://github.com/cucumber/cucumber-expressions/issues/376) Stefan Gasterstädt)
+- [Java] Add `Scenario.getLanguage()` to return the current language ([#3124](https://github.com/cucumber/cucumber-jvm/pull/3124) Stefan Gasterstädt)
 
 ## [7.32.0] - 2025-11-21
 ### Changed
