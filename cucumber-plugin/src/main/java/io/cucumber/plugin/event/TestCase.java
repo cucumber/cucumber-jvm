@@ -38,7 +38,9 @@ public interface TestCase {
     @Deprecated
     String getScenarioDesignation();
 
-    String getLanguage();
+    default String getLanguage(){
+        return null;
+    }
 
     List<String> getTags();
 
