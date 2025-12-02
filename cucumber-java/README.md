@@ -329,6 +329,55 @@ public class DataTableStepDefinitions {
 }
 ```
 
+### Localized Transformers
+
+Combining the [Before hook](#before--after) and the Scenario's language offers custom transformation that respects the
+language of the feature file. For example, localized features about summer solstice may provide the date "21 kesäkuuta
+2025" (Finnish) or "21 juin 2025" (French). Parsing these dates requires an according `DateTimeFormatter`, either within
+a default transformer method or within a named type.
+
+ ```java
+package com.example.app;
+
+import io.cucumber.java.Before;
+import io.cucumber.java.DefaultParameterTransformer;
+import io.cucumber.java.ParameterType;
+import io.cucumber.java.Scenario;
+
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
+public class TransformerDefinitions {
+
+    private DateTimeFormatter formatter;
+
+    @Before
+    public void updateFormatter(final Scenario scenario) {
+        String language = scenario.getLanguage();
+        Locale locale = new Locale.Builder().setLanguage(language).build();
+        formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy").withLocale(locale);
+    }
+
+    @DefaultParameterTransformer
+    public Object transform(final String value, final Type type)
+    throws Exception {
+        if (LocalDate.class.equals(type)) {
+            return LocalDate.parse(value.toString(), formatter);
+        } else {
+            throw new UnsupportedOperationException("Can't transform '" + value + "' to " + type);
+        }
+    }
+
+    @ParameterType(name = "date", value = "\\d{1,2} \\w+ \\d{4}")
+    public LocalDate parseLocalDate(String value) {
+        return LocalDate.parse(value, formatter);
+    }
+
+}
+```
+
 ### Empty Cells
 
 Data tables in Gherkin cannot represent null or an empty string unambiguously. Cucumber will interpret empty cells as
