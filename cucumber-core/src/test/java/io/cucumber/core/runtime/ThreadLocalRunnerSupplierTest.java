@@ -2,8 +2,8 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.plugin.StubTestCase;
 import io.cucumber.core.runner.Runner;
-import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,6 @@ import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
 
 class ThreadLocalRunnerSupplierTest {
 
@@ -83,7 +82,7 @@ class ThreadLocalRunnerSupplierTest {
         runnerSupplier.get().getBus().registerHandlerFor(
             TestCaseStarted.class,
             event -> fail("Should not receive event"));
-        eventBus.send(new TestCaseStarted(EPOCH, mock(TestCase.class)));
+        eventBus.send(new TestCaseStarted(EPOCH, new StubTestCase()));
     }
 
 }

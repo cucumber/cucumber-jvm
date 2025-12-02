@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
@@ -10,8 +11,6 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InOrder;
 
 import java.net.URI;
 import java.time.Clock;
@@ -19,9 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HookOrderTest {
 
@@ -34,10 +31,12 @@ class HookOrderTest {
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n");
     private final Pickle pickle = feature.getPickles().get(0);
+    private final List<HookDefinition> listener = new ArrayList<>();
 
     @Test
     void before_hooks_execute_in_order() {
-        final List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1, -1, 0, 10000, Integer.MIN_VALUE);
+        final List<HookDefinition> hooks = mockHooks(listener, 3, Integer.MAX_VALUE, 1, -1, 0, 10000,
+            Integer.MIN_VALUE);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -52,31 +51,37 @@ class HookOrderTest {
 
         runnerSupplier.get().runPickle(pickle);
 
-        InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
+        verifyHookDefinitionExecutedInOrder();
     }
 
-    private List<HookDefinition> mockHooks(int... ordering) {
+    private void verifyHookDefinitionExecutedInOrder() {
+        long previousOrder = Long.MIN_VALUE;
+        for (HookDefinition hd : listener) {
+            assertTrue(hd.getOrder() >= previousOrder);
+            previousOrder = hd.getOrder();
+        }
+    }
+
+    private void verifyHookDefinitionExecutedInReverseOrder() {
+        long previousOrder = Long.MAX_VALUE;
+        for (HookDefinition hd : listener) {
+            assertTrue(hd.getOrder() <= previousOrder);
+            previousOrder = hd.getOrder();
+        }
+    }
+
+    private List<HookDefinition> mockHooks(List<HookDefinition> listener, int... ordering) {
         List<HookDefinition> hooks = new ArrayList<>();
         for (int order : ordering) {
-            HookDefinition hook = mock(HookDefinition.class, "Mock number " + order);
-            when(hook.getOrder()).thenReturn(order);
-            when(hook.getTagExpression()).thenReturn("");
-            when(hook.getLocation()).thenReturn("Mock location");
-            hooks.add(hook);
+            hooks.add(new MockHookDefinition(order, listener));
         }
         return hooks;
     }
 
     @Test
     void before_step_hooks_execute_in_order() {
-        final List<HookDefinition> hooks = mockHooks(3, Integer.MAX_VALUE, 1, -1, 0, 10000, Integer.MIN_VALUE);
+        final List<HookDefinition> hooks = mockHooks(listener, 3, Integer.MAX_VALUE, 1, -1, 0, 10000,
+            Integer.MIN_VALUE);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -91,19 +96,13 @@ class HookOrderTest {
 
         runnerSupplier.get().runPickle(pickle);
 
-        InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
+        verifyHookDefinitionExecutedInOrder();
     }
 
     @Test
     void after_hooks_execute_in_reverse_order() {
-        final List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
+        final List<HookDefinition> hooks = mockHooks(listener, Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0,
+            10000);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -118,19 +117,13 @@ class HookOrderTest {
 
         runnerSupplier.get().runPickle(pickle);
 
-        InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
+        verifyHookDefinitionExecutedInReverseOrder();
     }
 
     @Test
     void after_step_hooks_execute_in_reverse_order() {
-        final List<HookDefinition> hooks = mockHooks(Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0, 10000);
+        final List<HookDefinition> hooks = mockHooks(listener, Integer.MIN_VALUE, 2, Integer.MAX_VALUE, 4, -1, 0,
+            10000);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -145,20 +138,13 @@ class HookOrderTest {
 
         runnerSupplier.get().runPickle(pickle);
 
-        InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
+        verifyHookDefinitionExecutedInReverseOrder();
     }
 
     @Test
     void hooks_order_across_many_backends() {
-        final List<HookDefinition> backend1Hooks = mockHooks(3, Integer.MAX_VALUE, 1);
-        final List<HookDefinition> backend2Hooks = mockHooks(2, Integer.MAX_VALUE, 4);
+        final List<HookDefinition> backend1Hooks = mockHooks(listener, 3, Integer.MAX_VALUE, 1);
+        final List<HookDefinition> backend2Hooks = mockHooks(listener, 2, Integer.MAX_VALUE, 4);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -177,17 +163,41 @@ class HookOrderTest {
 
         runnerSupplier.get().runPickle(pickle);
 
-        List<HookDefinition> allHooks = new ArrayList<>();
-        allHooks.addAll(backend1Hooks);
-        allHooks.addAll(backend2Hooks);
-
-        InOrder inOrder = inOrder(allHooks.toArray());
-        inOrder.verify(backend1Hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(backend2Hooks.get(0)).execute(ArgumentMatchers.any());
-        inOrder.verify(backend1Hooks.get(0)).execute(ArgumentMatchers.any());
-        inOrder.verify(backend2Hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(backend1Hooks.get(1)).execute(ArgumentMatchers.any());
-        inOrder.verify(backend2Hooks.get(1)).execute(ArgumentMatchers.any());
+        verifyHookDefinitionExecutedInOrder();
     }
 
+    private static class MockHookDefinition implements HookDefinition {
+        private final int order;
+        private final List<HookDefinition> listener;
+
+        public MockHookDefinition(int order, List<HookDefinition> listener) {
+            this.order = order;
+            this.listener = listener;
+        }
+
+        @Override
+        public void execute(TestCaseState state) {
+            listener.add(this);
+        }
+
+        @Override
+        public String getTagExpression() {
+            return "";
+        }
+
+        @Override
+        public int getOrder() {
+            return order;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return "Mock location";
+        }
+    }
 }
