@@ -1,6 +1,7 @@
 package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,7 +25,7 @@ public final class CucumberInvocationTargetException extends RuntimeException {
      * @deprecated use {@link #getCause()} instead.
      */
     @Deprecated
-    public Throwable getInvocationTargetExceptionCause() {
+    public @Nullable Throwable getInvocationTargetExceptionCause() {
         return getCause();
     }
 
@@ -33,7 +34,8 @@ public final class CucumberInvocationTargetException extends RuntimeException {
     }
 
     @Override
-    public Throwable getCause() {
+    @SuppressWarnings("UnsynchronizedOverridesSynchronized")
+    public @Nullable Throwable getCause() {
         return invocationTargetException.getCause();
     }
 }

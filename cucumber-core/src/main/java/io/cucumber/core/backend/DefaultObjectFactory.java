@@ -27,24 +27,28 @@ public final class DefaultObjectFactory implements ObjectFactory {
 
     private final Map<Class<?>, Object> instances = new HashMap<>();
 
+    @Override
     public void start() {
         // No-op
     }
 
+    @Override
     public void stop() {
         instances.clear();
     }
 
+    @Override
     public boolean addClass(Class<?> clazz) {
         return true;
     }
 
+    @Override
     public <T> T getInstance(Class<T> type) {
-        T instance = type.cast(instances.get(type));
-        if (instance == null) {
-            instance = cacheNewInstance(type);
+        Object instance = instances.get(type);
+        if (instance != null) {
+            return type.cast(instance);
         }
-        return instance;
+        return cacheNewInstance(type);
     }
 
     private <T> T cacheNewInstance(Class<T> type) {

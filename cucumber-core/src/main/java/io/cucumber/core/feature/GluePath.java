@@ -118,13 +118,14 @@ public final class GluePath {
                 classPathResource = classPathResource.substring(0, classPathResource.length() - 1);
             }
             String packageName = classPathResource.replaceAll("/", ".");
-            String message = "" +
-                    "Consider replacing glue path '%s' with '%s'.\n'" +
-                    "\n" +
-                    "The current glue path points to a source directory in your project. However " +
-                    "cucumber looks for glue (i.e. step definitions) on the classpath. By using a " +
-                    "package name you can avoid this ambiguity.";
-            return String.format(message, gluePath, packageName);
+            return """
+                    Consider replacing glue path '%s' with '%s'.
+                    
+                    The current glue path points to a source directory in your \
+                    project. However cucumber looks for glue (i.e. step \
+                    definitions) on the classpath. By using a package name you \
+                    can avoid this ambiguity."""
+                    .formatted(gluePath, packageName);
         });
     }
 
@@ -135,10 +136,9 @@ public final class GluePath {
 
     @SuppressWarnings("UnnecessaryParentheses")
     private static boolean isValidIdentifier(String schemeSpecificPart) {
-        for (String part : schemeSpecificPart.split("/")) {
+        for (String part : schemeSpecificPart.split("/", 0)) {
             for (int i = 0; i < part.length(); i++) {
-                if (i == 0 && !isJavaIdentifierStart(part.charAt(i))
-                        || (i != 0 && !isJavaIdentifierPart(part.charAt(i)))) {
+                if ((i == 0 && !isJavaIdentifierStart(part.charAt(i))) || (i != 0 && !isJavaIdentifierPart(part.charAt(i)))) {
                     return false;
                 }
             }

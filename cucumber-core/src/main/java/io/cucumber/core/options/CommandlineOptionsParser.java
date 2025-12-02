@@ -9,6 +9,7 @@ import io.cucumber.datatable.DataTableFormatter;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialects;
 import io.cucumber.tagexpressions.TagExpressionParser;
+import org.jspecify.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,10 +75,10 @@ public final class CommandlineOptionsParser {
     private static final String USAGE_RESOURCE = "/io/cucumber/core/options/USAGE.txt";
 
     private final PrintWriter out;
-    private Byte exitCode = null;
+    private @Nullable Byte exitCode = null;
 
     public CommandlineOptionsParser(OutputStream outputStream) {
-        out = new PrintWriter(outputStream, true);
+        out = new PrintWriter(outputStream, true, Charset.defaultCharset());
     }
 
     public Optional<Byte> exitStatus() {
@@ -109,7 +111,7 @@ public final class CommandlineOptionsParser {
                 String nextArg = removeArgFor(arg, args);
                 exitCode = printI18nKeywords(nextArg);
                 return parsedOptions;
-            } else if (arg.equals(I18N) || arg.equals(I18N_KEYWORDS)) {
+            } else if (arg.equals(I18N)) {
                 String nextArg = removeArgFor(arg, args);
                 exitCode = printI18n(nextArg);
                 return parsedOptions;

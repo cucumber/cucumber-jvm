@@ -131,6 +131,7 @@ public final class FeatureWithLines implements Serializable {
         return uri.equals(that.uri) && lines.equals(that.lines);
     }
 
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(uri.toString());
         for (Integer line : lines) {

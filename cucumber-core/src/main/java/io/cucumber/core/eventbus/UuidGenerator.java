@@ -10,8 +10,10 @@ import java.util.function.Supplier;
  */
 @API(status = API.Status.EXPERIMENTAL)
 public interface UuidGenerator extends Supplier<UUID> {
+    
     UUID generateId();
 
+    @Override
     default UUID get() {
         return generateId();
     }
