@@ -331,10 +331,9 @@ public class DataTableStepDefinitions {
 
 ### Localized Transformers
 
-Combining the [Before hook](#before--after) and the Scenario's language offers custom transformation that respects the
-language of the feature file. For example, localized features about summer solstice may provide the date "21 kesäkuuta
-2025" (Finnish) or "21 juin 2025" (French). Parsing these dates requires an according `DateTimeFormatter`, either within
-a default transformer method or within a named type.
+To transform a value localized to the language of the feature file combine the [Before hook](#before--after) and the
+scenario's language. For example, localized features about summer solstice may provide the date "21 kesäkuuta 2025"
+(Finnish) or "21 juin 2025" (French). Parsing these dates requires a `DateTimeFormatter` with a locale.
 
  ```java
 package com.example.app;
