@@ -339,11 +339,9 @@ scenario's language. For example, localized features about summer solstice may p
 package com.example.app;
 
 import io.cucumber.java.Before;
-import io.cucumber.java.DefaultParameterTransformer;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.Scenario;
 
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -359,16 +357,6 @@ public class TransformerDefinitions {
         formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy").withLocale(locale);
     }
 
-    @DefaultParameterTransformer
-    public Object transform(final String value, final Type type)
-    throws Exception {
-        if (LocalDate.class.equals(type)) {
-            return LocalDate.parse(value.toString(), formatter);
-        } else {
-            throw new UnsupportedOperationException("Can't transform '" + value + "' to " + type);
-        }
-    }
-
     @ParameterType(name = "date", value = "\\d{1,2} \\w+ \\d{4}")
     public LocalDate parseLocalDate(String value) {
         return LocalDate.parse(value, formatter);
@@ -376,6 +364,21 @@ public class TransformerDefinitions {
 
 }
 ```
+
+Similar, the example `ObjectMapper` of the [aforementioned default transformers](#default-transformers) can be localized
+before each scenario.
+
+```java
+    [...]
+    @Before
+    public void updateObjectMapper(final Scenario scenario) {
+        String language = scenario.getLanguage();
+        Locale locale = new Locale.Builder().setLanguage(language).build();
+        objectMapper.setLocale(locale);
+    }
+    [...]
+```
+
 
 ### Empty Cells
 
