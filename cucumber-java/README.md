@@ -365,7 +365,7 @@ public class TransformerDefinitions {
 }
 ```
 
-Similar, the example `ObjectMapper` of the [aforementioned default transformers](#default-transformers) can be localized
+Similarly, the example `ObjectMapper` of the [aforementioned default transformers](#default-transformers) can be localized
 before each scenario.
 
 ```java
