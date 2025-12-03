@@ -357,8 +357,8 @@ public class TransformerDefinitions {
         formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy").withLocale(locale);
     }
 
-    @ParameterType(name = "date", value = "\\d{1,2} \\w+ \\d{4}")
-    public LocalDate parseLocalDate(String value) {
+    @ParameterType(value = "\\d{1,2} \\w+ \\d{4}")
+    public LocalDate localizedDate(String value) {
         return LocalDate.parse(value, formatter);
     }
 
