@@ -88,7 +88,7 @@ public interface TestCaseState {
      * @return the language of the Scenario.
      */
     default String getLanguage() {
-        return null;   
+        return null;
     }
 
     /**
