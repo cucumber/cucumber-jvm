@@ -1,8 +1,10 @@
 package io.cucumber.core.stepexpression;
 
+import org.jspecify.annotations.Nullable;
+
 public interface Argument {
 
-    Object getValue();
+    @Nullable Object getValue();
 
     @Override
     String toString();

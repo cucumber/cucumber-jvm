@@ -9,6 +9,7 @@ import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.stepexpression.Argument;
 import io.cucumber.core.stepexpression.ArgumentMatcher;
 import io.cucumber.core.stepexpression.StepExpression;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -53,7 +54,7 @@ final class CoreStepDefinition implements StepDefinition {
         return stepDefinition;
     }
 
-    List<Argument> matchedArguments(Step step) {
+    @Nullable List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step, types);
     }
 

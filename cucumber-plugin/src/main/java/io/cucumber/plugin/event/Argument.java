@@ -1,6 +1,7 @@
 package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents an argument in a cucumber or regular expressions
@@ -14,12 +15,14 @@ public interface Argument {
 
     String getParameterTypeName();
 
+    @Nullable
     String getValue();
 
     int getStart();
 
     int getEnd();
 
+    @Nullable
     Group getGroup();
 
 }

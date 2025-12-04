@@ -36,6 +36,7 @@ import io.cucumber.messages.types.SourceReference;
 import io.cucumber.messages.types.StepDefinitionPattern;
 import io.cucumber.messages.types.StepDefinitionPatternType;
 import io.cucumber.plugin.event.StepDefinedEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static java.util.Objects.requireNonNull;
 
 final class CachingGlue implements Glue {
 
@@ -84,9 +87,9 @@ final class CachingGlue implements Glue {
 
     private final EventBus bus;
 
-    private StepTypeRegistry stepTypeRegistry;
-    private Locale locale = null;
-    private StepExpressionFactory stepExpressionFactory = null;
+    private @Nullable StepTypeRegistry stepTypeRegistry;
+    private @Nullable Locale locale = null;
+    private @Nullable StepExpressionFactory stepExpressionFactory = null;
     private boolean cacheIsDirty = false;
     private boolean hasScenarioScopedGlue = false;
 
@@ -245,7 +248,7 @@ final class CachingGlue implements Glue {
     }
 
     StepTypeRegistry getStepTypeRegistry() {
-        return stepTypeRegistry;
+        return requireNonNull(stepTypeRegistry);
     }
 
     void prepareGlue(Locale locale) throws DuplicateStepDefinitionException {
@@ -343,19 +346,11 @@ final class CachingGlue implements Glue {
                     .orElseGet(this::emptySourceReference),
             coreHook.getTagExpression(),
             coreHook.getHookType()
-                    .map(hookType -> {
-                        switch (hookType) {
-                            case BEFORE:
-                                return HookType.BEFORE_TEST_CASE;
-                            case AFTER:
-                                return HookType.AFTER_TEST_CASE;
-                            case BEFORE_STEP:
-                                return HookType.BEFORE_TEST_STEP;
-                            case AFTER_STEP:
-                                return HookType.AFTER_TEST_STEP;
-                            default:
-                                return null;
-                        }
+                    .map(hookType -> switch (hookType) {
+                        case BEFORE -> HookType.BEFORE_TEST_CASE;
+                        case AFTER -> HookType.AFTER_TEST_CASE;
+                        case BEFORE_STEP -> HookType.BEFORE_TEST_STEP;
+                        case AFTER_STEP -> HookType.AFTER_TEST_STEP;
                     })
                     .orElse(null));
         bus.send(Envelope.of(messagesHook));
@@ -380,16 +375,14 @@ final class CachingGlue implements Glue {
     }
 
     private SourceReference createSourceReference(io.cucumber.core.backend.SourceReference reference) {
-        if (reference instanceof JavaMethodReference) {
-            JavaMethodReference methodReference = (JavaMethodReference) reference;
+        if (reference instanceof JavaMethodReference methodReference) {
             return SourceReference.of(new JavaMethod(
                 methodReference.className(),
                 methodReference.methodName(),
                 methodReference.methodParameterTypes()));
         }
 
-        if (reference instanceof StackTraceElementReference) {
-            StackTraceElementReference stackReference = (StackTraceElementReference) reference;
+        if (reference instanceof StackTraceElementReference stackReference) {
             JavaStackTraceElement stackTraceElement = new JavaStackTraceElement(
                 stackReference.className(),
                 // TODO: Fix json schema. Stacktrace elements need not have a
@@ -417,7 +410,7 @@ final class CachingGlue implements Glue {
         }
     }
 
-    PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {
+    @Nullable PickleStepDefinitionMatch stepDefinitionMatch(URI uri, Step step) throws AmbiguousStepDefinitionsException {
         PickleStepDefinitionMatch cachedMatch = cachedStepDefinitionMatch(uri, step);
         if (cachedMatch != null) {
             return cachedMatch;
@@ -425,7 +418,7 @@ final class CachingGlue implements Glue {
         return findStepDefinitionMatch(uri, step);
     }
 
-    private PickleStepDefinitionMatch cachedStepDefinitionMatch(URI uri, Step step) {
+    private @Nullable PickleStepDefinitionMatch cachedStepDefinitionMatch(URI uri, Step step) {
         String stepDefinitionPattern = stepPatternByStepText.get(step.getText());
         if (stepDefinitionPattern == null) {
             return null;
@@ -436,18 +429,16 @@ final class CachingGlue implements Glue {
             return null;
         }
 
-        // Step definition arguments consists of parameters included in the step
-        // text and
-        // gherkin step arguments (doc string and data table) which are not
-        // included in
-        // the step text. As such the step definition arguments can not be
-        // cached and
-        // must be recreated each time.
-        List<Argument> arguments = coreStepDefinition.matchedArguments(step);
+        // At this point we know the step matches but:
+        // Step definition arguments consists of parameters included in the
+        // step text and gherkin step arguments (doc string and data table)
+        // which are not included in the step text. As such the step definition
+        // arguments can not be cached and must be recreated each time.
+        List<Argument> arguments = requireNonNull(coreStepDefinition.matchedArguments(step));
         return new PickleStepDefinitionMatch(arguments, coreStepDefinition, uri, step);
     }
 
-    private PickleStepDefinitionMatch findStepDefinitionMatch(URI uri, Step step)
+    private @Nullable PickleStepDefinitionMatch findStepDefinitionMatch(URI uri, Step step)
             throws AmbiguousStepDefinitionsException {
         List<PickleStepDefinitionMatch> matches = stepDefinitionMatches(uri, step);
         if (matches.isEmpty()) {
@@ -498,8 +489,7 @@ final class CachingGlue implements Glue {
         Iterator<?> glueIterator = glues.iterator();
         while (glueIterator.hasNext()) {
             Object glue = glueIterator.next();
-            if (glue instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScoped = (ScenarioScoped) glue;
+            if (glue instanceof ScenarioScoped scenarioScoped) {
                 scenarioScoped.dispose();
                 glueIterator.remove();
                 cacheIsDirty = true;

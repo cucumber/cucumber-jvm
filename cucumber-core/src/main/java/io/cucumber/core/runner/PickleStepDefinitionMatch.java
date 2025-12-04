@@ -41,7 +41,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         if (arguments.size() != parameterInfos.size()) {
             throw arityMismatch(parameterInfos.size());
         }
-        List<Object> result = new ArrayList<>();
+        List<@Nullable Object> result = new ArrayList<>();
         try {
             for (Argument argument : arguments) {
                 result.add(argument.getValue());
@@ -125,7 +125,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
                         stepDefinition.getLocation()), e);
     }
 
-    private Throwable couldNotInvokeStep(CucumberBackendException e, List<Object> result) {
+    private Throwable couldNotInvokeStep(CucumberBackendException e, List<@Nullable Object> result) {
         // TODO: Add doc URL
         return new CucumberException("""
                 Could not invoke step [%s] defined at '%s'.
@@ -159,7 +159,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
         return formatted.toString();
     }
 
-    private String createArgumentTypes(List<Object> result) {
+    private String createArgumentTypes(List<@Nullable Object> result) {
         return result.stream()
                 .map(o -> o == null ? "null" : o.getClass().getName())
                 .collect(Collectors.joining(", "));

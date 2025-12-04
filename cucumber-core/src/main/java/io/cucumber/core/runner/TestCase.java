@@ -179,18 +179,15 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
         List<StepMatchArgumentsList> stepMatchArgumentsLists = emptyList();
         List<String> stepDefinitionIds = emptyList();
 
-        if (pluginTestStep instanceof HookTestStep) {
-            HookTestStep hookTestStep = (HookTestStep) pluginTestStep;
+        if (pluginTestStep instanceof HookTestStep hookTestStep) {
             HookDefinitionMatch definitionMatch = hookTestStep.getDefinitionMatch();
             CoreHookDefinition hookDefinition = definitionMatch.getHookDefinition();
             hookId = hookDefinition.getId().toString();
-        } else if (pluginTestStep instanceof PickleStepTestStep) {
-            PickleStepTestStep pickleStep = (PickleStepTestStep) pluginTestStep;
+        } else if (pluginTestStep instanceof PickleStepTestStep pickleStep) {
             pickleStepId = pickleStep.getStep().getId();
             stepMatchArgumentsLists = getStepMatchArguments(pickleStep);
             StepDefinition stepDefinition = pickleStep.getDefinitionMatch().getStepDefinition();
-            if (stepDefinition instanceof CoreStepDefinition) {
-                CoreStepDefinition coreStepDefinition = (CoreStepDefinition) stepDefinition;
+            if (stepDefinition instanceof CoreStepDefinition coreStepDefinition) {
                 stepDefinitionIds = singletonList(coreStepDefinition.getId().toString());
             }
         }

@@ -43,7 +43,7 @@ public final class Runner {
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
     private final Map<String, Locale> localeCache = new HashMap<>();
-    private List<SnippetGenerator> snippetGenerators;
+    private final List<SnippetGenerator> snippetGenerators = new ArrayList<>();
 
     public Runner(
             EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, Options runnerOptions
@@ -72,7 +72,8 @@ public final class Runner {
             buildBackendWorlds();
 
             glue.prepareGlue(localeForPickle(pickle));
-            snippetGenerators = createSnippetGeneratorsForPickle(pickle.getLanguage(), glue.getStepTypeRegistry());
+            snippetGenerators.clear();
+            snippetGenerators.addAll(createSnippetGeneratorsForPickle(pickle.getLanguage(), glue.getStepTypeRegistry()));
 
             TestCase testCase = createTestCaseForPickle(pickle);
             testCase.run(bus);
@@ -240,7 +241,7 @@ public final class Runner {
     private List<Snippet> generateSnippetsForStep(Step step) {
         return snippetGenerators.stream()
                 .flatMap(generator -> {
-                    String language = generator.getLanguage().orElse("unknown");
+                    String language = generator.getPickleLanguage().orElse("unknown");
                     return generator.getSnippet(step, runnerOptions.getSnippetType())
                             .stream()
                             .map(code -> new Snippet(language, code));

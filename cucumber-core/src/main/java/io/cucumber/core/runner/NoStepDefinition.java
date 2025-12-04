@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.StepDefinition;
 
+import java.util.Collections;
 import java.util.List;
 
 final class NoStepDefinition implements StepDefinition {
@@ -13,12 +14,12 @@ final class NoStepDefinition implements StepDefinition {
 
     @Override
     public List<ParameterInfo> parameterInfos() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public String getPattern() {
-        return null;
+        return "";
     }
 
     @Override
@@ -28,7 +29,7 @@ final class NoStepDefinition implements StepDefinition {
 
     @Override
     public String getLocation() {
-        return null;
+        return "no location";
     }
 
 }

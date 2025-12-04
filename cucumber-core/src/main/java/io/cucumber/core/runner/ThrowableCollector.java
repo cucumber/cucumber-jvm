@@ -1,5 +1,7 @@
 package io.cucumber.core.runner;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.function.Predicate;
 
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
@@ -13,7 +15,7 @@ import static io.cucumber.core.runner.TestAbortedExceptions.createIsTestAbortedE
  */
 final class ThrowableCollector {
 
-    private Throwable throwable;
+    private @Nullable Throwable throwable;
     private final Predicate<Throwable> isTestAbortedException = createIsTestAbortedExceptionPredicate();
 
     void execute(Runnable runnable) {
@@ -40,7 +42,7 @@ final class ThrowableCollector {
         return isTestAbortedException.test(throwable);
     }
 
-    Throwable getThrowable() {
+    @Nullable Throwable getThrowable() {
         return throwable;
     }
 

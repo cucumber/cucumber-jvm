@@ -10,6 +10,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.plugin.event.DataTableArgument;
 import io.cucumber.plugin.event.DocStringArgument;
 import io.cucumber.plugin.event.StepArgument;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.text.Normalizer;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -37,19 +39,19 @@ public final class SnippetGenerator {
 
     private final Snippet snippet;
     private final CucumberExpressionGenerator generator;
-    private final String language;
+    private final @Nullable String pickleLanguage;
 
     public SnippetGenerator(Snippet snippet, ParameterTypeRegistry parameterTypeRegistry) {
         this(null, snippet, parameterTypeRegistry);
     }
 
-    public SnippetGenerator(String language, Snippet snippet, ParameterTypeRegistry parameterTypeRegistry) {
-        this.language = language;
+    public SnippetGenerator(@Nullable String pickleLanguage, Snippet snippet, ParameterTypeRegistry parameterTypeRegistry) {
+        this.pickleLanguage = pickleLanguage;
         this.snippet = snippet;
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
-    public Optional<String> getLanguage() {
+    public Optional<String> getPickleLanguage() {
         return snippet.language();
     }
 
@@ -72,7 +74,7 @@ public final class SnippetGenerator {
         List<String> parameterNames = toParameterNames(expression, parameterNameGenerator);
         Map<String, Type> arguments = arguments(step, parameterNames, expression.getParameterTypes());
         return snippet.template().format(new String[] {
-                getNormalizedKeyWord(language, keyword),
+                getNormalizedKeyWord(pickleLanguage, keyword),
                 snippet.escapePattern(source),
                 functionName,
                 snippet.arguments(arguments),
@@ -89,13 +91,13 @@ public final class SnippetGenerator {
     }
 
     private static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.US) + str.substring(1);
     }
 
-    private static String getNormalizedKeyWord(String language, String keyword) {
+    private static String getNormalizedKeyWord(@Nullable String pickleLanguage, String keyword) {
         // Exception: Use the symbol names for the Emoj language.
         // Emoji are not legal identifiers in Java.
-        if ("em".equals(language)) {
+        if ("em".equals(pickleLanguage)) {
             return getNormalizedEmojiKeyWord(keyword);
         }
         return getNormalizedKeyWord(keyword);

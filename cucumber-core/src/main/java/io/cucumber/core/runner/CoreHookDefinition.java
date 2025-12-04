@@ -87,8 +87,7 @@ class CoreHookDefinition {
 
         @Override
         public void dispose() {
-            if (delegate instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScoped = (ScenarioScoped) delegate;
+            if (delegate instanceof ScenarioScoped scenarioScoped) {
                 scenarioScoped.dispose();
             }
         }

@@ -10,6 +10,7 @@ import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.WriteEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.time.Instant;
@@ -31,7 +32,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private final TestCase testCase;
     private final UUID testExecutionId;
 
-    private UUID currentTestStepId;
+    private @Nullable UUID currentTestStepId;
 
     TestCaseState(EventBus bus, UUID testExecutionId, TestCase testCase) {
         this.bus = requireNonNull(bus);
@@ -71,8 +72,9 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     public void attach(byte[] data, String mediaType, String name) {
         requireNonNull(data);
         requireNonNull(mediaType);
+        requireNonNull(currentTestStepId);
 
-        requireActiveTestStep();
+        getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new EmbedEvent(instant, testCase, data, mediaType, name));
         bus.send(Envelope.of(new Attachment(
@@ -94,7 +96,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         requireNonNull(data);
         requireNonNull(mediaType);
 
-        requireActiveTestStep();
+        UUID currentTestStepId = getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new EmbedEvent(instant, testCase, data.getBytes(UTF_8), mediaType, name));
         bus.send(Envelope.of(new Attachment(
@@ -113,7 +115,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public void log(String text) {
-        requireActiveTestStep();
+        UUID currentTestStepId = getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new WriteEvent(instant, testCase, text));
         bus.send(Envelope.of(new Attachment(
@@ -150,7 +152,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         return testCase.getLocation().getLine();
     }
 
-    Throwable getError() {
+    @Nullable Throwable getError() {
         if (stepResults.isEmpty()) {
             return null;
         }
@@ -166,11 +168,12 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         this.currentTestStepId = null;
     }
 
-    private void requireActiveTestStep() {
+    private UUID getRequiredCurrentTestStepId() {
         if (currentTestStepId == null) {
             throw new IllegalStateException(
                 "You can not use Scenario.log or Scenario.attach when a step is not being executed");
         }
+        return currentTestStepId;
     }
 
 }
