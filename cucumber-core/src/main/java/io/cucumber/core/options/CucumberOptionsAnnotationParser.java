@@ -8,6 +8,7 @@ import io.cucumber.core.feature.GluePath;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
+import org.jspecify.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
@@ -18,7 +19,7 @@ public final class CucumberOptionsAnnotationParser {
 
     private boolean featuresSpecified = false;
     private boolean overridingGlueSpecified = false;
-    private OptionsProvider optionsProvider;
+    private @Nullable OptionsProvider optionsProvider;
 
     public CucumberOptionsAnnotationParser withOptionsProvider(OptionsProvider optionsProvider) {
         this.optionsProvider = optionsProvider;
@@ -128,7 +129,7 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addFeatures(CucumberOptions options, RuntimeOptionsBuilder args) {
-        if (options != null && options.features().length != 0) {
+        if (options.features().length != 0) {
             for (String feature : options.features()) {
                 FeatureWithLinesOrRerunPath parsed = FeatureWithLinesOrRerunPath.parse(feature);
                 parsed.getFeaturesToRerun().ifPresent(args::addRerun);
@@ -181,7 +182,7 @@ public final class CucumberOptionsAnnotationParser {
 
     public interface OptionsProvider {
 
-        CucumberOptions getOptions(Class<?> clazz);
+        @Nullable CucumberOptions getOptions(Class<?> clazz);
 
     }
 
@@ -207,9 +208,9 @@ public final class CucumberOptionsAnnotationParser {
 
         SnippetType snippets();
 
-        Class<? extends ObjectFactory> objectFactory();
+        @Nullable Class<? extends ObjectFactory> objectFactory();
 
-        Class<? extends UuidGenerator> uuidGenerator();
+        @Nullable Class<? extends UuidGenerator> uuidGenerator();
 
     }
 

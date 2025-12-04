@@ -19,6 +19,7 @@ import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.query.Lineage;
 import io.cucumber.query.Query;
 import io.cucumber.query.Repository;
+import org.jspecify.annotations.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -111,7 +113,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                         .map(testCaseStarted -> createTestData(
                             testCaseFinished, //
                             testCaseStarted, //
-                            createTimeLineGroup(timeLineGroupsById) //
+                                workerId -> timeLineGroupsById.computeIfAbsent(workerId, id -> new TimeLineGroup(id, id)) //
                         )))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -122,22 +124,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 .collect(Collectors.toList());
 
         writeTimeLineReport(timeLineGroups, timeLineItems);
-    }
-
-    private Function<String, TimeLineGroup> createTimeLineGroup(
-            Map<String, TimeLineGroup> timeLineGroups
-    ) {
-
-        return workerId -> timeLineGroups.computeIfAbsent(workerId, createTimeLineGroup());
-    }
-
-    private Function<String, TimeLineGroup> createTimeLineGroup() {
-        return workerId -> {
-            TimeLineGroup timeLineGroup = new TimeLineGroup();
-            timeLineGroup.setContent(workerId);
-            timeLineGroup.setId(workerId);
-            return timeLineGroup;
-        };
     }
 
     private TimeLineItem createTestData(
@@ -191,7 +177,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                 .map(pickle -> {
                     StringBuilder tags = new StringBuilder();
                     for (PickleTag tag : pickle.getTags()) {
-                        tags.append(tag.getName().toLowerCase()).append(",");
+                        tags.append(tag.getName().toLowerCase(Locale.US)).append(",");
                     }
                     return tags.toString();
                 }).orElse("");
@@ -228,9 +214,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     }
 
     private void copyReportFiles() throws IOException {
-        if (reportDir == null) {
-            return;
-        }
         File outputDir = new File(reportDir.getPath());
         for (String textAsset : TEXT_ASSETS) {
             try (InputStream textAssetStream = getClass().getResourceAsStream(textAsset)) {
@@ -255,14 +238,11 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     static class TimeLineGroup {
 
-        private String id;
-        private String content;
+        private final String id;
+        private final String content;
 
-        public void setId(String id) {
+        TimeLineGroup(String id, String content) {
             this.id = id;
-        }
-
-        public void setContent(String content) {
             this.content = content;
         }
 
@@ -270,7 +250,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             return id;
         }
 
-        public String getContent() {
+        public @Nullable String getContent() {
             return content;
         }
 
@@ -278,16 +258,16 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     static class TimeLineItem {
 
-        private String id;
-        private String feature;
-        private String scenario;
+        private @Nullable String id;
+        private @Nullable String feature;
+        private @Nullable String scenario;
         private long start;
-        private String group;
+        private @Nullable String group;
         // Replaced in JS file
         private String content = ""; 
-        private String tags;
+        private @Nullable String tags;
         private long end;
-        private String className;
+        private @Nullable String className;
 
         public void setId(String id) {
             this.id = id;
@@ -325,15 +305,15 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.className = className;
         }
 
-        public String getId() {
+        public @Nullable String getId() {
             return id;
         }
 
-        public String getFeature() {
+        public @Nullable String getFeature() {
             return feature;
         }
 
-        public String getScenario() {
+        public @Nullable String getScenario() {
             return scenario;
         }
 
@@ -341,15 +321,15 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             return start;
         }
 
-        public String getGroup() {
+        public @Nullable String getGroup() {
             return group;
         }
 
-        public String getContent() {
+        public @Nullable String getContent() {
             return content;
         }
 
-        public String getTags() {
+        public @Nullable String getTags() {
             return tags;
         }
 
@@ -357,7 +337,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             return end;
         }
 
-        public String getClassName() {
+        public @Nullable String getClassName() {
             return className;
         }
 

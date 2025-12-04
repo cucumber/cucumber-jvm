@@ -8,6 +8,7 @@ import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -23,23 +24,23 @@ public final class RuntimeOptionsBuilder {
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
     private final List<Options.Plugin> plugins = new ArrayList<>();
-    private List<FeatureWithLines> parsedRerunPaths = null;
-    private Integer parsedThreads = null;
-    private Boolean parsedDryRun = null;
-    private Boolean parsedMonochrome = null;
-    private SnippetType parsedSnippetType = null;
-    private Boolean parsedWip = null;
-    private PickleOrder parsedPickleOrder = null;
-    private Integer parsedCount = null;
-    private Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
-    private Class<? extends UuidGenerator> parsedUuidGeneratorClass = null;
-    private Boolean addDefaultSummaryPrinter = null;
+    private @Nullable List<FeatureWithLines> parsedRerunPaths = null;
+    private @Nullable Integer parsedThreads = null;
+    private @Nullable Boolean parsedDryRun = null;
+    private @Nullable Boolean parsedMonochrome = null;
+    private @Nullable SnippetType parsedSnippetType = null;
+    private @Nullable Boolean parsedWip = null;
+    private @Nullable PickleOrder parsedPickleOrder = null;
+    private @Nullable Integer parsedCount = null;
+    private @Nullable Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
+    private @Nullable Class<? extends UuidGenerator> parsedUuidGeneratorClass = null;
+    private @Nullable Boolean addDefaultSummaryPrinter = null;
     private boolean addDefaultGlueIfAbsent;
     private boolean addDefaultFeaturePathIfAbsent;
-    private String parsedPublishToken = null;
-    private Boolean parsedPublish;
-    private Boolean parsedPublishQuiet;
-    private Boolean parsedEnablePublishPlugin;
+    private @Nullable String parsedPublishToken = null;
+    private @Nullable Boolean parsedPublish;
+    private @Nullable Boolean parsedPublishQuiet;
+    private @Nullable Boolean parsedEnablePublishPlugin;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {

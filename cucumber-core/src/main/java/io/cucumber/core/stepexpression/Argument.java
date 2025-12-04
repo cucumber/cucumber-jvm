@@ -4,6 +4,7 @@ public interface Argument {
 
     Object getValue();
 
+    @Override
     String toString();
 
 }

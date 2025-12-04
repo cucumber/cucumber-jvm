@@ -10,6 +10,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.query.Query;
 import io.cucumber.query.Repository;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -18,7 +19,9 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collector;
@@ -88,11 +91,11 @@ public final class RerunFormatter implements ConcurrentEventListener {
         writer.close();
     }
 
-    private void printUriWithLines(String uri, TreeSet<Integer> lines) {
+    private void printUriWithLines(String uri, Set<Integer> lines) {
         writer.println(renderFeatureWithLines(uri, lines));
     }
 
-    private static Collector<UriAndLine, ?, TreeMap<String, TreeSet<Integer>>> groupByUriAndThenCollectLines() {
+    private static Collector<UriAndLine, ?, Map<String, Set<Integer>>> groupByUriAndThenCollectLines() {
         return groupingBy(
                 UriAndLine::getUri,
                 // Sort URIs
@@ -103,7 +106,7 @@ public final class RerunFormatter implements ConcurrentEventListener {
                         toCollection(TreeSet::new)));
     }
 
-    private static StringBuilder renderFeatureWithLines(String uri, TreeSet<Integer> lines) {
+    private static StringBuilder renderFeatureWithLines(String uri, Set<Integer> lines) {
         String path = relativize(URI.create(uri)).toString();
         StringBuilder builder = new StringBuilder(path);
         for (Integer line : lines) {
@@ -129,18 +132,18 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private static final class UriAndLine {
         private final String uri;
-        private final Integer line;
+        private final @Nullable Integer line;
 
-        private UriAndLine(String uri, Integer line) {
+        private UriAndLine(String uri, @Nullable Integer line) {
             this.uri = uri;
             this.line = line;
         }
 
-        public String getUri() {
+        String getUri() {
             return uri;
         }
 
-        public Integer getLine() {
+        @Nullable Integer getLine() {
             return line;
         }
     }

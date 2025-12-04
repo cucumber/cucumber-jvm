@@ -2,7 +2,6 @@ package io.cucumber.core.options;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.Proxy.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleEntry;
@@ -11,6 +10,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import static java.net.Proxy.NO_PROXY;
+import static java.net.Proxy.Type.HTTP;
+import static java.net.Proxy.Type.SOCKS;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -90,9 +91,9 @@ public final class CurlOption {
 
         Proxy.Type type;
         if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("https")) {
-            type = Type.HTTP;
+            type = HTTP;
         } else if (protocol.equalsIgnoreCase("socks")) {
-            type = Type.SOCKS;
+            type = SOCKS;
         } else {
             throw new IllegalArgumentException("'" + arg + "' did not have a valid proxy protocol");
         }

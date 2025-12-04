@@ -35,6 +35,7 @@ final class UTF8PrintWriter implements Appendable, Closeable, Flushable {
         }
     }
 
+    @Override
     public void flush() {
         try {
             out.flush();

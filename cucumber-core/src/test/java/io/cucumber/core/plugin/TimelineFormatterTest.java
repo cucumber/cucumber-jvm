@@ -263,40 +263,40 @@ class TimelineFormatterTest {
             final int idx = i;
 
             assertAll(
-                () -> assertThat(String.format("feature on item %s, was not as expected", idx),
+                () -> assertThat("feature on item %d, was not as expected".formatted(idx),
                     actual.getFeature(),
                     is(equalTo(expected.getFeature()))),
-                () -> assertThat(String.format("className on item %s, was not as expected", idx),
+                () -> assertThat("className on item %d, was not as expected".formatted(idx),
                     actual.getClassName(),
                     is(equalTo(expected.getClassName()))),
-                () -> assertThat(String.format("content on item %s, was not as expected", idx),
+                () -> assertThat("content on item %d, was not as expected".formatted(idx),
                     actual.getContent(),
                     is(equalTo(expected.getContent()))),
-                () -> assertThat(String.format("tags on item %s, was not as expected", idx),
+                () -> assertThat("tags on item %d, was not as expected".formatted(idx),
                     actual.getTags(),
                     is(equalTo(expected.getTags()))),
                 () -> {
                     if (checkActualTimeStamps) {
                         assertAll(
-                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
+                            () -> assertThat("startTime on item %d, was not as expected".formatted(idx),
                                 actual.getStart(), is(equalTo(expected.getStart()))),
-                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
+                            () -> assertThat("endTime on item %d, was not as expected".formatted(idx),
                                 actual.getEnd(), is(equalTo(expected.getEnd()))));
                     } else {
                         assertAll(
-                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
+                            () -> assertThat("startTime on item %d, was not as expected".formatted(idx),
                                 actual.getStart(), is(notNullValue())),
-                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
+                            () -> assertThat("endTime on item %d, was not as expected".formatted(idx),
                                 actual.getEnd(), is(notNullValue())));
                     }
                 },
                 () -> {
                     if (checkActualThreadData) {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx),
+                        assertThat("threadId on item %d, was not as expected".formatted(idx),
                             actual.getGroup(),
                             is(equalTo(expected.getGroup())));
                     } else {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx),
+                        assertThat("threadId on item %d, was not as expected".formatted(idx),
                             actual.getGroup(),
                             is(notNullValue()));
                     }

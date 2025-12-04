@@ -38,7 +38,7 @@ final class PickleOrderParser {
         if (seedString != null) {
             seed = Long.parseLong(seedString);
         } else {
-            seed = Math.abs(new Random().nextLong());
+            seed = new Random().nextLong(Long.MAX_VALUE);
             log.info(() -> "Using random scenario order. Seed: " + seed);
         }
         return StandardPickleOrders.random(seed);

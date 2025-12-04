@@ -10,8 +10,6 @@ import io.cucumber.usageformatter.UnusedReportSerializer;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static io.cucumber.usageformatter.MessagesToUsageWriter.builder;
-
 /**
  * Formatter to measure performance of steps. Includes average and median step
  * duration.
@@ -23,7 +21,7 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
     // Used by PluginFactory
     @SuppressWarnings("WeakerAccess") 
     public UnusedStepsSummaryPrinter(OutputStream out) {
-        this.writer = builder(new UnusedReportSerializer()).build(out);
+        this.writer = MessagesToUsageWriter.builder(new UnusedReportSerializer()).build(out);
     }
 
     @Override

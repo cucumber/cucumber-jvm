@@ -1,9 +1,10 @@
 package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
-import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Thrown when an exception was thrown by glue code. Not to be confused with
@@ -14,18 +15,19 @@ import java.lang.reflect.InvocationTargetException;
 public final class CucumberInvocationTargetException extends RuntimeException {
 
     private final Located located;
-    private final InvocationTargetException invocationTargetException;
+    private final Throwable cause;
 
     public CucumberInvocationTargetException(Located located, InvocationTargetException invocationTargetException) {
+        super(invocationTargetException.getCause());
         this.located = located;
-        this.invocationTargetException = invocationTargetException;
+        this.cause = requireNonNull(invocationTargetException.getCause());
     }
 
     /**
      * @deprecated use {@link #getCause()} instead.
      */
     @Deprecated
-    public @Nullable Throwable getInvocationTargetExceptionCause() {
+    public Throwable getInvocationTargetExceptionCause() {
         return getCause();
     }
 
@@ -34,8 +36,7 @@ public final class CucumberInvocationTargetException extends RuntimeException {
     }
 
     @Override
-    @SuppressWarnings("UnsynchronizedOverridesSynchronized")
-    public @Nullable Throwable getCause() {
-        return invocationTargetException.getCause();
+    public synchronized Throwable getCause() {
+        return cause;
     }
 }

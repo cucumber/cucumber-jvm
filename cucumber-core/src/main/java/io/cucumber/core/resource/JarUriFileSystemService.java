@@ -15,6 +15,7 @@ import java.util.function.Function;
 
 import static io.cucumber.core.resource.ClasspathSupport.nestedJarEntriesExplanation;
 import static java.util.Collections.emptyMap;
+import static java.util.Objects.requireNonNull;
 
 final class JarUriFileSystemService {
 
@@ -39,7 +40,7 @@ final class JarUriFileSystemService {
     }
 
     private synchronized static void closeFileSystem(URI jarUri) throws IOException {
-        int referents = referenceCount.get(jarUri).decrementAndGet();
+        int referents = requireNonNull(referenceCount.get(jarUri)).decrementAndGet();
         if (referents == 0) {
             openFiles.remove(jarUri).close();
             referenceCount.remove(jarUri);
@@ -49,7 +50,7 @@ final class JarUriFileSystemService {
     private synchronized static FileSystem openFileSystem(URI jarUri) throws IOException {
         FileSystem existing = openFiles.get(jarUri);
         if (existing != null) {
-            referenceCount.get(jarUri).getAndIncrement();
+            requireNonNull(referenceCount.get(jarUri)).getAndIncrement();
             return existing;
         }
         FileSystem fileSystem = FileSystems.newFileSystem(jarUri, emptyMap());
@@ -115,7 +116,7 @@ final class JarUriFileSystemService {
         // Examples:
         // jar:file:/home/user/application.jar!/BOOT-INF/lib/dependency.jar!/com/example/dependency/resource.txt
         // jar:file:/home/user/application.jar!/BOOT-INF/classes!/com/example/package/resource.txt
-        String[] parts = uri.toString().split("!");
+        String[] parts = uri.toString().split("!", 0);
         String jarUri = parts[0];
         String jarEntry = parts[1];
         String subEntry = parts[2];

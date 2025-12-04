@@ -105,7 +105,7 @@ public final class CucumberPropertiesParser {
         parse(properties,
             OPTIONS_PROPERTY_NAME,
             identity(),
-            warnWhenCucumberOptionsIsUsed());
+            CucumberPropertiesParser::warnWhenCucumberOptionsIsUsed);
 
         parseAll(properties,
             PLUGIN_PROPERTY_NAME,
@@ -141,10 +141,10 @@ public final class CucumberPropertiesParser {
         return builder;
     }
 
-    private static Consumer<String> warnWhenCucumberOptionsIsUsed() {
+    private static void warnWhenCucumberOptionsIsUsed(String commandLineOptions) {
         // Quite a few old blogs still recommend the use of cucumber.options
         // This should take care of recurring question involving this property.
-        return commandLineOptions -> log.warn(() -> String.format("" +
+        log.warn(() -> String.format("" +
                 "Passing commandline options via the property '%s' is no longer supported. " +
                 "Please use individual properties instead. " +
                 "See the java doc on %s for details.",

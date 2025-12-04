@@ -20,6 +20,7 @@ import io.cucumber.core.plugin.UsageJsonFormatter;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,9 +88,9 @@ public final class PluginOption implements Options.Plugin {
 
     private final String pluginString;
     private final Class<? extends Plugin> pluginClass;
-    private final String argument;
+    private final @Nullable String argument;
 
-    private PluginOption(String pluginString, Class<? extends Plugin> pluginClass, String argument) {
+    private PluginOption(String pluginString, Class<? extends Plugin> pluginClass, @Nullable String argument) {
         this.pluginString = requireNonNull(pluginString);
         this.pluginClass = requireNonNull(pluginClass);
         this.argument = argument;
@@ -189,7 +190,7 @@ public final class PluginOption implements Options.Plugin {
     }
 
     @Override
-    public String argument() {
+    public @Nullable String argument() {
         return argument;
     }
 

@@ -1,6 +1,7 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.feature.FeatureWithLines;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,11 +33,11 @@ import java.util.Optional;
  */
 class FeatureWithLinesOrRerunPath {
 
-    private final FeatureWithLines featureWithLines;
-    private final Collection<FeatureWithLines> featuresWithLinesToRerun;
+    private final @Nullable FeatureWithLines featureWithLines;
+    private final @Nullable Collection<FeatureWithLines> featuresWithLinesToRerun;
 
     FeatureWithLinesOrRerunPath(
-            FeatureWithLines featureWithLines, Collection<FeatureWithLines> featuresWithLinesToRerun
+            @Nullable FeatureWithLines featureWithLines, @Nullable Collection<FeatureWithLines> featuresWithLinesToRerun
     ) {
         this.featureWithLines = featureWithLines;
         this.featuresWithLinesToRerun = featuresWithLinesToRerun;

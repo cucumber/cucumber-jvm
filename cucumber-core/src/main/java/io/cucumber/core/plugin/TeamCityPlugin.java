@@ -40,6 +40,7 @@ public final class TeamCityPlugin implements ConcurrentEventListener {
 
     TeamCityPlugin(OutputStream out) {
         this.out = out;
+        this.writer = MessagesToTeamCityWriter.builder().build(out);
     }
 
     @Override

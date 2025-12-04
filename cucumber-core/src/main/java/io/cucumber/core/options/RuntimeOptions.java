@@ -10,6 +10,7 @@ import io.cucumber.core.plugin.NoPublishFormatter;
 import io.cucumber.core.plugin.PublishFormatter;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.tagexpressions.Expression;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.lang.Boolean.FALSE;
@@ -51,10 +51,10 @@ public final class RuntimeOptions implements
     private int threads = 1;
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
     private int count = 0;
-    private Class<? extends ObjectFactory> objectFactoryClass;
-    private Class<? extends UuidGenerator> uuidGeneratorClass;
-    private String publishToken;
-    private Boolean publish;
+    private @Nullable Class<? extends ObjectFactory> objectFactoryClass;
+    private @Nullable Class<? extends UuidGenerator> uuidGeneratorClass;
+    private @Nullable String publishToken;
+    private @Nullable Boolean publish;
     // Disable the banner advertising the hosted cucumber reports by default
     // until the uncertainty around the projects future is resolved. It would
     // not be proper to advertise a service that may be discontinued to new
@@ -133,6 +133,7 @@ public final class RuntimeOptions implements
         return monochrome;
     }
 
+    @Override
     public boolean isWip() {
         return wip;
     }
@@ -161,7 +162,7 @@ public final class RuntimeOptions implements
     }
 
     @Override
-    public Class<? extends ObjectFactory> getObjectFactoryClass() {
+    public @Nullable Class<? extends ObjectFactory> getObjectFactoryClass() {
         return objectFactoryClass;
     }
 
@@ -170,7 +171,7 @@ public final class RuntimeOptions implements
     }
 
     @Override
-    public Class<? extends UuidGenerator> getUuidGeneratorClass() {
+    public @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass() {
         return uuidGeneratorClass;
     }
 
@@ -193,11 +194,11 @@ public final class RuntimeOptions implements
 
     @Override
     public List<URI> getFeaturePaths() {
-        return unmodifiableList(featurePaths.stream()
+        return featurePaths.stream()
                 .map(FeatureWithLines::uri)
                 .sorted()
                 .distinct()
-                .collect(Collectors.toList()));
+                .toList();
     }
 
     void setFeaturePaths(List<FeatureWithLines> featurePaths) {

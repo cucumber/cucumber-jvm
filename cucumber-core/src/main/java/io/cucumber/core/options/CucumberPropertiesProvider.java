@@ -1,7 +1,9 @@
 package io.cucumber.core.options;
 
+import org.jspecify.annotations.Nullable;
+
 @FunctionalInterface
 public interface CucumberPropertiesProvider {
 
-    String get(String key);
+    @Nullable String get(String key);
 }

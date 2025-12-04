@@ -2,13 +2,14 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Located;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 final class StackManipulation {
 
     private StackManipulation() {
-
+        /* no-op */
     }
 
     static Throwable removeFrameworkFramesAndAppendStepLocation(
@@ -25,7 +26,7 @@ final class StackManipulation {
         return error;
     }
 
-    private static void walkException(Throwable cause, Consumer<Throwable> action) {
+    private static void walkException(@Nullable Throwable cause, Consumer<Throwable> action) {
         while (cause != null) {
             action.accept(cause);
             cause = cause.getCause();

@@ -1,7 +1,9 @@
 package io.cucumber.core.eventbus;
 
+import org.jspecify.annotations.Nullable;
+
 public interface Options {
 
-    Class<? extends UuidGenerator> getUuidGeneratorClass();
+    @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass();
 
 }

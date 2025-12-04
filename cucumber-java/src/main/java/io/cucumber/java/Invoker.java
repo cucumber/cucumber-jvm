@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Located;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +20,7 @@ final class Invoker {
         return invoke(null, annotation, expressionMethod);
     }
 
-    static Object invoke(Located located, Object target, Method method, Object... args) {
+    static Object invoke(@Nullable Located located, Object target, Method method, Object... args) {
         Method targetMethod = targetMethod(target, method);
         return doInvoke(located, target, targetMethod, args);
     }
@@ -59,7 +60,7 @@ final class Invoker {
         }
     }
 
-    private static Object doInvoke(Located located, Object target, Method targetMethod, Object[] args) {
+    private static Object doInvoke(@Nullable Located located, @Nullable Object target, Method targetMethod, Object[] args) {
         boolean accessible = targetMethod.isAccessible();
         try {
             targetMethod.setAccessible(true);
@@ -68,6 +69,9 @@ final class Invoker {
             throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
         } catch (InvocationTargetException e) {
             if (located == null) { // Reflecting into annotations
+                throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
+            }
+            if (e.getCause() == null) {
                 throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
             }
             throw new CucumberInvocationTargetException(located, e);

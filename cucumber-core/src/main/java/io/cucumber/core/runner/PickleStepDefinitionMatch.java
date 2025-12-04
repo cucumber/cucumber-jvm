@@ -12,6 +12,7 @@ import io.cucumber.cucumberexpressions.CucumberExpressionException;
 import io.cucumber.datatable.CucumberDataTableException;
 import io.cucumber.datatable.UndefinedDataTableTypeException;
 import io.cucumber.docstring.CucumberDocStringException;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     public void runStep(TestCaseState state) throws Throwable {
         List<Argument> arguments = getArguments();
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
-        if (parameterInfos != null && arguments.size() != parameterInfos.size()) {
+        if (arguments.size() != parameterInfos.size()) {
             throw arityMismatch(parameterInfos.size());
         }
         List<Object> result = new ArrayList<>();
@@ -92,17 +93,17 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private CucumberException registerDataTableTypeInConfiguration(Exception e) {
         // TODO: Add doc URL
-        return new CucumberException(String.format("" +
-                "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears you did not register a data table type.",
+        return new CucumberException(String.format("""
+                        Could not convert arguments for step [%s] defined at '%s'.
+                        It appears you did not register a data table type.""",
             stepDefinition.getPattern(),
             stepDefinition.getLocation()), e);
     }
 
-    private CucumberInvocationTargetException causedByCucumberInvocationTargetException(RuntimeException e) {
+    private @Nullable CucumberInvocationTargetException causedByCucumberInvocationTargetException(RuntimeException e) {
         Throwable cause = e.getCause();
-        if (cause instanceof CucumberInvocationTargetException) {
-            return (CucumberInvocationTargetException) cause;
+        if (cause instanceof CucumberInvocationTargetException cucumberInvocationTargetException) {
+            return cucumberInvocationTargetException;
         }
         return null;
     }
@@ -116,22 +117,22 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private CucumberException couldNotInvokeArgumentConversion(CucumberBackendException e) {
         // TODO: Add doc URL
-        return new CucumberException(String.format("" +
-                "Could not convert arguments for step [%s] defined at '%s'.\n" +
-                "It appears there was a problem with a hook or transformer definition.",
-            stepDefinition.getPattern(),
-            stepDefinition.getLocation()), e);
+        return new CucumberException("""
+                Could not convert arguments for step [%s] defined at '%s'.
+                It appears there was a problem with a hook or transformer definition."""
+                .formatted(
+                        stepDefinition.getPattern(), 
+                        stepDefinition.getLocation()), e);
     }
 
     private Throwable couldNotInvokeStep(CucumberBackendException e, List<Object> result) {
-        String argumentTypes = createArgumentTypes(result);
         // TODO: Add doc URL
-        return new CucumberException(String.format("" +
-                "Could not invoke step [%s] defined at '%s'.\n" +
-                "It appears there was a problem with the step definition.\n" +
-                "The converted arguments types were (" + argumentTypes + ")",
-            stepDefinition.getPattern(),
-            stepDefinition.getLocation()), e);
+        return new CucumberException("""
+                Could not invoke step [%s] defined at '%s'.
+                It appears there was a problem with the step definition.
+                The converted arguments types were (%s)"""
+                .formatted(stepDefinition.getPattern(), 
+                        stepDefinition.getLocation(), createArgumentTypes(result)), e);
     }
 
     private StackTraceElement getStepLocation() {

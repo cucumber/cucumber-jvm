@@ -1,5 +1,7 @@
 package io.cucumber.core.plugin;
 
+import org.jspecify.annotations.Nullable;
+
 public interface Options {
 
     Iterable<Plugin> plugins();
@@ -12,7 +14,7 @@ public interface Options {
 
         Class<? extends io.cucumber.plugin.Plugin> pluginClass();
 
-        String argument();
+        @Nullable String argument();
 
         String pluginString();
 
