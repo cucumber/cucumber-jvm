@@ -12,20 +12,16 @@ import io.cucumber.plugin.event.DocStringArgument;
 import io.cucumber.plugin.event.StepArgument;
 
 import java.lang.reflect.Type;
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static io.cucumber.core.codegen.GherkinKeywordNormalizer.normalizeKeyword;
 import static io.cucumber.core.snippets.SnippetType.CAMELCASE;
-import static java.util.stream.Collectors.joining;
 
 public final class SnippetGenerator {
 
@@ -72,7 +68,7 @@ public final class SnippetGenerator {
         List<String> parameterNames = toParameterNames(expression, parameterNameGenerator);
         Map<String, Type> arguments = arguments(step, parameterNames, expression.getParameterTypes());
         return snippet.template().format(new String[] {
-                getNormalizedKeyWord(language, keyword),
+                normalizeKeyword(language, keyword),
                 snippet.escapePattern(source),
                 functionName,
                 snippet.arguments(arguments),
@@ -86,48 +82,6 @@ public final class SnippetGenerator {
         return parameterNames.stream()
                 .map(parameterNameGenerator::generate)
                 .collect(Collectors.toList());
-    }
-
-    private static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
-    private static String getNormalizedKeyWord(String language, String keyword) {
-        // Exception: Use the symbol names for the Emoj language.
-        // Emoji are not legal identifiers in Java.
-        if ("em".equals(language)) {
-            return getNormalizedEmojiKeyWord(keyword);
-        }
-        return getNormalizedKeyWord(keyword);
-    }
-
-    private static String getNormalizedEmojiKeyWord(String keyword) {
-        String titleCasedName = getCodePoints(keyword).mapToObj(Character::getName)
-                .map(s -> s.split(" "))
-                .flatMap(Arrays::stream)
-                .map(String::toLowerCase)
-                .map(SnippetGenerator::capitalize)
-                .collect(joining(" "));
-        return getNormalizedKeyWord(titleCasedName);
-    }
-
-    private static IntStream getCodePoints(String s) {
-        int length = s.length();
-        List<Integer> codePoints = new ArrayList<>();
-        for (int offset = 0; offset < length;) {
-            int codepoint = s.codePointAt(offset);
-            codePoints.add(codepoint);
-            offset += Character.charCount(codepoint);
-        }
-        return codePoints.stream().mapToInt(value -> value);
-    }
-
-    private static String getNormalizedKeyWord(String keyword) {
-        return normalize(keyword.replaceAll("[\\s',!\u00AD’]", ""));
-    }
-
-    static String normalize(CharSequence s) {
-        return Normalizer.normalize(s, Normalizer.Form.NFC);
     }
 
     private String functionName(String sentence, IdentifierGenerator functionNameGenerator) {
