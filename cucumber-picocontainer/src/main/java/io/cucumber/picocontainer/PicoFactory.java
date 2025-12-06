@@ -101,7 +101,9 @@ public final class PicoFactory implements ObjectFactory {
 
     @Override
     public void stop() {
-        pico.stop();
+        if (pico.getLifecycleState().isStarted()) {
+            pico.stop();
+        }
         pico.dispose();
     }
 
