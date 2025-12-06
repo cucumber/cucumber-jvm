@@ -11,7 +11,7 @@ public final class PicoBackendProviderService implements BackendProviderService 
 
     @Override
     public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader) {
-        return new PicoBackend();
+        return new PicoBackend(container, classLoader);
     }
 
 }
