@@ -14,6 +14,7 @@ import io.cucumber.tagexpressions.Expression;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 
 public final class RuntimeOptions implements
         io.cucumber.core.feature.Options,
@@ -40,6 +42,7 @@ public final class RuntimeOptions implements
         io.cucumber.core.eventbus.Options {
 
     private final List<URI> glue = new ArrayList<>();
+    private final Set<String> glueClasses = new HashSet<>();
     private final List<Expression> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
@@ -151,6 +154,11 @@ public final class RuntimeOptions implements
     }
 
     @Override
+    public Set<String> getGlueClasses() {
+        return unmodifiableSet(glueClasses);
+    }
+
+    @Override
     public boolean isDryRun() {
         return dryRun;
     }
@@ -189,6 +197,11 @@ public final class RuntimeOptions implements
     void setGlue(List<URI> parsedGlue) {
         glue.clear();
         glue.addAll(parsedGlue);
+    }
+
+    void setGlueClasses(Set<String> parsedGlue) {
+        glueClasses.clear();
+        glueClasses.addAll(parsedGlue);
     }
 
     @Override
