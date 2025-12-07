@@ -3,7 +3,6 @@ package io.cucumber.picocontainer;
 import org.apiguardian.api.API;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.injectors.Provider;
-import org.picocontainer.injectors.ProviderAdapter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,24 +15,21 @@ import java.lang.annotation.Target;
  * <ul>
  * <li>a list of classes conforming the PicoContainer's {@link Provider}
  * interface,</li>
- * <li>a list of classes conforming the PicoContainer's {@link ProviderAdapter}
- * interface.</li>
  * </ul>
  * <p>
- * An example (ancillary containing the specific ProviderAdapter as nested
- * class) is:
+ * An example (ancillary containing the specific Provider as nested class) is:
  *
  * <pre>
  * package some.example;
  *
  * import java.sql.*;
  * import io.cucumber.picocontainer.CucumberPicoProvider;
- * import org.picocontainer.injectors.ProviderAdapter;
+ * import org.picocontainer.injectors.Provider;
  *
- * &#64;CucumberPicoProvider(providerAdapters = { MyCucumberPicoProvider.DatabaseConnectionProvider.class })
+ * &#64;CucumberPicoProvider(providers = { MyCucumberPicoProvider.DatabaseConnectionProvider.class })
  * public class MyCucumberPicoProvider {
  *
- *     public static class DatabaseConnectionProvider extends ProviderAdapter {
+ *     public static class DatabaseConnectionProvider implements Provider {
  *         public Connection provide() throws ClassNotFoundException, ReflectiveOperationException, SQLException {
  *             // Connecting to MySQL Using the JDBC DriverManager Interface
  *             // https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
@@ -57,14 +53,13 @@ import java.lang.annotation.Target;
  * <li>Cucumber PicoContainer uses PicoContainer's {@link MutablePicoContainer}
  * internally. Doing so, all {@link #providers() Providers} will be added by
  * {@link MutablePicoContainer#addAdapter(org.picocontainer.ComponentAdapter)
- * MutablePicoContainer#addAdapter(new ProviderAdapter(provider))} and all
- * {@link #providerAdapters() ProviderAdapters} will be added by
- * {@link MutablePicoContainer#addAdapter(org.picocontainer.ComponentAdapter)
- * MutablePicoContainer#addAdapter(adapter)}.</li>
- * <li>For each class there can be only one
- * {@link Provider}/{@link ProviderAdapter}. Otherwise an according exception
- * will be thrown (e.g. {@code PicoCompositionException} with message "Duplicate
- * Keys not allowed ..."</li>
+ * MutablePicoContainer#addAdapter(new ProviderAdapter(provider))}. (If any of
+ * the providers additionally extends
+ * {@link org.picocontainer.injectors.ProviderAdapter ProviderAdapter} then
+ * these will be added directly without being wrapped again.)</li>
+ * <li>For each class there can be only one {@link Provider}. Otherwise an
+ * according exception will be thrown (e.g. {@code PicoCompositionException}
+ * with message "Duplicate Keys not allowed ..."</li>
  * </ul>
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -73,7 +68,5 @@ import java.lang.annotation.Target;
 public @interface CucumberPicoProvider {
 
     Class<? extends Provider>[] providers() default {};
-
-    Class<? extends ProviderAdapter>[] providerAdapters() default {};
 
 }

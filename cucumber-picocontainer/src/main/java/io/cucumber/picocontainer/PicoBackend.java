@@ -37,7 +37,6 @@ final class PicoBackend implements Backend {
                 .forEach(picoConfig -> {
                     CucumberPicoProvider configuration = picoConfig.getAnnotation(CucumberPicoProvider.class);
                     stream(configuration.providers()).forEach(container::addClass);
-                    stream(configuration.providerAdapters()).forEach(container::addClass);
                 });
     }
 
