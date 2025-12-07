@@ -30,7 +30,10 @@ the tool of your choice - including with popular
 
 * [Installation](https://cucumber.io/docs/installation/java/)
 * [Documentation](https://cucumber.io/docs/cucumber/)
-* [Hello World project](https://github.com/cucumber/cucumber-java-skeleton)
+* Hello world projects
+  * [Maven](https://github.com/cucumber/cucumber-jvm-starter-maven-java)
+  * [Gradle](https://github.com/cucumber/cucumber-jvm-starter-gradle-java)
+* [Example Projects](https://github.com/cucumber/cucumber-jvm-examples)
 
 ## Upgrading?
 
