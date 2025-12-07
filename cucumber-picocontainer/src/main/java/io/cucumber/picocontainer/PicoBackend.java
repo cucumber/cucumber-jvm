@@ -32,10 +32,10 @@ final class PicoBackend implements Backend {
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
-                .filter(clazz -> clazz.isAnnotationPresent(PicoConfiguration.class))
+                .filter(clazz -> clazz.isAnnotationPresent(CucumberPicoProvider.class))
                 .distinct()
                 .forEach(picoConfig -> {
-                    PicoConfiguration configuration = picoConfig.getAnnotation(PicoConfiguration.class);
+                    CucumberPicoProvider configuration = picoConfig.getAnnotation(CucumberPicoProvider.class);
                     stream(configuration.providers()).forEach(container::addClass);
                     stream(configuration.providerAdapters()).forEach(container::addClass);
                 });

@@ -27,11 +27,11 @@ import java.lang.annotation.Target;
  * package some.example;
  *
  * import java.sql.*;
- * import io.cucumber.picocontainer.PicoConfiguration;
+ * import io.cucumber.picocontainer.CucumberPicoProvider;
  * import org.picocontainer.injectors.ProviderAdapter;
  *
- * &#64;PicoConfiguration(providerAdapters = { MyPicoConfiguration.DatabaseConnectionProvider.class })
- * public class MyPicoConfiguration {
+ * &#64;CucumberPicoProvider(providerAdapters = { MyCucumberPicoProvider.DatabaseConnectionProvider.class })
+ * public class MyCucumberPicoProvider {
  *
  *     public static class DatabaseConnectionProvider extends ProviderAdapter {
  *         public Connection provide() throws ClassNotFoundException, ReflectiveOperationException, SQLException {
@@ -48,12 +48,12 @@ import java.lang.annotation.Target;
  * Notes:
  * <ul>
  * <li>Currently, there is no limitation to the number of
- * {@link PicoConfiguration} annotations. All of these annotations will be
+ * {@link CucumberPicoProvider} annotations. All of these annotations will be
  * considered when preparing the {@link org.picocontainer.PicoContainer
  * PicoContainer}.</li>
- * <li>If there is no {@link PicoConfiguration} annotation at all then (beside
- * the basic preparation) no additional PicoContainer preparation will be
- * done.</li>
+ * <li>If there is no {@link CucumberPicoProvider} annotation at all then
+ * (beside the basic preparation) no additional PicoContainer preparation will
+ * be done.</li>
  * <li>Cucumber PicoContainer uses PicoContainer's {@link MutablePicoContainer}
  * internally. Doing so, all {@link #providers() Providers} will be added by
  * {@link MutablePicoContainer#addAdapter(org.picocontainer.ComponentAdapter)
@@ -70,7 +70,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @API(status = API.Status.EXPERIMENTAL)
-public @interface PicoConfiguration {
+public @interface CucumberPicoProvider {
 
     Class<? extends Provider>[] providers() default {};
 

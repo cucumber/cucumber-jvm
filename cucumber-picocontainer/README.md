@@ -132,10 +132,10 @@ database connection as a constructor argument.
 package com.example.app;
 
 import java.sql.*;
-import io.cucumber.picocontainer.PicoConfiguration;
+import io.cucumber.picocontainer.CucumberPicoProvider;
 import org.picocontainer.injectors.ProviderAdapter;
 
-@PicoConfiguration(providerAdapters = { ExamplePicoConfiguration.DatabaseConnectionProvider.class })
+@CucumberPicoProvider(providerAdapters = { ExampleCucumberPicoProvider.DatabaseConnectionProvider.class })
 public class ExamplePicoConfiguration {
 
     public static class DatabaseConnectionProvider extends ProviderAdapter {
