@@ -78,7 +78,7 @@ public class GenerateI18n {
         }
 
         private void writeKeyWordAnnotation(GherkinDialect dialect, String keyword) {
-            String normalizedLanguage = normalizeLanguage(dialect);
+            String normalizedLanguage = normalizeLanguage(dialect.getLanguage());
             String normalizedKeyword = normalizeKeyword(dialect.getLanguage(), keyword);
 
             Map<String, String> binding = new LinkedHashMap<>();
@@ -103,7 +103,7 @@ public class GenerateI18n {
         }
 
         private void writePackageInfo(GherkinDialect dialect) {
-            String normalizedLanguage = normalizeLanguage(dialect);
+            String normalizedLanguage = normalizeLanguage(dialect.getLanguage());
             String languageName = dialect.getName();
             if (!dialect.getName().equals(dialect.getNativeName())) {
                 languageName += " - " + dialect.getNativeName();

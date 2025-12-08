@@ -1,6 +1,6 @@
 package io.cucumber.core.codegen;
 
-import io.cucumber.gherkin.GherkinDialect;
+import org.apiguardian.api.API;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -10,9 +10,11 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.joining;
 
-public class GherkinKeywordNormalizer {
+@API(status = API.Status.INTERNAL)
+public final class GherkinKeywordNormalizer {
 
     private GherkinKeywordNormalizer() {
+        /* no-op */
     }
 
     public static String normalizeKeyword(String language, String keyword) {
@@ -24,8 +26,8 @@ public class GherkinKeywordNormalizer {
         return normalizeKeyword(keyword);
     }
 
-    public static String normalizeLanguage(GherkinDialect dialect) {
-        return dialect.getLanguage().replaceAll("[\\s-]", "_").toLowerCase();
+    public static String normalizeLanguage(String language) {
+        return language.replaceAll("[\\s-]", "_").toLowerCase();
     }
 
     public static String capitalize(String str) {

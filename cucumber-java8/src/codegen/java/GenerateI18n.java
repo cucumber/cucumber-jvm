@@ -69,7 +69,7 @@ public class GenerateI18n {
         }
 
         private void writeInterface(GherkinDialect dialect) {
-			String normalizedLanguage = normalizeLanguage(dialect);
+			String normalizedLanguage = normalizeLanguage(dialect.getLanguage());
             String languageName = dialect.getName();
             if (!dialect.getName().equals(dialect.getNativeName())) {
                 languageName += " - " + dialect.getNativeName();
