@@ -1,4 +1,4 @@
-package io.cucumber.core.codegen;
+package io.cucumber.core.snippets;
 
 import org.apiguardian.api.API;
 

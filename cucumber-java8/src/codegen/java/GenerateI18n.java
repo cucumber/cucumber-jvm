@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static io.cucumber.core.codegen.GherkinKeywordNormalizer.capitalize;
-import static io.cucumber.core.codegen.GherkinKeywordNormalizer.normalizeKeyword;
-import static io.cucumber.core.codegen.GherkinKeywordNormalizer.normalizeLanguage;
+import static io.cucumber.core.snippets.GherkinKeywordNormalizer.capitalize;
+import static io.cucumber.core.snippets.GherkinKeywordNormalizer.normalizeKeyword;
+import static io.cucumber.core.snippets.GherkinKeywordNormalizer.normalizeLanguage;
 import static java.nio.file.Files.newBufferedWriter;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;

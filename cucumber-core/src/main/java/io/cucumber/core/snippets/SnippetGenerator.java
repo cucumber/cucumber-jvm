@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.codegen.GherkinKeywordNormalizer.normalizeKeyword;
+import static io.cucumber.core.snippets.GherkinKeywordNormalizer.normalizeKeyword;
 import static io.cucumber.core.snippets.SnippetType.CAMELCASE;
 
 public final class SnippetGenerator {
