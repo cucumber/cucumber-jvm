@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static io.cucumber.core.snippets.GherkinKeywordNormalizer.capitalize;
 import static io.cucumber.core.snippets.GherkinKeywordNormalizer.normalizeKeyword;
 import static io.cucumber.core.snippets.GherkinKeywordNormalizer.normalizeLanguage;
 import static java.nio.file.Files.newBufferedWriter;
@@ -101,5 +100,9 @@ public class GenerateI18n {
                     .map(keyword -> normalizeKeyword(dialect.getLanguage(), keyword))
                     .collect(toList());
         }
+
+		private static String capitalize(String str) {
+			return str.substring(0, 1).toUpperCase() + str.substring(1);
+		}
     }
 }

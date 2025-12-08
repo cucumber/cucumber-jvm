@@ -30,10 +30,6 @@ public final class GherkinKeywordNormalizer {
         return language.replaceAll("[\\s-]", "_").toLowerCase();
     }
 
-    public static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
     private static String normalizeKeyword(String keyword) {
         return normalize(keyword.replaceAll("[\\s',!\u00AD’]", ""));
     }
@@ -46,6 +42,10 @@ public final class GherkinKeywordNormalizer {
                 .map(GherkinKeywordNormalizer::capitalize)
                 .collect(joining(" "));
         return normalizeKeyword(titleCasedName);
+    }
+
+    private static String capitalize(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
     private static String normalize(CharSequence s) {
