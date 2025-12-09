@@ -10,9 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [Core] Improve error message for missing operands in tag expressions ([#221](https://github.com/cucumber/tag-expressions/pull/221))
+- [Core] Include empty scenarios and backgrounds in json report ([#34](https://github.com/cucumber/cucumber-json-formatter/pull/34))
+
 ### Added
-- [Core] Upload Cucumber Reports with Gzip encoding ([#3115](https://github.com/cucumber/cucumber-jvm/pull/3115))
 - [Java] Add `Scenario.getLanguage()` to return the current language ([#3124](https://github.com/cucumber/cucumber-jvm/pull/3124) Stefan Gasterstädt)
+
+### Changed
+- [Core] Upload Cucumber Reports with Gzip encoding ([#3115](https://github.com/cucumber/cucumber-jvm/pull/3115))
+- [Core] Render the empty tag expression as an empty string ([#222](https://github.com/cucumber/tag-expressions/pull/222))
+- [Core] Update dependency io.cucumber:html-formatter to v22.2.0
+- [Core] Update dependency io.cucumber:tag-expressions to v8.1.0
+- [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.3.2
 
 ## [7.32.0] - 2025-11-21
 ### Changed
