@@ -10,10 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Core] Improve error message for missing operands in tag expressions ([#221](https://github.com/cucumber/tag-expressions/pull/221))
-- [Core] Include empty scenarios and backgrounds in json report ([#34](https://github.com/cucumber/cucumber-json-formatter/pull/34))
 
+## [7.33.0] - 2025-12-09
 ### Added
 - [Java] Add `Scenario.getLanguage()` to return the current language ([#3124](https://github.com/cucumber/cucumber-jvm/pull/3124) Stefan Gasterstädt)
 
@@ -23,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:html-formatter to v22.2.0
 - [Core] Update dependency io.cucumber:tag-expressions to v8.1.0
 - [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.3.2
+
+### Fixed
+- [Core] Improve error message for missing operands in tag expressions ([#221](https://github.com/cucumber/tag-expressions/pull/221))
+- [Core] Include empty scenarios and backgrounds in json report ([#34](https://github.com/cucumber/cucumber-json-formatter/pull/34))
 
 ## [7.32.0] - 2025-11-21
 ### Changed
@@ -566,7 +568,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.32.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...HEAD
+[7.33.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.32.0...v7.33.0
 [7.32.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...v7.32.0
 [7.31.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...v7.31.0
 [7.30.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.29.0...v7.30.0
