@@ -11,13 +11,9 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used to provide some additional PicoContainer
- * configuration. At the moment this covers:
- * <ul>
- * <li>a list of classes conforming the PicoContainer's {@link Provider}
- * interface,</li>
- * </ul>
+ * {@link Provider} classes.
  * <p>
- * An example (ancillary containing the specific Provider as nested class) is:
+ * An example is:
  *
  * <pre>
  * package some.example;
@@ -26,18 +22,28 @@ import java.lang.annotation.Target;
  * import io.cucumber.picocontainer.CucumberPicoProvider;
  * import org.picocontainer.injectors.Provider;
  *
- * &#64;CucumberPicoProvider(providers = { MyCucumberPicoProvider.DatabaseConnectionProvider.class })
- * public class MyCucumberPicoProvider {
- *
- *     public static class DatabaseConnectionProvider implements Provider {
- *         public Connection provide() throws ClassNotFoundException, ReflectiveOperationException, SQLException {
- *             // Connecting to MySQL Using the JDBC DriverManager Interface
- *             // https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
- *             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
- *             return DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "mydbuser", "mydbpassword");
- *         }
+ * &#64;CucumberPicoProvider
+ * public class DatabaseConnectionProvider implements Provider {
+ *     public Connection provide() throws ClassNotFoundException, ReflectiveOperationException, SQLException {
+ *         // Connecting to MySQL Using the JDBC DriverManager Interface
+ *         // https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
+ *         Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+ *         return DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "mydbuser", "mydbpassword");
  *     }
+ * }
+ * </pre>
+ * <p>
+ * In order to re-use existing {@link Provider}s, you can refer to those like
+ * this:
  *
+ * <pre>
+ * package some.example;
+ *
+ * import io.cucumber.picocontainer.CucumberPicoProvider;
+ * import some.other.namespace.SomeExistingProvider.class;
+ *
+ * &#64;CucumberPicoProvider(providers = { SomeExistingProvider.class })
+ * public class MyCucumberPicoProviders {
  * }
  * </pre>
  * <p>
