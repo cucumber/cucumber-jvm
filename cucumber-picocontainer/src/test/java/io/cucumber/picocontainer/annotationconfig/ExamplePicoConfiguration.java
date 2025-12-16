@@ -5,9 +5,10 @@ import org.picocontainer.injectors.Provider;
 
 import java.net.URL;
 
-@CucumberPicoProvider(providers = { ExamplePicoConfiguration.NestedUrlProvider.class, URLConnectionProvider.class, DatabaseConnectionProvider.class })
+@CucumberPicoProvider(providers = { URLConnectionProvider.class, DatabaseConnectionProvider.class })
 public class ExamplePicoConfiguration {
 
+    @CucumberPicoProvider
     public static class NestedUrlProvider implements Provider {
         public URL provide() {
             throw new UnsupportedOperationException("Intentionally not supported to detect any premature injection.");
