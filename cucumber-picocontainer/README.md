@@ -135,9 +135,9 @@ import java.sql.*;
 import io.cucumber.picocontainer.CucumberPicoProvider;
 import org.picocontainer.injectors.ProviderAdapter;
 
-@CucumberPicoProvider(providerAdapters = { ExampleCucumberPicoProvider.DatabaseConnectionProvider.class })
 public class ExamplePicoConfiguration {
 
+    @CucumberPicoProvider
     public static class DatabaseConnectionProvider extends ProviderAdapter {
         public Connection provide() throws ClassNotFoundException, ReflectiveOperationException, SQLException {
             // Connecting to MySQL Using the JDBC DriverManager Interface
