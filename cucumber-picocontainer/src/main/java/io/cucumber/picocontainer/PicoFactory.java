@@ -60,8 +60,11 @@ public final class PicoFactory implements ObjectFactory {
             // so recycle it by defining a new lifecycle and removing all
             // instances
             pico.setLifecycleState(new DefaultLifecycleState());
-            pico.getComponentAdapters()
-                    .forEach(cached -> ((Cached<?>) cached).flush());
+            pico.getComponentAdapters().forEach(adapters -> {
+                if (adapters instanceof Cached) {
+                    ((Cached<?>) adapters).flush();
+                }
+            });
         }
         pico.start();
     }
