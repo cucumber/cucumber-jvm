@@ -2,9 +2,9 @@ package io.cucumber.picocontainer;
 
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.picocontainer.annotationconfig.ConnectionProvider;
 import io.cucumber.picocontainer.annotationconfig.DatabaseConnectionProvider;
 import io.cucumber.picocontainer.annotationconfig.ExamplePicoConfiguration;
+import io.cucumber.picocontainer.annotationconfig.URLConnectionProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +47,7 @@ class PicoBackendTest {
     void adds_provider_classes() {
         backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
         backend.buildWorld();
-        verify(factory).addClass(ConnectionProvider.class);
+        verify(factory).addClass(URLConnectionProvider.class);
     }
 
     @Test
@@ -64,7 +64,7 @@ class PicoBackendTest {
             URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
         backend.buildWorld();
         verify(factory, never()).addClass(ExamplePicoConfiguration.class);
-        verify(factory, times(1)).addClass(ConnectionProvider.class);
+        verify(factory, times(1)).addClass(URLConnectionProvider.class);
         verify(factory, times(1)).addClass(DatabaseConnectionProvider.class);
     }
 
