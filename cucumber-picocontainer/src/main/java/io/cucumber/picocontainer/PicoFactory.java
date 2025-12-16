@@ -70,7 +70,7 @@ public final class PicoFactory implements ObjectFactory {
         pico.start();
     }
 
-    private boolean isProviderAdapter(Class<?> clazz) {
+    static boolean isProviderAdapter(Class<?> clazz) {
         return ProviderAdapter.class.isAssignableFrom(clazz);
     }
 
@@ -84,7 +84,7 @@ public final class PicoFactory implements ObjectFactory {
         }
     }
 
-    private boolean isProvider(Class<?> clazz) {
+    static boolean isProvider(Class<?> clazz) {
         return Provider.class.isAssignableFrom(clazz);
     }
 
