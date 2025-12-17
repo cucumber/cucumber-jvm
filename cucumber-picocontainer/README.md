@@ -124,27 +124,25 @@ it is recommended to provide your own implementation of
 `io.cucumber.core.backend.ObjectFactory` and make it available through
 SPI.
 
-However it is possible to configure additional PicoContainer `Provider`s and/or
-`ProviderAdapter`s. For example, some step definition classes might require a
-database connection as a constructor argument.
+However it is possible to configure additional PicoContainer `Provider`s. For
+example, some step definition classes might require a database connection as a
+constructor argument.
 
 ```java
 package com.example.app;
 
 import java.sql.*;
 import io.cucumber.picocontainer.CucumberPicoProvider;
-import org.picocontainer.injectors.ProviderAdapter;
+import org.picocontainer.injectors.Provider;
 
-public class ExamplePicoConfiguration {
+@CucumberPicoProvider
+public class DatabaseConnectionProvider implements Provider {
 
-    @CucumberPicoProvider
-    public static class DatabaseConnectionProvider extends ProviderAdapter {
-        public Connection provide() throws ClassNotFoundException, ReflectiveOperationException, SQLException {
-            // Connecting to MySQL Using the JDBC DriverManager Interface
-            // https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
-            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "mydbuser", "mydbpassword");
-        }
+    public Connection provide() throws ClassNotFoundException, ReflectiveOperationException, SQLException {
+        // Connecting to MySQL Using the JDBC DriverManager Interface
+        // https://dev.mysql.com/doc/connector-j/en/connector-j-usagenotes-connect-drivermanager.html
+        Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "mydbuser", "mydbpassword");
     }
 
 }
