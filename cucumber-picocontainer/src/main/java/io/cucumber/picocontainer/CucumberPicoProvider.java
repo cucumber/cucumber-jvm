@@ -33,20 +33,6 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  * <p>
- * In order to re-use existing {@link Provider}s, you can refer to those like
- * this:
- *
- * <pre>
- * package some.example;
- *
- * import io.cucumber.picocontainer.CucumberPicoProvider;
- * import some.other.namespace.SomeExistingProvider.class;
- *
- * &#64;CucumberPicoProvider(providers = { SomeExistingProvider.class })
- * public class MyCucumberPicoProviders {
- * }
- * </pre>
- * <p>
  * Notes:
  * <ul>
  * <li>Currently, there is no limitation to the number of
@@ -57,7 +43,7 @@ import java.lang.annotation.Target;
  * (beside the basic preparation) no additional PicoContainer preparation will
  * be done.</li>
  * <li>Cucumber PicoContainer uses PicoContainer's {@link MutablePicoContainer}
- * internally. Doing so, all {@link #providers() Providers} will be added by
+ * internally. Doing so, all {@link Provider}s will be added by
  * {@link MutablePicoContainer#addAdapter(org.picocontainer.ComponentAdapter)
  * MutablePicoContainer#addAdapter(new ProviderAdapter(provider))}. (If any of
  * the providers additionally extends
@@ -72,7 +58,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @API(status = API.Status.EXPERIMENTAL)
 public @interface CucumberPicoProvider {
-
-    Class<? extends Provider>[] providers() default {};
-
 }

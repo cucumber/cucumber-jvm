@@ -104,18 +104,12 @@ public final class PicoFactory implements ObjectFactory {
     }
 
     private static void checkMeaningfulPicoAnnotation(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(CucumberPicoProvider.class)) {
-            CucumberPicoProvider annotation = clazz.getAnnotation(CucumberPicoProvider.class);
-            if (!isProvider(clazz) && (annotation.providers().length == 0)) {
-                throw new CucumberBackendException(String.format("" +
-                        "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring "
-                        +
-                        "PicoContainer Provider classes. Please ensure that at least one the following requirements is satisfied:\n"
-                        +
-                        "1) the class implements org.picocontainer.injectors.Provider\n" +
-                        "2) the annotation #providers() refers to at least one class implementing org.picocontainer.injectors.Provider",
-                    clazz.getName()));
-            }
+        if (clazz.isAnnotationPresent(CucumberPicoProvider.class) && !isProvider(clazz)) {
+            throw new CucumberBackendException(String.format("" +
+                    "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
+                    +
+                    "PicoContainer Provider instance. Therefore, this glue class must implement org.picocontainer.injectors.Provider.",
+                clazz.getName()));
         }
     }
 
