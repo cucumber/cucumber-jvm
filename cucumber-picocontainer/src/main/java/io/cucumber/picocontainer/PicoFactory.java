@@ -103,13 +103,27 @@ public final class PicoFactory implements ObjectFactory {
         return true;
     }
 
+    private static boolean hasDefaultConstructor(Class<?> clazz) {
+        for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+            if (constructor.getParameterCount() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void checkMeaningfulPicoAnnotation(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(CucumberPicoProvider.class) && !isProvider(clazz)) {
-            throw new CucumberBackendException(String.format("" +
-                    "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
-                    +
-                    "PicoContainer Provider instance. Therefore, this glue class must implement org.picocontainer.injectors.Provider.",
-                clazz.getName()));
+        if (clazz.isAnnotationPresent(CucumberPicoProvider.class)) {
+            if (!isProvider(clazz) || !hasDefaultConstructor(clazz)) {
+                throw new CucumberBackendException(String.format("" +
+                        "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
+                        +
+                        "PicoContainer Provider instance. Please ensure that all the following requirements are satisfied:\n"
+                        +
+                        "1) the class implements org.picocontainer.injectors.Provider\n" +
+                        "2) the class provides a default constructor.",
+                    clazz.getName()));
+            }
         }
     }
 
