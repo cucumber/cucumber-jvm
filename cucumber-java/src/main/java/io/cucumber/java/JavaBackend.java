@@ -11,7 +11,9 @@ import io.cucumber.core.resource.ClasspathSupport;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.java.MethodScanner.scan;
@@ -30,18 +32,37 @@ final class JavaBackend implements Backend {
 
     @Override
     public void loadGlue(Glue glue, List<URI> gluePaths) {
-        GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
+        loadGlueClassesImpl(glue, scanForClasses(gluePaths));
+    }
 
-        gluePaths.stream()
+    @Override
+    public void loadGlueClasses(Glue glue, Set<String> glueClassNames) {
+        Set<Class<?>> glueClasses = glueClassNames.stream()
+                .map(classFinder::loadClass)
+                .collect(Collectors.toSet());
+
+        loadGlueClassesImpl(glue, glueClasses);
+    }
+
+    private void loadGlueClassesImpl(Glue glue, Set<Class<?>> glueClasses) {
+        GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
+        glueClasses.forEach(aGlueClass -> processClass(aGlueClass, glueAdaptor));
+    }
+
+    private Set<Class<?>> scanForClasses(List<URI> gluePaths) {
+        return gluePaths.stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
-                .distinct()
-                .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
-                    container.addClass(method.getDeclaringClass());
-                    glueAdaptor.addDefinition(method, annotation);
-                }));
+                .collect(Collectors.toSet());
+    }
+
+    private void processClass(Class<?> aGlueClass, GlueAdaptor glueAdaptor) {
+        scan(aGlueClass, (method, annotation) -> {
+            container.addClass(method.getDeclaringClass());
+            glueAdaptor.addDefinition(method, annotation);
+        });
     }
 
     @Override
