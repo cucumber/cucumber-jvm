@@ -117,14 +117,17 @@ public final class PicoFactory implements ObjectFactory {
 
     @SuppressWarnings("unchecked")
     private static Class<Provider> checkProperPicoProvider(Class<?> clazz) {
-        if (!isProvider(clazz) || !hasDefaultConstructor(clazz)) {
+        if (!isProvider(clazz) || !isInstantiable(clazz) || !hasDefaultConstructor(clazz)) {
             throw new CucumberBackendException(String.format("" +
                     "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
                     +
-                    "PicoContainer Provider instance. Please ensure that all the following requirements are satisfied:\n"
+                    "PicoContainer Provider instance. Please ensure that all of the following requirements are satisfied:\n"
                     +
                     "1) the class implements org.picocontainer.injectors.Provider\n" +
-                    "2) the class provides a default constructor.",
+                    "2) the class is public\n" +
+                    "3) the class is not abstract\n" +
+                    "4) the class provides a default constructor\n" +
+                    "5) if nested, the class is static.",
                 clazz.getName()));
         }
         return (Class<Provider>) clazz;
