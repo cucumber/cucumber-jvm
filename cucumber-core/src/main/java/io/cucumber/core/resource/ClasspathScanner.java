@@ -111,6 +111,14 @@ public final class ClasspathScanner {
         return Optional.empty();
     }
 
+    public Class<?> loadClass(String fqn) {
+        try {
+            return getClassLoader().loadClass(fqn);
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            throw new IllegalArgumentException("Could not to load class '" + fqn + "'", e);
+        }
+    }
+
     public List<Class<?>> scanForClassesInPackage(String packageName) {
         return scanForClassesInPackage(packageName, NULL_FILTER);
     }

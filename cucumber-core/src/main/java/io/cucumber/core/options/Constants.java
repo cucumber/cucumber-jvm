@@ -119,6 +119,16 @@ public final class Constants {
     public static final String GLUE_PROPERTY_NAME = "cucumber.glue";
 
     /**
+     * Property name to set the glue classes: {@value}
+     * <p>
+     * A comma separated list fully qualified class names e.g.:
+     * {@code com.example.app.Stepdefinitions}.
+     *
+     * @see io.cucumber.core.feature.GluePath
+     */
+    public static final String GLUE_CLASSES_PROPERTY_NAME = "cucumber.glue-classes";
+
+    /**
      * Property name used to select a specific object factory implementation:
      * {@value}
      *

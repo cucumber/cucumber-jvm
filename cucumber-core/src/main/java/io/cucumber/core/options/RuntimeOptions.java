@@ -79,7 +79,7 @@ public final class RuntimeOptions implements
     }
 
     void addDefaultGlueIfAbsent() {
-        if (glue.isEmpty()) {
+        if (glue.isEmpty() && glueClasses.isEmpty()) {
             glue.add(rootPackageUri());
         }
     }

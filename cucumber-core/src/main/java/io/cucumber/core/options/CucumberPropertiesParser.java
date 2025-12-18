@@ -20,6 +20,7 @@ import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.GLUE_CLASSES_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
@@ -87,6 +88,11 @@ public final class CucumberPropertiesParser {
             GLUE_PROPERTY_NAME,
             splitAndMap(GluePath::parse),
             builder::addGlue);
+
+        parseAll(properties,
+            GLUE_CLASSES_PROPERTY_NAME,
+            splitAndMap(identity()),
+            builder::addGlueClass);
 
         parse(properties,
             OBJECT_FACTORY_PROPERTY_NAME,
