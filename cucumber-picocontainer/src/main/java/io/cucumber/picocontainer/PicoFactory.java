@@ -20,6 +20,7 @@ import java.util.Set;
 public final class PicoFactory implements ObjectFactory {
 
     private final Set<Class<?>> classes = new HashSet<>();
+    private final Set<Class<Provider>> providers = new HashSet<>();
     private MutablePicoContainer pico;
 
     private static boolean isInstantiable(Class<?> clazz) {
@@ -35,23 +36,18 @@ public final class PicoFactory implements ObjectFactory {
                     .withCaching()
                     .withLifecycle()
                     .build();
-            Set<Class<?>> providers = new HashSet<>();
             Set<Class<?>> providedClasses = new HashSet<>();
-            for (Class<?> clazz : classes) {
-                if (isProvider(clazz)) {
-                    providers.add(clazz);
-                    ProviderAdapter adapter = adapterForProviderClass(clazz);
-                    pico.addAdapter(adapter);
-                    providedClasses.add(adapter.getComponentImplementation());
-                }
+            for (Class<Provider> clazz : providers) {
+                ProviderAdapter adapter = adapterForProviderClass(clazz);
+                pico.addAdapter(adapter);
+                providedClasses.add(adapter.getComponentImplementation());
             }
             for (Class<?> clazz : classes) {
-                // do not add the classes that represent a picocontainer
-                // Provider, and also do not add those raw classes that are
-                // already provided (otherwise this causes exceptional
-                // situations, e.g. PicoCompositionException with message
-                // "Duplicate Keys not allowed. Duplicate for 'class XXX'")
-                if (!providers.contains(clazz) && !providedClasses.contains(clazz)) {
+                // do not add classes that are already provided (otherwise this
+                // causes exceptional situations, e.g. PicoCompositionException
+                // with message "Duplicate Keys not allowed. Duplicate for
+                // 'class XXX'")
+                if (!providedClasses.contains(clazz)) {
                     pico.addComponent(clazz);
                 }
             }
@@ -69,6 +65,10 @@ public final class PicoFactory implements ObjectFactory {
         pico.start();
     }
 
+    static boolean hasCucumberPicoProvider(Class<?> clazz) {
+        return clazz.isAnnotationPresent(CucumberPicoProvider.class);
+    }
+
     static boolean isProvider(Class<?> clazz) {
         return Provider.class.isAssignableFrom(clazz);
     }
@@ -77,9 +77,9 @@ public final class PicoFactory implements ObjectFactory {
         return ProviderAdapter.class.isAssignableFrom(clazz);
     }
 
-    private static ProviderAdapter adapterForProviderClass(Class<?> clazz) {
+    private static ProviderAdapter adapterForProviderClass(Class<Provider> clazz) {
         try {
-            Provider provider = (Provider) clazz.getDeclaredConstructor().newInstance();
+            Provider provider = clazz.getDeclaredConstructor().newInstance();
             return isProviderAdapter(clazz) ? (ProviderAdapter) provider : new ProviderAdapter(provider);
         } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException | PicoException e) {
             throw new CucumberBackendException(e.getMessage(), e);
@@ -96,9 +96,12 @@ public final class PicoFactory implements ObjectFactory {
 
     @Override
     public boolean addClass(Class<?> clazz) {
-        checkMeaningfulPicoAnnotation(clazz);
-        if (isInstantiable(clazz) && classes.add(clazz)) {
-            addConstructorDependencies(clazz);
+        if (hasCucumberPicoProvider(clazz)) {
+            providers.add(checkProperPicoProvider(clazz));
+        } else {
+            if (isInstantiable(clazz) && classes.add(clazz)) {
+                addConstructorDependencies(clazz);
+            }
         }
         return true;
     }
@@ -112,19 +115,19 @@ public final class PicoFactory implements ObjectFactory {
         return false;
     }
 
-    private static void checkMeaningfulPicoAnnotation(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(CucumberPicoProvider.class)) {
-            if (!isProvider(clazz) || !hasDefaultConstructor(clazz)) {
-                throw new CucumberBackendException(String.format("" +
-                        "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
-                        +
-                        "PicoContainer Provider instance. Please ensure that all the following requirements are satisfied:\n"
-                        +
-                        "1) the class implements org.picocontainer.injectors.Provider\n" +
-                        "2) the class provides a default constructor.",
-                    clazz.getName()));
-            }
+    @SuppressWarnings("unchecked")
+    private static Class<Provider> checkProperPicoProvider(Class<?> clazz) {
+        if (!isProvider(clazz) || !hasDefaultConstructor(clazz)) {
+            throw new CucumberBackendException(String.format("" +
+                    "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
+                    +
+                    "PicoContainer Provider instance. Please ensure that all the following requirements are satisfied:\n"
+                    +
+                    "1) the class implements org.picocontainer.injectors.Provider\n" +
+                    "2) the class provides a default constructor.",
+                clazz.getName()));
         }
+        return (Class<Provider>) clazz;
     }
 
     @Override
