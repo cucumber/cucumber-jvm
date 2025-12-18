@@ -11,7 +11,6 @@ import io.cucumber.core.resource.ClasspathSupport;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -39,9 +38,7 @@ final class JavaBackend implements Backend {
     @Override
     public void loadGlueClasses(Glue glue, Set<String> glueClassNames) {
         Set<Class<?>> glueClasses = glueClassNames.stream()
-                .map(classFinder::safelyLoadClass)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(classFinder::loadClass)
                 .collect(Collectors.toSet());
 
         loadGlueClassesImpl(glue, glueClasses);

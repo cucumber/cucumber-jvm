@@ -63,7 +63,6 @@ public final class RuntimeOptionsBuilder {
     }
 
     public RuntimeOptionsBuilder addGlueClass(String glueClassName) {
-        // TODO: Support Class<?> ?
         parsedGlueClasses.add(glueClassName);
         return this;
     }
