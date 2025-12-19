@@ -45,20 +45,12 @@ class PicoBackendTest {
     }
 
     @Test
-    void adds_referenced_provider_classes() {
+    void adds_unnested_provider_classes() {
         backend.loadGlue(glue,
             singletonList(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
         backend.buildWorld();
-        verify(factory).addClass(ExamplePicoConfiguration.NestedUrlConnectionProvider.class);
+        verify(factory).addClass(UrlToUriProvider.class);
         verify(factory).addClass(DatabaseConnectionProvider.class);
-    }
-
-    @Test
-    void adds_selfsufficient_provider_classes() {
-        backend.loadGlue(glue,
-            singletonList(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
-        backend.buildWorld();
-        verify(factory).addClass(ExamplePicoConfiguration.NestedUrlProvider.class);
     }
 
     @Test
@@ -66,7 +58,8 @@ class PicoBackendTest {
         backend.loadGlue(glue,
             singletonList(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
         backend.buildWorld();
-        verify(factory).addClass(UrlToUriProvider.class);
+        verify(factory).addClass(ExamplePicoConfiguration.NestedUrlProvider.class);
+        verify(factory).addClass(ExamplePicoConfiguration.NestedUrlConnectionProvider.class);
     }
 
     @Test
