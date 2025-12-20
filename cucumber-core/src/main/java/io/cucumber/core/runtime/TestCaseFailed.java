@@ -3,6 +3,8 @@ package io.cucumber.core.runtime;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Failures as asserted by
  * {@link TestCaseResultObserver#assertTestCasePassed(Supplier, Function, Function, Function)}
@@ -14,8 +16,12 @@ import java.util.function.Supplier;
  */
 class TestCaseFailed extends RuntimeException {
 
-    TestCaseFailed(Throwable throwable) {
-        super(throwable);
+    TestCaseFailed(Throwable cause) {
+        super(requireNonNull(cause));
     }
 
+    @Override
+    public synchronized Throwable getCause() {
+        return requireNonNull(super.getCause());
+    }
 }

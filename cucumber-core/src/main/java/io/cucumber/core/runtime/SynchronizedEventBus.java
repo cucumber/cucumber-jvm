@@ -15,8 +15,8 @@ public final class SynchronizedEventBus implements EventBus {
     }
 
     public static SynchronizedEventBus synchronize(EventBus eventBus) {
-        if (eventBus instanceof SynchronizedEventBus) {
-            return (SynchronizedEventBus) eventBus;
+        if (eventBus instanceof SynchronizedEventBus synchronizedEventBus) {
+            return synchronizedEventBus;
         }
 
         return new SynchronizedEventBus(eventBus);

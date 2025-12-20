@@ -22,7 +22,6 @@ public interface Argument {
 
     int getEnd();
 
-    @Nullable
     Group getGroup();
 
 }

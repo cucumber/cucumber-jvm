@@ -14,6 +14,7 @@ import io.cucumber.core.plugin.PluginFactory;
 import io.cucumber.core.plugin.Plugins;
 import io.cucumber.core.resource.ClassLoaders;
 import io.cucumber.plugin.Plugin;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Clock;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * This is the main entry point for running Cucumber features from the CLI.
  */
+@SuppressWarnings("JavaLangClash")
 public final class Runtime {
 
     private static final Logger log = LoggerFactory.getLogger(Runtime.class);
@@ -114,14 +116,14 @@ public final class Runtime {
 
     public static final class Builder {
 
-        private EventBus eventBus;
+        private @Nullable EventBus eventBus;
         private Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
         private RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        private BackendSupplier backendSupplier;
-        private ObjectFactorySupplier objectFactorySupplier;
-        private FeatureSupplier featureSupplier;
+        private @Nullable BackendSupplier backendSupplier;
+        private @Nullable ObjectFactorySupplier objectFactorySupplier;
+        private @Nullable FeatureSupplier featureSupplier;
         private List<Plugin> additionalPlugins = emptyList();
-        private Supplier<UuidGenerator> uuidGeneratorSupplier;
+        private @Nullable Supplier<UuidGenerator> uuidGeneratorSupplier;
 
         private Builder() {
         }

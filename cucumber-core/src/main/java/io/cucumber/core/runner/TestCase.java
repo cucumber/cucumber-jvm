@@ -202,8 +202,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
             return emptyList();
         }
 
-        if (definitionMatch instanceof AmbiguousPickleStepDefinitionsMatch) {
-            AmbiguousPickleStepDefinitionsMatch ambiguousPickleStepDefinitionsMatch = (AmbiguousPickleStepDefinitionsMatch) definitionMatch;
+        if (definitionMatch instanceof AmbiguousPickleStepDefinitionsMatch ambiguousPickleStepDefinitionsMatch) {
             return ambiguousPickleStepDefinitionsMatch.getDefinitionArguments().stream()
                     .map(TestCase::createStepMatchArgumentList)
                     .collect(toList());
