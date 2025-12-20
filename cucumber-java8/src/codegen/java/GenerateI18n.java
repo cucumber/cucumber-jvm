@@ -58,7 +58,7 @@ public class GenerateI18n {
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_21);
             cfg.setClassForTemplateLoading(GenerateI18n.class, "templates");
             cfg.setDefaultEncoding("UTF-8");
-            cfg.setLocale(Locale.US);
+            cfg.setLocale(Locale.ROOT);
             cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
             templateSource = cfg.getTemplate("lambda.java.ftl");

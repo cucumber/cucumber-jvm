@@ -1,6 +1,7 @@
 package io.cucumber.core.eventbus;
 
 import io.cucumber.core.exception.CucumberException;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
 
@@ -303,7 +304,7 @@ class IncrementingUuidGeneratorTest {
      *                       default classloader id generator must be used
      * @return               a new IncrementingUuidGenerator instance
      */
-    private static UuidGenerator getUuidGeneratorFromOtherClassloader(Integer classloaderId) {
+    private static UuidGenerator getUuidGeneratorFromOtherClassloader(@Nullable Integer classloaderId) {
         try {
             Class<?> aClass = new NonCachingClassLoader().findClass(IncrementingUuidGenerator.class.getName());
             if (classloaderId != null) {

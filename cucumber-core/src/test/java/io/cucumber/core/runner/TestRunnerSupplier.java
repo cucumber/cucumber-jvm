@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.util.Collections.singleton;
 
-public final class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactory {
+class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactory {
 
     private final EventBus bus;
     private final RuntimeOptions runtimeOptions;

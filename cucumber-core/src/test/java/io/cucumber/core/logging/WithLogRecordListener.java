@@ -14,15 +14,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
-
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(WithLogRecordListener.Extension.class)
 public @interface WithLogRecordListener {
     final class Extension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
         private ExtensionContext.Store getContextStore(ExtensionContext context) {
-            Namespace namespace = create(Extension.class, context.getRequiredTestMethod());
+            Namespace namespace = Namespace.create(Extension.class, context.getRequiredTestMethod());
             return context.getStore(namespace);
         }
 

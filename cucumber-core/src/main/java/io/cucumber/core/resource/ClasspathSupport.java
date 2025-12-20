@@ -71,7 +71,7 @@ public final class ClasspathSupport {
         String subPackageName = determineSubpackageName(baseDir, classFile);
         return Stream.of(basePackageName, subPackageName)
                 // default package
-                .filter(value -> !value.isEmpty()) 
+                .filter(value -> !value.isEmpty())
                 .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
@@ -86,7 +86,7 @@ public final class ClasspathSupport {
         String resourceName = resource.getFileName().toString();
         String classpathResourcePath = Stream.of(basePackagePath, subPackageName, resourceName)
                 // default package .
-                .filter(value -> !value.isEmpty()) 
+                .filter(value -> !value.isEmpty())
                 .collect(joining(RESOURCE_SEPARATOR_STRING));
         return classpathResourceUri(classpathResourcePath);
     }
@@ -159,7 +159,7 @@ public final class ClasspathSupport {
         return """
                 By default Cucumber scans the entire classpath for step definitions.
                 You can restrict this by configuring the glue path.
-                
+
                 %s""".formatted(configurationExamples());
     }
 
@@ -167,15 +167,16 @@ public final class ClasspathSupport {
         return """
                 By default Cucumber scans the entire classpath for step definitions.
                 However the resource '%s' is located in a nested jar.
-                
+
                 This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.
                 Cucumber currently doesn't support classpath scanning in nested jars.
-                
+
                 You can avoid this error by unpacking your application before executing or upgrading to Spring Boot 3.2 or higher.
-                
+
                 Alternatively you can restrict which packages cucumber scans configuring the glue path such that Cucumber only scans un-nested jars.
-                
-                %s""".formatted(uri, configurationExamples());
+
+                %s"""
+                .formatted(uri, configurationExamples());
     }
 
     public static String configurationExamples() {

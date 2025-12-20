@@ -63,7 +63,6 @@ class StubStepDefinition implements StepDefinition {
         return "{stubbed location with details}";
     }
 
-
     @Override
     public Optional<SourceReference> getSourceReference() {
         try {

@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 
 public interface Options {
 
-    @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass();
+    @Nullable
+    Class<? extends UuidGenerator> getUuidGeneratorClass();
 
 }

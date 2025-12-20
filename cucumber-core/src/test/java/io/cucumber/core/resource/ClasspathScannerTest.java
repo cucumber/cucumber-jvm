@@ -69,7 +69,7 @@ class ClasspathScannerTest {
         URLStreamHandler handler = new URLStreamHandler() {
             @Override
             protected URLConnection openConnection(URL u) {
-                return null;
+                throw new IllegalStateException();
             }
         };
         URL resourceUrl = new URL(null, "bundle-resource:com/cucumber/bundle", handler);

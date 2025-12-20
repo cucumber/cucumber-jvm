@@ -1,21 +1,17 @@
 package io.cucumber.core.backend;
 
-import java.lang.reflect.Method;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Optional;
 
 public final class StubLocation implements Located {
 
     private final String location;
-    private final SourceReference sourceReference;
+    private final @Nullable SourceReference sourceReference;
 
     public StubLocation(String location) {
         this.location = location;
         this.sourceReference = null;
-    }
-
-    public StubLocation(Method method) {
-        this.location = null;
-        this.sourceReference = SourceReference.fromMethod(method);
     }
 
     public StubLocation(SourceReference sourceReference) {
@@ -24,14 +20,13 @@ public final class StubLocation implements Located {
     }
 
     private static String formatLocation(SourceReference sourceReference) {
-        if (sourceReference instanceof JavaMethodReference) {
-            JavaMethodReference javaMethodReference = (JavaMethodReference) sourceReference;
+        if (sourceReference instanceof JavaMethodReference javaMethodReference) {
             String className = javaMethodReference.className();
             String methodName = javaMethodReference.methodName();
             String parameterTypes = String.join(",", javaMethodReference.methodParameterTypes());
             return String.format("%s#%s(%s)", className, methodName, parameterTypes);
         }
-        return null;
+        throw new IllegalArgumentException(sourceReference.toString());
     }
 
     @Override

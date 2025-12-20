@@ -17,7 +17,7 @@ final class Banner {
         this.out = out;
         this.monochrome = monochrome;
     }
-    
+
     void print(List<Line> lines, AnsiEscapes... border) {
         int maxLength = lines.stream().map(Line::length).max(comparingInt(a -> a))
                 .orElseThrow(NoSuchElementException::new);

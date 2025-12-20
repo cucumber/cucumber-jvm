@@ -1,5 +1,7 @@
 package io.cucumber.core.backend;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -7,12 +9,13 @@ public final class StubHookDefinition implements HookDefinition {
 
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final Located location;
-    private final RuntimeException exception;
-    private final Consumer<TestCaseState> action;
-    private final HookType hookType;
+    private final @Nullable RuntimeException exception;
+    private final @Nullable Consumer<TestCaseState> action;
+    private final @Nullable HookType hookType;
 
     public StubHookDefinition(
-            Located location, RuntimeException exception, Consumer<TestCaseState> action, HookType hookType
+            Located location, @Nullable RuntimeException exception, @Nullable Consumer<TestCaseState> action,
+            @Nullable HookType hookType
     ) {
         this.location = location;
         this.exception = exception;

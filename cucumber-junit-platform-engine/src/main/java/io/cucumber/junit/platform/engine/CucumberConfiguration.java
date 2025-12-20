@@ -214,7 +214,7 @@ class CucumberConfiguration implements
 
     ExecutionMode getExecutionModeFeature() {
         return configurationParameters.get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
-            value -> ExecutionMode.valueOf(value.toUpperCase(Locale.US)))
+            value -> ExecutionMode.valueOf(value.toUpperCase(Locale.ROOTUS)))
                 .orElse(ExecutionMode.CONCURRENT);
     }
 

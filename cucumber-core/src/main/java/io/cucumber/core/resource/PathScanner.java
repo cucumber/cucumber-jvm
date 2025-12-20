@@ -25,10 +25,10 @@ public final class PathScanner {
 
     private static final Logger log = LoggerFactory.getLogger(PathScanner.class);
 
-    public PathScanner(){
+    public PathScanner() {
         /* no-op */
     }
-    
+
     void findResourcesForUri(URI baseUri, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
         try (CloseablePath closeablePath = open(baseUri)) {
             Path baseDir = closeablePath.getPath();

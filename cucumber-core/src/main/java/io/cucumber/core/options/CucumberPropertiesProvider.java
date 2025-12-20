@@ -5,5 +5,6 @@ import org.jspecify.annotations.Nullable;
 @FunctionalInterface
 public interface CucumberPropertiesProvider {
 
-    @Nullable String get(String key);
+    @Nullable
+    String get(String key);
 }

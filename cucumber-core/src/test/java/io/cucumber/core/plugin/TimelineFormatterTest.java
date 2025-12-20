@@ -55,21 +55,21 @@ class TimelineFormatterTest {
             .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
             .build();
 
-    private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
-            "Feature: Failing Feature\n" +
-            " Background:\n" +
-            " Given bg_1\n" +
-            " When bg_2\n" +
-            " Then bg_3\n" +
-            " @TagA\n" +
-            " Scenario: Scenario 1\n" +
-            " Given step_01\n" +
-            " When step_02\n" +
-            " Then step_03\n" +
-            " Scenario: Scenario 2\n" +
-            " Given step_01\n" +
-            " When step_02\n" +
-            " Then step_03");
+    private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", """
+            Feature: Failing Feature
+             Background:
+             Given bg_1
+             When bg_2
+             Then bg_3
+             @TagA
+             Scenario: Scenario 1
+             Given step_01
+             When step_02
+             Then step_03
+             Scenario: Scenario 2
+             Given step_01
+             When step_02
+             Then step_03""");
 
     private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", """
             Feature: Successful Feature
@@ -126,7 +126,7 @@ class TimelineFormatterTest {
     }
 
     private void runFormatterWithPlugin() {
-        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofMillis(1000));
+        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofSeconds(1));
 
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(failingFeature,

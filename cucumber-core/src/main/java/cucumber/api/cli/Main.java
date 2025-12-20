@@ -10,8 +10,8 @@ import io.cucumber.core.logging.LoggerFactory;
 public final class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    
-    private Main(){
+
+    private Main() {
         /* no-op */
     }
 

@@ -1,5 +1,7 @@
 package io.cucumber.core.backend;
 
+import org.jspecify.annotations.Nullable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -14,7 +16,7 @@ public final class StubStepDefinition implements StepDefinition {
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final List<ParameterInfo> parameterInfos;
     private final String expression;
-    private final Throwable exception;
+    private final @Nullable Throwable exception;
     private final Located location;
 
     public StubStepDefinition(String pattern, String location, Type... types) {
@@ -37,7 +39,7 @@ public final class StubStepDefinition implements StepDefinition {
         this(pattern, new StubLocation(location), exception, types);
     }
 
-    private StubStepDefinition(String pattern, StubLocation location, Throwable exception, Type... types) {
+    private StubStepDefinition(String pattern, StubLocation location, @Nullable Throwable exception, Type... types) {
         this.parameterInfos = Stream.of(types).map(StubParameterInfo::new).collect(Collectors.toList());
         this.expression = pattern;
         this.location = location;
@@ -57,8 +59,8 @@ public final class StubStepDefinition implements StepDefinition {
     @Override
     public void execute(Object[] args) {
         if (exception != null) {
-            if (exception instanceof CucumberBackendException) {
-                throw (CucumberBackendException) exception;
+            if (exception instanceof CucumberBackendException cucumberBackendException) {
+                throw cucumberBackendException;
             }
             throw new CucumberInvocationTargetException(location, new InvocationTargetException(exception));
         }

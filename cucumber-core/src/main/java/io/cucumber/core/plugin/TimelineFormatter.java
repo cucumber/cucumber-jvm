@@ -77,7 +77,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 
     // Used by PluginFactory
-    @SuppressWarnings({"unused", "RedundantThrows", "ResultOfMethodCallIgnored"}) 
+    @SuppressWarnings({ "unused", "RedundantThrows", "ResultOfMethodCallIgnored" })
     public TimelineFormatter(File reportDir) throws FileNotFoundException {
         reportDir.mkdirs();
         if (!reportDir.isDirectory()) {
@@ -113,7 +113,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                         .map(testCaseStarted -> createTestData(
                             testCaseFinished, //
                             testCaseStarted, //
-                                workerId -> timeLineGroupsById.computeIfAbsent(workerId, id -> new TimeLineGroup(id, id)) //
+                            workerId -> timeLineGroupsById.computeIfAbsent(workerId, id -> new TimeLineGroup(id, id)) //
                         )))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -264,7 +264,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         private long start;
         private @Nullable String group;
         // Replaced in JS file
-        private String content = ""; 
+        private String content = "";
         private @Nullable String tags;
         private long end;
         private @Nullable String className;

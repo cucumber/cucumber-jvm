@@ -136,7 +136,7 @@ public final class LoggerFactory {
                 String className = element.getClassName();
                 if (THIS_LOGGER_CLASS.equals(className)) {
                     // Next element is calling this logger
-                    found = true; 
+                    found = true;
                 } else if (found) {
                     sourceClassName = className;
                     sourceMethodName = element.getMethodName();

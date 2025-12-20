@@ -13,7 +13,7 @@ public final class HtmlFormatter implements ConcurrentEventListener {
     private final MessagesToHtmlWriter writer;
 
     // Used by PluginFactory
-    @SuppressWarnings("WeakerAccess") 
+    @SuppressWarnings("WeakerAccess")
     public HtmlFormatter(OutputStream out) {
         this.writer = MessagesToHtmlWriter //
                 .builder(Jackson.OBJECT_MAPPER::writeValue) //

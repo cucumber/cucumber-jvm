@@ -11,6 +11,7 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -23,12 +24,12 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.nio.file.Files.readAllLines;
 import static java.time.Duration.ZERO;
 import static java.time.Instant.now;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -41,9 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PluginFactoryTest {
 
-    private PluginFactory fc = new PluginFactory();
+    final PluginFactory fc = new PluginFactory();
 
-    private Object plugin;
+    private @Nullable Object plugin;
 
     @TempDir
     Path tmp;
@@ -97,15 +98,19 @@ class PluginFactoryTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(jsonOption));
         assertThat(exception.getMessage(), is(equalTo(
-            "Couldn't create parent directories of '" + jsonReport.toFile().getCanonicalPath() + "'.\n" +
-                    "Make sure the the parent directory '" + jsonReport.getParent().toFile().getCanonicalPath()
-                    + "' isn't a file.\n" +
-                    "\n" +
-                    "Note: This usually happens when plugins write to colliding paths.\n" +
-                    "For example: 'html:target/cucumber, json:target/cucumber/report.json'\n" +
-                    "You can fix this by making the paths do no collide.\n" +
-                    "For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'\n" +
-                    "The details are in the stack trace below:")));
+            """
+                    Couldn't create parent directories of '%s'.
+                    Make sure the the parent directory '%s' isn't a file.
+
+                    Note: This usually happens when plugins write to colliding paths.
+                    For example: 'html:target/cucumber, json:target/cucumber/report.json'
+                    You can fix this by making the paths do no collide.
+                    For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'
+                    The details are in the stack trace below:"""
+                    .formatted( //
+                        jsonReport.toFile().getCanonicalPath(), //
+                        requireNonNull(jsonReport.getParent()).toFile().getCanonicalPath() //
+                    ))));
     }
 
     @Test
@@ -119,14 +124,15 @@ class PluginFactoryTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(htmlOption));
         assertThat(exception.getMessage(), is(equalTo(
-            "Couldn't create a file output stream for '" + htmlReport + "'.\n" +
-                    "Make sure the the file isn't a directory.\n" +
-                    "\n" +
-                    "Note: This usually happens when plugins write to colliding paths.\n" +
-                    "For example: 'json:target/cucumber/report.json, html:target/cucumber'\n" +
-                    "You can fix this by making the paths do no collide.\n" +
-                    "For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'\n" +
-                    "The details are in the stack trace below:")));
+            """
+                    Couldn't create a file output stream for '%s'.
+                    Make sure the the file isn't a directory.
+
+                    Note: This usually happens when plugins write to colliding paths.
+                    For example: 'json:target/cucumber/report.json, html:target/cucumber'
+                    You can fix this by making the paths do no collide.
+                    For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'
+                    The details are in the stack trace below:""".formatted(htmlReport))));
     }
 
     @Test
@@ -280,17 +286,18 @@ class PluginFactoryTest {
         OutputStream out;
 
         WantsOutputStream(OutputStream out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
     }
 
     static class WantsFileOrEmpty extends StubFormatter {
 
+        @Nullable
         File out = null;
 
         WantsFileOrEmpty(File out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
         WantsFileOrEmpty() {
@@ -303,7 +310,7 @@ class PluginFactoryTest {
         final File out;
 
         WantsFile(File out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
     }
@@ -311,11 +318,11 @@ class PluginFactoryTest {
     static class WantsFileOrURL extends StubFormatter {
 
         WantsFileOrURL(File out) {
-            Objects.requireNonNull(out);
+            requireNonNull(out);
         }
 
         WantsFileOrURL(URL out) {
-            Objects.requireNonNull(out);
+            requireNonNull(out);
         }
 
     }
@@ -325,7 +332,7 @@ class PluginFactoryTest {
         final String arg;
 
         WantsString(String arg) {
-            this.arg = Objects.requireNonNull(arg);
+            this.arg = requireNonNull(arg);
         }
 
     }
@@ -335,13 +342,12 @@ class PluginFactoryTest {
         final Appendable out;
 
         WantsAppendable(Appendable out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
         void writeAndClose(String s) throws IOException {
             out.append(s);
-            if (out instanceof Closeable) {
-                Closeable closeable = (Closeable) out;
+            if (out instanceof Closeable closeable) {
                 closeable.close();
             }
         }
@@ -360,9 +366,9 @@ class PluginFactoryTest {
     }
 
     private static final class FakeTestRunEventsPublisher implements EventPublisher {
-        private EventHandler<TestRunStarted> startHandler;
-        private EventHandler<TestRunFinished> finishedHandler;
-        private EventHandler<Envelope> envelopeHandler;
+        private @Nullable EventHandler<TestRunStarted> startHandler;
+        private @Nullable EventHandler<TestRunFinished> finishedHandler;
+        private @Nullable EventHandler<Envelope> envelopeHandler;
 
         @Override
         public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
@@ -396,6 +402,5 @@ class PluginFactoryTest {
         }
 
     }
-
 
 }

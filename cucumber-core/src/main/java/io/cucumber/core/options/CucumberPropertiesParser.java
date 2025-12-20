@@ -38,10 +38,10 @@ public final class CucumberPropertiesParser {
 
     private static final Logger log = LoggerFactory.getLogger(CucumberPropertiesParser.class);
 
-    public CucumberPropertiesParser(){
+    public CucumberPropertiesParser() {
         /* no-op */
     }
-    
+
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
         return parse(properties::get);
     }
@@ -115,7 +115,7 @@ public final class CucumberPropertiesParser {
         parse(properties,
             PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
             // No validation - validated on server
-            identity(), 
+            identity(),
             builder::setPublishToken);
 
         parse(properties,

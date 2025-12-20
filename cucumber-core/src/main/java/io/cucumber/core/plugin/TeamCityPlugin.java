@@ -24,7 +24,7 @@ public final class TeamCityPlugin implements ConcurrentEventListener {
     private MessagesToTeamCityWriter writer;
 
     // Used by PluginFactory
-    @SuppressWarnings("unused") 
+    @SuppressWarnings("unused")
     public TeamCityPlugin() {
         // This plugin prints markers for Team City and IntelliJ IDEA that
         // allows them to associate the output to specific test cases. Printing

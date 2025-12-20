@@ -16,8 +16,8 @@ public interface Backend {
      * @param glue      Glue that provides the steps to be executed.
      * @param gluePaths The locations for the glue to be loaded.
      */
-    default void loadGlue(Glue glue, List<URI> gluePaths){
-        
+    default void loadGlue(Glue glue, List<URI> gluePaths) {
+
     }
 
     /**
@@ -27,18 +27,18 @@ public interface Backend {
      * implement {@link ScenarioScoped}
      */
     default void buildWorld() {
-        
+
     }
 
     /**
      * Invoked at the end of a scenario, after hooks
      */
-    default void disposeWorld(){
-        
+    default void disposeWorld() {
+
     }
 
     @Nullable
-    default Snippet getSnippet(){
+    default Snippet getSnippet() {
         return null;
     }
 

@@ -8,10 +8,10 @@ import java.util.UUID;
  */
 public final class RandomUuidGenerator implements UuidGenerator {
 
-    public RandomUuidGenerator(){
+    public RandomUuidGenerator() {
         /* no-op */
     }
-    
+
     @Override
     public UUID generateId() {
         return UUID.randomUUID();

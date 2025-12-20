@@ -182,7 +182,8 @@ public final class CucumberOptionsAnnotationParser {
 
     public interface OptionsProvider {
 
-        @Nullable CucumberOptions getOptions(Class<?> clazz);
+        @Nullable
+        CucumberOptions getOptions(Class<?> clazz);
 
     }
 
@@ -208,9 +209,11 @@ public final class CucumberOptionsAnnotationParser {
 
         SnippetType snippets();
 
-        @Nullable Class<? extends ObjectFactory> objectFactory();
+        @Nullable
+        Class<? extends ObjectFactory> objectFactory();
 
-        @Nullable Class<? extends UuidGenerator> uuidGenerator();
+        @Nullable
+        Class<? extends UuidGenerator> uuidGenerator();
 
     }
 

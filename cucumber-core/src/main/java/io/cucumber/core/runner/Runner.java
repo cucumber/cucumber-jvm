@@ -73,7 +73,8 @@ public final class Runner {
 
             glue.prepareGlue(localeForPickle(pickle));
             snippetGenerators.clear();
-            snippetGenerators.addAll(createSnippetGeneratorsForPickle(pickle.getLanguage(), glue.getStepTypeRegistry()));
+            snippetGenerators
+                    .addAll(createSnippetGeneratorsForPickle(pickle.getLanguage(), glue.getStepTypeRegistry()));
 
             TestCase testCase = createTestCaseForPickle(pickle);
             testCase.run(bus);

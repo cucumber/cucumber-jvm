@@ -47,9 +47,9 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private static PrintWriter createPrintWriter(OutputStream out) {
         return new PrintWriter(
-                new OutputStreamWriter(
-                        requireNonNull(out),
-                        StandardCharsets.UTF_8));
+            new OutputStreamWriter(
+                requireNonNull(out),
+                StandardCharsets.UTF_8));
     }
 
     static URI relativize(URI uri) {
@@ -78,7 +78,6 @@ public final class RerunFormatter implements ConcurrentEventListener {
         });
     }
 
-
     private void finishReport() {
         query.findAllTestCaseStarted().stream()
                 .filter(this::isNotPassingOrSkipped)
@@ -97,13 +96,13 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private static Collector<UriAndLine, ?, Map<String, Set<Integer>>> groupByUriAndThenCollectLines() {
         return groupingBy(
-                UriAndLine::getUri,
-                // Sort URIs
-                TreeMap::new,
-                mapping(
-                        UriAndLine::getLine,
-                        // Sort lines
-                        toCollection(TreeSet::new)));
+            UriAndLine::getUri,
+            // Sort URIs
+            TreeMap::new,
+            mapping(
+                UriAndLine::getLine,
+                // Sort lines
+                toCollection(TreeSet::new)));
     }
 
     private static StringBuilder renderFeatureWithLines(String uri, Set<Integer> lines) {
@@ -143,7 +142,8 @@ public final class RerunFormatter implements ConcurrentEventListener {
             return uri;
         }
 
-        @Nullable Integer getLine() {
+        @Nullable
+        Integer getLine() {
             return line;
         }
     }

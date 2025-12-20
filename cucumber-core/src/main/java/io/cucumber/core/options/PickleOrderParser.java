@@ -14,8 +14,8 @@ final class PickleOrderParser {
     private static final Logger log = LoggerFactory.getLogger(PickleOrderParser.class);
 
     private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
-    
-    private PickleOrderParser(){
+
+    private PickleOrderParser() {
         /* no-op */
     }
 

@@ -47,7 +47,8 @@ final class RethrowingThrowableCollector {
         thrown.add(throwable);
     }
 
-    @Nullable Throwable getThrowable() {
+    @Nullable
+    Throwable getThrowable() {
         // Don't try any tricks with `.addSuppressed`. Other frameworks are
         // already doing this.
         if (thrown.isEmpty()) {

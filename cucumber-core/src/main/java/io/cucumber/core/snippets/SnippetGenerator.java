@@ -45,7 +45,9 @@ public final class SnippetGenerator {
         this(null, snippet, parameterTypeRegistry);
     }
 
-    public SnippetGenerator(@Nullable String pickleLanguage, Snippet snippet, ParameterTypeRegistry parameterTypeRegistry) {
+    public SnippetGenerator(
+            @Nullable String pickleLanguage, Snippet snippet, ParameterTypeRegistry parameterTypeRegistry
+    ) {
         this.pickleLanguage = pickleLanguage;
         this.snippet = snippet;
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
@@ -91,7 +93,7 @@ public final class SnippetGenerator {
     }
 
     private static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase(Locale.US) + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1);
     }
 
     private static String getNormalizedKeyWord(@Nullable String pickleLanguage, String keyword) {

@@ -120,7 +120,7 @@ public final class GluePath {
             String packageName = classPathResource.replaceAll("/", ".");
             return """
                     Consider replacing glue path '%s' with '%s'.
-                    
+
                     The current glue path points to a source directory in your \
                     project. However cucumber looks for glue (i.e. step \
                     definitions) on the classpath. By using a package name you \
@@ -138,7 +138,8 @@ public final class GluePath {
     private static boolean isValidIdentifier(String schemeSpecificPart) {
         for (String part : schemeSpecificPart.split("/", 0)) {
             for (int i = 0; i < part.length(); i++) {
-                if ((i == 0 && !isJavaIdentifierStart(part.charAt(i))) || (i != 0 && !isJavaIdentifierPart(part.charAt(i)))) {
+                if ((i == 0 && !isJavaIdentifierStart(part.charAt(i)))
+                        || (i != 0 && !isJavaIdentifierPart(part.charAt(i)))) {
                     return false;
                 }
             }

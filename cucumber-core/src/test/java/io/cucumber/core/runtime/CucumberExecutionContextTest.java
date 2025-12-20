@@ -60,7 +60,7 @@ class CucumberExecutionContextTest {
                 r.assertTestCasePassed(
                     Exception::new,
                     Function.identity(),
-                        suggestions -> new Exception(),
+                    suggestions -> new Exception(),
                     Function.identity());
             }
         }));

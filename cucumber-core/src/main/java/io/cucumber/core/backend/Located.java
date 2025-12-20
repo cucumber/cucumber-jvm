@@ -8,7 +8,8 @@ import java.util.Optional;
 public interface Located {
 
     /**
-     * Return true if this matches the location. This is used to filter stack traces.
+     * Return true if this matches the location. This is used to filter stack
+     * traces.
      * 
      * @param  stackTraceElement The location of the step.
      * @return                   Return true if this matches the location.

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.twoReference;
@@ -20,10 +21,11 @@ class UnusedStepsSummaryPrinterTest {
 
     @Test
     void writes_unused_report() throws UnsupportedEncodingException {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Given first step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -36,10 +38,12 @@ class UnusedStepsSummaryPrinterTest {
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("\n" +
-                "1 unused step definition(s)\n" +
-                "\n" +
-                "Location                                                    Expression   \n" +
-                "io.cucumber.core.plugin.PrettyFormatterStepDefinition.two() # second step\n");
+        assertThat(out.toString(StandardCharsets.UTF_8)).isEqualToNormalizingNewlines("""
+
+                1 unused step definition(s)
+
+                Location                                                    Expression  \s
+                io.cucumber.core.plugin.PrettyFormatterStepDefinition.two() # second step
+                """);
     }
 }

@@ -94,7 +94,7 @@ class CommandlineOptionsParserTest {
     }
 
     private String output() {
-        return new String(out.toByteArray(), StandardCharsets.UTF_8);
+        return out.toString(StandardCharsets.UTF_8);
     }
 
     @Test
@@ -255,7 +255,7 @@ class CommandlineOptionsParserTest {
     }
 
     private static Matcher<Plugin> plugin(final String pluginName) {
-        return new TypeSafeDiagnosingMatcher<Plugin>() {
+        return new TypeSafeDiagnosingMatcher<>() {
             @Override
             protected boolean matchesSafely(Plugin plugin, Description description) {
                 description.appendValue(plugin.getClass().getName());
@@ -362,7 +362,7 @@ class CommandlineOptionsParserTest {
                 .build(runtimeOptions);
 
         List<String> actual = options.getTagExpressions().stream()
-                .map(e -> e.toString())
+                .map(Object::toString)
                 .collect(toList());
 
         assertAll(
@@ -461,10 +461,11 @@ class CommandlineOptionsParserTest {
     }
 
     private Pickle createPickle(String uri, String name) {
-        Feature feature = TestFeatureParser.parse(uri, "" +
-                "Feature: Test feature\n" +
-                "  Scenario: " + name + "\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse(uri, """
+                Feature: Test feature
+                  Scenario: %s
+                     Given I have 4 cukes in my belly
+                """.formatted(name));
         return feature.getPickles().get(0);
     }
 
@@ -547,7 +548,7 @@ class CommandlineOptionsParserTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new IllegalStateException();
         }
 
         @Override

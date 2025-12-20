@@ -28,10 +28,10 @@ final class JarUriFileSystemService {
     private static final Map<URI, FileSystem> openFiles = new HashMap<>();
     private static final Map<URI, AtomicInteger> referenceCount = new HashMap<>();
 
-    private JarUriFileSystemService(){
+    private JarUriFileSystemService() {
         /* no-op */
     }
-    
+
     private static CloseablePath open(URI jarUri, Function<FileSystem, Path> pathProvider)
             throws IOException {
         FileSystem fileSystem = openFileSystem(jarUri);

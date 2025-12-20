@@ -42,7 +42,8 @@ final class ThrowableCollector {
         return isTestAbortedException.test(throwable);
     }
 
-    @Nullable Throwable getThrowable() {
+    @Nullable
+    Throwable getThrowable() {
         return throwable;
     }
 

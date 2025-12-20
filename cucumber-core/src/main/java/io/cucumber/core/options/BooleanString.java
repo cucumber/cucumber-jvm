@@ -1,12 +1,14 @@
 package io.cucumber.core.options;
 
+import org.jspecify.annotations.Nullable;
+
 final class BooleanString {
 
-    private BooleanString(){
+    private BooleanString() {
         /* no-op */
     }
-    
-    static boolean parseBoolean(String s) {
+
+    static boolean parseBoolean(@Nullable String s) {
         if (s == null) {
             return false;
         }

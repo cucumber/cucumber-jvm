@@ -32,9 +32,9 @@ public abstract class AbstractEventPublisher implements EventPublisher {
     }
 
     /**
-     * Send all events. 
-     * 
-     * <p>May be overridden, but must be called.
+     * Send all events.
+     * <p>
+     * May be overridden, but must be called.
      */
     protected <T> void sendAll(Iterable<T> events) {
         for (T event : events) {
@@ -43,9 +43,9 @@ public abstract class AbstractEventPublisher implements EventPublisher {
     }
 
     /**
-     * Send a single event. 
-     *
-     * <p>May be overridden, but must be called.
+     * Send a single event.
+     * <p>
+     * May be overridden, but must be called.
      */
     protected <T> void send(T event) {
         if (handlers.containsKey(Event.class) && event instanceof Event) {

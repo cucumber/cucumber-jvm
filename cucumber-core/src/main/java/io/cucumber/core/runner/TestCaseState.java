@@ -152,7 +152,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         return testCase.getLocation().getLine();
     }
 
-    @Nullable Throwable getError() {
+    @Nullable
+    Throwable getError() {
         if (stepResults.isEmpty()) {
             return null;
         }

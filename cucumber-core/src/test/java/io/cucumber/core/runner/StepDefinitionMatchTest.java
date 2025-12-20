@@ -216,8 +216,7 @@ class StepDefinitionMatchTest {
             "(few|some|lots of) (cukes|gherkins)",
             ItemQuantity.class,
             // Wrong number of capture groups
-            (String s) -> null 
-        ));
+            (String s) -> null));
 
         Feature feature = TestFeatureParser.parse("""
                 Feature: Test feature

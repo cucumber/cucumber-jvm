@@ -83,10 +83,11 @@ class CachingGlueTest {
         DuplicateDefaultParameterTransformers exception = assertThrows(
             DuplicateDefaultParameterTransformers.class,
             () -> glue.prepareGlue(language));
-        assertThat(exception.getMessage(), equalTo("" +
-                "There may not be more then one default parameter transformer. Found:\n" +
-                " - mocked default parameter transformer\n" +
-                " - mocked default parameter transformer\n"));
+        assertThat(exception.getMessage(), equalTo("""
+                There may not be more then one default parameter transformer. Found:
+                 - mocked default parameter transformer
+                 - mocked default parameter transformer
+                """));
     }
 
     @Test
@@ -97,10 +98,11 @@ class CachingGlueTest {
         DuplicateDefaultDataTableEntryTransformers exception = assertThrows(
             DuplicateDefaultDataTableEntryTransformers.class,
             () -> glue.prepareGlue(language));
-        assertThat(exception.getMessage(), equalTo("" +
-                "There may not be more then one default data table entry. Found:\n" +
-                " - mocked default data table entry transformer\n" +
-                " - mocked default data table entry transformer\n"));
+        assertThat(exception.getMessage(), equalTo("""
+                There may not be more then one default data table entry. Found:
+                 - mocked default data table entry transformer
+                 - mocked default data table entry transformer
+                """));
     }
 
     @Test
@@ -111,10 +113,11 @@ class CachingGlueTest {
         DuplicateDefaultDataTableCellTransformers exception = assertThrows(
             DuplicateDefaultDataTableCellTransformers.class,
             () -> glue.prepareGlue(language));
-        assertThat(exception.getMessage(), equalTo("" +
-                "There may not be more then one default table cell transformers. Found:\n" +
-                " - mocked default data table cell transformer\n" +
-                " - mocked default data table cell transformer\n"));
+        assertThat(exception.getMessage(), equalTo("""
+                There may not be more then one default table cell transformers. Found:
+                 - mocked default data table cell transformer
+                 - mocked default data table cell transformer
+                """));
     }
 
     @Test
@@ -178,10 +181,11 @@ class CachingGlueTest {
     }
 
     private static Step getPickleStep(String text) {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given " + text + "\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given %s
+                """.formatted(text));
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -246,11 +250,12 @@ class CachingGlueTest {
     }
 
     private static Step getPickleStepWithSingleCellTable(String stepText, String cell) {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given " + stepText + "\n" +
-                "       | " + cell + " |\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given %s
+                       | %s |
+                """.formatted(stepText, cell));
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -286,13 +291,14 @@ class CachingGlueTest {
     }
 
     private static Step getPickleStepWithDocString(String stepText, String doc) {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given " + stepText + "\n" +
-                "       \"\"\"\n" +
-                "       " + doc + "\n" +
-                "       \"\"\"\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given %s
+                       ""\"
+                       %s
+                       ""\"
+                """.formatted(stepText, doc));
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -634,7 +640,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
@@ -664,13 +670,13 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
     }
 
-    private static final class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
+    private static class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
 
         @Override
         public ParameterType<?> parameterType() {
@@ -694,7 +700,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
@@ -841,7 +847,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
@@ -872,7 +878,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
@@ -908,7 +914,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
@@ -938,7 +944,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 

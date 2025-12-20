@@ -16,8 +16,10 @@ public interface Options {
 
     SnippetType getSnippetType();
 
-    @Nullable Class<? extends ObjectFactory> getObjectFactoryClass();
+    @Nullable
+    Class<? extends ObjectFactory> getObjectFactoryClass();
 
-    @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass();
+    @Nullable
+    Class<? extends UuidGenerator> getUuidGeneratorClass();
 
 }

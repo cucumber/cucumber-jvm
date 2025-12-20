@@ -74,11 +74,11 @@ class CoreHookDefinition {
     Optional<HookDefinition.HookType> getHookType() {
         return delegate.getHookType();
     }
-    
+
     Optional<SourceReference> getDefinitionLocation() {
         return delegate.getSourceReference();
     }
-    
+
     static final class ScenarioScopedCoreHookDefinition extends CoreHookDefinition implements ScenarioScoped {
 
         private ScenarioScopedCoreHookDefinition(UUID id, HookDefinition delegate) {
@@ -93,6 +93,5 @@ class CoreHookDefinition {
         }
 
     }
-
 
 }

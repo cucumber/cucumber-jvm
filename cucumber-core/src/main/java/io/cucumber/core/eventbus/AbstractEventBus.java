@@ -3,9 +3,9 @@ package io.cucumber.core.eventbus;
 public abstract class AbstractEventBus extends AbstractEventPublisher implements EventBus {
 
     /**
-     * Send all events. 
-     *
-     * <p>May be overridden, but must be called.
+     * Send all events.
+     * <p>
+     * May be overridden, but must be called.
      */
     @Override
     public <T> void sendAll(Iterable<T> queue) {
@@ -13,9 +13,9 @@ public abstract class AbstractEventBus extends AbstractEventPublisher implements
     }
 
     /**
-     * Send a single event. 
-     *
-     * <p>May be overridden, but must be called.
+     * Send a single event.
+     * <p>
+     * May be overridden, but must be called.
      */
     @Override
     public <T> void send(T event) {

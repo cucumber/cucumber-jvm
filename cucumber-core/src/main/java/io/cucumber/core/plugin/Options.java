@@ -14,7 +14,8 @@ public interface Options {
 
         Class<? extends io.cucumber.plugin.Plugin> pluginClass();
 
-        @Nullable String argument();
+        @Nullable
+        String argument();
 
         String pluginString();
 

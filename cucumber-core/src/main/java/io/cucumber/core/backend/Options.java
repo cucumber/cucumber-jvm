@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 
 public interface Options {
 
-    @Nullable Class<? extends ObjectFactory> getObjectFactoryClass();
+    @Nullable
+    Class<? extends ObjectFactory> getObjectFactoryClass();
 
 }

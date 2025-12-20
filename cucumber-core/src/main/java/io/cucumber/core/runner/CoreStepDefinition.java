@@ -54,7 +54,8 @@ final class CoreStepDefinition implements StepDefinition {
         return stepDefinition;
     }
 
-    @Nullable List<Argument> matchedArguments(Step step) {
+    @Nullable
+    List<Argument> matchedArguments(Step step) {
         return argumentMatcher.argumentsFrom(step, types);
     }
 

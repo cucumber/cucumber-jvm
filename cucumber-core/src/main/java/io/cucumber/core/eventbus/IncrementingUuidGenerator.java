@@ -131,7 +131,7 @@ public class IncrementingUuidGenerator implements UuidGenerator {
                         UuidGenerator.class.getSimpleName() + "implementation.");
         }
         // set variant
-        long leastSigBits = counterValue | 0x8000000000000000L; 
+        long leastSigBits = counterValue | 0x8000000000000000L;
         return new UUID(msb, leastSigBits);
     }
 }

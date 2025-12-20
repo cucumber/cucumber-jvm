@@ -10,7 +10,7 @@ public interface TestCaseState {
 
     /**
      * Return tags of this scenario.
-     *      
+     * 
      * @return tags of this scenario.
      */
     Collection<String> getSourceTagNames();
@@ -27,10 +27,10 @@ public interface TestCaseState {
 
     /**
      * Returns true when the scenario has failed.
+     * <p>
+     * This is implemented as {@code this.getStatus() == Status.FAILED}.
      * 
-     * <p>This is implemented as {@code this.getStatus() == Status.FAILED}.
-     * 
-     * @return true if the scenario has failed. 
+     * @return true if the scenario has failed.
      */
     boolean isFailed();
 
@@ -99,10 +99,10 @@ public interface TestCaseState {
     URI getUri();
 
     /**
-     *  Returns the line in the feature file of the Scenario.
-     *  
-     *  <p>If this is a Scenario from Scenario Outlines this will
-     *  return the line of the example row in the Scenario Outline.
+     * Returns the line in the feature file of the Scenario.
+     * <p>
+     * If this is a Scenario from Scenario Outlines this will return the line of
+     * the example row in the Scenario Outline.
      * 
      * @return the line in the feature file of the Scenario.
      */

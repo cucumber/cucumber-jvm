@@ -26,10 +26,10 @@ import java.util.Optional;
 @API(status = API.Status.STABLE)
 public final class Main {
 
-    private Main(){
+    private Main() {
         /* no-op */
     }
-    
+
     public static void main(String... argv) {
         byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
         System.exit(exitStatus);

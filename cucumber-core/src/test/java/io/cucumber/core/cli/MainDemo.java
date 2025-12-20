@@ -1,8 +1,8 @@
 package io.cucumber.core.cli;
 
 public final class MainDemo {
-    
-    private MainDemo(){
+
+    private MainDemo() {
         /* no-op */
     }
 

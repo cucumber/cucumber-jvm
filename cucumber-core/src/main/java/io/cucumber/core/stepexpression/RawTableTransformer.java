@@ -7,6 +7,7 @@ import java.util.List;
 @FunctionalInterface
 interface RawTableTransformer<T> {
 
-    @Nullable T transform(List<List<String>> raw);
+    @Nullable
+    T transform(List<List<String>> raw);
 
 }

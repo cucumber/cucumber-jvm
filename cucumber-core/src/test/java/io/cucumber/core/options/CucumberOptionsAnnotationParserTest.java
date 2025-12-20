@@ -13,6 +13,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.tagexpressions.TagExpressionException;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -331,16 +332,6 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
-    @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
-    private static final class ClassWithNoFormatterPlugin {
-        // empty
-    }
-
-    @CucumberOptions(junit = { "option1", "option2=value" })
-    private static final class ClassWithJunitOption {
-        // empty
-    }
-
     @CucumberOptions(glue = { "app.features.user.registration", "app.features.hooks" })
     private static class ClassWithGlue {
         // empty
@@ -434,12 +425,12 @@ class CucumberOptionsAnnotationParserTest {
         }
 
         @Override
-        public Class<? extends ObjectFactory> objectFactory() {
+        public @Nullable Class<? extends ObjectFactory> objectFactory() {
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
 
         @Override
-        public Class<? extends UuidGenerator> uuidGenerator() {
+        public @Nullable Class<? extends UuidGenerator> uuidGenerator() {
             return (annotation.uuidGenerator() == NoUuidGenerator.class) ? null : annotation.uuidGenerator();
         }
     }
@@ -447,7 +438,7 @@ class CucumberOptionsAnnotationParserTest {
     private static final class CoreCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
 
         @Override
-        public CucumberOptionsAnnotationParser.CucumberOptions getOptions(Class<?> clazz) {
+        public CucumberOptionsAnnotationParser.@Nullable CucumberOptions getOptions(Class<?> clazz) {
             final CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
             if (annotation == null) {
                 return null;
@@ -466,7 +457,7 @@ class CucumberOptionsAnnotationParserTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new IllegalStateException();
         }
 
         @Override
