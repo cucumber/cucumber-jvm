@@ -359,7 +359,7 @@ public final class DataTableType {
         }
 
         @Override
-        public T transform(List<List<String>> raw) throws Throwable {
+        public @Nullable T transform(List<List<String>> raw) throws Throwable {
             return transformer.transform(DataTable.create(raw, CONVERSION_REQUIRED));
         }
 

@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -76,7 +77,7 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         }
 
         @Override
-        public Object transform(
+        public @Nullable Object transform(
                 Map<String, String> entryValue, Type toValueType, TableCellByTypeTransformer cellTransformer
         ) throws Throwable {
             return delegate.transform(converter.toCamelCase(entryValue), toValueType, cellTransformer);

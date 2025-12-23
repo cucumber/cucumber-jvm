@@ -10,6 +10,7 @@ import io.cucumber.datatable.DataTableType;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -29,7 +30,7 @@ class StepTypeRegistryTest {
             "example",
             ".*",
             Object.class,
-            (String s) -> null);
+            (@Nullable String s) -> null);
         registry.defineParameterType(expected);
         Expression expresion = expressionFactory.createExpression("{example}");
         assertThat(expresion.getRegexp().pattern(), is("^(.*)$"));
