@@ -15,8 +15,6 @@
     <url>https://cucumber.io/</url>
 
     <properties>
-        <!-- Tool chains, ect -->
-        <base.java.version>1.8</base.java.version>
         <javadoc.java.version>8</javadoc.java.version>
         <project.build.outputTimestamp>1761582949</project.build.outputTimestamp>
     </properties>

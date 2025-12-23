@@ -1,6 +1,5 @@
 module io.cucumber.junit.platform.engine {
     requires io.cucumber.core;
-    requires io.cucumber.core.gherkin;
 
     requires org.junit.platform.commons;
 

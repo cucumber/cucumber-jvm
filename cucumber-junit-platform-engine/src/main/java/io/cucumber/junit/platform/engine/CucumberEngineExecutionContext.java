@@ -109,7 +109,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     }
 
     void runTestCase(Pickle pickle) {
-        context.runTestCase((runner) -> {
+        context.runTestCase(runner -> {
             try (TestCaseResultObserver observer = observe(runner.getBus())) {
                 log.debug(() -> "Executing test case " + pickle.getName());
                 runner.runPickle(pickle);

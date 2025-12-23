@@ -54,7 +54,7 @@
         </dependency>
 
         <!-- Surefire detects the CucumberEngine and will not use the
-        JupiterEngine unless we add explicitly -->
+        JupiterEngine unless we add it explicitly -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -77,11 +77,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration combine.self="override">
-                    <!-- Ignore Automatic module name -->
+                <configuration>
                     <archive>
                         <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
                             <Engine-Version-cucumber>${project.version}</Engine-Version-cucumber>
                         </manifestEntries>
                     </archive>

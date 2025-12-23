@@ -51,23 +51,20 @@ enum DefaultNamingStrategyProvider {
     }
 
     private static Function<BiFunction<Node, String, String>, NamingStrategy> parseStrategy(String exampleStrategy) {
-        switch (exampleStrategy) {
-            case "number":
-                return DefaultNamingStrategyProvider::exampleNumberStrategy;
-            case "number-and-pickle-if-parameterized":
-                return DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy;
-            case "pickle":
-                return DefaultNamingStrategyProvider::pickleNameStrategy;
-            default:
-                throw new IllegalArgumentException("Unrecognized example naming strategy " + exampleStrategy);
-        }
+        return switch (exampleStrategy) {
+            case "number" -> DefaultNamingStrategyProvider::exampleNumberStrategy;
+            case "number-and-pickle-if-parameterized" ->
+                    DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy;
+            case "pickle" -> DefaultNamingStrategyProvider::pickleNameStrategy;
+            default -> throw new IllegalArgumentException("Unrecognized example naming strategy " + exampleStrategy);
+        };
     }
 
     private static NamingStrategy exampleNumberAndPickleIfParameterizedStrategy(
             BiFunction<Node, String, String> baseStrategy
     ) {
         return createNamingStrategy(
-            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+                node -> baseStrategy.apply(node, nameOrKeyword(node)),
             (node, pickle) -> baseStrategy.apply(node, nameOrKeyword(node) + pickleNameIfParameterized(node, pickle)));
     }
 
@@ -88,13 +85,13 @@ enum DefaultNamingStrategyProvider {
 
     private static NamingStrategy exampleNumberStrategy(BiFunction<Node, String, String> baseStrategy) {
         return createNamingStrategy(
-            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+                node -> baseStrategy.apply(node, nameOrKeyword(node)),
             (node, pickle) -> baseStrategy.apply(node, nameOrKeyword(node)));
     }
 
     private static NamingStrategy pickleNameStrategy(BiFunction<Node, String, String> baseStrategy) {
         return createNamingStrategy(
-            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+                node -> baseStrategy.apply(node, nameOrKeyword(node)),
             (node, pickle) -> baseStrategy.apply(node, pickle.getName()));
     }
 
