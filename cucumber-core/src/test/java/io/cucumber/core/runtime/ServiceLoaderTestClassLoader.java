@@ -12,13 +12,15 @@ import java.util.Enumeration;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Testing classloader for ServiceLoader. This classloader overrides the
  * META-INF/services/interface-class-name file with a custom definition.
  */
 final class ServiceLoaderTestClassLoader extends URLClassLoader {
-    Class<?> metaInfInterface;
-    Class<?>[] implementingClasses;
+    private final Class<?> metaInfInterface;
+    private final Class<?>[] implementingClasses;
 
     /**
      * Constructs a classloader which has no META-INF/services/metaInfInterface.
@@ -26,7 +28,7 @@ final class ServiceLoaderTestClassLoader extends URLClassLoader {
      * @param metaInfInterface ServiceLoader interface
      */
     ServiceLoaderTestClassLoader(Class<?> metaInfInterface) {
-        this(metaInfInterface, (Class<?>[]) null);
+        this(metaInfInterface, new Class[0]);
     }
 
     /**
@@ -67,13 +69,13 @@ final class ServiceLoaderTestClassLoader extends URLClassLoader {
                             return new ByteArrayInputStream(Stream.of(implementingClasses)
                                     .map(Class::getName)
                                     .collect(Collectors.joining("\n"))
-                                    .getBytes());
+                                    .getBytes(UTF_8));
                         }
                     };
                 }
             });
 
-            return new Enumeration<URL>() {
+            return new Enumeration<>() {
                 boolean hasNext = true;
 
                 @Override

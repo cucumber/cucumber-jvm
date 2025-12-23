@@ -12,7 +12,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("NullAway")
+@SuppressWarnings("NullAway") // TODO: Use Assert
 public final class StepDurationTimeService extends Clock implements ConcurrentEventListener {
 
     private static final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();

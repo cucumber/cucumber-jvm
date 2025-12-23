@@ -35,6 +35,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("NullAway") // TODO: Use AssertJ
 class StepExpressionFactoryTest {
 
     private static final Type UNKNOWN_TYPE = Object.class;
@@ -89,7 +90,7 @@ class StepExpressionFactoryTest {
     @Test
     void table_expression_with_type_creates_single_ingredients_from_table() {
 
-        registry.defineDataTableType(new DataTableType(Ingredient.class, beanMapper(registry)));
+        registry.defineDataTableType(new DataTableType(Ingredient.class, beanMapper()));
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", Ingredient.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         List<Argument> match = expression.match("Given some stuff:", tableTransposed);
@@ -98,14 +99,14 @@ class StepExpressionFactoryTest {
         assertThat(ingredient.name, is(equalTo("chocolate")));
     }
 
-    private TableTransformer<Ingredient> beanMapper(final StepTypeRegistry registry) {
+    private TableTransformer<Ingredient> beanMapper() {
         return table -> {
             Map<String, String> tableRow = table.transpose().entries().get(0);
-            return listBeanMapper(registry).transform(tableRow);
+            return listBeanMapper().transform(tableRow);
         };
     }
 
-    private TableEntryTransformer<Ingredient> listBeanMapper(final StepTypeRegistry registry) {
+    private TableEntryTransformer<Ingredient> listBeanMapper() {
         // Just pretend this is a bean mapper.
         return tableRow -> {
             Ingredient bean = new Ingredient();
@@ -120,7 +121,7 @@ class StepExpressionFactoryTest {
     @Test
     void table_expression_with_list_type_creates_list_of_ingredients_from_table() {
 
-        registry.defineDataTableType(new DataTableType(Ingredient.class, listBeanMapper(registry)));
+        registry.defineDataTableType(new DataTableType(Ingredient.class, listBeanMapper()));
 
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", getTypeFromStepDefinition());
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);

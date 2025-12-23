@@ -19,7 +19,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
-@SuppressWarnings("NullAway")
+@SuppressWarnings("NullAway") // TODO: Use Assert
 class ExitStatusTest {
 
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);

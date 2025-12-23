@@ -36,7 +36,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SuppressWarnings("NullAway")
+@SuppressWarnings("NullAway") // TODO: Use Assert
 class StepDefinitionMatchTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);

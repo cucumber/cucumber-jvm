@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.util.Collections.singleton;
 
-@SuppressWarnings("NullAway")
+@SuppressWarnings("NullAway") // TODO: Use Assert
 class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactory {
 
     private final EventBus bus;

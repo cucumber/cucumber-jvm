@@ -50,12 +50,12 @@ class ObjectFactoryServiceLoaderTest {
             options);
 
         CucumberException exception = assertThrows(CucumberException.class, loader::loadObjectFactory);
-        assertThat(exception.getMessage(), is("" +
-                "Could not find any object factory.\n" +
-                "\n" +
-                "Cucumber uses SPI to discover object factory implementations.\n" +
-                "This typically happens when using shaded jars. Make sure\n" +
-                "to merge all SPI definitions in META-INF/services correctly"));
+        assertThat(exception.getMessage(), is("""
+                Could not find any object factory.
+
+                Cucumber uses SPI to discover object factory implementations.
+                This typically happens when using shaded jars. Make sure
+                to merge all SPI definitions in META-INF/services correctly"""));
     }
 
     /**
@@ -173,13 +173,12 @@ class ObjectFactoryServiceLoaderTest {
             options);
 
         CucumberException exception = assertThrows(CucumberException.class, loader::loadObjectFactory);
-        assertThat(exception.getMessage(), is("" +
-                "Could not find object factory io.cucumber.core.runtime.ObjectFactoryServiceLoaderTest$OtherFactory.\n"
-                +
-                "\n" +
-                "Cucumber uses SPI to discover object factory implementations.\n" +
-                "Has the class been registered with SPI and is it available on\n" +
-                "the classpath?"));
+        assertThat(exception.getMessage(), is("""
+                Could not find object factory io.cucumber.core.runtime.ObjectFactoryServiceLoaderTest$OtherFactory.
+
+                Cucumber uses SPI to discover object factory implementations.
+                Has the class been registered with SPI and is it available on
+                the classpath?"""));
     }
 
     /**
@@ -204,7 +203,7 @@ class ObjectFactoryServiceLoaderTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new IllegalStateException();
         }
 
         @Override
