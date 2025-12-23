@@ -12,10 +12,11 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("NullAway") // TODO: Use Assert
+@SuppressWarnings("NullAway")
 public final class StepDurationTimeService extends Clock implements ConcurrentEventListener {
 
-    private static final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
+    @SuppressWarnings("ThreadLocalUsage")
+    private final ThreadLocal<Instant> currentInstant = new ThreadLocal<>();
     private final List<Duration> stepDuration;
     private int currentStepDurationIndex;
 

@@ -285,7 +285,8 @@ class PluginFactoryTest {
 
         OutputStream out;
 
-        WantsOutputStream(OutputStream out) {
+        @SuppressWarnings("RedundantModifier")
+        public WantsOutputStream(OutputStream out) {
             this.out = requireNonNull(out);
         }
 
@@ -296,11 +297,13 @@ class PluginFactoryTest {
         @Nullable
         File out = null;
 
-        WantsFileOrEmpty(File out) {
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsFileOrEmpty(File out) {
             this.out = requireNonNull(out);
         }
 
-        WantsFileOrEmpty() {
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsFileOrEmpty() {
         }
 
     }
@@ -309,7 +312,8 @@ class PluginFactoryTest {
 
         final File out;
 
-        WantsFile(File out) {
+        @SuppressWarnings("RedundantModifier")
+        public WantsFile(File out) {
             this.out = requireNonNull(out);
         }
 
@@ -317,11 +321,13 @@ class PluginFactoryTest {
 
     static class WantsFileOrURL extends StubFormatter {
 
-        WantsFileOrURL(File out) {
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsFileOrURL(File out) {
             requireNonNull(out);
         }
 
-        WantsFileOrURL(URL out) {
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsFileOrURL(URL out) {
             requireNonNull(out);
         }
 
@@ -331,7 +337,8 @@ class PluginFactoryTest {
 
         final String arg;
 
-        WantsString(String arg) {
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsString(String arg) {
             this.arg = requireNonNull(arg);
         }
 
@@ -341,7 +348,8 @@ class PluginFactoryTest {
 
         final Appendable out;
 
-        WantsAppendable(Appendable out) {
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsAppendable(Appendable out) {
             this.out = requireNonNull(out);
         }
 
@@ -356,11 +364,17 @@ class PluginFactoryTest {
 
     static class WantsNothing extends StubFormatter {
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsNothing() {
+
+        }
+
     }
 
     static class WantsTooMuch extends StubFormatter {
 
-        WantsTooMuch(String too, String much) {
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsTooMuch(String too, String much) {
         }
 
     }

@@ -72,9 +72,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     public void attach(byte[] data, String mediaType, @Nullable String name) {
         requireNonNull(data);
         requireNonNull(mediaType);
-        requireNonNull(currentTestStepId);
 
-        getRequiredCurrentTestStepId();
+        UUID currentTestStepId = getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new EmbedEvent(instant, testCase, data, mediaType, name));
         bus.send(Envelope.of(new Attachment(

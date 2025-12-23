@@ -238,15 +238,29 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     static class TimeLineGroup {
 
-        private final String id;
-        private final String content;
+        private @Nullable String id;
+        private @Nullable String content;
 
-        TimeLineGroup(String id, String content) {
+        @SuppressWarnings("RedundantModifier")
+        public TimeLineGroup() {
+
+        }
+
+        @SuppressWarnings("RedundantModifier")
+        public TimeLineGroup(String id, String content) {
             this.id = id;
             this.content = content;
         }
 
-        public String getId() {
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public void setContent(@Nullable String content) {
+            this.content = content;
+        }
+
+        public @Nullable String getId() {
             return id;
         }
 
@@ -269,6 +283,11 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         private long end;
         private @Nullable String className;
 
+        @SuppressWarnings("RedundantModifier")
+        public TimeLineItem() {
+            /* no-op */
+        }
+
         public void setId(String id) {
             this.id = id;
         }
@@ -285,7 +304,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             this.start = start;
         }
 
-        public void setGroup(String group) {
+        public void setGroup(@Nullable String group) {
             this.group = group;
         }
 
