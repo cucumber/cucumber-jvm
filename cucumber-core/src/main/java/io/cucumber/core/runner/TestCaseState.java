@@ -69,7 +69,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public void attach(byte[] data, String mediaType, String name) {
+    public void attach(byte[] data, String mediaType, @Nullable String name) {
         requireNonNull(data);
         requireNonNull(mediaType);
         requireNonNull(currentTestStepId);
@@ -92,7 +92,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public void attach(String data, String mediaType, String name) {
+    public void attach(String data, String mediaType, @Nullable String name) {
         requireNonNull(data);
         requireNonNull(mediaType);
 
@@ -115,6 +115,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public void log(String text) {
+        requireNonNull(text);
+
         UUID currentTestStepId = getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new WriteEvent(instant, testCase, text));

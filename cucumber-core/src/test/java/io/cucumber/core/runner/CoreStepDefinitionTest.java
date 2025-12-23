@@ -31,6 +31,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("NullAway")
 class CoreStepDefinitionTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(Locale.ENGLISH);
@@ -40,13 +41,14 @@ class CoreStepDefinitionTest {
 
     @Test
     void should_apply_identity_transform_to_doc_string_when_target_type_is_object() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some step\n" +
-                "       \"\"\"\n" +
-                "       content\n" +
-                "       \"\"\"\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some step
+                       ""\"
+                       content
+                       ""\"
+                """);
         StepDefinition stepDefinition = new StubStepDefinition("I have some step", Object.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
@@ -57,11 +59,12 @@ class CoreStepDefinitionTest {
 
     @Test
     void should_apply_identity_transform_to_data_table_when_target_type_is_object() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some step\n" +
-                "      | content |\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some step
+                      | content |
+                """);
         StepDefinition stepDefinition = new StubStepDefinition("I have some step", Object.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
@@ -71,11 +74,12 @@ class CoreStepDefinitionTest {
 
     @Test
     void should_convert_empty_pickle_table_cells_to_null_values() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some step\n" +
-                "       |  |\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some step
+                       |  |
+                """);
         StepDefinition stepDefinition = new StubStepDefinition("I have some step", Object.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         CoreStepDefinition coreStepDefinition = new CoreStepDefinition(id, stepDefinition, expression);
@@ -86,13 +90,14 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_to_map_of_double_to_double() throws Throwable {
         Method m = Steps.class.getMethod("mapOfDoubleToDouble", Map.class);
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given some text\n" +
-                "      | 100.5 | 99.5 | \n" +
-                "      | 0.5   | -0.5 | \n" +
-                "      | 1000  | 999  | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given some text
+                      | 100.5 | 99.5 |\s
+                      | 0.5   | -0.5 |\s
+                      | 1000  | 999  |\s
+                """);
         Map<Double, Double> stepDefs = runStepDef(m, false, feature);
 
         assertAll(
@@ -101,7 +106,7 @@ class CoreStepDefinitionTest {
             () -> assertThat(stepDefs, hasEntry(100.5, 99.5)));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "TypeParameterUnusedInFormals" })
     private <T> T runStepDef(Method method, boolean transposed, Feature feature) {
         StubStepDefinition stepDefinition = new StubStepDefinition("some text", transposed,
             method.getGenericParameterTypes());
@@ -122,13 +127,14 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_transposed_to_map_of_double_to_double() throws Throwable {
         Method m = Steps.class.getMethod("transposedMapOfDoubleToListOfDouble", Map.class);
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given some text\n" +
-                "      | 100.5 | 99.5 | \n" +
-                "      | 0.5   | -0.5 | \n" +
-                "      | 1000  | 999  | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given some text
+                      | 100.5 | 99.5 |\s
+                      | 0.5   | -0.5 |\s
+                      | 1000  | 999  |\s
+                """);
         Map<Double, List<Double>> stepDefs = runStepDef(m, true, feature);
         assertThat(stepDefs, hasEntry(100.5, asList(0.5, 1000.0)));
     }
@@ -136,13 +142,14 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_to_list_of_single_values() throws Throwable {
         Method m = Steps.class.getMethod("listOfListOfDoubles", List.class);
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given some text\n" +
-                "      | 100.5 | 99.5 | \n" +
-                "      | 0.5   | -0.5 | \n" +
-                "      | 1000  | 999  | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given some text
+                      | 100.5 | 99.5 |\s
+                      | 0.5   | -0.5 |\s
+                      | 1000  | 999  |\s
+                """);
         List<List<Double>> stepDefs = runStepDef(m, false, feature);
         assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
     }
@@ -150,12 +157,13 @@ class CoreStepDefinitionTest {
     @Test
     void transforms_to_list_of_single_values_transposed() throws Throwable {
         Method m = Steps.class.getMethod("listOfListOfDoubles", List.class);
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given some text\n" +
-                "      | 100.5 | 0.5   | 1000| \n" +
-                "      | 99.5   | -0.5 | 999 | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given some text
+                      | 100.5 | 0.5   | 1000|\s
+                      | 99.5   | -0.5 | 999 |\s
+                """);
         List<List<Double>> stepDefs = runStepDef(m, true, feature);
         assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
     }
@@ -163,12 +171,13 @@ class CoreStepDefinitionTest {
     @Test
     void passes_plain_data_table() throws Throwable {
         Method m = Steps.class.getMethod("plainDataTable", DataTable.class);
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given some text\n" +
-                "      | Birth Date | \n" +
-                "      | 1957-05-10 | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given some text
+                      | Birth Date |\s
+                      | 1957-05-10 |\s
+                """);
         DataTable stepDefs = runStepDef(m, false, feature);
 
         assertAll(
@@ -179,12 +188,13 @@ class CoreStepDefinitionTest {
     @Test
     void passes_transposed_data_table() throws Throwable {
         Method m = Steps.class.getMethod("plainDataTable", DataTable.class);
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given some text\n" +
-                "      | Birth Date | \n" +
-                "      | 1957-05-10 | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given some text
+                      | Birth Date |\s
+                      | 1957-05-10 |\s
+                """);
         DataTable stepDefs = runStepDef(m, true, feature);
 
         assertAll(

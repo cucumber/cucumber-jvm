@@ -18,55 +18,65 @@ import static org.hamcrest.core.Is.is;
 class DryRunTest {
 
     Feature skip = TestFeatureParser.parse("1/skipped.feature",
-        "Feature: skip\n" +
-                "  Scenario: skip\n" +
-                "    * skipped step\n" +
-                "    * passed step\n" +
-                "    * skipped step\n" +
-                "    * pending step\n" +
-                "    * undefined step\n" +
-                "    * ambiguous step\n" +
-                "    * failed step\n");
+        """
+                Feature: skip
+                  Scenario: skip
+                    * skipped step
+                    * passed step
+                    * skipped step
+                    * pending step
+                    * undefined step
+                    * ambiguous step
+                    * failed step
+                """);
     Feature pending = TestFeatureParser.parse("2/pending.feature",
-        "Feature: pending\n" +
-                "  Scenario: pending\n" +
-                "    * pending step\n" +
-                "    * passed step\n" +
-                "    * skipped step\n" +
-                "    * pending step\n" +
-                "    * undefined step\n" +
-                "    * ambiguous step\n" +
-                "    * failed step\n");
+        """
+                Feature: pending
+                  Scenario: pending
+                    * pending step
+                    * passed step
+                    * skipped step
+                    * pending step
+                    * undefined step
+                    * ambiguous step
+                    * failed step
+                """);
     Feature undefined = TestFeatureParser.parse("3/undefined.feature",
-        "Feature: undefined\n" +
-                "  Scenario: undefined\n" +
-                "    * undefined step\n" +
-                "    * passed step\n" +
-                "    * skipped step\n" +
-                "    * pending step\n" +
-                "    * undefined step\n" +
-                "    * ambiguous step\n" +
-                "    * failed step\n");
+        """
+                Feature: undefined
+                  Scenario: undefined
+                    * undefined step
+                    * passed step
+                    * skipped step
+                    * pending step
+                    * undefined step
+                    * ambiguous step
+                    * failed step
+                """);
     Feature ambiguous = TestFeatureParser.parse("4/ambiguous.feature",
-        "Feature: ambiguous\n" +
-                "  Scenario: ambiguous\n" +
-                "    * ambiguous step\n" +
-                "    * passed step\n" +
-                "    * skipped step\n" +
-                "    * pending step\n" +
-                "    * undefined step\n" +
-                "    * ambiguous step\n" +
-                "    * failed step\n");
+        """
+                Feature: ambiguous
+                  Scenario: ambiguous
+                    * ambiguous step
+                    * passed step
+                    * skipped step
+                    * pending step
+                    * undefined step
+                    * ambiguous step
+                    * failed step
+                """);
     Feature failed = TestFeatureParser.parse("5/failed.feature",
-        "Feature: failed\n" +
-                "  Scenario: failed\n" +
-                "    * failed step\n" +
-                "    * passed step\n" +
-                "    * skipped step\n" +
-                "    * pending step\n" +
-                "    * undefined step\n" +
-                "    * ambiguous step\n" +
-                "    * failed step\n");
+        """
+                Feature: failed
+                  Scenario: failed
+                    * failed step
+                    * passed step
+                    * skipped step
+                    * pending step
+                    * undefined step
+                    * ambiguous step
+                    * failed step
+                """);
 
     StubBackendSupplier backend = new StubBackendSupplier(
         new StubStepDefinition("passed step"),
@@ -86,56 +96,59 @@ class DryRunTest {
                 .build()
                 .run();
 
-        assertThat(out.toString(), is("" +
-                "skip\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "pending\n" +
-                "    PENDING\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "undefined\n" +
-                "    UNDEFINED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "ambiguous\n" +
-                "    AMBIGUOUS\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "failed\n" +
-                "    FAILED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n"));
+        assertThat(out.toString(), is("""
+                skip
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                pending
+                    PENDING
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                undefined
+                    UNDEFINED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                ambiguous
+                    AMBIGUOUS
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                failed
+                    FAILED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                """));
 
     }
 
     @Test
     void dry_run_passes_skipped_step() {
         Feature skipped = TestFeatureParser.parse("1/skipped.feature",
-            "Feature: skipped\n" +
-                    "  Scenario: skipped\n" +
-                    "    * skipped step\n");
+            """
+                    Feature: skipped
+                      Scenario: skipped
+                        * skipped step
+                    """);
 
         StepStatusSpy out = new StepStatusSpy();
         Runtime.builder()
@@ -146,17 +159,20 @@ class DryRunTest {
                 .build()
                 .run();
 
-        assertThat(out.toString(), is("" +
-                "skipped\n" +
-                "    PASSED\n"));
+        assertThat(out.toString(), is("""
+                skipped
+                    PASSED
+                """));
     }
 
     @Test
     void dry_run_passes_pending_step() {
         Feature pending = TestFeatureParser.parse("2/pending.feature",
-            "Feature: pending\n" +
-                    "  Scenario: pending\n" +
-                    "    * pending step\n");
+            """
+                    Feature: pending
+                      Scenario: pending
+                        * pending step
+                    """);
 
         StepStatusSpy out = new StepStatusSpy();
         Runtime.builder()
@@ -167,9 +183,10 @@ class DryRunTest {
                 .build()
                 .run();
 
-        assertThat(out.toString(), is("" +
-                "pending\n" +
-                "    PASSED\n"));
+        assertThat(out.toString(), is("""
+                pending
+                    PASSED
+                """));
     }
 
     @Test
@@ -183,15 +200,16 @@ class DryRunTest {
                 .build()
                 .run();
 
-        assertThat(out.toString(), is("" +
-                "undefined\n" +
-                "    UNDEFINED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n"));
+        assertThat(out.toString(), is("""
+                undefined
+                    UNDEFINED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                """));
     }
 
     @Test
@@ -205,23 +223,26 @@ class DryRunTest {
                 .build()
                 .run();
 
-        assertThat(out.toString(), is("" +
-                "ambiguous\n" +
-                "    AMBIGUOUS\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n" +
-                "    SKIPPED\n"));
+        assertThat(out.toString(), is("""
+                ambiguous
+                    AMBIGUOUS
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                    SKIPPED
+                """));
     }
 
     @Test
     void dry_run_passes_failed_step() {
         Feature failed = TestFeatureParser.parse("5/failed.feature",
-            "Feature: failed\n" +
-                    "  Scenario: failed\n" +
-                    "    * failed step\n");
+            """
+                    Feature: failed
+                      Scenario: failed
+                        * failed step
+                    """);
 
         StepStatusSpy out = new StepStatusSpy();
         Runtime.builder()
@@ -232,9 +253,10 @@ class DryRunTest {
                 .build()
                 .run();
 
-        assertThat(out.toString(), is("" +
-                "failed\n" +
-                "    PASSED\n"));
+        assertThat(out.toString(), is("""
+                failed
+                    PASSED
+                """));
     }
 
     private static final class StepStatusSpy implements EventListener {

@@ -14,6 +14,7 @@ import java.util.List;
 
 import static java.util.Collections.singleton;
 
+@SuppressWarnings("NullAway")
 class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactory {
 
     private final EventBus bus;

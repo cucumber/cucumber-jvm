@@ -52,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("NullAway")
 class CachingGlueTest {
 
     private final Locale language = ENGLISH;
@@ -631,10 +632,6 @@ class CachingGlueTest {
             super(pattern, types);
         }
 
-        MockedScenarioScopedStepDefinition(String pattern, boolean transposed, Type... types) {
-            super(pattern, transposed, types);
-        }
-
         @Override
         public void dispose() {
             disposed = true;
@@ -800,7 +797,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
