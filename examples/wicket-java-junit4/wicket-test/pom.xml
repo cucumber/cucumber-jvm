@@ -9,8 +9,7 @@
     <name>Examples: Wicket application tested with Selenium</name>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.examples.wicket.test</project.Automatic-Module-Name>
-        <junit-jupiter.version>5.14.0</junit-jupiter.version>
+                <junit-jupiter.version>5.14.0</junit-jupiter.version>
         <htmlunit.version>4.13.0</htmlunit.version>
     </properties>
 

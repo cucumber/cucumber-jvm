@@ -9,7 +9,6 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import java.beans.ConstructorProperties;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -1694,7 +1693,6 @@ class DataTableTypeRegistryTableConverterTest {
     public static final class AirPortCode {
         private final String code;
 
-        @ConstructorProperties("code")
         AirPortCode(String code) {
             this.code = code;
         }

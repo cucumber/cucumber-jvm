@@ -15,7 +15,6 @@
     <url>https://cucumber.io/</url>
 
     <properties>
-        <javadoc.java.version>8</javadoc.java.version>
         <project.build.outputTimestamp>1761582949</project.build.outputTimestamp>
     </properties>
     <scm>

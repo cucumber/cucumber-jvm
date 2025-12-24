@@ -12,8 +12,7 @@
     <name>Examples: Calculator - Java - Annotations - CLI</name>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.examples.calculator</project.Automatic-Module-Name>
-    </properties>
+            </properties>
 
     <dependencyManagement>
         <dependencies>

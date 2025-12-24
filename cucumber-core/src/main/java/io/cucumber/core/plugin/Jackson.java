@@ -3,6 +3,7 @@ package io.cucumber.core.plugin;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.ConstructorDetector;
@@ -23,6 +24,7 @@ final class Jackson {
             .enable(DeserializationFeature.USE_LONG_FOR_INTS)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+            .disable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
             .build();
 
     private Jackson() {

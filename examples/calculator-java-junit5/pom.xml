@@ -13,8 +13,7 @@
     <name>Examples: Calculator - Java - Annotations - Junit 5</name>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.examples.calculator</project.Automatic-Module-Name>
-    </properties>
+            </properties>
 
     <dependencyManagement>
         <dependencies>
