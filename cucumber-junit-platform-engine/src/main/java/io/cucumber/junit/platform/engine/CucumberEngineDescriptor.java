@@ -1,5 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
@@ -14,9 +15,9 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
 
     static final String ENGINE_ID = "cucumber";
     private final CucumberConfiguration configuration;
-    private final TestSource source;
+    private final @Nullable  TestSource source;
 
-    CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration, TestSource source) {
+    CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration, @Nullable TestSource source) {
         super(uniqueId, "Cucumber");
         this.configuration = requireNonNull(configuration);
         this.source = source;
@@ -28,7 +29,7 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
 
     @Override
     public Optional<TestSource> getSource() {
-        return Optional.ofNullable(this.source);
+        return Optional.ofNullable(source);
     }
 
     @Override

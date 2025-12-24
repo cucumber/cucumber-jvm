@@ -5,4 +5,5 @@ module io.cucumber.core.gherkin {
     requires io.cucumber.plugin;
 
     exports io.cucumber.core.gherkin;
+
 }

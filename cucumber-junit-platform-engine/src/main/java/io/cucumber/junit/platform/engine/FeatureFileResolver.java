@@ -79,11 +79,11 @@ final class FeatureFileResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(DiscoverySelector selector, Context context) {
-        if (selector instanceof FeatureElementSelector) {
-            return resolve((FeatureElementSelector) selector, context);
+        if (selector instanceof FeatureElementSelector elementSelector) {
+            return resolve(elementSelector, context);
         }
-        if (selector instanceof FeatureWithLinesSelector) {
-            return resolve((FeatureWithLinesSelector) selector);
+        if (selector instanceof FeatureWithLinesSelector featureWithLinesSelector) {
+            return resolve(featureWithLinesSelector);
         }
         return SelectorResolver.super.resolve(selector, context);
     }
@@ -132,6 +132,7 @@ final class FeatureFileResolver implements SelectorResolver {
         return toResolution(selectors);
     }
 
+    @SuppressWarnings("deprecation") // TODO: Updagrade
     @Override
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
         Set<Resource> resources = selector.getClasspathResources();

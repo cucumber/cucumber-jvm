@@ -236,7 +236,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
         }
     }
 
-    static class TimeLineGroup {
+    public static final class TimeLineGroup {
 
         private @Nullable String id;
         private @Nullable String content;
@@ -270,7 +270,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
 
     }
 
-    static class TimeLineItem {
+    public static final class TimeLineItem {
 
         private @Nullable String id;
         private @Nullable String feature;

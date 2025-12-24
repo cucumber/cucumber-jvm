@@ -89,11 +89,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
+    @Deprecated
     public @Nullable StepArgument getStepArgument() {
         return step.getArgument();
     }
 
     @Override
+    @Deprecated
     public int getStepLine() {
         return step.getLine();
     }
@@ -104,6 +106,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
+    @Deprecated
     public String getStepText() {
         return step.getText();
     }

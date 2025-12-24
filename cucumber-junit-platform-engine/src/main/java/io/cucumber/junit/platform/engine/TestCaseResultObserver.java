@@ -6,7 +6,7 @@ import org.opentest4j.TestAbortedException;
 
 import java.util.function.Function;
 
-class TestCaseResultObserver implements AutoCloseable {
+final class TestCaseResultObserver implements AutoCloseable {
 
     private final io.cucumber.core.runtime.TestCaseResultObserver delegate;
 

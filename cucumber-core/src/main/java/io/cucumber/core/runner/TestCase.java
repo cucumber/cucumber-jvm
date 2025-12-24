@@ -102,6 +102,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
+    @Deprecated
     public Integer getLine() {
         return pickle.getLocation().getLine();
     }
@@ -122,6 +123,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     }
 
     @Override
+    @Deprecated
     public String getScenarioDesignation() {
         return fileColonLine(getLocation().getLine()) + " # " + getName();
     }

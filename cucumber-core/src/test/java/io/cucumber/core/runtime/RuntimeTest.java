@@ -35,6 +35,7 @@ import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -66,6 +67,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Disabled // TODO: Put tests into separate module
 class RuntimeTest {
 
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);

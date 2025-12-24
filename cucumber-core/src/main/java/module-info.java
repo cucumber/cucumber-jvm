@@ -31,10 +31,18 @@ module io.cucumber.core {
     exports io.cucumber.core.plugin;
     exports io.cucumber.core.runner;
     exports io.cucumber.core.eventbus;
+    exports io.cucumber.core.runtime;
+    exports io.cucumber.core.feature;
+    exports io.cucumber.core.resource;
+    exports io.cucumber.core.logging;
+    exports io.cucumber.core.options;
+    exports io.cucumber.core.snippets;
+    exports io.cucumber.core.exception;
 
     uses io.cucumber.core.gherkin.FeatureParser;
     uses io.cucumber.core.backend.BackendProviderService;
     uses io.cucumber.core.backend.ObjectFactory;
+    uses io.cucumber.core.eventbus.UuidGenerator;
 
     provides io.cucumber.core.backend.ObjectFactory with io.cucumber.core.backend.DefaultObjectFactory;
     provides io.cucumber.core.eventbus.UuidGenerator

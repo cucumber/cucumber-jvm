@@ -27,7 +27,8 @@ class OrderingVisitor implements TestDescriptor.Visitor {
             // Ok. All TestDescriptors are AbstractCucumberTestDescriptor
             @SuppressWarnings("rawtypes")
             List<CucumberTestDescriptor> cucumberDescriptors = (List) children;
-            orderer.apply(cucumberDescriptors);
+            @SuppressWarnings("UnusedVariable")
+            List<CucumberTestDescriptor> apply = orderer.apply(cucumberDescriptors);
             return children;
         });
     }

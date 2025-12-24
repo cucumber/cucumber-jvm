@@ -20,6 +20,7 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         this.transformer = delegate.headersToProperties() ? new ConvertingTransformer(transformer) : transformer;
     }
 
+    @SuppressWarnings("deprecation")
     public static CoreDefaultDataTableEntryTransformerDefinition create(
             DefaultDataTableEntryTransformerDefinition definition
     ) {
@@ -52,6 +53,7 @@ class CoreDefaultDataTableEntryTransformerDefinition implements DefaultDataTable
         return delegate.getLocation();
     }
 
+    @SuppressWarnings("deprecation")
     private static class ScenarioCoreDefaultDataTableEntryTransformerDefinition
             extends CoreDefaultDataTableEntryTransformerDefinition implements ScenarioScoped {
 

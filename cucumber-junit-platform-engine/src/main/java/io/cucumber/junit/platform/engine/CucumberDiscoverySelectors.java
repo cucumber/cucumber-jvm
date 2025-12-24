@@ -2,7 +2,6 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.plugin.event.Node;
-import org.junit.platform.commons.util.ToStringBuilder;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.UniqueId;
@@ -86,12 +85,8 @@ class CucumberDiscoverySelectors {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            FeatureWithLinesSelector that = (FeatureWithLinesSelector) o;
-            return uri.equals(that.uri) && filePositions.equals(that.filePositions);
+            if (!(o instanceof FeatureWithLinesSelector that)) return false;
+            return Objects.equals(uri, that.uri) && Objects.equals(filePositions, that.filePositions);
         }
 
         @Override
@@ -101,10 +96,10 @@ class CucumberDiscoverySelectors {
 
         @Override
         public String toString() {
-            return new ToStringBuilder(this) //
-                    .append("uri", this.uri) //
-                    .append("filePositions", this.filePositions) //
-                    .toString();
+            return "FeatureWithLinesSelector{" +
+                    "uri=" + uri +
+                    ", filePositions=" + filePositions +
+                    '}';
         }
     }
 
@@ -178,8 +173,7 @@ class CucumberDiscoverySelectors {
         }
 
         static Set<FeatureElementSelector> selectElementsOf(FeatureWithSource feature, Node selected) {
-            if (selected instanceof Node.Container) {
-                Node.Container<?> container = (Node.Container<?>) selected;
+            if (selected instanceof Node.Container<?> container) {
                 return container.elements().stream()
                         .map(element -> new FeatureElementSelector(feature, element))
                         .collect(toSet());
@@ -195,14 +189,11 @@ class CucumberDiscoverySelectors {
             return element;
         }
 
+
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            FeatureElementSelector that = (FeatureElementSelector) o;
-            return feature.equals(that.feature) && element.equals(that.element);
+            if (!(o instanceof FeatureElementSelector that)) return false;
+            return Objects.equals(feature, that.feature) && Objects.equals(element, that.element);
         }
 
         @Override
@@ -212,10 +203,10 @@ class CucumberDiscoverySelectors {
 
         @Override
         public String toString() {
-            return new ToStringBuilder(this) //
-                    .append("feature", this.feature.getUri()) //
-                    .append("element", this.element.getLocation()) //
-                    .toString();
+            return "FeatureElementSelector{" +
+                    "feature=" + feature +
+                    ", element=" + element +
+                    '}';
         }
     }
 }

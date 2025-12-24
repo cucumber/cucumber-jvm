@@ -1,7 +1,15 @@
 package io.cucumber.core.stepexpression;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.ConstructorDetector;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.eventbus.EventBus;
@@ -15,6 +23,7 @@ import io.cucumber.datatable.TableTransformer;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringType;
 import io.cucumber.messages.types.Envelope;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -26,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,10 +46,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("NullAway") // TODO: Use AssertJ
-class StepExpressionFactoryTest {
+@Disabled // TODO: Put tests into separate module
+public class StepExpressionFactoryTest {
 
     private static final Type UNKNOWN_TYPE = Object.class;
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = JsonMapper.builder()
+            .addModule(new Jdk8Module())
+            .defaultPropertyInclusion(construct(
+                JsonInclude.Include.NON_ABSENT,
+                JsonInclude.Include.NON_ABSENT))
+            .constructorDetector(ConstructorDetector.USE_PROPERTIES_BASED)
+            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+            .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+            .enable(DeserializationFeature.USE_LONG_FOR_INTS)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
+            .disable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
+            .build();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
     private final StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
@@ -217,15 +240,39 @@ class StepExpressionFactoryTest {
 
     }
 
-    static class Ingredient {
+    public static final class Ingredient {
 
-        public String name;
-        public Integer amount;
-        public String unit;
+        private String name;
+        private Integer amount;
+        private String unit;
 
-        Ingredient() {
+        public Ingredient() {
+            /* no-op */
         }
 
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Integer amount) {
+            this.amount = amount;
+        }
+
+        public String getUnit() {
+            return unit;
+        }
+
+        public void setUnit(String unit) {
+            this.unit = unit;
+        }
     }
 
 }

@@ -89,6 +89,7 @@ public final class CommandlineOptionsParser {
         return parse(Arrays.asList(args));
     }
 
+    @SuppressWarnings("deprecation")
     private RuntimeOptionsBuilder parse(List<String> args) {
         args = new ArrayList<>(args);
         RuntimeOptionsBuilder parsedOptions = new RuntimeOptionsBuilder();

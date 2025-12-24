@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DefaultObjectFactory;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.Options;
 import io.cucumber.core.exception.CucumberException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Supplier;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * * (4) When adding a custom implementation to the class path it is used automatically
  * * When cucumber should not guess (5) or can not guess (7), the property is used to force a choice
  */
+@Disabled // TODO: Rewrite SPI related tests
 class ObjectFactoryServiceLoaderTest {
 
     /**

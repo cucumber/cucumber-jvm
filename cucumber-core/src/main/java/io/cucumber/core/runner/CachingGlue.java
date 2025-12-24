@@ -54,6 +54,7 @@ import static java.util.Objects.requireNonNull;
 
 final class CachingGlue implements Glue {
 
+    @SuppressWarnings("deprecation")
     private static final Comparator<CoreHookDefinition> HOOK_ORDER_ASCENDING = Comparator
             .comparingInt(CoreHookDefinition::getOrder)
             .thenComparing(ScenarioScoped.class::isInstance);
@@ -113,42 +114,47 @@ final class CachingGlue implements Glue {
     public void addStepDefinition(StepDefinition stepDefinition) {
         stepDefinitions.add(stepDefinition);
         cacheIsDirty = true;
-        hasScenarioScopedGlue |= stepDefinition instanceof ScenarioScoped;
+        updateHasScenarioScoedGlue(stepDefinition);
     }
 
     @Override
     public void addBeforeHook(HookDefinition hookDefinition) {
         beforeHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         beforeHooks.sort(HOOK_ORDER_ASCENDING);
-        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
+        updateHasScenarioScoedGlue(hookDefinition);
     }
 
     @Override
     public void addAfterHook(HookDefinition hookDefinition) {
         afterHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         afterHooks.sort(HOOK_ORDER_ASCENDING);
-        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
+        updateHasScenarioScoedGlue(hookDefinition);
     }
 
     @Override
     public void addBeforeStepHook(HookDefinition hookDefinition) {
         beforeStepHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         beforeStepHooks.sort(HOOK_ORDER_ASCENDING);
-        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
+        updateHasScenarioScoedGlue(hookDefinition);
     }
 
     @Override
     public void addAfterStepHook(HookDefinition hookDefinition) {
         afterStepHooks.add(CoreHookDefinition.create(hookDefinition, bus::generateId));
         afterStepHooks.sort(HOOK_ORDER_ASCENDING);
-        hasScenarioScopedGlue |= hookDefinition instanceof ScenarioScoped;
+        updateHasScenarioScoedGlue(hookDefinition);
     }
 
     @Override
     public void addParameterType(ParameterTypeDefinition parameterType) {
         parameterTypeDefinitions.add(parameterType);
         cacheIsDirty = true;
-        hasScenarioScopedGlue |= parameterType instanceof ScenarioScoped;
+        updateHasScenarioScoedGlue(parameterType);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void updateHasScenarioScoedGlue(Object stepDefinition) {
+        hasScenarioScopedGlue |= stepDefinition instanceof ScenarioScoped;
     }
 
     @Override
@@ -486,6 +492,7 @@ final class CachingGlue implements Glue {
         hasScenarioScopedGlue = false;
     }
 
+    @SuppressWarnings("deprecation")
     private void removeScenarioScopedGlue(Iterable<?> glues) {
         Iterator<?> glueIterator = glues.iterator();
         while (glueIterator.hasNext()) {
