@@ -206,6 +206,7 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation") // TODO: Upgrade
     void classpathResourceSelectorThrowIfDuplicateResources() {
         class TestResource implements Resource {
 

@@ -43,6 +43,7 @@ class TestCaseResultObserverTest {
 
     private final TestCase testCase = new TestCase() {
         @Override
+        @Deprecated
         public Integer getLine() {
             return 12;
         }
@@ -63,6 +64,7 @@ class TestCaseResultObserverTest {
         }
 
         @Override
+        @Deprecated
         public String getScenarioDesignation() {
             return "mock-test-case:12";
         }
@@ -131,11 +133,13 @@ class TestCaseResultObserverTest {
         }
 
         @Override
+        @Deprecated
         public StepArgument getStepArgument() {
             return step.getArgument();
         }
 
         @Override
+        @Deprecated
         public int getStepLine() {
             return step.getLine();
         }
@@ -146,6 +150,7 @@ class TestCaseResultObserverTest {
         }
 
         @Override
+        @Deprecated
         public String getStepText() {
             return step.getText();
         }

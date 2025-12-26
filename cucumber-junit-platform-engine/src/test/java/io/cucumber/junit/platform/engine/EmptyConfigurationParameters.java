@@ -18,6 +18,7 @@ class EmptyConfigurationParameters implements ConfigurationParameters {
         return Optional.empty();
     }
 
+    @Deprecated
     public int size() {
         return 0;
     }
