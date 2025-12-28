@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
+
 ## [7.33.0] - 2025-12-09
 ### Added
 - [Java] Add `Scenario.getLanguage()` to return the current language ([#3124](https://github.com/cucumber/cucumber-jvm/pull/3124) Stefan Gasterstädt)
