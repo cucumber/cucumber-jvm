@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
 @Documented
 @Repeatable(${kw}.${kw}s.class)
 @API(status = API.Status.STABLE)
+@SuppressWarnings("UnicodeInCode") 
 public @interface ${kw} {
     /**
      * A cucumber or regular expression.

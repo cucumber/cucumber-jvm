@@ -24,8 +24,11 @@ public @interface BeforeStep {
     String value() default "";
 
     /**
-     * @return the order in which this hook should run. Lower numbers are run
-     *         first. The default order is 10000.
+     * Returns the order in which this hook should run.
+     * <p>
+     * Lower numbers are run first. The default order is 10000.
+     * 
+     * @return the order in which this hook should run
      */
     int order() default 10000;
 

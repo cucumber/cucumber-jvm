@@ -7,9 +7,7 @@ import io.cucumber.docstring.DocStringType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
-
-class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocStringTypeDefinition {
+final class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocStringTypeDefinition {
 
     private final io.cucumber.docstring.DocStringType docStringType;
 
@@ -42,7 +40,7 @@ class JavaDocStringTypeDefinition extends AbstractGlueDefinition implements DocS
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(io.cucumber.java.DocStringType.class)
                 .addSignature("public JsonNode json(String content)")
                 .addNote("Note: JsonNode is an example of the class you want to convert content to")

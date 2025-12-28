@@ -83,6 +83,7 @@ final class GlueAdaptor {
         }
     }
 
+    @SuppressWarnings("GetClassOnAnnotation")
     private static String expression(Annotation annotation) {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");

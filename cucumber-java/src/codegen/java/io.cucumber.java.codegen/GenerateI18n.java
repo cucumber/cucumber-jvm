@@ -1,3 +1,5 @@
+package io.cucumber.java.codegen;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -104,7 +106,7 @@ public class GenerateI18n {
         }
 
         private static String capitalize(String s) {
-            return s.substring(0, 1).toUpperCase() + s.substring(1);
+            return s.substring(0, 1).toUpperCase(Locale.ROOT) + s.substring(1);
         }
 
         private static String getNormalizedKeyWord(GherkinDialect dialect, String keyword) {
@@ -156,7 +158,7 @@ public class GenerateI18n {
         }
 
         private static String getNormalizedLanguage(GherkinDialect dialect) {
-            return dialect.getLanguage().replaceAll("[\\s-]", "_").toLowerCase();
+            return dialect.getLanguage().replaceAll("[\\s-]", "_").toLowerCase(Locale.ROOT);
         }
 
     }

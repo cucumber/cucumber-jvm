@@ -41,7 +41,7 @@ abstract class AbstractGlueDefinition implements Located {
         return fullFormat;
     }
 
-    final Object invokeMethod(Object... args) {
+    final Object invokeMethod(@Nullable Object... args) {
         if (Modifier.isStatic(method.getModifiers())) {
             return Invoker.invokeStatic(this, method, args);
         }

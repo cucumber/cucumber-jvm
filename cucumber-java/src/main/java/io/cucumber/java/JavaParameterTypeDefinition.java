@@ -7,10 +7,9 @@ import io.cucumber.cucumberexpressions.ParameterType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Collections.singletonList;
 
-class JavaParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
+final class JavaParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
 
     private final ParameterType<Object> parameterType;
 
@@ -69,7 +68,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(io.cucumber.java.ParameterType.class)
                 .addSignature("public Author parameterName(String all)")
                 .addSignature("public Author parameterName(String captureGroup1, String captureGroup2, ...ect )")

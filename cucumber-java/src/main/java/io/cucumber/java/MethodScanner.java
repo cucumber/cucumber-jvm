@@ -114,6 +114,7 @@ final class MethodScanner {
         return annotationClass.getAnnotation(StepDefinitionAnnotations.class) != null;
     }
 
+    @SuppressWarnings("GetClassOnAnnotation")
     private static Annotation[] repeatedAnnotations(Annotation annotation) {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");

@@ -157,7 +157,7 @@
                     <addOutputToClasspath>false</addOutputToClasspath>
                     <addResourcesToClasspath>false</addResourcesToClasspath>
                     <additionalClasspathElements>${project.build.directory}/codegen-classes</additionalClasspathElements>
-                    <mainClass>GenerateI18n</mainClass>
+                    <mainClass>io.cucumber.java.codegen.GenerateI18n</mainClass>
                     <arguments>
                         <argument>${project.build.directory}/generated-sources/i18n</argument>
                         <argument>io/cucumber/java</argument>

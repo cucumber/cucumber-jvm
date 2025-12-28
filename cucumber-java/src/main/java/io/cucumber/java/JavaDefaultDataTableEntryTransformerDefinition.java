@@ -10,9 +10,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
-
-class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableElementTransformerDefinition
+final class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableElementTransformerDefinition
         implements DefaultDataTableEntryTransformerDefinition {
 
     private final TableEntryByTypeTransformer transformer;
@@ -47,10 +45,9 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
         Type parameterType = genericParameterTypes[0];
 
         if (!Object.class.equals(parameterType)) {
-            if (!(parameterType instanceof ParameterizedType)) {
+            if (!(parameterType instanceof ParameterizedType parameterizedType)) {
                 throw createInvalidSignatureException(method);
             }
-            ParameterizedType parameterizedType = (ParameterizedType) parameterType;
             Type rawType = parameterizedType.getRawType();
             if (!Map.class.equals(rawType)) {
                 throw createInvalidSignatureException(method);
@@ -90,7 +87,7 @@ class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatatableEl
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(DefaultDataTableEntryTransformer.class)
                 .addSignature("public Object defaultDataTableEntry(Map<String, String> fromValue, Type toValueType)")
                 .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")
