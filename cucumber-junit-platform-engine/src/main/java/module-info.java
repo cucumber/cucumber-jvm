@@ -13,6 +13,6 @@ module io.cucumber.junit.platform.engine {
     requires io.cucumber.tagexpressions;
 
     exports io.cucumber.junit.platform.engine;
-    
+
     provides org.junit.platform.engine.TestEngine with io.cucumber.junit.platform.engine.CucumberTestEngine;
 }

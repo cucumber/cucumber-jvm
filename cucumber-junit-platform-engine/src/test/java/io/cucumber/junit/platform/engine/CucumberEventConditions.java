@@ -20,7 +20,11 @@ import static org.junit.platform.testkit.engine.Event.byTestDescriptor;
 import static org.junit.platform.testkit.engine.EventConditions.displayName;
 import static org.junit.platform.testkit.engine.EventConditions.uniqueIdSubstring;
 
-class CucumberEventConditions {
+final class CucumberEventConditions {
+
+    private CucumberEventConditions() {
+        /* no-op */
+    }
 
     static Condition<Event> engine(Condition<Event> condition) {
         return allOf(EventConditions.engine(), condition);

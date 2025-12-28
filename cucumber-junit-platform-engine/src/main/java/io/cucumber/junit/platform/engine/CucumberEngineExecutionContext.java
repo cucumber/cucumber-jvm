@@ -50,7 +50,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         if (context != null) {
             return context;
         }
-        
+
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader,
             configuration);

@@ -85,7 +85,8 @@ class CucumberDiscoverySelectors {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof FeatureWithLinesSelector that)) return false;
+            if (!(o instanceof FeatureWithLinesSelector that))
+                return false;
             return Objects.equals(uri, that.uri) && Objects.equals(filePositions, that.filePositions);
         }
 
@@ -103,7 +104,7 @@ class CucumberDiscoverySelectors {
         }
     }
 
-    static class FeatureElementSelector implements DiscoverySelector {
+    static final class FeatureElementSelector implements DiscoverySelector {
 
         private final FeatureWithSource feature;
         private final Node element;
@@ -189,10 +190,10 @@ class CucumberDiscoverySelectors {
             return element;
         }
 
-
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof FeatureElementSelector that)) return false;
+            if (!(o instanceof FeatureElementSelector that))
+                return false;
             return Objects.equals(feature, that.feature) && Objects.equals(element, that.element);
         }
 

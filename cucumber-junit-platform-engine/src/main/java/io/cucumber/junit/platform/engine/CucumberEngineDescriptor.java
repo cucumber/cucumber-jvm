@@ -15,7 +15,7 @@ class CucumberEngineDescriptor extends EngineDescriptor implements Node<Cucumber
 
     static final String ENGINE_ID = "cucumber";
     private final CucumberConfiguration configuration;
-    private final @Nullable  TestSource source;
+    private final @Nullable TestSource source;
 
     CucumberEngineDescriptor(UniqueId uniqueId, CucumberConfiguration configuration, @Nullable TestSource source) {
         super(uniqueId, "Cucumber");

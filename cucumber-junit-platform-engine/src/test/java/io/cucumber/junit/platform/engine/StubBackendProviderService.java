@@ -27,7 +27,7 @@ public final class StubBackendProviderService implements BackendProviderService 
     /**
      * We need an implementation of Backend to prevent Runtime from blowing up.
      */
-    public static class StubBackend implements Backend {
+    public static final class StubBackend implements Backend {
 
         StubBackend() {
 
