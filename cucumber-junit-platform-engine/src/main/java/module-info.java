@@ -2,10 +2,7 @@ module io.cucumber.junit.platform.engine {
     requires org.jspecify;
     requires transitive org.apiguardian.api;
 
-    requires transitive org.opentest4j;
-    requires transitive org.junit.platform.engine;
-
-    requires org.junit.platform.commons;
+    requires org.junit.platform.engine;
 
     requires io.cucumber.core;
     requires io.cucumber.plugin;

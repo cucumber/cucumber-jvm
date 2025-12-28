@@ -11,11 +11,11 @@ import org.junit.platform.testkit.engine.EventConditions;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.allOf;
-import static org.junit.platform.commons.util.FunctionUtils.where;
 import static org.junit.platform.testkit.engine.Event.byTestDescriptor;
 import static org.junit.platform.testkit.engine.EventConditions.displayName;
 import static org.junit.platform.testkit.engine.EventConditions.uniqueIdSubstring;
@@ -135,4 +135,9 @@ final class CucumberEventConditions {
             byTestDescriptor(where(TestDescriptor::getUniqueId, candidate -> candidate.hasPrefix(uniqueId))),
             "test descriptor with prefix " + uniqueId);
     }
+
+    private static <T, V> Predicate<T> where(Function<T, V> function, Predicate<? super V> predicate) {
+        return input -> predicate.test(function.apply(input));
+    }
+
 }
