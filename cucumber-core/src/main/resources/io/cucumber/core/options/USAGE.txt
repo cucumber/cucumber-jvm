@@ -155,7 +155,7 @@ cucumber.glue=                  # comma separated package names.
                                 # example: com.example.glue
 
 cucumber.glue-classes=          # comma separated class names.
-                                # example: com.example.glue.StepDefinitions
+                                # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB
 
 cucumber.plugin=                # comma separated plugin strings.
                                 # example: pretty, json:path/to/report.json

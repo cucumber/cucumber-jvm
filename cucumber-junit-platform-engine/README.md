@@ -467,6 +467,9 @@ cucumber.filter.tags=                                          # a cucumber tag 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
 
+cucumber.glue-classes=                                         # comma separated class names.
+                                                               # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB 
+
 cucumber.junit-platform.discovery.as-root-engine               # true or false
                                                                # default: true
                                                                # enable discovery when used as a root engine.
