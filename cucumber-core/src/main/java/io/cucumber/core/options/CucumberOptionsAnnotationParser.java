@@ -106,24 +106,30 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addGlue(CucumberOptions options, RuntimeOptionsBuilder args) {
-        boolean hasExtraGlue = options.extraGlue().length > 0;
-        boolean hasGlue = options.glue().length > 0;
+        boolean hasExtraGlue = options.extraGlue().length > 0 || options.extraGlueGlasses().length > 0;
+        boolean hasGlue = options.glue().length > 0 || options.glueGlasses().length > 0;
 
         if (hasExtraGlue && hasGlue) {
-            throw new CucumberException("glue and extraGlue cannot be specified at the same time");
+            throw new CucumberException("glue(Classes) and extraGlue(Classes) cannot be specified at the same time");
         }
 
+        Class<?>[] glueClasses = {};
         String[] gluePaths = {};
         if (hasExtraGlue) {
             gluePaths = options.extraGlue();
+            glueClasses = options.extraGlueGlasses();
         }
         if (hasGlue) {
             gluePaths = options.glue();
+            glueClasses = options.glueGlasses();
             overridingGlueSpecified = true;
         }
 
         for (String glue : gluePaths) {
             args.addGlue(GluePath.parse(glue));
+        }
+        for (Class<?> glueClass : glueClasses) {
+            args.addGlueClass(glueClass.getName());
         }
     }
 
@@ -193,7 +199,15 @@ public final class CucumberOptionsAnnotationParser {
 
         String[] glue();
 
+        default Class<?>[] glueGlasses() {
+            return new Class[0];
+        }
+
         String[] extraGlue();
+
+        default Class<?>[] extraGlueGlasses() {
+            return new Class[0];
+        }
 
         String tags();
 

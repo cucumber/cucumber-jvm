@@ -69,6 +69,18 @@ public @interface CucumberOptions {
     String[] glue() default {};
 
     /**
+     * Classes with glue code.
+     * <p>
+     * When no glue is provided, Cucumber will use the package of the annotated
+     * class. For example, if the annotated class is
+     * {@code com.example.RunCucumber} then glue is assumed to be located in
+     * {@code com.example}.
+     *
+     * @return list of class names
+     */
+    Class<?>[] glueClasses() default {};
+
+    /**
      * Package to load additional glue code (step definitions, hooks and
      * plugins) from. E.g: {@code com.example.app}
      * <p>
@@ -78,6 +90,16 @@ public @interface CucumberOptions {
      * @return list of package names
      */
     String[] extraGlue() default {};
+
+    /**
+     * Addtional classes with glue code.
+     * <p>
+     * These classes are used in addition to the default described in
+     * {@code #glue}.
+     *
+     * @return list of class names
+     */
+    Class<?>[] extraGlueClasses() default {};
 
     /**
      * Only run scenarios tagged with tags matching {@code TAG_EXPRESSION}.

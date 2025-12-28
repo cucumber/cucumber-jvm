@@ -249,7 +249,7 @@ class CucumberOptionsAnnotationParserTest {
         Executable testMethod = () -> parser().parse(ClassWithGlueAndExtraGlue.class).build();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(),
-            is(equalTo("glue and extraGlue cannot be specified at the same time")));
+            is(equalTo("glue(Classes) and extraGlue(Classes) cannot be specified at the same time")));
     }
 
     @Test
