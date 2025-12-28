@@ -38,6 +38,7 @@ import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_CLASSES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
@@ -147,6 +148,16 @@ class CucumberConfiguration implements
                 .map(String::trim)
                 .map(GluePath::parse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<String> getGlueClasses() {
+        return configurationParameters
+                .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(String::trim)
+                .collect(Collectors.toSet());
     }
 
     @Override

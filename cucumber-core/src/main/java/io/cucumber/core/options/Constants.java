@@ -122,7 +122,7 @@ public final class Constants {
      * Property name to set the glue classes: {@value}
      * <p>
      * A comma separated list fully qualified class names e.g.:
-     * {@code com.example.app.Stepdefinitions}.
+     * {@code com.example.StepDefinitionsA, com.example.StepDefinitionsB}.
      *
      * @see io.cucumber.core.feature.GluePath
      */
