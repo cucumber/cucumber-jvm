@@ -96,7 +96,7 @@ public final class PicoFactory implements ObjectFactory {
 
     @Override
     public boolean addClass(Class<?> clazz) {
-        if (hasCucumberPicoProvider(clazz)) {
+        if (isProvider(clazz)) {
             providers.add(checkProperPicoProvider(clazz));
         } else {
             if (isInstantiable(clazz) && classes.add(clazz)) {
