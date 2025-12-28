@@ -31,9 +31,13 @@ final class PicoBackend implements Backend {
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
-                .filter(PicoFactory::hasCucumberPicoProvider)
+                .filter(PicoBackend::hasCucumberPicoProvider)
                 .distinct()
                 .forEach(container::addClass);
+    }
+
+    private static boolean hasCucumberPicoProvider(Class<?> clazz) {
+        return clazz.isAnnotationPresent(CucumberPicoProvider.class);
     }
 
     @Override

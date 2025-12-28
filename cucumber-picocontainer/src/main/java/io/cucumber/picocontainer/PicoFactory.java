@@ -65,15 +65,11 @@ public final class PicoFactory implements ObjectFactory {
         pico.start();
     }
 
-    static boolean hasCucumberPicoProvider(Class<?> clazz) {
-        return clazz.isAnnotationPresent(CucumberPicoProvider.class);
-    }
-
-    static boolean isProvider(Class<?> clazz) {
+    private static boolean isProvider(Class<?> clazz) {
         return Provider.class.isAssignableFrom(clazz);
     }
 
-    static boolean isProviderAdapter(Class<?> clazz) {
+    private static boolean isProviderAdapter(Class<?> clazz) {
         return ProviderAdapter.class.isAssignableFrom(clazz);
     }
 
@@ -97,7 +93,7 @@ public final class PicoFactory implements ObjectFactory {
     @Override
     public boolean addClass(Class<?> clazz) {
         if (isProvider(clazz)) {
-            providers.add(checkProperPicoProvider(clazz));
+            providers.add(requireConstructableProvider(clazz));
         } else {
             if (isInstantiable(clazz) && classes.add(clazz)) {
                 addConstructorDependencies(clazz);
@@ -116,7 +112,7 @@ public final class PicoFactory implements ObjectFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static Class<Provider> checkProperPicoProvider(Class<?> clazz) {
+    private static Class<Provider> requireConstructableProvider(Class<?> clazz) {
         if (!isProvider(clazz) || !isInstantiable(clazz) || !hasDefaultConstructor(clazz)) {
             throw new CucumberBackendException(String.format("" +
                     "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
