@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,9 +27,9 @@ public final class DataTableSteps {
     @DataTableType
     public Author authorEntryTransformer(Map<String, String> entry) {
         return new DataTableSteps.Author(
-            entry.get("firstName"),
-            entry.get("lastName"),
-            entry.get("birthDate"));
+            requireNonNull(entry.get("firstName")),
+            requireNonNull(entry.get("lastName")),
+            requireNonNull(entry.get("birthDate")));
     }
 
     @Given("a list of authors in a table")
@@ -59,7 +60,9 @@ public final class DataTableSteps {
 
     @DataTableType(replaceWithEmptyString = "[blank]")
     public DataTableSteps.Person transform(Map<String, String> tableEntry) {
-        return new Person(tableEntry.get("first"), tableEntry.get("last"));
+        return new Person(
+            requireNonNull(tableEntry.get("first")),
+            requireNonNull(tableEntry.get("last")));
     }
 
     public static final class Author {

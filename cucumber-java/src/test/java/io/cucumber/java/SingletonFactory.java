@@ -1,16 +1,17 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.ObjectFactory;
+import org.jspecify.annotations.Nullable;
 
 class SingletonFactory implements ObjectFactory {
 
-    private Object singleton;
+    private @Nullable Object singleton;
 
     SingletonFactory() {
         this(null);
     }
 
-    SingletonFactory(Object singleton) {
+    SingletonFactory(@Nullable Object singleton) {
         this.singleton = singleton;
     }
 
