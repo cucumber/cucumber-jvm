@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@SuppressWarnings("UnicodeInCode")
 public final class FrenchSteps {
 
     @Étantdonné("j'ai {bigdecimal} concombres fractionnaires")

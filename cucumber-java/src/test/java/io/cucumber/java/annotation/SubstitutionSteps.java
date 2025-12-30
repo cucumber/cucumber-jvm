@@ -3,6 +3,7 @@ package io.cucumber.java.annotation;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -12,12 +13,11 @@ public final class SubstitutionSteps {
 
     private static final Map<String, String> ROLES = Map.of(
         "Manager", "now able to manage your employee accounts",
-            "Admin", "able to manage any user account on the system"
-    );
+        "Admin", "able to manage any user account on the system");
 
-    private String name;
-    private String role;
-    private String details;
+    private @Nullable String name;
+    private @Nullable String role;
+    private @Nullable String details;
 
     @Given("I have a user account with my name {string}")
     public void I_have_a_user_account_with_my_name(String name) {

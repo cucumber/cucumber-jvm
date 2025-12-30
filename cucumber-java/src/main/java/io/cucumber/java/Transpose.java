@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  *
  * <pre>
  * {@code
- * @DataTableType
+ * &#64;DataTableType
  * public User convert(Map<String, String> entry){
  *    return new User(
  *        entry.get("firstname"),
