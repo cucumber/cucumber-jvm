@@ -40,7 +40,8 @@ import java.lang.annotation.Target;
  * object:
  * 
  * <pre>
- * {@code 
+ * {@code
+ * 
  * @Given("^the user is$")
  * public void the_user_is(@Transpose User user) {
  *     this.user = user;

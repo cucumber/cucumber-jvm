@@ -16,8 +16,8 @@ import java.lang.annotation.Target;
  * <p>
  * 
  * <pre>
- * &#64;CucumberContextConfiguration
- * &#64;SpringBootTest(classes = TestConfig.class)
+ * @CucumberContextConfiguration
+ * @SpringBootTest(classes = TestConfig.class)
  * public class CucumberSpringConfiguration {
  * }
  * </pre>

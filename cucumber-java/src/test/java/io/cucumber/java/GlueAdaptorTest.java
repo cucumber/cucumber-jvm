@@ -14,6 +14,7 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.java.en.Given;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -28,7 +29,8 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class GlueAdaptorTest {
+@SuppressWarnings("NullAway") // TODO: Use AssertJ
+class GlueAdaptorTest {
 
     private final Lookup lookup = new Lookup() {
 
@@ -51,18 +53,18 @@ public class GlueAdaptorTest {
             return item.getPattern().equals("repeated");
         }
     };
-    private DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer;
-    private DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer;
-    private DefaultParameterTransformerDefinition defaultParameterTransformer;
-    private DataTableTypeDefinition dataTableTypeDefinition;
-    private ParameterTypeDefinition parameterTypeDefinition;
-    private HookDefinition afterStepHook;
-    private HookDefinition beforeStepHook;
-    private HookDefinition afterHook;
-    private HookDefinition beforeHook;
-    private StaticHookDefinition afterAllHook;
-    private StaticHookDefinition beforeAllHook;
-    private DocStringTypeDefinition docStringTypeDefinition;
+    private @Nullable DefaultDataTableCellTransformerDefinition defaultDataTableCellTransformer;
+    private @Nullable DefaultDataTableEntryTransformerDefinition defaultDataTableEntryTransformer;
+    private @Nullable DefaultParameterTransformerDefinition defaultParameterTransformer;
+    private @Nullable DataTableTypeDefinition dataTableTypeDefinition;
+    private @Nullable ParameterTypeDefinition parameterTypeDefinition;
+    private @Nullable HookDefinition afterStepHook;
+    private @Nullable HookDefinition beforeStepHook;
+    private @Nullable HookDefinition afterHook;
+    private @Nullable HookDefinition beforeHook;
+    private @Nullable StaticHookDefinition afterAllHook;
+    private @Nullable StaticHookDefinition beforeAllHook;
+    private @Nullable DocStringTypeDefinition docStringTypeDefinition;
     private final Glue container = new Glue() {
         @Override
         public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {

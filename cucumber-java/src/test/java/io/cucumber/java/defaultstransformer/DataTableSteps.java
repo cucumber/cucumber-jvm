@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataTableSteps {
+public final class DataTableSteps {
 
     private final Author expectedAuthor = new Author("Annie M. G.", "Schmidt", "1911-03-20");
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -46,7 +46,7 @@ public class DataTableSteps {
         assertThat(currency, is(Currency.getInstance("EUR")));
     }
 
-    public static class Author {
+    public static final class Author {
 
         String firstName;
         String lastName;

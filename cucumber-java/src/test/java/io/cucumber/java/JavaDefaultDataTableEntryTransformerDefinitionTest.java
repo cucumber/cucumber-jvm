@@ -2,6 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.TableCellByTypeTransformer;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -88,11 +89,12 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             "After replacing [empty] and [blank] with empty strings the datatable entry contains duplicate keys: {[empty]=a, [blank]=b}"));
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public <T> T correct_method(Map<String, String> fromValue, Type toValueType) {
         return join(fromValue);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "TypeParameterUnusedInFormals" })
     private static <T> T join(Map<String, String> fromValue) {
         return (T) fromValue.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining());
@@ -110,6 +112,7 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             is("key=value"));
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public <T> T correct_method_with_cell_transformer(
             Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer
     ) {
@@ -127,11 +130,12 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             () -> new JavaDefaultDataTableEntryTransformerDefinition(toMany, lookup));
     }
 
-    public <T> T one_argument(Map<String, String> fromValue) {
+    @SuppressWarnings("TypeParameterUnusedInFormals")
+    public <T> @Nullable T one_argument(Map<String, String> fromValue) {
         return null;
     }
 
-    public Object four_arguments(Map<String, String> fromValue, String one, String two, String three) {
+    public @Nullable Object four_arguments(Map<String, String> fromValue, String one, String two, String three) {
         return null;
     }
 
@@ -162,15 +166,15 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             () -> new JavaDefaultDataTableEntryTransformerDefinition(method3, lookup));
     }
 
-    public Object invalid_first_type(String fromValue, Type toValueType) {
+    public @Nullable Object invalid_first_type(String fromValue, Type toValueType) {
         return null;
     }
 
-    public Object invalid_first_type(List<String> fromValue, Type toValueType) {
+    public @Nullable Object invalid_first_type(List<String> fromValue, Type toValueType) {
         return null;
     }
 
-    public Object invalid_first_type(Map<String, Object> fromValue, Type toValueType) {
+    public @Nullable Object invalid_first_type(Map<String, Object> fromValue, Type toValueType) {
         return null;
     }
 
@@ -182,7 +186,7 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
-    public Object invalid_second_type(Map<String, String> fromValue, String toValue) {
+    public @Nullable Object invalid_second_type(Map<String, String> fromValue, String toValue) {
         return null;
     }
 
@@ -194,7 +198,9 @@ class JavaDefaultDataTableEntryTransformerDefinitionTest {
             () -> new JavaDefaultDataTableEntryTransformerDefinition(method, lookup));
     }
 
-    public Object invalid_optional_third_type(Map<String, String> fromValue, Type toValueType, String cellTransformer) {
+    public @Nullable Object invalid_optional_third_type(
+            Map<String, String> fromValue, Type toValueType, String cellTransformer
+    ) {
         return null;
     }
 

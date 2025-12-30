@@ -30,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.net.URI;
 import java.time.Clock;
@@ -52,7 +53,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings
 class JUnitReporterWithStepNotificationsTest {
 
     private static final Location scenarioLine = new Location(0, 0);
@@ -60,10 +61,11 @@ class JUnitReporterWithStepNotificationsTest {
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final JUnitReporter jUnitReporter = new JUnitReporter(bus,
         new JUnitOptionsBuilder().setStepNotifications(true).build());
-    private final Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given step name\n");
+    private final Feature feature = TestFeatureParser.parse("""
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given step name
+            """);
     private final Step step = feature.getPickles().get(0).getSteps().get(0);
     @Mock
     private TestCase testCase;
@@ -250,11 +252,12 @@ class JUnitReporterWithStepNotificationsTest {
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
         assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
-        assertThat(pickleFailure.getException().getMessage(), is("" +
-                "The step 'step name' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n"));
+        assertThat(pickleFailure.getException().getMessage(), is("""
+                The step 'step name' is undefined.
+                You can implement this step using the snippet(s) below:
+                
+                some snippet
+                """));
     }
 
     @Test

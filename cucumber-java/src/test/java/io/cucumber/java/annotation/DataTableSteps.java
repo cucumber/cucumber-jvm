@@ -12,7 +12,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataTableSteps {
+public final class DataTableSteps {
 
     private final Author expectedAuthor = new Author("Annie M. G.", "Schmidt", "1911-03-20");
     private final Person expectedPerson = new Person("Astrid", "Lindgren");
@@ -62,7 +62,7 @@ public class DataTableSteps {
         return new Person(tableEntry.get("first"), tableEntry.get("last"));
     }
 
-    public static class Author {
+    public static final class Author {
 
         final String firstName;
         final String lastName;
@@ -109,7 +109,7 @@ public class DataTableSteps {
 
     }
 
-    public static class Person {
+    public static final class Person {
 
         private final String first;
         private final String last;

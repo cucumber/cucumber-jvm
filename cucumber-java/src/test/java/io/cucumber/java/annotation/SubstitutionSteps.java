@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SubstitutionSteps {
+public final class SubstitutionSteps {
 
     private static final Map<String, String> ROLES = new HashMap<String, String>() {
         {
@@ -35,9 +35,10 @@ public class SubstitutionSteps {
 
     @Then("I should receive an email with the body:")
     public void I_should_receive_an_email_with_the_body(String body) {
-        String expected = String.format("Dear %s,\n" +
-                "You have been granted %s rights.  You are %s. Please be responsible.\n" +
-                "-The Admins",
+        String expected = String.format("""
+                Dear %s,
+                You have been granted %s rights.  You are %s. Please be responsible.
+                -The Admins""",
             name, role, details);
         assertEquals(expected, body);
     }

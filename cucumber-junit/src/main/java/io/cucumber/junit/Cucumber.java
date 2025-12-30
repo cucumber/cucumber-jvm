@@ -55,8 +55,8 @@ import static java.util.stream.Collectors.toList;
  * any fields or methods. For example: <blockquote>
  * 
  * <pre>
- * &#64;RunWith(Cucumber.class)
- * &#64;CucumberOptions(plugin = "pretty")
+ * @RunWith(Cucumber.class)
+ * @CucumberOptions(plugin = "pretty")
  * public class RunCucumberTest {
  * }
  * </pre>

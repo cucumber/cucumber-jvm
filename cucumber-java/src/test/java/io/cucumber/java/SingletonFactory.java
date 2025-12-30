@@ -6,11 +6,11 @@ class SingletonFactory implements ObjectFactory {
 
     private Object singleton;
 
-    public SingletonFactory() {
+    SingletonFactory() {
         this(null);
     }
 
-    public SingletonFactory(Object singleton) {
+    SingletonFactory(Object singleton) {
         this.singleton = singleton;
     }
 

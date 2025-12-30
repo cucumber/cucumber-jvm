@@ -82,7 +82,7 @@ class MethodScannerTest {
 
     }
 
-    @SuppressWarnings({"InnerClassMayBeStatic", "ClassCanBeStatic"})
+    @SuppressWarnings({ "InnerClassMayBeStatic", "ClassCanBeStatic" })
     public class NonStaticInnerClass {
 
         @Before
