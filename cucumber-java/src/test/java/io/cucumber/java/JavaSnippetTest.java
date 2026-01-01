@@ -263,7 +263,6 @@ class JavaSnippetTest {
                     // Write code here that turns the phrase above into concrete actions
                     throw new io.cucumber.java.PendingException();
                 }
-
                 @Given("I have a {string}:")
                 public void i_have_a(String string, String docString) {
                     // Write code here that turns the phrase above into concrete actions
@@ -352,7 +351,6 @@ class JavaSnippetTest {
                     // For other transformations you can register a DataTableType.
                     throw new io.cucumber.java.PendingException();
                 }
-
                 @Given("I have in table {string}:")
                 public void i_have_in_table(String string, io.cucumber.datatable.DataTable dataTable) {
                     // Write code here that turns the phrase above into concrete actions

@@ -11,16 +11,13 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
-import io.cucumber.java.en.Given;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -37,7 +34,7 @@ class GlueAdaptorTest {
         @Override
         @SuppressWarnings("unchecked")
         public <T> T getInstance(Class<T> glueClass) {
-            return (T) GlueAdaptorTest.this;
+            return (T) new GlueAdaptorTestStepDefinitions();
         }
     };
     private final List<StepDefinition> stepDefinitions = new ArrayList<>();
@@ -148,7 +145,7 @@ class GlueAdaptorTest {
 
     @Test
     void creates_all_glue_steps() {
-        MethodScanner.scan(GlueAdaptorTest.class, adaptor::addDefinition);
+        MethodScanner.scan(GlueAdaptorTestStepDefinitions.class, adaptor::addDefinition);
 
         assertAll(
             () -> assertThat(stepDefinitions, containsInAnyOrder(aStep, repeated)),
@@ -168,77 +165,6 @@ class GlueAdaptorTest {
             () -> assertThat(beforeAllHook, notNullValue()),
             () -> assertThat(afterAllHook, notNullValue()),
             () -> assertThat(docStringTypeDefinition, notNullValue()));
-    }
-
-    @Given(value = "a step")
-    @Given("repeated")
-    public void step_definition() {
-
-    }
-
-    @DefaultDataTableCellTransformer
-    public String default_data_table_cell_transformer(String fromValue, Type toValueType) {
-        return "default_data_table_cell_transformer";
-    }
-
-    @DefaultDataTableEntryTransformer
-    public String default_data_table_entry_transformer(Map<String, String> fromValue, Type toValueType) {
-        return "default_data_table_entry_transformer";
-    }
-
-    @DefaultParameterTransformer
-    public String default_parameter_transformer(String fromValue, Type toValueTYpe) {
-        return "default_parameter_transformer";
-    }
-
-    @DataTableType
-    public String data_table_type(String fromValue) {
-        return "data_table_type";
-    }
-
-    @ParameterType(
-            value = "pattern",
-            name = "name",
-            preferForRegexMatch = true,
-            useForSnippets = true,
-            useRegexpMatchAsStrongTypeHint = false)
-    public String parameter_type(String fromValue) {
-        return "parameter_type";
-    }
-
-    @AfterStep
-    public void after_step() {
-
-    }
-
-    @BeforeStep
-    public void before_step() {
-
-    }
-
-    @After
-    public void after() {
-
-    }
-
-    @Before
-    public void before() {
-
-    }
-
-    @AfterAll
-    public static void afterAll() {
-
-    }
-
-    @BeforeAll
-    public static void beforeAll() {
-
-    }
-
-    @DocStringType
-    public Object json(String docString) {
-        return null;
     }
 
 }
