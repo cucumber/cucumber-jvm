@@ -60,7 +60,7 @@ public final class DefaultObjectFactory implements ObjectFactory {
         } catch (NoSuchMethodException | IllegalAccessException e) {
             throw new CucumberException("""
                     %s does not have an accessible public zero-argument constructor.
-                    
+
                     To use dependency injection add an other ObjectFactory implementation such as:
                      * cucumber-picocontainer
                      * cucumber-spring

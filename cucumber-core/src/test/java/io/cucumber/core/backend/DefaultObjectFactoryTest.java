@@ -39,15 +39,16 @@ class DefaultObjectFactoryTest {
         CucumberException exception = assertThrows(CucumberException.class,
             () -> factory.getInstance(NoAccessibleConstructor.class));
 
-        assertThat(exception.getMessage(), is("" +
-                "class io.cucumber.core.backend.DefaultObjectFactoryTest$NoAccessibleConstructor does not have a public zero-argument constructor.\n"
-                +
-                "\n" +
-                "To use dependency injection add an other ObjectFactory implementation such as:\n" +
-                " * cucumber-picocontainer\n" +
-                " * cucumber-spring\n" +
-                " * cucumber-jakarta-cdi\n" +
-                " * ...etc\n"));
+        assertThat(exception.getMessage(),
+            is("""
+                    class io.cucumber.core.backend.DefaultObjectFactoryTest$NoAccessibleConstructor does not have an accessible public zero-argument constructor.
+
+                    To use dependency injection add an other ObjectFactory implementation such as:
+                     * cucumber-picocontainer
+                     * cucumber-spring
+                     * cucumber-jakarta-cdi
+                     * ...etc
+                    """));
     }
 
     public static final class StepDefinition {
