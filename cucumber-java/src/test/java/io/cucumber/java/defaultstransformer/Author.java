@@ -1,10 +1,18 @@
 package io.cucumber.java.defaultstransformer;
 
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
+
 public final class Author {
 
-    private String firstName;
-    private String lastName;
-    private String birthDate;
+    private @Nullable String firstName;
+    private @Nullable String lastName;
+    private @Nullable String birthDate;
+
+    public Author() {
+        /* no-op */
+    }
 
     public Author(String firstName, String lastName, String birthDate) {
         this.firstName = firstName;
@@ -12,7 +20,7 @@ public final class Author {
         this.birthDate = birthDate;
     }
 
-    public String getFirstName() {
+    public @Nullable String getFirstName() {
         return firstName;
     }
 
@@ -20,7 +28,7 @@ public final class Author {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
+    public @Nullable String getLastName() {
         return lastName;
     }
 
@@ -28,7 +36,7 @@ public final class Author {
         this.lastName = lastName;
     }
 
-    public String getBirthDate() {
+    public @Nullable String getBirthDate() {
         return birthDate;
     }
 
@@ -37,27 +45,16 @@ public final class Author {
     }
 
     @Override
-    public int hashCode() {
-        int result = firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        result = 31 * result + birthDate.hashCode();
-        return result;
+    public boolean equals(Object o) {
+        if (!(o instanceof Author author))
+            return false;
+        return Objects.equals(firstName, author.firstName) && Objects.equals(lastName, author.lastName)
+                && Objects.equals(birthDate, author.birthDate);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        Author author = (Author) o;
-
-        if (!firstName.equals(author.firstName))
-            return false;
-        if (!lastName.equals(author.lastName))
-            return false;
-        return birthDate.equals(author.birthDate);
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, birthDate);
     }
 
     @Override

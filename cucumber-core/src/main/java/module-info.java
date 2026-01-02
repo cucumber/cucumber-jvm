@@ -4,12 +4,10 @@ module io.cucumber.core {
 
     requires io.cucumber.cienvironment;
     requires io.cucumber.core.gherkin;
-    requires io.cucumber.cucumberexpressions;
     requires io.cucumber.gherkin;
     requires io.cucumber.htmlformatter;
     requires io.cucumber.jsonformatter;
     requires io.cucumber.junitxmlformatter;
-    requires io.cucumber.messages;
     requires io.cucumber.plugin;
     requires io.cucumber.prettyformatter;
     requires io.cucumber.query;
@@ -21,8 +19,10 @@ module io.cucumber.core {
     requires java.logging;
     requires org.jspecify;
 
+    requires transitive io.cucumber.messages;
     requires transitive io.cucumber.datatable;
     requires transitive io.cucumber.docstring;
+    requires transitive io.cucumber.cucumberexpressions;
     requires transitive org.apiguardian.api;
 
     exports cucumber.api.cli;

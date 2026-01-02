@@ -14,16 +14,20 @@ final class Invoker {
     }
 
     static Object invoke(Located located, Object target, Method method, Object... args) {
-        boolean accessible = method.isAccessible();
+        boolean accessible = method.canAccess(target);
         try {
-            method.setAccessible(true);
+            if (!accessible) {
+                method.setAccessible(true);
+            }
             return method.invoke(target, args);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new CucumberBackendException("Failed to invoke " + method, e);
         } catch (InvocationTargetException e) {
             throw new CucumberInvocationTargetException(located, e);
         } finally {
-            method.setAccessible(accessible);
+            if (!accessible) {
+                method.setAccessible(false);
+            }
         }
     }
 

@@ -29,7 +29,7 @@ public final class DataTableSteps {
             .build();
 
     @DefaultParameterTransformer
-    @DefaultDataTableEntryTransformer(headersToProperties = true)
+    @DefaultDataTableEntryTransformer
     @DefaultDataTableCellTransformer
     public Object defaultTransformer(Object fromValue, Type toValueType) {
         return objectMapper.convertValue(fromValue, objectMapper.constructType(toValueType));

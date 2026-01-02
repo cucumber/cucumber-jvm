@@ -65,7 +65,9 @@ final class Invoker {
     ) {
         boolean accessible = targetMethod.canAccess(target);
         try {
-            targetMethod.setAccessible(true);
+            if (!accessible) {
+                targetMethod.setAccessible(true);
+            }
             return targetMethod.invoke(target, args);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
@@ -78,7 +80,9 @@ final class Invoker {
             }
             throw new CucumberInvocationTargetException(located, e);
         } finally {
-            targetMethod.setAccessible(accessible);
+            if (!accessible) {
+                targetMethod.setAccessible(false);
+            }
         }
     }
 

@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.messages.types.HookType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

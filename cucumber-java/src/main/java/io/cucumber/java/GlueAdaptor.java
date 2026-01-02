@@ -86,7 +86,7 @@ final class GlueAdaptor {
     @SuppressWarnings("GetClassOnAnnotation")
     private static String expression(Annotation annotation) {
         try {
-            Method expressionMethod = annotation.getClass().getMethod("value");
+            Method expressionMethod = annotation.annotationType().getDeclaredMethod("value");
             return (String) Invoker.invoke(annotation, expressionMethod);
         } catch (NoSuchMethodException e) {
             // Should never happen.

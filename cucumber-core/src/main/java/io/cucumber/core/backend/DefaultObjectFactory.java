@@ -57,16 +57,16 @@ public final class DefaultObjectFactory implements ObjectFactory {
             T instance = constructor.newInstance();
             instances.put(type, instance);
             return instance;
-        } catch (NoSuchMethodException e) {
-            throw new CucumberException(String.format("" +
-                    "%s does not have a public zero-argument constructor.\n" +
-                    "\n" +
-                    "To use dependency injection add an other ObjectFactory implementation such as:\n" +
-                    " * cucumber-picocontainer\n" +
-                    " * cucumber-spring\n" +
-                    " * cucumber-jakarta-cdi\n" +
-                    " * ...etc\n",
-                type), e);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new CucumberException("""
+                    %s does not have an accessible public zero-argument constructor.
+                    
+                    To use dependency injection add an other ObjectFactory implementation such as:
+                     * cucumber-picocontainer
+                     * cucumber-spring
+                     * cucumber-jakarta-cdi
+                     * ...etc
+                    """.formatted(type), e);
         } catch (Exception e) {
             throw new CucumberException(String.format("Failed to instantiate %s", type), e);
         }

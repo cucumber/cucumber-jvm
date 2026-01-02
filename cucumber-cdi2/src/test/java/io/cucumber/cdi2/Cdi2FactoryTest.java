@@ -43,7 +43,7 @@ class Cdi2FactoryTest {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = { true, false })
+    @ValueSource(booleans = {true, false})
     void shouldCreateNewInstancesForEachScenario(boolean ignoreLocalBeansXml) {
         IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
         // Scenario 1
@@ -62,9 +62,47 @@ class Cdi2FactoryTest {
         // VetoedBean makes it possible to compare the object outside the
         // scenario/application scope
         assertAll(
-            () -> assertThat(a1, is(notNullValue())),
-            () -> assertThat(a1, is(not(equalTo(b1)))),
-            () -> assertThat(b1, is(not(equalTo(a1)))));
+                () -> assertThat(a1, is(notNullValue())),
+                () -> assertThat(a1, is(not(equalTo(b1)))),
+                () -> assertThat(b1, is(not(equalTo(a1)))));
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldCreateApplicationScopedInstance(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
+        factory.addClass(ApplicationScopedBean.class);
+        factory.start();
+        ApplicationScopedBean bean = factory.getInstance(ApplicationScopedBean.class);
+        assertAll(
+                // assert that it is is a CDI proxy
+                () -> assertThat(bean.getClass(), not(is(ApplicationScopedBean.class))),
+                () -> assertThat(bean.getClass().getSuperclass(), is(ApplicationScopedBean.class)));
+        factory.stop();
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldCreateUnmanagedInstance(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
+        factory.start();
+        UnmanagedBean bean = factory.getInstance(UnmanagedBean.class);
+        assertThat(bean.getClass(), is(UnmanagedBean.class));
+        factory.stop();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldInjectStepDefinitions(boolean ignoreLocalBeansXml) {
+        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
+        factory.addClass(OtherStepDefinitions.class);
+        factory.addClass(StepDefinitions.class);
+        factory.start();
+        StepDefinitions stepDefinitions = factory.getInstance(StepDefinitions.class);
+        assertThat(stepDefinitions.injected, is(notNullValue()));
+        factory.stop();
     }
 
     @ApplicationScoped
@@ -72,32 +110,8 @@ class Cdi2FactoryTest {
 
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = { true, false })
-    void shouldCreateApplicationScopedInstance(boolean ignoreLocalBeansXml) {
-        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
-        factory.addClass(ApplicationScopedBean.class);
-        factory.start();
-        ApplicationScopedBean bean = factory.getInstance(ApplicationScopedBean.class);
-        assertAll(
-            // assert that it is is a CDI proxy
-            () -> assertThat(bean.getClass(), not(is(ApplicationScopedBean.class))),
-            () -> assertThat(bean.getClass().getSuperclass(), is(ApplicationScopedBean.class)));
-        factory.stop();
-    }
-
     static class UnmanagedBean {
 
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { true, false })
-    void shouldCreateUnmanagedInstance(boolean ignoreLocalBeansXml) {
-        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
-        factory.start();
-        UnmanagedBean bean = factory.getInstance(UnmanagedBean.class);
-        assertThat(bean.getClass(), is(UnmanagedBean.class));
-        factory.stop();
     }
 
     static class OtherStepDefinitions {
@@ -109,18 +123,6 @@ class Cdi2FactoryTest {
         @Inject
         OtherStepDefinitions injected;
 
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { true, false })
-    void shouldInjectStepDefinitions(boolean ignoreLocalBeansXml) {
-        IgnoreLocalBeansXmlClassLoader.setClassLoader(ignoreLocalBeansXml);
-        factory.addClass(OtherStepDefinitions.class);
-        factory.addClass(StepDefinitions.class);
-        factory.start();
-        StepDefinitions stepDefinitions = factory.getInstance(StepDefinitions.class);
-        assertThat(stepDefinitions.injected, is(notNullValue()));
-        factory.stop();
     }
 
 }
