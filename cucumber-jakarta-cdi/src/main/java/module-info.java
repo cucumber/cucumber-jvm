@@ -9,6 +9,8 @@ module io.cucumber.jakarta.cdi {
     requires transitive org.apiguardian.api;
 
     requires io.cucumber.core;
+    requires jakarta.cdi;
+
     provides ObjectFactory
             with CdiJakartaFactory;
 

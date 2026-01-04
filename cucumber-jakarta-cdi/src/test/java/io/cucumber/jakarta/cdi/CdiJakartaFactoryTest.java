@@ -36,11 +36,6 @@ class CdiJakartaFactoryTest {
         assertDoesNotThrow(factory::stop);
     }
 
-    @Vetoed
-    static class VetoedBean {
-
-    }
-
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
     void shouldCreateNewInstancesForEachScenario(boolean ignoreLocalBeansXml) {
@@ -66,11 +61,6 @@ class CdiJakartaFactoryTest {
             () -> assertThat(b1, is(not(equalTo(a1)))));
     }
 
-    @ApplicationScoped
-    static class ApplicationScopedBean {
-
-    }
-
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
     void shouldCreateApplicationScopedInstance(boolean ignoreLocalBeansXml) {
@@ -85,10 +75,6 @@ class CdiJakartaFactoryTest {
         factory.stop();
     }
 
-    static class UnmanagedBean {
-
-    }
-
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
     void shouldCreateUnmanagedInstance(boolean ignoreLocalBeansXml) {
@@ -97,17 +83,6 @@ class CdiJakartaFactoryTest {
         UnmanagedBean bean = factory.getInstance(UnmanagedBean.class);
         assertThat(bean.getClass(), is(UnmanagedBean.class));
         factory.stop();
-    }
-
-    static class OtherStepDefinitions {
-
-    }
-
-    static class StepDefinitions {
-
-        @Inject
-        OtherStepDefinitions injected;
-
     }
 
     @ParameterizedTest
@@ -122,4 +97,28 @@ class CdiJakartaFactoryTest {
         factory.stop();
     }
 
+    @Vetoed
+    static class VetoedBean {
+
+    }
+
+    @ApplicationScoped
+    static class ApplicationScopedBean {
+
+    }
+
+    static class UnmanagedBean {
+
+    }
+
+    static class OtherStepDefinitions {
+
+    }
+
+    static class StepDefinitions {
+
+        @Inject
+        OtherStepDefinitions injected;
+
+    }
 }

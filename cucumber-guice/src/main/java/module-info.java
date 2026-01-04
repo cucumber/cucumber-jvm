@@ -14,7 +14,7 @@ module io.cucumber.guice {
     requires com.google.guice;
 
     exports io.cucumber.guice;
-    
+
     provides ObjectFactory with GuiceFactory;
     provides BackendProviderService with GuiceBackendProviderService;
 
