@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Stage;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -12,6 +13,10 @@ import static java.lang.String.format;
 final class InjectorSourceFactory {
     private static final Logger log = LoggerFactory.getLogger(GuiceFactory.class);
     static final String GUICE_INJECTOR_SOURCE_KEY = "guice.injector-source";
+
+    private InjectorSourceFactory() {
+        /* no-op */
+    }
 
     static InjectorSource createDefaultScenarioModuleInjectorSource() {
         return () -> Guice.createInjector(Stage.PRODUCTION, CucumberModules.createScenarioModule());
@@ -29,7 +34,7 @@ final class InjectorSourceFactory {
     }
 
     @Deprecated
-    static Class<?> loadInjectorSourceFromProperties(Map<String, String> properties) {
+    static @Nullable Class<?> loadInjectorSourceFromProperties(Map<String, String> properties) {
         String injectorSourceClassName = properties.get(GUICE_INJECTOR_SOURCE_KEY);
 
         if (injectorSourceClassName == null) {
