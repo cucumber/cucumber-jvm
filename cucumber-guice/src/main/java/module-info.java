@@ -13,6 +13,8 @@ module io.cucumber.guice {
     requires io.cucumber.core;
     requires com.google.guice;
 
+    exports io.cucumber.guice;
+    
     provides ObjectFactory with GuiceFactory;
     provides BackendProviderService with GuiceBackendProviderService;
 
