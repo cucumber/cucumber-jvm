@@ -58,7 +58,6 @@
             <modules>
                 <module>compatibility</module>
                 <module>cucumber-kotlin-java8</module>
-                <module>examples</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -91,7 +90,6 @@
             <modules>
                 <module>compatibility</module>
                 <module>cucumber-kotlin-java8</module>
-                <module>examples</module>
             </modules>
         </profile>
 
