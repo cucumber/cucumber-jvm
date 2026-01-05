@@ -1,5 +1,7 @@
 name: Release Maven
 
+permissions: { }
+
 on:
   push:
     branches: [release/*]
@@ -10,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: Release
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'

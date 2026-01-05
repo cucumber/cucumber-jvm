@@ -1,194 +1,123 @@
 package io.cucumber.compatibility;
 
+import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
-import static java.util.Spliterators.spliteratorUnknownSize;
-import static java.util.stream.StreamSupport.stream;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.isA;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.containsInRelativeOrder;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.hamcrest.collection.IsMapContaining.hasKey;
+import static java.util.Objects.requireNonNull;
 
-public class AComparableMessage extends
-        TypeSafeDiagnosingMatcher<JsonNode> {
+public class AComparableMessage extends TypeSafeDiagnosingMatcher<JsonNode> {
 
-    private final List<Matcher<?>> expectedFields;
-    private final int depth;
+    private final JsonNode expectedMessage;
+    private final String messageType;
+    private final Map<Pattern, Matcher<?>> replacements;
+    private final Map<JsonPointer, JsonNode> expectedFields;
+    private final Map<JsonPointer, Matcher<?>> expectedMatchers;
 
-    public AComparableMessage(String messageType, JsonNode expectedMessage) {
-        this(messageType, expectedMessage, 0);
+    public AComparableMessage(String messageType, JsonNode expectedMessage, Map<Pattern, Matcher<?>> replacements) {
+        this.expectedMessage = expectedMessage;
+        this.messageType = requireNonNull(messageType);
+        this.replacements = requireNonNull(replacements);
+        this.expectedFields = extractFieldsAndPointers(requireNonNull(expectedMessage));
+        this.expectedMatchers = createMatchers(expectedFields);
     }
 
-    AComparableMessage(String messageType, JsonNode expectedMessage, int depth) {
-        this.depth = depth + 1;
-        this.expectedFields = extractExpectedFields(messageType, expectedMessage, this.depth);
-    }
-
-    private static List<Matcher<?>> extractExpectedFields(String messageType, JsonNode expectedMessage, int depth) {
-        List<Matcher<?>> expected = new ArrayList<>();
-        asMapOfJsonNameToField(expectedMessage).forEach((fieldName, expectedValue) -> {
-            switch (fieldName) {
-                // exception: error messages are platform specific
-                case "exception":
-                case "message":
-                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
-                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
-                    break;
-
-                // exception: the CCK uses relative paths as uris
-                case "uri":
-                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
-                    break;
-
-                // exception: the CCK expects source references with URIs but
-                // Java can only provide method and stack trace references.
-                case "sourceReference":
-                    expected.add(hasKey(is(fieldName)));
-                    break;
-
-                // exception: ids are not predictable
-                case "id":
-                    // exception: not yet implemented
-                    if ("testRunStarted".equals(messageType)) {
-                        expected.add(not(hasKey(fieldName)));
-                        break;
-                    }
-                case "pickleId":
-                case "astNodeId":
-                case "hookId":
-                case "pickleStepId":
-                case "testCaseId":
-                case "testStepId":
-                case "testCaseStartedId":
-                    expected.add(hasEntry(is(fieldName), isA(TextNode.class)));
-                    break;
-                // exception: not yet implemented
-                case "testRunStartedId":
-                    expected.add(not(hasKey(fieldName)));
-                    break;
-                // exception: protocolVersion can vary
-                case "protocolVersion":
-                    expected.add(hasEntry(is(fieldName), isA(TextNode.class)));
-                    break;
-                case "astNodeIds":
-                case "stepDefinitionIds":
-                    if (expectedValue instanceof ArrayNode) {
-                        ArrayNode expectedValues = (ArrayNode) expectedValue;
-                        if (expectedValues.isEmpty()) {
-                            expected.add(hasEntry(is(fieldName), emptyIterable()));
-                        } else {
-                            expected.add(hasEntry(is(fieldName), containsInRelativeOrder(isA(TextNode.class))));
-                        }
-                        break;
-                    }
-                    // exception: timestamps and durations are not predictable
-                case "timestamp":
-                case "duration":
-                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
-                    break;
-
-                // exception: Mata fields depend on the platform
-                case "implementation":
-                case "runtime":
-                case "os":
-                case "cpu":
-                    expected.add(hasEntry(is(fieldName), isA(expectedValue.getClass())));
-                    break;
-                case "ci":
-                    // exception: Absent when running locally, present in ci
-                    expected.add(
-                        anyOf(not(hasKey(is(fieldName))), hasEntry(is(fieldName),
-                            isA(expectedValue.getClass()))));
-                    break;
-                default:
-                    expected.add(hasEntry(is(fieldName), aComparableValue(messageType,
-                        expectedValue,
-                        depth)));
-            }
+    private Map<JsonPointer, Matcher<?>> createMatchers(Map<JsonPointer, JsonNode> expectedFields) {
+        Map<JsonPointer, Matcher<?>> expectedMatchers = new LinkedHashMap<>();
+        expectedFields.forEach((jsonPointer, node) -> {
+            Matcher<JsonNode> defaultValue = CoreMatchers.equalTo(node);
+            expectedMatchers.put(jsonPointer, findReplacement(jsonPointer, defaultValue));
         });
-        return expected;
+        return expectedMatchers;
     }
 
-    @SuppressWarnings("unchecked")
-    private static Matcher<?> aComparableValue(String messageType, Object value, int depth) {
-        if (value instanceof ObjectNode) {
-            JsonNode message = (JsonNode) value;
-            return new AComparableMessage(messageType, message, depth);
-        }
-
-        if (value instanceof ArrayNode) {
-            ArrayNode values = (ArrayNode) value;
-            Spliterator<JsonNode> spliterator = spliteratorUnknownSize(values.iterator(), 0);
-            List<Matcher<? super Object>> allComparableValues = stream(spliterator, false)
-                    .map(o -> aComparableValue(messageType, o, depth))
-                    .map(o -> (Matcher<? super Object>) o)
-                    .collect(Collectors.toList());
-            if (allComparableValues.isEmpty()) {
-                return emptyIterable();
+    private Matcher<?> findReplacement(JsonPointer jsonPointer, Matcher<JsonNode> defaultValue) {
+        for (Map.Entry<Pattern, Matcher<?>> entry : replacements.entrySet()) {
+            if (entry.getKey().matcher(jsonPointer.toString()).matches()) {
+                return entry.getValue();
             }
-            return contains(allComparableValues);
         }
+        return defaultValue;
+    }
 
-        if (value instanceof TextNode
-                || value instanceof NumericNode
-                || value instanceof BooleanNode) {
-            return CoreMatchers.is(value);
+    private Map<JsonPointer, JsonNode> extractFieldsAndPointers(JsonNode node) {
+        JsonPointer path = JsonPointer.empty();
+        return extractFieldsAndPointers(path, node);
+    }
+
+    private Map<JsonPointer, JsonNode> extractFieldsAndPointers(JsonPointer path, JsonNode node) {
+        if (node instanceof ObjectNode) {
+            return extractFieldsAndPointers(path, (ObjectNode) node);
         }
-        throw new IllegalArgumentException("Unsupported type " + value.getClass() +
-                ": " + value);
+        if (node instanceof ArrayNode) {
+            return extractFieldsAndPointers(path, (ArrayNode) node);
+        }
+        return Collections.singletonMap(path, node);
+    }
+
+    private Map<JsonPointer, JsonNode> extractFieldsAndPointers(JsonPointer path, ObjectNode node) {
+        Map<JsonPointer, JsonNode> expectedFields = new LinkedHashMap<>();
+        node.fieldNames().forEachRemaining(fieldName -> {
+            JsonNode field = node.get(fieldName);
+            JsonPointer fieldPath = path.appendProperty(fieldName);
+            expectedFields.putAll(extractFieldsAndPointers(fieldPath, field));
+        });
+        return expectedFields;
+    }
+
+    private Map<JsonPointer, JsonNode> extractFieldsAndPointers(JsonPointer path, ArrayNode node) {
+        Map<JsonPointer, JsonNode> expectedFields = new LinkedHashMap<>();
+        for (int i = 0, size = node.size(); i < size; i++) {
+            JsonNode element = node.get(i);
+            JsonPointer elementPath = path.appendIndex(i);
+            expectedFields.putAll(extractFieldsAndPointers(elementPath, element));
+        }
+        return expectedFields;
     }
 
     @Override
-    public void describeTo(Description description) {
-        StringBuilder padding = new StringBuilder();
-        for (int i = 0; i < depth + 1; i++) {
-            padding.append("\t");
-        }
-        description.appendList("\n" + padding, ",\n" + padding,
-            "\n", expectedFields);
-    }
+    protected boolean matchesSafely(JsonNode item, Description mismatchDescription) {
+        for (Map.Entry<JsonPointer, Matcher<?>> entry : expectedMatchers.entrySet()) {
+            JsonPointer pointer = entry.getKey();
+            Matcher<?> expected = entry.getValue();
+            JsonNode actual = item.at(pointer);
 
-    @Override
-    protected boolean matchesSafely(JsonNode actual, Description mismatchDescription) {
-        Map<String, Object> actualFields = asMapOfJsonNameToField(actual);
-        for (Matcher<?> expectedField : expectedFields) {
-            if (!expectedField.matches(actualFields)) {
-                expectedField.describeMismatch(actualFields, mismatchDescription);
+            if (!expected.matches(actual)) {
+                mismatchDescription
+                        .appendText(pointer.toString()).appendText(" ")
+                        .appendText(actual.toString()).appendText(" ");
+                // Copy and paste needed to suppress this finding.
+                System.out.printf("%s.put(Pattern.compile(\"%s\"),  isA(%s.class));%n", messageType, pointer,
+                    actual.getClass().getSimpleName());
                 return false;
             }
         }
         return true;
     }
 
-    private static Map<String, Object> asMapOfJsonNameToField(JsonNode envelope) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        envelope.fieldNames()
-                .forEachRemaining(jsonField -> {
-                    JsonNode value = envelope.get(jsonField);
-                    map.put(jsonField, value);
-                });
-        return map;
+    @Override
+    public void describeTo(Description description) {
+        description.appendValue(expectedMessage);
     }
 
+    @Override
+    public String toString() {
+        return "AComparableMessage{" +
+                "expectedMessage=" + expectedMessage +
+                ", messageType='" + messageType + '\'' +
+                ", replacements=" + replacements +
+                ", expectedFields=" + expectedFields +
+                ", expectedMatchers=" + expectedMatchers +
+                '}';
+    }
 }

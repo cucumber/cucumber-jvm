@@ -11,6 +11,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
+
+## [7.33.0] - 2025-12-09
+### Added
+- [Java] Add `Scenario.getLanguage()` to return the current language ([#3124](https://github.com/cucumber/cucumber-jvm/pull/3124) Stefan Gasterstädt)
+
+### Changed
+- [Core] Upload Cucumber Reports with Gzip encoding ([#3115](https://github.com/cucumber/cucumber-jvm/pull/3115))
+- [Core] Render the empty tag expression as an empty string ([#222](https://github.com/cucumber/tag-expressions/pull/222))
+- [Core] Update dependency io.cucumber:html-formatter to v22.2.0
+- [Core] Update dependency io.cucumber:tag-expressions to v8.1.0
+- [Core] Update dependency io.cucumber:cucumber-json-formatter to v0.3.2
+
+### Fixed
+- [Core] Improve error message for missing operands in tag expressions ([#221](https://github.com/cucumber/tag-expressions/pull/221))
+- [Core] Include empty scenarios and backgrounds in json report ([#34](https://github.com/cucumber/cucumber-json-formatter/pull/34))
+
+## [7.32.0] - 2025-11-21
+### Changed
+- [Core] Update dependency io.cucumber:gherkin to v36.1.0
+- [Core] Update dependency io.cucumber:html-formatter to v22.1.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter to v0.11.0
+- [Core] Update dependency io.cucumber:pretty-formatter to v2.4.1
+
+### Fixed
+- [Core] Add OS version to `Meta` message ([#3108](https://github.com/cucumber/cucumber-jvm/pull/3108))
+- [Core] Fix interpolated data tables and doc string arguments in Json report ([#29](https://github.com/cucumber/cucumber-json-formatter/pull/29))
+
 ## [7.31.0] - 2025-10-27
 ### Added
 - [Core] Add a `UsageJsonFormatter`, use with `--plugin usage-json` ([#3086](https://github.com/cucumber/cucumber-jvm/pull/3086) M.P. Korstanje)
@@ -542,7 +571,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...HEAD
+[7.33.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.32.0...v7.33.0
+[7.32.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...v7.32.0
 [7.31.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...v7.31.0
 [7.30.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.29.0...v7.30.0
 [7.29.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.28.2...v7.29.0

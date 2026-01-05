@@ -2,41 +2,26 @@ package io.cucumber.compatibility;
 
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
+import org.junit.platform.commons.io.Resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Comparator.comparing;
 
 final class TestCase {
 
-    private static final String FEATURES_DIRECTORY = "src/test/resources/features";
-    private static final String FEATURES_PACKAGE = "io.cucumber.compatibility";
+    static final String TEST_CASES_PACKAGE = "io.cucumber.compatibilitykit";
+    static final String GLUE_PACKAGE = "io.cucumber.compatibility";
 
     private final String id;
+    private final String testCaseResourceName;
+    private final Resource expected;
 
-    private TestCase(String id) {
-        this.id = id;
-    }
-
-    static List<TestCase> testCases() throws IOException {
-        List<TestCase> testCases = new ArrayList<>();
-        Path dir = Paths.get(FEATURES_DIRECTORY);
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-            for (Path path : stream) {
-                if (path.toFile().isDirectory()) {
-                    testCases.add(new TestCase(path.getFileName().toString()));
-                }
-            }
-        }
-        testCases.sort(comparing(TestCase::getId));
-        return testCases;
+    TestCase(Resource expected) {
+        this.expected = expected;
+        String expectedResourceName = expected.getName();
+        this.testCaseResourceName = expectedResourceName.substring(0, expectedResourceName.lastIndexOf('/'));
+        this.id = testCaseResourceName.substring(testCaseResourceName.lastIndexOf('/') + 1);
     }
 
     String getId() {
@@ -44,15 +29,15 @@ final class TestCase {
     }
 
     URI getGlue() {
-        return GluePath.parse(FEATURES_PACKAGE + "." + id.replace("-", ""));
+        return GluePath.parse(GLUE_PACKAGE + "." + id.replace("-", ""));
     }
 
     FeatureWithLines getFeatures() {
-        return FeatureWithLines.parse("file:" + FEATURES_DIRECTORY + "/" + id);
+        return FeatureWithLines.parse("classpath:" + testCaseResourceName);
     }
 
-    Path getExpectedFile() {
-        return Paths.get(FEATURES_DIRECTORY + "/" + id + "/" + id + ".ndjson");
+    InputStream getExpectedFile() throws IOException {
+        return expected.getInputStream();
     }
 
     @Override

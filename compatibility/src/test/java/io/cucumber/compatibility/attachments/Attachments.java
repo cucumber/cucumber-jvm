@@ -5,9 +5,8 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.When;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import static io.cucumber.compatibility.Resources.read;
 
 public class Attachments {
 
@@ -50,8 +49,7 @@ public class Attachments {
 
     @When("a PDF document is attached and renamed")
     public void aPDFDocumentIsAttachedAndRenamed() throws IOException {
-        Path path = Paths.get("src/test/resources/features/attachments/document.pdf");
-        byte[] bytes = Files.readAllBytes(path);
+        byte[] bytes = read("/io/cucumber/compatibilitykit/features/attachments/document.pdf");
         scenario.attach(bytes, "application/pdf", "renamed.pdf");
     }
 
@@ -59,5 +57,4 @@ public class Attachments {
     public void aLinkToIsAttached(String uri) {
         scenario.attach(uri, "text/uri-list", null);
     }
-
 }

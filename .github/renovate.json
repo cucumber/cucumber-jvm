@@ -7,7 +7,7 @@
     {
       "groupName": "Messages and dependants",
       "matchPackageNames": [
-        "/io.cucumber:(messages|gherkin|query|html-formatter|junit-xml-formatter|testng-xml-formatter|pretty-formatter|cucumber-json-formatter)/"
+        "/io.cucumber:(messages|gherkin|query|html-formatter|junit-xml-formatter|testng-xml-formatter|pretty-formatter|cucumber-json-formatter|compatibility-kit)/"
       ]
     }
   ]

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPOutputStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.newOutputStream;
@@ -91,6 +92,7 @@ class UrlOutputStream extends OutputStream {
                 sendRequest(option.getProxy(), new URL(location), CurlOption.HttpMethod.PUT, false);
             }
         } else {
+            urlConnection.setRequestProperty("Content-Encoding", "gzip");
             urlConnection.setDoOutput(true);
             sendRequestBody(urlConnection, requestHeaders, temp);
             getResponseBody(urlConnection, requestHeaders);
@@ -109,7 +111,7 @@ class UrlOutputStream extends OutputStream {
     private static void sendRequestBody(
             HttpURLConnection urlConnection, Map<String, List<String>> requestHeaders, Path requestBody
     ) throws IOException {
-        try (OutputStream outputStream = urlConnection.getOutputStream()) {
+        try (OutputStream outputStream = new GZIPOutputStream(urlConnection.getOutputStream())) {
             Files.copy(requestBody, outputStream);
         } catch (IOException e) {
             String method = urlConnection.getRequestMethod();

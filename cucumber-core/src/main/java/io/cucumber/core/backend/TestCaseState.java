@@ -99,6 +99,13 @@ public interface TestCaseState {
     URI getUri();
 
     /**
+     * Returns the language of the Scenario.
+     * 
+     * @return the language of the Scenario.
+     */
+    String getLanguage();
+
+    /**
      * Returns the line in the feature file of the Scenario.
      * <p>
      * If this is a Scenario from Scenario Outlines this will return the line of
