@@ -9,6 +9,7 @@
 
     <properties>
         <junit-jupiter.version>5.14.1</junit-jupiter.version>
+        <project.rootdir>${project.basedir}/..</project.rootdir>
     </properties>
 
     <artifactId>cucumber-gherkin-messages</artifactId>

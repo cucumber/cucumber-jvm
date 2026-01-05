@@ -16,7 +16,8 @@
         <guice.version>7.0.0</guice.version>
         <hamcrest.version>3.0</hamcrest.version>
         <junit-jupiter.version>5.14.1</junit-jupiter.version>
-        <mockito.version>5.20.0</mockito.version>
+        <mockito.version>5.21.0</mockito.version>
+        <project.rootdir>${project.basedir}/..</project.rootdir>
     </properties>
 
     <dependencyManagement>

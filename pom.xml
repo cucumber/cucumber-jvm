@@ -16,6 +16,7 @@
 
     <properties>
         <project.build.outputTimestamp>1766076852</project.build.outputTimestamp>
+        <project.rootdir>${project.basedir}</project.rootdir>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -199,24 +200,7 @@
                         </groups>
                     </configuration>
                 </plugin>
-
-                <!-- Determine project root for revapi and spotless  -->
-                <plugin>
-                    <groupId>org.commonjava.maven.plugins</groupId>
-                    <artifactId>directory-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>directories</id>
-                            <goals>
-                                <goal>highest-basedir</goal>
-                            </goals>
-                            <phase>initialize</phase>
-                            <configuration>
-                                <property>main.basedir</property>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+                
                 <!-- Semantic version check  -->
                 <plugin>
                     <groupId>org.revapi</groupId>
@@ -255,7 +239,7 @@
                         </analysisConfiguration>
                         <analysisConfigurationFiles>
                             <configurationFile>
-                                <path>${main.basedir}/.revapi/api-changes.json</path>
+                                <path>${project.rootdir}/.revapi/api-changes.json</path>
                                 <roots>
                                     <root>7.0.0</root>
                                     <root>7.2.0</root>
@@ -276,10 +260,10 @@
                     <configuration>
                         <java>
                             <eclipse>
-                                <file>${main.basedir}/.spotless/eclipse-formatter-settings.xml</file>
+                                <file>${project.rootdir}/.spotless/eclipse-formatter-settings.xml</file>
                             </eclipse>
                             <importOrder>
-                                <file>${main.basedir}/.spotless/intellij-idea.importorder</file>
+                                <file>${project.rootdir}/.spotless/intellij-idea.importorder</file>
                             </importOrder>
                         </java>
                     </configuration>

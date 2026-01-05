@@ -18,6 +18,7 @@
         <cdi-api.version>2.0.SP1</cdi-api.version>
         <deltaspike.version>1.9.6</deltaspike.version>
         <junit-jupiter.version>5.14.1</junit-jupiter.version>
+        <project.rootdir>${project.basedir}/..</project.rootdir>
     </properties>
 
     <dependencyManagement>
