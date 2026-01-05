@@ -13,6 +13,7 @@
     <name>Cucumber-JVM: Bill of Materials</name>
 
     <properties>
+        <project.rootdir>${project.basedir}/..</project.rootdir>
         <ci-environment.version>12.0.0</ci-environment.version>
         <cucumber-expressions.version>18.0.1</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.3.2</cucumber-json-formatter.version>
