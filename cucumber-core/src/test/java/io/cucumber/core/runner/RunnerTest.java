@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -14,11 +15,11 @@ import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InOrder;
 
 import java.net.URI;
 import java.time.Clock;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,53 +29,33 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RunnerTest {
 
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-
     @Test
     void hooks_execute_inside_world_and_around_world() {
-        StaticHookDefinition beforeAllHook = createStaticHook();
-        StaticHookDefinition afterAllHook = createStaticHook();
-        HookDefinition beforeHook = createHook();
-        HookDefinition afterHook = createHook();
+        List<String> listener = new ArrayList<>();
+        StaticHookDefinition beforeAllHook = new MockStaticHookDefinition("beforeAllHook", listener);
+        StaticHookDefinition afterAllHook = new MockStaticHookDefinition("afterAllHook", listener);
+        HookDefinition beforeHook = new MockHookDefinition("beforeHook", listener);
+        HookDefinition afterHook = new MockHookDefinition("afterHook", listener);
 
-        Backend backend = mock(Backend.class);
-        when(backend.getSnippet()).thenReturn(new TestSnippet());
-        ObjectFactory objectFactory = mock(ObjectFactory.class);
-        doAnswer(invocation -> {
-            Glue glue = invocation.getArgument(0);
-            glue.addBeforeAllHook(beforeAllHook);
-            glue.addAfterAllHook(afterAllHook);
-            glue.addBeforeHook(beforeHook);
-            glue.addAfterHook(afterHook);
-            return null;
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
+        Backend backend = new MockBackend(beforeAllHook, afterAllHook, beforeHook, afterHook, listener);
+        ObjectFactory objectFactory = new MockObjectFactory();
 
         Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runBeforeAllHooks();
         runner.runPickle(createPicklesWithSteps());
         runner.runAfterAllHooks();
 
-        InOrder inOrder = inOrder(beforeAllHook, afterAllHook, beforeHook, afterHook, backend);
-        inOrder.verify(beforeAllHook).execute();
-        inOrder.verify(backend).buildWorld();
-        inOrder.verify(beforeHook).execute(any(TestCaseState.class));
-        inOrder.verify(afterHook).execute(any(TestCaseState.class));
-        inOrder.verify(backend).disposeWorld();
-        inOrder.verify(afterAllHook).execute();
+        assertLinesMatch(
+            List.of("beforeAllHook", "buildWorld", "beforeHook", "afterHook", "disposeWorld", "afterAllHook"),
+            listener);
     }
 
     private Pickle createPicklesWithSteps() {
@@ -85,26 +66,14 @@ class RunnerTest {
         return feature.getPickles().get(0);
     }
 
-    private StaticHookDefinition createStaticHook() {
-        StaticHookDefinition hook = mock(StaticHookDefinition.class);
-        when(hook.getLocation()).thenReturn("");
-        return hook;
-    }
-
-    private HookDefinition createHook() {
-        HookDefinition hook = mock(HookDefinition.class);
-        when(hook.getTagExpression()).thenReturn("");
-        when(hook.getLocation()).thenReturn("");
-        return hook;
-    }
-
     @Test
     void steps_are_skipped_after_failure() {
-        StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step"));
+        List<String> listener = new ArrayList<>();
+        StubStepDefinition stepDefinition = new MockStubStepDefinition(listener);
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
-        final HookDefinition failingBeforeHook = createHook();
-        doThrow(new RuntimeException("Boom")).when(failingBeforeHook).execute(ArgumentMatchers.any());
+        final HookDefinition failingBeforeHook = new MockHookDefinition("beforeHook", listener,
+            new RuntimeException("Boom"));
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -115,9 +84,7 @@ class RunnerTest {
 
         runnerSupplier.get().runPickle(pickleMatchingStepDefinitions);
 
-        InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
-        inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class));
-        inOrder.verify(stepDefinition, never()).execute(any(Object[].class));
+        assertLinesMatch(List.of("beforeHook"), listener);
     }
 
     private Pickle createPickleMatchingStepDefinitions(StubStepDefinition stepDefinition) {
@@ -131,18 +98,11 @@ class RunnerTest {
 
     @Test
     void aftersteps_are_executed_after_failed_step() {
-        StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step") {
-
-            @Override
-            public void execute(Object[] args) {
-                super.execute(args);
-                throw new RuntimeException();
-            }
-        });
-
+        List<String> listener = new ArrayList<>();
+        StubStepDefinition stepDefinition = new MockStubStepDefinition(listener, new RuntimeException());
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
-        final HookDefinition afterStepHook = createHook();
+        final HookDefinition afterStepHook = new MockHookDefinition("afterHook", listener);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -154,18 +114,17 @@ class RunnerTest {
 
         runnerSupplier.get().runPickle(pickleMatchingStepDefinitions);
 
-        InOrder inOrder = inOrder(afterStepHook, stepDefinition);
-        inOrder.verify(stepDefinition).execute(any(Object[].class));
-        inOrder.verify(afterStepHook).execute(any(TestCaseState.class));
+        assertLinesMatch(List.of("stepDefinition", "afterHook"), listener);
     }
 
     @Test
     void aftersteps_executed_for_passed_step() {
-        StubStepDefinition stepDefinition = spy(new StubStepDefinition("some step"));
+        List<String> listener = new ArrayList<>();
+        StubStepDefinition stepDefinition = new MockStubStepDefinition(listener);
         Pickle pickle = createPickleMatchingStepDefinitions(stepDefinition);
 
-        HookDefinition afteStepHook1 = createHook();
-        HookDefinition afteStepHook2 = createHook();
+        HookDefinition afteStepHook1 = new MockHookDefinition("afterHook1", listener);
+        HookDefinition afteStepHook2 = new MockHookDefinition("afterHook2", listener);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -178,19 +137,18 @@ class RunnerTest {
 
         runnerSupplier.get().runPickle(pickle);
 
-        InOrder inOrder = inOrder(afteStepHook1, afteStepHook2, stepDefinition);
-        inOrder.verify(stepDefinition).execute(any(Object[].class));
-        inOrder.verify(afteStepHook2).execute(any(TestCaseState.class));
-        inOrder.verify(afteStepHook1).execute(any(TestCaseState.class));
+        assertLinesMatch(List.of("stepDefinition", "afterHook2", "afterHook1"), listener);
     }
 
     @Test
     void hooks_execute_also_after_failure() {
-        HookDefinition beforeHook = createHook();
-        HookDefinition afterHook = createHook();
+        List<String> listener = new ArrayList<>();
+        HookDefinition beforeHook = new MockHookDefinition("beforeHook", listener);
+        HookDefinition afterHook = new MockHookDefinition("afterHook", listener);
+        ;
 
-        HookDefinition failingBeforeHook = createHook();
-        doThrow(new RuntimeException("boom")).when(failingBeforeHook).execute(any(TestCaseState.class));
+        HookDefinition failingBeforeHook = new MockHookDefinition("failingBeforeHook", listener,
+            new RuntimeException("boom"));
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -203,17 +161,15 @@ class RunnerTest {
 
         runnerSupplier.get().runPickle(createPicklesWithSteps());
 
-        InOrder inOrder = inOrder(failingBeforeHook, beforeHook, afterHook);
-        inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class));
-        inOrder.verify(beforeHook).execute(any(TestCaseState.class));
-        inOrder.verify(afterHook).execute(any(TestCaseState.class));
+        assertLinesMatch(List.of("failingBeforeHook", "beforeHook", "afterHook"), listener);
     }
 
     @Test
     void all_static_hooks_execute_also_after_failure() {
-        StaticHookDefinition beforeAllHook = createStaticHook();
-        StaticHookDefinition failingBeforeAllHook = createStaticHook();
-        doThrow(new RuntimeException("boom")).when(failingBeforeAllHook).execute();
+        List<String> listener = new ArrayList<>();
+        StaticHookDefinition beforeAllHook = new MockStaticHookDefinition("beforeAllHook", listener);
+        StaticHookDefinition failingBeforeAllHook = new MockStaticHookDefinition("failingBeforeAllHook", listener,
+            new RuntimeException("boom"));
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -226,9 +182,7 @@ class RunnerTest {
         Runner runner = runnerSupplier.get();
         assertThrows(RuntimeException.class, runner::runBeforeAllHooks);
 
-        InOrder inOrder = inOrder(beforeAllHook, failingBeforeAllHook);
-        inOrder.verify(beforeAllHook).execute();
-        inOrder.verify(failingBeforeAllHook).execute();
+        assertLinesMatch(List.of("beforeAllHook", "failingBeforeAllHook"), listener);
     }
 
     @Test
@@ -265,12 +219,13 @@ class RunnerTest {
     void hooks_not_executed_in_dry_run_mode() {
         RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
 
-        StaticHookDefinition beforeAllHook = createStaticHook();
-        StaticHookDefinition afterAllHook = createStaticHook();
-        HookDefinition beforeHook = createHook();
-        HookDefinition afterHook = createHook();
-        HookDefinition beforeStepHook = createHook();
-        HookDefinition afterStepHook = createHook();
+        List<String> listener = new ArrayList<>();
+        StaticHookDefinition beforeAllHook = new MockStaticHookDefinition("beforeAllHook", listener);
+        StaticHookDefinition afterAllHook = new MockStaticHookDefinition("afterAllHook", listener);
+        HookDefinition beforeHook = new MockHookDefinition("beforeHook", listener);
+        HookDefinition afterHook = new MockHookDefinition("afterHook", listener);
+        HookDefinition beforeStepHook = new MockHookDefinition("beforeStepHook", listener);
+        HookDefinition afterStepHook = new MockHookDefinition("afterStepHook", listener);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
@@ -288,20 +243,16 @@ class RunnerTest {
         runnerSupplier.get().runPickle(createPicklesWithSteps());
         runnerSupplier.get().runAfterAllHooks();
 
-        verify(beforeAllHook, never()).execute();
-        verify(afterAllHook, never()).execute();
-        verify(beforeHook, never()).execute(any(TestCaseState.class));
-        verify(afterHook, never()).execute(any(TestCaseState.class));
-        verify(beforeStepHook, never()).execute(any(TestCaseState.class));
-        verify(afterStepHook, never()).execute(any(TestCaseState.class));
+        assertLinesMatch(Collections.emptyList(), listener);
     }
 
     @Test
     void scenario_hooks_not_executed_for_empty_pickles() {
-        HookDefinition beforeHook = createHook();
-        HookDefinition afterHook = createHook();
-        HookDefinition beforeStepHook = createHook();
-        HookDefinition afterStepHook = createHook();
+        List<String> listener = new ArrayList<>();
+        HookDefinition beforeHook = new MockHookDefinition("beforeHook", listener);
+        HookDefinition afterHook = new MockHookDefinition("afterHook", listener);
+        HookDefinition beforeStepHook = new MockHookDefinition("beforeStepHook", listener);
+        HookDefinition afterStepHook = new MockHookDefinition("afterStepHook", listener);
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
@@ -316,9 +267,7 @@ class RunnerTest {
 
         runnerSupplier.get().runPickle(createEmptyPickle());
 
-        verify(beforeHook, never()).execute(any(TestCaseState.class));
-        verify(afterStepHook, never()).execute(any(TestCaseState.class));
-        verify(afterHook, never()).execute(any(TestCaseState.class));
+        assertLinesMatch(Collections.emptyList(), listener);
     }
 
     private Pickle createEmptyPickle() {
@@ -330,12 +279,192 @@ class RunnerTest {
 
     @Test
     void backends_are_asked_for_snippets_for_undefined_steps() {
-        Backend backend = mock(Backend.class);
-        when(backend.getSnippet()).thenReturn(new TestSnippet());
-        ObjectFactory objectFactory = mock(ObjectFactory.class);
+        List<String> listener = new ArrayList<>();
+        MockBackend backend = new MockBackend(null, null, null, null, listener);
+        ObjectFactory objectFactory = new MockObjectFactory();
         Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runPickle(createPicklesWithSteps());
-        verify(backend).getSnippet();
+        assertTrue(backend.getSnippetCalled);
     }
 
+    private static class MockBackend implements Backend {
+        private final StaticHookDefinition beforeAllHook;
+        private final StaticHookDefinition afterAllHook;
+        private final HookDefinition beforeHook;
+        private final HookDefinition afterHook;
+        private final List<String> listener;
+        boolean getSnippetCalled;
+
+        public MockBackend(
+                StaticHookDefinition beforeAllHook, StaticHookDefinition afterAllHook,
+                HookDefinition beforeHook, HookDefinition afterHook, List<String> listener
+        ) {
+            this.beforeAllHook = beforeAllHook;
+            this.afterAllHook = afterAllHook;
+            this.beforeHook = beforeHook;
+            this.afterHook = afterHook;
+            this.listener = listener;
+        }
+
+        @Override
+        public void loadGlue(Glue glue, List<URI> gluePaths) {
+            if (beforeAllHook != null) {
+                glue.addBeforeAllHook(beforeAllHook);
+            }
+            if (afterAllHook != null) {
+                glue.addAfterAllHook(afterAllHook);
+            }
+            if (beforeHook != null) {
+                glue.addBeforeHook(beforeHook);
+            }
+            if (afterHook != null) {
+                glue.addAfterHook(afterHook);
+            }
+        }
+
+        @Override
+        public void buildWorld() {
+            listener.add("buildWorld");
+        }
+
+        @Override
+        public void disposeWorld() {
+            listener.add("disposeWorld");
+        }
+
+        @Override
+        public Snippet getSnippet() {
+            getSnippetCalled = true;
+            return new TestSnippet();
+        }
+    }
+
+    private static class MockObjectFactory implements ObjectFactory {
+        @Override
+        public boolean addClass(Class<?> glueClass) {
+            return false;
+        }
+
+        @Override
+        public <T> T getInstance(Class<T> glueClass) {
+            return null;
+        }
+
+        @Override
+        public void start() {
+
+        }
+
+        @Override
+        public void stop() {
+
+        }
+    }
+
+    private static class MockStaticHookDefinition implements StaticHookDefinition {
+        private final String hookName;
+        private final List<String> listener;
+        private final RuntimeException exception;
+
+        public MockStaticHookDefinition(String hookName, List<String> listener) {
+            this(hookName, listener, null);
+        }
+
+        public MockStaticHookDefinition(String hookName, List<String> listener, RuntimeException exception) {
+            this.hookName = hookName;
+            this.listener = listener;
+            this.exception = exception;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return "";
+        }
+
+        @Override
+        public void execute() {
+            listener.add(hookName);
+            if (exception != null) {
+                throw exception;
+            }
+        }
+
+        @Override
+        public int getOrder() {
+            return 0;
+        }
+    }
+
+    private static class MockHookDefinition implements HookDefinition {
+        private final String hookName;
+        private final List<String> listener;
+        private final RuntimeException exception;
+
+        public MockHookDefinition(String hookName, List<String> listener) {
+            this(hookName, listener, null);
+        }
+
+        public MockHookDefinition(String hookName, List<String> listener, RuntimeException exception) {
+            this.hookName = hookName;
+            this.listener = listener;
+            this.exception = exception;
+        }
+
+        @Override
+        public void execute(io.cucumber.core.backend.TestCaseState state) {
+            listener.add(hookName);
+            if (exception != null) {
+                throw exception;
+            }
+        }
+
+        @Override
+        public String getTagExpression() {
+            return "";
+        }
+
+        @Override
+        public int getOrder() {
+            return 0;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return "";
+        }
+    }
+
+    private static class MockStubStepDefinition extends StubStepDefinition {
+        private final List<String> listener;
+        private final RuntimeException exception;
+
+        MockStubStepDefinition(List<String> listener) {
+            this(listener, null);
+        }
+
+        MockStubStepDefinition(List<String> listener, RuntimeException exception) {
+            super("some step");
+            this.listener = listener;
+            this.exception = exception;
+        }
+
+        @Override
+        public void execute(Object[] args) {
+            super.execute(args);
+            listener.add("stepDefinition");
+            if (exception != null) {
+                throw exception;
+            }
+        }
+    }
 }
