@@ -33,7 +33,8 @@ class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefiniti
                 .collect(toList());
     }
 
-    @Nullable String replaceEmptyPatternsWithEmptyString(@Nullable String t) {
+    @Nullable
+    String replaceEmptyPatternsWithEmptyString(@Nullable String t) {
         for (String emptyPattern : emptyPatterns) {
             if (emptyPattern.equals(t)) {
                 return "";
@@ -66,8 +67,8 @@ class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefiniti
             }
         }
         return new IllegalArgumentException(
-                "After replacing %s and %s with empty strings the datatable entry contains duplicate keys: %s"
-                .formatted(conflict.get(0), conflict.get(1), fromValue));
+            "After replacing %s and %s with empty strings the datatable entry contains duplicate keys: %s"
+                    .formatted(conflict.get(0), conflict.get(1), fromValue));
     }
 
 }

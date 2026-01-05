@@ -6,7 +6,7 @@ import io.cucumber.cucumberexpressions.ParameterType;
 
 import java.util.Collections;
 
-class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
+final class Java8ParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
 
     private final ParameterType<?> parameterType;
 

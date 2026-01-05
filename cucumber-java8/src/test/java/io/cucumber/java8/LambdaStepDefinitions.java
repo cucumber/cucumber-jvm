@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.datatable.DataTable;
+import org.jspecify.annotations.Nullable;
 import org.opentest4j.TestAbortedException;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LambdaStepDefinitions implements io.cucumber.java8.En {
 
-    private static LambdaStepDefinitions lastInstance;
+    private static @Nullable LambdaStepDefinitions lastInstance;
 
     private final int outside = 41;
 
@@ -27,7 +28,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
             return person;
         });
 
-        ParameterType("optional", "[a-z]*", args -> Optional.of(args));
+        ParameterType("optional", "[a-z]*", Optional::of);
 
         Before((Scenario scenario) -> {
             assertNotSame(this, lastInstance);
@@ -128,9 +129,11 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
         assertEquals(42, cuckes.intValue());
     }
 
-    public static class Person {
+    public static final class Person {
 
+        @Nullable
         String first;
+        @Nullable
         String last;
 
     }

@@ -13,10 +13,10 @@ import java.util.UUID;
 
 final class TestFeatureParser {
 
-    private TestFeatureParser(){
+    private TestFeatureParser() {
         /* no-op */
     }
-    
+
     static Feature parse(final String source) {
         return parse("file:test.feature", source);
     }
@@ -37,7 +37,7 @@ final class TestFeatureParser {
                 return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
             }
 
-        }).orElse(null);
+        }).orElseThrow();
     }
 
 }

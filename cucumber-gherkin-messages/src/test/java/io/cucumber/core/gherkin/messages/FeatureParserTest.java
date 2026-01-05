@@ -113,8 +113,8 @@ class FeatureParserTest {
             DocStringArgument argument0 = (DocStringArgument) requireNonNull(steps.get(0).getArgument());
             DocStringArgument argument1 = (DocStringArgument) requireNonNull(steps.get(1).getArgument());
             assertAll(() -> {
-                assertNull(argument0.getContentType());
-                assertEquals("text/plain", argument1.getContentType());
+                assertNull(argument0.getMediaType());
+                assertEquals("text/plain", argument1.getMediaType());
             });
         }
     }

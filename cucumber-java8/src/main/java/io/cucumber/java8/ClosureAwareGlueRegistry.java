@@ -35,10 +35,11 @@ final class ClosureAwareGlueRegistry implements LambdaGlueRegistry {
         if (expectedRegistrations < 0) {
             expectedRegistrations = registered;
         } else if (expectedRegistrations != registered) {
-            throw new CucumberBackendException(String.format("""
-                            Found an inconsistent number of glue registrations.
-                            Previously %s step definitions, hooks and parameter types were registered. Currently %s.
-                            To optimize performance Cucumber expects glue registration to be identical for each scenario and example.""",
+            throw new CucumberBackendException(String.format(
+                """
+                        Found an inconsistent number of glue registrations.
+                        Previously %s step definitions, hooks and parameter types were registered. Currently %s.
+                        To optimize performance Cucumber expects glue registration to be identical for each scenario and example.""",
                 expectedRegistrations, registered));
         }
     }
@@ -126,10 +127,11 @@ final class ClosureAwareGlueRegistry implements LambdaGlueRegistry {
             AbstractGlueDefinition existing, AbstractGlueDefinition candidate
     ) {
         if (!existing.getClass().equals(candidate.getClass())) {
-            throw new CucumberBackendException(String.format("""
-                            Found an inconsistent glue registrations.
-                            Previously the registration in slot %s was a '%s'. Currently '%s'.
-                            To optimize performance Cucumber expects glue registration to be identical for each scenario and example.""",
+            throw new CucumberBackendException(String.format(
+                """
+                        Found an inconsistent glue registrations.
+                        Previously the registration in slot %s was a '%s'. Currently '%s'.
+                        To optimize performance Cucumber expects glue registration to be identical for each scenario and example.""",
                 registered, existing.getClass().getName(), candidate.getClass().getName()));
         }
     }

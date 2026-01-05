@@ -13,6 +13,7 @@ final class Java8ParameterInfo implements ParameterInfo {
         this.typeResolver = typeResolver;
     }
 
+    @Override
     public Type getType() {
         return typeResolver.getType();
     }

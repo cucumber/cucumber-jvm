@@ -10,11 +10,13 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import org.hamcrest.CustomTypeSafeMatcher;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 final class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
@@ -26,6 +28,8 @@ final class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
         LambdaGlueRegistry.INSTANCE.set(myLambdaGlueRegistry);
         new SomeLambdaStepDefs();
         final StepDefinition stepDefinition = myLambdaGlueRegistry.getStepDefinition();
+
+        assertNotNull(stepDefinition);
 
         CucumberInvocationTargetException exception = assertThrows(CucumberInvocationTargetException.class,
             () -> stepDefinition.execute(new Object[0]));
@@ -45,7 +49,7 @@ final class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
     private static final class MyLambdaGlueRegistry implements LambdaGlueRegistry {
 
-        private StepDefinition stepDefinition;
+        private @Nullable StepDefinition stepDefinition;
 
         @Override
         public void addStepDefinition(StepDefinition stepDefinition) {
@@ -106,6 +110,7 @@ final class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
         }
 
+        @Nullable
         StepDefinition getStepDefinition() {
             return stepDefinition;
         }

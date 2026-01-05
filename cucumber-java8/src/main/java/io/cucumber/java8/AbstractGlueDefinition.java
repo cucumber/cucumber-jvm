@@ -93,7 +93,8 @@ abstract class AbstractGlueDefinition implements Located {
         Class<?>[] rawArguments = TypeResolver.resolveRawArguments(bodyClass, body);
         for (Class<?> aClass : rawArguments) {
             if (TypeResolver.Unknown.class.equals(aClass)) {
-                throw new IllegalStateException("Could resolve the return type of the lambda at %s:%d".formatted(location.getFileName(), location.getLineNumber()));
+                throw new IllegalStateException("Could resolve the return type of the lambda at %s:%d"
+                        .formatted(location.getFileName(), location.getLineNumber()));
             }
         }
         return rawArguments;

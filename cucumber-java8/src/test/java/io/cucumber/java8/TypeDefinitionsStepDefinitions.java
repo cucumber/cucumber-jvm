@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@SuppressWarnings("UnnecessaryStringBuilder")
 public class TypeDefinitionsStepDefinitions implements En {
 
     public TypeDefinitionsStepDefinitions() {
@@ -21,8 +23,10 @@ public class TypeDefinitionsStepDefinitions implements En {
             (StringBuilder builder) -> assertThat(builder.getClass(), equalTo(StringBuilder.class)));
         DocStringType("doc", (String docString) -> new StringBuilder(docString));
 
-        DataTableType((Map<String, String> entry) -> new Author(entry.get("name"), entry.get("surname"),
-            entry.get("famousBook")));
+        DataTableType((Map<String, String> entry) -> new Author(
+            requireNonNull(entry.get("name")),
+            requireNonNull(entry.get("surname")),
+            requireNonNull(entry.get("famousBook"))));
 
         DataTableType((List<String> row) -> new Book(row.get(0), row.get(1)));
 
@@ -190,7 +194,8 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof Book book)) return false;
+            if (!(o instanceof Book book))
+                return false;
             return Objects.equals(name, book.name) && Objects.equals(mainCharacter, book.mainCharacter);
         }
 
@@ -219,7 +224,8 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof Cell cell)) return false;
+            if (!(o instanceof Cell cell))
+                return false;
             return Objects.equals(name, cell.name);
         }
 
@@ -255,7 +261,8 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof Literature that)) return false;
+            if (!(o instanceof Literature that))
+                return false;
             return Objects.equals(types, that.types) && Objects.equals(characters, that.characters);
         }
 

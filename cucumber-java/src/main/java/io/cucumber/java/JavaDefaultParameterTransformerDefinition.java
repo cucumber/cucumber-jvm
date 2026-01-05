@@ -42,7 +42,7 @@ final class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefini
         return method;
     }
 
-    private Object execute(@Nullable String fromValue, Type toValueType) {
+    private @Nullable Object execute(@Nullable String fromValue, Type toValueType) {
         return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 

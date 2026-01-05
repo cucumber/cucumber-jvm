@@ -9,6 +9,9 @@ module io.cucumber.java {
     requires transitive org.apiguardian.api;
 
     requires io.cucumber.core;
+
+    exports io.cucumber.java;
+    
     provides BackendProviderService
             with JavaBackendProviderService;
 
