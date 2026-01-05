@@ -7,5 +7,5 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @IncludeEngines("cucumber")
 @SelectPackages("io.cucumber.cdi2.example")
-public final class RunCucumberTest {
+final class RunCucumberTest {
 }

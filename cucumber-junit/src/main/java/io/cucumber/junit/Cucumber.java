@@ -57,7 +57,7 @@ import static java.util.stream.Collectors.toList;
  * <pre>
  * @RunWith(Cucumber.class)
  * @CucumberOptions(plugin = "pretty")
- * public class RunCucumberTest {
+ * final class RunCucumberTest {
  * }
  * </pre>
  * 

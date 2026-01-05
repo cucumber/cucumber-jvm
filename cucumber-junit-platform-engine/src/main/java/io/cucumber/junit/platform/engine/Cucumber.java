@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  *             @ConfigurationParameter(
  *             key = GLUE_PROPERTY_NAME,
  *             value = "com.example")
- *             public class RunCucumberTest {
+ *             final class RunCucumberTest {
  *             }
  * }</pre>
  * 
