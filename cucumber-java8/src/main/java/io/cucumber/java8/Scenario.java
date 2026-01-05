@@ -26,6 +26,8 @@ public final class Scenario {
     }
 
     /**
+     * Returns tags of this scenario.
+     *
      * @return tags of this scenario.
      */
     public Collection<String> getSourceTagNames() {
@@ -33,19 +35,24 @@ public final class Scenario {
     }
 
     /**
-     * Returns the current status of this test case.
+     * Returns the current status of this scenario.
      * <p>
-     * The test case status is calculate as the most severe status of the
-     * executed steps in the testcase so far.
+     * The scenario status is calculate as the most severe status of the
+     * executed steps in the scenario so far.
      *
-     * @return the current status of this test case
+     * @return the current status of this scenario
      */
     public Status getStatus() {
         return Status.valueOf(delegate.getStatus().name());
     }
 
     /**
-     * @return true if and only if {@link #getStatus()} returns "failed"
+     * Returns true the scenario has failed.
+     * <p>
+     * The scenario has failed if {@link #getStatus()} returns
+     * {@link Status#FAILED}.
+     * 
+     * @return true if the scenario failed.
      */
     public boolean isFailed() {
         return delegate.isFailed();
@@ -53,7 +60,7 @@ public final class Scenario {
 
     /**
      * Attach data to the report(s).
-     * 
+     *
      * <pre>
      * {@code
      * // Attach a screenshot. See your UI automation tool's docs for
@@ -79,6 +86,8 @@ public final class Scenario {
     }
 
     /**
+     * Attaches some text based data to the report.
+     *
      * @param data      what to attach, for example html.
      * @param mediaType what is the data?
      * @param name      attachment name
@@ -99,6 +108,8 @@ public final class Scenario {
     }
 
     /**
+     * Return the name of the Scenario
+     * 
      * @return the name of the Scenario
      */
     public String getName() {
@@ -122,6 +133,8 @@ public final class Scenario {
     }
 
     /**
+     * Returns the uri of the Scenario.
+     * 
      * @return the uri of the Scenario.
      */
     public URI getUri() {

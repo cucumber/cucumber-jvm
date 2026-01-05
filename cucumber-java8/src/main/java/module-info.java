@@ -1,6 +1,7 @@
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.java8.Java8BackendProviderService;
 
+@SuppressWarnings("module") // package is called java8
 module io.cucumber.java8 {
     requires org.jspecify;
 
@@ -9,6 +10,8 @@ module io.cucumber.java8 {
     requires transitive org.apiguardian.api;
 
     requires io.cucumber.core;
+    requires net.jodah.typetools;
+
     provides BackendProviderService
             with Java8BackendProviderService;
 

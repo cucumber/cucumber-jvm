@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -74,7 +75,7 @@ final class JavaDefaultDataTableEntryTransformerDefinition extends AbstractDatat
         return method;
     }
 
-    private Object execute(
+    private @Nullable Object execute(
             Map<String, String> fromValue, Type toValueType, TableCellByTypeTransformer cellTransformer
     ) {
         Object[] args;

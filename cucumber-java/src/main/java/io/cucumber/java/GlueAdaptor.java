@@ -10,6 +10,8 @@ import static io.cucumber.core.backend.HookDefinition.HookType.AFTER;
 import static io.cucumber.core.backend.HookDefinition.HookType.AFTER_STEP;
 import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE;
 import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE_STEP;
+import static io.cucumber.java.Invoker.invoke;
+import static java.util.Objects.requireNonNull;
 
 final class GlueAdaptor {
 
@@ -87,7 +89,7 @@ final class GlueAdaptor {
     private static String expression(Annotation annotation) {
         try {
             Method expressionMethod = annotation.annotationType().getDeclaredMethod("value");
-            return (String) Invoker.invoke(annotation, expressionMethod);
+            return (String) requireNonNull(invoke(annotation, expressionMethod));
         } catch (NoSuchMethodException e) {
             // Should never happen.
             throw new IllegalStateException(e);

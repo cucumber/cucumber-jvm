@@ -3,6 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.SourceReference;
 import net.jodah.typetools.TypeResolver;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,9 +16,10 @@ import static java.util.Objects.requireNonNull;
 
 abstract class AbstractGlueDefinition implements Located {
 
-    private Object body;
-    private Method method;
-    private SourceReference sourceReference;
+    private @Nullable Object body;
+    private @Nullable Method method;
+    private @Nullable SourceReference sourceReference;
+    private int parameterCount;
     final StackTraceElement location;
 
     AbstractGlueDefinition(Object body, StackTraceElement location) {
@@ -29,9 +31,10 @@ abstract class AbstractGlueDefinition implements Located {
         updateClosure(other.body);
     }
 
-    private void updateClosure(Object body) {
+    private void updateClosure(@Nullable Object body) {
         this.body = requireNonNull(body);
         this.method = getAcceptMethod(body.getClass());
+        this.parameterCount = method.getParameterCount();
     }
 
     void disposeClosure() {
@@ -53,15 +56,15 @@ abstract class AbstractGlueDefinition implements Located {
         return acceptMethods.get(0);
     }
 
-    protected Object invokeMethod(Object... args) {
-        if (body == null) {
+    protected @Nullable Object invokeMethod(@Nullable Object... args) {
+        if (body == null || method == null) {
             throw new IllegalStateException("Can not execute scenario scoped glue when scenario has been disposed of");
         }
         return Invoker.invoke(this, body, method, args);
     }
 
     protected int getParameterCount() {
-        return method.getParameterCount();
+        return parameterCount;
     }
 
     @Override
@@ -90,9 +93,7 @@ abstract class AbstractGlueDefinition implements Located {
         Class<?>[] rawArguments = TypeResolver.resolveRawArguments(bodyClass, body);
         for (Class<?> aClass : rawArguments) {
             if (TypeResolver.Unknown.class.equals(aClass)) {
-                throw new IllegalStateException("" +
-                        "Could resolve the return type of the lambda at " + location.getFileName() + ":"
-                        + location.getLineNumber());
+                throw new IllegalStateException("Could resolve the return type of the lambda at %s:%d".formatted(location.getFileName(), location.getLineNumber()));
             }
         }
         return rawArguments;

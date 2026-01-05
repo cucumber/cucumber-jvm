@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.cucumberexpressions.ParameterType;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -55,7 +56,7 @@ final class JavaParameterTypeDefinition extends AbstractGlueDefinition implement
         return method;
     }
 
-    private Object execute(String[] captureGroups) {
+    private @Nullable Object execute(String[] captureGroups) {
         Object[] args;
 
         if (String[].class.equals(method.getParameterTypes()[0])) {

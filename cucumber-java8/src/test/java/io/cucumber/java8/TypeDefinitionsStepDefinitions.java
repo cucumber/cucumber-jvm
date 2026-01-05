@@ -190,13 +190,13 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Book book = (Book) o;
-            return Objects.equals(name, book.name) &&
-                    Objects.equals(mainCharacter, book.mainCharacter);
+            if (!(o instanceof Book book)) return false;
+            return Objects.equals(name, book.name) && Objects.equals(mainCharacter, book.mainCharacter);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, mainCharacter);
         }
 
         @Override
@@ -219,12 +219,13 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Cell cell = (Cell) o;
+            if (!(o instanceof Cell cell)) return false;
             return Objects.equals(name, cell.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(name);
         }
 
         @Override
@@ -254,13 +255,13 @@ public class TypeDefinitionsStepDefinitions implements En {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            Literature that = (Literature) o;
-            return types.containsAll(that.types) &&
-                    characters.containsAll(that.characters);
+            if (!(o instanceof Literature that)) return false;
+            return Objects.equals(types, that.types) && Objects.equals(characters, that.characters);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(types, characters);
         }
 
         @Override

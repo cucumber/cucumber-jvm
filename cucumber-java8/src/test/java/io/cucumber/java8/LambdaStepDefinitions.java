@@ -135,7 +135,7 @@ public class LambdaStepDefinitions implements io.cucumber.java8.En {
 
     }
 
-    public static class Contact {
+    public static final class Contact {
 
         private final String number;
 

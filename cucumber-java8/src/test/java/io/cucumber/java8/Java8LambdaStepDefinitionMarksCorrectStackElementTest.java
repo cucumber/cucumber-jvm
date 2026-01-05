@@ -17,7 +17,7 @@ import java.util.Arrays;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
+final class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
     private final MyLambdaGlueRegistry myLambdaGlueRegistry = new MyLambdaGlueRegistry();
 
@@ -43,7 +43,7 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
             });
     }
 
-    private static class MyLambdaGlueRegistry implements LambdaGlueRegistry {
+    private static final class MyLambdaGlueRegistry implements LambdaGlueRegistry {
 
         private StepDefinition stepDefinition;
 
@@ -112,9 +112,9 @@ class Java8LambdaStepDefinitionMarksCorrectStackElementTest {
 
     }
 
-    public static final class SomeLambdaStepDefs implements En {
+    static final class SomeLambdaStepDefs implements En {
 
-        public SomeLambdaStepDefs() {
+        SomeLambdaStepDefs() {
             Given("I have a some step definition", () -> {
                 throw new Exception();
             });

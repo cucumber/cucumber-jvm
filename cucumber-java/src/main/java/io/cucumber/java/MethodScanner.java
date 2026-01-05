@@ -9,9 +9,11 @@ import java.util.function.BiConsumer;
 
 import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
 import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
+import static io.cucumber.java.Invoker.invoke;
 import static java.lang.reflect.Modifier.isAbstract;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
+import static java.util.Objects.requireNonNull;
 
 final class MethodScanner {
 
@@ -118,7 +120,7 @@ final class MethodScanner {
     private static Annotation[] repeatedAnnotations(Annotation annotation) {
         try {
             Method expressionMethod = annotation.getClass().getMethod("value");
-            return (Annotation[]) Invoker.invoke(annotation, expressionMethod);
+            return (Annotation[]) requireNonNull(invoke(annotation, expressionMethod));
         } catch (NoSuchMethodException e) {
             // Should never happen.
             throw new IllegalStateException(e);

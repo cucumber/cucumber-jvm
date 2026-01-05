@@ -16,11 +16,11 @@ final class Invoker {
 
     }
 
-    static Object invoke(Annotation annotation, Method expressionMethod) {
+    static @Nullable Object invoke(Annotation annotation, Method expressionMethod) {
         return invoke(null, annotation, expressionMethod);
     }
 
-    static Object invoke(@Nullable Located located, Object target, Method method, @Nullable Object... args) {
+    static @Nullable Object invoke(@Nullable Located located, Object target, Method method, @Nullable Object... args) {
         Method targetMethod = targetMethod(target, method);
         return doInvoke(located, target, targetMethod, args);
     }
@@ -60,7 +60,7 @@ final class Invoker {
         }
     }
 
-    private static Object doInvoke(
+    private static @Nullable Object doInvoke(
             @Nullable Located located, @Nullable Object target, Method targetMethod, @Nullable Object[] args
     ) {
         boolean accessible = targetMethod.canAccess(target);
@@ -86,7 +86,7 @@ final class Invoker {
         }
     }
 
-    static Object invokeStatic(Located located, Method method, @Nullable Object... args) {
+    static @Nullable Object invokeStatic(Located located, Method method, @Nullable Object... args) {
         return doInvoke(located, null, method, args);
     }
 
