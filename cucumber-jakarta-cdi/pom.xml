@@ -3,6 +3,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.cdi.jakarta</project.Automatic-Module-Name>
+        <project.rootdir>${project.basedir}/..</project.rootdir>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <jakarta.enterprise.cdi-api.version>4.1.0</jakarta.enterprise.cdi-api.version>
         <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>

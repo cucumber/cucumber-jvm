@@ -13,6 +13,7 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.core</project.Automatic-Module-Name>
+        <project.rootdir>${project.basedir}/..</project.rootdir>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <assertj.version>3.27.6</assertj.version>
         <jackson.version>2.20.1</jackson.version>
@@ -190,13 +191,6 @@
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
             <version>${reactive-streams.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 
