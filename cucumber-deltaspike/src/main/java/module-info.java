@@ -4,8 +4,6 @@ import io.cucumber.deltaspike.DeltaSpikeObjectFactory;
 module io.cucumber.deltaspike {
     requires org.jspecify;
 
-    requires transitive io.cucumber.datatable;
-    requires transitive io.cucumber.docstring;
     requires transitive org.apiguardian.api;
 
     requires io.cucumber.core;

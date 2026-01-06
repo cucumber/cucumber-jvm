@@ -9,8 +9,6 @@ module io.cucumber.jakarta.cdi {
     requires java.naming;
     requires org.apache.tomee.container.core;
 
-    requires transitive io.cucumber.datatable;
-    requires transitive io.cucumber.docstring;
     requires transitive org.apiguardian.api;
 
     provides ObjectFactory

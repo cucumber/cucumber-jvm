@@ -6,8 +6,6 @@ import io.cucumber.guice.GuiceFactory;
 module io.cucumber.guice {
     requires org.jspecify;
 
-    requires transitive io.cucumber.datatable;
-    requires transitive io.cucumber.docstring;
     requires transitive org.apiguardian.api;
 
     requires io.cucumber.core;
