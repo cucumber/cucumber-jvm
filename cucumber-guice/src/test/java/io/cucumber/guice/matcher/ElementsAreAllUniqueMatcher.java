@@ -5,7 +5,7 @@ import org.hamcrest.Matcher;
 
 import java.util.Collection;
 
-public class ElementsAreAllUniqueMatcher<E> extends ElementsAreAllMatcher<E> {
+public final class ElementsAreAllUniqueMatcher<E> extends ElementsAreAllMatcher<E> {
 
     static final String DESCRIPTION = "a collection of two or more non-null elements that are determined to be unique" +
             " according to the java.lang.Object.equals() contract";

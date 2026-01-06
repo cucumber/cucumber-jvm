@@ -11,12 +11,12 @@ import java.nio.file.Path;
  *
  * @see FeatureWithLines
  */
-public class FeatureIdentifier {
+public final class FeatureIdentifier {
 
     private static final String FEATURE_FILE_SUFFIX = ".feature";
 
     private FeatureIdentifier() {
-
+        /* no-op */
     }
 
     public static URI parse(String featureIdentifier) {

@@ -10,17 +10,19 @@ import java.lang.annotation.Target;
 
 /**
  * Configure Cucumbers options.
- * 
+ *
  * @deprecated JUnit 4 is in maintenance mode. Upgrade to JUnit 5 and switch to
  *             the {@code cucumber-junit-platform-engine}.
  */
 @Deprecated
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
-@API(status = API.Status.STABLE)
+@Target(ElementType.TYPE)
+@API(status = API.Status.DEPRECATED)
 public @interface CucumberOptions {
 
     /**
+     * Return true if glue code execution should be skipped.
+     *
      * @return true if glue code execution should be skipped.
      */
     boolean dryRun() default false;
@@ -77,7 +79,7 @@ public @interface CucumberOptions {
      * plugins) from. E.g: {@code com.example.app}
      * <p>
      * These packages are used in addition to the default described in
-     * {@code #glue}.
+     * {@link #glue()}.
      *
      * @return list of package names
      */
@@ -110,14 +112,16 @@ public @interface CucumberOptions {
     String[] plugin() default {};
 
     /**
-     * Publish report to https://reports.cucumber.io.
-     * <p>
-     * 
+     * Publish report to
+     * <a href="https://reports.cucumber.io">reports.cucumber.io</a>.
+     *
      * @return true if reports should be published on the web.
      */
     boolean publish() default false;
 
     /**
+     * Returns true if terminal output should be without colours.
+     *
      * @return true if terminal output should be without colours.
      */
     boolean monochrome() default false;
@@ -131,6 +135,8 @@ public @interface CucumberOptions {
     String[] name() default {};
 
     /**
+     * Returns the format of the generated snippets.
+     *
      * @return the format of the generated snippets.
      */
     SnippetType snippets() default SnippetType.UNDERSCORE;

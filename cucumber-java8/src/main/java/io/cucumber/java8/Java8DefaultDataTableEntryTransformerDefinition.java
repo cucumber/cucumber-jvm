@@ -3,7 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.DefaultDataTableEntryTransformerDefinition;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 
-class Java8DefaultDataTableEntryTransformerDefinition extends AbstractDatatableElementTransformerDefinition
+final class Java8DefaultDataTableEntryTransformerDefinition extends AbstractDatatableElementTransformerDefinition
         implements DefaultDataTableEntryTransformerDefinition {
 
     Java8DefaultDataTableEntryTransformerDefinition(String[] emptyPatterns, DefaultDataTableEntryTransformerBody body) {

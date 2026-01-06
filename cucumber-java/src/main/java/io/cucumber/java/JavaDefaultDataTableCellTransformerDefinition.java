@@ -7,9 +7,7 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
-
-class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition
+final class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableElementTransformerDefinition
         implements DefaultDataTableCellTransformerDefinition {
 
     private final TableCellByTypeTransformer transformer;
@@ -43,7 +41,7 @@ class JavaDefaultDataTableCellTransformerDefinition extends AbstractDatatableEle
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(DefaultDataTableCellTransformer.class)
                 .addSignature("public Object defaultDataTableCell(String fromValue, Type toValueType)")
                 .addSignature("public Object defaultDataTableCell(Object fromValue, Type toValueType)")

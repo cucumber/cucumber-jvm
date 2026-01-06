@@ -15,6 +15,6 @@ final class NoUuidGenerator implements UuidGenerator {
 
     @Override
     public UUID generateId() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

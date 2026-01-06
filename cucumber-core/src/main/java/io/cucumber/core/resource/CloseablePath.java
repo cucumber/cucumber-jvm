@@ -6,7 +6,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class CloseablePath implements Closeable {
+final class CloseablePath implements Closeable {
 
     private static final Closeable NULL_CLOSEABLE = () -> {
     };

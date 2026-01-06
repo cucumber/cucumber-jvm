@@ -2,6 +2,7 @@ package io.cucumber.docstring;
 
 import io.cucumber.docstring.DocString.DocStringConverter;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -19,8 +20,9 @@ public final class DocStringTypeRegistryDocStringConverter implements DocStringC
         this.docStringTypeRegistry = requireNonNull(docStringTypeRegistry);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T convert(DocString docString, Type targetType) {
+    @Override
+    @SuppressWarnings({ "unchecked", "TypeParameterUnusedInFormals" })
+    public <T> @Nullable T convert(DocString docString, Type targetType) {
         if (DocString.class.equals(targetType)) {
             return (T) docString;
         }

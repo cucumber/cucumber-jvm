@@ -2,6 +2,7 @@ package io.cucumber.cdi2;
 
 import io.cucumber.core.backend.ObjectFactory;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
@@ -20,13 +21,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 @API(status = API.Status.STABLE)
 public final class Cdi2Factory implements ObjectFactory, Extension {
 
     private final Set<Class<?>> stepClasses = new HashSet<>();
 
     private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
-    private SeContainer container;
+    private @Nullable SeContainer container;
 
     @Override
     public void start() {
@@ -62,7 +65,8 @@ public final class Cdi2Factory implements ObjectFactory, Extension {
         if (instance != null) {
             return type.cast(instance.get());
         }
-        Instance<T> selected = container.select(type);
+
+        Instance<T> selected = requireNonNull(container).select(type);
         if (selected.isUnsatisfied()) {
             BeanManager beanManager = container.getBeanManager();
             Unmanaged<T> unmanaged = new Unmanaged<>(beanManager, type);

@@ -3,9 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
@@ -18,8 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({ "WeakerAccess" })
-@ExtendWith({ MockitoExtension.class })
+@SuppressWarnings("WeakerAccess")
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class JavaHookDefinitionTest {
 
@@ -69,11 +66,11 @@ public class JavaHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
-                " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
-                " * public void before_or_after()\n" +
-                "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"));
+        assertThat(exception.getMessage(), startsWith("""
+                A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:
+                 * public void before_or_after(io.cucumber.java.Scenario scenario)
+                 * public void before_or_after()
+                at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"""));
     }
 
     public void invalid_parameter(String badType) {
@@ -110,11 +107,12 @@ public class JavaHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
-                " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
-                " * public void before_or_after()\n" +
-                "at io.cucumber.java.JavaHookDefinitionTest.string_return_type()\n"));
+        assertThat(exception.getMessage(), startsWith("""
+                A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:
+                 * public void before_or_after(io.cucumber.java.Scenario scenario)
+                 * public void before_or_after()
+                at io.cucumber.java.JavaHookDefinitionTest.string_return_type()
+                """));
     }
 
     @Before

@@ -4,6 +4,8 @@ import org.apiguardian.api.API;
 
 import java.lang.reflect.InvocationTargetException;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Thrown when an exception was thrown by glue code. Not to be confused with
  * {@link CucumberBackendException} which is thrown when the backend failed to
@@ -13,11 +15,12 @@ import java.lang.reflect.InvocationTargetException;
 public final class CucumberInvocationTargetException extends RuntimeException {
 
     private final Located located;
-    private final InvocationTargetException invocationTargetException;
+    private final Throwable cause;
 
     public CucumberInvocationTargetException(Located located, InvocationTargetException invocationTargetException) {
+        super(invocationTargetException.getCause());
         this.located = located;
-        this.invocationTargetException = invocationTargetException;
+        this.cause = requireNonNull(invocationTargetException.getCause());
     }
 
     /**
@@ -33,7 +36,7 @@ public final class CucumberInvocationTargetException extends RuntimeException {
     }
 
     @Override
-    public Throwable getCause() {
-        return invocationTargetException.getCause();
+    public synchronized Throwable getCause() {
+        return cause;
     }
 }

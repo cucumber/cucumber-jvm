@@ -24,4 +24,7 @@
  * precedence if the same class is also bound using a scope annotation.
  * </p>
  */
+@NullMarked
 package io.cucumber.guice;
+
+import org.jspecify.annotations.NullMarked;

@@ -6,7 +6,7 @@ import org.hamcrest.TypeSafeMatcher;
 
 import java.util.Objects;
 
-public class IsEqualCompressingLineSeparators extends TypeSafeMatcher<String> {
+public final class IsEqualCompressingLineSeparators extends TypeSafeMatcher<String> {
 
     private final String expected;
 

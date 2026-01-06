@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class MethodFormatTest {
     public void methodWithoutArgs() {
     }
 
-    public List methodWithArgsAndException(String foo, Map bar) throws IllegalArgumentException {
+    public @Nullable List<?> methodWithArgsAndException(String foo, Map<?, ?> bar) throws IllegalArgumentException {
         return null;
     }
 
@@ -38,7 +39,8 @@ class MethodFormatTest {
     @Test
     void shouldUseSimpleFormatWhenMethodHasNoException() {
         assertThat(MethodFormat.FULL.format(methodWithArgsAndException),
-            startsWith("io.cucumber.java.MethodFormatTest.methodWithArgsAndException(java.lang.String,java.util.Map)"));
+            startsWith(
+                "io.cucumber.java.MethodFormatTest.methodWithArgsAndException(java.lang.String,java.util.Map<?, ?>)"));
     }
 
 }

@@ -1,32 +1,34 @@
 package io.cucumber.core.plugin;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
 class StubException extends RuntimeException {
 
-    private final String stacktrace;
-    private final String className;
+    private final @Nullable String stacktrace;
+    private final @Nullable String className;
 
-    private StubException(String className, String message, String stacktrace) {
+    private StubException(@Nullable String className, @Nullable String message, @Nullable String stacktrace) {
         super(message);
         this.className = className;
         this.stacktrace = stacktrace;
     }
 
-    public StubException() {
+    StubException() {
         this("stub exception");
     }
 
-    public StubException(String message) {
+    StubException(String message) {
         this(null, message, null);
     }
 
-    public StubException withClassName() {
+    StubException withClassName() {
         return new StubException(StubException.class.getName(), getMessage(), stacktrace);
     }
 
-    public StubException withStacktrace(String stacktrace) {
+    StubException withStacktrace(String stacktrace) {
         return new StubException(className, getMessage(), stacktrace);
     }
 
@@ -44,23 +46,26 @@ class StubException extends RuntimeException {
         if (className != null) {
             p.println(className);
         }
-        p.print(getMessage());
+        String message = getMessage();
+        if (message != null) {
+            p.print(message);
+        }
         if (stacktrace != null) {
             p.println("");
             p.println("\t" + stacktrace);
         }
     }
 
-    private static class PrintWriterOrStream {
-        private final PrintWriter writer;
-        private final PrintStream stream;
+    private static final class PrintWriterOrStream {
+        private final @Nullable PrintWriter writer;
+        private final @Nullable PrintStream stream;
 
-        private PrintWriterOrStream(PrintWriter writer) {
+        private PrintWriterOrStream(@Nullable PrintWriter writer) {
             this.writer = writer;
             this.stream = null;
         }
 
-        private PrintWriterOrStream(PrintStream stream) {
+        private PrintWriterOrStream(@Nullable PrintStream stream) {
             this.writer = null;
             this.stream = stream;
         }

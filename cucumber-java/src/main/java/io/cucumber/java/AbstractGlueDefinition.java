@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Located;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.SourceReference;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -14,8 +15,8 @@ abstract class AbstractGlueDefinition implements Located {
 
     protected final Method method;
     private final Lookup lookup;
-    private String fullFormat;
-    private SourceReference sourceReference;
+    private @Nullable String fullFormat;
+    private @Nullable SourceReference sourceReference;
 
     AbstractGlueDefinition(Method method, Lookup lookup) {
         this.method = requireNonNull(method);
@@ -40,7 +41,7 @@ abstract class AbstractGlueDefinition implements Located {
         return fullFormat;
     }
 
-    final Object invokeMethod(Object... args) {
+    final @Nullable Object invokeMethod(@Nullable Object... args) {
         if (Modifier.isStatic(method.getModifiers())) {
             return Invoker.invokeStatic(this, method, args);
         }

@@ -14,6 +14,6 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
         key = GLUE_PROPERTY_NAME,
         value = "io.cucumber.spring.metaconfig.general," +
                 "io.cucumber.spring.commonglue")
-public class RunCucumberTest {
+final class RunCucumberTest {
 
 }

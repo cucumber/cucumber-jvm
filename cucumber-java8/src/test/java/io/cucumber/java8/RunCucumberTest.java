@@ -7,6 +7,6 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @IncludeEngines("cucumber")
 @SelectPackages("io.cucumber.java8")
-public class RunCucumberTest {
+final class RunCucumberTest {
 
 }

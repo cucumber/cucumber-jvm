@@ -12,7 +12,6 @@
     <name>Cucumber-JVM: Java</name>
 
     <properties>
-        <project.Automatic-Module-Name>io.cucumber.java</project.Automatic-Module-Name>
         <project.rootdir>${project.basedir}/..</project.rootdir>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <hamcrest.version>3.0</hamcrest.version>
@@ -82,6 +81,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -159,7 +163,7 @@
                     <addOutputToClasspath>false</addOutputToClasspath>
                     <addResourcesToClasspath>false</addResourcesToClasspath>
                     <additionalClasspathElements>${project.build.directory}/codegen-classes</additionalClasspathElements>
-                    <mainClass>GenerateI18n</mainClass>
+                    <mainClass>io.cucumber.java.codegen.GenerateI18n</mainClass>
                     <arguments>
                         <argument>${project.build.directory}/generated-sources/i18n</argument>
                         <argument>io/cucumber/java</argument>
@@ -197,6 +201,15 @@
                         <!-- ISO 639-3 Language -->
                         <exclude>**/io/cucumber/java/???/*</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- TODO: Use module-info-patch.maven -->
+                    <!-- TODO: Why is this even needed? -->
+                    <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
         </plugins>

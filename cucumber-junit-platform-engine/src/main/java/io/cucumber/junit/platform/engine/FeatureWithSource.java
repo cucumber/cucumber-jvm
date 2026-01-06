@@ -25,4 +25,12 @@ final class FeatureWithSource {
     String getUri() {
         return feature.getUri().toString();
     }
+
+    @Override
+    public String toString() {
+        return "FeatureWithSource{" +
+                "feature=" + feature.getUri() +
+                ", source=" + source +
+                '}';
+    }
 }

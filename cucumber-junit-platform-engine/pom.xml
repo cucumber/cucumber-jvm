@@ -55,7 +55,7 @@
         </dependency>
 
         <!-- Surefire detects the CucumberEngine and will not use the
-        JupiterEngine unless we add explicitly -->
+        JupiterEngine unless we add it explicitly -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -77,12 +77,19 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Workaround, Surefire puts JUnit on the classpath. 
+                         But Cucumber puts parts of it on the module path. -->
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration combine.self="override">
-                    <!-- Ignore Automatic module name -->
+                <configuration>
                     <archive>
                         <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
                             <Engine-Version-cucumber>${project.version}</Engine-Version-cucumber>
                         </manifestEntries>
                     </archive>

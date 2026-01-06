@@ -8,9 +8,8 @@ import io.cucumber.spring.cucumbercontextconfigannotation.AnnotatedInterface;
 import io.cucumber.spring.cucumbercontextconfigannotation.WithMetaAnnotation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.net.URI;
 
@@ -20,7 +19,7 @@ import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings
 class SpringBackendTest {
 
     @Mock

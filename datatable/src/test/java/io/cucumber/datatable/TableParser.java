@@ -3,7 +3,7 @@ package io.cucumber.datatable;
 import java.util.ArrayList;
 import java.util.List;
 
-class TableParser {
+final class TableParser {
 
     private TableParser() {
     }
@@ -14,7 +14,7 @@ class TableParser {
 
     static DataTable parse(String source) {
         List<List<String>> rows = new ArrayList<>();
-        for (String line : source.split("\n")) {
+        for (String line : source.split("\n", 0)) {
             if (line.isEmpty()) {
                 continue;
             }
@@ -25,7 +25,7 @@ class TableParser {
 
     private static List<String> parseRow(String line) {
         List<String> row = new ArrayList<>();
-        String[] split = line.trim().split("\\|");
+        String[] split = line.trim().split("\\|", 0);
         for (int i = 0; i < split.length; i++) {
             String s = split[i];
             if (i == 0) {

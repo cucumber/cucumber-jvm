@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@SuppressWarnings("deprecation")
 final class JUnitCucumberOptionsProviderTest {
 
     private JUnitCucumberOptionsProvider optionsProvider;
@@ -50,7 +51,7 @@ final class JUnitCucumberOptionsProviderTest {
         assertEquals(IncrementingUuidGenerator.class, options.uuidGenerator());
     }
 
-    @CucumberOptions()
+    @CucumberOptions
     private static final class ClassWithDefault {
 
     }
@@ -74,7 +75,7 @@ final class JUnitCucumberOptionsProviderTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override

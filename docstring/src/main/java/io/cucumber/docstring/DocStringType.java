@@ -1,6 +1,7 @@
 package io.cucumber.docstring;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -45,6 +46,7 @@ public final class DocStringType {
         return type;
     }
 
+    @Nullable
     Object transform(String content) {
         try {
             return transformer.transform(content);
@@ -59,6 +61,7 @@ public final class DocStringType {
     @FunctionalInterface
     public interface Transformer<T> {
 
+        @Nullable
         T transform(String content) throws Throwable;
 
     }

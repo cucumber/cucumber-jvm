@@ -16,13 +16,13 @@ public interface FeatureParser {
     Optional<Feature> parse(URI path, String source, Supplier<UUID> idGenerator);
 
     default Optional<Feature> parse(URI path, InputStream source, Supplier<UUID> idGenerator) throws IOException {
-        final byte[] buffer = new byte[2 * 1024]; // 2KB
+        final byte[] buffer = new byte[2 * 1024];
         int read;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             while (-1 != (read = source.read(buffer, 0, buffer.length))) {
                 outputStream.write(buffer, 0, read);
             }
-            String s = new String(outputStream.toByteArray(), UTF_8);
+            String s = outputStream.toString(UTF_8);
             return parse(path, s, idGenerator);
         }
     }

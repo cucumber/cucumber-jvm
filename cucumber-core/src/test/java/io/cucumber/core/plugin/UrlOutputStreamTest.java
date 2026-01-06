@@ -9,6 +9,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -27,17 +28,14 @@ import java.util.stream.IntStream;
 import java.util.zip.GZIPInputStream;
 
 import static java.lang.String.format;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(VertxExtension.class)
-public class UrlOutputStreamTest {
+class UrlOutputStreamTest {
 
     private static final int TIMEOUT_SECONDS = 15;
     private int port;
-    private Exception exception;
+    private @Nullable Exception exception;
 
     @BeforeEach
     void randomPort() throws IOException {
@@ -54,12 +52,13 @@ public class UrlOutputStreamTest {
         CurlOption option = CurlOption.parse(format("http://localhost:%d/s3", port));
 
         verifyRequest(option, testServer, vertx, testContext, requestBody);
-        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
-        assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
-                "> PUT http://localhost:" + port + "/s3\n" +
-                "< HTTP/1.1 500 Internal Server Error\n" +
-                "< transfer-encoding: chunked\n" +
-                "Oh noes"));
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
+        assertThat(exception).hasMessage("""
+                HTTP request failed:
+                > PUT http://localhost:%d/s3
+                < HTTP/1.1 500 Internal Server Error
+                < transfer-encoding: chunked
+                Oh noes""".formatted(port));
     }
 
     private void verifyRequest(
@@ -88,7 +87,7 @@ public class UrlOutputStreamTest {
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
-        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
     }
 
     @Test
@@ -100,7 +99,7 @@ public class UrlOutputStreamTest {
                 .parse(format("http://localhost:%d/accept -X GET -H 'Authorization: Bearer s3cr3t'", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
-        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
         if (exception != null) {
             throw exception;
         }
@@ -116,11 +115,13 @@ public class UrlOutputStreamTest {
         CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location -X POST", port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
-        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS), is(true));
-        assertThat(exception.getMessage(), equalTo("HTTP request failed:\n" +
-                "> POST http://localhost:" + port + "/redirect-no-location\n" +
-                "< HTTP/1.1 307 Temporary Redirect\n" +
-                "< content-length: 0\n"));
+        assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
+        assertThat(exception).hasMessage("""
+                HTTP request failed:
+                > POST http://localhost:%d/redirect-no-location
+                < HTTP/1.1 307 Temporary Redirect
+                < content-length: 0
+                """.formatted(port));
     }
 
     @Test
@@ -157,25 +158,25 @@ public class UrlOutputStreamTest {
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
-    public static class TestServer extends AbstractVerticle {
+    static final class TestServer extends AbstractVerticle {
 
         private final int port;
         private final VertxTestContext testContext;
         private final String expectedBody;
         private final HttpMethod expectedMethod;
-        private final String expectedQuery;
-        private final String expectedContentType;
+        private final @Nullable String expectedQuery;
+        private final @Nullable String expectedContentType;
         private final int statusCode;
         private final String responseBody;
         private final Buffer receivedBody = Buffer.buffer(0);
 
-        public TestServer(
+        TestServer(
                 int port,
                 VertxTestContext testContext,
                 String expectedBody,
                 HttpMethod expectedMethod,
-                String expectedQuery,
-                String expectedContentType,
+                @Nullable String expectedQuery,
+                @Nullable String expectedContentType,
                 int statusCode, String responseBody
         ) {
             this.port = port;
@@ -220,18 +221,18 @@ public class UrlOutputStreamTest {
             router.route("/s3").handler(ctx -> {
                 ctx.response().setStatusCode(statusCode);
                 testContext.verify(() -> {
-                    assertThat(ctx.request().method(), is(equalTo(expectedMethod)));
-                    assertThat(ctx.request().query(), is(equalTo(expectedQuery)));
-                    assertThat(ctx.request().getHeader("Content-Type"), is(equalTo(expectedContentType)));
+                    assertThat(ctx.request().method()).isEqualTo(expectedMethod);
+                    assertThat(ctx.request().query()).isEqualTo(expectedQuery);
+                    assertThat(ctx.request().getHeader("Content-Type")).isEqualTo(expectedContentType);
                     // We should never send the Authorization header.
-                    assertThat(ctx.request().getHeader("Authorization"), is(nullValue()));
+                    assertThat(ctx.request().getHeader("Authorization")).isNull();
 
                     ctx.request().handler(receivedBody::appendBuffer);
                     ctx.request().endHandler(e -> {
                         ctx.response().setChunked(true);
                         ctx.response().write(responseBody);
                         ctx.response().end();
-                        testContext.verify(() -> assertThat(unzipBody(), is(equalTo(expectedBody))));
+                        testContext.verify(() -> assertThat(unzipBody()).isEqualTo(expectedBody));
                     });
                 });
             });

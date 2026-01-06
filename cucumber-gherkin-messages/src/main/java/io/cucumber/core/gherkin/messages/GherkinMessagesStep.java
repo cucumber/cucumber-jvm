@@ -8,32 +8,33 @@ import io.cucumber.messages.types.PickleDocString;
 import io.cucumber.messages.types.PickleStep;
 import io.cucumber.messages.types.PickleTable;
 import io.cucumber.plugin.event.Location;
+import org.jspecify.annotations.Nullable;
 
 final class GherkinMessagesStep implements Step {
 
     private final PickleStep pickleStep;
-    private final Argument argument;
-    private final String keyWord;
+    private final @Nullable Argument argument;
+    private final String keyword;
     private final StepType stepType;
-    private final String previousGwtKeyWord;
+    private final String previousGwtKeyword;
     private final Location location;
 
     GherkinMessagesStep(
             PickleStep pickleStep,
             GherkinDialect dialect,
-            String previousGwtKeyWord,
+            String previousGwtKeyword,
             Location location,
             String keyword
     ) {
         this.pickleStep = pickleStep;
         this.argument = extractArgument(pickleStep, location);
-        this.keyWord = keyword;
-        this.stepType = extractKeyWordType(keyWord, dialect);
-        this.previousGwtKeyWord = previousGwtKeyWord;
+        this.keyword = keyword;
+        this.stepType = extractKeyWordType(this.keyword, dialect);
+        this.previousGwtKeyword = previousGwtKeyword;
         this.location = location;
     }
 
-    private static Argument extractArgument(PickleStep pickleStep, Location location) {
+    private static @Nullable Argument extractArgument(PickleStep pickleStep, Location location) {
         return pickleStep.getArgument()
                 .map(argument -> {
                     if (argument.getDocString().isPresent()) {
@@ -49,31 +50,31 @@ final class GherkinMessagesStep implements Step {
                 }).orElse(null);
     }
 
-    private static StepType extractKeyWordType(String keyWord, GherkinDialect dialect) {
-        if (StepType.isAstrix(keyWord)) {
+    private static StepType extractKeyWordType(String keyword, GherkinDialect dialect) {
+        if (StepType.isAstrix(keyword)) {
             return StepType.OTHER;
         }
-        if (dialect.getGivenKeywords().contains(keyWord)) {
+        if (dialect.getGivenKeywords().contains(keyword)) {
             return StepType.GIVEN;
         }
-        if (dialect.getWhenKeywords().contains(keyWord)) {
+        if (dialect.getWhenKeywords().contains(keyword)) {
             return StepType.WHEN;
         }
-        if (dialect.getThenKeywords().contains(keyWord)) {
+        if (dialect.getThenKeywords().contains(keyword)) {
             return StepType.THEN;
         }
-        if (dialect.getAndKeywords().contains(keyWord)) {
+        if (dialect.getAndKeywords().contains(keyword)) {
             return StepType.AND;
         }
-        if (dialect.getButKeywords().contains(keyWord)) {
+        if (dialect.getButKeywords().contains(keyword)) {
             return StepType.BUT;
         }
-        throw new IllegalStateException("Keyword " + keyWord + " was neither given, when, then, and, but nor *");
+        throw new IllegalStateException("Keyword " + keyword + " was neither given, when, then, and, but nor *");
     }
 
     @Override
     public String getKeyword() {
-        return keyWord;
+        return keyword;
     }
 
     @Override
@@ -93,7 +94,7 @@ final class GherkinMessagesStep implements Step {
 
     @Override
     public String getPreviousGivenWhenThenKeyword() {
-        return previousGwtKeyWord;
+        return previousGwtKeyword;
     }
 
     @Override
@@ -102,7 +103,7 @@ final class GherkinMessagesStep implements Step {
     }
 
     @Override
-    public Argument getArgument() {
+    public @Nullable Argument getArgument() {
         return argument;
     }
 

@@ -11,6 +11,6 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectPackages("io.cucumber.jakarta.openejb")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.jakarta.openejb")
-public class RunCucumberTest {
+final class RunCucumberTest {
 
 }

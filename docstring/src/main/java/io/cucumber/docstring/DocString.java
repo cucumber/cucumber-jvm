@@ -1,6 +1,7 @@
 package io.cucumber.docstring;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -28,10 +29,10 @@ import static java.util.Objects.requireNonNull;
 public final class DocString {
 
     private final String content;
-    private final String contentType;
+    private final @Nullable String contentType;
     private final DocStringConverter converter;
 
-    private DocString(String content, String contentType, DocStringConverter converter) {
+    private DocString(String content, @Nullable String contentType, DocStringConverter converter) {
         this.content = requireNonNull(content);
         this.contentType = contentType;
         this.converter = requireNonNull(converter);
@@ -41,15 +42,15 @@ public final class DocString {
         return create(content, null);
     }
 
-    public static DocString create(String content, String contentType) {
+    public static DocString create(String content, @Nullable String contentType) {
         return create(content, contentType, new ConversionRequired());
     }
 
-    public static DocString create(String content, String contentType, DocStringConverter converter) {
+    public static DocString create(String content, @Nullable String contentType, DocStringConverter converter) {
         return new DocString(content, contentType, converter);
     }
 
-    public Object convert(Type type) {
+    public @Nullable Object convert(Type type) {
         return converter.convert(this, type);
     }
 
@@ -57,7 +58,7 @@ public final class DocString {
         return content;
     }
 
-    public String getContentType() {
+    public @Nullable String getContentType() {
         return contentType;
     }
 
@@ -86,7 +87,8 @@ public final class DocString {
 
     public interface DocStringConverter {
 
-        <T> T convert(DocString docString, Type targetType);
+        @SuppressWarnings("TypeParameterUnusedInFormals")
+        <T> @Nullable T convert(DocString docString, Type targetType);
 
     }
 

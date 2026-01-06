@@ -28,7 +28,6 @@ import static java.util.stream.Collectors.toList;
 
 public final class ResourceScanner<R> {
 
-    private static final Predicate<String> NULL_FILTER = x -> true;
     private final PathScanner pathScanner = new PathScanner();
     private final Supplier<ClassLoader> classLoaderSupplier;
     private final Predicate<Path> canLoad;
@@ -121,17 +120,17 @@ public final class ResourceScanner<R> {
         pathScanner.findResourcesForPath(
             resourcePath,
             canLoad,
-            processResource(DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource(), resources::add));
+            processResource(DEFAULT_PACKAGE_NAME, x -> true, createUriResource(), resources::add));
         return resources;
     }
 
     public List<R> scanForResourcesUri(URI classpathResourceUri) {
         requireNonNull(classpathResourceUri, "classpathResourceUri must not be null");
         if (CLASSPATH_SCHEME.equals(classpathResourceUri.getScheme())) {
-            return scanForClasspathResource(resourceName(classpathResourceUri), NULL_FILTER);
+            return scanForClasspathResource(resourceName(classpathResourceUri), x -> true);
         }
 
-        return findResourcesForUri(classpathResourceUri, DEFAULT_PACKAGE_NAME, NULL_FILTER, createUriResource());
+        return findResourcesForUri(classpathResourceUri, DEFAULT_PACKAGE_NAME, x -> true, createUriResource());
     }
 
 }

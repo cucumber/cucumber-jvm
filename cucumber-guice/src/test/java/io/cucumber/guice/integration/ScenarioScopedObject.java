@@ -1,5 +1,5 @@
 package io.cucumber.guice.integration;
 
-public class ScenarioScopedObject {
+public final class ScenarioScopedObject {
 
 }

@@ -30,8 +30,8 @@ abstract class FeatureSource {
             return new FeatureClasspathSource(source);
         }
         UriSource source = UriSource.from(uri);
-        if (source instanceof FileSource) {
-            return new FeatureFileSource((FileSource) source);
+        if (source instanceof FileSource fileSource) {
+            return new FeatureFileSource(fileSource);
         }
         return new FeatureUriSource(source);
     }

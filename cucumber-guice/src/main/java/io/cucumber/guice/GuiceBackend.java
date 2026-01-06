@@ -6,6 +6,7 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collection;
@@ -47,7 +48,7 @@ final class GuiceBackend implements Backend {
     }
 
     @Override
-    public Snippet getSnippet() {
+    public @Nullable Snippet getSnippet() {
         return null;
     }
 

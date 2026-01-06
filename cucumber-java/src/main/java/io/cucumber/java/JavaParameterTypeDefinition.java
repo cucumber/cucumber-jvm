@@ -3,14 +3,14 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.cucumberexpressions.ParameterType;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Collections.singletonList;
 
-class JavaParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
+final class JavaParameterTypeDefinition extends AbstractGlueDefinition implements ParameterTypeDefinition {
 
     private final ParameterType<Object> parameterType;
 
@@ -56,7 +56,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
         return method;
     }
 
-    private Object execute(String[] captureGroups) {
+    private @Nullable Object execute(String[] captureGroups) {
         Object[] args;
 
         if (String[].class.equals(method.getParameterTypes()[0])) {
@@ -69,7 +69,7 @@ class JavaParameterTypeDefinition extends AbstractGlueDefinition implements Para
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(io.cucumber.java.ParameterType.class)
                 .addSignature("public Author parameterName(String all)")
                 .addSignature("public Author parameterName(String captureGroup1, String captureGroup2, ...ect )")

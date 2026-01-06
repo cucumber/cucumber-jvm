@@ -7,6 +7,7 @@ import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.java8.LambdaGlueRegistry.CLOSED;
+import static java.util.Objects.requireNonNull;
 
 final class Java8Backend implements Backend {
 
@@ -23,7 +25,7 @@ final class Java8Backend implements Backend {
     private final ClasspathScanner classFinder;
 
     private final List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
-    private ClosureAwareGlueRegistry glue;
+    private @Nullable ClosureAwareGlueRegistry glue;
 
     Java8Backend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderProvider) {
         this.container = container;
@@ -53,7 +55,7 @@ final class Java8Backend implements Backend {
     public void buildWorld() {
         // Instantiate all the stepdef classes for java8 - the stepdef will be
         // initialised in the constructor.
-        glue.startRegistration();
+        requireNonNull(glue).startRegistration();
         LambdaGlueRegistry.INSTANCE.set(glue);
         for (Class<? extends LambdaGlue> lambdaGlueClass : lambdaGlueClasses) {
             lookup.getInstance(lambdaGlueClass);
@@ -64,7 +66,7 @@ final class Java8Backend implements Backend {
 
     @Override
     public void disposeWorld() {
-        glue.disposeClosures();
+        requireNonNull(glue).disposeClosures();
     }
 
     @Override

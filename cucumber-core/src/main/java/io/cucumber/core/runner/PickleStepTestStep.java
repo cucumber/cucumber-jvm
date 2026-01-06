@@ -5,6 +5,7 @@ import io.cucumber.core.gherkin.Step;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collections;
@@ -88,11 +89,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    public StepArgument getStepArgument() {
+    @Deprecated
+    public @Nullable StepArgument getStepArgument() {
         return step.getArgument();
     }
 
     @Override
+    @Deprecated
     public int getStepLine() {
         return step.getLine();
     }
@@ -103,6 +106,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
+    @Deprecated
     public String getStepText() {
         return step.getText();
     }

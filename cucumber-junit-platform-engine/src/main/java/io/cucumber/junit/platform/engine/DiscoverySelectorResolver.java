@@ -9,6 +9,7 @@ import static io.cucumber.junit.platform.engine.FeatureWithLinesFileResolver.isT
 
 class DiscoverySelectorResolver {
 
+    @SuppressWarnings("deprecation") // TODO: Updagrade
     private static final EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
             .<CucumberEngineDescriptor> builder()
             .addSelectorResolver(context -> new FileContainerSelectorResolver( //

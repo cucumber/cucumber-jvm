@@ -6,7 +6,6 @@ import io.cucumber.core.backend.StaticHookDefinition;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.lang.reflect.Modifier.isStatic;
 
 final class JavaStaticHookDefinition extends AbstractGlueDefinition implements StaticHookDefinition {
@@ -37,7 +36,7 @@ final class JavaStaticHookDefinition extends AbstractGlueDefinition implements S
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(BeforeAll.class)
                 .addAnnotation(AfterAll.class)
                 .addSignature("public static void before_or_after_all()")

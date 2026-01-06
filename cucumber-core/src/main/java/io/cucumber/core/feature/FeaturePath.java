@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
  * @see FeatureIdentifier
  * @see FeatureWithLines
  */
-public class FeaturePath {
+public final class FeaturePath {
 
     private FeaturePath() {
 

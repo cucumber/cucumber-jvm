@@ -2,8 +2,9 @@ package io.cucumber.junit;
 
 import org.junit.runner.RunWith;
 
+@SuppressWarnings("deprecation")
 @RunWith(Cucumber.class)
 @CucumberOptions(stepNotifications = true)
-public class RunCucumberTestWithStepNotifications {
+final class RunCucumberTestWithStepNotifications {
 
 }

@@ -12,7 +12,7 @@ import io.cucumber.docstring.DocStringTypeRegistry;
 
 import java.util.Locale;
 
-public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry {
+public final class StepTypeRegistry {
 
     private final ParameterTypeRegistry parameterTypeRegistry;
 
@@ -38,34 +38,28 @@ public final class StepTypeRegistry implements io.cucumber.core.api.TypeRegistry
         return docStringTypeRegistry;
     }
 
-    @Override
     public void defineParameterType(ParameterType<?> parameterType) {
         parameterTypeRegistry.defineParameterType(parameterType);
     }
 
-    @Override
     public void defineDocStringType(DocStringType docStringType) {
         docStringTypeRegistry.defineDocStringType(docStringType);
     }
 
-    @Override
     public void defineDataTableType(DataTableType tableType) {
         dataTableTypeRegistry.defineDataTableType(tableType);
     }
 
-    @Override
     public void setDefaultParameterTransformer(ParameterByTypeTransformer defaultParameterByTypeTransformer) {
         parameterTypeRegistry.setDefaultParameterTransformer(defaultParameterByTypeTransformer);
     }
 
-    @Override
     public void setDefaultDataTableEntryTransformer(
             TableEntryByTypeTransformer defaultDataTableEntryByTypeTransformer
     ) {
         dataTableTypeRegistry.setDefaultDataTableEntryTransformer(defaultDataTableEntryByTypeTransformer);
     }
 
-    @Override
     public void setDefaultDataTableCellTransformer(TableCellByTypeTransformer defaultDataTableByTypeTransformer) {
         dataTableTypeRegistry.setDefaultDataTableCellTransformer(defaultDataTableByTypeTransformer);
     }

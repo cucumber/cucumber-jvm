@@ -1,5 +1,5 @@
 package io.cucumber.guice.integration;
 
-public class UnScopedObject {
+public final class UnScopedObject {
 
 }

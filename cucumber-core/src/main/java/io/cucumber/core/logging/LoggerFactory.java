@@ -1,5 +1,7 @@
 package io.cucumber.core.logging;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -114,7 +116,7 @@ public final class LoggerFactory {
             log(Level.FINER, throwable, message);
         }
 
-        private void log(Level level, Throwable throwable, Supplier<String> message) {
+        private void log(Level level, @Nullable Throwable throwable, Supplier<String> message) {
             boolean loggable = julLogger.isLoggable(level);
             if (loggable || !listeners.isEmpty()) {
                 LogRecord logRecord = createLogRecord(level, throwable, message);
@@ -125,7 +127,7 @@ public final class LoggerFactory {
             }
         }
 
-        private LogRecord createLogRecord(Level level, Throwable throwable, Supplier<String> message) {
+        private LogRecord createLogRecord(Level level, @Nullable Throwable throwable, Supplier<String> message) {
             StackTraceElement[] stack = new Throwable().getStackTrace();
             String sourceClassName = null;
             String sourceMethodName = null;
@@ -133,7 +135,8 @@ public final class LoggerFactory {
             for (StackTraceElement element : stack) {
                 String className = element.getClassName();
                 if (THIS_LOGGER_CLASS.equals(className)) {
-                    found = true; // Next element is calling this logger
+                    // Next element is calling this logger
+                    found = true;
                 } else if (found) {
                     sourceClassName = className;
                     sourceMethodName = element.getMethodName();

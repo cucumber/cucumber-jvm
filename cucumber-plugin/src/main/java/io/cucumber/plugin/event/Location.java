@@ -48,4 +48,12 @@ public final class Location implements Comparable<Location> {
         }
         return Integer.compare(column, o.column);
     }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "line=" + line +
+                ", column=" + column +
+                '}';
+    }
 }

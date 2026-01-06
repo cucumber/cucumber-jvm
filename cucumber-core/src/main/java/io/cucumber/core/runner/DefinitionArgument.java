@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.stepexpression.ExpressionArgument;
 import io.cucumber.plugin.event.Argument;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,8 +22,7 @@ final class DefinitionArgument implements Argument {
     static List<Argument> createArguments(List<io.cucumber.core.stepexpression.Argument> match) {
         List<Argument> args = new ArrayList<>();
         for (io.cucumber.core.stepexpression.Argument argument : match) {
-            if (argument instanceof ExpressionArgument) {
-                ExpressionArgument expressionArgument = (ExpressionArgument) argument;
+            if (argument instanceof ExpressionArgument expressionArgument) {
                 args.add(new DefinitionArgument(expressionArgument));
             }
         }
@@ -35,23 +35,23 @@ final class DefinitionArgument implements Argument {
     }
 
     @Override
-    public String getValue() {
-        return group == null ? null : group.getValue();
+    public @Nullable String getValue() {
+        return group.getValue();
     }
 
     @Override
     public int getStart() {
-        return group == null ? -1 : group.getStart();
+        return group.getStart();
     }
 
     @Override
     public int getEnd() {
-        return group == null ? -1 : group.getEnd();
+        return group.getEnd();
     }
 
     @Override
     public io.cucumber.plugin.event.Group getGroup() {
-        return group == null ? null : new Group(group);
+        return new Group(group);
     }
 
     private static final class Group implements io.cucumber.plugin.event.Group {
@@ -72,7 +72,7 @@ final class DefinitionArgument implements Argument {
         }
 
         @Override
-        public String getValue() {
+        public @Nullable String getValue() {
             return group.getValue();
         }
 
