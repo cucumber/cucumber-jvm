@@ -5,16 +5,19 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.runtime.CucumberExecutionContext;
 import io.cucumber.junit.PickleRunners.PickleRunner;
+import org.jspecify.annotations.Nullable;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
@@ -30,12 +33,12 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     private final List<PickleRunner> children;
     private final Feature feature;
     private final JUnitOptions options;
-    private final Integer uniqueSuffix;
+    private final @Nullable Integer uniqueSuffix;
     private final CucumberExecutionContext context;
-    private Description description;
+    private @Nullable Description description;
 
     private FeatureRunner(
-            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, CucumberExecutionContext context,
+            Feature feature, @Nullable Integer uniqueSuffix, Predicate<Pickle> filter, CucumberExecutionContext context,
             JUnitOptions options
     )
             throws InitializationError {
@@ -61,7 +64,7 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
     }
 
     static FeatureRunner create(
-            Feature feature, Integer uniqueSuffix, Predicate<Pickle> filter, CucumberExecutionContext context,
+            Feature feature, @Nullable Integer uniqueSuffix, Predicate<Pickle> filter, CucumberExecutionContext context,
             JUnitOptions options
     ) {
         try {
@@ -73,37 +76,6 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
 
     boolean isEmpty() {
         return children.isEmpty();
-    }
-
-    private static final class FeatureId implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-        private final URI uri;
-
-        FeatureId(Feature feature) {
-            this.uri = feature.getUri();
-        }
-
-        @Override
-        public int hashCode() {
-            return uri.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            FeatureId featureId = (FeatureId) o;
-            return uri.equals(featureId.uri);
-        }
-
-        @Override
-        public String toString() {
-            return uri.toString();
-        }
-
     }
 
     @Override
@@ -149,6 +121,35 @@ final class FeatureRunner extends ParentRunner<PickleRunner> {
         } finally {
             notifier.fireTestFinished(describeChild(child));
         }
+    }
+
+    private static final class FeatureId implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
+        private final URI uri;
+
+        FeatureId(Feature feature) {
+            this.uri = feature.getUri();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof FeatureId featureId))
+                return false;
+            return Objects.equals(uri, featureId.uri);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(uri);
+        }
+
+        @Override
+        public String toString() {
+            return uri.toString();
+        }
+
     }
 
 }

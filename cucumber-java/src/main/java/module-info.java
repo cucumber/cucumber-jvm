@@ -11,7 +11,7 @@ module io.cucumber.java {
     requires io.cucumber.core;
 
     exports io.cucumber.java;
-    
+
     provides BackendProviderService
             with JavaBackendProviderService;
 

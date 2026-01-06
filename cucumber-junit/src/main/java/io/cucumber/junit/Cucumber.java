@@ -47,6 +47,7 @@ import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+// @formatter:off
 /**
  * Cucumber JUnit Runner.
  * <p>
@@ -54,12 +55,12 @@ import static java.util.stream.Collectors.toList;
  * files as junit tests. In general, the runner class should be empty without
  * any fields or methods. For example: <blockquote>
  * 
- * <pre>
+ * <pre>{@code 
  * @RunWith(Cucumber.class)
  * @CucumberOptions(plugin = "pretty")
  * final class RunCucumberTest {
  * }
- * </pre>
+ * }</pre>
  * 
  * </blockquote>
  * <p>
@@ -88,6 +89,7 @@ import static java.util.stream.Collectors.toList;
  * @deprecated JUnit 4 is in maintenance mode. Upgrade to JUnit 5 and switch to
  *             the {@code cucumber-junit-platform-engine}.
  */
+// @formatter:on
 @Deprecated
 @API(status = API.Status.STABLE)
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
@@ -218,7 +220,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private class StartAndFinishTestRun extends Statement {
         private final Statement next;
 
-        public StartAndFinishTestRun(Statement next) {
+        StartAndFinishTestRun(Statement next) {
             this.next = next;
         }
 

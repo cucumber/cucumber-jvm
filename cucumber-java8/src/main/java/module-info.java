@@ -13,7 +13,7 @@ module io.cucumber.java8 {
     requires net.jodah.typetools;
 
     exports io.cucumber.java8;
-    
+
     provides BackendProviderService
             with Java8BackendProviderService;
 

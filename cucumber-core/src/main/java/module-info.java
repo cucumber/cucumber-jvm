@@ -38,6 +38,7 @@ module io.cucumber.core {
     exports io.cucumber.core.options;
     exports io.cucumber.core.snippets;
     exports io.cucumber.core.exception;
+    exports io.cucumber.core.filter;
 
     uses io.cucumber.core.gherkin.FeatureParser;
     uses io.cucumber.core.backend.BackendProviderService;

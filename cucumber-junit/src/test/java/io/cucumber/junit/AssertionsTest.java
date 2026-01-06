@@ -13,19 +13,22 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class AssertionsTest {
+final class AssertionsTest {
 
     @Test
     void should_throw_cucumber_exception_when_annotated() {
         Executable testMethod = () -> Assertions.assertNoCucumberAnnotatedMethods(WithCucumberMethod.class);
         CucumberException expectedThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo(
-            "\n\n" +
-                    "Classes annotated with @RunWith(Cucumber.class) must not define any\n" +
-                    "Step Definition or Hook methods. Their sole purpose is to serve as\n" +
-                    "an entry point for JUnit. Step Definitions and Hooks should be defined\n" +
-                    "in their own classes. This allows them to be reused across features.\n" +
-                    "Offending class: class io.cucumber.junit.AssertionsTest$WithCucumberMethod\n")));
+            """
+
+
+            Classes annotated with @RunWith(Cucumber.class) must not define any
+            Step Definition or Hook methods. Their sole purpose is to serve as
+            an entry point for JUnit. Step Definitions and Hooks should be defined
+            in their own classes. This allows them to be reused across features.
+            Offending class: class io.cucumber.junit.AssertionsTest$WithCucumberMethod
+            """)));
     }
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -33,9 +36,11 @@ class AssertionsTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     @RunWith(Cucumber.class)
-    private static final class WithCucumberMethod {
+    static final class WithCucumberMethod {
 
+        @SuppressWarnings("unused")
         @StubCucumberAnnotation
         public void before() {
 

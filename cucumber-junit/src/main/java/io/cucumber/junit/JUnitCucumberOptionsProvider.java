@@ -14,6 +14,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
 
     private static final Logger log = LoggerFactory.getLogger(JUnitCucumberOptionsProvider.class);
 
+    @SuppressWarnings("deprecation")
     @Override
     public CucumberOptionsAnnotationParser.@Nullable CucumberOptions getOptions(Class<?> clazz) {
         CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
@@ -34,6 +35,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         }
     }
 
+    @SuppressWarnings("deprecation")
     private static class JunitCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
 
         private final CucumberOptions annotation;
@@ -89,14 +91,10 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
 
         @Override
         public SnippetType snippets() {
-            switch (annotation.snippets()) {
-                case UNDERSCORE:
-                    return SnippetType.UNDERSCORE;
-                case CAMELCASE:
-                    return SnippetType.CAMELCASE;
-                default:
-                    throw new IllegalArgumentException("" + annotation.snippets());
-            }
+            return switch (annotation.snippets()) {
+                case UNDERSCORE -> SnippetType.UNDERSCORE;
+                case CAMELCASE -> SnippetType.CAMELCASE;
+            };
         }
 
         @Override
