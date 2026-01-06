@@ -57,8 +57,18 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
         }
 
         @Override
+        public Class<?>[] glueGlasses() {
+            return annotation.glueClasses();
+        }
+
+        @Override
         public String[] extraGlue() {
             return annotation.extraGlue();
+        }
+
+        @Override
+        public Class<?>[] extraGlueGlasses() {
+            return annotation.extraGlueClasses();
         }
 
         @Override
