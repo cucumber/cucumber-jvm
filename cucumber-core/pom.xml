@@ -138,6 +138,10 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.xmlunit</groupId>
@@ -279,6 +283,7 @@
                                     <include>com.fasterxml.jackson.core:jackson-core</include>
                                     <include>com.fasterxml.jackson.core:jackson-annotations</include>
                                     <include>com.fasterxml.jackson.datatype:jackson-datatype-jdk8</include>
+                                    <include>com.fasterxml.jackson.module:jackson-module-parameter-names</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -316,6 +321,14 @@
                                 </filter>
                                 <filter>
                                     <artifact>com.fasterxml.jackson.datatype:jackson-datatype-jdk8</artifact>
+                                    <excludes>
+                                        <exclude>**/module-info.class</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/services/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.fasterxml.jackson.module:jackson-module-parameter-names</artifact>
                                     <excludes>
                                         <exclude>**/module-info.class</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
