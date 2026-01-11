@@ -104,7 +104,7 @@ public final class ClasspathScanner {
     private Optional<Class<?>> safelyLoadClass(String fqn) {
         try {
             return Optional.ofNullable(getClassLoader().loadClass(fqn));
-        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+        } catch (ClassNotFoundException | LinkageError e) {
             log.debug(e, () -> "Could not to load class '" + fqn
                     + "'. If this is not a Glue class you can ignore this exception.\n");
         }
