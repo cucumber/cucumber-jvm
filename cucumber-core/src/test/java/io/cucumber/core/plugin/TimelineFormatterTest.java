@@ -1,10 +1,5 @@
 package io.cucumber.core.plugin;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
@@ -16,6 +11,7 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
+import io.cucumber.messages.ndjson.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -30,8 +26,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_ABSENT;
-import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -48,12 +42,6 @@ class TimelineFormatterTest {
 
     private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Paths
             .get("src/main/resources/io/cucumber/core/plugin/timeline");
-
-    private final ObjectMapper objectMapper = JsonMapper.builder()
-            .defaultPropertyInclusion(construct(NON_ABSENT, NON_ABSENT))
-            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
-            .build();
 
     // private final Gson gson = new GsonBuilder().registerTypeAdapter(
     // Instant.class,
@@ -238,7 +226,7 @@ class TimelineFormatterTest {
                 " }\n" +
                 "]");
 
-        return objectMapper.readValue(expectedJson, TimeLineItem[].class);
+        return Jackson.OBJECT_MAPPER.readValue(expectedJson, TimeLineItem[].class);
     }
 
     private ActualReportOutput readReport() throws IOException {
@@ -252,8 +240,8 @@ class TimelineFormatterTest {
                 groupLines = line.substring("CucumberHTML.timelineGroups.pushArray(".length(), line.length() - 2);
             }
         }
-        TimeLineItem[] tests = objectMapper.readValue(itemLines, TimeLineItem[].class);
-        TimeLineGroup[] groups = objectMapper.readValue(groupLines, TimeLineGroup[].class);
+        TimeLineItem[] tests = Jackson.OBJECT_MAPPER.readValue(itemLines, TimeLineItem[].class);
+        TimeLineGroup[] groups = Jackson.OBJECT_MAPPER.readValue(groupLines, TimeLineGroup[].class);
         return new ActualReportOutput(tests, groups);
     }
 
@@ -322,7 +310,7 @@ class TimelineFormatterTest {
 
         TimeLineItem[] expectedTests = getExpectedTestData();
 
-        TimeLineGroup[] expectedGroups = objectMapper.readValue(
+        TimeLineGroup[] expectedGroups = Jackson.OBJECT_MAPPER.readValue(
             ("[\n" +
                     " {\n" +
                     " \"id\": \"main\",\n" +
