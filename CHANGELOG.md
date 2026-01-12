@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
 
 ### Changed
-- [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization. 
+- [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138)) 
 
 ## [7.33.0] - 2025-12-09
 ### Added
