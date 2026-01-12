@@ -1,9 +1,5 @@
 package io.cucumber.core.plugin;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Envelope;
@@ -36,7 +32,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Value.construct;
 import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static java.util.Comparator.comparing;
 import static java.util.Locale.ROOT;
@@ -68,11 +63,6 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final Query query = new Query(repository);
 
     private final File reportDir;
-
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .setDefaultPropertyInclusion(construct(Include.NON_ABSENT, Include.NON_ABSENT))
-            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-            .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 
     @SuppressWarnings({ "unused", "RedundantThrows" }) // Used by PluginFactory
     public TimelineFormatter(File reportDir) throws FileNotFoundException {
@@ -222,7 +212,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             BufferedWriter out, String pushTo, Collection<?> content
     ) throws IOException {
         out.append("CucumberHTML.").append(pushTo).append(".pushArray(");
-        objectMapper.writeValue(out, content);
+        Jackson.OBJECT_MAPPER.writeValue(out, content);
         out.append(");");
     }
 
