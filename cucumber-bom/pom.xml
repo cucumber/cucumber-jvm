@@ -21,7 +21,7 @@
         <html-formatter.version>22.3.0</html-formatter.version>
         <junit-xml-formatter.version>0.11.0</junit-xml-formatter.version>
         <messages.version>30.1.0</messages.version>
-        <messages-ndjson.version>0.1.0</messages-ndjson.version>
+        <messages-ndjson.version>0.2.0</messages-ndjson.version>
         <pretty-formatter.version>2.4.1</pretty-formatter.version>
         <query.version>14.7.0</query.version>
         <tag-expressions.version>8.1.0</tag-expressions.version>
