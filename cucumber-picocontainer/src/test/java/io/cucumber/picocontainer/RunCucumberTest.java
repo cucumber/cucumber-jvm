@@ -1,9 +1,16 @@
 package io.cucumber.picocontainer;
 
-import io.cucumber.junit.Cucumber;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectPackages;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Cucumber.class)
-public class RunCucumberTest {
+import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+
+@Suite
+@IncludeEngines("cucumber")
+@SelectPackages("io.cucumber.picocontainer")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.picocontainer")
+final class RunCucumberTest {
 
 }
