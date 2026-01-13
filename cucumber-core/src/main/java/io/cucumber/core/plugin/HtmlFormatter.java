@@ -1,6 +1,7 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.htmlformatter.MessagesToHtmlWriter;
+import io.cucumber.messages.ndjson.Serializer;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -15,8 +16,9 @@ public final class HtmlFormatter implements ConcurrentEventListener {
     // Used by PluginFactory
     @SuppressWarnings("WeakerAccess")
     public HtmlFormatter(OutputStream out) {
+        Serializer serializer = new Serializer();
         this.writer = MessagesToHtmlWriter //
-                .builder(Jackson.OBJECT_MAPPER::writeValue) //
+                .builder(serializer::writeValue) //
                 .build(out);
     }
 

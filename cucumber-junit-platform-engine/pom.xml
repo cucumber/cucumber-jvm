@@ -12,9 +12,10 @@
     <name>Cucumber-JVM: JUnit 5 - JUnit Platform Engine</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.junit.platform.engine</project.Automatic-Module-Name>
         <project.rootdir>${project.basedir}/..</project.rootdir>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.14.1</junit-jupiter.version>
+        <junit-jupiter.version>5.14.2</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>

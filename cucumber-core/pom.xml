@@ -18,7 +18,7 @@
         <assertj.version>3.27.6</assertj.version>
         <jackson.version>2.20.1</jackson.version>
         <jsoup.version>1.22.1</jsoup.version>
-        <junit-jupiter.version>5.14.1</junit-jupiter.version>
+        <junit-jupiter.version>5.14.2</junit-jupiter.version>
         <xmlunit.version>2.11.0</xmlunit.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
@@ -72,6 +72,10 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>messages</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>messages-ndjson</artifactId>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -130,15 +134,22 @@
             <artifactId>apiguardian-api</artifactId>
             <version>${apiguardian-api.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
+            <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
@@ -256,7 +267,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

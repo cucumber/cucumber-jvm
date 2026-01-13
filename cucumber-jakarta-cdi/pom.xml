@@ -7,7 +7,7 @@
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <jakarta.enterprise.cdi-api.version>4.1.0</jakarta.enterprise.cdi-api.version>
         <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
-        <junit-jupiter.version>5.14.1</junit-jupiter.version>
+        <junit-jupiter.version>5.14.2</junit-jupiter.version>
         <hamcrest.version>3.0</hamcrest.version>
         <weld.version>5.1.6.Final</weld.version>
     </properties>
