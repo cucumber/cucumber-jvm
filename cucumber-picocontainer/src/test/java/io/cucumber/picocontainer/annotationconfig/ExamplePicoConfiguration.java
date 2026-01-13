@@ -6,17 +6,17 @@ import org.picocontainer.injectors.Provider;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ExamplePicoConfiguration {
+public final class ExamplePicoConfiguration {
 
     @CucumberPicoProvider
-    public static class NestedUrlProvider implements Provider {
+    public static final class NestedUrlProvider implements Provider {
         public URL provide() {
             throw new UnsupportedOperationException("Intentionally not supported to detect any premature injection.");
         }
     }
 
     @CucumberPicoProvider
-    public static class NestedUrlConnectionProvider implements Provider {
+    public static final class NestedUrlConnectionProvider implements Provider {
         public HttpURLConnection provide(URL url) {
             throw new UnsupportedOperationException("Intentionally not supported to detect any premature injection.");
         }

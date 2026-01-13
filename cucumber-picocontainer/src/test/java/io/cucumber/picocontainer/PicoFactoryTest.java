@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PicoFactoryTest {
+final class PicoFactoryTest {
 
     @Test
     void shouldGiveUsNewInstancesForEachScenario() {
@@ -88,8 +88,8 @@ class PicoFactoryTest {
         assertThat(factory.getInstance(NonStaticInnerClass.class), nullValue());
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
-    public class NonStaticInnerClass {
+    @SuppressWarnings({ "InnerClassMayBeStatic", "ClassCanBeStatic" })
+    public final class NonStaticInnerClass {
 
     }
 

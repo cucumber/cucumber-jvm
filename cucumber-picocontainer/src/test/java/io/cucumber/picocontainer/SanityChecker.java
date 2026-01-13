@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Listener that makes sure Cucumber fires events in the right order
  */
-public class SanityChecker implements TestListener {
+public final class SanityChecker implements TestListener {
 
     private static final String INDENT = "  ";
     private static final String INSANITY = "INSANITY";
