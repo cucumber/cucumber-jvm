@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.cdi2</project.Automatic-Module-Name>
         <project.rootdir>${project.basedir}/..</project.rootdir>
         <cdi-api.version>2.0.SP1</cdi-api.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
@@ -97,21 +98,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- Maven adds /target/test-classes as both the
-                    classpath and module path root. The SeContainer doesn't like
-                    this -->
-                    <useModulePath>false</useModulePath>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    
     <profiles>
         <profile>
             <id>cdi2-weld</id>

@@ -18,6 +18,7 @@
         <cdi-api.version>2.0.SP1</cdi-api.version>
         <deltaspike.version>1.9.6</deltaspike.version>
         <junit-jupiter.version>5.14.1</junit-jupiter.version>
+        <project.Automatic-Module-Name>io.cucumber.deltaspike</project.Automatic-Module-Name>
         <project.rootdir>${project.basedir}/..</project.rootdir>
     </properties>
 
@@ -90,20 +91,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- Maven adds /target/test-classes as both the
-                        classpath and module path root. The CdiContainer doesn't like
-                        this -->
-                    <useModulePath>false</useModulePath>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
