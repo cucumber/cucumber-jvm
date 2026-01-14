@@ -1,6 +1,7 @@
 package io.cucumber.spring;
 
 import io.cucumber.core.backend.CucumberBackendException;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -16,6 +17,7 @@ import java.util.Deque;
 import java.util.function.Supplier;
 
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
+import static java.util.Objects.requireNonNull;
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
 
 class TestContextAdaptor {
@@ -24,7 +26,7 @@ class TestContextAdaptor {
     private final TestContextManager delegate;
     private final ConfigurableApplicationContext applicationContext;
     private final Deque<Runnable> stopInvocations = new ArrayDeque<>();
-    private Object delegateTestInstance;
+    private @Nullable Object delegateTestInstance;
 
     static TestContextAdaptor create(
             Supplier<TestContextManager> testContextManagerSupplier,
@@ -129,7 +131,7 @@ class TestContextAdaptor {
     private void notifyTestContextManagerAboutBeforeTestMethod() {
         try {
             Method dummyMethod = getDummyMethod();
-            delegate.beforeTestMethod(delegateTestInstance, dummyMethod);
+            delegate.beforeTestMethod(getRequiredDelegateTestInstance(), dummyMethod);
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }
@@ -150,10 +152,14 @@ class TestContextAdaptor {
 
     private void notifyTestContextManagerAboutBeforeExecution() {
         try {
-            delegate.beforeTestExecution(delegateTestInstance, getDummyMethod());
+            delegate.beforeTestExecution(getRequiredDelegateTestInstance(), getDummyMethod());
         } catch (Exception e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }
+    }
+
+    private Object getRequiredDelegateTestInstance() {
+        return requireNonNull(delegateTestInstance);
     }
 
     private static void registerStepClassBeanDefinitions(
@@ -241,7 +247,7 @@ class TestContextAdaptor {
     }
 
     final <T> T getInstance(Class<T> type) {
-        return applicationContext.getBean(type);
+        return requireNonNull(applicationContext).getBean(type);
     }
 
     private Method getDummyMethod() {

@@ -13,12 +13,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;
 
-import static io.cucumber.spring.TestContextAdaptor.create;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -31,7 +29,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 
 @MockitoSettings
-public class TestTestContextAdaptorTest {
+final class TestContextAdaptorTest {
 
     @Mock
     TestExecutionListener listener;
@@ -44,7 +42,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAllLiveCycleHooks() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -63,7 +62,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterClassIfBeforeClassFailed() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -79,7 +79,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterClassIfPrepareTestInstanceFailed() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -95,7 +96,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterMethodIfBeforeMethodThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -114,7 +116,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterTestExecutionIfBeforeTestExecutionThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -134,7 +137,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterTestMethodIfAfterTestExecutionThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -155,7 +159,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAfterTesClassIfAfterTestMethodThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -176,7 +181,8 @@ public class TestTestContextAdaptorTest {
     @Test
     void invokesAllMethodsPriorIfAfterTestClassThrows() throws Exception {
         TestContextManager manager = new TestContextManager(SomeContextConfiguration.class);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(SomeContextConfiguration.class));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager,
+            singletonList(SomeContextConfiguration.class));
         manager.registerTestExecutionListeners(listener);
         InOrder inOrder = inOrder(listener);
 
@@ -198,7 +204,7 @@ public class TestTestContextAdaptorTest {
     @ValueSource(classes = { WithAutowiredDependency.class, WithConstructorDependency.class })
     void autowireAndPostProcessesOnlyOnce(Class<? extends Spy> testClass) {
         TestContextManager manager = new TestContextManager(testClass);
-        TestContextAdaptor adaptor = create(() -> manager, singletonList(testClass));
+        TestContextAdaptor adaptor = TestContextAdaptor.create(() -> manager, singletonList(testClass));
 
         assertAll(
             () -> assertDoesNotThrow(adaptor::start),
@@ -213,7 +219,8 @@ public class TestTestContextAdaptorTest {
 
     @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
-    public static class SomeContextConfiguration {
+    @SuppressWarnings("DesignForExtension")
+    static class SomeContextConfiguration {
 
     }
 
@@ -231,7 +238,8 @@ public class TestTestContextAdaptorTest {
 
     @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
-    public static class WithAutowiredDependency implements BeanNameAware, Spy {
+    @SuppressWarnings("DesignForExtension")
+    static class WithAutowiredDependency implements BeanNameAware, Spy {
 
         @Autowired
         BellyBean belly;
@@ -242,13 +250,13 @@ public class TestTestContextAdaptorTest {
         private DummyComponent dummyComponent;
 
         @Autowired
-        public void setDummyComponent(DummyComponent dummyComponent) {
+        void setDummyComponent(DummyComponent dummyComponent) {
             this.dummyComponent = dummyComponent;
             this.autowiredCount++;
         }
 
         @Override
-        public void setBeanName(@NonNull String ignored) {
+        public void setBeanName(String ignored) {
             postProcessedCount++;
         }
 
@@ -275,7 +283,8 @@ public class TestTestContextAdaptorTest {
 
     @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
-    public static class WithConstructorDependency implements BeanNameAware, Spy {
+    @SuppressWarnings("DesignForExtension")
+    static class WithConstructorDependency implements BeanNameAware, Spy {
 
         final BellyBean belly;
         final DummyComponent dummyComponent;
@@ -283,14 +292,14 @@ public class TestTestContextAdaptorTest {
         int postProcessedCount = 0;
         int autowiredCount = 0;
 
-        public WithConstructorDependency(BellyBean belly, DummyComponent dummyComponent) {
+        WithConstructorDependency(BellyBean belly, DummyComponent dummyComponent) {
             this.belly = belly;
             this.dummyComponent = dummyComponent;
             this.autowiredCount++;
         }
 
         @Override
-        public void setBeanName(@NonNull String ignored) {
+        public void setBeanName(String ignored) {
             postProcessedCount++;
         }
 

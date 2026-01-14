@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
+@SuppressWarnings("DesignForExtension")
 public class Belly {
 
     private static final AtomicLong counter = new AtomicLong(0);

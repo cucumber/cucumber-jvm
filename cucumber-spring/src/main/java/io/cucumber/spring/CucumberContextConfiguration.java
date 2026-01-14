@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// @formatter:off
 /**
  * This annotation is used on a configuration class to make the Cucumber aware
  * of the test configuration. This is to be used in conjunction with
@@ -15,12 +16,12 @@ import java.lang.annotation.Target;
  * annotated as follows:
  * <p>
  * 
- * <pre>
- * @CucumberContextConfiguration
- * @SpringBootTest(classes = TestConfig.class)
- * public class CucumberSpringConfiguration {
- * }
- * </pre>
+ * <pre>{@code
+ *     @CucumberContextConfiguration
+ *     @SpringBootTest(classes = TestConfig.class)
+ *     public class CucumberSpringConfiguration {
+ *     }
+ * }</pre>
  * <p>
  * Notes:
  * <ul>
@@ -41,6 +42,7 @@ import java.lang.annotation.Target;
  * <li></li>
  * </ul>
  */
+// @formatter:on
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @API(status = API.Status.STABLE)

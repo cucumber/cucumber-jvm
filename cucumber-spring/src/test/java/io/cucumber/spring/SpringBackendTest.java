@@ -20,7 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @MockitoSettings
-class SpringBackendTest {
+final class SpringBackendTest {
 
     @Mock
     private Glue glue;

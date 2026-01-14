@@ -14,7 +14,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-class RunParallelCucumberTest {
+final class RunParallelCucumberTest {
 
     @Test
     void test() throws ExecutionException, InterruptedException {

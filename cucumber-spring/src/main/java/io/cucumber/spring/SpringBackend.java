@@ -3,7 +3,6 @@ package io.cucumber.spring;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
@@ -36,21 +35,6 @@ final class SpringBackend implements Backend {
                 .filter(this::checkIfOfClassTypeAndNotAbstract)
                 .distinct()
                 .forEach(container::addClass);
-    }
-
-    @Override
-    public void buildWorld() {
-
-    }
-
-    @Override
-    public void disposeWorld() {
-
-    }
-
-    @Override
-    public Snippet getSnippet() {
-        return null;
     }
 
     private boolean checkIfOfClassTypeAndNotAbstract(Class<?> clazz) {

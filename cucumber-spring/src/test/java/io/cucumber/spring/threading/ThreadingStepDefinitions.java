@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 @CucumberContextConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
+@SuppressWarnings("DesignForExtension")
 public class ThreadingStepDefinitions {
 
     static final int concurrency = 5;

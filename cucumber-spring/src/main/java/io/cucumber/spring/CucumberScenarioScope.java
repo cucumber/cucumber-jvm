@@ -1,5 +1,6 @@
 package io.cucumber.spring;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
@@ -30,12 +31,12 @@ class CucumberScenarioScope implements Scope {
     }
 
     @Override
-    public Object resolveContextualObject(String key) {
+    public @Nullable Object resolveContextualObject(String key) {
         return null;
     }
 
     @Override
-    public String getConversationId() {
+    public @Nullable String getConversationId() {
         CucumberTestContext context = CucumberTestContext.getInstance();
         return context.getId()
                 .map(id -> "cucumber_test_context_" + id)
