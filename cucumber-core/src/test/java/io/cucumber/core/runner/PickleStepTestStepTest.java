@@ -138,7 +138,7 @@ class PickleStepTestStepTest {
 
     @Test
     void result_is_skipped_when_before_step_hook_does_not_pass() {
-        doThrow(TestAbortedException.class).when(beforeHookDefinition).execute(any(TestCaseState.class));
+        doThrow(TestAbortedException.class).when(beforeHookDefinition).execute(any(TestCaseState.class), any());
         ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
@@ -146,7 +146,7 @@ class PickleStepTestStepTest {
 
     @Test
     void step_execution_is_skipped_when_before_step_hook_does_not_pass() throws Throwable {
-        doThrow(TestAbortedException.class).when(beforeHookDefinition).execute(any(TestCaseState.class));
+        doThrow(TestAbortedException.class).when(beforeHookDefinition).execute(any(TestCaseState.class), any());
         step.run(testCase, bus, state, ExecutionMode.RUN);
         verify(definitionMatch, never()).runStep(any(TestCaseState.class));
         verify(definitionMatch, never()).dryRunStep(any(TestCaseState.class));
@@ -155,7 +155,7 @@ class PickleStepTestStepTest {
     @Test
     void result_is_result_from_hook_when_before_step_hook_does_not_pass() {
         Exception exception = new RuntimeException();
-        doThrow(exception).when(beforeHookDefinition).execute(any(TestCaseState.class));
+        doThrow(exception).when(beforeHookDefinition).execute(any(TestCaseState.class), any());
         Result failure = new Result(Status.FAILED, ZERO, exception);
         ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
@@ -186,7 +186,7 @@ class PickleStepTestStepTest {
     void result_is_result_from_hook_when_after_step_hook_does_not_pass() {
         Exception exception = new RuntimeException();
         Result failure = new Result(Status.FAILED, ZERO, exception);
-        doThrow(exception).when(afterHookDefinition).execute(any(TestCaseState.class));
+        doThrow(exception).when(afterHookDefinition).execute(any(TestCaseState.class), any());
         ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(FAILED)));
@@ -199,23 +199,24 @@ class PickleStepTestStepTest {
 
     @Test
     void after_step_hook_is_run_when_before_step_hook_does_not_pass() {
-        doThrow(RuntimeException.class).when(beforeHookDefinition).execute(any(TestCaseState.class));
+        doThrow(RuntimeException.class).when(beforeHookDefinition).execute(any(TestCaseState.class), any());
         step.run(testCase, bus, state, ExecutionMode.RUN);
-        verify(afterHookDefinition).execute(any(TestCaseState.class));
+        verify(afterHookDefinition).execute(any(TestCaseState.class), any());
     }
 
     @Test
     void after_step_hook_is_run_when_step_does_not_pass() throws Throwable {
         doThrow(Exception.class).when(definitionMatch).runStep(any(TestCaseState.class));
         step.run(testCase, bus, state, ExecutionMode.RUN);
-        verify(afterHookDefinition).execute(any(TestCaseState.class));
+        verify(afterHookDefinition).execute(any(TestCaseState.class), any());
     }
 
     @Test
     void after_step_hook_scenario_contains_step_failure_when_step_does_not_pass() throws Throwable {
         Throwable expectedError = new TestAbortedException("oops");
         doThrow(expectedError).when(definitionMatch).runStep(any(TestCaseState.class));
-        doThrow(new RuntimeException()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
+        doThrow(new RuntimeException()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)),
+            any());
         step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(state.getError(), is(expectedError));
     }
@@ -227,8 +228,9 @@ class PickleStepTestStepTest {
     @Test
     void after_step_hook_scenario_contains_before_step_hook_failure_when_before_step_hook_does_not_pass() {
         Throwable expectedError = new TestAbortedException("oops");
-        doThrow(expectedError).when(beforeHookDefinition).execute(any(TestCaseState.class));
-        doThrow(new RuntimeException()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)));
+        doThrow(expectedError).when(beforeHookDefinition).execute(any(TestCaseState.class), any());
+        doThrow(new RuntimeException()).when(afterHookDefinition).execute(argThat(scenarioDoesNotHave(expectedError)),
+            any());
         step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(state.getError(), is(expectedError));
     }

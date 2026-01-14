@@ -26,6 +26,24 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
         }
     }
 
+    /**
+     * Runs the hook with step information. This is used for {@code @BeforeStep}
+     * and {@code @AfterStep} hooks to provide access to step details.
+     *
+     * @param  state     the test case state
+     * @param  step      the step being executed
+     * @throws Throwable if the hook fails
+     */
+    public void runStep(TestCaseState state, io.cucumber.plugin.event.Step step) throws Throwable {
+        try {
+            hookDefinition.execute(state, step);
+        } catch (CucumberBackendException e) {
+            throw couldNotInvokeHook(e);
+        } catch (CucumberInvocationTargetException e) {
+            throw removeFrameworkFrames(e);
+        }
+    }
+
     private Throwable couldNotInvokeHook(CucumberBackendException e) {
         return new CucumberException(String.format("" +
                 "Could not invoke hook defined at '%s'.\n" +

@@ -44,7 +44,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
 
         for (HookTestStep before : beforeStepHookSteps) {
             nextExecutionMode = before
-                    .run(testCase, bus, state, executionMode)
+                    .run(testCase, bus, state, executionMode, step)
                     .next(nextExecutionMode);
         }
 
@@ -53,7 +53,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
 
         for (HookTestStep after : afterStepHookSteps) {
             nextExecutionMode = after
-                    .run(testCase, bus, state, executionMode)
+                    .run(testCase, bus, state, executionMode, step)
                     .next(nextExecutionMode);
         }
 

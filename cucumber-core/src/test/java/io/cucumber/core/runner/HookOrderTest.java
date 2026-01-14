@@ -92,13 +92,14 @@ class HookOrderTest {
         runnerSupplier.get().runPickle(pickle);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
+        // Step hooks receive both TestCaseState and Step
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
     }
 
     @Test
@@ -146,13 +147,14 @@ class HookOrderTest {
         runnerSupplier.get().runPickle(pickle);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
+        // Step hooks receive both TestCaseState and Step
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
     }
 
     @Test

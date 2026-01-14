@@ -19,6 +19,7 @@ import static io.cucumber.plugin.event.HookType.AFTER_STEP;
 import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -117,9 +118,10 @@ class TestCaseTest {
         testCase.run(bus);
 
         InOrder order = inOrder(beforeStep1HookDefinition1, definitionMatch1, afterStep1HookDefinition1);
-        order.verify(beforeStep1HookDefinition1).execute(isA(TestCaseState.class));
+        // Step hooks receive both TestCaseState and Step
+        order.verify(beforeStep1HookDefinition1).execute(isA(TestCaseState.class), any());
         order.verify(definitionMatch1).runStep(isA(TestCaseState.class));
-        order.verify(afterStep1HookDefinition1).execute(isA(TestCaseState.class));
+        order.verify(afterStep1HookDefinition1).execute(isA(TestCaseState.class), any());
     }
 
     @Test
@@ -130,10 +132,11 @@ class TestCaseTest {
         testCase.run(bus);
 
         InOrder order = inOrder(beforeStep1HookDefinition2, definitionMatch2, afterStep1HookDefinition2);
-        order.verify(beforeStep1HookDefinition2, never()).execute(isA(TestCaseState.class));
+        // Step hooks receive both TestCaseState and Step
+        order.verify(beforeStep1HookDefinition2, never()).execute(isA(TestCaseState.class), any());
         order.verify(definitionMatch2, never()).runStep(isA(TestCaseState.class));
         order.verify(definitionMatch2, never()).dryRunStep(isA(TestCaseState.class));
-        order.verify(afterStep1HookDefinition2, never()).execute(isA(TestCaseState.class));
+        order.verify(afterStep1HookDefinition2, never()).execute(isA(TestCaseState.class), any());
     }
 
     @Test
