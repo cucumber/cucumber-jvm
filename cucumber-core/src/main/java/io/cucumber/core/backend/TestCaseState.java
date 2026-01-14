@@ -1,6 +1,7 @@
 package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collection;
@@ -57,7 +58,7 @@ public interface TestCaseState {
      * @param mediaType what is the data?
      * @param name      attachment name
      */
-    void attach(byte[] data, String mediaType, String name);
+    void attach(byte[] data, String mediaType, @Nullable String name);
 
     /**
      * Attach data to the report(s).
@@ -67,7 +68,7 @@ public interface TestCaseState {
      * @param name      attachment name
      * @see             #attach(byte[], String, String)
      */
-    void attach(String data, String mediaType, String name);
+    void attach(String data, String mediaType, @Nullable String name);
 
     /**
      * Outputs some text into the report.

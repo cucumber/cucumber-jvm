@@ -2,6 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.TestCaseState;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collection;
@@ -81,7 +82,7 @@ public final class Scenario {
      * @param mediaType what is the data?
      * @param name      attachment name
      */
-    public void attach(byte[] data, String mediaType, String name) {
+    public void attach(byte[] data, String mediaType, @Nullable String name) {
         delegate.attach(data, mediaType, name);
     }
 
@@ -93,7 +94,7 @@ public final class Scenario {
      * @param name      attachment name
      * @see             #attach(byte[], String, String)
      */
-    public void attach(String data, String mediaType, String name) {
+    public void attach(String data, String mediaType, @Nullable String name) {
         delegate.attach(data, mediaType, name);
     }
 

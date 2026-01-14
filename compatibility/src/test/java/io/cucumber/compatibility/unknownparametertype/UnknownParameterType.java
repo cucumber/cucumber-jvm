@@ -2,7 +2,7 @@ package io.cucumber.compatibility.unknownparametertype;
 
 import io.cucumber.java.en.Given;
 
-public class UnknownParameterType {
+public final class UnknownParameterType {
 
     @Given("{airport} is closed because of a strike")
     public void test(String airport) throws Exception {
