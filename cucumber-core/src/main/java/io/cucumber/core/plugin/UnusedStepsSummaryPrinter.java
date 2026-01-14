@@ -18,10 +18,10 @@ public final class UnusedStepsSummaryPrinter implements ColorAware, ConcurrentEv
 
     private final MessagesToUsageWriter writer;
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
+    // Used by PluginFactory
+    @SuppressWarnings("WeakerAccess")
     public UnusedStepsSummaryPrinter(OutputStream out) {
-        this.writer = MessagesToUsageWriter.builder(new UnusedReportSerializer())
-                .build(out);
+        this.writer = MessagesToUsageWriter.builder(new UnusedReportSerializer()).build(out);
     }
 
     @Override

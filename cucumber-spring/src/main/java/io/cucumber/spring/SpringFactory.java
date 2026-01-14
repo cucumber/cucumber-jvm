@@ -4,6 +4,7 @@ import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static io.cucumber.spring.TestContextAdaptor.create;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Spring based implementation of ObjectFactory.
@@ -48,8 +49,8 @@ import static io.cucumber.spring.TestContextAdaptor.create;
 public final class SpringFactory implements ObjectFactory {
 
     private final Collection<Class<?>> stepClasses = new HashSet<>();
-    private Class<?> withCucumberContextConfiguration = null;
-    private TestContextAdaptor testContextAdaptor;
+    private @Nullable Class<?> withCucumberContextConfiguration = null;
+    private @Nullable TestContextAdaptor testContextAdaptor;
 
     @Override
     public boolean addClass(final Class<?> stepClass) {
@@ -68,13 +69,13 @@ public final class SpringFactory implements ObjectFactory {
 
     private static void checkNoComponentAnnotations(Class<?> type) {
         if (AnnotatedElementUtils.isAnnotated(type, Component.class)) {
-            throw new CucumberBackendException(String.format("" +
-                    "Glue class %1$s was (meta-)annotated with @Component; marking it as a candidate for auto-detection by "
-                    +
-                    "Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by "
-                    +
-                    "spring may lead to duplicate bean definitions. Please remove the @Component (meta-)annotation",
-                type.getName()));
+            throw new CucumberBackendException(
+                """
+                        Glue class %1$s was (meta-)annotated with @Component; marking it as a candidate for auto-detection by Spring.
+                        Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions.
+                        Please remove the @Component (meta-)annotation
+                        """
+                        .formatted(type.getName()));
         }
     }
 
@@ -84,13 +85,13 @@ public final class SpringFactory implements ObjectFactory {
 
     private void checkOnlyOneClassHasCucumberContextConfiguration(Class<?> stepClass) {
         if (withCucumberContextConfiguration != null) {
-            throw new CucumberBackendException(String.format("" +
-                    "Glue class %1$s and %2$s are both (meta-)annotated with @CucumberContextConfiguration.\n" +
-                    "Please ensure only one class configures the spring context\n" +
-                    "\n" +
-                    "By default Cucumber scans the entire classpath for context configuration.\n" +
-                    "You can restrict this by configuring the glue path.\n" +
-                    ClasspathSupport.configurationExamples(),
+            throw new CucumberBackendException(String.format("""
+                    Glue class %%1$s and %%2$s are both (meta-)annotated with @CucumberContextConfiguration.
+                    Please ensure only one class configures the spring context
+
+                    By default Cucumber scans the entire classpath for context configuration.
+                    You can restrict this by configuring the glue path.
+                    %s""".formatted(ClasspathSupport.configurationExamples()),
                 stepClass,
                 withCucumberContextConfiguration));
         }
@@ -99,26 +100,28 @@ public final class SpringFactory implements ObjectFactory {
     @Override
     public void start() {
         if (withCucumberContextConfiguration == null) {
-            throw new CucumberBackendException("" +
-                    "Please annotate a glue class with some context configuration.\n" +
-                    "\n" +
-                    "For example:\n" +
-                    "\n" +
-                    "   @CucumberContextConfiguration\n" +
-                    "   @SpringBootTest(classes = TestConfig.class)\n" +
-                    "   public class CucumberSpringConfiguration { }" +
-                    "\n" +
-                    "Or: \n" +
-                    "\n" +
-                    "   @CucumberContextConfiguration\n" +
-                    "   @ContextConfiguration( ... )\n" +
-                    "   public class CucumberSpringConfiguration { }");
+            throw new CucumberBackendException("""
+                    Please annotate a glue class with some context configuration.
+
+                    For example:
+
+                       @CucumberContextConfiguration
+                       @SpringBootTest(classes = TestConfig.class)
+                       public class CucumberSpringConfiguration { }
+
+                    Or:
+
+                       @CucumberContextConfiguration
+                       @ContextConfiguration( ... )
+                       public class CucumberSpringConfiguration { }""");
         }
 
         // The application context created by the TestContextManager is
         // a singleton and reused between scenarios and shared between
         // threads.
-        testContextAdaptor = create(() -> new TestContextManager(withCucumberContextConfiguration), stepClasses);
+        var nonNullWithCucumberContextConfiguration = withCucumberContextConfiguration;
+        testContextAdaptor = TestContextAdaptor
+                .create(() -> new TestContextManager(nonNullWithCucumberContextConfiguration), stepClasses);
         testContextAdaptor.start();
     }
 
@@ -132,7 +135,7 @@ public final class SpringFactory implements ObjectFactory {
     @Override
     public <T> T getInstance(final Class<T> type) {
         try {
-            return testContextAdaptor.getInstance(type);
+            return requireNonNull(testContextAdaptor).getInstance(type);
         } catch (BeansException e) {
             throw new CucumberBackendException(e.getMessage(), e);
         }

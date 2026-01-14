@@ -1,6 +1,7 @@
 package io.cucumber.docstring;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -50,7 +51,7 @@ public final class DocStringTypeRegistry {
         return contentType.isEmpty() ? "[anonymous]" : contentType;
     }
 
-    List<DocStringType> lookup(String contentType, Type type) {
+    List<DocStringType> lookup(@Nullable String contentType, Type type) {
         DocStringType docStringType = lookupByContentTypeAndType(orDefault(contentType), type);
         if (docStringType != null) {
             return Collections.singletonList(docStringType);
@@ -59,7 +60,7 @@ public final class DocStringTypeRegistry {
         return lookUpByType(type);
     }
 
-    private String orDefault(String contentType) {
+    private String orDefault(@Nullable String contentType) {
         return contentType == null ? DEFAULT_CONTENT_TYPE : contentType;
     }
 
@@ -71,7 +72,7 @@ public final class DocStringTypeRegistry {
                 .collect(Collectors.toList());
     }
 
-    private DocStringType lookupByContentTypeAndType(String contentType, Type type) {
+    private @Nullable DocStringType lookupByContentTypeAndType(String contentType, Type type) {
         Map<Type, DocStringType> docStringTypesByType = docStringTypes.get(contentType);
         if (docStringTypesByType == null) {
             return null;

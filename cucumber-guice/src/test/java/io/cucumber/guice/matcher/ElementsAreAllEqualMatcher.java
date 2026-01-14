@@ -5,11 +5,15 @@ import org.hamcrest.Matcher;
 
 import java.util.Collection;
 
-public class ElementsAreAllEqualMatcher<E> extends ElementsAreAllMatcher<E> {
+public final class ElementsAreAllEqualMatcher<E> extends ElementsAreAllMatcher<E> {
 
     static final String DESCRIPTION = "a collection of two or more non-null elements that are determined to be the " +
             "same according to the java.lang.Object.equals() contract";
     private static final int EXPECTED_NUMBER_OF_UNIQUE_ELEMENTS = 1;
+
+    private ElementsAreAllEqualMatcher() {
+        /* no-op */
+    }
 
     /**
      * Creates a matcher for {@link java.util.Collection}s that matches when

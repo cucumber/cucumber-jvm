@@ -5,6 +5,7 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.CurlOption;
 import io.cucumber.plugin.Plugin;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,9 +50,9 @@ public final class PluginFactory {
             Appendable.class
     };
 
-    private String pluginUsingDefaultOut = null;
+    private @Nullable String pluginUsingDefaultOut = null;
 
-    private PrintStream defaultOut = new PrintStream(System.out) {
+    private @Nullable PrintStream defaultOut = new PrintStream(System.out) {
         @Override
         public void close() {
             // We have no intention to close System.out
@@ -66,10 +67,11 @@ public final class PluginFactory {
         }
     }
 
-    private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, String argument)
+    private <T extends Plugin> T instantiate(String pluginString, Class<T> pluginClass, @Nullable String argument)
             throws IOException, URISyntaxException {
         Map<Class<?>, Constructor<T>> singleArgConstructors = findSingleArgConstructors(pluginClass);
-        if (argument == null) {// No argument passed
+        // No argument passed
+        if (argument == null) {
             Constructor<T> outputStreamConstructor = singleArgConstructors.get(OutputStream.class);
             if (outputStreamConstructor != null) {
                 return newInstance(outputStreamConstructor, defaultOutOrFailIfAlreadyUsed(pluginString));
@@ -105,7 +107,8 @@ public final class PluginFactory {
         for (Class<?> ctorArgClass : CTOR_PARAMETERS) {
             try {
                 result.put(ctorArgClass, pluginClass.getConstructor(ctorArgClass));
-            } catch (NoSuchMethodException ignore) {
+            } catch (NoSuchMethodException ignored) {
+                /* no-op */
             }
         }
         return result;
@@ -137,7 +140,7 @@ public final class PluginFactory {
         }
     }
 
-    private <T extends Plugin> Constructor<T> findEmptyConstructor(Class<T> pluginClass) {
+    private <T extends Plugin> @Nullable Constructor<T> findEmptyConstructor(Class<T> pluginClass) {
         try {
             return pluginClass.getConstructor();
         } catch (NoSuchMethodException ignore) {
@@ -160,11 +163,7 @@ public final class PluginFactory {
             return arg;
         }
         if (ctorArgClass.equals(OutputStream.class)) {
-            if (arg == null) {
-                return defaultOutOrFailIfAlreadyUsed(pluginString);
-            } else {
-                return openStream(arg);
-            }
+            return openStream(arg);
         }
 
         if (ctorArgClass.equals(Appendable.class)) {

@@ -9,6 +9,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,7 +19,6 @@ import java.util.function.Predicate;
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runner.ExecutionMode.SKIP;
 import static io.cucumber.core.runner.TestAbortedExceptions.createIsTestAbortedExceptionPredicate;
-import static io.cucumber.core.runner.TestStepResultStatusMapper.from;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.time.Duration.ZERO;
 
@@ -100,7 +100,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return Status.FAILED;
     }
 
-    private Result mapStatusToResult(Status status, Throwable error, Duration duration) {
+    private Result mapStatusToResult(Status status, @Nullable Throwable error, Duration duration) {
         if (status == Status.UNDEFINED) {
             return new Result(status, ZERO, null);
         }
@@ -115,7 +115,7 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         TestStepResult testStepResult = new TestStepResult(
             toMessage(duration),
             result.getError() != null ? result.getError().getMessage() : null,
-            from(result.getStatus()),
+            TestStepResultStatusMapper.from(result.getStatus()),
             result.getError() != null ? toMessage(result.getError()) : null);
 
         Envelope envelope = Envelope.of(new io.cucumber.messages.types.TestStepFinished(

@@ -11,22 +11,12 @@ import java.util.Collections;
 public abstract class TestBackendSupplier implements Backend, BackendSupplier {
 
     @Override
-    public void buildWorld() {
-
-    }
-
-    @Override
-    public void disposeWorld() {
-
-    }
-
-    @Override
-    public Snippet getSnippet() {
+    public final Snippet getSnippet() {
         return new TestSnippet();
     }
 
     @Override
-    public Collection<? extends Backend> get() {
+    public final Collection<? extends Backend> get() {
         return Collections.singleton(this);
     }
 

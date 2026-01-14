@@ -1,16 +1,18 @@
 package io.cucumber.core.exception;
 
+import org.jspecify.annotations.Nullable;
+
 public class CucumberException extends RuntimeException {
 
-    public CucumberException(String message) {
+    public CucumberException(@Nullable String message) {
         super(message);
     }
 
-    public CucumberException(String message, Throwable cause) {
+    public CucumberException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
-    public CucumberException(Throwable cause) {
+    public CucumberException(@Nullable Throwable cause) {
         super(cause);
     }
 

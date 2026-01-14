@@ -3,7 +3,7 @@ package io.cucumber.compatibility.undefined;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 
-public class Undefined {
+public final class Undefined {
 
     @Given("an implemented step")
     public void anImplementedStep() {

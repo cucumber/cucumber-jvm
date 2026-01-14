@@ -34,6 +34,7 @@ class CoreHookDefinition {
         }
     }
 
+    @SuppressWarnings("deprecation")
     static CoreHookDefinition create(HookDefinition hookDefinition, Supplier<UUID> uuidGenerator) {
         // Ideally we would avoid this by keeping the scenario scoped
         // glue in a different bucket from the globally scoped glue.
@@ -75,7 +76,12 @@ class CoreHookDefinition {
         return delegate.getHookType();
     }
 
-    static class ScenarioScopedCoreHookDefinition extends CoreHookDefinition implements ScenarioScoped {
+    Optional<SourceReference> getDefinitionLocation() {
+        return delegate.getSourceReference();
+    }
+
+    @SuppressWarnings("deprecation")
+    static final class ScenarioScopedCoreHookDefinition extends CoreHookDefinition implements ScenarioScoped {
 
         private ScenarioScopedCoreHookDefinition(UUID id, HookDefinition delegate) {
             super(id, delegate);
@@ -83,15 +89,11 @@ class CoreHookDefinition {
 
         @Override
         public void dispose() {
-            if (delegate instanceof ScenarioScoped) {
-                ScenarioScoped scenarioScoped = (ScenarioScoped) delegate;
+            if (delegate instanceof ScenarioScoped scenarioScoped) {
                 scenarioScoped.dispose();
             }
         }
 
     }
 
-    Optional<SourceReference> getDefinitionLocation() {
-        return delegate.getSourceReference();
-    }
 }

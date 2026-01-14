@@ -11,6 +11,6 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("io/cucumber/spring/dirtyCukes.feature")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.spring.dirtiescontextconfig")
-public class RunCucumberTest {
+final class RunCucumberTest {
 
 }

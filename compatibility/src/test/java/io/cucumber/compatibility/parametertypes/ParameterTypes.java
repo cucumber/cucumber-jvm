@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ParameterTypes {
+public final class ParameterTypes {
 
     @Given("{flight} has been delayed")
     public void lhrCDGHasBeenDelayedMinutes(Flight flight) {

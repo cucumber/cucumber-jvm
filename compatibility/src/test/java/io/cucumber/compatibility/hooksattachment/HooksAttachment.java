@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static io.cucumber.compatibility.Resources.read;
 
-public class HooksAttachment {
+public final class HooksAttachment {
 
     @Before
     public void before(Scenario scenario) throws IOException {

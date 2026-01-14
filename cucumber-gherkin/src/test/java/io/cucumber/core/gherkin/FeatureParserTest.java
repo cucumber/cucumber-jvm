@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class FeatureParserTest {
 
     @Test
+    @SuppressWarnings("deprecation")
     void test() throws IOException {
         AtomicReference<URI> receivedPath = new AtomicReference<>();
         AtomicReference<String> recievedSource = new AtomicReference<>();

@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class ShellWords {
+final class ShellWords {
 
     private static final Pattern SHELLWORDS_PATTERN = Pattern.compile("[^\\s'\"]+|[']([^']*)[']|[\"]([^\"]*)[\"]");
 
     private ShellWords() {
+        /* no-op */
     }
 
     static List<String> parse(String cmdline) {

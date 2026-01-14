@@ -1,5 +1,6 @@
 package io.cucumber.picocontainer;
 
+import org.jspecify.annotations.Nullable;
 import org.picocontainer.Disposable;
 import org.picocontainer.Startable;
 
@@ -14,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * <p>
  * In a real app, this could be a database connector or similar.
  */
-public class DisposableCucumberBelly
+public final class DisposableCucumberBelly
         implements Disposable, Startable {
     static final List<String> events = new ArrayList<>();
 
-    private List<String> contents;
+    private @Nullable List<String> contents;
     private boolean isDisposed = false;
     private boolean wasStarted = false;
     private boolean wasStopped = false;
 
-    public List<String> getContents() {
+    public @Nullable List<String> getContents() {
         assertFalse(isDisposed);
         return contents;
     }
 
-    public void setContents(List<String> contents) {
+    public void setContents(@Nullable List<String> contents) {
         assertFalse(isDisposed);
         this.contents = contents;
     }

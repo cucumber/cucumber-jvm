@@ -50,7 +50,8 @@ import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.contai
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.isA;
 
-public class CompatibilityTest {
+@SuppressWarnings("NullAway")
+final class CompatibilityTest {
 
     private static final List<String> unsupportedTestCases = Arrays.asList(
         // exception: not applicable

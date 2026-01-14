@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ParameterTypeSteps {
+public final class ParameterTypeSteps {
 
     private final LocalDate expected = LocalDate.of(1907, 11, 14);
 

@@ -4,7 +4,7 @@ import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 
-public class Pending {
+public final class Pending {
 
     @Given("an unimplemented pending step")
     public void anUnimplementedPendingStep() {

@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -22,5 +23,6 @@ public interface TableEntryTransformer<T> {
      * @return           an instance of {@code T}
      * @throws Throwable when the transform fails for any reason
      */
+    @Nullable
     T transform(Map<String, String> entry) throws Throwable;
 }

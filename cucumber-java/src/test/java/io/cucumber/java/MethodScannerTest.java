@@ -10,7 +10,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -21,8 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MethodScannerTest {
 
     private final List<Map.Entry<Method, Annotation>> scanResult = new ArrayList<>();
-    private final BiConsumer<Method, Annotation> backend = (method, annotation) -> scanResult
-            .add(new SimpleEntry<>(method, annotation));
+
+    private boolean addScanResult(Method method, Annotation annotation) {
+        return scanResult
+                .add(new SimpleEntry<>(method, annotation));
+    }
 
     @BeforeEach
     void createBackend() {
@@ -32,33 +34,33 @@ class MethodScannerTest {
     @Test
     void scan_finds_annotated_methods() throws NoSuchMethodException {
         Method method = BaseSteps.class.getMethod("m");
-        MethodScanner.scan(BaseSteps.class, backend);
+        MethodScanner.scan(BaseSteps.class, this::addScanResult);
         assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
     }
 
     @Test
     void scan_ignores_object() {
-        MethodScanner.scan(Object.class, backend);
+        MethodScanner.scan(Object.class, this::addScanResult);
         assertThat(scanResult, empty());
     }
 
     @Test
     void scan_ignores_bridge_methods() throws NoSuchMethodException {
         Method method = SpecializedReturnType.class.getMethod("test");
-        MethodScanner.scan(SpecializedReturnType.class, backend);
+        MethodScanner.scan(SpecializedReturnType.class, this::addScanResult);
         assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
     }
 
     @Test
     void scan_ignores_non_instantiable_class() {
-        MethodScanner.scan(NonStaticInnerClass.class, backend);
+        MethodScanner.scan(NonStaticInnerClass.class, this::addScanResult);
         assertThat(scanResult, empty());
     }
 
     @Test
     void loadGlue_fails_when_class_is_not_method_declaring_class() {
         InvalidMethodException exception = assertThrows(InvalidMethodException.class,
-            () -> MethodScanner.scan(ExtendedSteps.class, backend));
+            () -> MethodScanner.scan(ExtendedSteps.class, this::addScanResult));
         assertThat(exception.getMessage(), is(
             "You're not allowed to extend classes that define Step Definitions or hooks. " +
                     "class io.cucumber.java.MethodScannerTest$ExtendedSteps extends class io.cucumber.java.MethodScannerTest$BaseSteps"));
@@ -80,7 +82,7 @@ class MethodScannerTest {
 
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
+    @SuppressWarnings({ "InnerClassMayBeStatic", "ClassCanBeStatic" })
     public class NonStaticInnerClass {
 
         @Before
@@ -97,6 +99,7 @@ class MethodScannerTest {
     public static class SpecializedReturnType implements GenericReturnType {
 
         @Given("test")
+        @Override
         public Integer test() {
             return 1;
         }

@@ -5,9 +5,8 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java8.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.net.URI;
 
@@ -17,7 +16,7 @@ import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings
 class Java8BackendTest {
 
     @Mock

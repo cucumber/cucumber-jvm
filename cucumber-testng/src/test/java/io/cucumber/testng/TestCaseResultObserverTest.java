@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.expectThrows;
 
+@SuppressWarnings("NullAway") // TestNGs assertNotNull not recongized
 public class TestCaseResultObserverTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
@@ -113,11 +114,12 @@ public class TestCaseResultObserverTest {
         assertThat(exception.getCause(), instanceOf(SkipException.class));
         SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(false));
-        assertThat(skipException.getMessage(), is("" +
-                "The step 'some step' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "stub snippet\n"));
+        assertThat(skipException.getMessage(), is("""
+                The step 'some step' is undefined.
+                You can implement this step using the snippet(s) below:
+
+                stub snippet
+                """));
     }
 
     @Test
@@ -137,11 +139,12 @@ public class TestCaseResultObserverTest {
         assertThat(exception.getCause(), instanceOf(SkipException.class));
         SkipException skipException = (SkipException) exception.getCause();
         assertThat(skipException.isSkip(), is(false));
-        assertThat(skipException.getMessage(), is("" +
-                "The step 'some step' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "stub snippet\n"));
+        assertThat(skipException.getMessage(), is("""
+                The step 'some step' is undefined.
+                You can implement this step using the snippet(s) below:
+
+                stub snippet
+                """));
     }
 
     @Test

@@ -4,6 +4,7 @@ import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.SourceReference;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TypeResolver;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -21,7 +22,7 @@ class StubStepDefinition implements StepDefinition {
     private final String expression;
     private final boolean transposed;
 
-    private List<Object> args;
+    private @Nullable List<Object> args;
 
     StubStepDefinition(String pattern, Type... types) {
         this(pattern, false, types);
@@ -49,7 +50,7 @@ class StubStepDefinition implements StepDefinition {
         return expression;
     }
 
-    public List<Object> getArgs() {
+    public @Nullable List<Object> getArgs() {
         return args;
     }
 
@@ -61,6 +62,16 @@ class StubStepDefinition implements StepDefinition {
     @Override
     public String getLocation() {
         return "{stubbed location with details}";
+    }
+
+    @Override
+    public Optional<SourceReference> getSourceReference() {
+        try {
+            Method method = getClass().getMethod("getSourceReference");
+            return Optional.of(SourceReference.fromMethod(method));
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private final class StubParameterInfo implements ParameterInfo {
@@ -86,16 +97,6 @@ class StubStepDefinition implements StepDefinition {
             return () -> type;
         }
 
-    }
-
-    @Override
-    public Optional<SourceReference> getSourceReference() {
-        try {
-            Method method = getClass().getMethod("getSourceReference");
-            return Optional.of(SourceReference.fromMethod(method));
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
 }

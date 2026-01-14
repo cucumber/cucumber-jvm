@@ -69,13 +69,7 @@ public final class UndefinedDataTableTypeException extends CucumberDataTableExce
 
     private static String prettyProblemList(List<String> problems) {
         return "Please review these problems:\n" +
-                problems.stream().collect(joining("" +
-
-                        "\n" +
-                        "\n",
-                    "\n", "\n" +
-                            "\n" +
-                            "Note: Usually solving one is enough"));
+                problems.stream().collect(joining("\n\n", "\n", "\n\nNote: Usually solving one is enough"));
     }
 
     static UndefinedDataTableTypeException singletonNoConverterDefined(Type type, List<String> problems) {

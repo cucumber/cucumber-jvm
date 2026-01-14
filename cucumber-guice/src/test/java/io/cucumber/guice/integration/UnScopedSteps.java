@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class UnScopedSteps {
+public final class UnScopedSteps {
 
     private static final List<UnScopedObject> OBJECTS = new ArrayList<>(3);
     private final Provider<UnScopedObject> unScopedObjectProvider;

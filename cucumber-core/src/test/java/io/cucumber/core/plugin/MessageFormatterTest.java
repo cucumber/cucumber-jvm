@@ -28,14 +28,14 @@ public class MessageFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L), null);
+        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0), null);
         bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null, null);
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0), null, null);
         bus.send(Envelope.of(testRunFinished));
 
-        String ndjson = new String(bytes.toByteArray(), UTF_8);
-        String[] actual = ndjson.split("\\n");
+        String ndjson = bytes.toString(UTF_8);
+        String[] actual = ndjson.split("\\n", 0);
         String[] expected = {
                 "{\"testRunStarted\":{\"timestamp\":{\"seconds\":10,\"nanos\":0}}}",
                 "{\"testRunFinished\":{\"success\":true,\"timestamp\":{\"seconds\":15,\"nanos\":0}}}"

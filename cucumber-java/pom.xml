@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.34.0-SNAPSHOT</version>
+        <version>8.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-java</artifactId>
@@ -85,6 +85,21 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest.version}</version>
@@ -159,7 +174,7 @@
                     <addOutputToClasspath>false</addOutputToClasspath>
                     <addResourcesToClasspath>false</addResourcesToClasspath>
                     <additionalClasspathElements>${project.build.directory}/codegen-classes</additionalClasspathElements>
-                    <mainClass>GenerateI18n</mainClass>
+                    <mainClass>io.cucumber.java.codegen.GenerateI18n</mainClass>
                     <arguments>
                         <argument>${project.build.directory}/generated-sources/i18n</argument>
                         <argument>io/cucumber/java</argument>

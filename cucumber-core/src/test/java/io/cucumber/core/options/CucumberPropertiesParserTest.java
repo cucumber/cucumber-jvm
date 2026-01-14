@@ -242,7 +242,7 @@ class CucumberPropertiesParserTest {
     void should_parse_rerun_files() throws IOException {
         mockFileResource("classpath:path/to.feature");
         mockFileResource("classpath:path/to/other.feature");
-        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + temp.toString());
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + temp);
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(),
             containsInAnyOrder(URI.create("classpath:path/to.feature"), URI.create("classpath:path/to/other.feature")));
@@ -275,7 +275,7 @@ class CucumberPropertiesParserTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new IllegalStateException();
         }
 
         @Override

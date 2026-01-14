@@ -5,6 +5,7 @@ import io.cucumber.core.options.CurlOption;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,7 +16,7 @@ import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_URL_PROPERTY_NAM
 public final class PublishFormatter implements ConcurrentEventListener, ColorAware {
 
     /**
-     * Where to publishes messages by default
+     * Where to publish messages by default
      */
     public static final String DEFAULT_CUCUMBER_MESSAGE_STORE_URL = "https://messages.cucumber.io/api/reports -X GET";
 
@@ -45,7 +46,7 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
         urlReporter.setMonochrome(monochrome);
     }
 
-    private static CurlOption createCurlOption(String token) {
+    private static CurlOption createCurlOption(@Nullable String token) {
         // Note: This only includes properties from the environment and
         // cucumber.properties. It does not include junit-platform.properties
         // Fixing this requires an overhaul of the plugin system.

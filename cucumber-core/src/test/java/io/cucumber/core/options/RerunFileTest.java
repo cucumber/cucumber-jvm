@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -17,6 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singleton;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -29,6 +31,7 @@ class RerunFileTest {
     @TempDir
     Path temp;
 
+    @Nullable
     Path rerunPath;
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -38,8 +41,10 @@ class RerunFileTest {
     @Test
     void loads_features_specified_in_rerun_file() throws Exception {
         mockFileResource(
-            "path/bar.feature:2\n" +
-                    "path/foo.feature:4\n");
+            """
+                    path/bar.feature:2
+                    path/foo.feature:4
+                    """);
 
         RuntimeOptions runtimeOptions = parser
                 .parse("@" + rerunPath)
@@ -56,7 +61,7 @@ class RerunFileTest {
     }
 
     private void mockFileResource(String... contents) throws IOException {
-        Path path = Files.createTempFile(temp, "rerun", ".txt");
+        Path path = Files.createTempFile(requireNonNull(temp), "rerun", ".txt");
         Files.write(path, Arrays.asList(contents), UTF_8, WRITE);
         this.rerunPath = path;
     }

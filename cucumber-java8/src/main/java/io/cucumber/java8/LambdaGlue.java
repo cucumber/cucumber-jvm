@@ -590,6 +590,8 @@ public interface LambdaGlue {
     }
 
     /**
+     * Register parameter type.
+     * 
      * @see LambdaGlue#ParameterType(String, String,
      *      io.cucumber.java8.ParameterDefinitionBody.A2)
      */
@@ -599,6 +601,8 @@ public interface LambdaGlue {
     }
 
     /**
+     * Register parameter type.
+     * 
      * @see LambdaGlue#ParameterType(String, String,
      *      io.cucumber.java8.ParameterDefinitionBody.A2)
      */
@@ -608,6 +612,8 @@ public interface LambdaGlue {
     }
 
     /**
+     * Register parameter type.
+     *
      * @see LambdaGlue#ParameterType(String, String,
      *      io.cucumber.java8.ParameterDefinitionBody.A2)
      */
@@ -617,6 +623,8 @@ public interface LambdaGlue {
     }
 
     /**
+     * Register parameter type.
+     *
      * @see LambdaGlue#ParameterType(String, String,
      *      io.cucumber.java8.ParameterDefinitionBody.A2)
      */
@@ -626,6 +634,8 @@ public interface LambdaGlue {
     }
 
     /**
+     * Register parameter type.
+     *
      * @see LambdaGlue#ParameterType(String, String,
      *      io.cucumber.java8.ParameterDefinitionBody.A2)
      */
@@ -635,6 +645,8 @@ public interface LambdaGlue {
     }
 
     /**
+     * Register parameter type.
+     *
      * @see LambdaGlue#ParameterType(String, String,
      *      io.cucumber.java8.ParameterDefinitionBody.A2)
      */
@@ -644,6 +656,8 @@ public interface LambdaGlue {
     }
 
     /**
+     * Register parameter type.
+     *
      * @see LambdaGlue#ParameterType(String, String,
      *      io.cucumber.java8.ParameterDefinitionBody.A2)
      */

@@ -10,16 +10,20 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class Bytes {
 
+    private Bytes() {
+        /* no-op */
+    }
+
     static DiagnosingMatcher<ByteArrayOutputStream> bytes(Matcher<String> expected) {
-        return new DiagnosingMatcher<ByteArrayOutputStream>() {
+        return new DiagnosingMatcher<>() {
             @Override
             protected boolean matches(Object actual, Description description) {
                 description.appendText("was ");
-                if (!(actual instanceof ByteArrayOutputStream)) {
+                if (!(actual instanceof ByteArrayOutputStream byteArrayOutputStream)) {
                     description.appendValue(actual.getClass());
                     return false;
                 }
-                String actualString = new String(((ByteArrayOutputStream) actual).toByteArray(), UTF_8);
+                String actualString = byteArrayOutputStream.toString(UTF_8);
                 description.appendValue(actualString);
                 return expected.matches(actualString);
             }

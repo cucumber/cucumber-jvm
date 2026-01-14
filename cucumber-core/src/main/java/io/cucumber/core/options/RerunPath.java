@@ -17,7 +17,11 @@ import java.util.stream.Collectors;
  * Either a path to a rerun file or a directory containing exclusively rerun
  * files.
  */
-class RerunPath {
+final class RerunPath {
+
+    private RerunPath() {
+        /* no-op */
+    }
 
     static Collection<FeatureWithLines> parse(Path rerunFileOrDirectory) {
         return listRerunFiles(rerunFileOrDirectory).stream()
@@ -29,6 +33,7 @@ class RerunPath {
     private static Set<Path> listRerunFiles(Path path) {
         class FileCollector extends SimpleFileVisitor<Path> {
             final Set<Path> paths = new HashSet<>();
+
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 if (!Files.isDirectory(file)) {

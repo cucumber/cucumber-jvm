@@ -12,21 +12,23 @@ import java.util.Enumeration;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Testing classloader for ServiceLoader. This classloader overrides the
  * META-INF/services/interface-class-name file with a custom definition.
  */
-public class ServiceLoaderTestClassLoader extends URLClassLoader {
-    Class<?> metaInfInterface;
-    Class<?>[] implementingClasses;
+final class ServiceLoaderTestClassLoader extends URLClassLoader {
+    private final Class<?> metaInfInterface;
+    private final Class<?>[] implementingClasses;
 
     /**
      * Constructs a classloader which has no META-INF/services/metaInfInterface.
      *
      * @param metaInfInterface ServiceLoader interface
      */
-    public ServiceLoaderTestClassLoader(Class<?> metaInfInterface) {
-        this(metaInfInterface, (Class<?>[]) null);
+    ServiceLoaderTestClassLoader(Class<?> metaInfInterface) {
+        this(metaInfInterface, new Class[0]);
     }
 
     /**
@@ -39,7 +41,7 @@ public class ServiceLoaderTestClassLoader extends URLClassLoader {
      * @param implementingClasses potential subclasses of the ServiceLoader
      *                            metaInfInterface
      */
-    public ServiceLoaderTestClassLoader(Class<?> metaInfInterface, Class<?>... implementingClasses) {
+    ServiceLoaderTestClassLoader(Class<?> metaInfInterface, Class<?>... implementingClasses) {
         super(new URL[0], metaInfInterface.getClassLoader());
         if (!metaInfInterface.isInterface()) {
             throw new IllegalArgumentException("the META-INF service " + metaInfInterface + " should be an interface");
@@ -67,13 +69,13 @@ public class ServiceLoaderTestClassLoader extends URLClassLoader {
                             return new ByteArrayInputStream(Stream.of(implementingClasses)
                                     .map(Class::getName)
                                     .collect(Collectors.joining("\n"))
-                                    .getBytes());
+                                    .getBytes(UTF_8));
                         }
                     };
                 }
             });
 
-            return new Enumeration<URL>() {
+            return new Enumeration<>() {
                 boolean hasNext = true;
 
                 @Override

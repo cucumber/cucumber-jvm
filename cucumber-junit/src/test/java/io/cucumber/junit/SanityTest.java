@@ -2,7 +2,7 @@ package io.cucumber.junit;
 
 import org.junit.jupiter.api.Test;
 
-class SanityTest {
+final class SanityTest {
 
     @Test
     void reports_events_correctly_with_cucumber_runner() {

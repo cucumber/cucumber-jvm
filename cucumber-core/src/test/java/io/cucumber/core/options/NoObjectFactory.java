@@ -18,7 +18,7 @@ final class NoObjectFactory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> glueClass) {
-        return null;
+        throw new IllegalStateException();
     }
 
     @Override

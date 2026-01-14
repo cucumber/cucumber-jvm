@@ -3,13 +3,11 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.messages.types.HookType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Objects.requireNonNull;
 
 final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
@@ -46,7 +44,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(Before.class)
                 .addAnnotation(After.class)
                 .addAnnotation(BeforeStep.class)

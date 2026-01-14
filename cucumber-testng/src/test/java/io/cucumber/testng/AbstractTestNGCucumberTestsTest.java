@@ -106,7 +106,7 @@ public final class AbstractTestNGCucumberTestsTest {
             invokedTestMethods.add(method);
         }
 
-        public List<IInvokedMethod> getInvokedTestMethods() {
+        List<IInvokedMethod> getInvokedTestMethods() {
             return invokedTestMethods;
         }
     }

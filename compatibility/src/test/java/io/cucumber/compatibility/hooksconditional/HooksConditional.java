@@ -4,7 +4,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 
-public class HooksConditional {
+public final class HooksConditional {
 
     @Before("@passing-hook")
     public void before() {

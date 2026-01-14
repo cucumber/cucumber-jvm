@@ -18,7 +18,7 @@ final class InvalidMethodSignatureException extends CucumberBackendException {
         return new InvalidMethodSignatureExceptionBuilder(method);
     }
 
-    static class InvalidMethodSignatureExceptionBuilder {
+    static final class InvalidMethodSignatureExceptionBuilder {
 
         private final Method method;
         private final List<Class<?>> annotations = new ArrayList<>();

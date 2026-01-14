@@ -1,6 +1,7 @@
 package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 
@@ -9,7 +10,7 @@ import static java.util.Objects.requireNonNull;
 @API(status = API.Status.STABLE)
 public final class EmbedEvent extends TestCaseEvent {
 
-    public final String name;
+    public final @Nullable String name;
     private final byte[] data;
     private final String mediaType;
 
@@ -17,7 +18,7 @@ public final class EmbedEvent extends TestCaseEvent {
         this(timeInstant, testCase, data, mediaType, null);
     }
 
-    public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mediaType, String name) {
+    public EmbedEvent(Instant timeInstant, TestCase testCase, byte[] data, String mediaType, @Nullable String name) {
         super(timeInstant, testCase);
         this.data = requireNonNull(data);
         this.mediaType = requireNonNull(mediaType);
@@ -41,7 +42,7 @@ public final class EmbedEvent extends TestCaseEvent {
         return mediaType;
     }
 
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 

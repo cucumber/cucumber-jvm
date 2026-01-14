@@ -1,5 +1,6 @@
 package io.cucumber.openejb;
 
+@SuppressWarnings("DesignForExtension")
 public class Belly {
 
     private int cukes;

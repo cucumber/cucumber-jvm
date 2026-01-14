@@ -1,6 +1,7 @@
 package io.cucumber.core.stepexpression;
 
 import io.cucumber.cucumberexpressions.Group;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -13,7 +14,7 @@ public final class ExpressionArgument implements Argument {
     }
 
     @Override
-    public Object getValue() {
+    public @Nullable Object getValue() {
         return argument.getValue();
     }
 
@@ -31,7 +32,8 @@ public final class ExpressionArgument implements Argument {
 
     @Override
     public String toString() {
-        return argument.getGroup() == null ? null : argument.getGroup().getValue();
+        String value = argument.getGroup().getValue();
+        return value == null ? "null" : value;
     }
 
 }

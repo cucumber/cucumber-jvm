@@ -4,7 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class RulesBackgrounds {
+public final class RulesBackgrounds {
 
     @Given("an order for {string}")
     public void context(String item) {

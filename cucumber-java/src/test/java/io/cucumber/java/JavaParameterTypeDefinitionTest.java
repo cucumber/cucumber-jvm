@@ -39,8 +39,8 @@ class JavaParameterTypeDefinitionTest {
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry)
                 .createExpression("{convert_one_capture_group_to_string}");
-        List<Argument<?>> test = cucumberExpression.match("test");
-        assertThat(test.get(0).getValue(), equalTo("convert_one_capture_group_to_string"));
+        Optional<List<Argument<?>>> test = cucumberExpression.match("test");
+        assertThat(test.get().get(0).getValue(), equalTo("convert_one_capture_group_to_string"));
     }
 
     public String convert_one_capture_group_to_string(String all) {
@@ -56,8 +56,8 @@ class JavaParameterTypeDefinitionTest {
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry)
                 .createExpression("{convert_two_capture_group_to_string}");
-        List<Argument<?>> test = cucumberExpression.match("test test");
-        assertThat(test.get(0).getValue(), equalTo("convert_two_capture_group_to_string"));
+        Optional<List<Argument<?>>> test = cucumberExpression.match("test test");
+        assertThat(test.get().get(0).getValue(), equalTo("convert_two_capture_group_to_string"));
     }
 
     public String convert_two_capture_group_to_string(String captureGroup1, String captureGroup2) {
@@ -73,8 +73,8 @@ class JavaParameterTypeDefinitionTest {
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry)
                 .createExpression("{convert_varargs_capture_group_to_string}");
-        List<Argument<?>> test = cucumberExpression.match("test test");
-        assertThat(test.get(0).getValue(), equalTo("convert_varargs_capture_group_to_string"));
+        Optional<List<Argument<?>>> test = cucumberExpression.match("test test");
+        assertThat(test.get().get(0).getValue(), equalTo("convert_varargs_capture_group_to_string"));
     }
 
     public String convert_varargs_capture_group_to_string(String... captureGroups) {
@@ -90,8 +90,8 @@ class JavaParameterTypeDefinitionTest {
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry)
                 .createExpression("{convert_two_capture_group_to_string}");
-        List<Argument<?>> test = cucumberExpression.match("test");
-        assertThrows(CucumberExpressionException.class, () -> test.get(0).getValue());
+        Optional<List<Argument<?>>> test = cucumberExpression.match("test");
+        assertThrows(CucumberExpressionException.class, () -> test.get().get(0).getValue());
     }
 
     @Test
@@ -113,8 +113,8 @@ class JavaParameterTypeDefinitionTest {
         registry.defineParameterType(definition.parameterType());
         Expression cucumberExpression = new ExpressionFactory(registry)
                 .createExpression("{convert_capture_group_to_optional_string}");
-        List<Argument<?>> args = cucumberExpression.match("convert_capture_group_to_optional_string");
-        assertThat(args.get(0).getValue(), is(Optional.of("convert_capture_group_to_optional_string")));
+        Optional<List<Argument<?>>> args = cucumberExpression.match("convert_capture_group_to_optional_string");
+        assertThat(args.get().get(0).getValue(), is(Optional.of("convert_capture_group_to_optional_string")));
     }
 
     public Optional<String> convert_capture_group_to_optional_string(String all) {

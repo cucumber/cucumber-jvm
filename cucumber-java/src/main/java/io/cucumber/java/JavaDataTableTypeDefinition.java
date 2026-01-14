@@ -11,8 +11,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
-
 class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDefinition
         implements DataTableTypeDefinition {
 
@@ -74,11 +72,10 @@ class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDef
         }
 
         Type parameterType = parameterTypes[0];
-        if (!(parameterType instanceof ParameterizedType)) {
+        if (!(parameterType instanceof ParameterizedType parameterizedType)) {
             return parameterType;
         }
 
-        ParameterizedType parameterizedType = (ParameterizedType) parameterType;
         Type[] typeParameters = parameterizedType.getActualTypeArguments();
         for (Type typeParameter : typeParameters) {
             if (!String.class.equals(typeParameter)) {
@@ -90,7 +87,7 @@ class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDef
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(io.cucumber.java.DataTableType.class)
                 .addSignature("public Author author(DataTable table)")
                 .addSignature("public Author author(List<String> row)")

@@ -9,7 +9,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class UndefinedStepExceptionTest {
+final class UndefinedStepExceptionTest {
 
     @Test
     void should_generate_a_message_for_no_suggestions() {
@@ -24,11 +24,12 @@ class UndefinedStepExceptionTest {
                 new Suggestion("some step", singletonList("some snippet")))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' is undefined.
+                You can implement this step using the snippet(s) below:
+
+                some snippet
+                """));
     }
 
     @Test
@@ -38,12 +39,13 @@ class UndefinedStepExceptionTest {
                 new Suggestion("some step", asList("some snippet", "some other snippet")))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' is undefined.
+                You can implement this step using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                """));
     }
 
     @Test
@@ -54,12 +56,13 @@ class UndefinedStepExceptionTest {
                 new Suggestion("some other step", singletonList("some other snippet")))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' and 1 other step(s) are undefined.\n" +
-                "You can implement these steps using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' and 1 other step(s) are undefined.
+                You can implement these steps using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                """));
     }
 
     @Test
@@ -70,12 +73,13 @@ class UndefinedStepExceptionTest {
                 new Suggestion("some other step", asList("some other snippet", "some other snippet")))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' and 1 other step(s) are undefined.\n" +
-                "You can implement these steps using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' and 1 other step(s) are undefined.
+                You can implement these steps using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                """));
     }
 
     @Test
@@ -87,13 +91,14 @@ class UndefinedStepExceptionTest {
                 new Suggestion("yet another step", singletonList("yet another snippet")))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' and 2 other step(s) are undefined.\n" +
-                "You can implement these steps using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n" +
-                "yet another snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' and 2 other step(s) are undefined.
+                You can implement these steps using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                yet another snippet
+                """));
     }
 
 }

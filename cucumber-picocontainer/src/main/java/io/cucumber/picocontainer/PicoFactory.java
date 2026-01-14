@@ -3,6 +3,7 @@ package io.cucumber.picocontainer;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 import org.picocontainer.PicoException;
@@ -16,12 +17,14 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 @API(status = API.Status.STABLE)
 public final class PicoFactory implements ObjectFactory {
 
     private final Set<Class<?>> classes = new HashSet<>();
     private final Set<Class<Provider>> providers = new HashSet<>();
-    private MutablePicoContainer pico;
+    private @Nullable MutablePicoContainer pico;
 
     private static boolean isInstantiable(Class<?> clazz) {
         boolean isNonStaticInnerClass = !Modifier.isStatic(clazz.getModifiers()) && clazz.getEnclosingClass() != null;
@@ -84,6 +87,10 @@ public final class PicoFactory implements ObjectFactory {
 
     @Override
     public void stop() {
+        if (pico == null) {
+            return;
+        }
+
         if (pico.getLifecycleState().isStarted()) {
             pico.stop();
         }
@@ -114,16 +121,14 @@ public final class PicoFactory implements ObjectFactory {
     @SuppressWarnings("unchecked")
     private static Class<Provider> requireConstructableProvider(Class<?> clazz) {
         if (!isProvider(clazz) || !isInstantiable(clazz) || !hasDefaultConstructor(clazz)) {
-            throw new CucumberBackendException(String.format("" +
-                    "Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a"
-                    +
-                    "PicoContainer Provider instance. Please ensure that all of the following requirements are satisfied:\n"
-                    +
-                    "1) the class implements org.picocontainer.injectors.Provider\n" +
-                    "2) the class is public\n" +
-                    "3) the class is not abstract\n" +
-                    "4) the class provides a default constructor\n" +
-                    "5) if nested, the class is static.",
+            throw new CucumberBackendException(String.format("""
+                    Glue class %1$s was annotated with @CucumberPicoProvider; marking it as a candidate for declaring a\
+                    PicoContainer Provider instance. Please ensure that all of the following requirements are satisfied:
+                    1) the class implements org.picocontainer.injectors.Provider
+                    2) the class is public
+                    3) the class is not abstract
+                    4) the class provides a default constructor
+                    5) if nested, the class is static.""",
                 clazz.getName()));
         }
         return (Class<Provider>) clazz;
@@ -131,7 +136,7 @@ public final class PicoFactory implements ObjectFactory {
 
     @Override
     public <T> T getInstance(Class<T> type) {
-        return pico.getComponent(type);
+        return requireNonNull(pico).getComponent(type);
     }
 
     private void addConstructorDependencies(Class<?> clazz) {

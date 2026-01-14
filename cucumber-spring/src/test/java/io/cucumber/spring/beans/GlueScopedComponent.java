@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @ScenarioScope
+@SuppressWarnings("DesignForExtension")
 public class GlueScopedComponent {
 
     private static final AtomicLong counter = new AtomicLong(0);

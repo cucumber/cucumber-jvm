@@ -13,10 +13,13 @@ public final class HtmlFormatter implements ConcurrentEventListener {
 
     private final MessagesToHtmlWriter writer;
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
-    public HtmlFormatter(OutputStream out) throws IOException {
+    // Used by PluginFactory
+    @SuppressWarnings("WeakerAccess")
+    public HtmlFormatter(OutputStream out) {
         Serializer serializer = new Serializer();
-        this.writer = new MessagesToHtmlWriter(out, serializer::writeValue);
+        this.writer = MessagesToHtmlWriter //
+                .builder(serializer::writeValue) //
+                .build(out);
     }
 
     @Override
