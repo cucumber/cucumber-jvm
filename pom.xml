@@ -8,14 +8,14 @@
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.34.0-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
     <url>https://cucumber.io/</url>
 
     <properties>
-        <project.build.outputTimestamp>1766076852</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1768395646</project.build.outputTimestamp>
         <project.rootdir>${project.basedir}</project.rootdir>
     </properties>
     <scm>
