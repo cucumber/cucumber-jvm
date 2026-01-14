@@ -17,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
 import static java.nio.file.Files.readAllLines;
 
 /**
@@ -54,7 +53,7 @@ public final class FeatureWithLines implements Serializable {
             });
             return featurePaths;
         } catch (Exception e) {
-            throw new CucumberException(format("Failed to parse '%s'", path), e);
+            throw new CucumberException("Failed to parse '%s'".formatted(path), e);
         }
     }
 

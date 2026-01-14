@@ -32,6 +32,6 @@ final class BooleanString {
         }
 
         throw new IllegalArgumentException(
-            String.format("'%s' Was not a valid boolean value. Please use either 'true' or 'false'.", s));
+            "'%s' Was not a valid boolean value. Please use either 'true' or 'false'.".formatted(s));
     }
 }

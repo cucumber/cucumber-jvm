@@ -144,11 +144,10 @@ public final class CucumberPropertiesParser {
     private static void warnWhenCucumberOptionsIsUsed(String commandLineOptions) {
         // Quite a few old blogs still recommend the use of cucumber.options
         // This should take care of recurring question involving this property.
-        log.warn(() -> String.format("" +
-                "Passing commandline options via the property '%s' is no longer supported. " +
-                "Please use individual properties instead. " +
-                "See the java doc on %s for details.",
-            OPTIONS_PROPERTY_NAME, Constants.class.getName()));
+        log.warn(() -> ("""
+                Passing commandline options via the property '%s' is no longer supported.
+                Please use individual properties instead. See the java doc on %s for details.
+                """).formatted(OPTIONS_PROPERTY_NAME, Constants.class.getName()));
     }
 
     private <T> void parse(

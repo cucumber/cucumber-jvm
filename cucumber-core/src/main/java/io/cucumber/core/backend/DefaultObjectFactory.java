@@ -68,7 +68,7 @@ public final class DefaultObjectFactory implements ObjectFactory {
                      * ...etc
                     """.formatted(type), e);
         } catch (Exception e) {
-            throw new CucumberException(String.format("Failed to instantiate %s", type), e);
+            throw new CucumberException("Failed to instantiate %s".formatted(type), e);
         }
     }
 

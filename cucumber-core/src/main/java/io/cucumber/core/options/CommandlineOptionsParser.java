@@ -293,7 +293,7 @@ public final class CommandlineOptionsParser {
         int padding = 7;
         int width = maxWidth + padding;
 
-        return String.format("%" + -width + "s", text);
+        return ("%" + -width + "s").formatted(text);
     }
 
     private void addKeywordRow(List<List<String>> table, String key, List<String> keywords) {

@@ -24,7 +24,7 @@ public final class StubLocation implements Located {
             String className = javaMethodReference.className();
             String methodName = javaMethodReference.methodName();
             String parameterTypes = String.join(",", javaMethodReference.methodParameterTypes());
-            return String.format("%s#%s(%s)", className, methodName, parameterTypes);
+            return "%s#%s(%s)".formatted(className, methodName, parameterTypes);
         }
         throw new IllegalArgumentException(sourceReference.toString());
     }

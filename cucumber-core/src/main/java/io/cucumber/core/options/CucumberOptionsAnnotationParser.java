@@ -75,7 +75,7 @@ public final class CucumberOptionsAnnotationParser {
             try {
                 args.addTagFilter(TagExpressionParser.parse(tagExpression));
             } catch (TagExpressionException tee) {
-                throw new IllegalArgumentException(String.format("Invalid tag expression at '%s'", clazz.getName()),
+                throw new IllegalArgumentException("Invalid tag expression at '%s'".formatted(clazz.getName()),
                     tee);
             }
         }
