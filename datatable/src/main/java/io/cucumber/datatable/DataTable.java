@@ -112,8 +112,8 @@ public final class DataTable {
         int columns = table.isEmpty() ? 0 : table.get(0).size();
         for (List<String> row : table) {
             if (columns != row.size()) {
-                throw new IllegalArgumentException(String
-                        .format("Table is not rectangular: expected %s column(s) but found %s.", columns, row.size()));
+                throw new IllegalArgumentException("Table is not rectangular: expected %s column(s) but found %s."
+                        .formatted(columns, row.size()));
             }
         }
         return table;
@@ -914,33 +914,34 @@ public final class DataTable {
         @SuppressWarnings("TypeParameterUnusedInFormals")
         public <T> @Nullable T convert(DataTable dataTable, Type type, boolean transposed) {
             throw new CucumberDataTableException(
-                String.format("Can't convert DataTable to %s. DataTable was created without a converter", type));
+                "Can't convert DataTable to %s. DataTable was created without a converter".formatted(type));
         }
 
         @Override
         public <T> List<@Nullable T> toList(DataTable dataTable, Type itemType) {
-            throw new CucumberDataTableException(String.format(
-                "Can't convert DataTable to List<%s>. DataTable was created without a converter", itemType));
+            throw new CucumberDataTableException(
+                "Can't convert DataTable to List<%s>. DataTable was created without a converter".formatted(itemType));
         }
 
         @Override
         public <T> List<List<@Nullable T>> toLists(DataTable dataTable, Type itemType) {
-            throw new CucumberDataTableException(String.format(
-                "Can't convert DataTable to List<List<%s>>. DataTable was created without a converter", itemType));
+            throw new CucumberDataTableException(
+                "Can't convert DataTable to List<List<%s>>. DataTable was created without a converter"
+                        .formatted(itemType));
         }
 
         @Override
         public <K, V> Map<@Nullable K, @Nullable V> toMap(DataTable dataTable, Type keyType, Type valueType) {
             throw new CucumberDataTableException(
-                String.format("Can't convert DataTable to Map<%s,%s>. DataTable was created without a converter",
-                    keyType, valueType));
+                "Can't convert DataTable to Map<%s,%s>. DataTable was created without a converter"
+                        .formatted(keyType, valueType));
         }
 
         @Override
         public <K, V> List<Map<@Nullable K, @Nullable V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
             throw new CucumberDataTableException(
-                String.format("Can't convert DataTable to List<Map<%s,%s>>. DataTable was created without a converter",
-                    keyType, valueType));
+                "Can't convert DataTable to List<Map<%s,%s>>. DataTable was created without a converter"
+                        .formatted(keyType, valueType));
         }
 
     }

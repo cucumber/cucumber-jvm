@@ -63,7 +63,10 @@ final class SanityChecker implements TestListener {
             out.append("END   ").append(ended.toString()).append("\n");
             if (!lastStarted.toString().equals(ended.toString())) {
                 out.append(INSANITY).append("\n");
-                String errorMessage = String.format("Started : %s\nEnded   : %s\n", lastStarted, ended);
+                String errorMessage = """
+                        Started : %s
+                        Ended   : %s
+                        """.formatted(lastStarted, ended);
                 out.append(errorMessage).append("\n");
             }
         } catch (Exception e) {

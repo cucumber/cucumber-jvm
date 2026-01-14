@@ -49,7 +49,7 @@ class FeatureParserWithCaching {
             try {
                 return new URI("classpath", name, null);
             } catch (URISyntaxException e) {
-                String message = String.format("Could not create classpath uri for resource '%s'", name);
+                String message = "Could not create classpath uri for resource '%s'".formatted(name);
                 throw new CucumberException(message, e);
             }
         }

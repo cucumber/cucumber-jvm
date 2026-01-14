@@ -15,7 +15,6 @@ import java.util.function.Function;
 
 import static io.cucumber.datatable.TypeFactory.aListOf;
 import static io.cucumber.datatable.TypeFactory.constructType;
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
@@ -77,11 +76,11 @@ public final class DataTableTypeRegistry {
     public void defineDataTableType(DataTableType dataTableType) {
         DataTableType existing = tableTypeByType.get(dataTableType.getTargetType());
         if (existing != null && !existing.isReplaceable()) {
-            throw new DuplicateTypeException(format("""
+            throw new DuplicateTypeException("""
                     There already is a data table type registered that can supply %s.
                     You are trying to register a %s for %s.
                     The existing data table type registered a %s for %s.
-                    """,
+                    """.formatted(
                 dataTableType.getElementType(),
                 dataTableType.getTransformerType().getSimpleName(),
                 dataTableType.getElementType(),

@@ -150,14 +150,17 @@ class UrlOutputStream extends OutputStream {
             String responseBody,
             @Nullable Exception e
     ) {
-        return new IOException(String.format(
-            "%s:\n> %s %s%s%s%s",
-            "HTTP request failed",
-            method,
-            url,
-            headersToString("> ", requestHeaders),
-            headersToString("< ", responseHeaders),
-            responseBody), e);
+        return new IOException("""
+                %s:
+                > %s %s%s%s%s"""
+                .formatted(
+                    "HTTP request failed",
+                    method,
+                    url,
+                    headersToString("> ", requestHeaders),
+                    headersToString("< ", responseHeaders),
+                    responseBody),
+            e);
     }
 
     private static String headersToString(String prefix, Map<@Nullable String, List<@Nullable String>> headers) {

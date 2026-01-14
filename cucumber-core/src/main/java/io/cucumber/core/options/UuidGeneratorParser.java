@@ -15,10 +15,11 @@ public final class UuidGeneratorParser {
             uuidGeneratorClass = Class.forName(cucumberUuidGenerator);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(
-                    "Could not load UUID generator class for '%s'".formatted(cucumberUuidGenerator), e);
+                "Could not load UUID generator class for '%s'".formatted(cucumberUuidGenerator), e);
         }
         if (!UuidGenerator.class.isAssignableFrom(uuidGeneratorClass)) {
-            throw new IllegalArgumentException("UUID generator class '%s' was not a subclass of '%s'".formatted(uuidGeneratorClass, UuidGenerator.class));
+            throw new IllegalArgumentException("UUID generator class '%s' was not a subclass of '%s'"
+                    .formatted(uuidGeneratorClass, UuidGenerator.class));
         }
         return (Class<? extends UuidGenerator>) uuidGeneratorClass;
     }

@@ -20,5 +20,5 @@ public interface TableCellTransformer<T> {
      * @throws Throwable when the transform fails for any reason
      */
     @Nullable
-    T transform(String cell) throws Throwable;
+    T transform(@Nullable String cell) throws Throwable;
 }

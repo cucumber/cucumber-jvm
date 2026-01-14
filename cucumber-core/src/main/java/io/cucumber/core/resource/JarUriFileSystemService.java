@@ -93,7 +93,7 @@ final class JarUriFileSystemService {
         String uriString = uri.toString();
         int lastJarUriSeparator = uriString.lastIndexOf(JAR_URI_SEPARATOR);
         if (lastJarUriSeparator < 0) {
-            throw new IllegalArgumentException(String.format("jar uri '%s' must contain '%s'", uri, JAR_URI_SEPARATOR));
+            throw new IllegalArgumentException("jar uri '%s' must contain '%s'".formatted(uri, JAR_URI_SEPARATOR));
         }
         String url = uriString.substring(0, lastJarUriSeparator);
         String entry = uriString.substring(lastJarUriSeparator + 1);

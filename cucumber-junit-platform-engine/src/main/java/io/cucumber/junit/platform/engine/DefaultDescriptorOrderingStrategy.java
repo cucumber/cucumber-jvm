@@ -54,8 +54,8 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
 
         private long createRandomSeed() {
             long generatedSeed = new Random().nextLong(Long.MAX_VALUE);
-            log.config(() -> String.format("Using generated seed for configuration parameter '%s' with value '%s'.",
-                EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME, generatedSeed));
+            log.config(() -> "Using generated seed for configuration parameter '%s' with value '%s'."
+                    .formatted(EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME, generatedSeed));
             return generatedSeed;
         }
     };

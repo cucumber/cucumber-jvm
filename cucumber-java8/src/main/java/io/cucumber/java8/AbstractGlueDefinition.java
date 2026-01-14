@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static io.cucumber.core.backend.SourceReference.fromStackTraceElement;
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 abstract class AbstractGlueDefinition implements Located {
@@ -50,8 +49,8 @@ abstract class AbstractGlueDefinition implements Located {
             }
         }
         if (acceptMethods.size() != 1) {
-            throw new IllegalStateException(format(
-                "Expected single 'accept' method on body class, found '%s'", acceptMethods));
+            throw new IllegalStateException(
+                "Expected single 'accept' method on body class, found '%s'".formatted(acceptMethods));
         }
         return acceptMethods.get(0);
     }

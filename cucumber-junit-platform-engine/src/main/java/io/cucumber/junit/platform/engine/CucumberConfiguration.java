@@ -196,9 +196,8 @@ class CucumberConfiguration implements
         if (strategy == SUREFIRE) {
             issueReporter.reportIssue(DiscoveryIssue.create(
                 WARNING,
-                String.format(
-                    "The '%s=surefire' naming strategy does not work as expected on Surefire 3.5.4 and above. Upgrade Surefire to at least 3.5.4 and use the 'long' strategy instead.",
-                    JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME)));
+                "The '%s=surefire' naming strategy does not work as expected on Surefire 3.5.4 and above. Upgrade Surefire to at least 3.5.4 and use the 'long' strategy instead."
+                        .formatted(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME)));
         }
         return strategy;
     }

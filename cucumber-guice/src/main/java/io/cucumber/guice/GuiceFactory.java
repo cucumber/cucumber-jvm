@@ -14,7 +14,6 @@ import java.util.HashSet;
 import static io.cucumber.guice.InjectorSourceFactory.createDefaultScenarioModuleInjectorSource;
 import static io.cucumber.guice.InjectorSourceFactory.instantiateUserSpecifiedInjectorSource;
 import static io.cucumber.guice.InjectorSourceFactory.loadInjectorSourceFromProperties;
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -64,15 +63,14 @@ public final class GuiceFactory implements ObjectFactory {
 
     private void checkOnlyOneClassHasInjectorSource(Class<?> stepClass) {
         if (withInjectorSource != null) {
-            throw new CucumberBackendException(format("" +
+            throw new CucumberBackendException(("" +
                     "Glue class %1$s and %2$s are both implementing io.cucumber.guice.InjectorSource.\n" +
                     "Please ensure only one class configures the Guice context\n" +
                     "\n" +
                     "By default Cucumber scans the entire classpath for context configuration.\n" +
                     "You can restrict this by configuring the glue path.\n" +
-                    ClasspathSupport.configurationExamples(),
-                stepClass,
-                withInjectorSource));
+                    ClasspathSupport.configurationExamples())
+                    .formatted(stepClass, withInjectorSource));
         }
     }
 

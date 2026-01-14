@@ -153,7 +153,7 @@ public final class DataTableType {
             return transformer.transform(raw);
         } catch (Throwable throwable) {
             throw new CucumberDataTableException(
-                String.format("'%s' could not transform%n%s", toCanonical(), DataTable.create(raw)), throwable);
+                "'%s' could not transform%n%s".formatted(toCanonical(), DataTable.create(raw)), throwable);
         }
     }
 

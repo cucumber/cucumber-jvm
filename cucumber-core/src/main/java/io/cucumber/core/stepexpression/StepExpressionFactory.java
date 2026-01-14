@@ -18,7 +18,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 public final class StepExpressionFactory {
@@ -76,9 +75,8 @@ public final class StepExpressionFactory {
 
     private static Supplier<Type> stepDefinitionDoesNotTakeAnyParameter(StepDefinition stepDefinition) {
         return () -> {
-            throw new CucumberException(format(
-                "step definition at %s does not take any parameters",
-                stepDefinition.getLocation()));
+            throw new CucumberException("step definition at %s does not take any parameters"
+                    .formatted(stepDefinition.getLocation()));
         };
     }
 

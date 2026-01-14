@@ -81,18 +81,18 @@ public final class PluginFactory {
                 return newInstance(emptyConstructor);
             }
             if (!singleArgConstructors.isEmpty()) {
-                throw new CucumberException(String.format(
-                    "You must supply an output argument to %s. Like so: %s:DIR|FILE|URL", pluginString,
-                    pluginString));
+                throw new CucumberException(
+                    "You must supply an output argument to %s. Like so: %s:DIR|FILE|URL"
+                            .formatted(pluginString, pluginString));
             }
-            throw new CucumberException(String.format(
-                "%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s",
-                pluginClass, asList(CTOR_PARAMETERS)));
+            throw new CucumberException(
+                "%s must have at least one empty constructor or a constructor that declares a single parameter of one of: %s"
+                        .formatted(pluginClass, asList(CTOR_PARAMETERS)));
         }
         if (singleArgConstructors.size() != 1) {
             throw new CucumberException(
-                String.format("%s must have exactly one constructor that declares a single parameter of one of: %s",
-                    pluginClass, asList(CTOR_PARAMETERS)));
+                "%s must have exactly one constructor that declares a single parameter of one of: %s"
+                        .formatted(pluginClass, asList(CTOR_PARAMETERS)));
         }
         Map.Entry<Class<?>, Constructor<T>> singleArgConstructorEntry = singleArgConstructors.entrySet().iterator()
                 .next();
@@ -171,13 +171,13 @@ public final class PluginFactory {
                     .filter(c -> c != Appendable.class)
                     .map(Class::getName)
                     .collect(Collectors.joining(", "));
-            log.error(() -> String.format(
-                "The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s",
-                pluginClass.getName(), recommendedParameters));
+            log.error(
+                () -> "The %s plugin class takes a java.lang.Appendable in its constructor, which is deprecated and will be removed in the next major release. It should be changed to accept one of %s"
+                        .formatted(pluginClass.getName(), recommendedParameters));
             return new UTF8OutputStreamWriter(openStream(arg));
         }
         throw new CucumberException(
-            String.format("Cannot convert %s into a %s to pass to the %s plugin", arg, ctorArgClass, pluginString));
+            "Cannot convert %s into a %s to pass to the %s plugin".formatted(arg, ctorArgClass, pluginString));
     }
 
     private static URL makeURL(String arg) throws MalformedURLException {
@@ -204,10 +204,9 @@ public final class PluginFactory {
         try {
             canonicalFile = file.getCanonicalFile();
         } catch (IOException e) {
-            throw new IllegalArgumentException(String.format("" +
-                    "Couldn't get the canonical file of '%s'.\n" +
-                    "The details are in the stack trace below:",
-                file),
+            throw new IllegalArgumentException("""
+                    Couldn't get the canonical file of '%s'.
+                    The details are in the stack trace below:""".formatted(file),
                 e);
         }
 
@@ -218,17 +217,17 @@ public final class PluginFactory {
             }
         } catch (IOException e) {
             // See: https://github.com/cucumber/cucumber-jvm/issues/2108
-            throw new IllegalArgumentException(String.format("" +
-                    "Couldn't create parent directories of '%s'.\n" +
-                    "Make sure the the parent directory '%s' isn't a file.\n" +
-                    "\n" +
-                    "Note: This usually happens when plugins write to colliding paths.\n" +
-                    "For example: 'html:target/cucumber, json:target/cucumber/report.json'\n" +
-                    "You can fix this by making the paths do no collide.\n" +
-                    "For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'" +
-                    "\n" +
-                    "The details are in the stack trace below:",
-                canonicalFile, canonicalFile.getParentFile()),
+            throw new IllegalArgumentException("""
+                    Couldn't create parent directories of '%s'.
+                    Make sure the the parent directory '%s' isn't a file.
+
+                    Note: This usually happens when plugins write to colliding paths.
+                    For example: 'html:target/cucumber, json:target/cucumber/report.json'
+                    You can fix this by making the paths do no collide.
+                    For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'\
+
+                    The details are in the stack trace below:"""
+                    .formatted(canonicalFile, canonicalFile.getParentFile()),
                 e);
         }
 
@@ -236,17 +235,17 @@ public final class PluginFactory {
             return new FileOutputStream(canonicalFile);
         } catch (FileNotFoundException e) {
             // See: https://github.com/cucumber/cucumber-jvm/issues/2108
-            throw new IllegalArgumentException(String.format("" +
-                    "Couldn't create a file output stream for '%s'.\n" +
-                    "Make sure the the file isn't a directory.\n" +
-                    "\n" +
-                    "Note: This usually happens when plugins write to colliding paths.\n" +
-                    "For example: 'json:target/cucumber/report.json, html:target/cucumber'\n" +
-                    "You can fix this by making the paths do no collide.\n" +
-                    "For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'" +
-                    "\n" +
-                    "The details are in the stack trace below:",
-                file),
+            throw new IllegalArgumentException("""
+                    Couldn't create a file output stream for '%s'.
+                    Make sure the the file isn't a directory.
+
+                    Note: This usually happens when plugins write to colliding paths.
+                    For example: 'json:target/cucumber/report.json, html:target/cucumber'
+                    You can fix this by making the paths do no collide.
+                    For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'\
+
+                    The details are in the stack trace below:"""
+                    .formatted(file),
                 e);
         }
     }

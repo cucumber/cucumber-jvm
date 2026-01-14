@@ -53,11 +53,11 @@ public final class PublishFormatter implements ConcurrentEventListener, ColorAwa
         Map<String, String> properties = CucumberProperties.create();
         String url = properties.getOrDefault(PLUGIN_PUBLISH_URL_PROPERTY_NAME, DEFAULT_CUCUMBER_MESSAGE_STORE_URL);
         if (token != null) {
-            url += String.format(" -H 'Authorization: Bearer %s'", token);
+            url += " -H 'Authorization: Bearer %s'".formatted(token);
         }
         String proxy = properties.get(PLUGIN_PUBLISH_PROXY_PROPERTY_NAME);
         if (proxy != null) {
-            url += String.format(" -x '%s'", proxy);
+            url += " -x '%s'".formatted(proxy);
         }
         return CurlOption.parse(url);
     }

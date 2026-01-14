@@ -5,7 +5,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -51,9 +50,8 @@ public final class DocStringType {
         try {
             return transformer.transform(content);
         } catch (Throwable throwable) {
-            throw new CucumberDocStringException(format(
-                "'%s' could not transform%n%s",
-                contentType, DocString.create(content, contentType)),
+            throw new CucumberDocStringException("'%s' could not transform%n%s"
+                    .formatted(contentType, DocString.create(content, contentType)),
                 throwable);
         }
     }

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
-
 @API(status = API.Status.STABLE)
 public final class DocStringTypeRegistry {
 
@@ -38,13 +36,13 @@ public final class DocStringTypeRegistry {
             DocStringType existing, DocStringType docStringType
     ) {
         String contentType = existing.getContentType();
-        return new CucumberDocStringException(format("" +
+        return new CucumberDocStringException(("" +
                 "There is already docstring type registered for '%s' and %s.\n" +
-                "You are trying to add '%s' and %s",
-            emptyToAnonymous(contentType),
-            existing.getType().getTypeName(),
-            emptyToAnonymous(docStringType.getContentType()),
-            docStringType.getType().getTypeName()));
+                "You are trying to add '%s' and %s").formatted(
+                    emptyToAnonymous(contentType),
+                    existing.getType().getTypeName(),
+                    emptyToAnonymous(docStringType.getContentType()),
+                    docStringType.getType().getTypeName()));
     }
 
     private static String emptyToAnonymous(String contentType) {

@@ -15,7 +15,7 @@ final class DuplicateStepDefinitionException extends CucumberException {
         requireNonNull(a);
         requireNonNull(b);
 
-        return String.format("Duplicate step definitions in %s and %s",
+        return "Duplicate step definitions in %s and %s".formatted(
             a.getLocation(),
             b.getLocation());
     }

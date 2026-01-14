@@ -242,15 +242,14 @@ class GuiceFactoryTest {
 
         Executable testMethod = () -> factory.addClass(SecondInjectorSource.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
-        String exceptionMessage = String.format("""
+        String exceptionMessage = """
                 Glue class %%1$s and %%2$s are both implementing io.cucumber.guice.InjectorSource.
                 Please ensure only one class configures the Guice context
 
                 By default Cucumber scans the entire classpath for context configuration.
                 You can restrict this by configuring the glue path.
-                %s""".formatted(ClasspathSupport.configurationExamples()),
-            SecondInjectorSource.class,
-            YourInjectorSource.class);
+                %s""".formatted(ClasspathSupport.configurationExamples())
+                .formatted(SecondInjectorSource.class, YourInjectorSource.class);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(exceptionMessage));
     }
 

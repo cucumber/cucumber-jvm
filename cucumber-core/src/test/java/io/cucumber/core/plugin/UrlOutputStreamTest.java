@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.zip.GZIPInputStream;
 
-import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(VertxExtension.class)
@@ -49,7 +48,7 @@ class UrlOutputStreamTest {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 500,
             "Oh noes");
-        CurlOption option = CurlOption.parse(format("http://localhost:%d/s3", port));
+        CurlOption option = CurlOption.parse("http://localhost:%d/s3".formatted(port));
 
         verifyRequest(option, testServer, vertx, testContext, requestBody);
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
@@ -84,7 +83,7 @@ class UrlOutputStreamTest {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody + requestBody, HttpMethod.PUT, null, null,
             200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect", port));
+        CurlOption url = CurlOption.parse("http://localhost:%d/redirect".formatted(port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
@@ -96,7 +95,7 @@ class UrlOutputStreamTest {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
         CurlOption url = CurlOption
-                .parse(format("http://localhost:%d/accept -X GET -H 'Authorization: Bearer s3cr3t'", port));
+                .parse("http://localhost:%d/accept -X GET -H 'Authorization: Bearer s3cr3t'".formatted(port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
@@ -112,7 +111,7 @@ class UrlOutputStreamTest {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null,
             "application/x-www-form-urlencoded", 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d/redirect-no-location -X POST", port));
+        CurlOption url = CurlOption.parse("http://localhost:%d/redirect-no-location -X POST".formatted(port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
 
         assertThat(testContext.awaitCompletion(TIMEOUT_SECONDS, TimeUnit.SECONDS)).isTrue();
@@ -128,7 +127,7 @@ class UrlOutputStreamTest {
     void streams_request_body_in_chunks(Vertx vertx, VertxTestContext testContext) {
         String requestBody = makeOneKilobyteStringWithEmoji();
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, null, null, 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d", port));
+        CurlOption url = CurlOption.parse("http://localhost:%d".formatted(port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
@@ -144,7 +143,7 @@ class UrlOutputStreamTest {
         String requestBody = "hello";
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.POST, null,
             "application/x-www-form-urlencoded", 200, "");
-        CurlOption url = CurlOption.parse(format("http://localhost:%d -X POST", port));
+        CurlOption url = CurlOption.parse("http://localhost:%d -X POST".formatted(port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 
@@ -154,7 +153,7 @@ class UrlOutputStreamTest {
         TestServer testServer = new TestServer(port, testContext, requestBody, HttpMethod.PUT, "foo=bar",
             "application/x-ndjson", 200, "");
         CurlOption url = CurlOption
-                .parse(format("http://localhost:%d?foo=bar -H 'Content-Type: application/x-ndjson'", port));
+                .parse("http://localhost:%d?foo=bar -H 'Content-Type: application/x-ndjson'".formatted(port));
         verifyRequest(url, testServer, vertx, testContext, requestBody);
     }
 

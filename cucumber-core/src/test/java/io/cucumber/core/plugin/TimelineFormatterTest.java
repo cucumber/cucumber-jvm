@@ -158,11 +158,12 @@ class TimelineFormatterTest {
 
             final int idx = i;
             assertAll(
-                () -> assertThat(String.format("id on group %s, was not as expected", idx),
+                () -> assertThat("id on group %s, was not as expected".formatted(idx),
                     actual.getId(),
                     is(notNullValue())),
-                () -> assertThat(String.format("content on group %s, was not as expected",
-                    idx), actual.getContent(),
+                () -> assertThat("content on group %s, was not as expected"
+                        .formatted(idx),
+                    actual.getContent(),
                     is(notNullValue())));
         }
 
@@ -338,12 +339,12 @@ class TimelineFormatterTest {
 
             int idx = i;
             assertAll(
-                () -> assertThat(String.format("id on group %s, was not as expected", idx),
-                    actual.getId(),
-                    is(equalTo(expected.getId()))),
-                () -> assertThat(String.format("content on group %s, was not as expected",
-                    idx), actual.getContent(),
-                    is(equalTo(expected.getContent()))));
+                () -> assertThat("id on group %s, was not as expected"
+                        .formatted(idx),
+                    actual.getId(), is(equalTo(expected.getId()))),
+                () -> assertThat("content on group %s, was not as expected"
+                        .formatted(idx),
+                    actual.getContent(), is(equalTo(expected.getContent()))));
         }
     }
 

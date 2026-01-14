@@ -40,7 +40,7 @@ public final class Runner {
     private final Collection<? extends Backend> backends;
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
-    private List<SnippetGenerator> snippetGenerators = new ArrayList<>(1);
+    private final List<SnippetGenerator> snippetGenerators = new ArrayList<>(1);
 
     public Runner(
             EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, Options runnerOptions
@@ -112,10 +112,11 @@ public final class Runner {
         try {
             hookDefinition.execute();
         } catch (CucumberBackendException e) {
-            CucumberException exception = new CucumberException(String.format("" +
-                    "Could not invoke hook defined at '%s'.\n" +
-                    "It appears there was a problem with the hook definition.",
-                hookDefinition.getLocation()), e);
+            CucumberException exception = new CucumberException("""
+                    Could not invoke hook defined at '%s'.
+                    It appears there was a problem with the hook definition."""
+                    .formatted(hookDefinition.getLocation()),
+                e);
             throwAsUncheckedException(exception);
         } catch (CucumberInvocationTargetException e) {
             Throwable throwable = removeFrameworkFrames(e);

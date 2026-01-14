@@ -80,22 +80,21 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private CucumberException arityMismatch(int parameterCount) {
         List<String> arguments = createArgumentsForErrorMessage();
-        return new CucumberException(String.format(
-            "Step [%s] is defined with %s parameters at '%s'.\n" +
-                    "However, the gherkin step has %s arguments%sStep text: %s",
-            stepDefinition.getPattern(),
-            parameterCount,
-            stepDefinition.getLocation(),
-            arguments.size(),
-            formatArguments(arguments),
-            step.getText()));
+        return new CucumberException(("Step [%s] is defined with %s parameters at '%s'.\n" +
+                "However, the gherkin step has %s arguments%sStep text: %s").formatted(
+                    stepDefinition.getPattern(),
+                    parameterCount,
+                    stepDefinition.getLocation(),
+                    arguments.size(),
+                    formatArguments(arguments),
+                    step.getText()));
     }
 
     private CucumberException registerDataTableTypeInConfiguration(Exception e) {
         // TODO: Add doc URL
-        return new CucumberException(String.format("""
+        return new CucumberException("""
                 Could not convert arguments for step [%s] defined at '%s'.
-                It appears you did not register a data table type.""",
+                It appears you did not register a data table type.""".formatted(
             stepDefinition.getPattern(),
             stepDefinition.getLocation()), e);
     }
@@ -109,8 +108,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     private CucumberException couldNotConvertArguments(Exception e) {
-        return new CucumberException(String.format(
-            "Could not convert arguments for step [%s] defined at '%s'.",
+        return new CucumberException("Could not convert arguments for step [%s] defined at '%s'.".formatted(
             stepDefinition.getPattern(),
             stepDefinition.getLocation()), e);
     }

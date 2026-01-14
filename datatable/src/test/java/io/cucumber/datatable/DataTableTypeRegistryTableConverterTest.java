@@ -26,7 +26,6 @@ import static io.cucumber.datatable.DataTable.emptyDataTable;
 import static io.cucumber.datatable.TableParser.parse;
 import static io.cucumber.datatable.TypeFactory.typeName;
 import static java.lang.Double.parseDouble;
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -972,12 +971,12 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, MAP_OF_STRING_TO_LIST_OF_DOUBLE));
-        assertThat(exception.getMessage(), is(format("""
+        assertThat(exception.getMessage(), is("""
                 Can't convert DataTable to Map<%s, %s>.
                 There are more values then keys. \
                 The first header cell was left blank. \
-                You can add a value there""",
-            typeName(String.class), LIST_OF_DOUBLE)));
+                You can add a value there"""
+                .formatted(typeName(String.class), LIST_OF_DOUBLE)));
     }
 
     @Test
@@ -991,11 +990,11 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, MAP_OF_STRING_TO_STRING));
-        assertThat(exception.getMessage(), is(format("""
+        assertThat(exception.getMessage(), is("""
                 Can't convert DataTable to Map<%s, %s>.
                 There is more then one value per key. \
-                Did you mean to transform to Map<%s, List<%s>> instead?""",
-            typeName(String.class), typeName(String.class), typeName(String.class), typeName(String.class))));
+                Did you mean to transform to Map<%s, List<%s>> instead?"""
+                .formatted(typeName(String.class), typeName(String.class), typeName(String.class), typeName(String.class))));
     }
 
     @Test
@@ -1102,10 +1101,10 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.convert(table, Piece.class));
-        assertThat(exception.getMessage(), is(format("""
+        assertThat(exception.getMessage(), is("""
                 Can't convert DataTable to %s. \
-                The table contained more then one item: [♘, ♝]""",
-            typeName(Piece.class))));
+                The table contained more then one item: [♘, ♝]"""
+                .formatted(typeName(Piece.class))));
     }
 
     @Test
@@ -1354,10 +1353,10 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, Coordinate.class));
-        assertThat(exception.getMessage(), startsWith(format("""
+        assertThat(exception.getMessage(), startsWith("""
                 Can't convert DataTable to Map<%s, %s>.
-                Encountered duplicate key""",
-            typeName(AirPortCode.class), typeName(Coordinate.class))));
+                Encountered duplicate key"""
+                .formatted(typeName(AirPortCode.class), typeName(Coordinate.class))));
     }
 
     @Test
@@ -1402,12 +1401,12 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, Coordinate.class));
-        assertThat(exception.getMessage(), is(format("""
+        assertThat(exception.getMessage(), is("""
                 Can't convert DataTable to Map<%s, %s>.
                 There are more values then keys. \
                 Did you use a TableEntryTransformer for the key \
-                while using a TableRow or TableCellTransformer for the value?""",
-            typeName(AirPortCode.class), typeName(Coordinate.class))));
+                while using a TableRow or TableCellTransformer for the value?"""
+                .formatted(typeName(AirPortCode.class), typeName(Coordinate.class))));
     }
 
     @Test
@@ -1424,10 +1423,11 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, AirPortCode.class, Coordinate.class));
-        assertThat(exception.getMessage(), startsWith(format("""
-                Can't convert DataTable to Map<%s, %s>.
-                The first cell was either blank or you have registered a TableEntryTransformer for the key type.""",
-            typeName(AirPortCode.class), typeName(Coordinate.class))));
+        assertThat(exception.getMessage(),
+            startsWith("""
+                    Can't convert DataTable to Map<%s, %s>.
+                    The first cell was either blank or you have registered a TableEntryTransformer for the key type."""
+                    .formatted(typeName(AirPortCode.class), typeName(Coordinate.class))));
     }
 
     @Test
@@ -1444,12 +1444,12 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, String.class, Coordinate.class));
-        assertThat(exception.getMessage(), is(format("""
+        assertThat(exception.getMessage(), is("""
                 Can't convert DataTable to Map<%s, %s>.
                 There are more keys than values. \
                 Did you use a TableEntryTransformer for the value \
-                while using a TableRow or TableCellTransformer for the keys?""",
-            typeName(String.class), typeName(Coordinate.class))));
+                while using a TableRow or TableCellTransformer for the keys?"""
+                .formatted(typeName(String.class), typeName(Coordinate.class))));
     }
 
     @Test
@@ -1463,10 +1463,11 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMap(table, String.class, String.class));
-        assertThat(exception.getMessage(), startsWith(format("""
-                Can't convert DataTable to Map<%s, %s>.
-                The first cell was either blank or you have registered a TableEntryTransformer for the key type.""",
-            typeName(String.class), typeName(String.class))));
+        assertThat(exception.getMessage(),
+            startsWith("""
+                    Can't convert DataTable to Map<%s, %s>.
+                    The first cell was either blank or you have registered a TableEntryTransformer for the key type."""
+                    .formatted(typeName(String.class), typeName(String.class))));
     }
 
     @Test
@@ -1586,9 +1587,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, Integer.class, Integer.class));
-        assertThat(exception.getMessage(), is(format("Can't convert DataTable to Map<%s, %s>.\n" +
-                "Encountered duplicate key 1 with values 4 and 5",
-            typeName(Integer.class), typeName(Integer.class))));
+        assertThat(exception.getMessage(), is(("Can't convert DataTable to Map<%s, %s>.\n" +
+                "Encountered duplicate key 1 with values 4 and 5")
+                .formatted(typeName(Integer.class), typeName(Integer.class))));
     }
 
     @Test
@@ -1600,9 +1601,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, Integer.class, Integer.class));
-        assertThat(exception.getMessage(), is(format("Can't convert DataTable to Map<%s, %s>.\n" +
-                "Encountered duplicate key null with values 1 and 2",
-            typeName(Integer.class), typeName(Integer.class))));
+        assertThat(exception.getMessage(), is(("Can't convert DataTable to Map<%s, %s>.\n" +
+                "Encountered duplicate key null with values 1 and 2")
+                .formatted(typeName(Integer.class), typeName(Integer.class))));
     }
 
     @Test
@@ -1659,7 +1660,7 @@ class DataTableTypeRegistryTableConverterTest {
 
         @Override
         public String toString() {
-            return format("%d: %s", number, value);
+            return "%d: %s".formatted(number, value);
         }
     }
 

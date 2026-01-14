@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.datatable.DataTable.emptyDataTable;
 import static io.cucumber.datatable.TypeFactory.typeName;
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -475,10 +474,10 @@ class DataTableTest {
             CucumberDataTableException.class,
             table::asMaps);
 
-        assertThat(exception.getMessage(), is(format("""
+        assertThat(exception.getMessage(), is("""
                 Can't convert DataTable to Map<%s, %s>.
-                Encountered duplicate key 1 with values 4 and 5""",
-            typeName(String.class), typeName(String.class))));
+                Encountered duplicate key 1 with values 4 and 5"""
+                .formatted(typeName(String.class), typeName(String.class))));
     }
 
     @Test
@@ -491,10 +490,10 @@ class DataTableTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             table::asMaps);
-        assertThat(exception.getMessage(), is(format("""
+        assertThat(exception.getMessage(), is("""
                 Can't convert DataTable to Map<%s, %s>.
-                Encountered duplicate key null with values 1 and 2""",
-            typeName(String.class), typeName(String.class))));
+                Encountered duplicate key null with values 1 and 2"""
+                .formatted(typeName(String.class), typeName(String.class))));
     }
 
     @Test
