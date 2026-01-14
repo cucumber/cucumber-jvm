@@ -1,6 +1,5 @@
 package io.cucumber.java;
 
-import io.cucumber.plugin.event.StepArgument;
 import org.apiguardian.api.API;
 
 /**
@@ -38,13 +37,5 @@ public interface Step {
      * @return step line number
      */
     int getLine();
-
-    /**
-     * Returns this Gherkin step argument. Can be either a data table or doc
-     * string.
-     *
-     * @return a step argument, null if absent
-     */
-    StepArgument getArgument();
 
 }

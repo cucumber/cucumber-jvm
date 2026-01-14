@@ -1,7 +1,5 @@
 package io.cucumber.java;
 
-import io.cucumber.plugin.event.StepArgument;
-
 /**
  * Internal wrapper that implements the public {@link Step} interface by
  * delegating to the internal step representation.
@@ -27,11 +25,6 @@ final class StepInfo implements Step {
     @Override
     public int getLine() {
         return delegate.getLine();
-    }
-
-    @Override
-    public StepArgument getArgument() {
-        return delegate.getArgument();
     }
 
 }
