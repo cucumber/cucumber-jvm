@@ -28,7 +28,7 @@ class AmbiguousStepDefinitionMatchTest {
 
     @Test
     void throws_ambiguous_step_definitions_exception_when_run() {
-        Executable testMethod = () -> match.runStep(mock(TestCaseState.class));
+        Executable testMethod = () -> match.runStep(mock(TestCaseState.class), null);
         AmbiguousStepDefinitionsException actualThrown = assertThrows(AmbiguousStepDefinitionsException.class,
             testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(

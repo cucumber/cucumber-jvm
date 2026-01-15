@@ -39,7 +39,13 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    ExecutionMode run(TestCase testCase, EventBus bus, TestCaseState state, ExecutionMode executionMode) {
+    ExecutionMode run(
+            TestCase testCase,
+            EventBus bus,
+            TestCaseState state,
+            ExecutionMode executionMode,
+            io.cucumber.plugin.event.Step ignoredStep
+    ) {
         ExecutionMode nextExecutionMode = executionMode;
 
         for (HookTestStep before : beforeStepHookSteps) {
@@ -48,7 +54,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
                     .next(nextExecutionMode);
         }
 
-        nextExecutionMode = super.run(testCase, bus, state, nextExecutionMode)
+        nextExecutionMode = super.run(testCase, bus, state, nextExecutionMode, null)
                 .next(nextExecutionMode);
 
         for (HookTestStep after : afterStepHookSteps) {
