@@ -150,7 +150,7 @@ public final class DataTableTypeRegistryTableConverter implements TableConverter
     @SuppressWarnings("unchecked")
     private <T> ListOrProblems<T> toListOrProblems(DataTable dataTable, Type itemType) {
         List<String> problems = new ArrayList<>();
-        List<List<String>> cells = dataTable.cells();
+        List<List<@Nullable String>> cells = dataTable.cells();
         boolean singleColumn = dataTable.width() == 1;
         boolean mayHaveHeader = dataTable.height() > 1;
 

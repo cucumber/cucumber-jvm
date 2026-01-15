@@ -106,7 +106,7 @@ class DataTableTypeRegistryTableConverterTest {
     private static final TableTransformer<ChessBoard> CHESS_BOARD_TABLE_TRANSFORMER = table -> new ChessBoard(
         table.subTable(1, 1).values());
     private static final TableCellTransformer<Piece> PIECE_TABLE_CELL_TRANSFORMER = Piece::fromString;
-    private static final TableCellTransformer<AirPortCode> AIR_PORT_CODE_TABLE_CELL_TRANSFORMER = AirPortCode::new;
+    private static final TableCellTransformer<AirPortCode> AIR_PORT_CODE_TABLE_CELL_TRANSFORMER = AirPortCode::fromString;
     private static final TableEntryTransformer<Coordinate> COORDINATE_TABLE_ENTRY_TRANSFORMER = tableEntry -> new Coordinate(
         parseDouble(tableEntry.get("lat")),
         parseDouble(tableEntry.get("lon")));
@@ -143,7 +143,7 @@ class DataTableTypeRegistryTableConverterTest {
     private static final TableCellByTypeTransformer JACKSON_TABLE_CELL_BY_TYPE_CONVERTER = (value,
             cellType) -> objectMapper.convertValue(value, objectMapper.constructType(cellType));
     private static final DataTableType DATE_TABLE_CELL_TRANSFORMER = new DataTableType(Date.class,
-        (String source) -> dateFormat().parse(source));
+        (@Nullable String source) -> dateFormat().parse(source));
 
     private static Object convertToNumberedObject(Map<String, String> numberedEntry, Type type) {
         int number = Integer.parseInt(numberedEntry.get("#"));
@@ -505,7 +505,8 @@ class DataTableTypeRegistryTableConverterTest {
 
         List<Optional<String>> expected = singletonList(Optional.of("Goodbye"));
 
-        registry.defineDataTableType(new DataTableType(OPTIONAL_STRING, (String cell) -> Optional.of("Goodbye")));
+        registry.defineDataTableType(
+            new DataTableType(OPTIONAL_STRING, (@Nullable String cell) -> Optional.of("Goodbye")));
 
         assertEquals(expected, converter.toList(table, OPTIONAL_STRING));
         assertEquals(expected, converter.convert(table, LIST_OF_OPTIONAL_STRING));
@@ -994,7 +995,8 @@ class DataTableTypeRegistryTableConverterTest {
                 Can't convert DataTable to Map<%s, %s>.
                 There is more then one value per key. \
                 Did you mean to transform to Map<%s, List<%s>> instead?"""
-                .formatted(typeName(String.class), typeName(String.class), typeName(String.class), typeName(String.class))));
+                .formatted(typeName(String.class), typeName(String.class), typeName(String.class),
+                    typeName(String.class))));
     }
 
     @Test
@@ -1676,7 +1678,7 @@ class DataTableTypeRegistryTableConverterTest {
             this.glyp = glyp;
         }
 
-        static @Nullable Piece fromString(String glyp) {
+        static @Nullable Piece fromString(@Nullable String glyp) {
             for (Piece piece : values()) {
                 if (piece.glyp.equals(glyp)) {
                     return piece;
@@ -1723,7 +1725,11 @@ class DataTableTypeRegistryTableConverterTest {
         }
 
         @JsonCreator
-        static AirPortCode fromString(String code) {
+        static @Nullable AirPortCode fromString(@Nullable String code) {
+            if (code == null) {
+                return null;
+            }
+
             return new AirPortCode(code);
         }
     }

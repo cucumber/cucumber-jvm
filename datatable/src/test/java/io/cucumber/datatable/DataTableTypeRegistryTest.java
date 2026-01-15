@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -44,7 +45,7 @@ class DataTableTypeRegistryTest {
                 Integer.parseInt(entry.get("index of place")));
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final DataTableType CELL = new DataTableType(Place.class,
-        (String cell) -> OBJECT_MAPPER.convertValue(cell, Place.class));
+        (@Nullable String cell) -> OBJECT_MAPPER.convertValue(cell, Place.class));
     private static final DataTableType ENTRY = new DataTableType(Place.class,
         (Map<String, String> entry) -> OBJECT_MAPPER.convertValue(entry, Place.class));
 
@@ -246,7 +247,7 @@ class DataTableTypeRegistryTest {
     void string_transformer_is_replaceable() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         registry.defineDataTableType(
-            new DataTableType(String.class, (String cell) -> "[blank]".equals(cell) ? "" : cell));
+            new DataTableType(String.class, (@Nullable String cell) -> "[blank]".equals(cell) ? "" : cell));
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_STRING);
         assertNotNull(dataTableType);
         assertEquals(
@@ -258,7 +259,7 @@ class DataTableTypeRegistryTest {
     void object_transformer_is_replaceable() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         registry.defineDataTableType(
-            new DataTableType(Object.class, (String cell) -> "[blank]".equals(cell) ? "" : cell));
+            new DataTableType(Object.class, (@Nullable String cell) -> "[blank]".equals(cell) ? "" : cell));
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_OBJECT);
         assertNotNull(dataTableType);
         assertEquals(
@@ -283,7 +284,7 @@ class DataTableTypeRegistryTest {
     void boolean_transformer_is_replaceable() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         registry.defineDataTableType(
-            new DataTableType(Boolean.class, (String cell) -> "yes".equals(cell)));
+            new DataTableType(Boolean.class, (@Nullable String cell) -> "yes".equals(cell)));
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BOOLEAN);
         assertNotNull(dataTableType);
         assertEquals(

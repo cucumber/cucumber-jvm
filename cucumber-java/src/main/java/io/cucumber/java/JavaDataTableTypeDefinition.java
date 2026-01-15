@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DataTableTypeDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableType;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -49,7 +50,7 @@ class JavaDataTableTypeDefinition extends AbstractDatatableElementTransformerDef
         if (String.class.equals(parameterType)) {
             return new DataTableType(
                 returnType,
-                (String cell) -> invokeMethod(
+                (@Nullable String cell) -> invokeMethod(
                     replaceEmptyPatternsWithEmptyString(cell)));
         }
 

@@ -1,5 +1,6 @@
 package io.cucumber.datatable;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class DataTableTypeTest {
 
     private final DataTableType singleCellType = new DataTableType(
-        Integer.class, (String s) -> Integer.parseInt(s));
+        Integer.class, (@Nullable String s) -> Integer.parseInt(s));
 
     @Test
     void shouldTransformATableCell() {

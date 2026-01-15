@@ -40,7 +40,7 @@ final class ConversionRequired implements TableConverter {
     public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
         throw new CucumberDataTableException(
             "Can't convert DataTable to Map<%s,%s>. You have to write the conversion for it in this method"
-                    .formatted(keyType,valueType));
+                    .formatted(keyType, valueType));
     }
 
     @Override

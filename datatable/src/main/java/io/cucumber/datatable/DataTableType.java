@@ -125,7 +125,8 @@ public final class DataTableType {
      *                                     {@code List<List<T>>}
      */
     static DataTableType defaultCell(Type cellType, TableCellByTypeTransformer defaultDataTableTransformer) {
-        return new DataTableType(cellType, (String cell) -> defaultDataTableTransformer.transform(cell, cellType));
+        return new DataTableType(cellType,
+            (@Nullable String cell) -> defaultDataTableTransformer.transform(cell, cellType));
     }
 
     /**
@@ -148,7 +149,7 @@ public final class DataTableType {
                 .transform(entry, entryType, tableCellByTypeTransformer));
     }
 
-    public @Nullable Object transform(List<List<String>> raw) {
+    public @Nullable Object transform(List<List<@Nullable String>> raw) {
         try {
             return transformer.transform(raw);
         } catch (Throwable throwable) {
@@ -241,7 +242,7 @@ public final class DataTableType {
         }
 
         @Override
-        public List<List<@Nullable T>> transform(List<List<String>> raw) throws Throwable {
+        public List<List<@Nullable T>> transform(List<List<@Nullable String>> raw) throws Throwable {
             List<List<@Nullable T>> list = new ArrayList<>(raw.size());
             for (List<String> tableRow : raw) {
                 List<@Nullable T> row = new ArrayList<>(tableRow.size());
@@ -286,8 +287,8 @@ public final class DataTableType {
         }
 
         @Override
-        public List<T> transform(List<List<String>> raw) throws Throwable {
-            List<T> list = new ArrayList<>();
+        public List<@Nullable T> transform(List<List<@Nullable String>> raw) throws Throwable {
+            List<@Nullable T> list = new ArrayList<>();
             for (List<String> tableRow : raw) {
                 list.add(transformer.transform(tableRow));
             }
