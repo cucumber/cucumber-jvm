@@ -1,18 +1,20 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static io.cucumber.core.backend.Status.PASSED;
@@ -20,10 +22,8 @@ import static io.cucumber.core.backend.Status.SKIPPED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class HookTestStepTest {
 
@@ -31,7 +31,9 @@ class HookTestStepTest {
             "Feature: Test feature\n" +
             "  Scenario: Test scenario\n" +
             "     Given I have 4 cukes in my belly\n");
-    private final CoreHookDefinition hookDefintion = mock(CoreHookDefinition.class);
+    List<Object> listener = new ArrayList<>();
+    private final CoreHookDefinition hookDefintion = CoreHookDefinition.create(new MockHookDefinition(listener),
+        UUID::randomUUID);
     private final HookDefinitionMatch definitionMatch = new HookDefinitionMatch(hookDefintion);
     private final TestCase testCase = new TestCase(
         UUID.randomUUID(),
@@ -40,34 +42,26 @@ class HookTestStepTest {
         Collections.emptyList(),
         feature.getPickles().get(0),
         false);
-    private final EventBus bus = mock(EventBus.class);
+    private final EventBus bus = new MockEventBus(listener);
     private final UUID testExecutionId = UUID.randomUUID();
     private final TestCaseState state = new TestCaseState(bus, testExecutionId, testCase);
     private final HookTestStep step = new HookTestStep(UUID.randomUUID(), HookType.AFTER_STEP, definitionMatch);
-
-    @BeforeEach
-    void init() {
-        Mockito.when(bus.getInstant()).thenReturn(Instant.now());
-    }
 
     @Test
     void run_does_run() {
         step.run(testCase, bus, state, ExecutionMode.RUN);
 
-        InOrder order = inOrder(bus, hookDefintion);
-        order.verify(bus).send(isA(TestStepStarted.class));
-        order.verify(hookDefintion).execute(state);
-        order.verify(bus).send(isA(TestStepFinished.class));
+        assertInstanceOf(TestStepStarted.class, listener.get(0));
+        assertEquals("HookDefinition.execute", listener.get(1));
+        assertInstanceOf(TestStepFinished.class, listener.get(2));
     }
 
     @Test
     void run_does_dry_run() {
         step.run(testCase, bus, state, ExecutionMode.DRY_RUN);
 
-        InOrder order = inOrder(bus, hookDefintion);
-        order.verify(bus).send(isA(TestStepStarted.class));
-        order.verify(hookDefintion, never()).execute(state);
-        order.verify(bus).send(isA(TestStepFinished.class));
+        assertInstanceOf(TestStepStarted.class, listener.get(0));
+        assertInstanceOf(TestStepFinished.class, listener.get(1));
     }
 
     @Test
@@ -91,4 +85,74 @@ class HookTestStepTest {
         assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
 
+    private static class MockHookDefinition implements HookDefinition {
+        private final List<Object> listener;
+        public MockHookDefinition(List<Object> listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void execute(io.cucumber.core.backend.TestCaseState state) {
+            listener.add("HookDefinition.execute");
+        }
+
+        @Override
+        public String getTagExpression() {
+            return "";
+        }
+
+        @Override
+        public int getOrder() {
+            return 0;
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return null;
+        }
+    }
+
+    private static class MockEventBus implements EventBus {
+        private final List<Object> listener;
+        public MockEventBus(List<Object> listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public Instant getInstant() {
+            return Instant.now();
+        }
+
+        @Override
+        public UUID generateId() {
+            return null;
+        }
+
+        @Override
+        public <T> void send(T event) {
+            if (!(event instanceof Envelope)) {
+                listener.add(event);
+            }
+        }
+
+        @Override
+        public <T> void sendAll(Iterable<T> queue) {
+
+        }
+
+        @Override
+        public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+
+        }
+
+        @Override
+        public <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
+
+        }
+    }
 }
