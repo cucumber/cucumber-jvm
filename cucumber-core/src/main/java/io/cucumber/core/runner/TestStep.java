@@ -43,14 +43,24 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         return id;
     }
 
-    ExecutionMode run(TestCase testCase, EventBus bus, TestCaseState state, ExecutionMode executionMode) {
+    /**
+     * Runs this test step. The step parameter is used by step hooks to access
+     * step details and may be null for non-step hooks.
+     */
+    ExecutionMode run(
+            TestCase testCase,
+            EventBus bus,
+            TestCaseState state,
+            ExecutionMode executionMode,
+            io.cucumber.plugin.event.Step step
+    ) {
         Instant startTime = bus.getInstant();
         emitTestStepStarted(testCase, bus, state.getTestExecutionId(), startTime);
 
         Status status;
         Throwable error = null;
         try {
-            status = executeStep(state, executionMode);
+            status = executeStep(state, executionMode, step);
         } catch (Throwable t) {
             rethrowIfUnrecoverable(t);
             error = t;
@@ -75,10 +85,14 @@ abstract class TestStep implements io.cucumber.plugin.event.TestStep {
         bus.send(envelope);
     }
 
-    private Status executeStep(TestCaseState state, ExecutionMode executionMode) throws Throwable {
+    private Status executeStep(
+            TestCaseState state,
+            ExecutionMode executionMode,
+            io.cucumber.plugin.event.Step step
+    ) throws Throwable {
         state.setCurrentTestStepId(id);
         try {
-            return executionMode.execute(stepDefinitionMatch, state);
+            return executionMode.execute(stepDefinitionMatch, state, step);
         } finally {
             state.clearCurrentTestStepId();
         }

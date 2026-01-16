@@ -63,7 +63,7 @@ class HookTest {
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(backend).buildWorld();
-        inOrder.verify(hook).execute(ArgumentMatchers.any());
+        inOrder.verify(hook).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
         inOrder.verify(backend).disposeWorld();
     }
 

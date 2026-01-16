@@ -61,6 +61,7 @@ import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -179,7 +180,7 @@ class RuntimeTest {
         runtime.run();
 
         ArgumentCaptor<TestCaseState> capturedScenario = ArgumentCaptor.forClass(TestCaseState.class);
-        verify(beforeHook).execute(capturedScenario.capture());
+        verify(beforeHook).execute(capturedScenario.capture(), any());
         assertThat(capturedScenario.getValue().getName(), is(equalTo("scenario name")));
     }
 

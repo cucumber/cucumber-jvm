@@ -70,9 +70,9 @@ public class JavaHookDefinitionTest {
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
         assertThat(exception.getMessage(), startsWith("" +
-                "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
-                " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
-                " * public void before_or_after()\n" +
+                "A @Before annotated method must have one of these signatures:\n" +
+                " * public void hook()\n" +
+                " * public void hook(io.cucumber.java.Scenario scenario)\n" +
                 "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"));
     }
 
@@ -111,9 +111,9 @@ public class JavaHookDefinitionTest {
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
         assertThat(exception.getMessage(), startsWith("" +
-                "A method annotated with Before, After, BeforeStep or AfterStep must have one of these signatures:\n" +
-                " * public void before_or_after(io.cucumber.java.Scenario scenario)\n" +
-                " * public void before_or_after()\n" +
+                "A @Before annotated method must have one of these signatures:\n" +
+                " * public void hook()\n" +
+                " * public void hook(io.cucumber.java.Scenario scenario)\n" +
                 "at io.cucumber.java.JavaHookDefinitionTest.string_return_type()\n"));
     }
 
