@@ -7,9 +7,16 @@ Options:
 
   -g, --glue PATH                          Package to load glue code (step
                                            definitions, hooks and plugins) from
-                                           e.g: com.example.app. When not
-                                           provided Cucumber will search the
-                                           classpath.
+                                           e.g: com.example.app.
+                                           When neither glue, nor glue classes
+                                           are  provided Cucumber will search
+                                           the classpath.
+
+  --glue-class FQCN                        A fully qualified glue class name
+                                           e.g: com.example.app.StepDefinitions.
+                                           When neither glue, nor glue classes
+                                           are  provided Cucumber will search
+                                           the classpath.
 
   -p, --plugin PLUGIN[:[PATH|[URI [OPTIONS]]]
                                            Register a plugin.
@@ -146,6 +153,9 @@ cucumber.filter.tags=           # a cucumber tag expression.
 
 cucumber.glue=                  # comma separated package names.
                                 # example: com.example.glue
+
+cucumber.glue-classes=          # comma separated class names.
+                                # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB
 
 cucumber.plugin=                # comma separated plugin strings.
                                 # example: pretty, json:path/to/report.json
