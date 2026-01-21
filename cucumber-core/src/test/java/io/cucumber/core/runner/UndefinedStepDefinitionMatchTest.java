@@ -25,7 +25,7 @@ class UndefinedStepDefinitionMatchTest {
     @Test
     void throws_undefined_step_definitions_exception_when_run() {
         UndefinedStepDefinitionException expectedThrown = assertThrows(UndefinedStepDefinitionException.class,
-            () -> match.runStep(mock(TestCaseState.class), null));
+            () -> match.runStep(mock(TestCaseState.class)));
         assertThat(expectedThrown.getMessage(), equalTo("No step definitions found"));
     }
 

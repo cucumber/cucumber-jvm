@@ -98,4 +98,7 @@ public interface TestCaseState {
      */
     Integer getLine();
 
+    default PickleStep geCurrentPickleStep() {
+        return null;
+    }
 }

@@ -34,7 +34,7 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
     }
 
     @Override
-    public void runStep(TestCaseState state, io.cucumber.plugin.event.Step step) throws Throwable {
+    public void runStep(TestCaseState state) throws Throwable {
         List<Argument> arguments = getArguments();
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
         if (parameterInfos != null && arguments.size() != parameterInfos.size()) {

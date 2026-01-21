@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.PickleStep;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.plugin.event.Argument;
@@ -11,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep {
+final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep, PickleStep {
 
     private final URI uri;
     private final Step step;
@@ -39,29 +40,27 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    ExecutionMode run(
-            TestCase testCase,
-            EventBus bus,
-            TestCaseState state,
-            ExecutionMode executionMode,
-            io.cucumber.plugin.event.Step ignoredStep
-    ) {
+    ExecutionMode run(TestCase testCase, EventBus bus, TestCaseState state, ExecutionMode executionMode) {
         ExecutionMode nextExecutionMode = executionMode;
+
+        state.setCurrentPickleStep(this);
 
         for (HookTestStep before : beforeStepHookSteps) {
             nextExecutionMode = before
-                    .run(testCase, bus, state, executionMode, step)
+                    .run(testCase, bus, state, executionMode)
                     .next(nextExecutionMode);
         }
 
-        nextExecutionMode = super.run(testCase, bus, state, nextExecutionMode, null)
+        nextExecutionMode = super.run(testCase, bus, state, nextExecutionMode)
                 .next(nextExecutionMode);
 
         for (HookTestStep after : afterStepHookSteps) {
             nextExecutionMode = after
-                    .run(testCase, bus, state, executionMode, step)
+                    .run(testCase, bus, state, executionMode)
                     .next(nextExecutionMode);
         }
+
+        state.clearCurrentPickleStep();
 
         return nextExecutionMode;
     }
@@ -113,4 +112,18 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
         return step.getText();
     }
 
+    @Override
+    public String getKeyword() {
+        return step.getKeyword();
+    }
+
+    @Override
+    public String getText() {
+        return step.getText();
+    }
+
+    @Override
+    public int getLine() {
+        return step.getLine();
+    }
 }

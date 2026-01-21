@@ -71,8 +71,8 @@ class RunnerTest {
         InOrder inOrder = inOrder(beforeAllHook, afterAllHook, beforeHook, afterHook, backend);
         inOrder.verify(beforeAllHook).execute();
         inOrder.verify(backend).buildWorld();
-        inOrder.verify(beforeHook).execute(any(TestCaseState.class), any());
-        inOrder.verify(afterHook).execute(any(TestCaseState.class), any());
+        inOrder.verify(beforeHook).execute(any(TestCaseState.class));
+        inOrder.verify(afterHook).execute(any(TestCaseState.class));
         inOrder.verify(backend).disposeWorld();
         inOrder.verify(afterAllHook).execute();
     }
@@ -104,7 +104,7 @@ class RunnerTest {
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
 
         final HookDefinition failingBeforeHook = createHook();
-        doThrow(new RuntimeException("Boom")).when(failingBeforeHook).execute(any(), any());
+        doThrow(new RuntimeException("Boom")).when(failingBeforeHook).execute(ArgumentMatchers.any());
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -116,7 +116,7 @@ class RunnerTest {
         runnerSupplier.get().runPickle(pickleMatchingStepDefinitions);
 
         InOrder inOrder = inOrder(failingBeforeHook, stepDefinition);
-        inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class), any());
+        inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class));
         inOrder.verify(stepDefinition, never()).execute(any(Object[].class));
     }
 
@@ -156,7 +156,7 @@ class RunnerTest {
 
         InOrder inOrder = inOrder(afterStepHook, stepDefinition);
         inOrder.verify(stepDefinition).execute(any(Object[].class));
-        inOrder.verify(afterStepHook).execute(any(TestCaseState.class), any());
+        inOrder.verify(afterStepHook).execute(any(TestCaseState.class));
     }
 
     @Test
@@ -180,8 +180,8 @@ class RunnerTest {
 
         InOrder inOrder = inOrder(afteStepHook1, afteStepHook2, stepDefinition);
         inOrder.verify(stepDefinition).execute(any(Object[].class));
-        inOrder.verify(afteStepHook2).execute(any(TestCaseState.class), any());
-        inOrder.verify(afteStepHook1).execute(any(TestCaseState.class), any());
+        inOrder.verify(afteStepHook2).execute(any(TestCaseState.class));
+        inOrder.verify(afteStepHook1).execute(any(TestCaseState.class));
     }
 
     @Test
@@ -190,7 +190,7 @@ class RunnerTest {
         HookDefinition afterHook = createHook();
 
         HookDefinition failingBeforeHook = createHook();
-        doThrow(new RuntimeException("boom")).when(failingBeforeHook).execute(any(TestCaseState.class), any());
+        doThrow(new RuntimeException("boom")).when(failingBeforeHook).execute(any(TestCaseState.class));
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
@@ -204,9 +204,9 @@ class RunnerTest {
         runnerSupplier.get().runPickle(createPicklesWithSteps());
 
         InOrder inOrder = inOrder(failingBeforeHook, beforeHook, afterHook);
-        inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class), any());
-        inOrder.verify(beforeHook).execute(any(TestCaseState.class), any());
-        inOrder.verify(afterHook).execute(any(TestCaseState.class), any());
+        inOrder.verify(failingBeforeHook).execute(any(TestCaseState.class));
+        inOrder.verify(beforeHook).execute(any(TestCaseState.class));
+        inOrder.verify(afterHook).execute(any(TestCaseState.class));
     }
 
     @Test
@@ -290,10 +290,10 @@ class RunnerTest {
 
         verify(beforeAllHook, never()).execute();
         verify(afterAllHook, never()).execute();
-        verify(beforeHook, never()).execute(any(TestCaseState.class), any());
-        verify(afterHook, never()).execute(any(TestCaseState.class), any());
-        verify(beforeStepHook, never()).execute(any(TestCaseState.class), any());
-        verify(afterStepHook, never()).execute(any(TestCaseState.class), any());
+        verify(beforeHook, never()).execute(any(TestCaseState.class));
+        verify(afterHook, never()).execute(any(TestCaseState.class));
+        verify(beforeStepHook, never()).execute(any(TestCaseState.class));
+        verify(afterStepHook, never()).execute(any(TestCaseState.class));
     }
 
     @Test
@@ -316,9 +316,9 @@ class RunnerTest {
 
         runnerSupplier.get().runPickle(createEmptyPickle());
 
-        verify(beforeHook, never()).execute(any(TestCaseState.class), any());
-        verify(afterStepHook, never()).execute(any(TestCaseState.class), any());
-        verify(afterHook, never()).execute(any(TestCaseState.class), any());
+        verify(beforeHook, never()).execute(any(TestCaseState.class));
+        verify(afterStepHook, never()).execute(any(TestCaseState.class));
+        verify(afterHook, never()).execute(any(TestCaseState.class));
     }
 
     private Pickle createEmptyPickle() {

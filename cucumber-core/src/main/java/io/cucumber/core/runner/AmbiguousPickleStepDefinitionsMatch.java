@@ -19,8 +19,7 @@ final class AmbiguousPickleStepDefinitionsMatch extends PickleStepDefinitionMatc
     }
 
     @Override
-    public void runStep(TestCaseState state, io.cucumber.plugin.event.Step step)
-            throws AmbiguousStepDefinitionsException {
+    public void runStep(TestCaseState state) throws AmbiguousStepDefinitionsException {
         throw exception;
     }
 

@@ -13,7 +13,7 @@ final class UndefinedPickleStepDefinitionMatch extends PickleStepDefinitionMatch
     }
 
     @Override
-    public void runStep(TestCaseState state, io.cucumber.plugin.event.Step step) {
+    public void runStep(TestCaseState state) {
         throw new UndefinedStepDefinitionException();
     }
 

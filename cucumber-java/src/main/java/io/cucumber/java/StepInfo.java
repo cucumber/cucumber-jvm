@@ -1,14 +1,16 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.PickleStep;
+
 /**
  * Internal wrapper that implements the public {@link Step} interface by
  * delegating to the internal step representation.
  */
 final class StepInfo implements Step {
 
-    private final io.cucumber.plugin.event.Step delegate;
+    private final PickleStep delegate;
 
-    StepInfo(io.cucumber.plugin.event.Step delegate) {
+    StepInfo(PickleStep delegate) {
         this.delegate = delegate;
     }
 

@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.messages.types.HookType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -113,11 +112,6 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     @Override
     public void execute(TestCaseState state) {
-        execute(state, null);
-    }
-
-    @Override
-    public void execute(TestCaseState state, io.cucumber.plugin.event.Step step) {
         Object[] args;
         int paramCount = method.getParameterTypes().length;
 
@@ -129,7 +123,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             // 2 parameters: Scenario and Step
             args = new Object[] {
                     new io.cucumber.java.Scenario(state),
-                    step != null ? new StepInfo(step) : null
+                    new StepInfo(state.geCurrentPickleStep())
             };
         }
 

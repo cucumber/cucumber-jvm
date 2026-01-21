@@ -53,13 +53,13 @@ class HookOrderTest {
         runnerSupplier.get().runPickle(pickle);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
     }
 
     private List<HookDefinition> mockHooks(int... ordering) {
@@ -92,14 +92,13 @@ class HookOrderTest {
         runnerSupplier.get().runPickle(pickle);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        // Step hooks receive both TestCaseState and Step
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
     }
 
     @Test
@@ -120,13 +119,13 @@ class HookOrderTest {
         runnerSupplier.get().runPickle(pickle);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
     }
 
     @Test
@@ -147,14 +146,13 @@ class HookOrderTest {
         runnerSupplier.get().runPickle(pickle);
 
         InOrder inOrder = inOrder(hooks.toArray());
-        // Step hooks receive both TestCaseState and Step
-        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(6)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(3)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(1)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(5)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(4)).execute(ArgumentMatchers.any());
+        inOrder.verify(hooks.get(0)).execute(ArgumentMatchers.any());
     }
 
     @Test
@@ -184,12 +182,12 @@ class HookOrderTest {
         allHooks.addAll(backend2Hooks);
 
         InOrder inOrder = inOrder(allHooks.toArray());
-        inOrder.verify(backend1Hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(backend2Hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(backend1Hooks.get(0)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(backend2Hooks.get(2)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(backend1Hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
-        inOrder.verify(backend2Hooks.get(1)).execute(ArgumentMatchers.any(), ArgumentMatchers.any());
+        inOrder.verify(backend1Hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend2Hooks.get(0)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend1Hooks.get(0)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend2Hooks.get(2)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend1Hooks.get(1)).execute(ArgumentMatchers.any());
+        inOrder.verify(backend2Hooks.get(1)).execute(ArgumentMatchers.any());
     }
 
 }

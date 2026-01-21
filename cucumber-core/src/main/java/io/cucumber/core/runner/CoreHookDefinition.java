@@ -47,10 +47,6 @@ class CoreHookDefinition {
         delegate.execute(scenario);
     }
 
-    void execute(TestCaseState scenario, io.cucumber.plugin.event.Step step) {
-        delegate.execute(scenario, step);
-    }
-
     HookDefinition getDelegate() {
         return delegate;
     }

@@ -16,23 +16,14 @@ final class HookDefinitionMatch implements StepDefinitionMatch {
     }
 
     @Override
-    public void runStep(TestCaseState state, io.cucumber.plugin.event.Step step) throws Throwable {
-        executeHook(() -> hookDefinition.execute(state, step));
-    }
-
-    private void executeHook(HookAction action) throws Throwable {
+    public void runStep(TestCaseState state) throws Throwable {
         try {
-            action.execute();
+            hookDefinition.execute(state);
         } catch (CucumberBackendException e) {
             throw couldNotInvokeHook(e);
         } catch (CucumberInvocationTargetException e) {
             throw removeFrameworkFrames(e);
         }
-    }
-
-    @FunctionalInterface
-    private interface HookAction {
-        void execute() throws Throwable;
     }
 
     private Throwable couldNotInvokeHook(CucumberBackendException e) {

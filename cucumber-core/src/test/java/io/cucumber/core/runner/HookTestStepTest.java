@@ -20,7 +20,6 @@ import static io.cucumber.core.backend.Status.SKIPPED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -53,41 +52,41 @@ class HookTestStepTest {
 
     @Test
     void run_does_run() {
-        step.run(testCase, bus, state, ExecutionMode.RUN, null);
+        step.run(testCase, bus, state, ExecutionMode.RUN);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
-        order.verify(hookDefintion).execute(isA(TestCaseState.class), any());
+        order.verify(hookDefintion).execute(state);
         order.verify(bus).send(isA(TestStepFinished.class));
     }
 
     @Test
     void run_does_dry_run() {
-        step.run(testCase, bus, state, ExecutionMode.DRY_RUN, null);
+        step.run(testCase, bus, state, ExecutionMode.DRY_RUN);
 
         InOrder order = inOrder(bus, hookDefintion);
         order.verify(bus).send(isA(TestStepStarted.class));
-        order.verify(hookDefintion, never()).execute(isA(TestCaseState.class), any());
+        order.verify(hookDefintion, never()).execute(state);
         order.verify(bus).send(isA(TestStepFinished.class));
     }
 
     @Test
     void next_execution_mode_is_run_when_step_passes() {
-        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN, null);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.RUN);
         assertThat(nextExecutionMode, is(ExecutionMode.RUN));
         assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
 
     @Test
     void next_execution_mode_is_skip_when_step_is_skipped() {
-        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.SKIP, null);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.SKIP);
         assertThat(nextExecutionMode, is(ExecutionMode.SKIP));
         assertThat(state.getStatus(), is(equalTo(SKIPPED)));
     }
 
     @Test
     void next_execution_mode_is_dry_run_when_step_passes_dry_run() {
-        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.DRY_RUN, null);
+        ExecutionMode nextExecutionMode = step.run(testCase, bus, state, ExecutionMode.DRY_RUN);
         assertThat(nextExecutionMode, is(ExecutionMode.DRY_RUN));
         assertThat(state.getStatus(), is(equalTo(PASSED)));
     }
