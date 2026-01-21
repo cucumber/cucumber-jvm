@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -158,8 +159,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public Step geCurrentPickleStep() {
-        return currentPickleStep;
+    public Optional<Step> geCurrentPickleStep() {
+        return Optional.ofNullable(currentPickleStep);
     }
 
     Throwable getError() {
