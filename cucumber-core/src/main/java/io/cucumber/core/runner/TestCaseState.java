@@ -1,6 +1,6 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.backend.PickleStep;
+import io.cucumber.core.backend.Step;
 import io.cucumber.core.backend.Status;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Convertor;
@@ -33,7 +33,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private final UUID testExecutionId;
 
     private UUID currentTestStepId;
-    private PickleStep currentPickleStep;
+    private Step currentPickleStep;
 
     TestCaseState(EventBus bus, UUID testExecutionId, TestCase testCase) {
         this.bus = requireNonNull(bus);
@@ -158,7 +158,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public PickleStep geCurrentPickleStep() {
+    public Step geCurrentPickleStep() {
         return currentPickleStep;
     }
 
@@ -178,7 +178,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         this.currentTestStepId = null;
     }
 
-    void setCurrentPickleStep(PickleStep currentPickleStep) {
+    void setCurrentPickleStep(Step currentPickleStep) {
         this.currentPickleStep = currentPickleStep;
     }
 

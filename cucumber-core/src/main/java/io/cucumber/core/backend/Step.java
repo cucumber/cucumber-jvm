@@ -1,6 +1,7 @@
 package io.cucumber.core.backend;
 
-public interface PickleStep {
+public interface Step {
+
     String getKeyword();
 
     String getText();

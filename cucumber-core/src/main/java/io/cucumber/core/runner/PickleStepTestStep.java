@@ -1,8 +1,7 @@
 package io.cucumber.core.runner;
 
-import io.cucumber.core.backend.PickleStep;
+import io.cucumber.core.backend.Step;
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.gherkin.Step;
 import io.cucumber.plugin.event.Argument;
 import io.cucumber.plugin.event.StepArgument;
 import io.cucumber.plugin.event.TestCase;
@@ -12,21 +11,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep, PickleStep {
+final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.event.PickleStepTestStep, Step {
 
     private final URI uri;
-    private final Step step;
+    private final io.cucumber.core.gherkin.Step step;
     private final List<HookTestStep> afterStepHookSteps;
     private final List<HookTestStep> beforeStepHookSteps;
     private final PickleStepDefinitionMatch definitionMatch;
 
-    PickleStepTestStep(UUID id, URI uri, Step step, PickleStepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(UUID id, URI uri, io.cucumber.core.gherkin.Step step, PickleStepDefinitionMatch definitionMatch) {
         this(id, uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
     PickleStepTestStep(
             UUID id, URI uri,
-            Step step,
+            io.cucumber.core.gherkin.Step step,
             List<HookTestStep> beforeStepHookSteps,
             List<HookTestStep> afterStepHookSteps,
             PickleStepDefinitionMatch definitionMatch
@@ -79,7 +78,7 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     }
 
     @Override
-    public Step getStep() {
+    public io.cucumber.core.gherkin.Step getStep() {
         return step;
     }
 
