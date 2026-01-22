@@ -3,8 +3,8 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Step;
 
 /**
- * Internal wrapper that implements the public {@link io.cucumber.java.Step} interface by
- * delegating to the internal step representation.
+ * Internal wrapper that implements the public {@link io.cucumber.java.Step}
+ * interface by delegating to the internal step representation.
  */
 final class StepInfo implements io.cucumber.java.Step {
 

@@ -19,7 +19,9 @@ final class PickleStepTestStep extends TestStep implements io.cucumber.plugin.ev
     private final List<HookTestStep> beforeStepHookSteps;
     private final PickleStepDefinitionMatch definitionMatch;
 
-    PickleStepTestStep(UUID id, URI uri, io.cucumber.core.gherkin.Step step, PickleStepDefinitionMatch definitionMatch) {
+    PickleStepTestStep(
+            UUID id, URI uri, io.cucumber.core.gherkin.Step step, PickleStepDefinitionMatch definitionMatch
+    ) {
         this(id, uri, step, Collections.emptyList(), Collections.emptyList(), definitionMatch);
     }
 
