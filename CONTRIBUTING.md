@@ -12,27 +12,25 @@ We appreciate that. Do keep the following in mind:
 
 ## Building
 
-Cucumber-JVM is built with [Maven](http://maven.apache.org/) and includes a
-[Maven Wrapper](https://maven.apache.org/wrapper) that will automatically
-download a correct version of Maven.
+Cucumber-JVM is built with [Maven](http://maven.apache.org/) 3.9.9+.
 
 When building the project for the first time, run:
 
 ```
-./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
+mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true
 ```
 
 The `cucumber-archetype` modules integration tests against `-SNAPSHOT` 
 versions of Cucumber. These must be installed first.
 
-Afterward `./mvnw test` or `./mvnw verify` should work as expected.
+Afterward `mvn test` or `mvn verify` should work as expected.
 
 ## Formatting Java
 
 The source code is formatted automatically by spotless when running:
 
 ```
-./mvnw install
+mvn install
 ```
 
 To configure IntelliJ IDEA/Eclipse use the configuration files in `.spotless/`.

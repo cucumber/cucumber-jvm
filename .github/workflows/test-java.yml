@@ -33,9 +33,9 @@ jobs:
           java-version: ${{ matrix.version }}
           cache: 'maven'
       - name: Install dependencies
-        run: ./mvnw install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -D"archetype.test.skip=true" -D"maven.javadoc.skip=true" --batch-mode -D"style.color=always" --show-version
+        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -D"archetype.test.skip=true" -D"maven.javadoc.skip=true" --batch-mode -D"style.color=always" --show-version
       - name: Test
-        run: ./mvnw verify -Pinclude-extra-modules -D"style.color=always"
+        run: mvn verify -Pinclude-extra-modules -D"style.color=always"
 
   javadoc:
     name: 'Javadoc'
@@ -48,9 +48,9 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Install dependencies
-        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Javadoc
-        run: ./mvnw javadoc:jar -Dstyle.color=always
+        run: mvn javadoc:jar -Dstyle.color=always
 
   semver:
     name: 'Semver'
@@ -63,6 +63,6 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: Install dependencies
-        run: ./mvnw install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
       - name: Test (Semver check)
-        run: ./mvnw verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dstyle.color=always
+        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dstyle.color=always
