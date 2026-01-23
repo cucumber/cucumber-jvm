@@ -25,7 +25,7 @@
         <pretty-formatter.version>3.0.0-SNAPSHOT</pretty-formatter.version>
         <query.version>15.0.1</query.version>
         <tag-expressions.version>9.0.0-SNAPSHOT</tag-expressions.version>
-        <teamcity-formatter.version>0.3.0-SNAPSHOT</teamcity-formatter.version>
+        <teamcity-formatter.version>0.3.0</teamcity-formatter.version>
         <testng-xml-formatter.version>0.8.0</testng-xml-formatter.version>
         <usage-formatter.version>0.2.0</usage-formatter.version>
     </properties>
