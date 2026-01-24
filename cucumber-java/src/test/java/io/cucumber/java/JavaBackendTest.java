@@ -90,9 +90,12 @@ class JavaBackendTest {
     void logs_loadGlue_hints() {
         LogRecordListener listener = new LogRecordListener();
         LoggerFactory.addListener(listener);
-        backend.loadGlue(glue, singletonList(URI.create("classpath:/com"))); // loads a lot of classes
+
+        // When loading a lot of classes
+        backend.loadGlue(glue, singletonList(URI.create("classpath:/com")));
         backend.buildWorld();
 
+        // Then we log some hint message to improve the situation
         assertTrue(listener.getLogRecords().get(0).getMessage().contains("Scanning the glue packages"));
     }
 
