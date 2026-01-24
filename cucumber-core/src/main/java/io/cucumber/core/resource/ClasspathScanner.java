@@ -72,7 +72,7 @@ public final class ClasspathScanner {
         List<Class<?>> classes = new ArrayList<>();
         pathScanner.findResourcesForUri(
             baseUri,
-            path -> isClassFile(path) && isNotModuleInfo(path) && isNotPackageInfo(path),
+            path -> isClassFileButNotAnonymousClass(path) && isNotModuleInfo(path) && isNotPackageInfo(path),
             processClassFiles(packageName, classFilter, classes::add));
         return classes;
     }
@@ -85,7 +85,7 @@ public final class ClasspathScanner {
         return !path.endsWith(PACKAGE_INFO_FILE_NAME);
     }
 
-    private static boolean isClassFile(Path file) {
+    private static boolean isClassFileButNotAnonymousClass(Path file) {
         String filename = file.getFileName().toString();
         boolean isClass = filename.endsWith(CLASS_FILE_SUFFIX);
         return isClass && isNotAnonymousClass(filename);
@@ -102,7 +102,7 @@ public final class ClasspathScanner {
             }
             return false;// anonymous class
         }
-        return true;
+        return true; // not inner class
     }
 
     private Function<Path, Consumer<Path>> processClassFiles(
