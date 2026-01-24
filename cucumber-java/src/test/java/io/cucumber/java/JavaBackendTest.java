@@ -3,6 +3,8 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.logging.LogRecordListener;
+import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.java.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -81,6 +84,16 @@ class JavaBackendTest {
                 .collect(toList());
         assertThat(patterns, equalTo(asList("test", "test again")));
 
+    }
+
+    @Test
+    void logs_loadGlue_hints() {
+        LogRecordListener listener = new LogRecordListener();
+        LoggerFactory.addListener(listener);
+        backend.loadGlue(glue, singletonList(URI.create("classpath:/com"))); // loads a lot of classes
+        backend.buildWorld();
+
+        assertTrue(listener.getLogRecords().get(0).getMessage().contains("Scanning the glue packages"));
     }
 
 }
