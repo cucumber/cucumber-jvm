@@ -214,7 +214,7 @@ public final class Runtime {
         private BackendSupplier createBackendSupplier(ObjectFactorySupplier objectFactorySupplier) {
             return this.backendSupplier != null
                     ? this.backendSupplier
-                    : new BackendServiceLoader(this.classLoader, objectFactorySupplier);
+                    : new BackendServiceLoader(this.classLoader, this.runtimeOptions, objectFactorySupplier);
         }
 
         private EventBus createEventBus() {

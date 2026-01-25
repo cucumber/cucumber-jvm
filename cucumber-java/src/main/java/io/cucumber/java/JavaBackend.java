@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.Options;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -29,11 +30,13 @@ final class JavaBackend implements Backend {
     private final Lookup lookup;
     private final Container container;
     private final ClasspathScanner classFinder;
+    private final Options options;
 
-    JavaBackend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier) {
+    JavaBackend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier, Options options) {
         this.lookup = lookup;
         this.container = container;
         this.classFinder = new ClasspathScanner(classLoaderSupplier);
+        this.options = options;
     }
 
     @Override
@@ -59,69 +62,70 @@ final class JavaBackend implements Backend {
                     });
                 });
 
-        long t1 = System.currentTimeMillis();
-        int glueClassCount = glueClasses.size();
-        if (glueClassCount > 0) {
-            long duration = t1 -
-                    t0;
-            int containerClassCount = containerClasses.size();
-            long expectedGain = duration - duration * containerClassCount /
-                    glueClassCount;
-            if (expectedGain > 100) {
-                List<String> suggestions = new ArrayList<>();
-                if (gluePaths.contains(URI.create("classpath:/"))) {
-                    suggestions.add("1) " + ClasspathSupport.classPathScanningExplanation());
-                }
+        if (options.isGlueHintEnabled()) {
+            int glueClassCount = glueClasses.size();
+            if (glueClassCount > 0) {
+                long t1 = System.currentTimeMillis();
+                long duration = t1 -
+                        t0;
+                int containerClassCount = containerClasses.size();
+                long expectedGain = duration - duration * containerClassCount /
+                        glueClassCount;
+                if (expectedGain > options.getGlueHintThreshold()) {
+                    List<String> suggestions = new ArrayList<>();
+                    if (gluePaths.contains(URI.create("classpath:/"))) {
+                        suggestions.add("1) " + ClasspathSupport.classPathScanningExplanation());
+                    }
 
-                String classesNotContainingGlueSuggestion = glueClasses.stream()
-                        .filter(clazz -> !containerClasses.contains(clazz) && clazz.getDeclaringClass() == null)
-                        .limit(10)
-                        .map(Class::getName)
-                        .collect(Collectors.joining("\n"));
-                if (!classesNotContainingGlueSuggestion.isEmpty()) {
-                    suggestions.add((suggestions.size() + 1)
-                            + ") remove the classes that do not contain cucumber step/hooks/injectors, e.g.:\n" +
-                            classesNotContainingGlueSuggestion + "\n");
-                }
+                    String classesNotContainingGlueSuggestion = glueClasses.stream()
+                            .filter(clazz -> !containerClasses.contains(clazz) && clazz.getDeclaringClass() == null)
+                            .limit(10)
+                            .map(Class::getName)
+                            .collect(Collectors.joining("\n"));
+                    if (!classesNotContainingGlueSuggestion.isEmpty()) {
+                        suggestions.add((suggestions.size() + 1)
+                                + ") remove the classes that do not contain cucumber step/hooks/injectors, e.g.:\n" +
+                                classesNotContainingGlueSuggestion + "\n");
+                    }
 
-                String publicInnerClassesSuggestion = glueClasses.stream()
-                        .filter(clazz -> !containerClasses.contains(clazz) &&
-                                Modifier.isPublic(clazz.getModifiers()) &&
-                                clazz.getDeclaringClass() != null)
-                        .limit(10)
-                        .map(Class::getName)
-                        .collect(Collectors.joining("\n"));
-                if (!publicInnerClassesSuggestion.isEmpty()) {
-                    suggestions.add((suggestions.size() + 1)
-                            + ") for classes that contain steps/hooks/injectors, change public static inner classes to private (or remove them from the glue package), e.g.:\n"
-                            +
-                            publicInnerClassesSuggestion + "\n");
-                }
+                    String publicInnerClassesSuggestion = glueClasses.stream()
+                            .filter(clazz -> !containerClasses.contains(clazz) &&
+                                    Modifier.isPublic(clazz.getModifiers()) &&
+                                    clazz.getDeclaringClass() != null)
+                            .limit(10)
+                            .map(Class::getName)
+                            .collect(Collectors.joining("\n"));
+                    if (!publicInnerClassesSuggestion.isEmpty()) {
+                        suggestions.add((suggestions.size() + 1)
+                                + ") for classes that contain steps/hooks/injectors, change public static inner classes to private (or remove them from the glue package), e.g.:\n"
+                                +
+                                publicInnerClassesSuggestion + "\n");
+                    }
 
-                String nonPublicInnerClassesSuggestion = glueClasses.stream()
-                        .filter(clazz -> !containerClasses.contains(clazz) &&
-                                !Modifier.isPublic(clazz.getModifiers()) &&
-                                clazz.getDeclaringClass() != null)
-                        .limit(10)
-                        .map(Class::getName)
-                        .collect(Collectors.joining("\n"));
-                if (!nonPublicInnerClassesSuggestion.isEmpty()) {
-                    suggestions.add((suggestions.size() + 1)
-                            + ") for classes that contain steps/hooks/injectors, remove non-public static inner classes from the glue package, e.g.:\n"
-                            +
-                            nonPublicInnerClassesSuggestion + "\n");
-                }
+                    String nonPublicInnerClassesSuggestion = glueClasses.stream()
+                            .filter(clazz -> !containerClasses.contains(clazz) &&
+                                    !Modifier.isPublic(clazz.getModifiers()) &&
+                                    clazz.getDeclaringClass() != null)
+                            .limit(10)
+                            .map(Class::getName)
+                            .collect(Collectors.joining("\n"));
+                    if (!nonPublicInnerClassesSuggestion.isEmpty()) {
+                        suggestions.add((suggestions.size() + 1)
+                                + ") for classes that contain steps/hooks/injectors, remove non-public static inner classes from the glue package, e.g.:\n"
+                                +
+                                nonPublicInnerClassesSuggestion + "\n");
+                    }
 
-                log.info(() -> "Scanning the glue packages took " + duration +
-                        " ms for " + glueClassCount + " classes, but only " +
-                        containerClassCount +
-                        " of them are Cucumber glue items. You could gain about " +
-                        expectedGain +
-                        " ms by cleaning the glue package. Some advices (by decreasing efficiency):\n" +
-                        String.join("\n", suggestions));
+                    log.info(() -> "Scanning the glue packages took " + duration +
+                            " ms for " + glueClassCount + " classes, but only " +
+                            containerClassCount +
+                            " of them are Cucumber glue items. You could gain about " +
+                            expectedGain +
+                            " ms by cleaning the glue package. Some advices (by decreasing efficiency):\n" +
+                            String.join("\n", suggestions));
+                }
             }
         }
-
     }
 
     @Override

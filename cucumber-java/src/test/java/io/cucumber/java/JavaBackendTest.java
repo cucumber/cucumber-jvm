@@ -5,6 +5,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.java.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,15 @@ class JavaBackendTest {
     private ObjectFactory factory;
 
     private JavaBackend backend;
+    private RuntimeOptions options = RuntimeOptions.defaultOptions();
+
+    @BeforeEach
+    void setUp() {
+    }
 
     @BeforeEach
     void createBackend() {
-        this.backend = new JavaBackend(factory, factory, currentThread()::getContextClassLoader);
+        this.backend = new JavaBackend(factory, factory, currentThread()::getContextClassLoader, options);
     }
 
     @Test
@@ -87,7 +93,7 @@ class JavaBackendTest {
     }
 
     @Test
-    void logs_loadGlue_hints() {
+    void logs_loadGlue_hints_default_options() {
         LogRecordListener listener = new LogRecordListener();
         LoggerFactory.addListener(listener);
 
@@ -97,6 +103,36 @@ class JavaBackendTest {
 
         // Then we log some hint message to improve the situation
         assertTrue(listener.getLogRecords().get(0).getMessage().contains("Scanning the glue packages"));
+    }
+
+    @Test
+    void logs_loadGlue_hints_no_display() {
+        // When glue loading hint is disabled
+        LogRecordListener listener = new LogRecordListener();
+        LoggerFactory.addListener(listener);
+        options.setGlueHintEnabled(false);
+
+        // When loading a lot of classes
+        backend.loadGlue(glue, singletonList(URI.create("classpath:/com")));
+        backend.buildWorld();
+
+        // Then no hint is displayed
+        assertTrue(listener.getLogRecords().isEmpty());
+    }
+
+    @Test
+    void logs_loadGlue_hints_below_threshold() {
+        // Given threshold value is very high
+        LogRecordListener listener = new LogRecordListener();
+        LoggerFactory.addListener(listener);
+        options.setGlueHintThreshold(Integer.MAX_VALUE);
+
+        // When loading a lot of classes
+        backend.loadGlue(glue, singletonList(URI.create("classpath:/com")));
+        backend.buildWorld();
+
+        // Then no hint is displayed
+        assertTrue(listener.getLogRecords().isEmpty());
     }
 
 }

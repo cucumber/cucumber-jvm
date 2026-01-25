@@ -170,7 +170,8 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
             runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
+        BackendSupplier backendSupplier = new BackendServiceLoader(clazz::getClassLoader, runtimeOptions,
+            objectFactorySupplier);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
             objectFactorySupplier);
         this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
