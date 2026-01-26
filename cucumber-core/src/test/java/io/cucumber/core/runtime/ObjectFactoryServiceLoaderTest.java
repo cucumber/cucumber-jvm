@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DefaultObjectFactory;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.Options;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.options.RuntimeOptions;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Supplier;
@@ -43,7 +44,7 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void shouldThrowIfDefaultObjectFactoryServiceCouldNotBeLoaded() {
-        Options options = () -> null;
+        Options options = RuntimeOptions.defaultOptions();
         Supplier<ClassLoader> classLoader = () -> new ServiceLoaderTestClassLoader(ObjectFactory.class);
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             classLoader,
@@ -63,7 +64,7 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void shouldLoadDefaultObjectFactoryService() {
-        Options options = () -> null;
+        Options options = RuntimeOptions.defaultOptions();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             ObjectFactoryServiceLoaderTest.class::getClassLoader,
             options);
@@ -75,7 +76,8 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void shouldLoadSelectedObjectFactoryService() {
-        Options options = () -> DefaultObjectFactory.class;
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
+        options.setObjectFactoryClass(DefaultObjectFactory.class);
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             ObjectFactoryServiceLoaderTest.class::getClassLoader,
             options);
@@ -87,7 +89,7 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void test_case_4() {
-        io.cucumber.core.backend.Options options = () -> null;
+        io.cucumber.core.backend.Options options = RuntimeOptions.defaultOptions();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 DefaultObjectFactory.class,
@@ -101,7 +103,7 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void test_case_4_with_services_in_reverse_order() {
-        io.cucumber.core.backend.Options options = () -> null;
+        io.cucumber.core.backend.Options options = RuntimeOptions.defaultOptions();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 OtherFactory.class,
@@ -115,7 +117,8 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void test_case_5() {
-        io.cucumber.core.backend.Options options = () -> DefaultObjectFactory.class;
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
+        options.setObjectFactoryClass(DefaultObjectFactory.class);
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 DefaultObjectFactory.class,
@@ -130,7 +133,7 @@ class ObjectFactoryServiceLoaderTest {
     @Test
     void test_case_6() {
         // Given
-        Options options = () -> null;
+        Options options = RuntimeOptions.defaultOptions();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 DefaultObjectFactory.class,
@@ -151,7 +154,8 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void test_case_7() {
-        io.cucumber.core.backend.Options options = () -> OtherFactory.class;
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
+        options.setObjectFactoryClass(OtherFactory.class);
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 DefaultObjectFactory.class,
@@ -166,8 +170,8 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void shouldThrowIfSelectedObjectFactoryServiceCouldNotBeLoaded() {
-
-        Options options = () -> OtherFactory.class;
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
+        options.setObjectFactoryClass(OtherFactory.class);
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class),
             options);
@@ -187,7 +191,7 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void test_case_9() {
-        io.cucumber.core.backend.Options options = () -> null;
+        io.cucumber.core.backend.Options options = RuntimeOptions.defaultOptions();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 OtherFactory.class),

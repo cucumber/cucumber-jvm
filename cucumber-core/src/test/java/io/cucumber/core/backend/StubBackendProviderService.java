@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 public class StubBackendProviderService implements BackendProviderService {
 
     @Override
-    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader) {
+    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader, Options options) {
         return new StubBackend();
     }
 

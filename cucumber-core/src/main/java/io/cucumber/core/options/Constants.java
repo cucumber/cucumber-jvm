@@ -119,6 +119,27 @@ public final class Constants {
     public static final String GLUE_PROPERTY_NAME = "cucumber.glue";
 
     /**
+     * Property name to enable displaying cucumber glue loading hints: {@value}
+     * <p>
+     * Enabling this will make the hints to be displayed if the expected gain is
+     * above the threshold.
+     * <p>
+     * Valid values are {@code true}, {@code false} (default is true).
+     */
+    public static final String GLUE_HINT_ENABLED_PROPERTY_NAME = "cucumber.glue.hint.enabled";
+
+    /**
+     * Property name to define the threshold to display cucumber glue loading
+     * hints: {@value}
+     * <p>
+     * Enabling this will make the hints to be displayed if the expected gain is
+     * above the threshold.
+     * <p>
+     * The threshold is in milliseconds.
+     */
+    public static final String GLUE_HINT_THRESHOLD_PROPERTY_NAME = "cucumber.glue.hint.threshold";
+
+    /**
      * Property name used to select a specific object factory implementation:
      * {@value}
      *
