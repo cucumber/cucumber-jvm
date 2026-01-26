@@ -91,18 +91,20 @@ public final class ClasspathScanner {
         return isClass && isNotAnonymousClass(filename);
     }
 
-    private static boolean isNotAnonymousClass(String className) {
-        int indexInnerClass = className.lastIndexOf('$');
-        if (indexInnerClass > 0) {
-            // inner class
-            for (int i = indexInnerClass + 1; i < className.length() - CLASS_FILE_SUFFIX.length(); i++) {
-                if (!Character.isDigit(className.charAt(i))) {
-                    return true; // not anonymous class
-                }
-            }
-            return false;// anonymous class
+    private static boolean isNotAnonymousClass(String fileName) {
+        int indexInnerClass = fileName.lastIndexOf('$');
+        if (indexInnerClass < 0) {
+            // not inner class
+            return true;
         }
-        return true; // not inner class
+        for (int i = indexInnerClass + 1; i < fileName.length() - CLASS_FILE_SUFFIX.length(); i++) {
+            if (!Character.isDigit(fileName.charAt(i))) {
+                // not anonymous class
+                return true;
+            }
+        }
+        // anonymous class
+        return false;
     }
 
     private Function<Path, Consumer<Path>> processClassFiles(
