@@ -16,7 +16,7 @@
 
     <properties>
         <junit-jupiter.version>5.14.2</junit-jupiter.version>
-        <assertj.version>3.27.6</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <project.rootdir>${project.basedir}/..</project.rootdir>
