@@ -120,7 +120,7 @@ public final class ClasspathScanner {
         };
     }
 
-    private Optional<Class<?>> safelyLoadClass(String fqn) {
+    public Optional<Class<?>> safelyLoadClass(String fqn) {
         try {
             return Optional.ofNullable(getClassLoader().loadClass(fqn));
         } catch (Throwable e) {
@@ -129,6 +129,14 @@ public final class ClasspathScanner {
                     + "'. If this is not a Glue class you can ignore this exception.\n");
         }
         return Optional.empty();
+    }
+
+    public Class<?> loadClass(String fqn) {
+        try {
+            return getClassLoader().loadClass(fqn);
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            throw new IllegalArgumentException("Could not to load class '" + fqn + "'", e);
+        }
     }
 
     public List<Class<?>> scanForClassesInPackage(String packageName) {

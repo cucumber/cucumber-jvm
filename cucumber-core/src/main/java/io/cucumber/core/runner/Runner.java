@@ -19,7 +19,6 @@ import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,11 +49,11 @@ public final class Runner {
         this.backends = backends;
         this.glue = new CachingGlue(bus);
         this.objectFactory = objectFactory;
-        List<URI> gluePaths = runnerOptions.getGlue();
-        log.debug(() -> "Loading glue from " + gluePaths);
+        log.debug(() -> "Loading glue from " + runnerOptions.getGlue());
         for (Backend backend : backends) {
             log.debug(() -> "Loading glue for backend " + backend.getClass().getName());
-            backend.loadGlue(this.glue, gluePaths);
+            backend.loadGlue(this.glue, runnerOptions.getGlue());
+            backend.loadGlueClasses(this.glue, runnerOptions.getGlueClasses());
         }
     }
 
