@@ -3,7 +3,6 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
-import io.cucumber.messages.types.HookType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -19,50 +18,113 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     private final HookType hookType;
 
     JavaHookDefinition(HookType hookType, Method method, String tagExpression, int order, Lookup lookup) {
-        super(requireValidMethod(method), lookup);
+        super(requireValidMethod(hookType, method), lookup);
         this.hookType = requireNonNull(hookType);
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
     }
 
-    private static Method requireValidMethod(Method method) {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes.length > 1) {
-            throw createInvalidSignatureException(method);
-        }
-
-        if (parameterTypes.length == 1) {
-            Class<?> parameterType = parameterTypes[0];
-            if (!(Object.class.equals(parameterType) || io.cucumber.java.Scenario.class.equals(parameterType))) {
-                throw createInvalidSignatureException(method);
-            }
-        }
-
+    private static Method requireValidMethod(HookType hookType, Method method) {
         Type returnType = method.getGenericReturnType();
         if (!Void.class.equals(returnType) && !void.class.equals(returnType)) {
-            throw createInvalidSignatureException(method);
+            throw createInvalidSignatureException(method, hookType);
         }
+
+        Class<?>[] parameterTypes = method.getParameterTypes();
+
+        switch (hookType) {
+            case BEFORE_STEP:
+            case AFTER_STEP:
+                validateStepHookParameters(method, parameterTypes, hookType);
+                break;
+            case BEFORE:
+            case AFTER:
+                validateScenarioHookParameters(method, parameterTypes, hookType);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown hook type: " + hookType);
+        }
+
         return method;
     }
 
-    private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
-                .addAnnotation(Before.class)
-                .addAnnotation(After.class)
-                .addAnnotation(BeforeStep.class)
-                .addAnnotation(AfterStep.class)
-                .addSignature("public void before_or_after(io.cucumber.java.Scenario scenario)")
-                .addSignature("public void before_or_after()")
-                .build();
+    private static void validateScenarioHookParameters(Method method, Class<?>[] parameterTypes, HookType hookType) {
+        // @Before and @After hooks: 0 or 1 parameter (Scenario)
+        if (parameterTypes.length > 1) {
+            throw createInvalidSignatureException(method, hookType);
+        }
+        if (parameterTypes.length == 1) {
+            Class<?> parameterType = parameterTypes[0];
+            if (!Object.class.equals(parameterType) && !io.cucumber.java.Scenario.class.equals(parameterType)) {
+                throw createInvalidSignatureException(method, hookType);
+            }
+        }
+    }
+
+    private static void validateStepHookParameters(Method method, Class<?>[] parameterTypes, HookType hookType) {
+        // @BeforeStep and @AfterStep hooks: 0, 1, or 2 parameters (Scenario,
+        // Step)
+        if (parameterTypes.length > 2) {
+            throw createInvalidSignatureException(method, hookType);
+        }
+        if (parameterTypes.length >= 1) {
+            Class<?> firstParam = parameterTypes[0];
+            if (!Object.class.equals(firstParam) && !io.cucumber.java.Scenario.class.equals(firstParam)) {
+                throw createInvalidSignatureException(method, hookType);
+            }
+        }
+        if (parameterTypes.length == 2) {
+            Class<?> secondParam = parameterTypes[1];
+            if (!Object.class.equals(secondParam) && !io.cucumber.java.Step.class.equals(secondParam)) {
+                throw createInvalidSignatureException(method, hookType);
+            }
+        }
+    }
+
+    private static InvalidMethodSignatureException createInvalidSignatureException(Method method, HookType hookType) {
+        InvalidMethodSignatureException.InvalidMethodSignatureExceptionBuilder exceptionBuilder = builder(method);
+
+        switch (hookType) {
+            case BEFORE:
+                exceptionBuilder.addAnnotation(Before.class);
+                break;
+            case AFTER:
+                exceptionBuilder.addAnnotation(After.class);
+                break;
+            case BEFORE_STEP:
+                exceptionBuilder.addAnnotation(BeforeStep.class);
+                break;
+            case AFTER_STEP:
+                exceptionBuilder.addAnnotation(AfterStep.class);
+                break;
+        }
+
+        exceptionBuilder.addSignature("public void hook()")
+                .addSignature("public void hook(io.cucumber.java.Scenario scenario)");
+
+        if (hookType == HookType.BEFORE_STEP || hookType == HookType.AFTER_STEP) {
+            exceptionBuilder.addSignature(
+                "public void hook(io.cucumber.java.Scenario scenario, io.cucumber.java.Step step)");
+        }
+
+        return exceptionBuilder.build();
     }
 
     @Override
     public void execute(TestCaseState state) {
         Object[] args;
-        if (method.getParameterTypes().length == 1) {
+        int paramCount = method.getParameterTypes().length;
+
+        if (paramCount == 0) {
+            args = new Object[0];
+        } else if (paramCount == 1) {
             args = new Object[] { new io.cucumber.java.Scenario(state) };
         } else {
-            args = new Object[0];
+            // 2 parameters: Scenario and Step
+            args = new Object[] {
+                    new io.cucumber.java.Scenario(state),
+                    state.geCurrentPickleStep().map(Step::new).orElse(null)
+            };
         }
 
         invokeMethod(args);

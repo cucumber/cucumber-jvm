@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
+import io.cucumber.core.backend.Step;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Attachment;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -32,6 +34,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private final UUID testExecutionId;
 
     private UUID currentTestStepId;
+    private Step currentPickleStep;
 
     TestCaseState(EventBus bus, UUID testExecutionId, TestCase testCase) {
         this.bus = requireNonNull(bus);
@@ -155,6 +158,11 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         return testCase.getLocation().getLine();
     }
 
+    @Override
+    public Optional<Step> geCurrentPickleStep() {
+        return Optional.ofNullable(currentPickleStep);
+    }
+
     Throwable getError() {
         if (stepResults.isEmpty()) {
             return null;
@@ -171,11 +179,18 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         this.currentTestStepId = null;
     }
 
+    void setCurrentPickleStep(Step currentPickleStep) {
+        this.currentPickleStep = currentPickleStep;
+    }
+
+    void clearCurrentPickleStep() {
+        this.currentPickleStep = null;
+    }
+
     private void requireActiveTestStep() {
         if (currentTestStepId == null) {
             throw new IllegalStateException(
                 "You can not use Scenario.log or Scenario.attach when a step is not being executed");
         }
     }
-
 }

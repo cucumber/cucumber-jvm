@@ -191,14 +191,15 @@ public class StepDefinitions {
 
 `BeforeStep` and `AfterStep` hooks are executed before and after each step is
 executed. A hook is declared by annotating a method. This method may take an
-argument of `io.cucumber.java.Scenario`. A [tag-expression](https://github.com/cucumber/tag-expressions) can be used to execute
-a hook conditionally.
+argument of `io.cucumber.java.Scenario` and optionally `io.cucumber.java.Step`.
+A [tag-expression](https://github.com/cucumber/tag-expressions) can be used to execute a hook conditionally.
 
 ```java
 package io.cucumber.example;
 
 import io.cucumber.java.AfterStep;
 import io.cucumber.java.BeforeStep;
+import io.cucumber.java.Scenario;
 
 public class StepDefinitions {
 
@@ -210,6 +211,31 @@ public class StepDefinitions {
     @AfterStep
     public void after(Scenario scenario) {
         scenario.log("Runs after each step");
+    }
+}
+```
+
+The `Step` parameter provides access to information about the step being executed:
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.AfterStep;
+import io.cucumber.java.BeforeStep;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.Step;
+
+public class StepDefinitions {
+
+    @BeforeStep
+    public void beforeStep(Scenario scenario, Step step) {
+        scenario.log("About to run: " + step.getKeyword() + step.getText());
+        scenario.log("Step is on line: " + step.getLine());
+    }
+
+    @AfterStep
+    public void afterStep(Scenario scenario, Step step) {
+        scenario.log("Finished: " + step.getText());
     }
 }
 ```

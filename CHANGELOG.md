@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
- 
+- [Java] Add Step info to `@BeforeStep` and `@AfterStep` hooks ([#3139](https://github.com/cucumber/cucumber-jvm/pull/3139), Menelaos Mamouzellos)
+
 ### Changed
 - [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138)) 
 - [Core] Early filtering of anonymous classes for glue ([#3150](https://github.com/cucumber/cucumber-jvm/pull/3150), Julien Kronegg)
