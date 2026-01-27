@@ -239,11 +239,6 @@ public class StepDefinitions {
     }
 }
 ```
-
-The `Step` interface provides:
- * `getKeyword()` - returns the step keyword (e.g., "Given ", "When ", "Then ")
- * `getText()` - returns the step text
- * `getLine()` - returns the line number in the feature file
     
 ## Transformers 
 
