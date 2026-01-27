@@ -15,13 +15,13 @@
     <properties>
         <project.rootdir>${project.basedir}/..</project.rootdir>
         <ci-environment.version>12.0.0</ci-environment.version>
-        <cucumber-expressions.version>18.0.1</cucumber-expressions.version>
+        <cucumber-expressions.version>18.1.0</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.3.2</cucumber-json-formatter.version>
         <gherkin.version>36.1.0</gherkin.version>
         <html-formatter.version>22.3.0</html-formatter.version>
         <junit-xml-formatter.version>0.11.0</junit-xml-formatter.version>
         <messages.version>30.1.0</messages.version>
-        <messages-ndjson.version>0.2.0</messages-ndjson.version>
+        <messages-ndjson.version>0.4.0</messages-ndjson.version>
         <pretty-formatter.version>2.4.1</pretty-formatter.version>
         <query.version>14.7.0</query.version>
         <tag-expressions.version>8.1.0</tag-expressions.version>

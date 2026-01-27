@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138)) 
+- [Core] Early filtering of anonymous classes for glue ([#3150](https://github.com/cucumber/cucumber-jvm/pull/3150), Julien Kronegg)
 
 ## [7.33.0] - 2025-12-09
 ### Added
