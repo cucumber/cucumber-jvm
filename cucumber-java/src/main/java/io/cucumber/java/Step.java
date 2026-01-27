@@ -32,7 +32,6 @@ public final class Step {
         return delegate.getKeyword();
     }
 
-
     /**
      * Returns this step's text.
      *
