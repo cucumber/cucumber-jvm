@@ -6,6 +6,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,9 @@ final class DefinitionArgument implements Argument {
 
         private Group(io.cucumber.cucumberexpressions.Group group) {
             this.group = group;
-            children = group.getChildren().stream()
+            children = group.getChildren()
+                    .orElse(Collections.emptyList())
+                    .stream()
                     .map(Group::new)
                     .collect(Collectors.toList());
         }
