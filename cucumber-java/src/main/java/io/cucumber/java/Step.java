@@ -15,27 +15,40 @@ import org.apiguardian.api.API;
  * @see AfterStep
  */
 @API(status = API.Status.STABLE)
-public interface Step {
+public final class Step {
+
+    private final io.cucumber.core.backend.Step delegate;
+
+    Step(io.cucumber.core.backend.Step delegate) {
+        this.delegate = delegate;
+    }
 
     /**
      * Returns this step's keyword. I.e. Given, When, Then.
      *
      * @return step keyword
      */
-    String getKeyword();
+    public String getKeyword() {
+        return delegate.getKeyword();
+    }
+
 
     /**
      * Returns this step's text.
      *
      * @return this step's text
      */
-    String getText();
+    public String getText() {
+        return delegate.getText();
+    }
 
     /**
      * Line in the feature file this step is located in.
      *
      * @return step line number
      */
-    int getLine();
+    public int getLine() {
+        return delegate.getLine();
+    }
 
 }

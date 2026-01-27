@@ -123,7 +123,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             // 2 parameters: Scenario and Step
             args = new Object[] {
                     new io.cucumber.java.Scenario(state),
-                    state.geCurrentPickleStep().map(StepInfo::new).orElse(null)
+                    state.geCurrentPickleStep().map(Step::new).orElse(null)
             };
         }
 
