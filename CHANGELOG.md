@@ -12,10 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- [Core] Ignore all potential class loading issues ([#3135](https://github.com/cucumber/tag-expressions/pull/3135), Christoph Läubrich)
+- [Core] Ignore all potential class loading issues ([#3135](https://github.com/cucumber/cucumber-jvm/pull/3135), Christoph Läubrich)
 
 ### Added
 - [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
+- [Java] Add Step info to `@BeforeStep` and `@AfterStep` hooks ([#3139](https://github.com/cucumber/cucumber-jvm/pull/3139), Menelaos Mamouzellos)
 
 ### Changed
 - [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138)) 
