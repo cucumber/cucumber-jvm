@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.34.1] - 2026-01-28
 ### Fixed
 - Ensure dependencies converge ([#3157](https://github.com/cucumber/cucumber-jvm/issues/3157)
 
@@ -583,7 +585,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.1...HEAD
+[7.34.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.0...v7.34.1
 [7.34.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...v7.34.0
 [7.33.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.32.0...v7.33.0
 [7.32.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...v7.32.0
