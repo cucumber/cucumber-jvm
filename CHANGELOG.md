@@ -11,16 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-- [Core] Ignore all potential class loading issues ([#3135](https://github.com/cucumber/cucumber-jvm/pull/3135), Christoph Läubrich)
-- [Core] Hide successful hooks by default in HTML report ([cucumber/react-components#415](https://github.com/cucumber/react-components/pull/415))
+## [7.34.0] - 2026-01-28
 ### Added
+- [Core] Hide successful hooks by default in HTML report ([cucumber/react-components#415](https://github.com/cucumber/react-components/pull/415))
 - [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
 - [Java] Add Step info to `@BeforeStep` and `@AfterStep` hooks ([#3139](https://github.com/cucumber/cucumber-jvm/pull/3139), Menelaos Mamouzellos)
 
 ### Changed
-- [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138)) 
+- [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138))
 - [Core] Early filtering of anonymous classes for glue ([#3150](https://github.com/cucumber/cucumber-jvm/pull/3150), Julien Kronegg)
+
+### Fixed
+- [Core] Ignore all potential class loading issues ([#3135](https://github.com/cucumber/cucumber-jvm/pull/3135), Christoph Läubrich)
 
 ## [7.33.0] - 2025-12-09
 ### Added
@@ -579,7 +581,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.0...HEAD
+[7.34.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...v7.34.0
 [7.33.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.32.0...v7.33.0
 [7.32.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...v7.32.0
 [7.31.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...v7.31.0
