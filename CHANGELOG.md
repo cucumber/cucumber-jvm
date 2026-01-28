@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - [Core] Ignore all potential class loading issues ([#3135](https://github.com/cucumber/cucumber-jvm/pull/3135), Christoph Läubrich)
-
+- [Core] Hide successful hooks by default in HTML report ([cucumber/react-components#415](https://github.com/cucumber/react-components/pull/415))
 ### Added
 - [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
 - [Java] Add Step info to `@BeforeStep` and `@AfterStep` hooks ([#3139](https://github.com/cucumber/cucumber-jvm/pull/3139), Menelaos Mamouzellos)
