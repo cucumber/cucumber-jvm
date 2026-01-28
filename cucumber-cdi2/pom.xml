@@ -15,7 +15,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.34.0</version>
+        <version>7.34.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-cdi2</artifactId>
