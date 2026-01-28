@@ -53,7 +53,6 @@ class ClasspathScannerTest {
             ExampleClass.class,
             ExampleInterface.class,
             OtherClass.class));
-        // does not contain anonymous classes
 
     }
 
