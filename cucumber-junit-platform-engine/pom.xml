@@ -14,7 +14,7 @@
     <properties>
         <project.rootdir>${project.basedir}/..</project.rootdir>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.14.2</junit-jupiter.version>
+        <junit-jupiter.version>6.0.2</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
