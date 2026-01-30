@@ -5,6 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 
 @API(status = API.Status.STABLE)
 public interface TestCaseState {
@@ -116,4 +117,7 @@ public interface TestCaseState {
      */
     Integer getLine();
 
+    default Optional<Step> geCurrentPickleStep() {
+        return Optional.empty();
+    }
 }

@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
+import io.cucumber.core.backend.Step;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Attachment;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -33,6 +35,7 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private final UUID testExecutionId;
 
     private @Nullable UUID currentTestStepId;
+    private @Nullable Step currentPickleStep;
 
     TestCaseState(EventBus bus, UUID testExecutionId, TestCase testCase) {
         this.bus = requireNonNull(bus);
@@ -158,6 +161,11 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         return testCase.getLocation().getLine();
     }
 
+    @Override
+    public Optional<Step> geCurrentPickleStep() {
+        return Optional.ofNullable(currentPickleStep);
+    }
+
     @Nullable
     Throwable getError() {
         if (stepResults.isEmpty()) {
@@ -175,6 +183,14 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         this.currentTestStepId = null;
     }
 
+    void setCurrentPickleStep(Step currentPickleStep) {
+        this.currentPickleStep = currentPickleStep;
+    }
+
+    void clearCurrentPickleStep() {
+        this.currentPickleStep = null;
+    }
+
     private UUID getRequiredCurrentTestStepId() {
         if (currentTestStepId == null) {
             throw new IllegalStateException(
@@ -182,5 +198,4 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         }
         return currentTestStepId;
     }
-
 }

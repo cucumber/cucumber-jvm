@@ -440,6 +440,28 @@
             "code": ".*",
             "new": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
             "justification": "Internal shaded API"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": ".*",
+            "old": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "new": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "justification": "Internal shaded API"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": ".*",
+            "old": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "justification": "Internal shaded API"
+          },
+          {
+            "ignore": true,
+            "regex": true,
+            "code": ".*",
+            "new": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "justification": "Internal shaded API"
           }
         ]
       }
