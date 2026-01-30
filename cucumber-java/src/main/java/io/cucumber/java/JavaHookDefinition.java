@@ -98,7 +98,8 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     @Override
     public void execute(TestCaseState state) {
-        @Nullable Object[] args;
+        @Nullable
+        Object[] args;
         int paramCount = method.getParameterTypes().length;
 
         if (paramCount == 0) {
