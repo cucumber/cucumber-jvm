@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- [All] Set baseline to Java 17 ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
+- [All] Adopt [JSpecify](https://jspecify.dev/) to declare nullability ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
 - [Core] Update dependency io.cucumber:ci-environment.version to v13.0.0
 - [Core] Update dependency io.cucumber:cucumber-expressions.version to v19.0.0
 - [Core] Update dependency io.cucumber:cucumber-json-formatter.version to v0.4.0
@@ -25,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter.version to v0.8.0
 - [Core] Update dependency io.cucumber:usage-formatter.version to v0.2.0
+- [JUnit Platform Engine] Use JUnit Platform 6.0.2 (JUnit Jupiter 6.0.2) ([#3083](https://github.com/cucumber/cucumber-jvm/pull/3083))
 
 ## [7.34.2] - 2026-01-29
 ### Fixed
