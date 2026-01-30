@@ -15,7 +15,7 @@ public class CucumberBackendException extends RuntimeException {
         super(message);
     }
 
-    public CucumberBackendException(@Nullable String message, Throwable cause) {
+    public CucumberBackendException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
