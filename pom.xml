@@ -63,6 +63,12 @@
             <build>
                 <pluginManagement>
                     <plugins>
+                        <plugin>
+                            <!-- TODO: Pull up into parent -->
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-dependency-plugin</artifactId>
+                            <version>3.9.0</version>
+                        </plugin>
                         <!-- Apply code format by default -->
                         <plugin>
                             <groupId>com.diffplug.spotless</groupId>
