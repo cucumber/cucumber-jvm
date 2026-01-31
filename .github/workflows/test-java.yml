@@ -26,6 +26,7 @@ jobs:
           - windows-latest
         version:
           - 21
+          - 25
     name: 'Build Java ${{ matrix.version }} - ${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
     steps:
