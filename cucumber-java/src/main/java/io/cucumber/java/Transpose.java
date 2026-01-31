@@ -9,11 +9,10 @@ import java.lang.annotation.Target;
 
 // @formatter:off
 /**
- * <p>
  * This annotation can be specified on step definition method parameters to give
  * Cucumber a hint to transpose a DataTable.
- * <p>
- * For example, if you have the following Gherkin step with a table
+ * 
+ * <p>For example, if you have the following Gherkin step with a table
  * 
  * <pre>
  * Given the user is
@@ -21,8 +20,8 @@ import java.lang.annotation.Target;
  *    | lastname    | Lo Giacco |
  *    | nationality | Italian   |
  * </pre>
- * <p>
- * And a data table type to create a User
+ * 
+ * <p>And a data table type to create a User
  *
  * <pre>
  * {@code

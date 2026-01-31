@@ -14,16 +14,16 @@ import java.lang.annotation.Target;
  * {@code @ContextConfiguration}, {@code @ContextHierarchy} or
  * {@code @BootstrapWith}. In case of SpringBoot, the configuration class can be
  * annotated as follows:
- * <p>
  * 
+ * <p>
  * <pre>{@code
  *     @CucumberContextConfiguration
  *     @SpringBootTest(classes = TestConfig.class)
  *     public class CucumberSpringConfiguration {
  *     }
  * }</pre>
- * <p>
- * Notes:
+ * 
+ * <p>Notes:
  * <ul>
  * <li>Only one glue class should be annotated with
  * {@code @CucumberContextConfiguration} otherwise an exception will be

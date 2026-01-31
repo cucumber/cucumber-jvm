@@ -21,19 +21,18 @@ import java.lang.annotation.Target;
  * Note about Testable: While this class is annotated with @Testable the
  * recommended way for IDEs and other tooling use the selectors implemented by
  * Cucumber to discover feature files.
- * <p>
  * 
  * @deprecated Please use the JUnit Platform Suite to run Cucumber in
  *             combination with Surefire or Gradle. E.g:
  * 
  *             <pre>{@code
- *package com.example;
+ * package com.example;
  *
- *import org.junit.platform.suite.api.ConfigurationParameter;
- *import org.junit.platform.suite.api.SelectPackages;
- *import org.junit.platform.suite.api.Suite;
+ * import org.junit.platform.suite.api.ConfigurationParameter;
+ * import org.junit.platform.suite.api.SelectPackages;
+ * import org.junit.platform.suite.api.Suite;
  *
- *import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+ * import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
  *
  *             @Suite
  *             @SelectPackages("com.example")

@@ -87,6 +87,15 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links>
+                        <link>https://docs.junit.org/${junit-jupiter.version}/api</link>
+                    </links>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

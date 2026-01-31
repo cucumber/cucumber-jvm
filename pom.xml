@@ -181,42 +181,6 @@
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <configuration>
-                        <doclint>none</doclint>
-                        <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
-                        <links>
-                            <link>https://junit.org/junit4/javadoc/latest/</link>
-                            <!-- TODO: Fix-->
-                            <!-- javadoc plugin can't port docs for modularized code to
-                               non-modularized code -->
-                            <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
-                            <!-- javadoc.io is down -->
-                            <!-- <link>https://javadoc.io/doc/org.testng/testng/7.1.0/</link> -->
-                        </links>
-                        <groups>
-                            <group>
-                                <title>API Packages</title>
-                                <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
-                                </packages>
-                            </group>
-                            <group>
-                                <title>I18n</title>
-                                <packages>io.cucumber.java8.*:io.cucumber.java.*</packages>
-                            </group>
-                            <group>
-                                <title>Dependency Injection Providers</title>
-                                <packages>
-                                    io.cucumber.spring:io.cucumber.guice:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
-                                </packages>
-                            </group>
-                        </groups>
-                    </configuration>
-                </plugin>
-                
                 <!-- Semantic version check  -->
                 <plugin>
                     <groupId>org.revapi</groupId>

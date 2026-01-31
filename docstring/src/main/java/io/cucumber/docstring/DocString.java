@@ -11,13 +11,13 @@ import static java.util.Objects.requireNonNull;
 /**
  * A doc string. For example:
  *
- * <pre>
+ * <pre>{@code
  * """application/json
  * {
  *   "hello": "world"
  * }
  * """
- * </pre>
+ * }</pre>
  * <p>
  * A doc string is either empty or contains some content. The content type is an
  * optional description of the content using a <a
