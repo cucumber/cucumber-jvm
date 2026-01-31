@@ -57,4 +57,10 @@ public final class Attachments {
     public void aLinkToIsAttached(String uri) {
         scenario.attach(uri, "text/uri-list", null);
     }
+
+    @When("the string {string} is attached as {string} before a failure")
+    public void theStringIsAttachAsBeforeAFailure(String text, String mediaType) {
+        scenario.attach(text, mediaType, null);
+        throw new RuntimeException("whoops");
+    }
 }
