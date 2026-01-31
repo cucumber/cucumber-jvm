@@ -9,7 +9,7 @@
 
     <artifactId>cucumber-junit-platform-engine</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: JUnit 5 - JUnit Platform Engine</name>
+    <name>Cucumber-JVM: JUnit 6 - JUnit Platform Engine</name>
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.junit.platform.engine</project.Automatic-Module-Name>
