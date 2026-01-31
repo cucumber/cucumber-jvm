@@ -316,7 +316,7 @@ the `cucumber.execution.parallel.enabled` configuration parameter to `true`,
 e.g., in `junit-platform.properties`.
 
 To control properties such as the desired parallelism and maximum parallelism,
-Cucumber supports JUnit 5s `ParallelExecutionConfigurationStrategy`. Cucumber
+Cucumber supports JUnit 6 `ParallelExecutionConfigurationStrategy`. Cucumber
 provides two implementations: `dynamic` and `fixed` that can be set through
 `cucumber.execution.parallel.config.strategy`. You may also implement a `custom`
 strategy.
@@ -442,8 +442,8 @@ cucumber.filter.name=                                          # a regular expre
                                                                # combined with cucumber.filter.tags using "and" semantics.
                                                                # example: ^Hello (World|Cucumber)$
                                                                # note: To ensure consistent reports between Cucumber and
-                                                               # JUnit 5 prefer using JUnit 5s discovery request filters
-                                                               # or JUnit 5 tag expressions instead.
+                                                               # JUnit Jupiter prefer using JUnit Jupiters discovery request filters
+                                                               # or JUnit Jupiter tag expressions instead.
 
 cucumber.features=                                             # comma separated paths to feature files. 
                                                                # example: path/to/example.feature, path/to/other.feature
@@ -461,8 +461,8 @@ cucumber.filter.tags=                                          # a cucumber tag 
                                                                # combined with cucumber.filter.name using "and" semantics.                                                               
                                                                # example: @Cucumber and not (@Gherkin or @Zucchini)
                                                                # note: To ensure consistent reports between Cucumber and
-                                                               # JUnit 5 prefer using JUnit 5s discovery request filters
-                                                               # or JUnit 5 tag expressions instead.
+                                                               # JUnit Jupiter prefer using JUnit Jupiters discovery request filters
+                                                               # or JUnit Jupiter tag expressions instead.
 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
@@ -566,7 +566,7 @@ cucumber.execution.exclusive-resources.<tag-name>.read=        # a comma separat
 
 ## Supported Discovery Selectors and Filters ## 
 
-JUnit 5 [introduced a test discovery mechanism](https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery)
+JUnit 6 [introduced a test discovery mechanism](https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery)
 as a dedicated feature of the platform itself. This allows IDEs and build tools
 to identify tests. Supported `DiscoverySelector`s are:
 
@@ -625,10 +625,10 @@ mvn verify -DexcludedGroups="Ignore" -Dgroups="Smoke | Sanity"
 ```
 
 For more information on how to select tags, see the relevant documentation:
-* [JUnit 5 Suite: @Include Tags](https://junit.org/junit5/docs/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/IncludeTags.html)
-* [JUnit 5 Suite: @Exclude Tags](https://junit.org/junit5/docs/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/ExcludeTags.html)
-* [JUnit 5 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)
-* [JUnit 5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions)
+* [JUnit 6 Suite: @Include Tags](https://junit.org/junit5/docs/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/IncludeTags.html)
+* [JUnit 6 Suite: @Exclude Tags](https://junit.org/junit5/docs/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/ExcludeTags.html)
+* [JUnit 6 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)
+* [JUnit 6 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions)
 * [Maven: Filtering by Tags](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html)
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
 
@@ -775,7 +775,7 @@ Note: any files written by Cucumber will be overwritten during the rerun.
 
 ### Using Gradle.
 
-Gradle support for JUnit 5 is rather limited 
+Gradle support for JUnit 6 is rather limited 
 [gradle#4773](https://github.com/gradle/gradle/issues/4773), 
 [junit5#2849](https://github.com/junit-team/junit5/issues/2849).
 As a workaround you can the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion)
@@ -786,7 +786,7 @@ Note: any files written by Cucumber will be overwritten while retrying.
 
 ### Using the JUnit Platform Launcher API
 
-The [JUnit Platform Launcher API](https://docs.junit.org/current/user-guide/#launcher-api) provides a method to programmatically run and
+The [JUnit Platform Launcher API](https://docs.junit.org/current/advanced-topics/launcher-api.html) provides a method to programmatically run and
 re-run tests. For example:
 
 ```java

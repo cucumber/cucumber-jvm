@@ -84,7 +84,7 @@ public class ApplicationOneTest {
 
 Repeat as needed.
 
-#### JUnit 5 + JUnit Platform Suite
+#### JUnit Jupiter + JUnit Platform Suite
 
 ```java
 package com.example;
