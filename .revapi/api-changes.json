@@ -6,6 +6,32 @@
       "ignore": true,
       "configuration": {
         "differences": [
+          {
+            "ignore": true,
+            "code": "java.class.removed",
+            "old": "interface io.cucumber.plugin.StrictAware",
+            "justification": "Removal of deprecated class"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.removed",
+            "old": "interface io.cucumber.plugin.SummaryPrinter",
+            "justification": "Removal of deprecated class"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.noLongerDefault",
+            "old": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "new": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "justification": "Removal of deprecated class"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.nowAbstract",
+            "old": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "new": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "justification": "Removal of deprecated class"
+          }
         ]
       }
     }
