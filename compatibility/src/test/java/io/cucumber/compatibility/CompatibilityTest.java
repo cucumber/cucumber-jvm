@@ -73,8 +73,7 @@ final class CompatibilityTest {
         "global-hooks-attachments",
         "global-hooks-beforeall-error",
         // exception: cucumber can't test runs intentionally
-        "test-run-exception"
-    );
+        "test-run-exception");
 
     private static final Map<String, Map<Pattern, Matcher<?>>> divergingExpectations = createDivergingExpectations();
 

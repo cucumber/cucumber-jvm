@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assumptions;
 
 public final class AllStatuses {
 
-
     @Given("a step")
     public void a_step() {
         /* no-op */
@@ -39,5 +38,3 @@ public final class AllStatuses {
     }
 
 }
-
-
