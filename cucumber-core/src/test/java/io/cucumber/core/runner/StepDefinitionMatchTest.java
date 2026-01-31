@@ -104,8 +104,8 @@ class StepDefinitionMatchTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given I have 4 cukes in my belly
-                       | A | B |\s
-                       | C | D |\s
+                       | A | B |
+                       | C | D |
                 """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
@@ -136,8 +136,8 @@ class StepDefinitionMatchTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given I have 4 cukes in my belly
-                       | A | B |\s
-                       | C | D |\s
+                       | A | B |
+                       | C | D |
                 """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
@@ -193,7 +193,7 @@ class StepDefinitionMatchTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given I have a data table
-                       | A |\s
+                       | A |
                 """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
@@ -284,9 +284,9 @@ class StepDefinitionMatchTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given I have some cukes in my belly
-                       | 3 |\s
-                       | 14 |\s
-                       | 15 |\s
+                       | 3 |
+                       | 14 |
+                       | 15 |
                 """);
 
         stepTypeRegistry.defineDataTableType(new DataTableType(ItemQuantity.class, ItemQuantity::new));
@@ -310,9 +310,9 @@ class StepDefinitionMatchTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given I have some cukes in my belly
-                       | 3 |\s
-                       | 14 |\s
-                       | 15 |\s
+                       | 3  |
+                       | 14 |
+                       | 15 |
                 """);
         RuntimeException userException = new RuntimeException();
 
@@ -406,7 +406,7 @@ class StepDefinitionMatchTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given I have a data table
-                       | A |\s
+                       | A |
                 """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
@@ -436,8 +436,8 @@ class StepDefinitionMatchTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given I have a data table
-                       | A |\s
-                       | B |\s
+                       | A |
+                       | B |
                 """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 

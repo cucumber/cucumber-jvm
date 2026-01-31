@@ -10,7 +10,6 @@ import io.cucumber.core.runtime.StubFeatureSupplier;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import static io.cucumber.core.plugin.PrettyFormatterStepDefinition.oneReference;
@@ -20,7 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UnusedStepsSummaryPrinterTest {
 
     @Test
-    void writes_unused_report() throws UnsupportedEncodingException {
+    @SuppressWarnings("MisleadingEscapedSpace")
+    void writes_unused_report() {
         Feature feature = TestFeatureParser.parse("path/test.feature", """
                 Feature: feature name
                   Scenario: scenario name

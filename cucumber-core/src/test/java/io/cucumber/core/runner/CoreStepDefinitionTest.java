@@ -94,9 +94,9 @@ class CoreStepDefinitionTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given some text
-                      | 100.5 | 99.5 |\s
-                      | 0.5   | -0.5 |\s
-                      | 1000  | 999  |\s
+                      | 100.5 | 99.5 |
+                      | 0.5   | -0.5 |
+                      | 1000  | 999  |
                 """);
         Map<Double, Double> stepDefs = runStepDef(m, false, feature);
 
@@ -131,9 +131,9 @@ class CoreStepDefinitionTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given some text
-                      | 100.5 | 99.5 |\s
-                      | 0.5   | -0.5 |\s
-                      | 1000  | 999  |\s
+                      | 100.5 | 99.5 |
+                      | 0.5   | -0.5 |
+                      | 1000  | 999  |
                 """);
         Map<Double, List<Double>> stepDefs = runStepDef(m, true, feature);
         assertThat(stepDefs, hasEntry(100.5, asList(0.5, 1000.0)));
@@ -146,9 +146,9 @@ class CoreStepDefinitionTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given some text
-                      | 100.5 | 99.5 |\s
-                      | 0.5   | -0.5 |\s
-                      | 1000  | 999  |\s
+                      | 100.5 | 99.5 |
+                      | 0.5   | -0.5 |
+                      | 1000  | 999  |
                 """);
         List<List<Double>> stepDefs = runStepDef(m, false, feature);
         assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
@@ -161,8 +161,8 @@ class CoreStepDefinitionTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given some text
-                      | 100.5 | 0.5   | 1000|\s
-                      | 99.5   | -0.5 | 999 |\s
+                      | 100.5 | 0.5   | 1000|
+                      | 99.5   | -0.5 | 999 |
                 """);
         List<List<Double>> stepDefs = runStepDef(m, true, feature);
         assertThat(stepDefs.toString(), is(equalTo("[[100.5, 99.5], [0.5, -0.5], [1000.0, 999.0]]")));
@@ -175,8 +175,8 @@ class CoreStepDefinitionTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given some text
-                      | Birth Date |\s
-                      | 1957-05-10 |\s
+                      | Birth Date |
+                      | 1957-05-10 |
                 """);
         DataTable stepDefs = runStepDef(m, false, feature);
 
@@ -192,8 +192,8 @@ class CoreStepDefinitionTest {
                 Feature: Test feature
                   Scenario: Test scenario
                      Given some text
-                      | Birth Date |\s
-                      | 1957-05-10 |\s
+                      | Birth Date |
+                      | 1957-05-10 |
                 """);
         DataTable stepDefs = runStepDef(m, true, feature);
 

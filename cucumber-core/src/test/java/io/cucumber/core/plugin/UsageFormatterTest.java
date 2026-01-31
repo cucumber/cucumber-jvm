@@ -12,7 +12,6 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.UUID;
@@ -24,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UsageFormatterTest {
 
     @Test
-    void writes_empty_report() throws UnsupportedEncodingException {
+    void writes_empty_report() {
         Feature feature = TestFeatureParser.parse("path/test.feature", """
                 Feature: feature name
                 """);
@@ -44,7 +43,8 @@ class UsageFormatterTest {
     }
 
     @Test
-    void writes_usage_report() throws UnsupportedEncodingException {
+    @SuppressWarnings("MisleadingEscapedSpace")
+    void writes_usage_report() {
         Feature feature = TestFeatureParser.parse("path/test.feature", """
                 Feature: feature name
                   Scenario: scenario 1
