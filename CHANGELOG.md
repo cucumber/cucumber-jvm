@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter.version to v0.12.0
 - [Core] Update dependency io.cucumber:messages.version to v32.0.0
 - [Core] Update dependency io.cucumber:messages-ndjson.version to v0.4.0
-- [Core] Update dependency io.cucumber:pretty-formatter.version to v3.0.0-SNAPSHOT
+- [Core] Update dependency io.cucumber:pretty-formatter.version to v3.0.0 
 - [Core] Update dependency io.cucumber:query.version to v15.0.1
 - [Core] Update dependency io.cucumber:tag-expressions.version to v9.0.0
 - [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.0

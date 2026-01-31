@@ -22,7 +22,7 @@
         <junit-xml-formatter.version>0.12.0</junit-xml-formatter.version>
         <messages.version>32.0.0</messages.version>
         <messages-ndjson.version>0.4.0</messages-ndjson.version>
-        <pretty-formatter.version>3.0.0-SNAPSHOT</pretty-formatter.version>
+        <pretty-formatter.version>3.0.0</pretty-formatter.version>
         <query.version>15.0.1</query.version>
         <tag-expressions.version>9.0.0</tag-expressions.version>
         <teamcity-formatter.version>0.3.0</teamcity-formatter.version>
