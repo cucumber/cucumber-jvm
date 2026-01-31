@@ -355,7 +355,7 @@
                             <revapi.differences id="guice-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
-                            <revapi.differences id="junit5-api-issues">
+                            <revapi.differences id="junit-jupiter-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
                             <revapi.differences id="jackson-api-issues">
@@ -366,12 +366,11 @@
                             <configurationFile>
                                 <path>${project.rootdir}/.revapi/api-changes.json</path>
                                 <roots>
-                                    <root>7.0.0</root>
-                                    <root>7.2.0</root>
+                                    <root>8.0.0</root>
                                     <root>internal</root>
                                     <root>testng</root>
                                     <root>guice</root>
-                                    <root>junit5</root>
+                                    <root>junit-jupiter</root>
                                     <root>jackson</root>
                                 </roots>
                             </configurationFile>
