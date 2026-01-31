@@ -321,8 +321,8 @@ class JavaSnippetTest {
                 Feature: Test feature
                   Scenario: Test Scenario
                     Given %s
-                      | key   |\s
-                      | value |\s
+                      | key   |
+                      | value |
                 """.formatted(stepText);
 
         Feature feature = TestFeatureParser.parse(source);
@@ -424,10 +424,11 @@ class JavaSnippetTest {
     }
 
     private String snippetForWildCard(String stepText) {
-        String source = "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test Scenario\n" +
-                "    * " + stepText + "\n";
+        String source = """
+                Feature: Test feature
+                  Scenario: Test Scenario
+                    * %s
+                """.formatted(stepText);
         Feature feature = TestFeatureParser.parse(source);
         Step step = feature.getPickles().get(0).getSteps().get(0);
         List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))

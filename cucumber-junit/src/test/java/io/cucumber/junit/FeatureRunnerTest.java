@@ -133,12 +133,12 @@ final class FeatureRunnerTest {
                   Background: background
                     Given step #1
                   Scenario Outline: scenario <id>
-                    When step #2\s
-                    Then step #3\s
+                    When step #2
+                    Then step #3
                     Examples: examples 1 name
-                      | id |\s
+                      | id |
                       | #1 |
-                      | #2  |
+                      | #2 |
                     Examples: examples 2 name
                       | id |
                       | #3 |
@@ -265,12 +265,12 @@ final class FeatureRunnerTest {
                   Background: background
                     Given step #1
                   Scenario Outline: scenario <id>
-                    When step #2\s
-                    Then step #3\s
+                    When step #2
+                    Then step #3
                     Examples: examples 1 name
-                      | id |\s
+                      | id |
                       | #1 |
-                      | #2  |
+                      | #2 |
                     Examples: examples 2 name
                       | id |
                       | #3 |
