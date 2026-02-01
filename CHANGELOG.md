@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter.version to v0.8.0
 - [Core] Update dependency io.cucumber:usage-formatter.version to v0.2.0
-- [JUnit Platform Engine] Use JUnit Platform 6.0.2 (JUnit Jupiter 6.0.2) ([#3083](https://github.com/cucumber/cucumber-jvm/pull/3083))
+- [JUnit Platform Engine] Use JUnit Platform 6.0.2 (JUnit Jupiter 6.0.2) ([#3162](https://github.com/cucumber/cucumber-jvm/pull/3162))
 - [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
 - [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
 
