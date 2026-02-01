@@ -11,9 +11,9 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
-import org.junit.platform.engine.support.hierarchical.ForkJoinPoolHierarchicalTestExecutorService;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutorService;
+import org.junit.platform.engine.support.hierarchical.ParallelHierarchicalTestExecutorServiceFactory;
 
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME;
@@ -93,7 +93,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
     protected HierarchicalTestExecutorService createExecutorService(ExecutionRequest request) {
         CucumberConfiguration configuration = getCucumberConfiguration(request);
         if (configuration.isParallelExecutionEnabled()) {
-            return new ForkJoinPoolHierarchicalTestExecutorService(
+            return ParallelHierarchicalTestExecutorServiceFactory.create(
                 new PrefixedConfigurationParameters(request.getConfigurationParameters(), PARALLEL_CONFIG_PREFIX));
         }
         return super.createExecutorService(request);
