@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * This class composes all interesting parameter information into one object.
  */
-class JavaParameterInfo implements ParameterInfo {
+final class JavaParameterInfo implements ParameterInfo {
 
     private final Type type;
     private final boolean transposed;
@@ -29,8 +29,8 @@ class JavaParameterInfo implements ParameterInfo {
         for (int i = 0; i < genericParameterTypes.length; i++) {
             boolean transposed = false;
             for (Annotation annotation : annotations[i]) {
-                if (annotation instanceof Transpose) {
-                    transposed = ((Transpose) annotation).value();
+                if (annotation instanceof Transpose transpose) {
+                    transposed = transpose.value();
                 }
             }
             result.add(new JavaParameterInfo(genericParameterTypes[i], transposed));
@@ -38,10 +38,12 @@ class JavaParameterInfo implements ParameterInfo {
         return result;
     }
 
+    @Override
     public Type getType() {
         return type;
     }
 
+    @Override
     public boolean isTransposed() {
         return transposed;
     }

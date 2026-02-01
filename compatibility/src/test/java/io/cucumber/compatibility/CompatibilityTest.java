@@ -50,11 +50,12 @@ import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.contai
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.isA;
 
-public class CompatibilityTest {
+@SuppressWarnings("NullAway")
+final class CompatibilityTest {
 
     private static final List<String> unsupportedTestCases = Arrays.asList(
         // exception: not applicable
-        "test-run-exception",
+        "test.feature-run-exception",
         // exception: Cucumber JVM does not support named hooks
         "hooks-named",
         // exception: Cucumber executes all hooks,
@@ -70,7 +71,9 @@ public class CompatibilityTest {
         "global-hooks",
         "global-hooks-afterall-error",
         "global-hooks-attachments",
-        "global-hooks-beforeall-error");
+        "global-hooks-beforeall-error",
+        // exception: cucumber can't test runs intentionally
+        "test-run-exception");
 
     private static final Map<String, Map<Pattern, Matcher<?>>> divergingExpectations = createDivergingExpectations();
 
@@ -273,7 +276,7 @@ public class CompatibilityTest {
         sortStepDefinitionsAndHooks(actualEnvelopes);
 
         // exception: Cucumber JVM needs a hook to access the scenario, remove
-        // this hook from the actual test case.
+        // this hook from the actual test.feature case.
         if ("attachments".equals(testCase.getId()) || "examples-tables-attachment".equals(testCase.getId())) {
             actualEnvelopes.getOrDefault("testCase", emptyList())
                     .forEach(jsonNode -> {
@@ -298,7 +301,7 @@ public class CompatibilityTest {
             // bug: Cucumber JVM doesn't produce a suggestion that matches float
             ((ArrayNode) expectedEnvelopes.get("suggestion").get(3).get("snippets")).remove(1);
         }
-        if ("ambiguous".equals(testCase.getId())) {
+        if ("ambiguous".equals(testCase.getId()) || "all-statuses".equals(testCase.getId())) {
             // bug: Cucumber JVM doesn't include the ambiguous step definitions
             // https://github.com/cucumber/cucumber-jvm/issues/3006
             expectedEnvelopes.remove("testCase");

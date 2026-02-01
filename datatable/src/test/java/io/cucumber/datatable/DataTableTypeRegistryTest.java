@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -12,9 +13,11 @@ import java.util.Map;
 import static io.cucumber.datatable.TypeFactory.aListOf;
 import static io.cucumber.datatable.TypeFactory.constructType;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,12 +39,13 @@ class DataTableTypeRegistryTest {
     private static final Type LIST_OF_LIST_OF_OBJECT = aListOf(aListOf(Object.class));
 
     private static final TableCellByTypeTransformer PLACE_TABLE_CELL_TRANSFORMER = (value,
-            cellType) -> new Place(value);
+            cellType) -> new Place(requireNonNull(value));
     private static final TableEntryByTypeTransformer PLACE_TABLE_ENTRY_TRANSFORMER = (entry, type,
-            cellTransformer) -> new Place(entry.get("name"), Integer.parseInt(entry.get("index of place")));
+            cellTransformer) -> new Place(requireNonNull(entry.get("name")),
+                Integer.parseInt(entry.get("index of place")));
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final DataTableType CELL = new DataTableType(Place.class,
-        (String cell) -> OBJECT_MAPPER.convertValue(cell, Place.class));
+        (@Nullable String cell) -> OBJECT_MAPPER.convertValue(cell, Place.class));
     private static final DataTableType ENTRY = new DataTableType(Place.class,
         (Map<String, String> entry) -> OBJECT_MAPPER.convertValue(entry, Place.class));
 
@@ -52,17 +56,18 @@ class DataTableTypeRegistryTest {
 
         registry.defineDataTableType(new DataTableType(
             Place.class,
-            (TableTransformer<Place>) table -> new Place(table.cell(0, 0))));
+            (DataTable table) -> new Place(requireNonNull(table.cell(0, 0)))));
 
         DuplicateTypeException exception = assertThrows(DuplicateTypeException.class,
             () -> registry.defineDataTableType(new DataTableType(
                 Place.class,
-                (TableTransformer<Place>) table -> new Place(table.cell(0, 0)))));
+                (DataTable table) -> new Place(requireNonNull(requireNonNull(table.cell(0, 0)))))));
 
-        assertThat(exception.getMessage(), is("" +
-                "There already is a data table type registered that can supply class io.cucumber.datatable.Place.\n" +
-                "You are trying to register a TableTransformer for class io.cucumber.datatable.Place.\n" +
-                "The existing data table type registered a TableTransformer for class io.cucumber.datatable.Place.\n"));
+        assertThat(exception.getMessage(), is("""
+                There already is a data table type registered that can supply class io.cucumber.datatable.Place.
+                You are trying to register a TableTransformer for class io.cucumber.datatable.Place.
+                The existing data table type registered a TableTransformer for class io.cucumber.datatable.Place.
+                """));
     }
 
     @Test
@@ -123,6 +128,7 @@ class DataTableTypeRegistryTest {
     void parse_decimal_with_english_locale() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BIG_DECIMAL);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(new BigDecimal("2105.88"))),
             dataTableType.transform(singletonList(singletonList("2,105.88"))));
@@ -132,6 +138,7 @@ class DataTableTypeRegistryTest {
     void parse_decimal_with_german_locale() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.GERMAN);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BIG_DECIMAL);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(new BigDecimal("2105.88"))),
             dataTableType.transform(singletonList(singletonList("2.105,88"))));
@@ -142,6 +149,7 @@ class DataTableTypeRegistryTest {
     void null_big_integer_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BIG_INTEGER);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -152,6 +160,7 @@ class DataTableTypeRegistryTest {
     void null_big_decimal_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BIG_DECIMAL);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -162,6 +171,7 @@ class DataTableTypeRegistryTest {
     void null_byte_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BYTE);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -172,6 +182,7 @@ class DataTableTypeRegistryTest {
     void null_short_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_SHORT);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -182,6 +193,7 @@ class DataTableTypeRegistryTest {
     void null_integer_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_INTEGER);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -192,6 +204,7 @@ class DataTableTypeRegistryTest {
     void null_long_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_LONG);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -202,6 +215,7 @@ class DataTableTypeRegistryTest {
     void null_float_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_FLOAT);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -212,6 +226,7 @@ class DataTableTypeRegistryTest {
     void null_double_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_DOUBLE);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -222,6 +237,7 @@ class DataTableTypeRegistryTest {
     void null_string_transformed_to_null() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_STRING);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(null)),
             dataTableType.transform(singletonList(singletonList(null))));
@@ -231,8 +247,9 @@ class DataTableTypeRegistryTest {
     void string_transformer_is_replaceable() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         registry.defineDataTableType(
-            new DataTableType(String.class, (String cell) -> "[blank]".equals(cell) ? "" : cell));
+            new DataTableType(String.class, (@Nullable String cell) -> "[blank]".equals(cell) ? "" : cell));
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_STRING);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList("")),
             dataTableType.transform(singletonList(singletonList("[blank]"))));
@@ -242,8 +259,9 @@ class DataTableTypeRegistryTest {
     void object_transformer_is_replaceable() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         registry.defineDataTableType(
-            new DataTableType(Object.class, (String cell) -> "[blank]".equals(cell) ? "" : cell));
+            new DataTableType(Object.class, (@Nullable String cell) -> "[blank]".equals(cell) ? "" : cell));
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_OBJECT);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList("")),
             dataTableType.transform(singletonList(singletonList("[blank]"))));
@@ -253,6 +271,7 @@ class DataTableTypeRegistryTest {
     void parse_boolean() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BOOLEAN);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(Boolean.TRUE)),
             dataTableType.transform(singletonList(singletonList("true"))));
@@ -265,8 +284,9 @@ class DataTableTypeRegistryTest {
     void boolean_transformer_is_replaceable() {
         DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
         registry.defineDataTableType(
-            new DataTableType(Boolean.class, (String cell) -> "yes".equals(cell)));
+            new DataTableType(Boolean.class, (@Nullable String cell) -> "yes".equals(cell)));
         DataTableType dataTableType = registry.lookupTableTypeByType(LIST_OF_LIST_OF_BOOLEAN);
+        assertNotNull(dataTableType);
         assertEquals(
             singletonList(singletonList(Boolean.TRUE)),
             dataTableType.transform(singletonList(singletonList("yes"))));

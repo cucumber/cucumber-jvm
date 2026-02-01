@@ -12,7 +12,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -23,11 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UsageFormatterTest {
 
     @Test
-    void writes_empty_report() throws UnsupportedEncodingException {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n");
+    void writes_empty_report() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                """);
 
-        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofMillis(1000));
+        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofSeconds(1));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -38,24 +39,26 @@ class UsageFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8")).isEmpty();
+        assertThat(out.toString(StandardCharsets.UTF_8)).isEmpty();
     }
 
     @Test
-    void writes_usage_report() throws UnsupportedEncodingException {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario 1\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario 2\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario 3\n" +
-                "    Given first step\n");
+    @SuppressWarnings("MisleadingEscapedSpace")
+    void writes_usage_report() {
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario 1
+                    Given first step
+                  Scenario: scenario 2
+                    Given first step
+                  Scenario: scenario 3
+                    Given first step
+                """);
 
         StepDurationTimeService timeService = new StepDurationTimeService(
-            Duration.ofMillis(1000),
-            Duration.ofMillis(2000),
-            Duration.ofMillis(4000));
+            Duration.ofSeconds(1),
+            Duration.ofSeconds(2),
+            Duration.ofSeconds(4));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -68,21 +71,16 @@ class UsageFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out.toString("UTF-8")).isEqualToNormalizingNewlines("" +
-                "\n" +
-                "Expression/Text Duration   Mean ±  Error Location                                                   \n"
-                +
-                "first step        7.000s 2.333s ± 1.440s io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n"
-                +
-                "  first step      4.000s                 path/test.feature:6                                        \n"
-                +
-                "  first step      2.000s                 path/test.feature:4                                        \n"
-                +
-                "  first step      1.000s                 path/test.feature:2                                        \n"
-                +
-                "second step                              io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n"
-                +
-                "  UNUSED                                                                                            \n");
+        assertThat(out.toString(StandardCharsets.UTF_8)).isEqualToNormalizingNewlines("""
+
+                Expression/Text Duration   Mean ±  Error Location                                                  \s
+                first step        7.000s 2.333s ± 1.440s io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()
+                  first step      4.000s                 path/test.feature:6                                       \s
+                  first step      2.000s                 path/test.feature:4                                       \s
+                  first step      1.000s                 path/test.feature:2                                       \s
+                second step                              io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()
+                  UNUSED                                                                                           \s
+                """);
 
     }
 }

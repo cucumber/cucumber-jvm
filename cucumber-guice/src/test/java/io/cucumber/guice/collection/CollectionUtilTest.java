@@ -23,6 +23,7 @@ class CollectionUtilTest {
     }
 
     @Test
+    @SuppressWarnings("NullAway")
     void testNullPointerExceptionIsThrownWhenListIsNull() {
         Executable testMethod = () -> CollectionUtil.removeAllExceptFirstElement(null);
         NullPointerException expectedThrown = assertThrows(NullPointerException.class, testMethod);

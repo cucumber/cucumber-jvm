@@ -17,6 +17,6 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectPackages("io.cucumber.guice.integration")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.guice.integration")
-public class RunCucumberTest {
+final class RunCucumberTest {
 
 }

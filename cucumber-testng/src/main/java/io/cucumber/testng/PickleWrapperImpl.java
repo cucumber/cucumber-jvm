@@ -8,6 +8,7 @@ final class PickleWrapperImpl implements PickleWrapper {
         this.pickle = pickle;
     }
 
+    @Override
     public Pickle getPickle() {
         return pickle;
     }

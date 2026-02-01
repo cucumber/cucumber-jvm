@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@SuppressWarnings("DesignForExtension")
 public class WithControllerAnnotation {
 
     private boolean autowired;

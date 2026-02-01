@@ -1,5 +1,6 @@
 package io.cucumber.datatable;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -7,15 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DataTableTypeTest {
 
     private final DataTableType singleCellType = new DataTableType(
-        Integer.class, (String s) -> Integer.parseInt(s));
+        Integer.class, (@Nullable String s) -> Integer.parseInt(s));
 
     @Test
     void shouldTransformATableCell() {
@@ -24,16 +27,17 @@ class DataTableTypeTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void shouldTransformATableEntry() {
         DataTableType tableType = new DataTableType(
             Place.class,
-            (Map<String, String> entry) -> new Place(entry.get("place")));
+            (Map<String, String> entry) -> new Place(requireNonNull(entry.get("place"))));
 
         String here = "here";
-        // noinspection unchecked
         List<Place> transform = (List<Place>) tableType
                 .transform(Arrays.asList(singletonList("place"), singletonList(here)));
 
+        assertNotNull(transform);
         assertEquals(1, transform.size());
         assertEquals(here, transform.get(0).name);
     }

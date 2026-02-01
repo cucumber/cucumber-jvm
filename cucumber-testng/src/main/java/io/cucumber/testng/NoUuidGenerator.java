@@ -10,11 +10,11 @@ import java.util.UUID;
 final class NoUuidGenerator implements UuidGenerator {
 
     private NoUuidGenerator() {
-        // No need for instantiation
+        /* no-op */
     }
 
     @Override
     public UUID generateId() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

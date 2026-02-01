@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StepDefinitions {
+public final class StepDefinitions {
 
     private final DisposableCucumberBelly belly;
     private static int scenarioCount = 0;
@@ -135,9 +135,8 @@ public class StepDefinitions {
 
     @After
     public void letsSeeWhatHappened(Scenario result) {
-        if (result.isFailed()) {
-            // Maybe take a screenshot!
-        }
+        /* no-op */
+        // Maybe take a screenshot if the scenario failed!
     }
 
 }

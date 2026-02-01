@@ -2,6 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.datatable.DataTable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,10 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.datatable.DataTable.create;
 import static java.util.stream.Collectors.toList;
 
-class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefinition {
+abstract class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefinition {
 
     private final String[] emptyPatterns;
 
@@ -26,16 +26,17 @@ class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefiniti
                 .map(this::replaceEmptyPatternsWithEmptyString)
                 .collect(toList());
 
-        return create(rawWithEmptyStrings, table.getTableConverter());
+        return DataTable.create(rawWithEmptyStrings, table.getTableConverter());
     }
 
-    List<String> replaceEmptyPatternsWithEmptyString(List<String> row) {
+    List<@Nullable String> replaceEmptyPatternsWithEmptyString(List<@Nullable String> row) {
         return row.stream()
                 .map(this::replaceEmptyPatternsWithEmptyString)
                 .collect(toList());
     }
 
-    String replaceEmptyPatternsWithEmptyString(String t) {
+    @Nullable
+    String replaceEmptyPatternsWithEmptyString(@Nullable String t) {
         for (String emptyPattern : emptyPatterns) {
             if (emptyPattern.equals(t)) {
                 return "";
@@ -67,8 +68,9 @@ class AbstractDatatableElementTransformerDefinition extends AbstractGlueDefiniti
                 conflict.add(emptyPattern);
             }
         }
-        String msg = "After replacing %s and %s with empty strings the datatable entry contains duplicate keys: %s";
-        return new IllegalArgumentException(String.format(msg, conflict.get(0), conflict.get(1), fromValue));
+        return new IllegalArgumentException(
+            "After replacing %s and %s with empty strings the datatable entry contains duplicate keys: %s"
+                    .formatted(conflict.get(0), conflict.get(1), fromValue));
     }
 
 }

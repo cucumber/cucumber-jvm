@@ -145,10 +145,11 @@ class CucumberPropertiesParserTest {
     void should_warn_about_cucumber_options(LogRecordListener logRecordListener) {
         properties.put(Constants.OPTIONS_PROPERTY_NAME, "--help");
         cucumberPropertiesParser.parse(properties).build();
-        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), equalTo("" +
-                "Passing commandline options via the property 'cucumber.options' is no longer supported. " +
-                "Please use individual properties instead. " +
-                "See the java doc on io.cucumber.core.options.Constants for details."));
+        assertThat(logRecordListener.getLogRecords().get(0).getMessage(), equalTo(
+            """
+                    Passing commandline options via the property 'cucumber.options' is no longer supported.
+                    Please use individual properties instead. See the java doc on io.cucumber.core.options.Constants for details.
+                    """));
     }
 
     @Test
@@ -242,7 +243,7 @@ class CucumberPropertiesParserTest {
     void should_parse_rerun_files() throws IOException {
         mockFileResource("classpath:path/to.feature");
         mockFileResource("classpath:path/to/other.feature");
-        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + temp.toString());
+        properties.put(Constants.FEATURES_PROPERTY_NAME, "@" + temp);
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
         assertThat(options.getFeaturePaths(),
             containsInAnyOrder(URI.create("classpath:path/to.feature"), URI.create("classpath:path/to/other.feature")));
@@ -275,7 +276,7 @@ class CucumberPropertiesParserTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new IllegalStateException();
         }
 
         @Override

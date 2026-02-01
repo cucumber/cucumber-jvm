@@ -13,6 +13,7 @@ import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.tagexpressions.TagExpressionException;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -260,17 +261,17 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @CucumberOptions(snippets = SnippetType.CAMELCASE)
-    private static class Snippets {
+    private static final class Snippets {
         // empty
     }
 
     @CucumberOptions(name = { "name1", "name2" })
-    private static class MultipleNames {
+    private static final class MultipleNames {
         // empty
     }
 
     @CucumberOptions(tags = "@cucumber or @gherkin")
-    private static class TagExpression {
+    private static final class TagExpression {
         // empty
     }
 
@@ -279,12 +280,12 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
-    private static class ClassWithInheredInvalidTagExpression extends ClassWithInvalidTagExpression {
+    private static final class ClassWithInheredInvalidTagExpression extends ClassWithInvalidTagExpression {
         // empty
     }
 
     @CucumberOptions
-    private static class NoName {
+    private static final class NoName {
         // empty
     }
 
@@ -293,16 +294,16 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @CucumberOptions
-    private static class WithDefaultOptions {
+    private static final class WithDefaultOptions {
         // empty
     }
 
-    private static class WithoutOptionsWithBaseClassWithoutOptions extends WithoutOptions {
+    private static final class WithoutOptionsWithBaseClassWithoutOptions extends WithoutOptions {
         // empty
     }
 
     @CucumberOptions(plugin = "pretty")
-    private static class SubClassWithFormatter extends BaseClassWithFormatter {
+    private static final class SubClassWithFormatter extends BaseClassWithFormatter {
         // empty
     }
 
@@ -312,7 +313,7 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @CucumberOptions(monochrome = true)
-    private static class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
+    private static final class SubClassWithMonoChromeTrue extends BaseClassWithMonoChromeFalse {
         // empty
     }
 
@@ -322,22 +323,12 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @CucumberOptions(objectFactory = TestObjectFactory.class)
-    private static class ClassWithCustomObjectFactory {
+    private static final class ClassWithCustomObjectFactory {
         // empty
     }
 
     @CucumberOptions(publish = true)
-    private static class ClassWithPublish {
-        // empty
-    }
-
-    @CucumberOptions(plugin = "io.cucumber.core.plugin.AnyStepDefinitionReporter")
-    private static class ClassWithNoFormatterPlugin {
-        // empty
-    }
-
-    @CucumberOptions(junit = { "option1", "option2=value" })
-    private static class ClassWithJunitOption {
+    private static final class ClassWithPublish {
         // empty
     }
 
@@ -352,12 +343,12 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @CucumberOptions(extraGlue = "app.features.user.hooks")
-    private static class SubClassWithExtraGlueOfExtraGlue extends ClassWithExtraGlue {
+    private static final class SubClassWithExtraGlueOfExtraGlue extends ClassWithExtraGlue {
         // empty
     }
 
     @CucumberOptions(extraGlue = "app.features.user.hooks")
-    private static class SubClassWithExtraGlueOfGlue extends ClassWithGlue {
+    private static final class SubClassWithExtraGlueOfGlue extends ClassWithGlue {
         // empty
     }
 
@@ -366,12 +357,12 @@ class CucumberOptionsAnnotationParserTest {
             extraGlue = "app.features.hooks"
 
     )
-    private static class ClassWithGlueAndExtraGlue {
+    private static final class ClassWithGlueAndExtraGlue {
         // empty
     }
 
     @CucumberOptions(uuidGenerator = IncrementingUuidGenerator.class)
-    private static class ClassWithUuidGenerator extends ClassWithGlue {
+    private static final class ClassWithUuidGenerator extends ClassWithGlue {
         // empty
     }
 
@@ -434,20 +425,20 @@ class CucumberOptionsAnnotationParserTest {
         }
 
         @Override
-        public Class<? extends ObjectFactory> objectFactory() {
+        public @Nullable Class<? extends ObjectFactory> objectFactory() {
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
 
         @Override
-        public Class<? extends UuidGenerator> uuidGenerator() {
+        public @Nullable Class<? extends UuidGenerator> uuidGenerator() {
             return (annotation.uuidGenerator() == NoUuidGenerator.class) ? null : annotation.uuidGenerator();
         }
     }
 
-    private static class CoreCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
+    private static final class CoreCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
 
         @Override
-        public CucumberOptionsAnnotationParser.CucumberOptions getOptions(Class<?> clazz) {
+        public CucumberOptionsAnnotationParser.@Nullable CucumberOptions getOptions(Class<?> clazz) {
             final CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
             if (annotation == null) {
                 return null;
@@ -466,7 +457,7 @@ class CucumberOptionsAnnotationParserTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new IllegalStateException();
         }
 
         @Override

@@ -6,6 +6,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 
 import java.io.PrintStream;
+import java.util.Locale;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.PLUGIN_PUBLISH_QUIET_PROPERTY_NAME;
@@ -16,6 +17,8 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
     private final PrintStream out;
     private boolean monochrome = false;
 
+    // Used in plugins
+    @SuppressWarnings("unused")
     public NoPublishFormatter() {
         this(System.err);
     }
@@ -62,7 +65,7 @@ public final class NoPublishFormatter implements ConcurrentEventListener, ColorA
                     new Banner.Span("true", AnsiEscapes.CYAN)),
                 new Banner.Line(
                     new Banner.Span("Environment variable:                            "),
-                    new Banner.Span(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME.toUpperCase().replace('.', '_'),
+                    new Banner.Span(PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME.toUpperCase(Locale.US).replace('.', '_'),
                         AnsiEscapes.CYAN),
                     new Banner.Span("="),
                     new Banner.Span("true", AnsiEscapes.CYAN)),

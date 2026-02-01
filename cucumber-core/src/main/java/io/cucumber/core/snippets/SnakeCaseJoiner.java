@@ -1,6 +1,7 @@
 package io.cucumber.core.snippets;
 
 import java.util.List;
+import java.util.Locale;
 
 class SnakeCaseJoiner implements Joiner {
 
@@ -14,7 +15,7 @@ class SnakeCaseJoiner implements Joiner {
             } else {
                 functionName.append('_');
             }
-            functionName.append(word.toLowerCase());
+            functionName.append(word.toLowerCase(Locale.ROOT));
         }
         return functionName.toString();
     }

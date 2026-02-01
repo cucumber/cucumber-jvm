@@ -1,5 +1,7 @@
 package io.cucumber.datatable;
 
+import java.util.Objects;
+
 class Place {
 
     final String name;
@@ -16,26 +18,14 @@ class Place {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Place place))
             return false;
-        }
-
-        Place place = (Place) o;
-
-        if (indexOfPlace != place.indexOfPlace) {
-            return false;
-        }
-        return name != null ? name.equals(place.name) : place.name == null;
+        return indexOfPlace == place.indexOfPlace && Objects.equals(name, place.name);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + indexOfPlace;
-        return result;
+        return Objects.hash(name, indexOfPlace);
     }
 
     @Override

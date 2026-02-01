@@ -1,6 +1,11 @@
 package io.cucumber.java.defaultstransformer;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.ConstructorDetector;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.cucumber.java.DefaultDataTableCellTransformer;
 import io.cucumber.java.DefaultDataTableEntryTransformer;
 import io.cucumber.java.DefaultParameterTransformer;
@@ -14,13 +19,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataTableSteps {
+public final class DataTableSteps {
 
     private final Author expectedAuthor = new Author("Annie M. G.", "Schmidt", "1911-03-20");
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder()
+            .addModule(new Jdk8Module())
+            .addModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES))
+            .constructorDetector(ConstructorDetector.USE_PROPERTIES_BASED)
+            .build();
 
     @DefaultParameterTransformer
-    @DefaultDataTableEntryTransformer(headersToProperties = true)
+    @DefaultDataTableEntryTransformer
     @DefaultDataTableCellTransformer
     public Object defaultTransformer(Object fromValue, Type toValueType) {
         return objectMapper.convertValue(fromValue, objectMapper.constructType(toValueType));
@@ -44,80 +53,6 @@ public class DataTableSteps {
     @Given("a currency in a parameter {}")
     public void aCurrencyInAParameter(Currency currency) {
         assertThat(currency, is(Currency.getInstance("EUR")));
-    }
-
-    public static class Author {
-
-        String firstName;
-        String lastName;
-        String birthDate;
-
-        Author() {
-        }
-
-        public Author(String firstName, String lastName, String birthDate) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.birthDate = birthDate;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public String getBirthDate() {
-            return birthDate;
-        }
-
-        public void setBirthDate(String birthDate) {
-            this.birthDate = birthDate;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = firstName.hashCode();
-            result = 31 * result + lastName.hashCode();
-            result = 31 * result + birthDate.hashCode();
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            Author author = (Author) o;
-
-            if (!firstName.equals(author.firstName))
-                return false;
-            if (!lastName.equals(author.lastName))
-                return false;
-            return birthDate.equals(author.birthDate);
-        }
-
-        @Override
-        public String toString() {
-            return "Author{" +
-                    "firstName='" + firstName + '\'' +
-                    ", lastName='" + lastName + '\'' +
-                    ", birthDate='" + birthDate + '\'' +
-                    '}';
-        }
-
     }
 
 }

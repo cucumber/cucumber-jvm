@@ -36,7 +36,7 @@ class CamelCaseConverterTest {
                     "threeWordsString", "ThreeWordsString", "three Words String",
                     "Three Words String", "Three words String", "Three Words string",
                     "Three words string", "three Words string", "three words String",
-                    "threeWords string", "three WordsString", "three wordsString",
+                    "threeWords string", "three WordsString", "three wordsString"
             })
     void convert_three_words_to_camel_case(String header) {
         assertThat(

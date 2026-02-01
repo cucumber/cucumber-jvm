@@ -4,14 +4,17 @@ import com.google.inject.Guice;
 import com.google.inject.Stage;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
-
-import static java.lang.String.format;
 
 final class InjectorSourceFactory {
     private static final Logger log = LoggerFactory.getLogger(GuiceFactory.class);
     static final String GUICE_INJECTOR_SOURCE_KEY = "guice.injector-source";
+
+    private InjectorSourceFactory() {
+        /* no-op */
+    }
 
     static InjectorSource createDefaultScenarioModuleInjectorSource() {
         return () -> Guice.createInjector(Stage.PRODUCTION, CucumberModules.createScenarioModule());
@@ -21,15 +24,15 @@ final class InjectorSourceFactory {
         try {
             return (InjectorSource) injectorSourceClass.getConstructor().newInstance();
         } catch (Exception e) {
-            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your " +
-                    "InjectorSource implementation is accessible and has a public zero args constructor.",
-                injectorSourceClass.getName());
+            String message = ("Instantiation of '%s' failed. Check the caused by exception and ensure your " +
+                    "InjectorSource implementation is accessible and has a public zero args constructor.")
+                    .formatted(injectorSourceClass.getName());
             throw new InjectorSourceInstantiationFailed(message, e);
         }
     }
 
     @Deprecated
-    static Class<?> loadInjectorSourceFromProperties(Map<String, String> properties) {
+    static @Nullable Class<?> loadInjectorSourceFromProperties(Map<String, String> properties) {
         String injectorSourceClassName = properties.get(GUICE_INJECTOR_SOURCE_KEY);
 
         if (injectorSourceClassName == null) {
@@ -37,16 +40,16 @@ final class InjectorSourceFactory {
         }
 
         log.warn(
-            () -> format("The '%s' property has been deprecated." +
-                    "Add a class implementing '%s' on the glue path instead",
-                GUICE_INJECTOR_SOURCE_KEY, InjectorSource.class.getName()));
+            () -> ("The '%s' property has been deprecated." +
+                    "Add a class implementing '%s' on the glue path instead")
+                    .formatted(GUICE_INJECTOR_SOURCE_KEY, InjectorSource.class.getName()));
 
         try {
             return Class.forName(injectorSourceClassName, true, Thread.currentThread().getContextClassLoader());
         } catch (Exception e) {
-            String message = format("Instantiation of '%s' failed. Check the caused by exception and ensure your " +
-                    "InjectorSource implementation is accessible and has a public zero args constructor.",
-                injectorSourceClassName);
+            String message = ("Instantiation of '%s' failed. Check the caused by exception and ensure your " +
+                    "InjectorSource implementation is accessible and has a public zero args constructor.")
+                    .formatted(injectorSourceClassName);
             throw new InjectorSourceInstantiationFailed(message, e);
         }
     }

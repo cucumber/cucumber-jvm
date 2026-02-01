@@ -3,6 +3,7 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.runner.Options;
 import io.cucumber.core.runner.Runner;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Returns a single unique runner.
@@ -15,7 +16,7 @@ public final class SingletonRunnerSupplier implements RunnerSupplier {
     private final Options runnerOptions;
     private final EventBus eventBus;
     private final ObjectFactorySupplier objectFactorySupplier;
-    private Runner runner;
+    private @Nullable Runner runner;
 
     public SingletonRunnerSupplier(
             Options runnerOptions,

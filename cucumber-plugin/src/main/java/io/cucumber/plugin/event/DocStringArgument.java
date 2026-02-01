@@ -1,6 +1,7 @@
 package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a Gherkin doc string argument.
@@ -14,8 +15,10 @@ public interface DocStringArgument extends StepArgument {
      * @deprecated use {@link #getMediaType()} instead.
      */
     @Deprecated
+    @Nullable
     String getContentType();
 
+    @Nullable
     String getMediaType();
 
     int getLine();

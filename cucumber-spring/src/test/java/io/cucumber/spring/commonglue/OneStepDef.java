@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("DesignForExtension")
 public class OneStepDef {
 
     int cucumbers;

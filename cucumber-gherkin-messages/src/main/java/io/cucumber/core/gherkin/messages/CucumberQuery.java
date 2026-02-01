@@ -10,6 +10,7 @@ import io.cucumber.messages.types.Rule;
 import io.cucumber.messages.types.Scenario;
 import io.cucumber.messages.types.Step;
 import io.cucumber.messages.types.TableRow;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,7 @@ final class CucumberQuery {
         updateStep(background.getSteps());
     }
 
-    private void updateScenario(Feature feature, Rule rule, Scenario scenario) {
+    private void updateScenario(Feature feature, @Nullable Rule rule, Scenario scenario) {
         gherkinScenarioById.put(requireNonNull(scenario.getId()), scenario);
         locationBySourceId.put(requireNonNull(scenario.getId()), scenario.getLocation());
         updateStep(scenario.getSteps());

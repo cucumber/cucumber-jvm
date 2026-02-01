@@ -147,16 +147,11 @@ class GluePathTest {
     static Stream<Arguments> warn_when_glue_as_filesystem_path_examples() {
         return Stream.of(
             arguments("src/main/java/com/example/package",
-                equalTo("" +
-                        "Consider replacing glue path " +
-                        "'src/main/java/com/example/package' with " +
-                        "'com.example.package'.\n" +
-                        "'\n" +
-                        "The current glue path points to a source " +
-                        "directory in your project. However cucumber " +
-                        "looks for glue (i.e. step definitions) on the " +
-                        "classpath. By using a package name you can " +
-                        "avoid this ambiguity.")),
+                equalTo(
+                    """
+                            Consider replacing glue path 'src/main/java/com/example/package' with 'com.example.package'.
+
+                            The current glue path points to a source directory in your project. However cucumber looks for glue (i.e. step definitions) on the classpath. By using a package name you can avoid this ambiguity.""")),
             arguments("src/main/java", containsString("with ''")),
             arguments("src/main/java/", containsString("with ''")),
             arguments("src/main/java_other", nullValue()),

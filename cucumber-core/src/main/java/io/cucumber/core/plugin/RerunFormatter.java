@@ -10,6 +10,7 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.query.Query;
 import io.cucumber.query.Repository;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -18,12 +19,13 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collector;
 
-import static io.cucumber.query.Repository.RepositoryFeature.INCLUDE_GHERKIN_DOCUMENTS;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
@@ -36,7 +38,6 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private final PrintWriter writer;
     private final Repository repository = Repository.builder()
-            .feature(INCLUDE_GHERKIN_DOCUMENTS, true)
             .build();
     private final Query query = new Query(repository);
 
@@ -77,24 +78,6 @@ public final class RerunFormatter implements ConcurrentEventListener {
         });
     }
 
-    private static final class UriAndLine {
-        private final String uri;
-        private final Long line;
-
-        private UriAndLine(String uri, Long line) {
-            this.uri = uri;
-            this.line = line;
-        }
-
-        public String getUri() {
-            return uri;
-        }
-
-        public Long getLine() {
-            return line;
-        }
-    }
-
     private void finishReport() {
         query.findAllTestCaseStarted().stream()
                 .filter(this::isNotPassingOrSkipped)
@@ -107,11 +90,11 @@ public final class RerunFormatter implements ConcurrentEventListener {
         writer.close();
     }
 
-    private void printUriWithLines(String uri, TreeSet<Long> lines) {
+    private void printUriWithLines(String uri, Set<Integer> lines) {
         writer.println(renderFeatureWithLines(uri, lines));
     }
 
-    private static Collector<UriAndLine, ?, TreeMap<String, TreeSet<Long>>> groupByUriAndThenCollectLines() {
+    private static Collector<UriAndLine, ?, Map<String, Set<Integer>>> groupByUriAndThenCollectLines() {
         return groupingBy(
             UriAndLine::getUri,
             // Sort URIs
@@ -122,10 +105,10 @@ public final class RerunFormatter implements ConcurrentEventListener {
                 toCollection(TreeSet::new)));
     }
 
-    private static StringBuilder renderFeatureWithLines(String uri, TreeSet<Long> lines) {
+    private static StringBuilder renderFeatureWithLines(String uri, Set<Integer> lines) {
         String path = relativize(URI.create(uri)).toString();
         StringBuilder builder = new StringBuilder(path);
-        for (Long line : lines) {
+        for (Integer line : lines) {
             builder.append(':');
             builder.append(line);
         }
@@ -134,7 +117,7 @@ public final class RerunFormatter implements ConcurrentEventListener {
 
     private UriAndLine createUriAndLine(Pickle pickle) {
         String uri = pickle.getUri();
-        Long line = query.findLocationOf(pickle).map(Location::getLine).orElse(null);
+        Integer line = pickle.getLocation().map(Location::getLine).orElse(null);
         return new UriAndLine(uri, line);
     }
 
@@ -144,6 +127,25 @@ public final class RerunFormatter implements ConcurrentEventListener {
                 .filter(status -> status != TestStepResultStatus.PASSED)
                 .filter(status -> status != TestStepResultStatus.SKIPPED)
                 .isPresent();
+    }
+
+    private static final class UriAndLine {
+        private final String uri;
+        private final @Nullable Integer line;
+
+        private UriAndLine(String uri, @Nullable Integer line) {
+            this.uri = uri;
+            this.line = line;
+        }
+
+        String getUri() {
+            return uri;
+        }
+
+        @Nullable
+        Integer getLine() {
+            return line;
+        }
     }
 
 }

@@ -19,13 +19,17 @@ public interface StepDefinition extends Located {
     void execute(Object[] args) throws CucumberBackendException, CucumberInvocationTargetException;
 
     /**
+     * Return parameter information.
+     *
      * @return parameter information, may not return null
      */
     List<ParameterInfo> parameterInfos();
 
     /**
-     * @return the pattern associated with this instance. Used for error
-     *         reporting only.
+     * Return the pattern associated with this instance. Used for error
+     * reporting only.
+     *
+     * @return the pattern associated with this instance.
      */
     String getPattern();
 

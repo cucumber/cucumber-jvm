@@ -29,6 +29,7 @@ class MapConfigurationParameters implements ConfigurationParameters {
         return get(key, Boolean::valueOf);
     }
 
+    @Deprecated
     public int size() {
         return 0;
     }

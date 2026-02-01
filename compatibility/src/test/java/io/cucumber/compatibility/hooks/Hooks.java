@@ -4,7 +4,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 
-public class Hooks {
+public final class Hooks {
 
     @Before
     public void before() {

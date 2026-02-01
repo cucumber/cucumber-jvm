@@ -26,12 +26,13 @@ class DefaultSummaryPrinterTest {
 
     @Test
     void writesSummary() {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Given first step
+                    When second step
+                    Then third step
+                """);
 
         StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofMillis(1128));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -47,11 +48,12 @@ class DefaultSummaryPrinterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "\n" +
-                "1 scenarios (1 passed)\n" +
-                "3 steps (3 passed)\n" +
-                "0m 3.384s\n")));
+        assertThat(out, bytes(equalCompressingLineSeparators("""
+
+                1 scenarios (1 passed)
+                3 steps (3 passed)
+                0m 3.384s (0m 3.384s executing your code)
+                """)));
     }
 
 }

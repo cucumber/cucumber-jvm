@@ -2,6 +2,7 @@ package io.cucumber.core.gherkin.messages;
 
 import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.messages.types.PickleDocString;
+import org.jspecify.annotations.Nullable;
 
 final class GherkinMessagesDocStringArgument implements DocStringArgument {
 
@@ -19,12 +20,13 @@ final class GherkinMessagesDocStringArgument implements DocStringArgument {
     }
 
     @Override
-    public String getContentType() {
+    @Deprecated
+    public @Nullable String getContentType() {
         return getMediaType();
     }
 
     @Override
-    public String getMediaType() {
+    public @Nullable String getMediaType() {
         String mediaType = docString.getMediaType().orElse(null);
         if ("".equals(mediaType)) {
             return null;

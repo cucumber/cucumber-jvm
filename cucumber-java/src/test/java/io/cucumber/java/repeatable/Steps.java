@@ -2,7 +2,7 @@ package io.cucumber.java.repeatable;
 
 import io.cucumber.java.en.Given;
 
-public class Steps {
+public final class Steps {
 
     @Given("test")
     @Given("test again")

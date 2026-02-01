@@ -189,10 +189,11 @@ class TestCaseStateTest {
 
     @Test
     void attach_throws_when_test_step_is_not_active() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         TestCaseState state = createTestCaseState(feature);
 
         assertThrows(IllegalStateException.class, () -> state.attach("Hello World", "text/plain", "hello.txt"));

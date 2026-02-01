@@ -11,6 +11,7 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -23,13 +24,12 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
-import static io.cucumber.core.options.TestPluginOption.parse;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.nio.file.Files.readAllLines;
 import static java.time.Duration.ZERO;
 import static java.time.Instant.now;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -42,12 +42,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PluginFactoryTest {
 
-    private PluginFactory fc = new PluginFactory();
+    final PluginFactory fc = new PluginFactory();
 
-    private Object plugin;
+    private @Nullable Object plugin;
 
     @TempDir
     Path tmp;
+
+    public static PluginOption parse(String pluginArgumentPattern) {
+        return PluginOption.parse(pluginArgumentPattern);
+    }
 
     @AfterEach
     void cleanUp() {
@@ -94,15 +98,19 @@ class PluginFactoryTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(jsonOption));
         assertThat(exception.getMessage(), is(equalTo(
-            "Couldn't create parent directories of '" + jsonReport.toFile().getCanonicalPath() + "'.\n" +
-                    "Make sure the the parent directory '" + jsonReport.getParent().toFile().getCanonicalPath()
-                    + "' isn't a file.\n" +
-                    "\n" +
-                    "Note: This usually happens when plugins write to colliding paths.\n" +
-                    "For example: 'html:target/cucumber, json:target/cucumber/report.json'\n" +
-                    "You can fix this by making the paths do no collide.\n" +
-                    "For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'\n" +
-                    "The details are in the stack trace below:")));
+            """
+                    Couldn't create parent directories of '%s'.
+                    Make sure the the parent directory '%s' isn't a file.
+
+                    Note: This usually happens when plugins write to colliding paths.
+                    For example: 'html:target/cucumber, json:target/cucumber/report.json'
+                    You can fix this by making the paths do no collide.
+                    For example: 'html:target/cucumber/report.html, json:target/cucumber/report.json'
+                    The details are in the stack trace below:"""
+                    .formatted( //
+                        jsonReport.toFile().getCanonicalPath(), //
+                        requireNonNull(jsonReport.getParent()).toFile().getCanonicalPath() //
+                    ))));
     }
 
     @Test
@@ -116,14 +124,15 @@ class PluginFactoryTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> fc.create(htmlOption));
         assertThat(exception.getMessage(), is(equalTo(
-            "Couldn't create a file output stream for '" + htmlReport + "'.\n" +
-                    "Make sure the the file isn't a directory.\n" +
-                    "\n" +
-                    "Note: This usually happens when plugins write to colliding paths.\n" +
-                    "For example: 'json:target/cucumber/report.json, html:target/cucumber'\n" +
-                    "You can fix this by making the paths do no collide.\n" +
-                    "For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'\n" +
-                    "The details are in the stack trace below:")));
+            """
+                    Couldn't create a file output stream for '%s'.
+                    Make sure the the file isn't a directory.
+
+                    Note: This usually happens when plugins write to colliding paths.
+                    For example: 'json:target/cucumber/report.json, html:target/cucumber'
+                    You can fix this by making the paths do no collide.
+                    For example: 'json:target/cucumber/report.json, html:target/cucumber/report.html'
+                    The details are in the stack trace below:""".formatted(htmlReport))));
     }
 
     @Test
@@ -261,105 +270,130 @@ class PluginFactoryTest {
             "You must supply an output argument to io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL. Like so: io.cucumber.core.plugin.PluginFactoryTest$WantsFileOrURL:DIR|FILE|URL")));
     }
 
-    public static class WantsOutputStream extends StubFormatter {
+    private void releaseResources(Object plugin) {
+        FakeTestRunEventsPublisher fakeTestRun = new FakeTestRunEventsPublisher();
+        if (plugin instanceof EventListener eventListener) {
+            eventListener.setEventPublisher(fakeTestRun);
+            fakeTestRun.fakeTestRunEvents();
+        } else if (plugin instanceof ConcurrentEventListener concurrentEventListener) {
+            concurrentEventListener.setEventPublisher(fakeTestRun);
+            fakeTestRun.fakeTestRunEvents();
+        }
+    }
 
-        public OutputStream out;
+    static class WantsOutputStream extends StubFormatter {
 
+        OutputStream out;
+
+        @SuppressWarnings("RedundantModifier")
         public WantsOutputStream(OutputStream out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
     }
 
-    public static class WantsFileOrEmpty extends StubFormatter {
+    static class WantsFileOrEmpty extends StubFormatter {
 
-        public File out = null;
+        @Nullable
+        File out = null;
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
         public WantsFileOrEmpty(File out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
         public WantsFileOrEmpty() {
         }
 
     }
 
-    public static class WantsFile extends StubFormatter {
+    static class WantsFile extends StubFormatter {
 
-        public final File out;
+        final File out;
 
+        @SuppressWarnings("RedundantModifier")
         public WantsFile(File out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
     }
 
-    public static class WantsFileOrURL extends StubFormatter {
+    static class WantsFileOrURL extends StubFormatter {
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
         public WantsFileOrURL(File out) {
-            Objects.requireNonNull(out);
+            requireNonNull(out);
         }
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
         public WantsFileOrURL(URL out) {
-            Objects.requireNonNull(out);
+            requireNonNull(out);
         }
 
     }
 
-    public static class WantsString extends StubFormatter {
+    static class WantsString extends StubFormatter {
 
-        public final String arg;
+        final String arg;
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
         public WantsString(String arg) {
-            this.arg = Objects.requireNonNull(arg);
+            this.arg = requireNonNull(arg);
         }
 
     }
 
-    public static class WantsAppendable extends StubFormatter {
+    static class WantsAppendable extends StubFormatter {
 
-        public final Appendable out;
+        final Appendable out;
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
         public WantsAppendable(Appendable out) {
-            this.out = Objects.requireNonNull(out);
+            this.out = requireNonNull(out);
         }
 
-        public void writeAndClose(String s) throws IOException {
+        void writeAndClose(String s) throws IOException {
             out.append(s);
-            if (out instanceof Closeable) {
-                Closeable closeable = (Closeable) out;
+            if (out instanceof Closeable closeable) {
                 closeable.close();
             }
         }
 
     }
 
-    public static class WantsNothing extends StubFormatter {
+    static class WantsNothing extends StubFormatter {
+
+        @SuppressWarnings({ "RedundantModifier", "unused" })
+        public WantsNothing() {
+
+        }
 
     }
 
-    public static class WantsTooMuch extends StubFormatter {
+    static class WantsTooMuch extends StubFormatter {
 
+        @SuppressWarnings({ "RedundantModifier", "unused" })
         public WantsTooMuch(String too, String much) {
         }
 
     }
 
-    private static class FakeTestRunEventsPublisher implements EventPublisher {
-        private EventHandler<TestRunStarted> startHandler;
-        private EventHandler<TestRunFinished> finishedHandler;
-        private EventHandler<Envelope> envelopeHandler;
+    private static final class FakeTestRunEventsPublisher implements EventPublisher {
+        private @Nullable EventHandler<TestRunStarted> startHandler;
+        private @Nullable EventHandler<TestRunFinished> finishedHandler;
+        private @Nullable EventHandler<Envelope> envelopeHandler;
 
         @Override
         public <T> void registerHandlerFor(Class<T> eventType, EventHandler<T> handler) {
             if (eventType == TestRunStarted.class) {
-                startHandler = ((EventHandler<TestRunStarted>) handler);
+                startHandler = (EventHandler<TestRunStarted>) handler;
             }
             if (eventType == TestRunFinished.class) {
-                finishedHandler = ((EventHandler<TestRunFinished>) handler);
+                finishedHandler = (EventHandler<TestRunFinished>) handler;
             }
             if (eventType == Envelope.class) {
-                envelopeHandler = ((EventHandler<Envelope>) handler);
+                envelopeHandler = (EventHandler<Envelope>) handler;
             }
         }
 
@@ -367,7 +401,7 @@ class PluginFactoryTest {
         public <T> void removeHandlerFor(Class<T> eventType, EventHandler<T> handler) {
         }
 
-        public void fakeTestRunEvents() {
+        void fakeTestRunEvents() {
             if (startHandler != null) {
                 startHandler.receive(new TestRunStarted(now()));
             }
@@ -381,17 +415,6 @@ class PluginFactoryTest {
             }
         }
 
-    }
-
-    private void releaseResources(Object plugin) {
-        FakeTestRunEventsPublisher fakeTestRun = new FakeTestRunEventsPublisher();
-        if (plugin instanceof EventListener) {
-            ((EventListener) plugin).setEventPublisher(fakeTestRun);
-            fakeTestRun.fakeTestRunEvents();
-        } else if (plugin instanceof ConcurrentEventListener) {
-            ((ConcurrentEventListener) plugin).setEventPublisher(fakeTestRun);
-            fakeTestRun.fakeTestRunEvents();
-        }
     }
 
 }

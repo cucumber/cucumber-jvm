@@ -1,6 +1,7 @@
 package io.cucumber.core.backend;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collection;
@@ -10,6 +11,8 @@ import java.util.Optional;
 public interface TestCaseState {
 
     /**
+     * Return tags of this scenario.
+     * 
      * @return tags of this scenario.
      */
     Collection<String> getSourceTagNames();
@@ -17,7 +20,7 @@ public interface TestCaseState {
     /**
      * Returns the current status of this test case.
      * <p>
-     * The test case status is calculate as the most severe status of the
+     * The test case status is calculated as the most severe status of the
      * executed steps in the testcase so far.
      *
      * @return the current status of this test case
@@ -25,7 +28,11 @@ public interface TestCaseState {
     Status getStatus();
 
     /**
-     * @return true if and only if {@link #getStatus()} returns "failed"
+     * Returns true when the scenario has failed.
+     * <p>
+     * This is implemented as {@code this.getStatus() == Status.FAILED}.
+     * 
+     * @return true if the scenario has failed.
      */
     boolean isFailed();
 
@@ -52,15 +59,17 @@ public interface TestCaseState {
      * @param mediaType what is the data?
      * @param name      attachment name
      */
-    void attach(byte[] data, String mediaType, String name);
+    void attach(byte[] data, String mediaType, @Nullable String name);
 
     /**
+     * Attach data to the report(s).
+     * 
      * @param data      what to attach, for example html.
      * @param mediaType what is the data?
      * @param name      attachment name
      * @see             #attach(byte[], String, String)
      */
-    void attach(String data, String mediaType, String name);
+    void attach(String data, String mediaType, @Nullable String name);
 
     /**
      * Outputs some text into the report.
@@ -71,31 +80,40 @@ public interface TestCaseState {
     void log(String text);
 
     /**
+     * Returns the name of the Scenario
+     * 
      * @return the name of the Scenario
      */
     String getName();
 
     /**
+     * Returns the id of the Scenario.
+     * 
      * @return the id of the Scenario.
      */
     String getId();
 
     /**
+     * Returns the uri of the Scenario.
+     * 
      * @return the uri of the Scenario.
      */
     URI getUri();
 
     /**
+     * Returns the language of the Scenario.
+     * 
      * @return the language of the Scenario.
      */
-    default String getLanguage() {
-        return null;
-    }
+    String getLanguage();
 
     /**
-     * @return the line in the feature file of the Scenario. If this is a
-     *         Scenario from Scenario Outlines this will return the line of the
-     *         example row in the Scenario Outline.
+     * Returns the line in the feature file of the Scenario.
+     * <p>
+     * If this is a Scenario from Scenario Outlines this will return the line of
+     * the example row in the Scenario Outline.
+     * 
+     * @return the line in the feature file of the Scenario.
      */
     Integer getLine();
 

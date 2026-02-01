@@ -1,5 +1,7 @@
 package io.cucumber.plugin.event;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 
 /**
@@ -9,6 +11,7 @@ public interface Group {
 
     Collection<Group> getChildren();
 
+    @Nullable
     String getValue();
 
     int getStart();

@@ -24,8 +24,11 @@ public @interface AfterStep {
     String value() default "";
 
     /**
-     * @return the order in which this hook should run. Higher numbers are run
-     *         first. The default order is 10000.
+     * Return the order in which this hook should run.
+     * <p>
+     * Higher numbers are run first. The default order is 10000.
+     *
+     * @return the order in which this hook should run.
      */
     int order() default 10000;
 

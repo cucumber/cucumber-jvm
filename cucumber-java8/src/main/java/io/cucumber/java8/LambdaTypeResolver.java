@@ -7,8 +7,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.String.format;
-
 final class LambdaTypeResolver implements TypeResolver {
 
     private final Type type;
@@ -32,10 +30,10 @@ final class LambdaTypeResolver implements TypeResolver {
             if (List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
                 throw withLocation(
                     new CucumberBackendException(
-                        format("Can't use %s in lambda step definition \"%s\". " +
+                        ("Can't use %s in lambda step definition \"%s\". " +
                                 "Declare a DataTable or DocString argument instead and convert " +
-                                "manually with 'asList/asLists/asMap/asMaps' and 'convert' respectively",
-                            argumentClass.getName(), expression)));
+                                "manually with 'asList/asLists/asMap/asMaps' and 'convert' respectively")
+                                .formatted(argumentClass.getName(), expression)));
             }
         }
         return argumentType;

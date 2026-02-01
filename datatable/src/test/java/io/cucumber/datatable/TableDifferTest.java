@@ -13,139 +13,150 @@ import static org.junit.jupiter.api.Assertions.fail;
 class TableDifferTest {
 
     private DataTable table() {
-        String source = "" +
-                "| Aslak | aslak@email.com | 123 |\n" +
-                "| Joe   | joe@email.com   | 234 |\n" +
-                "| Bryan | bryan@email.org | 456 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n";
+        String source = """
+                | Aslak | aslak@email.com | 123 |
+                | Joe   | joe@email.com   | 234 |
+                | Bryan | bryan@email.org | 456 |
+                | Ni    | ni@email.com    | 654 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable tableWithDuplicate() {
-        String source = "" +
-                "| Aslak | aslak@email.com | 123 |\n" +
-                "| Joe   | joe@email.com   | 234 |\n" +
-                "| Bryan | bryan@email.org | 456 |\n" +
-                "| Joe   | joe@email.com   | 234 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n";
+        String source = """
+                | Aslak | aslak@email.com | 123 |
+                | Joe   | joe@email.com   | 234 |
+                | Bryan | bryan@email.org | 456 |
+                | Joe   | joe@email.com   | 234 |
+                | Ni    | ni@email.com    | 654 |
+                | Ni    | ni@email.com    | 654 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithTwoConsecutiveRowsDeleted() {
-        String source = "" +
-                "| Aslak | aslak@email.com | 123 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n";
+        String source = """
+                | Aslak | aslak@email.com | 123 |
+                | Ni    | ni@email.com    | 654 |
+                """;
         return TableParser.parse(source);
 
     }
 
     private DataTable otherTableWithTwoConsecutiveRowsChanged() {
-        String source = "" +
-                "| Aslak | aslak@email.com  | 123 |\n" +
-                "| Joe   | joe@NOSPAM.com   | 234 |\n" +
-                "| Bryan | bryan@NOSPAM.org | 456 |\n" +
-                "| Ni    | ni@email.com     | 654 |\n";
+        String source = """
+                | Aslak | aslak@email.com  | 123 |
+                | Joe   | joe@NOSPAM.com   | 234 |
+                | Bryan | bryan@NOSPAM.org | 456 |
+                | Ni    | ni@email.com     | 654 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithTwoConsecutiveRowsInserted() {
-        String source = "" +
-                "| Aslak | aslak@email.com      | 123 |\n" +
-                "| Joe   | joe@email.com        | 234 |\n" +
-                "| Doe   | joe@email.com        | 234 |\n" +
-                "| Foo   | schnickens@email.net | 789 |\n" +
-                "| Bryan | bryan@email.org      | 456 |\n" +
-                "| Ni    | ni@email.com         | 654 |\n";
+        String source = """
+                | Aslak | aslak@email.com      | 123 |
+                | Joe   | joe@email.com        | 234 |
+                | Doe   | joe@email.com        | 234 |
+                | Foo   | schnickens@email.net | 789 |
+                | Bryan | bryan@email.org      | 456 |
+                | Ni    | ni@email.com         | 654 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithDeletedAndInserted() {
-        String source = "" +
-                "| Aslak | aslak@email.com      | 123 |\n" +
-                "| Doe   | joe@email.com        | 234 |\n" +
-                "| Foo   | schnickens@email.net | 789 |\n" +
-                "| Bryan | bryan@email.org      | 456 |\n";
+        String source = """
+                | Aslak | aslak@email.com      | 123 |
+                | Doe   | joe@email.com        | 234 |
+                | Foo   | schnickens@email.net | 789 |
+                | Bryan | bryan@email.org      | 456 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithInsertedAtEnd() {
-        String source = "" +
-                "| Aslak | aslak@email.com      | 123 |\n" +
-                "| Joe   | joe@email.com        | 234 |\n" +
-                "| Bryan | bryan@email.org      | 456 |\n" +
-                "| Ni    | ni@email.com         | 654 |\n" +
-                "| Doe   | joe@email.com        | 234 |\n" +
-                "| Foo   | schnickens@email.net | 789 |\n";
+        String source = """
+                | Aslak | aslak@email.com      | 123 |
+                | Joe   | joe@email.com        | 234 |
+                | Bryan | bryan@email.org      | 456 |
+                | Ni    | ni@email.com         | 654 |
+                | Doe   | joe@email.com        | 234 |
+                | Foo   | schnickens@email.net | 789 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithDifferentOrder() {
-        String source = "" +
-                "| Joe   | joe@email.com   | 234 |\n" +
-                "| Aslak | aslak@email.com | 123 |\n" +
-                "| Bryan | bryan@email.org | 456 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n";
+        String source = """
+                | Joe   | joe@email.com   | 234 |
+                | Aslak | aslak@email.com | 123 |
+                | Bryan | bryan@email.org | 456 |
+                | Ni    | ni@email.com    | 654 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithDifferentOrderAndDuplicate() {
-        String source = "" +
-                "| Joe   | joe@email.com   | 234 |\n" +
-                "| Aslak | aslak@email.com | 123 |\n" +
-                "| Bryan | bryan@email.org | 456 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n" +
-                "| Joe   | joe@email.com   | 234 |\n";
+        String source = """
+                | Joe   | joe@email.com   | 234 |
+                | Aslak | aslak@email.com | 123 |
+                | Bryan | bryan@email.org | 456 |
+                | Ni    | ni@email.com    | 654 |
+                | Ni    | ni@email.com    | 654 |
+                | Joe   | joe@email.com   | 234 |
+                """;
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithDifferentOrderDuplicateAndDeleted() {
-        String source = "" +
-                "| Joe   | joe@email.com   | 234 |\n" +
-                "| Bryan | bryan@email.org | 456 |\n" +
-                "| Bryan | bryan@email.org | 456 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n" +
-                "| Bob   | bob.email.com   | 555 |\n" +
-                "| Bryan | bryan@email.org | 456 |\n" +
-                "| Ni    | ni@email.com    | 654 |\n" +
-                "| Joe   | joe@email.com   | 234 |\n";
+        String source = """
+                | Joe   | joe@email.com   | 234 |
+                | Bryan | bryan@email.org | 456 |
+                | Bryan | bryan@email.org | 456 |
+                | Ni    | ni@email.com    | 654 |
+                | Bob   | bob.email.com   | 555 |
+                | Bryan | bryan@email.org | 456 |
+                | Ni    | ni@email.com    | 654 |
+                | Joe   | joe@email.com   | 234 |
+                """;
 
         return TableParser.parse(source);
     }
 
     private DataTable otherTableWithDeletedAndInsertedDifferentOrder() {
-        String source = "" +
-                "| Doe   | joe@email.com        | 234 |\n" +
-                "| Foo   | schnickens@email.net | 789 |\n" +
-                "| Aslak | aslak@email.com      | 123 |\n" +
-                "| Bryan | bryan@email.org      | 456 |\n";
+        String source = """
+                | Doe   | joe@email.com        | 234 |
+                | Foo   | schnickens@email.net | 789 |
+                | Aslak | aslak@email.com      | 123 |
+                | Bryan | bryan@email.org      | 456 |
+                """;
         return TableParser.parse(source);
     }
 
     @Test
     void shouldFindDifferences() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com      | 123 |\n" +
-                "    - | Joe   | joe@email.com        | 234 |\n" +
-                "    + | Doe   | joe@email.com        | 234 |\n" +
-                "    + | Foo   | schnickens@email.net | 789 |\n" +
-                "      | Bryan | bryan@email.org      | 456 |\n" +
-                "    - | Ni    | ni@email.com         | 654 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com      | 123 |
+                    - | Joe   | joe@email.com        | 234 |
+                    + | Doe   | joe@email.com        | 234 |
+                    + | Foo   | schnickens@email.net | 789 |
+                      | Bryan | bryan@email.org      | 456 |
+                    - | Ni    | ni@email.com         | 654 |
+                """;
         assertDiff(table(), otherTableWithDeletedAndInserted(), expected);
     }
 
     @Test
     void shouldFindNewLinesAtEnd() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com      | 123 |\n" +
-                "      | Joe   | joe@email.com        | 234 |\n" +
-                "      | Bryan | bryan@email.org      | 456 |\n" +
-                "      | Ni    | ni@email.com         | 654 |\n" +
-                "    + | Doe   | joe@email.com        | 234 |\n" +
-                "    + | Foo   | schnickens@email.net | 789 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com      | 123 |
+                      | Joe   | joe@email.com        | 234 |
+                      | Bryan | bryan@email.org      | 456 |
+                      | Ni    | ni@email.com         | 654 |
+                    + | Doe   | joe@email.com        | 234 |
+                    + | Foo   | schnickens@email.net | 789 |
+                """;
 
         assertDiff(table(), otherTableWithInsertedAtEnd(), expected);
     }
@@ -157,22 +168,21 @@ class TableDifferTest {
 
     @Test
     void should_find_new_lines_at_end_when_using_diff() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com      | 123 |\n" +
-                "      | Joe   | joe@email.com        | 234 |\n" +
-                "      | Bryan | bryan@email.org      | 456 |\n" +
-                "      | Ni    | ni@email.com         | 654 |\n" +
-                "    + | Doe   | joe@email.com        | 234 |\n" +
-                "    + | Foo   | schnickens@email.net | 789 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com      | 123 |
+                      | Joe   | joe@email.com        | 234 |
+                      | Bryan | bryan@email.org      | 456 |
+                      | Ni    | ni@email.com         | 654 |
+                    + | Doe   | joe@email.com        | 234 |
+                    + | Foo   | schnickens@email.net | 789 |
+                """;
 
         assertDiff(table(), otherTableWithInsertedAtEnd(), expected);
     }
 
     @Test
     void should_not_fail_with_out_of_memory() {
-        DataTable expected = TableParser.parse("" +
-                "| I'm going to work |\n");
+        DataTable expected = TableParser.parse("| I'm going to work |\n");
         List<List<String>> actual = new ArrayList<>();
         actual.add(singletonList("I just woke up"));
         actual.add(singletonList("I'm going to work"));
@@ -182,34 +192,34 @@ class TableDifferTest {
 
     @Test
     void should_diff_when_consecutive_deleted_lines() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com | 123 |\n" +
-                "    - | Joe   | joe@email.com   | 234 |\n" +
-                "    - | Bryan | bryan@email.org | 456 |\n" +
-                "      | Ni    | ni@email.com    | 654 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com | 123 |
+                    - | Joe   | joe@email.com   | 234 |
+                    - | Bryan | bryan@email.org | 456 |
+                      | Ni    | ni@email.com    | 654 |
+                """;
         assertDiff(table(), otherTableWithTwoConsecutiveRowsDeleted(), expected);
     }
 
     @Test
     void should_diff_with_empty_list() {
-        String expected = "" +
-
-                "    - | Aslak | aslak@email.com | 123 |\n" +
-                "    - | Joe   | joe@email.com   | 234 |\n" +
-                "    - | Bryan | bryan@email.org | 456 |\n" +
-                "    - | Ni    | ni@email.com    | 654 |\n";
+        String expected = """
+                    - | Aslak | aslak@email.com | 123 |
+                    - | Joe   | joe@email.com   | 234 |
+                    - | Bryan | bryan@email.org | 456 |
+                    - | Ni    | ni@email.com    | 654 |
+                """;
         assertDiff(table(), DataTable.create(new ArrayList<>()), expected);
     }
 
     @Test
     void should_diff_with_empty_table() {
-        String expected = "" +
-
-                "    - | Aslak | aslak@email.com | 123 |\n" +
-                "    - | Joe   | joe@email.com   | 234 |\n" +
-                "    - | Bryan | bryan@email.org | 456 |\n" +
-                "    - | Ni    | ni@email.com    | 654 |\n";
+        String expected = """
+                    - | Aslak | aslak@email.com | 123 |
+                    - | Joe   | joe@email.com   | 234 |
+                    - | Bryan | bryan@email.org | 456 |
+                    - | Ni    | ni@email.com    | 654 |
+                """;
 
         assertDiff(table(), DataTable.emptyDataTable(), expected);
     }
@@ -223,40 +233,41 @@ class TableDifferTest {
 
     @Test
     void should_diff_when_consecutive_changed_lines() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com  | 123 |\n" +
-                "    - | Joe   | joe@email.com    | 234 |\n" +
-                "    - | Bryan | bryan@email.org  | 456 |\n" +
-                "    + | Joe   | joe@NOSPAM.com   | 234 |\n" +
-                "    + | Bryan | bryan@NOSPAM.org | 456 |\n" +
-                "      | Ni    | ni@email.com     | 654 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com  | 123 |
+                    - | Joe   | joe@email.com    | 234 |
+                    - | Bryan | bryan@email.org  | 456 |
+                    + | Joe   | joe@NOSPAM.com   | 234 |
+                    + | Bryan | bryan@NOSPAM.org | 456 |
+                      | Ni    | ni@email.com     | 654 |
+                """;
 
         assertDiff(table(), otherTableWithTwoConsecutiveRowsChanged(), expected);
     }
 
     @Test
     void should_diff_when_consecutive_inserted_lines() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com      | 123 |\n" +
-                "      | Joe   | joe@email.com        | 234 |\n" +
-                "    + | Doe   | joe@email.com        | 234 |\n" +
-                "    + | Foo   | schnickens@email.net | 789 |\n" +
-                "      | Bryan | bryan@email.org      | 456 |\n" +
-                "      | Ni    | ni@email.com         | 654 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com      | 123 |
+                      | Joe   | joe@email.com        | 234 |
+                    + | Doe   | joe@email.com        | 234 |
+                    + | Foo   | schnickens@email.net | 789 |
+                      | Bryan | bryan@email.org      | 456 |
+                      | Ni    | ni@email.com         | 654 |
+                """;
         assertDiff(table(), otherTableWithTwoConsecutiveRowsInserted(), expected);
     }
 
     @Test
     void should_return_tables() {
-        String expected = "" +
-                "      | Aslak | aslak@email.com      | 123 |\n" +
-                "      | Joe   | joe@email.com        | 234 |\n" +
-                "    + | Doe   | joe@email.com        | 234 |\n" +
-                "    + | Foo   | schnickens@email.net | 789 |\n" +
-                "      | Bryan | bryan@email.org      | 456 |\n" +
-                "      | Ni    | ni@email.com         | 654 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com      | 123 |
+                      | Joe   | joe@email.com        | 234 |
+                    + | Doe   | joe@email.com        | 234 |
+                    + | Foo   | schnickens@email.net | 789 |
+                      | Bryan | bryan@email.org      | 456 |
+                      | Ni    | ni@email.com         | 654 |
+                """;
 
         assertDiff(table(), otherTableWithTwoConsecutiveRowsInserted(), expected);
     }
@@ -273,80 +284,80 @@ class TableDifferTest {
 
     @Test
     void unordered_diff_with_less_lines_in_other() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com | 123 |\n" +
-                "    - | Joe   | joe@email.com   | 234 |\n" +
-                "    - | Bryan | bryan@email.org | 456 |\n" +
-                "      | Ni    | ni@email.com    | 654 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com | 123 |
+                    - | Joe   | joe@email.com   | 234 |
+                    - | Bryan | bryan@email.org | 456 |
+                      | Ni    | ni@email.com    | 654 |
+                """;
         assertUnorderedDiff(table(), otherTableWithTwoConsecutiveRowsDeleted(), expected);
     }
 
     @Test
     void unordered_diff_with_more_lines_in_other() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com      | 123 |\n" +
-                "      | Joe   | joe@email.com        | 234 |\n" +
-                "      | Bryan | bryan@email.org      | 456 |\n" +
-                "      | Ni    | ni@email.com         | 654 |\n" +
-                "    + | Doe   | joe@email.com        | 234 |\n" +
-                "    + | Foo   | schnickens@email.net | 789 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com      | 123 |
+                      | Joe   | joe@email.com        | 234 |
+                      | Bryan | bryan@email.org      | 456 |
+                      | Ni    | ni@email.com         | 654 |
+                    + | Doe   | joe@email.com        | 234 |
+                    + | Foo   | schnickens@email.net | 789 |
+                """;
         assertUnorderedDiff(table(), otherTableWithTwoConsecutiveRowsInserted(), expected);
     }
 
     @Test
     void unordered_diff_with_added_and_deleted_rows_in_other() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com      | 123 |\n" +
-                "    - | Joe   | joe@email.com        | 234 |\n" +
-                "      | Bryan | bryan@email.org      | 456 |\n" +
-                "    - | Ni    | ni@email.com         | 654 |\n" +
-                "    + | Doe   | joe@email.com        | 234 |\n" +
-                "    + | Foo   | schnickens@email.net | 789 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com      | 123 |
+                    - | Joe   | joe@email.com        | 234 |
+                      | Bryan | bryan@email.org      | 456 |
+                    - | Ni    | ni@email.com         | 654 |
+                    + | Doe   | joe@email.com        | 234 |
+                    + | Foo   | schnickens@email.net | 789 |
+                """;
         assertUnorderedDiff(table(), otherTableWithDeletedAndInsertedDifferentOrder(), expected);
     }
 
     @Test
     void unordered_diff_with_added_duplicate_in_other() {
-        String expected = "" +
-
-                "      | Aslak | aslak@email.com | 123 |\n" +
-                "      | Joe   | joe@email.com   | 234 |\n" +
-                "      | Bryan | bryan@email.org | 456 |\n" +
-                "      | Ni    | ni@email.com    | 654 |\n" +
-                "    + | Ni    | ni@email.com    | 654 |\n" +
-                "    + | Joe   | joe@email.com   | 234 |\n";
+        String expected = """
+                      | Aslak | aslak@email.com | 123 |
+                      | Joe   | joe@email.com   | 234 |
+                      | Bryan | bryan@email.org | 456 |
+                      | Ni    | ni@email.com    | 654 |
+                    + | Ni    | ni@email.com    | 654 |
+                    + | Joe   | joe@email.com   | 234 |
+                """;
         assertUnorderedDiff(table(), otherTableWithDifferentOrderAndDuplicate(), expected);
     }
 
     @Test
     void unordered_diff_with_added_duplicate_in_other_reversed() {
-        String expected = "" +
-
-                "      | Joe   | joe@email.com   | 234 |\n" +
-                "      | Aslak | aslak@email.com | 123 |\n" +
-                "      | Bryan | bryan@email.org | 456 |\n" +
-                "      | Ni    | ni@email.com    | 654 |\n" +
-                "    - | Ni    | ni@email.com    | 654 |\n" +
-                "    - | Joe   | joe@email.com   | 234 |\n";
+        String expected = """
+                      | Joe   | joe@email.com   | 234 |
+                      | Aslak | aslak@email.com | 123 |
+                      | Bryan | bryan@email.org | 456 |
+                      | Ni    | ni@email.com    | 654 |
+                    - | Ni    | ni@email.com    | 654 |
+                    - | Joe   | joe@email.com   | 234 |
+                """;
         assertUnorderedDiff(otherTableWithDifferentOrderAndDuplicate(), table(), expected);
     }
 
     @Test
     void unordered_diff_with_added_duplicate_and_deleted_in_other() {
-        String expected = "" +
-
-                "    - | Aslak | aslak@email.com | 123 |\n" +
-                "      | Joe   | joe@email.com   | 234 |\n" +
-                "      | Bryan | bryan@email.org | 456 |\n" +
-                "      | Joe   | joe@email.com   | 234 |\n" +
-                "      | Ni    | ni@email.com    | 654 |\n" +
-                "      | Ni    | ni@email.com    | 654 |\n" +
-                "    + | Bryan | bryan@email.org | 456 |\n" +
-                "    + | Bob   | bob.email.com   | 555 |\n" +
-                "    + | Bryan | bryan@email.org | 456 |\n";
+        String expected = """
+                    - | Aslak | aslak@email.com | 123 |
+                      | Joe   | joe@email.com   | 234 |
+                      | Bryan | bryan@email.org | 456 |
+                      | Joe   | joe@email.com   | 234 |
+                      | Ni    | ni@email.com    | 654 |
+                      | Ni    | ni@email.com    | 654 |
+                    + | Bryan | bryan@email.org | 456 |
+                    + | Bob   | bob.email.com   | 555 |
+                    + | Bryan | bryan@email.org | 456 |
+                """;
 
         assertUnorderedDiff(tableWithDuplicate(), otherTableWithDifferentOrderDuplicateAndDeleted(), expected);
     }

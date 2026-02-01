@@ -6,7 +6,7 @@ import org.testng.SkipException;
 
 import java.util.function.Function;
 
-class TestCaseResultObserver implements AutoCloseable {
+final class TestCaseResultObserver implements AutoCloseable {
 
     private static final String SKIP_MESSAGE = "This scenario is skipped";
     private final io.cucumber.core.runtime.TestCaseResultObserver delegate;
@@ -22,7 +22,7 @@ class TestCaseResultObserver implements AutoCloseable {
     void assertTestCasePassed() {
         delegate.assertTestCasePassed(
             () -> new SkipException(SKIP_MESSAGE),
-            (exception) -> exception instanceof SkipException
+            exception -> exception instanceof SkipException
                     ? exception
                     : new SkipException(exception.getMessage(), exception),
             UndefinedStepException::new,

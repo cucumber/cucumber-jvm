@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.Proxy.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleEntry;
 
+import static java.net.Proxy.Type.HTTP;
+import static java.net.Proxy.Type.SOCKS;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -76,15 +77,17 @@ class CurlOptionTest {
     }
 
     @Test
+    @SuppressWarnings("AddressSelection")
     public void can_parse_https_proxy() {
         CurlOption option = CurlOption.parse("https://example.com -x https://proxy.example.com:3129");
-        assertThat(option.getProxy(), is(new Proxy(Type.HTTP, new InetSocketAddress("proxy.example.com", 3129))));
+        assertThat(option.getProxy(), is(new Proxy(HTTP, new InetSocketAddress("proxy.example.com", 3129))));
     }
 
     @Test
+    @SuppressWarnings("AddressSelection")
     public void can_parse_socks_proxy() {
         CurlOption option = CurlOption.parse("https://example.com -x socks://proxy.example.com:3129");
-        assertThat(option.getProxy(), is(new Proxy(Type.SOCKS, new InetSocketAddress("proxy.example.com", 3129))));
+        assertThat(option.getProxy(), is(new Proxy(SOCKS, new InetSocketAddress("proxy.example.com", 3129))));
     }
 
     @Test

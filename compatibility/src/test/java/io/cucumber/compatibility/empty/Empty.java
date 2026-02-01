@@ -1,5 +1,5 @@
 package io.cucumber.compatibility.empty;
 
-public class Empty {
+public final class Empty {
 
 }

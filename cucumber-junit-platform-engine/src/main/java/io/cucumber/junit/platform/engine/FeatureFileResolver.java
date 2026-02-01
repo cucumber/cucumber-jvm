@@ -79,11 +79,11 @@ final class FeatureFileResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(DiscoverySelector selector, Context context) {
-        if (selector instanceof FeatureElementSelector) {
-            return resolve((FeatureElementSelector) selector, context);
+        if (selector instanceof FeatureElementSelector elementSelector) {
+            return resolve(elementSelector, context);
         }
-        if (selector instanceof FeatureWithLinesSelector) {
-            return resolve((FeatureWithLinesSelector) selector);
+        if (selector instanceof FeatureWithLinesSelector featureWithLinesSelector) {
+            return resolve(featureWithLinesSelector);
         }
         return SelectorResolver.super.resolve(selector, context);
     }
@@ -132,6 +132,7 @@ final class FeatureFileResolver implements SelectorResolver {
         return toResolution(selectors);
     }
 
+    @SuppressWarnings("deprecation") // TODO: Updagrade
     @Override
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
         Set<Resource> resources = selector.getClasspathResources();
@@ -139,10 +140,11 @@ final class FeatureFileResolver implements SelectorResolver {
             return resolveClasspathResourceSelectorAsPackageSelector(selector);
         }
         if (resources.size() > 1) {
-            throw new IllegalArgumentException(String.format(
-                "Found %s resources named %s on the classpath %s.",
-                resources.size(), selector.getClasspathResourceName(),
-                resources.stream().map(Resource::getUri).collect(toList())));
+            throw new IllegalArgumentException("Found %s resources named %s on the classpath %s."
+                    .formatted(
+                        resources.size(), //
+                        selector.getClasspathResourceName(), //
+                        resources.stream().map(Resource::getUri).collect(toList())));
         }
         return resources.stream()
                 .findFirst()
@@ -171,10 +173,8 @@ final class FeatureFileResolver implements SelectorResolver {
     private void warnClasspathResourceSelectorUsedForPackage(ClasspathResourceSelector selector) {
         String classpathResourceName = selector.getClasspathResourceName();
         String packageName = classpathResourceName.replaceAll("/", ".");
-        String message = String.format(
-            "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead",
-            classpathResourceName,
-            packageName);
+        String message = "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead"
+                .formatted(classpathResourceName, packageName);
         issueReporter.reportIssue(DiscoveryIssue.builder(WARNING, message));
     }
 

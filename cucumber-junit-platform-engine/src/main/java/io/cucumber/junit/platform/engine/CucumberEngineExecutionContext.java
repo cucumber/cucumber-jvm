@@ -21,6 +21,7 @@ import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
 
 import java.time.Clock;
@@ -35,7 +36,7 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
     private static final Logger log = LoggerFactory.getLogger(CucumberEngineExecutionContext.class);
     private final CucumberConfiguration configuration;
 
-    private CucumberExecutionContext context;
+    private @Nullable CucumberExecutionContext context;
 
     CucumberEngineExecutionContext(CucumberConfiguration configuration) {
         this.configuration = configuration;
@@ -45,7 +46,11 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         return configuration;
     }
 
-    private CucumberExecutionContext createCucumberExecutionContext() {
+    private CucumberExecutionContext getCucumberExecutionContext() {
+        if (context != null) {
+            return context;
+        }
+
         Supplier<ClassLoader> classLoader = CucumberEngineExecutionContext.class::getClassLoader;
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader,
             configuration);
@@ -71,7 +76,8 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
             BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
             runnerSupplier = new SingletonRunnerSupplier(configuration, bus, backendSupplier, objectFactorySupplier);
         }
-        return new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
+        context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
+        return context;
     }
 
     void startTestRun() {
@@ -95,21 +101,20 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
         // until test execution starts.
         //
         // See: https://github.com/cucumber/cucumber-jvm/issues/2441
-        context = createCucumberExecutionContext();
-        context.startTestRun();
+        getCucumberExecutionContext().startTestRun();
     }
 
     public void runBeforeAllHooks() {
         log.debug(() -> "Running before all hooks");
-        context.runBeforeAllHooks();
+        getCucumberExecutionContext().runBeforeAllHooks();
     }
 
     public void beforeFeature(Feature feature) {
-        context.beforeFeature(feature);
+        getCucumberExecutionContext().beforeFeature(feature);
     }
 
     void runTestCase(Pickle pickle) {
-        context.runTestCase((runner) -> {
+        getCucumberExecutionContext().runTestCase(runner -> {
             try (TestCaseResultObserver observer = observe(runner.getBus())) {
                 log.debug(() -> "Executing test case " + pickle.getName());
                 runner.runPickle(pickle);
@@ -121,12 +126,12 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
 
     public void runAfterAllHooks() {
         log.debug(() -> "Running after all hooks");
-        context.runAfterAllHooks();
+        getCucumberExecutionContext().runAfterAllHooks();
     }
 
     public void finishTestRun() {
         log.debug(() -> "Finishing test run");
-        context.finishTestRun();
+        getCucumberExecutionContext().finishTestRun();
     }
 
 }

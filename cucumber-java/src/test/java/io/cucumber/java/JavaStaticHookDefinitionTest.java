@@ -11,8 +11,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({ "WeakerAccess" })
-public class JavaStaticHookDefinitionTest {
+@SuppressWarnings("WeakerAccess")
+class JavaStaticHookDefinitionTest {
 
     private final Lookup lookup = new Lookup() {
 
@@ -49,10 +49,11 @@ public class JavaStaticHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaStaticHookDefinition(method, 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A method annotated with BeforeAll or AfterAll must have one of these signatures:\n" +
-                " * public static void before_or_after_all()\n" +
-                "at io.cucumber.java.JavaStaticHookDefinitionTest.single_argument(io.cucumber.java.Scenario)\n"));
+        assertThat(exception.getMessage(), startsWith("""
+                A method annotated with BeforeAll or AfterAll must have one of these signatures:
+                 * public static void before_or_after_all()
+                at io.cucumber.java.JavaStaticHookDefinitionTest.single_argument(io.cucumber.java.Scenario)
+                """));
     }
 
     @Before
@@ -66,10 +67,11 @@ public class JavaStaticHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaStaticHookDefinition(method, 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A method annotated with BeforeAll or AfterAll must have one of these signatures:\n" +
-                " * public static void before_or_after_all()\n" +
-                "at io.cucumber.java.JavaStaticHookDefinitionTest.string_return_type()\n"));
+        assertThat(exception.getMessage(), startsWith("""
+                A method annotated with BeforeAll or AfterAll must have one of these signatures:
+                 * public static void before_or_after_all()
+                at io.cucumber.java.JavaStaticHookDefinitionTest.string_return_type()
+                """));
     }
 
     @Before

@@ -13,11 +13,14 @@ import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.InjectionTarget;
 import jakarta.enterprise.inject.spi.Unmanaged;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
 public final class CdiJakartaFactory implements ObjectFactory, Extension {
@@ -25,7 +28,7 @@ public final class CdiJakartaFactory implements ObjectFactory, Extension {
     private final Set<Class<?>> stepClasses = new HashSet<>();
 
     private final Map<Class<?>, Unmanaged.UnmanagedInstance<?>> standaloneInstances = new HashMap<>();
-    private SeContainer container;
+    private @Nullable SeContainer container;
 
     @Override
     public void start() {
@@ -61,7 +64,7 @@ public final class CdiJakartaFactory implements ObjectFactory, Extension {
         if (instance != null) {
             return type.cast(instance.get());
         }
-        Instance<T> selected = container.select(type);
+        Instance<T> selected = requireNonNull(container).select(type);
         if (selected.isUnsatisfied()) {
             BeanManager beanManager = container.getBeanManager();
             Unmanaged<T> unmanaged = new Unmanaged<>(beanManager, type);

@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -19,5 +20,6 @@ public interface TableRowTransformer<T> {
      * @return           an instance of {@code T}
      * @throws Throwable when the transform fails for any reason
      */
+    @Nullable
     T transform(List<String> row) throws Throwable;
 }

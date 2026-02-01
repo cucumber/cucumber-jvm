@@ -38,6 +38,10 @@ public final class CucumberPropertiesParser {
 
     private static final Logger log = LoggerFactory.getLogger(CucumberPropertiesParser.class);
 
+    public CucumberPropertiesParser() {
+        /* no-op */
+    }
+
     public RuntimeOptionsBuilder parse(Map<String, String> properties) {
         return parse(properties::get);
     }
@@ -101,7 +105,7 @@ public final class CucumberPropertiesParser {
         parse(properties,
             OPTIONS_PROPERTY_NAME,
             identity(),
-            warnWhenCucumberOptionsIsUsed());
+            CucumberPropertiesParser::warnWhenCucumberOptionsIsUsed);
 
         parseAll(properties,
             PLUGIN_PROPERTY_NAME,
@@ -110,7 +114,8 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             PLUGIN_PUBLISH_TOKEN_PROPERTY_NAME,
-            identity(), // No validation - validated on server
+            // No validation - validated on server
+            identity(),
             builder::setPublishToken);
 
         parse(properties,
@@ -136,14 +141,13 @@ public final class CucumberPropertiesParser {
         return builder;
     }
 
-    private static Consumer<String> warnWhenCucumberOptionsIsUsed() {
+    private static void warnWhenCucumberOptionsIsUsed(String commandLineOptions) {
         // Quite a few old blogs still recommend the use of cucumber.options
         // This should take care of recurring question involving this property.
-        return commandLineOptions -> log.warn(() -> String.format("" +
-                "Passing commandline options via the property '%s' is no longer supported. " +
-                "Please use individual properties instead. " +
-                "See the java doc on %s for details.",
-            OPTIONS_PROPERTY_NAME, Constants.class.getName()));
+        log.warn(() -> """
+                Passing commandline options via the property '%s' is no longer supported.
+                Please use individual properties instead. See the java doc on %s for details.
+                """.formatted(OPTIONS_PROPERTY_NAME, Constants.class.getName()));
     }
 
     private <T> void parse(

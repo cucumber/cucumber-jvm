@@ -3,12 +3,13 @@ package io.cucumber.java;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.java.InvalidMethodSignatureException.InvalidMethodSignatureExceptionBuilder;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
 import static java.util.Objects.requireNonNull;
 
 final class JavaHookDefinition extends AbstractGlueDefinition implements HookDefinition {
@@ -33,16 +34,9 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         Class<?>[] parameterTypes = method.getParameterTypes();
 
         switch (hookType) {
-            case BEFORE_STEP:
-            case AFTER_STEP:
-                validateStepHookParameters(method, parameterTypes, hookType);
-                break;
-            case BEFORE:
-            case AFTER:
-                validateScenarioHookParameters(method, parameterTypes, hookType);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown hook type: " + hookType);
+            case BEFORE_STEP, AFTER_STEP -> validateStepHookParameters(method, parameterTypes, hookType);
+            case BEFORE, AFTER -> validateScenarioHookParameters(method, parameterTypes, hookType);
+            default -> throw new IllegalArgumentException("Unknown hook type: " + hookType);
         }
 
         return method;
@@ -82,22 +76,14 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method, HookType hookType) {
-        InvalidMethodSignatureException.InvalidMethodSignatureExceptionBuilder exceptionBuilder = builder(method);
+        InvalidMethodSignatureExceptionBuilder exceptionBuilder = InvalidMethodSignatureException.builder(method);
 
-        switch (hookType) {
-            case BEFORE:
-                exceptionBuilder.addAnnotation(Before.class);
-                break;
-            case AFTER:
-                exceptionBuilder.addAnnotation(After.class);
-                break;
-            case BEFORE_STEP:
-                exceptionBuilder.addAnnotation(BeforeStep.class);
-                break;
-            case AFTER_STEP:
-                exceptionBuilder.addAnnotation(AfterStep.class);
-                break;
-        }
+        exceptionBuilder.addAnnotation(switch (hookType) {
+            case BEFORE -> Before.class;
+            case AFTER -> After.class;
+            case BEFORE_STEP -> BeforeStep.class;
+            case AFTER_STEP -> AfterStep.class;
+        });
 
         exceptionBuilder.addSignature("public void hook()")
                 .addSignature("public void hook(io.cucumber.java.Scenario scenario)");
@@ -112,6 +98,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     @Override
     public void execute(TestCaseState state) {
+        @Nullable
         Object[] args;
         int paramCount = method.getParameterTypes().length;
 
@@ -121,7 +108,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
             args = new Object[] { new io.cucumber.java.Scenario(state) };
         } else {
             // 2 parameters: Scenario and Step
-            args = new Object[] {
+            args = new @Nullable Object[] {
                     new io.cucumber.java.Scenario(state),
                     state.geCurrentPickleStep().map(Step::new).orElse(null)
             };

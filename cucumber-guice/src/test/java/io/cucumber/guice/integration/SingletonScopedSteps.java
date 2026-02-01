@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @ScenarioScoped
-public class SingletonScopedSteps {
+public final class SingletonScopedSteps {
 
     private static final List<SingletonObject> OBJECTS = new ArrayList<>(3);
     private final Provider<SingletonObject> singletonObjectProvider;

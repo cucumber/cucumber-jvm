@@ -14,7 +14,8 @@ public interface TestCase {
      * is an example in a Scenario Outline the method wil return the line of the
      * example.
      *
-     * @return the line of this scenario.
+     * @return     the line of this scenario.
+     * @deprecated use {@link #getLocation()} instead.
      */
     @Deprecated
     Integer getLine();
@@ -38,9 +39,7 @@ public interface TestCase {
     @Deprecated
     String getScenarioDesignation();
 
-    default String getLanguage() {
-        return null;
-    }
+    String getLanguage();
 
     List<String> getTags();
 

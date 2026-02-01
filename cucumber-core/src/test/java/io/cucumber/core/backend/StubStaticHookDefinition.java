@@ -1,13 +1,15 @@
 package io.cucumber.core.backend;
 
-public class StubStaticHookDefinition implements StaticHookDefinition {
+import org.jspecify.annotations.Nullable;
+
+public final class StubStaticHookDefinition implements StaticHookDefinition {
 
     private static final String STUBBED_LOCATION_WITH_DETAILS = "{stubbed location with details}";
     private final String location;
-    private final RuntimeException exception;
-    private final Runnable action;
+    private final @Nullable RuntimeException exception;
+    private final @Nullable Runnable action;
 
-    public StubStaticHookDefinition(String location, RuntimeException exception, Runnable action) {
+    public StubStaticHookDefinition(String location, @Nullable RuntimeException exception, @Nullable Runnable action) {
         this.location = location;
         this.exception = exception;
         this.action = action;

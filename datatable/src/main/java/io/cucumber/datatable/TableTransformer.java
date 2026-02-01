@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Transforms a table row to an instance of {@code T}.
@@ -17,5 +18,6 @@ public interface TableTransformer<T> {
      * @return           an instance of {@code T}
      * @throws Throwable when the transform fails for any reason
      */
+    @Nullable
     T transform(DataTable table) throws Throwable;
 }

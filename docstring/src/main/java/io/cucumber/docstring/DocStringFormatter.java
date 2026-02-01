@@ -38,7 +38,7 @@ public final class DocStringFormatter {
     public void formatTo(DocString docString, Appendable out) throws IOException {
         String printableContentType = docString.getContentType() == null ? "" : docString.getContentType();
         out.append(indentation).append("\"\"\"").append(printableContentType).append("\n");
-        for (String l : docString.getContent().split("\\n")) {
+        for (String l : docString.getContent().split("\\n", 0)) {
             out.append(indentation).append(l).append("\n");
         }
         out.append(indentation).append("\"\"\"").append("\n");

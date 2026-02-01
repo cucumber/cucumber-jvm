@@ -78,10 +78,11 @@ class RunnerTest {
     }
 
     private Pickle createPicklesWithSteps() {
-        Feature feature = TestFeatureParser.parse("file:path/to.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given some step\n");
+        Feature feature = TestFeatureParser.parse("file:path/to.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given some step
+                """);
         return feature.getPickles().get(0);
     }
 
@@ -122,10 +123,11 @@ class RunnerTest {
 
     private Pickle createPickleMatchingStepDefinitions(StubStepDefinition stepDefinition) {
         String pattern = stepDefinition.getPattern();
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given " + pattern + "\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given %s
+                """.formatted(pattern));
         return feature.getPickles().get(0);
     }
 
@@ -322,9 +324,10 @@ class RunnerTest {
     }
 
     private Pickle createEmptyPickle() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                """);
         return feature.getPickles().get(0);
     }
 

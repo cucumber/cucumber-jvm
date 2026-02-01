@@ -35,10 +35,11 @@ import static org.mockito.Mockito.when;
 
 class TestCaseStateResultTest {
 
-    private final Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n");
+    private final Feature feature = TestFeatureParser.parse("file:path/file.feature", """
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given I have 4 cukes in my belly
+            """);
     private final EventBus bus = mock(EventBus.class);
     private final TestCaseState s = new TestCaseState(
         bus,
@@ -162,8 +163,8 @@ class TestCaseStateResultTest {
 
         @Override
         public boolean matches(EmbedEvent argument) {
-            return (argument != null &&
-                    Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType));
+            return argument != null &&
+                    Arrays.equals(argument.getData(), data) && argument.getMediaType().equals(mediaType);
         }
 
     }
@@ -178,7 +179,7 @@ class TestCaseStateResultTest {
 
         @Override
         public boolean matches(WriteEvent argument) {
-            return (argument != null && argument.getText().equals(text));
+            return argument != null && argument.getText().equals(text);
         }
 
     }

@@ -28,7 +28,6 @@ public final class ClasspathScanner {
     private static final String CLASS_FILE_SUFFIX = ".class";
     private static final String PACKAGE_INFO_FILE_NAME = "package-info" + CLASS_FILE_SUFFIX;
     private static final String MODULE_INFO_FILE_NAME = "module-info" + CLASS_FILE_SUFFIX;
-    private static final Predicate<Class<?>> NULL_FILTER = aClass -> true;
 
     private final PathScanner pathScanner = new PathScanner();
 
@@ -114,7 +113,7 @@ public final class ClasspathScanner {
     }
 
     public List<Class<?>> scanForClassesInPackage(String packageName) {
-        return scanForClassesInPackage(packageName, NULL_FILTER);
+        return scanForClassesInPackage(packageName, aClass -> true);
     }
 
 }

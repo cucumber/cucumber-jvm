@@ -1,6 +1,7 @@
 package io.cucumber.spring;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public final class CucumberTestContext {
     private final Map<String, Object> objects = new HashMap<>();
     private final Map<String, Runnable> callbacks = new HashMap<>();
 
-    private Integer sessionId;
+    private @Nullable Integer sessionId;
 
     private CucumberTestContext() {
     }
@@ -44,6 +45,7 @@ public final class CucumberTestContext {
         sessionId = null;
     }
 
+    @Nullable
     Object get(String name) {
         requireActiveScenario();
         return objects.get(name);
@@ -68,12 +70,13 @@ public final class CucumberTestContext {
     void requireActiveScenario() {
         if (!isActive()) {
             throw new IllegalStateException(
-                "Scenario scoped beans can only be accessed while Cucumber is executing a scenario\n" +
-                        "\n" +
-                        "Note: By default, when using @ScenarioScope these beans must also be accessed on the\n" +
-                        "same thread as the one that is executing the scenario. If you are certain your scenario\n" +
-                        "scoped beans can only be accessed through step definitions you can also use\n" +
-                        "@ScenarioScope(proxyMode = ScopedProxyMode.NO)");
+                """
+                        Scenario scoped beans can only be accessed while Cucumber is executing a scenario
+
+                        Note: By default, when using @ScenarioScope these beans must also be accessed on the
+                        same thread as the one that is executing the scenario. If you are certain your scenario
+                        scoped beans can only be accessed through step definitions you can also use
+                        @ScenarioScope(proxyMode = ScopedProxyMode.NO)""");
         }
     }
 

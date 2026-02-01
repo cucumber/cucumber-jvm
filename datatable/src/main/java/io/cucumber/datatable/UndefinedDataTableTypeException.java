@@ -6,7 +6,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static io.cucumber.datatable.TypeFactory.typeName;
-import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
 @API(status = API.Status.STABLE)
@@ -64,48 +63,52 @@ public final class UndefinedDataTableTypeException extends CucumberDataTableExce
     }
 
     private static String problem(Type itemType, String problem, String solution) {
-        return format(" - " + problem + "\n   " + solution, typeName(itemType));
+        return (" - " + problem + "\n   " + solution).formatted(typeName(itemType));
     }
 
     private static String prettyProblemList(List<String> problems) {
         return "Please review these problems:\n" +
-                problems.stream().collect(joining("" +
-
-                        "\n" +
-                        "\n",
-                    "\n", "\n" +
-                            "\n" +
-                            "Note: Usually solving one is enough"));
+                problems.stream().collect(joining("\n\n", "\n", "\n\nNote: Usually solving one is enough"));
     }
 
     static UndefinedDataTableTypeException singletonNoConverterDefined(Type type, List<String> problems) {
         return new UndefinedDataTableTypeException(
-            format("Can't convert DataTable to %s.\n%s",
-                typeName(type), prettyProblemList(problems)));
+            """
+                    Can't convert DataTable to %s.
+                    %s"""
+                    .formatted(typeName(type), prettyProblemList(problems)));
 
     }
 
     static UndefinedDataTableTypeException mapNoConverterDefined(Type keyType, Type valueType, List<String> problems) {
         return new UndefinedDataTableTypeException(
-            format("Can't convert DataTable to Map<%s, %s>.\n%s",
-                typeName(keyType), typeName(valueType), prettyProblemList(problems)));
+            """
+                    Can't convert DataTable to Map<%s, %s>.
+                    %s"""
+                    .formatted(typeName(keyType), typeName(valueType), prettyProblemList(problems)));
     }
 
     static UndefinedDataTableTypeException mapsNoConverterDefined(Type keyType, Type valueType, List<String> problems) {
         return new UndefinedDataTableTypeException(
-            format("Can't convert DataTable to List<Map<%s, %s>>.\n%s",
-                typeName(keyType), typeName(valueType), prettyProblemList(problems)));
+            """
+                    Can't convert DataTable to List<Map<%s, %s>>.
+                    %s"""
+                    .formatted(typeName(keyType), typeName(valueType), prettyProblemList(problems)));
     }
 
     static CucumberDataTableException listNoConverterDefined(Type itemType, List<String> problems) {
         return new UndefinedDataTableTypeException(
-            format("Can't convert DataTable to List<%s>.\n%s",
-                typeName(itemType), prettyProblemList(problems)));
+            """
+                    Can't convert DataTable to List<%s>.
+                    %s"""
+                    .formatted(typeName(itemType), prettyProblemList(problems)));
     }
 
     static CucumberDataTableException listsNoConverterDefined(Type itemType, List<String> problems) {
         return new UndefinedDataTableTypeException(
-            format("Can't convert DataTable to List<List<%s>>.\n%s",
-                typeName(itemType), prettyProblemList(problems)));
+            """
+                    Can't convert DataTable to List<List<%s>>.
+                    %s"""
+                    .formatted(typeName(itemType), prettyProblemList(problems)));
     }
 }

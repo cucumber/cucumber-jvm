@@ -1,6 +1,7 @@
 package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a step in a scenario.
@@ -14,6 +15,7 @@ public interface Step {
      *
      * @return a step argument, null if absent
      */
+    @Nullable
     StepArgument getArgument();
 
     /**
@@ -22,6 +24,7 @@ public interface Step {
      * @return     step key word
      * @deprecated use {@link #getKeyword()} instead
      */
+    @Deprecated
     default String getKeyWord() {
         return getKeyword();
     }

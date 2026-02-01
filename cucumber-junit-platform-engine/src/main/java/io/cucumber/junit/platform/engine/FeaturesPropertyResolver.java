@@ -75,7 +75,7 @@ class FeaturesPropertyResolver {
         private final EngineDiscoveryRequest delegate;
         private final Set<? extends DiscoverySelector> selectors;
 
-        public FeaturesPropertyDiscoveryRequest(
+        FeaturesPropertyDiscoveryRequest(
                 EngineDiscoveryRequest delegate,
                 Set<? extends DiscoverySelector> selectors
         ) {

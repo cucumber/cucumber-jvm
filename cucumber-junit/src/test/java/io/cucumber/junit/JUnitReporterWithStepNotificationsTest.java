@@ -21,7 +21,6 @@ import io.cucumber.plugin.event.TestStepStarted;
 import org.junit.AssumptionViolatedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -29,7 +28,7 @@ import org.junit.runners.model.MultipleFailureException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.net.URI;
 import java.time.Clock;
@@ -52,19 +51,22 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class JUnitReporterWithStepNotificationsTest {
+@MockitoSettings
+final class JUnitReporterWithStepNotificationsTest {
 
     private static final Location scenarioLine = new Location(0, 0);
     private static final URI featureUri = URI.create("file:example.feature");
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final JUnitReporter jUnitReporter = new JUnitReporter(bus,
         new JUnitOptionsBuilder().setStepNotifications(true).build());
-    private final Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given step name\n");
+    private final Feature feature = TestFeatureParser.parse("""
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given step name
+            """);
     private final Step step = feature.getPickles().get(0).getSteps().get(0);
+
+    private final Description runnerStepDescription = createTestDescription("", step.getText());
     @Mock
     private TestCase testCase;
     @Mock
@@ -81,7 +83,6 @@ class JUnitReporterWithStepNotificationsTest {
     @BeforeEach
     void mockPickleRunner() {
         when(pickleRunner.getDescription()).thenReturn(pickleRunnerDescription);
-        Description runnerStepDescription = createTestDescription("", step.getText());
         lenient().when(pickleRunner.describeChild(step)).thenReturn(runnerStepDescription);
     }
 
@@ -105,7 +106,7 @@ class JUnitReporterWithStepNotificationsTest {
         jUnitReporter.startExecutionUnit(pickleRunner, runNotifier);
         jUnitReporter.finishExecutionUnit();
         bus.send(new TestCaseStarted(now(), testCase));
-        verify(runNotifier, never()).fireTestStarted(pickleRunner.getDescription());
+        verify(runNotifier, never()).fireTestStarted(runnerStepDescription);
     }
 
     @Test
@@ -124,8 +125,8 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
         bus.send(new TestCaseFinished(now(), testCase, result));
 
-        verify(runNotifier, never()).fireTestStarted(pickleRunner.describeChild(step));
-        verify(runNotifier, never()).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier, never()).fireTestStarted(runnerStepDescription);
+        verify(runNotifier, never()).fireTestFinished(runnerStepDescription);
     }
 
     @Test
@@ -139,8 +140,8 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
         bus.send(new TestCaseFinished(now(), testCase, result));
 
-        verify(runNotifier).fireTestStarted(pickleRunner.describeChild(step));
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestStarted(runnerStepDescription);
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
     }
 
     @Test
@@ -153,9 +154,9 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
         Failure stepFailure = failureArgumentCaptor.getValue();
-        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.getDescription(), is(equalTo(runnerStepDescription)));
         assertThat(stepFailure.getException(), instanceOf(SkippedThrowable.class));
         assertThat(stepFailure.getException().getMessage(), is(equalTo("This step is skipped")));
 
@@ -163,7 +164,7 @@ class JUnitReporterWithStepNotificationsTest {
 
         verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
         Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunnerDescription)));
         assertThat(pickleFailure.getException(), instanceOf(SkippedThrowable.class));
         assertThat(pickleFailure.getException().getMessage(), is(equalTo("This scenario is skipped")));
 
@@ -180,19 +181,19 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
         verify(runNotifier).fireTestAssumptionFailed(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure stepFailure = failureArgumentCaptor.getValue();
-        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.getDescription(), is(equalTo(runnerStepDescription)));
         assertThat(stepFailure.getException(), is(equalTo(exception)));
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
         verify(runNotifier, times(2)).fireTestAssumptionFailed(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunnerDescription)));
         assertThat(pickleFailure.getException(), is(equalTo(exception)));
     }
 
@@ -207,19 +208,19 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure stepFailure = failureArgumentCaptor.getValue();
-        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.getDescription(), is(equalTo(runnerStepDescription)));
         assertThat(stepFailure.getException(), is(equalTo(exception)));
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
         verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunnerDescription)));
         assertThat(pickleFailure.getException(), is(equalTo(exception)));
 
     }
@@ -237,24 +238,25 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure stepFailure = failureArgumentCaptor.getValue();
-        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.getDescription(), is(equalTo(runnerStepDescription)));
         assertThat(stepFailure.getException(), is(equalTo(exception)));
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
         verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
-        assertThat(pickleFailure.getException().getMessage(), is("" +
-                "The step 'step name' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n"));
+        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunnerDescription)));
+        assertThat(pickleFailure.getException().getMessage(), is("""
+                The step 'step name' is undefined.
+                You can implement this step using the snippet(s) below:
+
+                some snippet
+                """));
     }
 
     @Test
@@ -268,19 +270,19 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure stepFailure = failureArgumentCaptor.getValue();
-        assertThat(stepFailure.getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.getDescription(), is(equalTo(runnerStepDescription)));
         assertThat(stepFailure.getException(), is(equalTo(exception)));
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
         verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunnerDescription)));
         assertThat(pickleFailure.getException(), is(equalTo(exception)));
     }
 
@@ -301,15 +303,15 @@ class JUnitReporterWithStepNotificationsTest {
 
         // Hooks are not included in step failure
         verify(runNotifier, never()).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
         verify(runNotifier).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         Failure pickleFailure = failureArgumentCaptor.getValue();
-        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.getDescription(), is(equalTo(pickleRunnerDescription)));
         assertThat(pickleFailure.getException(), is(equalTo(exception)));
     }
 
@@ -327,29 +329,29 @@ class JUnitReporterWithStepNotificationsTest {
         bus.send(new TestStepFinished(now(), testCase, mockTestStep(step), result));
 
         verify(runNotifier, times(2)).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         List<Failure> stepFailure = failureArgumentCaptor.getAllValues();
 
-        assertThat(stepFailure.get(0).getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.get(0).getDescription(), is(equalTo(runnerStepDescription)));
         assertThat(stepFailure.get(0).getException(), is(equalTo(failures.get(0))));
 
-        assertThat(stepFailure.get(1).getDescription(), is(equalTo(pickleRunner.describeChild(step))));
+        assertThat(stepFailure.get(1).getDescription(), is(equalTo(runnerStepDescription)));
         assertThat(stepFailure.get(1).getException(), is(equalTo(failures.get(1))));
 
         bus.send(new TestCaseFinished(now(), testCase, result));
 
         verify(runNotifier, times(4)).fireTestFailure(failureArgumentCaptor.capture());
-        verify(runNotifier).fireTestFinished(pickleRunner.describeChild(step));
+        verify(runNotifier).fireTestFinished(runnerStepDescription);
 
         List<Failure> pickleFailure = failureArgumentCaptor.getAllValues();
 
         // Mockito recapture all arguments on .capture() so we end up with the
         // original 2, those 2 repeated and the finally the 2 we expect.
-        assertThat(pickleFailure.get(4).getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.get(4).getDescription(), is(equalTo(pickleRunnerDescription)));
         assertThat(pickleFailure.get(4).getException(), is(equalTo(failures.get(0))));
 
-        assertThat(pickleFailure.get(5).getDescription(), is(equalTo(pickleRunner.getDescription())));
+        assertThat(pickleFailure.get(5).getDescription(), is(equalTo(pickleRunnerDescription)));
         assertThat(pickleFailure.get(5).getException(), is(equalTo(failures.get(1))));
     }
 

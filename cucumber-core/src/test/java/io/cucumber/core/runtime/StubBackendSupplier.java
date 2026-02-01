@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class StubBackendSupplier implements BackendSupplier {
+public final class StubBackendSupplier implements BackendSupplier {
 
     private final List<StaticHookDefinition> beforeAll;
     private final List<HookDefinition> before;
@@ -76,16 +76,6 @@ public class StubBackendSupplier implements BackendSupplier {
                 afterStep.forEach(glue::addAfterStepHook);
                 after.forEach(glue::addAfterHook);
                 afterAll.forEach(glue::addAfterAllHook);
-            }
-
-            @Override
-            public void buildWorld() {
-
-            }
-
-            @Override
-            public void disposeWorld() {
-
             }
 
             @Override
