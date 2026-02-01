@@ -3,7 +3,7 @@ Cucumber JUnit (Deprecated)
 
 > [!IMPORTANT]  
 > **JUnit 4 is in maintenance mode.**  
-> For JUnit Jupiter use the [Cucumber JUnit Platform Engine](../cucumber-junit-platform-engine)
+> For JUnit 5+ use the [Cucumber JUnit Platform Engine](../cucumber-junit-platform-engine)
 
 Use JUnit 4 to execute Cucumber scenarios. To use add the `cucumber-junit`
 dependency to your `pom.xml` and use the [`cucumber-bom`](../cucumber-bom/README.md)

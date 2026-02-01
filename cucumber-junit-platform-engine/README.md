@@ -442,8 +442,8 @@ cucumber.filter.name=                                          # a regular expre
                                                                # combined with cucumber.filter.tags using "and" semantics.
                                                                # example: ^Hello (World|Cucumber)$
                                                                # note: To ensure consistent reports between Cucumber and
-                                                               # JUnit Jupiter prefer using JUnit Jupiters discovery request filters
-                                                               # or JUnit Jupiter tag expressions instead.
+                                                               # JUnit 6 prefer using JUnit 6s discovery request filters
+                                                               # or JUnit 6 tag expressions instead.
 
 cucumber.features=                                             # comma separated paths to feature files. 
                                                                # example: path/to/example.feature, path/to/other.feature
@@ -461,8 +461,8 @@ cucumber.filter.tags=                                          # a cucumber tag 
                                                                # combined with cucumber.filter.name using "and" semantics.                                                               
                                                                # example: @Cucumber and not (@Gherkin or @Zucchini)
                                                                # note: To ensure consistent reports between Cucumber and
-                                                               # JUnit Jupiter prefer using JUnit Jupiters discovery request filters
-                                                               # or JUnit Jupiter tag expressions instead.
+                                                               # JUnit 6 prefer using JUnit 6s discovery request filters
+                                                               # or JUnit 6 tag expressions instead.
 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
@@ -566,7 +566,7 @@ cucumber.execution.exclusive-resources.<tag-name>.read=        # a comma separat
 
 ## Supported Discovery Selectors and Filters ## 
 
-JUnit 6 [introduced a test discovery mechanism](https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery)
+The JUnit Platform [introduced a test discovery mechanism](https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery)
 as a dedicated feature of the platform itself. This allows IDEs and build tools
 to identify tests. Supported `DiscoverySelector`s are:
 
