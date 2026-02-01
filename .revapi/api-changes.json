@@ -240,6 +240,17 @@
             "code": "java.method.removed",
             "old": "method void io.cucumber.core.snippets.SnippetGenerator::<init>(io.cucumber.core.backend.Snippet, io.cucumber.cucumberexpressions.ParameterTypeRegistry)",
             "justification": "Snippets must now always include a programming language"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "@interface io.cucumber.junit.CucumberOptions",
+            "new": "@interface io.cucumber.junit.CucumberOptions",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.STABLE",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "Cucumber JUnit (for JUnit 4) was deprecated. Use Cucumber JUnit Platform Engine instead (JUnit 5+)"
           }
         ]
       }
@@ -672,17 +683,6 @@
             "oldValue": "\"5.13.3\"",
             "newValue": "\"6.0\"",
             "justification": "JUnit 6 Upgrade"
-          },
-          {
-            "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "@interface io.cucumber.junit.CucumberOptions",
-            "new": "@interface io.cucumber.junit.CucumberOptions",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "status",
-            "oldValue": "org.apiguardian.api.API.Status.STABLE",
-            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
-            "justification": "Cucumber JUnit (for JUnit 4) was deprecated. Use Cucumber JUnit Platform Engine instead (JUnit 5+)"
           }
         ]
       }
