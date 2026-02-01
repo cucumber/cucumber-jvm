@@ -6,7 +6,8 @@ import io.cucumber.java.en.When;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DataTables {
+@SuppressWarnings("NullAway")
+public final class DataTables {
 
     private DataTable toTranspose;
 

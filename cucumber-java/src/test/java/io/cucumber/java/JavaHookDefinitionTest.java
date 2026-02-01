@@ -3,9 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.TestCaseState;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
@@ -21,10 +19,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({ "WeakerAccess" })
-@ExtendWith({ MockitoExtension.class })
+@SuppressWarnings("WeakerAccess")
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
-public class JavaHookDefinitionTest {
+class JavaHookDefinitionTest {
 
     private final Lookup lookup = new Lookup() {
 
@@ -72,11 +69,11 @@ public class JavaHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A @Before annotated method must have one of these signatures:\n" +
-                " * public void hook()\n" +
-                " * public void hook(io.cucumber.java.Scenario scenario)\n" +
-                "at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"));
+        assertThat(exception.getMessage(), startsWith("""
+                A @Before annotated method must have one of these signatures:
+                 * public void hook()
+                 * public void hook(io.cucumber.java.Scenario scenario)
+                at io.cucumber.java.JavaHookDefinitionTest.invalid_parameter(java.lang.String"""));
     }
 
     public void invalid_parameter(String badType) {
@@ -113,11 +110,12 @@ public class JavaHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A @Before annotated method must have one of these signatures:\n" +
-                " * public void hook()\n" +
-                " * public void hook(io.cucumber.java.Scenario scenario)\n" +
-                "at io.cucumber.java.JavaHookDefinitionTest.string_return_type()\n"));
+        assertThat(exception.getMessage(), startsWith("""
+                A @Before annotated method must have one of these signatures:
+                 * public void hook()
+                 * public void hook(io.cucumber.java.Scenario scenario)
+                at io.cucumber.java.JavaHookDefinitionTest.string_return_type()
+                """));
     }
 
     @Before
@@ -173,11 +171,12 @@ public class JavaHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A @BeforeStep annotated method must have one of these signatures:\n" +
-                " * public void hook()\n" +
-                " * public void hook(io.cucumber.java.Scenario scenario)\n" +
-                " * public void hook(io.cucumber.java.Scenario scenario, io.cucumber.java.Step step)\n"));
+        assertThat(exception.getMessage(), startsWith("""
+                A @BeforeStep annotated method must have one of these signatures:
+                 * public void hook()
+                 * public void hook(io.cucumber.java.Scenario scenario)
+                 * public void hook(io.cucumber.java.Scenario scenario, io.cucumber.java.Step step)
+                """));
     }
 
     public void step_hook_invalid_first_param(String badType) {
@@ -190,11 +189,12 @@ public class JavaHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A @BeforeStep annotated method must have one of these signatures:\n" +
-                " * public void hook()\n" +
-                " * public void hook(io.cucumber.java.Scenario scenario)\n" +
-                " * public void hook(io.cucumber.java.Scenario scenario, io.cucumber.java.Step step)\n"));
+        assertThat(exception.getMessage(), startsWith("""
+                A @BeforeStep annotated method must have one of these signatures:
+                 * public void hook()
+                 * public void hook(io.cucumber.java.Scenario scenario)
+                 * public void hook(io.cucumber.java.Scenario scenario, io.cucumber.java.Step step)
+                """));
     }
 
     public void step_hook_invalid_second_param(Scenario scenario, String badType) {
@@ -207,8 +207,9 @@ public class JavaHookDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A @BeforeStep annotated method must have one of these signatures:\n"));
+        assertThat(exception.getMessage(), startsWith("""
+                A @BeforeStep annotated method must have one of these signatures:
+                """));
     }
 
     public void step_hook_too_many_params(Scenario scenario, Step step, String extra) {

@@ -1,6 +1,7 @@
 package io.cucumber.testng;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides cucumber with properties from {@code testng.xml}.
@@ -18,5 +19,6 @@ public interface CucumberPropertiesProvider {
      * @param  key the property name
      * @return     the property value or null
      */
+    @Nullable
     String get(String key);
 }

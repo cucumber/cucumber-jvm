@@ -4,24 +4,31 @@ import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.runtime.CucumberExecutionContext;
 import io.cucumber.plugin.event.Step;
+import org.jspecify.annotations.Nullable;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.cucumber.junit.FileNameCompatibleNames.createName;
 
 final class PickleRunners {
 
+    private PickleRunners() {
+        /* no-op */
+    }
+
     static PickleRunner withStepDescriptions(
-            CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix, JUnitOptions options
+            CucumberExecutionContext context, Pickle pickle, @Nullable Integer uniqueSuffix, JUnitOptions options
     ) {
         try {
             return new WithStepDescriptions(context, pickle, uniqueSuffix, options);
@@ -31,7 +38,7 @@ final class PickleRunners {
     }
 
     static PickleRunner withNoStepDescriptions(
-            String featureName, CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix,
+            String featureName, CucumberExecutionContext context, Pickle pickle, @Nullable Integer uniqueSuffix,
             JUnitOptions jUnitOptions
     ) {
         return new NoStepDescriptions(featureName, context, pickle, uniqueSuffix, jUnitOptions);
@@ -53,11 +60,12 @@ final class PickleRunners {
         private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
         private final Map<Step, Description> stepDescriptions = new HashMap<>();
-        private final Integer uniqueSuffix;
-        private Description description;
+        private final @Nullable Integer uniqueSuffix;
+        private @Nullable Description description;
 
         WithStepDescriptions(
-                CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix, JUnitOptions jUnitOptions
+                CucumberExecutionContext context, Pickle pickle, @Nullable Integer uniqueSuffix,
+                JUnitOptions jUnitOptions
         )
                 throws InitializationError {
             super((Class<?>) null);
@@ -128,11 +136,11 @@ final class PickleRunners {
         private final CucumberExecutionContext context;
         private final Pickle pickle;
         private final JUnitOptions jUnitOptions;
-        private final Integer uniqueSuffix;
-        private Description description;
+        private final @Nullable Integer uniqueSuffix;
+        private @Nullable Description description;
 
         NoStepDescriptions(
-                String featureName, CucumberExecutionContext context, Pickle pickle, Integer uniqueSuffix,
+                String featureName, CucumberExecutionContext context, Pickle pickle, @Nullable Integer uniqueSuffix,
                 JUnitOptions jUnitOptions
         ) {
             this.featureName = featureName;
@@ -172,6 +180,7 @@ final class PickleRunners {
 
     static final class PickleId implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 1L;
         private final URI uri;
         private final int pickleLine;
@@ -186,20 +195,15 @@ final class PickleRunners {
         }
 
         @Override
-        public int hashCode() {
-            int result = uri.hashCode();
-            result = 31 * result + pickleLine;
-            return result;
+        public boolean equals(Object o) {
+            if (!(o instanceof PickleId pickleId))
+                return false;
+            return pickleLine == pickleId.pickleLine && Objects.equals(uri, pickleId.uri);
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            PickleId that = (PickleId) o;
-            return pickleLine == that.pickleLine && uri.equals(that.uri);
+        public int hashCode() {
+            return Objects.hash(uri, pickleLine);
         }
 
         @Override
@@ -211,6 +215,7 @@ final class PickleRunners {
 
     private static final class PickleStepId implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 1L;
         private final URI uri;
         private final int pickleLine;
@@ -223,21 +228,16 @@ final class PickleRunners {
         }
 
         @Override
-        public int hashCode() {
-            int result = pickleLine;
-            result = 31 * result + uri.hashCode();
-            result = 31 * result + pickleStepLine;
-            return result;
+        public boolean equals(Object o) {
+            if (!(o instanceof PickleStepId that))
+                return false;
+            return pickleLine == that.pickleLine && pickleStepLine == that.pickleStepLine
+                    && Objects.equals(uri, that.uri);
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            PickleStepId that = (PickleStepId) o;
-            return pickleLine == that.pickleLine && pickleStepLine == that.pickleStepLine && uri.equals(that.uri);
+        public int hashCode() {
+            return Objects.hash(uri, pickleLine, pickleStepLine);
         }
 
         @Override

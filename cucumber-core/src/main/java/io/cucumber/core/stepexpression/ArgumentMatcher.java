@@ -3,6 +3,7 @@ package io.cucumber.core.stepexpression;
 import io.cucumber.core.gherkin.DataTableArgument;
 import io.cucumber.core.gherkin.DocStringArgument;
 import io.cucumber.core.gherkin.Step;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -16,29 +17,27 @@ public final class ArgumentMatcher {
         this.expression = expression;
     }
 
-    public List<Argument> argumentsFrom(Step step, Type... types) {
+    public @Nullable List<Argument> argumentsFrom(Step step, Type... types) {
         io.cucumber.core.gherkin.Argument arg = step.getArgument();
         if (arg == null) {
             return expression.match(step.getText(), types);
         }
 
-        if (arg instanceof io.cucumber.core.gherkin.DocStringArgument) {
-            DocStringArgument docString = (DocStringArgument) arg;
+        if (arg instanceof DocStringArgument docString) {
             String content = docString.getContent();
             String contentType = docString.getMediaType();
             return expression.match(step.getText(), content, contentType, types);
         }
 
-        if (arg instanceof io.cucumber.core.gherkin.DataTableArgument) {
-            DataTableArgument table = (DataTableArgument) arg;
-            List<List<String>> cells = emptyCellsToNull(table.cells());
+        if (arg instanceof DataTableArgument table) {
+            List<List<@Nullable String>> cells = emptyCellsToNull(table.cells());
             return expression.match(step.getText(), cells, types);
         }
 
         throw new IllegalStateException("Argument was neither PickleString nor PickleTable");
     }
 
-    private static List<List<String>> emptyCellsToNull(List<List<String>> cells) {
+    private static List<List<@Nullable String>> emptyCellsToNull(List<List<String>> cells) {
         return cells.stream()
                 .map(row -> row.stream()
                         .map(s -> s.isEmpty() ? null : s)

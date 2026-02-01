@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 
 import static io.cucumber.datatable.DataTable.emptyDataTable;
 import static io.cucumber.datatable.TypeFactory.typeName;
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -352,9 +350,10 @@ class DataTableTest {
         DataTable dataTable = createSimpleTable();
         List<List<String>> listOfListOfString = dataTable.cells();
         DataTable other = DataTable.create(listOfListOfString);
-        assertEquals("" +
-                "| one  | four  | seven  |\n" +
-                "| 4444 | 55555 | 666666 |\n",
+        assertEquals("""
+                | one  | four  | seven  |
+                | 4444 | 55555 | 666666 |
+                """,
             other.toString());
     }
 
@@ -437,42 +436,30 @@ class DataTableTest {
     void asMaps_delegates_to_converter() {
         List<List<String>> raw = asList(asList("hundred", "thousand"), asList("100", "1000"));
         DataTable table = DataTable.create(raw, tableConverter);
-        List<Map<String, Long>> expected = singletonList(new HashMap<String, Long>() {
-            {
-                put("hundred", 100L);
-                put("thousand", 1000L);
-            }
-        });
+        var expected = List.of(Map.of(
+            "hundred", 100L,
+            "thousand", 1000L));
         assertEquals(expected, table.asMaps(String.class, Long.class));
-        assertEquals(expected, table.asMaps((Type) String.class, (Type) Long.class));
+        assertEquals(expected, table.asMaps(String.class, (Type) Long.class));
     }
 
     @Test
     void asMaps_returns_maps_of_raw() {
         DataTable table = createSimpleNumberTable();
-        Map<String, String> expected = new HashMap<String, String>() {
-            {
-                put("1", "2");
-                put("100", "1000");
-            }
-        };
-        assertEquals(singletonList(expected), table.asMaps());
+        var expected = List.of(Map.of(
+            "1", "2",
+            "100", "1000"));
+        assertEquals(expected, table.asMaps());
     }
 
     @Test
     void asMaps_can_convert_table_with_null_values() {
-        DataTable table = DataTable.create(asList(
+        var expected = singletonList(NullMap.of(
+            "1", null,
+            "2", null));
+        assertEquals(expected, DataTable.create(asList(
             asList("1", "2"),
-            asList(null, null)), tableConverter);
-
-        Map<String, String> expected = new HashMap<String, String>() {
-            {
-                put("1", null);
-                put("2", null);
-            }
-        };
-
-        assertEquals(singletonList(expected), table.asMaps());
+            asList(null, null)), tableConverter).asMaps());
     }
 
     @Test
@@ -487,10 +474,10 @@ class DataTableTest {
             CucumberDataTableException.class,
             table::asMaps);
 
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "Encountered duplicate key 1 with values 4 and 5",
-            typeName(String.class), typeName(String.class))));
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to Map<%s, %s>.
+                Encountered duplicate key 1 with values 4 and 5"""
+                .formatted(typeName(String.class), typeName(String.class))));
     }
 
     @Test
@@ -503,21 +490,18 @@ class DataTableTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             table::asMaps);
-        assertThat(exception.getMessage(), is(format("" +
-                "Can't convert DataTable to Map<%s, %s>.\n" +
-                "Encountered duplicate key null with values 1 and 2",
-            typeName(String.class), typeName(String.class))));
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to Map<%s, %s>.
+                Encountered duplicate key null with values 1 and 2"""
+                .formatted(typeName(String.class), typeName(String.class))));
     }
 
     @Test
     void asMaps_with_nulls_returns_maps_of_raw() {
         List<List<String>> raw = asList(singletonList(null), singletonList(null));
         DataTable table = DataTable.create(raw, tableConverter);
-        Map<String, String> expected = new HashMap<String, String>() {
-            {
-                put(null, null);
-            }
-        };
+        var expected = NullMap.of(
+            null, null);
 
         assertEquals(singletonList(expected), table.asMaps());
     }
@@ -533,26 +517,20 @@ class DataTableTest {
     void asMap_delegates_to_converter() {
         List<List<String>> table1 = asList(asList("hundred", "100"), asList("thousand", "1000"));
         DataTable table = DataTable.create(table1, tableConverter);
-        Map<String, Long> expected = new HashMap<String, Long>() {
-            {
-                put("hundred", 100L);
-                put("thousand", 1000L);
-            }
-        };
+        var expected = NullMap.of(
+            "hundred", 100L,
+            "thousand", 1000L);
         assertEquals(expected, table.asMap(String.class, Long.class));
-        assertEquals(expected, table.asMap((Type) String.class, (Type) Long.class));
+        assertEquals(expected, table.asMap(String.class, (Type) Long.class));
     }
 
     @Test
     void asMap_returns_map_of_raw() {
         List<List<String>> table1 = asList(asList("hundred", "100"), asList("thousand", "1000"));
         DataTable table = DataTable.create(table1, tableConverter);
-        Map<String, String> expected = new HashMap<String, String>() {
-            {
-                put("hundred", "100");
-                put("thousand", "1000");
-            }
-        };
+        var expected = NullMap.of(
+            "hundred", "100",
+            "thousand", "1000");
         assertEquals(expected, table.asMap());
     }
 
@@ -581,24 +559,28 @@ class DataTableTest {
     }
 
     @Test
+    @Deprecated
     void can_print_table_to_appendable() throws IOException {
         DataTable table = createSimpleTable();
         Appendable appendable = new StringBuilder();
         table.print(appendable);
-        String expected = "" +
-                "      | one  | four  | seven  |\n" +
-                "      | 4444 | 55555 | 666666 |\n";
+        String expected = """
+                      | one  | four  | seven  |
+                      | 4444 | 55555 | 666666 |
+                """;
         assertEquals(expected, appendable.toString());
     }
 
     @Test
+    @Deprecated
     void can_print_table_to_string_builder() {
         DataTable table = createSimpleTable();
         StringBuilder appendable = new StringBuilder();
         table.print(appendable);
-        String expected = "" +
-                "      | one  | four  | seven  |\n" +
-                "      | 4444 | 55555 | 666666 |\n";
+        String expected = """
+                      | one  | four  | seven  |
+                      | 4444 | 55555 | 666666 |
+                """;
         assertEquals(expected, appendable.toString());
     }
 

@@ -1,7 +1,5 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.backend.Pending;
-
 import java.io.PrintStream;
 import java.io.PrintWriter;
 

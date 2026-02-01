@@ -9,6 +9,7 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterTypeDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,6 +21,7 @@ import static io.cucumber.java8.LambdaGlue.DEFAULT_BEFORE_ORDER;
 import static io.cucumber.java8.LambdaGlue.EMPTY_TAG_EXPRESSION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LambdaGlueTest {
@@ -29,10 +31,10 @@ class LambdaGlueTest {
     private final LambdaGlue lambdaGlue = new LambdaGlue() {
 
     };
-    private HookDefinition beforeStepHook;
-    private HookDefinition afterHook;
-    private HookDefinition beforeHook;
-    private HookDefinition afterStepHook;
+    private @Nullable HookDefinition beforeStepHook;
+    private @Nullable HookDefinition afterHook;
+    private @Nullable HookDefinition beforeHook;
+    private @Nullable HookDefinition afterStepHook;
     private final LambdaGlueRegistry lambdaGlueRegistry = new LambdaGlueRegistry() {
         @Override
         public void addStepDefinition(StepDefinition stepDefinition) {
@@ -125,7 +127,8 @@ class LambdaGlueTest {
         invoked.set(true);
     }
 
-    private void assertHook(HookDefinition hook, String tagExpression, int beforeOrder) {
+    private void assertHook(@Nullable HookDefinition hook, String tagExpression, int beforeOrder) {
+        assertNotNull(hook);
         assertThat(hook.getTagExpression(), is(tagExpression));
         assertThat(hook.getOrder(), is(beforeOrder));
         hook.execute(state);

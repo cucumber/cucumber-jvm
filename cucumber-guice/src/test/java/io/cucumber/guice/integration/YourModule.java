@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import io.cucumber.guice.ScenarioScoped;
 
-public class YourModule extends AbstractModule {
+public final class YourModule extends AbstractModule {
 
     @Override
     protected void configure() {

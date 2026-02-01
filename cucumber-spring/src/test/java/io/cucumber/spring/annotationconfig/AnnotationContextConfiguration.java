@@ -5,6 +5,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration("classpath:cucumber.xml")
 @CucumberContextConfiguration
+@SuppressWarnings("DesignForExtension")
 public class AnnotationContextConfiguration {
 
 }

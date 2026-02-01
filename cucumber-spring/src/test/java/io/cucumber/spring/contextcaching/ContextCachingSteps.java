@@ -11,6 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @CucumberContextConfiguration
 @ContextConfiguration(classes = ContextConfig.class)
+@SuppressWarnings("DesignForExtension")
 public class ContextCachingSteps {
 
     @Autowired

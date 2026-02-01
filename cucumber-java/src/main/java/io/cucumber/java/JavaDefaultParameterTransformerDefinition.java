@@ -3,13 +3,12 @@ package io.cucumber.java;
 import io.cucumber.core.backend.DefaultParameterTransformerDefinition;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import static io.cucumber.java.InvalidMethodSignatureException.builder;
-
-class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
+final class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
         implements DefaultParameterTransformerDefinition {
 
     private final Lookup lookup;
@@ -43,12 +42,12 @@ class JavaDefaultParameterTransformerDefinition extends AbstractGlueDefinition
         return method;
     }
 
-    private Object execute(String fromValue, Type toValueType) {
+    private @Nullable Object execute(@Nullable String fromValue, Type toValueType) {
         return Invoker.invoke(this, lookup.getInstance(method.getDeclaringClass()), method, fromValue, toValueType);
     }
 
     private static InvalidMethodSignatureException createInvalidSignatureException(Method method) {
-        return builder(method)
+        return InvalidMethodSignatureException.builder(method)
                 .addAnnotation(DefaultParameterTransformer.class)
                 .addSignature("public Object defaultDataTableEntry(String fromValue, Type toValueType)")
                 .addSignature("public Object defaultDataTableEntry(Object fromValue, Type toValueType)")

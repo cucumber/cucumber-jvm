@@ -3,6 +3,7 @@ package io.cucumber.datatable;
 import io.cucumber.datatable.TypeFactory.JavaType;
 import io.cucumber.datatable.TypeFactory.ListType;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.StringJoiner;
 import static io.cucumber.datatable.TypeFactory.aListOf;
 import static io.cucumber.datatable.TypeFactory.constructType;
 import static io.cucumber.datatable.TypeFactory.optionalOf;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A data table type describes how a data table should be represented as an
@@ -36,12 +38,8 @@ public final class DataTableType {
     }
 
     private DataTableType(Type type, RawTableTransformer<?> transformer, boolean replaceable) {
-        if (type == null)
-            throw new NullPointerException("type cannot be null");
-        if (transformer == null)
-            throw new NullPointerException("transformer cannot be null");
-        this.elementType = type;
-        this.transformer = transformer;
+        this.elementType = requireNonNull(type);
+        this.transformer = requireNonNull(transformer);
         this.replaceable = replaceable;
     }
 
@@ -127,7 +125,8 @@ public final class DataTableType {
      *                                     {@code List<List<T>>}
      */
     static DataTableType defaultCell(Type cellType, TableCellByTypeTransformer defaultDataTableTransformer) {
-        return new DataTableType(cellType, (String cell) -> defaultDataTableTransformer.transform(cell, cellType));
+        return new DataTableType(cellType,
+            (@Nullable String cell) -> defaultDataTableTransformer.transform(cell, cellType));
     }
 
     /**
@@ -150,12 +149,12 @@ public final class DataTableType {
                 .transform(entry, entryType, tableCellByTypeTransformer));
     }
 
-    public Object transform(List<List<String>> raw) {
+    public @Nullable Object transform(List<List<@Nullable String>> raw) {
         try {
             return transformer.transform(raw);
         } catch (Throwable throwable) {
             throw new CucumberDataTableException(
-                String.format("'%s' could not transform%n%s", toCanonical(), DataTable.create(raw)), throwable);
+                "'%s' could not transform%n%s".formatted(toCanonical(), DataTable.create(raw)), throwable);
         }
     }
 
@@ -214,7 +213,8 @@ public final class DataTableType {
     interface RawTableTransformer<T> {
         Class<?> getOriginalTransformerType();
 
-        T transform(List<List<String>> raw) throws Throwable;
+        @Nullable
+        T transform(List<List<@Nullable String>> raw) throws Throwable;
 
         RawTableTransformer<?> asOptional();
 
@@ -231,13 +231,9 @@ public final class DataTableType {
                 Type targetType,
                 TableCellTransformer<T> transformer
         ) {
-            if (targetType == null)
-                throw new NullPointerException("targetType cannot be null");
-            this.elementType = targetType;
+            this.elementType = requireNonNull(targetType);
             this.targetType = aListOf(aListOf(targetType));
-            if (transformer == null)
-                throw new NullPointerException("transformer cannot be null");
-            this.transformer = transformer;
+            this.transformer = requireNonNull(transformer);
         }
 
         @Override
@@ -246,10 +242,10 @@ public final class DataTableType {
         }
 
         @Override
-        public List<List<T>> transform(List<List<String>> raw) throws Throwable {
-            List<List<T>> list = new ArrayList<>(raw.size());
+        public List<List<@Nullable T>> transform(List<List<@Nullable String>> raw) throws Throwable {
+            List<List<@Nullable T>> list = new ArrayList<>(raw.size());
             for (List<String> tableRow : raw) {
-                List<T> row = new ArrayList<>(tableRow.size());
+                List<@Nullable T> row = new ArrayList<>(tableRow.size());
                 for (String entry : tableRow) {
                     row.add(transformer.transform(entry));
                 }
@@ -268,9 +264,9 @@ public final class DataTableType {
             return targetType;
         }
 
-        private class OptionalTableCellTransformer implements TableCellTransformer<Object> {
+        private final class OptionalTableCellTransformer implements TableCellTransformer<Object> {
             @Override
-            public Object transform(String cell) throws Throwable {
+            public Object transform(@Nullable String cell) throws Throwable {
                 return cell == null ? Optional.empty() : Optional.ofNullable(transformer.transform(cell));
             }
         }
@@ -281,12 +277,8 @@ public final class DataTableType {
         private final TableRowTransformer<T> transformer;
 
         TableRowTransformerAdaptor(Type targetType, TableRowTransformer<T> transformer) {
-            if (targetType == null)
-                throw new NullPointerException("targetType cannot be null");
-            this.targetType = aListOf(targetType);
-            if (transformer == null)
-                throw new NullPointerException("transformer cannot be null");
-            this.transformer = transformer;
+            this.targetType = aListOf(requireNonNull(targetType));
+            this.transformer = requireNonNull(transformer);
         }
 
         @Override
@@ -295,8 +287,8 @@ public final class DataTableType {
         }
 
         @Override
-        public List<T> transform(List<List<String>> raw) throws Throwable {
-            List<T> list = new ArrayList<>();
+        public List<@Nullable T> transform(List<List<@Nullable String>> raw) throws Throwable {
+            List<@Nullable T> list = new ArrayList<>();
             for (List<String> tableRow : raw) {
                 list.add(transformer.transform(tableRow));
             }
@@ -321,12 +313,8 @@ public final class DataTableType {
         private final TableEntryTransformer<T> transformer;
 
         TableEntryTransformerAdaptor(Type targetType, TableEntryTransformer<T> transformer) {
-            if (targetType == null)
-                throw new NullPointerException("targetType cannot be null");
-            this.targetType = aListOf(targetType);
-            if (transformer == null)
-                throw new NullPointerException("transformer cannot be null");
-            this.transformer = transformer;
+            this.targetType = aListOf(requireNonNull(targetType));
+            this.transformer = requireNonNull(transformer);
         }
 
         @Override
@@ -362,12 +350,8 @@ public final class DataTableType {
         private final TableTransformer<T> transformer;
 
         TableTransformerAdaptor(Type targetType, TableTransformer<T> transformer) {
-            if (targetType == null)
-                throw new NullPointerException("targetType cannot be null");
-            this.targetType = constructType(targetType);
-            if (transformer == null)
-                throw new NullPointerException("transformer cannot be null");
-            this.transformer = transformer;
+            this.targetType = constructType(requireNonNull(targetType));
+            this.transformer = requireNonNull(transformer);
         }
 
         @Override
@@ -376,7 +360,7 @@ public final class DataTableType {
         }
 
         @Override
-        public T transform(List<List<String>> raw) throws Throwable {
+        public @Nullable T transform(List<List<String>> raw) throws Throwable {
             return transformer.transform(DataTable.create(raw, CONVERSION_REQUIRED));
         }
 

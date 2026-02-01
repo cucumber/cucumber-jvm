@@ -11,10 +11,10 @@ import static io.cucumber.core.resource.ClasspathSupport.classpathResourceUri;
 import static io.cucumber.core.resource.ClasspathSupport.determineClasspathResourceUri;
 import static io.cucumber.core.resource.ClasspathSupport.resourceNameOfPackageName;
 
-class Resources {
+final class Resources {
 
     private Resources() {
-
+        /* no-op */
     }
 
     static BiFunction<Path, Path, Resource> createPackageResource(String packageName) {

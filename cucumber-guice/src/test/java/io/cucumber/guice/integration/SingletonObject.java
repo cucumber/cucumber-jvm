@@ -1,5 +1,5 @@
 package io.cucumber.guice.integration;
 
-public class SingletonObject {
+public final class SingletonObject {
 
 }

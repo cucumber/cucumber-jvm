@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StepHooksSteps {
+public final class StepHooksSteps {
 
     private final List<String> beforeStepTexts = new ArrayList<>();
     private final List<String> beforeStepKeywords = new ArrayList<>();

@@ -16,7 +16,8 @@ public final class UsageJsonFormatter implements Plugin, ConcurrentEventListener
 
     private final MessagesToUsageWriter writer;
 
-    @SuppressWarnings("WeakerAccess") // Used by PluginFactory
+    // Used by PluginFactory
+    @SuppressWarnings("WeakerAccess")
     public UsageJsonFormatter(OutputStream out) {
         this.writer = MessagesToUsageWriter.builder(Jackson.OBJECT_MAPPER::writeValue)
                 .build(out);

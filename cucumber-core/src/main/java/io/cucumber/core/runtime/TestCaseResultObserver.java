@@ -7,6 +7,7 @@ import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
     private final EventPublisher bus;
     private final List<Suggestion> suggestions = new ArrayList<>();
     private final EventHandler<SnippetsSuggestedEvent> snippetsSuggested = this::handleSnippetSuggestedEvent;
-    private Result result;
+    private @Nullable Result result;
     private final EventHandler<TestCaseFinished> testCaseFinished = this::handleTestCaseFinished;
 
     public TestCaseResultObserver(EventPublisher bus) {
@@ -56,7 +57,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
             Function<List<Suggestion>, Throwable> testCaseWasUndefined,
             Function<Throwable, Throwable> testCaseWasPending
     ) {
-        Status status = result.getStatus();
+        Status status = requireNonNull(result).getStatus();
         if (status.is(PASSED)) {
             return;
         }
@@ -70,7 +71,7 @@ public final class TestCaseResultObserver implements AutoCloseable {
         } else if (status.is(UNDEFINED)) {
             Throwable throwable = testCaseWasUndefined.apply(suggestions);
             throw new TestCaseFailed(throwable);
-        } else if (status.is(PENDING)) {
+        } else if (status.is(PENDING) && error != null) {
             Throwable throwable = testCaseWasPending.apply(error);
             throw new TestCaseFailed(throwable);
         }
@@ -84,14 +85,6 @@ public final class TestCaseResultObserver implements AutoCloseable {
         final List<String> snippets;
         final URI uri;
         final Location location;
-
-        @Deprecated
-        public Suggestion(String step, List<String> snippets) {
-            this.step = requireNonNull(step);
-            this.snippets = unmodifiableList(requireNonNull(snippets));
-            this.uri = null;
-            this.location = null;
-        }
 
         public Suggestion(String step, List<String> snippets, URI uri, Location location) {
             this.step = requireNonNull(step);

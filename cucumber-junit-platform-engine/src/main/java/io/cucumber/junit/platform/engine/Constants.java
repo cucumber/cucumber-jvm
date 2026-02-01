@@ -68,7 +68,9 @@ public final class Constants {
      * When using Cucumber through the JUnit Platform Launcher API or the JUnit
      * Platform Suite Engine, it is recommended to either use the
      * {@link org.junit.platform.engine.discovery.DiscoverySelectors} or
-     * annotations from {@link org.junit.platform.suite.api} respectively.
+     * annotations from <a
+     * href=https://docs.junit.org/6.0.2/api/org.junit.platform.suite.api/org/junit/platform/suite/api/package-summary.html>org.junit.platform.suite.api</a>
+     * respectively.
      * <p>
      * Additionally, when this property is used, to work around limitations in
      * Maven Surefire and Gradle, the Cucumber Engine will report its
@@ -89,10 +91,13 @@ public final class Constants {
      * By default, all scenarios are executed
      * <p>
      * Note: To ensure consistent reports between Cucumber and JUnit 5 prefer
-     * using JUnit 5 discovery request filters,
-     * {@link org.junit.platform.suite.api.IncludeTags} or <a
-     * href=https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions>JUnit
-     * 5 tag expressions</a> instead.
+     * using <a
+     * href=https://docs.junit.org/current/api/org.junit.platform.launcher/org/junit/platform/launcher/core/LauncherDiscoveryRequestBuilder.html#filters(org.junit.platform.engine.Filter...)>JUnit
+     * discovery request filters</a>, <a
+     * href=https://docs.junit.org/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/IncludeTags.html>org.junit.platform.suite.api.IncludeTags</a>
+     * or <a
+     * href=https://docs.junit.org/current/running-tests/tags.html#expressions>JUnit
+     * tag expressions</a> instead.
      */
     public static final String FILTER_NAME_PROPERTY_NAME = io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 
@@ -106,10 +111,13 @@ public final class Constants {
      * By default, all scenarios are executed
      * <p>
      * Note: To ensure consistent reports between Cucumber and JUnit 5 prefer
-     * using JUnit 5 discovery request filters,
-     * {@link org.junit.platform.suite.api.IncludeTags} or <a
-     * href=https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions>JUnit
-     * 5 tag expressions</a> instead.
+     * using <a
+     * href=https://docs.junit.org/current/api/org.junit.platform.launcher/org/junit/platform/launcher/core/LauncherDiscoveryRequestBuilder.html#filters(org.junit.platform.engine.Filter...)>JUnit
+     * discovery request filters</a>, <a
+     * href=https://docs.junit.org/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/IncludeTags.html>org.junit.platform.suite.api.IncludeTags</a>
+     * or <a
+     * href=https://docs.junit.org/current/running-tests/tags.html#expressions>JUnit
+     * tag expressions</a> instead.
      */
     public static final String FILTER_TAGS_PROPERTY_NAME = io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 
@@ -135,9 +143,9 @@ public final class Constants {
      * {@code Feature Name - Rule Name - Scenario Name - Examples Name - Example #N }.
      * This is useful for tools that only report the test name such as Gradle.
      * <p>
-     * When the {@code surefire} naming strategy is used with Surefire <= 3.5.2,
-     * nodes are named such the output makes sense. The feature name will be
-     * rendered as the class name. The long name without the feature will be
+     * When the {@code surefire} naming strategy is used with Surefire &lt;=
+     * 3.5.2, nodes are named such the output makes sense. The feature name will
+     * be rendered as the class name. The long name without the feature will be
      * rendered as the test method name. For example:
      * {@code Feature Name.Rule Name - Scenario Name - Examples Name - Example #N}.
      * <p>

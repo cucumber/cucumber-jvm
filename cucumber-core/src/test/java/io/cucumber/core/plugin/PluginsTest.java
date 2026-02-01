@@ -4,16 +4,14 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
-import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -23,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({ MockitoExtension.class })
+@MockitoSettings
 class PluginsTest {
 
     private final PluginFactory pluginFactory = new PluginFactory();
@@ -31,15 +29,6 @@ class PluginsTest {
     private EventPublisher rootEventPublisher;
     @Captor
     private ArgumentCaptor<EventPublisher> eventPublisher;
-
-    @Test
-    void shouldSetStrictOnPlugin() {
-        RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-        Plugins plugins = new Plugins(pluginFactory, runtimeOptions);
-        StrictAware plugin = mock(StrictAware.class);
-        plugins.addPlugin(plugin);
-        verify(plugin).setStrict(true);
-    }
 
     @Test
     void shouldSetMonochromeOnPlugin() {

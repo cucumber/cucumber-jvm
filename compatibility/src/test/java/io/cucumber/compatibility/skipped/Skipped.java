@@ -5,7 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import org.junit.jupiter.api.Assumptions;
 
-public class Skipped {
+public final class Skipped {
 
     @Before("@skip")
     public void before() {

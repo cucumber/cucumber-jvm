@@ -150,9 +150,10 @@ public final class TestNGCucumberRunner {
     }
 
     /**
-     * @return returns the cucumber scenarios as a two dimensional array of
-     *         {@link PickleWrapper} scenarios combined with their
-     *         {@link FeatureWrapper} feature.
+     * Provides an array of {@link PickleWrapper pickles} and
+     * {@link FeatureWrapper features} pairs.
+     *
+     * @return an array of pickle and feature wrapper pairs.
      */
     public Object[][] provideScenarios() {
         // Possibly invoked in a multi-threaded context

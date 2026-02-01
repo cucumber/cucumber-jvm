@@ -2,9 +2,10 @@ package io.cucumber.guice.collection;
 
 import java.util.List;
 
-public class CollectionUtil {
+public final class CollectionUtil {
 
     private CollectionUtil() {
+        /* no-op */
     }
 
     /**

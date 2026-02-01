@@ -2,6 +2,7 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.UnrecoverableExceptions;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,8 @@ final class RethrowingThrowableCollector {
             rethrowIfUnrecoverable(t);
             thrown.add(t);
             throwAsUncheckedException(t);
-            return null;
+            // Doesn't happen.
+            throw new IllegalStateException();
         }
     }
 
@@ -45,6 +47,7 @@ final class RethrowingThrowableCollector {
         thrown.add(throwable);
     }
 
+    @Nullable
     Throwable getThrowable() {
         // Don't try any tricks with `.addSuppressed`. Other frameworks are
         // already doing this.

@@ -6,6 +6,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.CucumberProperties;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,7 +14,7 @@ import java.util.HashSet;
 import static io.cucumber.guice.InjectorSourceFactory.createDefaultScenarioModuleInjectorSource;
 import static io.cucumber.guice.InjectorSourceFactory.instantiateUserSpecifiedInjectorSource;
 import static io.cucumber.guice.InjectorSourceFactory.loadInjectorSourceFromProperties;
-import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Guice implementation of the
@@ -22,13 +23,14 @@ import static java.lang.String.format;
 @API(status = API.Status.STABLE)
 public final class GuiceFactory implements ObjectFactory {
 
-    private Injector injector;
+    private @Nullable Injector injector;
 
     private final Collection<Class<?>> stepClasses = new HashSet<>();
-    private final Class<?> injectorSourceFromProperty;
-    private Class<?> withInjectorSource;
-    private ScenarioScope scenarioScope;
+    private final @Nullable Class<?> injectorSourceFromProperty;
+    private @Nullable Class<?> withInjectorSource;
+    private @Nullable ScenarioScope scenarioScope;
 
+    @SuppressWarnings("deprecation")
     public GuiceFactory() {
         this.injectorSourceFromProperty = loadInjectorSourceFromProperties(CucumberProperties.create());
         // Eager init to allow for static binding prior to before all hooks
@@ -61,15 +63,14 @@ public final class GuiceFactory implements ObjectFactory {
 
     private void checkOnlyOneClassHasInjectorSource(Class<?> stepClass) {
         if (withInjectorSource != null) {
-            throw new CucumberBackendException(format("" +
+            throw new CucumberBackendException(("" +
                     "Glue class %1$s and %2$s are both implementing io.cucumber.guice.InjectorSource.\n" +
                     "Please ensure only one class configures the Guice context\n" +
                     "\n" +
                     "By default Cucumber scans the entire classpath for context configuration.\n" +
                     "You can restrict this by configuring the glue path.\n" +
-                    ClasspathSupport.configurationExamples(),
-                stepClass,
-                withInjectorSource));
+                    ClasspathSupport.configurationExamples())
+                    .formatted(stepClass, withInjectorSource));
         }
     }
 
@@ -77,6 +78,7 @@ public final class GuiceFactory implements ObjectFactory {
         this.injector = injector;
     }
 
+    @Override
     public void start() {
         // Last minute init. Neither properties not annotations provided an
         // injector source.
@@ -87,6 +89,7 @@ public final class GuiceFactory implements ObjectFactory {
         scenarioScope.enterScope();
     }
 
+    @Override
     public void stop() {
         if (scenarioScope != null) {
             scenarioScope.exitScope();
@@ -94,8 +97,9 @@ public final class GuiceFactory implements ObjectFactory {
         }
     }
 
+    @Override
     public <T> T getInstance(Class<T> clazz) {
-        return injector.getInstance(clazz);
+        return requireNonNull(injector).getInstance(clazz);
     }
 
 }

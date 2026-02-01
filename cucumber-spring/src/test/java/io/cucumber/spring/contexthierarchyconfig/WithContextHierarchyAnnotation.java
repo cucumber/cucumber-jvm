@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextHierarchy;
 @ContextHierarchy({
         @ContextConfiguration("classpath:cucumber2.xml"),
         @ContextConfiguration("classpath:cucumber.xml") })
+@SuppressWarnings("DesignForExtension")
 public class WithContextHierarchyAnnotation {
 
     private boolean autowired;

@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.datatable.DataTableType;
+import org.jspecify.annotations.Nullable;
 
 final class Java8DataTableCellDefinition extends Java8DataTableTypeDefinition {
 
@@ -11,7 +12,7 @@ final class Java8DataTableCellDefinition extends Java8DataTableTypeDefinition {
         Class<?> returnType = resolveRawArguments(DataTableCellDefinitionBody.class, body.getClass())[0];
         this.dataTableType = new DataTableType(
             returnType,
-            (String cell) -> invokeMethod(replaceEmptyPatternsWithEmptyString(cell)));
+            (@Nullable String cell) -> invokeMethod(replaceEmptyPatternsWithEmptyString(cell)));
     }
 
     @Override

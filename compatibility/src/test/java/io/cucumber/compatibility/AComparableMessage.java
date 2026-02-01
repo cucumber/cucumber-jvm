@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
-public class AComparableMessage extends TypeSafeDiagnosingMatcher<JsonNode> {
+final class AComparableMessage extends TypeSafeDiagnosingMatcher<JsonNode> {
 
     private final JsonNode expectedMessage;
     private final String messageType;
@@ -24,7 +24,7 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<JsonNode> {
     private final Map<JsonPointer, JsonNode> expectedFields;
     private final Map<JsonPointer, Matcher<?>> expectedMatchers;
 
-    public AComparableMessage(String messageType, JsonNode expectedMessage, Map<Pattern, Matcher<?>> replacements) {
+    AComparableMessage(String messageType, JsonNode expectedMessage, Map<Pattern, Matcher<?>> replacements) {
         this.expectedMessage = expectedMessage;
         this.messageType = requireNonNull(messageType);
         this.replacements = requireNonNull(replacements);
@@ -56,11 +56,11 @@ public class AComparableMessage extends TypeSafeDiagnosingMatcher<JsonNode> {
     }
 
     private Map<JsonPointer, JsonNode> extractFieldsAndPointers(JsonPointer path, JsonNode node) {
-        if (node instanceof ObjectNode) {
-            return extractFieldsAndPointers(path, (ObjectNode) node);
+        if (node instanceof ObjectNode jsonNodes) {
+            return extractFieldsAndPointers(path, jsonNodes);
         }
-        if (node instanceof ArrayNode) {
-            return extractFieldsAndPointers(path, (ArrayNode) node);
+        if (node instanceof ArrayNode jsonNodes) {
+            return extractFieldsAndPointers(path, jsonNodes);
         }
         return Collections.singletonMap(path, node);
     }

@@ -3,24 +3,21 @@ package io.cucumber.java.annotation;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SubstitutionSteps {
+public final class SubstitutionSteps {
 
-    private static final Map<String, String> ROLES = new HashMap<String, String>() {
-        {
-            put("Manager", "now able to manage your employee accounts");
-            put("Admin", "able to manage any user account on the system");
-        }
-    };
+    private static final Map<String, String> ROLES = Map.of(
+        "Manager", "now able to manage your employee accounts",
+        "Admin", "able to manage any user account on the system");
 
-    private String name;
-    private String role;
-    private String details;
+    private @Nullable String name;
+    private @Nullable String role;
+    private @Nullable String details;
 
     @Given("I have a user account with my name {string}")
     public void I_have_a_user_account_with_my_name(String name) {
@@ -35,10 +32,10 @@ public class SubstitutionSteps {
 
     @Then("I should receive an email with the body:")
     public void I_should_receive_an_email_with_the_body(String body) {
-        String expected = String.format("Dear %s,\n" +
-                "You have been granted %s rights.  You are %s. Please be responsible.\n" +
-                "-The Admins",
-            name, role, details);
+        String expected = """
+                Dear %s,
+                You have been granted %s rights.  You are %s. Please be responsible.
+                -The Admins""".formatted(name, role, details);
         assertEquals(expected, body);
     }
 

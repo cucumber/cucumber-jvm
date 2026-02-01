@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.options.CurlOption;
 import io.cucumber.core.options.CurlOption.HttpMethod;
+import org.jspecify.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,13 +28,13 @@ import static java.util.Objects.requireNonNull;
 
 class UrlOutputStream extends OutputStream {
 
-    private final UrlReporter urlReporter;
+    private final @Nullable UrlReporter urlReporter;
 
     private final CurlOption option;
     private final Path temp;
     private final OutputStream tempOutputStream;
 
-    UrlOutputStream(CurlOption option, UrlReporter urlReporter) throws IOException {
+    UrlOutputStream(CurlOption option, @Nullable UrlReporter urlReporter) throws IOException {
         this.option = requireNonNull(option);
         this.urlReporter = urlReporter;
         this.temp = Files.createTempFile("cucumber", null);
@@ -147,19 +148,22 @@ class UrlOutputStream extends OutputStream {
             Map<String, List<String>> requestHeaders,
             Map<String, List<String>> responseHeaders,
             String responseBody,
-            Exception e
+            @Nullable Exception e
     ) {
-        return new IOException(String.format(
-            "%s:\n> %s %s%s%s%s",
-            "HTTP request failed",
-            method,
-            url,
-            headersToString("> ", requestHeaders),
-            headersToString("< ", responseHeaders),
-            responseBody), e);
+        return new IOException("""
+                %s:
+                > %s %s%s%s%s"""
+                .formatted(
+                    "HTTP request failed",
+                    method,
+                    url,
+                    headersToString("> ", requestHeaders),
+                    headersToString("< ", responseHeaders),
+                    responseBody),
+            e);
     }
 
-    private static String headersToString(String prefix, Map<String, List<String>> headers) {
+    private static String headersToString(String prefix, Map<@Nullable String, List<@Nullable String>> headers) {
         return headers
                 .entrySet()
                 .stream()
@@ -169,7 +173,7 @@ class UrlOutputStream extends OutputStream {
                         .map(value -> {
                             if (header.getKey() == null) {
                                 return prefix + value;
-                            } else if (header.getValue() == null) {
+                            } else if (value == null) {
                                 return prefix + header.getKey();
                             } else {
                                 return prefix + header.getKey() + ": " + value;

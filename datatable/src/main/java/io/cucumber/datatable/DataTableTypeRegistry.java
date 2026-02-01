@@ -3,6 +3,7 @@ package io.cucumber.datatable;
 import io.cucumber.datatable.TypeFactory.JavaType;
 import io.cucumber.datatable.TypeFactory.OptionalType;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -14,15 +15,15 @@ import java.util.function.Function;
 
 import static io.cucumber.datatable.TypeFactory.aListOf;
 import static io.cucumber.datatable.TypeFactory.constructType;
-import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 @API(status = API.Status.STABLE)
 public final class DataTableTypeRegistry {
 
     private final DataTableCellByTypeTransformer tableCellByTypeTransformer = new DataTableCellByTypeTransformer(this);
     private final Map<JavaType, DataTableType> tableTypeByType = new HashMap<>();
-    private TableEntryByTypeTransformer defaultDataTableEntryTransformer;
-    private TableCellByTypeTransformer defaultDataTableCellTransformer;
+    private @Nullable TableEntryByTypeTransformer defaultDataTableEntryTransformer;
+    private @Nullable TableCellByTypeTransformer defaultDataTableCellTransformer;
 
     public DataTableTypeRegistry(Locale locale) {
         final NumberParser numberParser = new NumberParser(locale);
@@ -75,10 +76,11 @@ public final class DataTableTypeRegistry {
     public void defineDataTableType(DataTableType dataTableType) {
         DataTableType existing = tableTypeByType.get(dataTableType.getTargetType());
         if (existing != null && !existing.isReplaceable()) {
-            throw new DuplicateTypeException(format("" +
-                    "There already is a data table type registered that can supply %s.\n" +
-                    "You are trying to register a %s for %s.\n" +
-                    "The existing data table type registered a %s for %s.\n",
+            throw new DuplicateTypeException("""
+                    There already is a data table type registered that can supply %s.
+                    You are trying to register a %s for %s.
+                    The existing data table type registered a %s for %s.
+                    """.formatted(
                 dataTableType.getElementType(),
                 dataTableType.getTransformerType().getSimpleName(),
                 dataTableType.getElementType(),
@@ -88,33 +90,35 @@ public final class DataTableTypeRegistry {
         tableTypeByType.put(dataTableType.getTargetType(), dataTableType);
     }
 
+    @Nullable
     DataTableType lookupCellTypeByType(Type type) {
         return lookupTableTypeByType(type, javaType -> aListOf(aListOf(javaType)));
     }
 
+    @Nullable
     DataTableType lookupRowTypeByType(Type type) {
         return lookupTableTypeByType(type, TypeFactory::aListOf);
     }
 
+    @Nullable
     DataTableType lookupTableTypeByType(Type type) {
         return lookupTableTypeByType(type, Function.identity());
     }
 
-    private DataTableType lookupTableTypeByType(Type type, Function<JavaType, JavaType> toTableType) {
+    private @Nullable DataTableType lookupTableTypeByType(Type type, Function<JavaType, JavaType> toTableType) {
         JavaType elementType = constructType(type);
         JavaType tableType = toTableType.apply(elementType);
         DataTableType dataTableType = tableTypeByType.get(tableType);
         if (dataTableType != null) {
             return dataTableType;
         }
-        if (elementType instanceof OptionalType) {
-            OptionalType optionalType = (OptionalType) elementType;
+        if (elementType instanceof OptionalType optionalType) {
             return lookupTableTypeAsOptionalByType(optionalType, toTableType);
         }
         return null;
     }
 
-    private DataTableType lookupTableTypeAsOptionalByType(
+    private @Nullable DataTableType lookupTableTypeAsOptionalByType(
             OptionalType elementType, Function<JavaType, JavaType> toTableType
     ) {
         JavaType requiredType = elementType.getElementType();
@@ -129,14 +133,14 @@ public final class DataTableTypeRegistry {
         return null;
     }
 
+    @Nullable
     DataTableType getDefaultTableCellTransformer(Type tableType) {
         if (defaultDataTableCellTransformer == null) {
             return null;
         }
 
-        if (tableType instanceof JavaType) {
-            JavaType javaType = (JavaType) tableType;
-            tableType = javaType.getOriginal();
+        if (tableType instanceof JavaType javaType) {
+            tableType = requireNonNull(javaType.getOriginal());
         }
 
         return DataTableType.defaultCell(
@@ -144,14 +148,14 @@ public final class DataTableTypeRegistry {
             defaultDataTableCellTransformer);
     }
 
+    @Nullable
     DataTableType getDefaultTableEntryTransformer(Type tableType) {
         if (defaultDataTableEntryTransformer == null) {
             return null;
         }
 
-        if (tableType instanceof JavaType) {
-            JavaType javaType = (JavaType) tableType;
-            tableType = javaType.getOriginal();
+        if (tableType instanceof JavaType javaType) {
+            tableType = requireNonNull(javaType.getOriginal());
         }
 
         return DataTableType.defaultEntry(

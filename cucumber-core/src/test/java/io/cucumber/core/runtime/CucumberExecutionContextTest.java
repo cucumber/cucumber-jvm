@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
@@ -60,7 +61,7 @@ class CucumberExecutionContextTest {
                 r.assertTestCasePassed(
                     Exception::new,
                     Function.identity(),
-                    (suggestions) -> new Exception(),
+                    suggestions -> new Exception(),
                     Function.identity());
             }
         }));
@@ -84,6 +85,7 @@ class CucumberExecutionContextTest {
 
         assertThat(testRunStarted.get(0), notNullValue());
         Result result = testRunFinished.get(0).getResult();
+        assertNotNull(result);
         assertThat(result.getStatus(), is(Status.FAILED));
         assertThat(result.getError(), is(failure));
     }

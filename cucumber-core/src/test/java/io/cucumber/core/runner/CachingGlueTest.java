@@ -52,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("NullAway") // TODO: Use Assert
 class CachingGlueTest {
 
     private final Locale language = ENGLISH;
@@ -83,10 +84,11 @@ class CachingGlueTest {
         DuplicateDefaultParameterTransformers exception = assertThrows(
             DuplicateDefaultParameterTransformers.class,
             () -> glue.prepareGlue(language));
-        assertThat(exception.getMessage(), equalTo("" +
-                "There may not be more then one default parameter transformer. Found:\n" +
-                " - mocked default parameter transformer\n" +
-                " - mocked default parameter transformer\n"));
+        assertThat(exception.getMessage(), equalTo("""
+                There may not be more then one default parameter transformer. Found:
+                 - mocked default parameter transformer
+                 - mocked default parameter transformer
+                """));
     }
 
     @Test
@@ -97,10 +99,11 @@ class CachingGlueTest {
         DuplicateDefaultDataTableEntryTransformers exception = assertThrows(
             DuplicateDefaultDataTableEntryTransformers.class,
             () -> glue.prepareGlue(language));
-        assertThat(exception.getMessage(), equalTo("" +
-                "There may not be more then one default data table entry. Found:\n" +
-                " - mocked default data table entry transformer\n" +
-                " - mocked default data table entry transformer\n"));
+        assertThat(exception.getMessage(), equalTo("""
+                There may not be more then one default data table entry. Found:
+                 - mocked default data table entry transformer
+                 - mocked default data table entry transformer
+                """));
     }
 
     @Test
@@ -111,10 +114,11 @@ class CachingGlueTest {
         DuplicateDefaultDataTableCellTransformers exception = assertThrows(
             DuplicateDefaultDataTableCellTransformers.class,
             () -> glue.prepareGlue(language));
-        assertThat(exception.getMessage(), equalTo("" +
-                "There may not be more then one default table cell transformers. Found:\n" +
-                " - mocked default data table cell transformer\n" +
-                " - mocked default data table cell transformer\n"));
+        assertThat(exception.getMessage(), equalTo("""
+                There may not be more then one default table cell transformers. Found:
+                 - mocked default data table cell transformer
+                 - mocked default data table cell transformer
+                """));
     }
 
     @Test
@@ -178,10 +182,11 @@ class CachingGlueTest {
     }
 
     private static Step getPickleStep(String text) {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given " + text + "\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given %s
+                """.formatted(text));
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -246,11 +251,12 @@ class CachingGlueTest {
     }
 
     private static Step getPickleStepWithSingleCellTable(String stepText, String cell) {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given " + stepText + "\n" +
-                "       | " + cell + " |\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given %s
+                       | %s |
+                """.formatted(stepText, cell));
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -286,13 +292,14 @@ class CachingGlueTest {
     }
 
     private static Step getPickleStepWithDocString(String stepText, String doc) {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given " + stepText + "\n" +
-                "       \"\"\"\n" +
-                "       " + doc + "\n" +
-                "       \"\"\"\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given %s
+                       ""\"
+                       %s
+                       ""\"
+                """.formatted(stepText, doc));
 
         return feature.getPickles().get(0).getSteps().get(0);
     }
@@ -617,29 +624,28 @@ class CachingGlueTest {
         assertThat(stepTypeRegistry1 == stepTypeRegistry2, is(true));
     }
 
-    private static class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
+    @SuppressWarnings("deprecation")
+    private static final class MockedScenarioScopedStepDefinition extends StubStepDefinition implements ScenarioScoped {
+
+        private boolean disposed;
 
         MockedScenarioScopedStepDefinition(String pattern, Type... types) {
             super(pattern, types);
         }
-
-        MockedScenarioScopedStepDefinition(String pattern, boolean transposed, Type... types) {
-            super(pattern, transposed, types);
-        }
-        private boolean disposed;
 
         @Override
         public void dispose() {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
     }
 
-    private static class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
+    @SuppressWarnings("deprecation")
+    private static final class MockedDataTableTypeDefinition implements DataTableTypeDefinition, ScenarioScoped {
 
         @Override
         public DataTableType dataTableType() {
@@ -663,12 +669,13 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
     }
 
+    @SuppressWarnings("deprecation")
     private static class MockedParameterTypeDefinition implements ParameterTypeDefinition, ScenarioScoped {
 
         @Override
@@ -693,13 +700,13 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
     }
 
-    private static class MockedParameterTypeDefinitionWithSourceReference extends MockedParameterTypeDefinition {
+    private static final class MockedParameterTypeDefinitionWithSourceReference extends MockedParameterTypeDefinition {
         @Override
         public Optional<SourceReference> getSourceReference() {
             return Optional.of(SourceReference.fromStackTraceElement(new StackTraceElement(
@@ -710,7 +717,7 @@ class CachingGlueTest {
         }
     }
 
-    private static class MockedHookDefinition implements HookDefinition {
+    private static final class MockedHookDefinition implements HookDefinition {
 
         private final int order;
 
@@ -749,7 +756,8 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
+    @SuppressWarnings("deprecation")
+    private static final class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
         private final int order;
 
@@ -793,7 +801,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
@@ -815,7 +823,8 @@ class CachingGlueTest {
 
     }
 
-    private static class MockedDefaultParameterTransformer
+    @SuppressWarnings("deprecation")
+    private static final class MockedDefaultParameterTransformer
             implements DefaultParameterTransformerDefinition, ScenarioScoped {
 
         @Override
@@ -840,13 +849,14 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
     }
 
-    private static class MockedDefaultDataTableCellTransformer
+    @SuppressWarnings("deprecation")
+    private static final class MockedDefaultDataTableCellTransformer
             implements DefaultDataTableCellTransformerDefinition, ScenarioScoped {
 
         @Override
@@ -871,13 +881,14 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
     }
 
-    private static class MockedDefaultDataTableEntryTransformer
+    @SuppressWarnings("deprecation")
+    private static final class MockedDefaultDataTableEntryTransformer
             implements DefaultDataTableEntryTransformerDefinition, ScenarioScoped {
 
         @Override
@@ -907,13 +918,14 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 
     }
 
-    private static class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {
+    @SuppressWarnings("deprecation")
+    private static final class MockedDocStringTypeDefinition implements DocStringTypeDefinition, ScenarioScoped {
 
         @Override
         public DocStringType docStringType() {
@@ -937,7 +949,7 @@ class CachingGlueTest {
             disposed = true;
         }
 
-        public boolean isDisposed() {
+        boolean isDisposed() {
             return disposed;
         }
 

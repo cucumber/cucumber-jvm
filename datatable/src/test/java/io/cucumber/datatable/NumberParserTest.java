@@ -23,6 +23,7 @@ class NumberParserTest {
     }
 
     @Test
+    @SuppressWarnings("FloatingPointLiteralPrecision")
     void can_parse_double() {
         assertEquals(1042.000000000000002, english.parseDouble("1,042.000000000000002"), 0);
         assertEquals(1042.000000000000002, german.parseDouble("1.042,000000000000002"), 0);

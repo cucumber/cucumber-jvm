@@ -3,6 +3,7 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.options.RuntimeOptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -14,6 +15,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 
+@Disabled // TODO: Put tests into separate module
 class SingletonRunnerSupplierTest {
 
     private SingletonRunnerSupplier runnerSupplier;

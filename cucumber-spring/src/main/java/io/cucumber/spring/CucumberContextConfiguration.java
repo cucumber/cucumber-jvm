@@ -7,22 +7,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// @formatter:off
 /**
  * This annotation is used on a configuration class to make the Cucumber aware
  * of the test configuration. This is to be used in conjunction with
  * {@code @ContextConfiguration}, {@code @ContextHierarchy} or
  * {@code @BootstrapWith}. In case of SpringBoot, the configuration class can be
  * annotated as follows:
- * <p>
  * 
- * <pre>
- * &#64;CucumberContextConfiguration
- * &#64;SpringBootTest(classes = TestConfig.class)
- * public class CucumberSpringConfiguration {
- * }
- * </pre>
  * <p>
- * Notes:
+ * <pre>{@code
+ *     @CucumberContextConfiguration
+ *     @SpringBootTest(classes = TestConfig.class)
+ *     public class CucumberSpringConfiguration {
+ *     }
+ * }</pre>
+ * 
+ * <p>Notes:
  * <ul>
  * <li>Only one glue class should be annotated with
  * {@code @CucumberContextConfiguration} otherwise an exception will be
@@ -41,6 +42,7 @@ import java.lang.annotation.Target;
  * <li></li>
  * </ul>
  */
+// @formatter:on
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @API(status = API.Status.STABLE)

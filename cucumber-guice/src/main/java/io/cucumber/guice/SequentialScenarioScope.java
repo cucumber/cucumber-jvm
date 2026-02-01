@@ -3,13 +3,14 @@ package io.cucumber.guice;
 import com.google.inject.Key;
 import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 class SequentialScenarioScope implements ScenarioScope {
 
-    private Map<Key<?>, Object> scenarioValues = null;
+    private @Nullable Map<Key<?>, Object> scenarioValues = null;
 
     /**
      * Scopes a provider. The returned provider returns objects from this scope.
@@ -36,7 +37,7 @@ class SequentialScenarioScope implements ScenarioScope {
 
             @SuppressWarnings("unchecked")
             T current = (T) scenarioValues.get(key);
-            if (current == null && !scenarioValues.containsKey(key)) {
+            if (current == null) {
                 current = unscoped.get();
                 scenarioValues.put(key, current);
             }

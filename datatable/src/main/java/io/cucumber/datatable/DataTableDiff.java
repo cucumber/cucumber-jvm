@@ -43,14 +43,11 @@ public final class DataTableDiff {
     }
 
     private String indentForRow(Integer rowIndex) {
-        switch (diffTypes.get(rowIndex)) {
-            case DELETE:
-                return "    - ";
-            case INSERT:
-                return "    + ";
-            default:
-                return "      ";
-        }
+        return switch (diffTypes.get(rowIndex)) {
+            case DELETE -> "    - ";
+            case INSERT -> "    + ";
+            default -> "      ";
+        };
     }
 
 }

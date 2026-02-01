@@ -5,4 +5,7 @@
  * <code>CLASSPATH</code> your step definitions will be instantiated by
  * PicoContainer.
  */
+@NullMarked
 package io.cucumber.picocontainer;
+
+import org.jspecify.annotations.NullMarked;

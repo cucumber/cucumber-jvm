@@ -1,5 +1,6 @@
 package io.cucumber.plugin.event;
 
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@NullUnmarked
 class NodeTest {
 
     private final Node.Example example1 = new Node.Example() {

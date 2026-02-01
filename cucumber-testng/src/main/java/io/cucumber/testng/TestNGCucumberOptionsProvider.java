@@ -6,6 +6,7 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.CucumberOptionsAnnotationParser;
 import io.cucumber.core.snippets.SnippetType;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 
@@ -14,7 +15,7 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
     private static final Logger log = LoggerFactory.getLogger(TestNGCucumberOptionsProvider.class);
 
     @Override
-    public CucumberOptionsAnnotationParser.CucumberOptions getOptions(Class<?> clazz) {
+    public CucumberOptionsAnnotationParser.@Nullable CucumberOptions getOptions(Class<?> clazz) {
         CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
         if (annotation != null) {
             return new TestNGCucumberOptions(annotation);
@@ -88,23 +89,19 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
 
         @Override
         public SnippetType snippets() {
-            switch (annotation.snippets()) {
-                case UNDERSCORE:
-                    return SnippetType.UNDERSCORE;
-                case CAMELCASE:
-                    return SnippetType.CAMELCASE;
-                default:
-                    throw new IllegalArgumentException("" + annotation.snippets());
-            }
+            return switch (annotation.snippets()) {
+                case UNDERSCORE -> SnippetType.UNDERSCORE;
+                case CAMELCASE -> SnippetType.CAMELCASE;
+            };
         }
 
         @Override
-        public Class<? extends ObjectFactory> objectFactory() {
+        public @Nullable Class<? extends ObjectFactory> objectFactory() {
             return (annotation.objectFactory() == NoObjectFactory.class) ? null : annotation.objectFactory();
         }
 
         @Override
-        public Class<? extends UuidGenerator> uuidGenerator() {
+        public @Nullable Class<? extends UuidGenerator> uuidGenerator() {
             return (annotation.uuidGenerator() == NoUuidGenerator.class) ? null : annotation.uuidGenerator();
         }
     }

@@ -7,25 +7,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// @formatter:off
 /**
- * <p>
  * This annotation can be specified on step definition method parameters to give
  * Cucumber a hint to transpose a DataTable.
- * <p>
- * For example, if you have the following Gherkin step with a table
+ * 
+ * <p>For example, if you have the following Gherkin step with a table
  * 
  * <pre>
  * Given the user is
- *    | firstname	| Roberto	|
- *    | lastname	| Lo Giacco |
- *    | nationality	| Italian	|
+ *    | firstname   | Roberto   |
+ *    | lastname    | Lo Giacco |
+ *    | nationality | Italian   |
  * </pre>
- * <p>
- * And a data table type to create a User
+ * 
+ * <p>And a data table type to create a User
  *
  * <pre>
  * {@code
- * &#64;DataTableType
+ * @DataTableType
  * public User convert(Map<String, String> entry){
  *    return new User(
  *        entry.get("firstname"),
@@ -40,14 +40,19 @@ import java.lang.annotation.Target;
  * object:
  * 
  * <pre>
- * &#064;Given("^the user is$")
- * public void the_user_is(&#064;Transpose User user) {
+ * {@code
+ * 
+ * @Given("^the user is$")
+ * public void the_user_is(@Transpose User user) {
  *     this.user = user;
+ * }
  * }
  * </pre>
  */
+// @formatter:on
+
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.PARAMETER })
+@Target(ElementType.PARAMETER)
 @API(status = API.Status.STABLE)
 public @interface Transpose {
 

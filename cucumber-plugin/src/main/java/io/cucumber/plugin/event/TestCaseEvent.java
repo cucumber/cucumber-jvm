@@ -15,6 +15,9 @@ public abstract class TestCaseEvent extends TimeStampedEvent {
         this.testCase = Objects.requireNonNull(testCase);
     }
 
+    /**
+     * Returns the test case for this event.
+     */
     public TestCase getTestCase() {
         return testCase;
     }

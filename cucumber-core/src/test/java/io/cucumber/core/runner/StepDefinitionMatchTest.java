@@ -36,6 +36,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("NullAway") // TODO: Use Assert
 class StepDefinitionMatchTest {
 
     private final StepTypeRegistry stepTypeRegistry = new StepTypeRegistry(ENGLISH);
@@ -57,10 +58,11 @@ class StepDefinitionMatchTest {
 
     @Test
     void executes_a_step() throws Throwable {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.class);
@@ -73,10 +75,11 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
@@ -88,21 +91,22 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.\n"
-                    +
-                    "However, the gherkin step has 1 arguments:\n" +
-                    " * 4\n" +
-                    "Step text: I have 4 cukes in my belly")));
+            """
+                    Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.
+                    However, the gherkin step has 1 arguments:
+                     * 4
+                    Step text: I have 4 cukes in my belly""")));
     }
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_fewer_parameters_than_arguments_with_data_table() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n" +
-                "       | A | B | \n" +
-                "       | C | D | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                       | A | B |
+                       | C | D |
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly");
@@ -115,25 +119,26 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.\n"
-                    +
-                    "However, the gherkin step has 2 arguments:\n" +
-                    " * 4\n" +
-                    " * Table:\n" +
-                    "      | A | B |\n" +
-                    "      | C | D |\n" +
-                    "\n" +
-                    "Step text: I have 4 cukes in my belly")));
+            """
+                    Step [I have {int} cukes in my belly] is defined with 0 parameters at '{stubbed location with details}'.
+                    However, the gherkin step has 2 arguments:
+                     * 4
+                     * Table:
+                          | A | B |
+                          | C | D |
+
+                    Step text: I have 4 cukes in my belly""")));
     }
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_more_parameters_than_arguments() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n" +
-                "       | A | B | \n" +
-                "       | C | D | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                       | A | B |
+                       | C | D |
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition("I have {int} cukes in my belly", Integer.TYPE,
@@ -147,23 +152,24 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Step [I have {int} cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n"
-                    +
-                    "However, the gherkin step has 2 arguments:\n" +
-                    " * 4\n" +
-                    " * Table:\n" +
-                    "      | A | B |\n" +
-                    "      | C | D |\n" +
-                    "\n" +
-                    "Step text: I have 4 cukes in my belly")));
+            """
+                    Step [I have {int} cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.
+                    However, the gherkin step has 2 arguments:
+                     * 4
+                     * Table:
+                          | A | B |
+                          | C | D |
+
+                    Step text: I have 4 cukes in my belly""")));
     }
 
     @Test
     void throws_arity_mismatch_exception_when_there_are_more_parameters_and_no_arguments() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have cukes in my belly
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have cukes in my belly", Integer.TYPE, Short.TYPE,
             List.class);
@@ -175,18 +181,20 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Step [I have cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.\n" +
-                    "However, the gherkin step has 0 arguments.\n" +
-                    "Step text: I have cukes in my belly")));
+            """
+                    Step [I have cukes in my belly] is defined with 3 parameters at '{stubbed location with details}'.
+                    However, the gherkin step has 0 arguments.
+                    Step text: I have cukes in my belly""")));
     }
 
     @Test
     void throws_register_type_in_configuration_exception_when_there_is_no_data_table_type_defined() {
-        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have a data table\n" +
-                "       | A | \n");
+        Feature feature = TestFeatureParser.parse("file:test.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have a data table
+                       | A |
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition(
@@ -204,9 +212,9 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.\n"
-                    +
-                    "It appears you did not register a data table type.")));
+            """
+                    Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.
+                    It appears you did not register a data table type.""")));
     }
 
     @Test
@@ -215,13 +223,14 @@ class StepDefinitionMatchTest {
             "itemQuantity",
             "(few|some|lots of) (cukes|gherkins)",
             ItemQuantity.class,
-            (String s) -> null // Wrong number of capture groups
-        ));
+            // Wrong number of capture groups
+            (String s) -> null));
 
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some cukes in my belly
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
@@ -248,10 +257,11 @@ class StepDefinitionMatchTest {
                     new InvocationTargetException(userException));
             }));
 
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some cukes in my belly
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
         StepDefinition stepDefinition = new StubStepDefinition("I have {itemQuantity} in my belly", ItemQuantity.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
@@ -270,13 +280,14 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_convert_exception_for_singleton_table_dimension_mismatch() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some cukes in my belly\n" +
-                "       | 3 | \n" +
-                "       | 14 | \n" +
-                "       | 15 | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some cukes in my belly
+                       | 3 |
+                       | 14 |
+                       | 15 |
+                """);
 
         stepTypeRegistry.defineDataTableType(new DataTableType(ItemQuantity.class, ItemQuantity::new));
 
@@ -295,13 +306,14 @@ class StepDefinitionMatchTest {
 
     @Test
     void rethrows_target_invocation_exceptions_from_data_table() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some cukes in my belly\n" +
-                "       | 3 | \n" +
-                "       | 14 | \n" +
-                "       | 15 | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some cukes in my belly
+                       | 3  |
+                       | 14 |
+                       | 15 |
+                """);
         RuntimeException userException = new RuntimeException();
 
         stepTypeRegistry.defineDataTableType(new DataTableType(
@@ -329,13 +341,14 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_convert_exception_for_docstring() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some cukes in my belly\n" +
-                "       \"\"\"doc\n" +
-                "        converting this should throw an exception\n" +
-                "       \"\"\"\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some cukes in my belly
+                       ""\"doc
+                        converting this should throw an exception
+                       ""\"
+                """);
 
         stepTypeRegistry.defineDocStringType(new DocStringType(ItemQuantity.class, "doc", content -> {
             throw new IllegalArgumentException(content);
@@ -358,13 +371,14 @@ class StepDefinitionMatchTest {
     void rethrows_target_invocation_exception_for_docstring() {
         RuntimeException userException = new RuntimeException();
 
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have some cukes in my belly\n" +
-                "       \"\"\"doc\n" +
-                "        converting this should throw an exception\n" +
-                "       \"\"\"\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have some cukes in my belly
+                       ""\"doc
+                        converting this should throw an exception
+                       ""\"
+                """);
 
         stepTypeRegistry.defineDocStringType(new DocStringType(ItemQuantity.class, "doc", content -> {
             throw new CucumberInvocationTargetException(stubbedLocation, new InvocationTargetException(userException));
@@ -388,11 +402,12 @@ class StepDefinitionMatchTest {
 
     @Test
     void throws_could_not_invoke_argument_conversion_when_argument_could_not_be_got() {
-        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have a data table\n" +
-                "       | A | \n");
+        Feature feature = TestFeatureParser.parse("file:test.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have a data table
+                       | A |
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition(
@@ -410,19 +425,20 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.\n"
-                    +
-                    "It appears there was a problem with a hook or transformer definition.")));
+            """
+                    Could not convert arguments for step [I have a data table] defined at '{stubbed location with details}'.
+                    It appears there was a problem with a hook or transformer definition.""")));
     }
 
     @Test
     void throws_could_not_invoke_step_when_execution_failed_due_to_bad_methods() {
-        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have a data table\n" +
-                "       | A | \n" +
-                "       | B | \n");
+        Feature feature = TestFeatureParser.parse("file:test.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have a data table
+                       | A |
+                       | B |
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition(
@@ -443,17 +459,19 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Could not invoke step [I have a data table] defined at '{stubbed location with details}'.\n" +
-                    "It appears there was a problem with the step definition.\n" +
-                    "The converted arguments types were (java.lang.String, java.lang.String)")));
+            """
+                    Could not invoke step [I have a data table] defined at '{stubbed location with details}'.
+                    It appears there was a problem with the step definition.
+                    The converted arguments types were (java.lang.String, java.lang.String)""")));
     }
 
     @Test
     void throws_could_not_invoke_step_when_execution_failed_with_null_arguments() {
-        Feature feature = TestFeatureParser.parse("file:test.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have an null value\n");
+        Feature feature = TestFeatureParser.parse("file:test.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have an null value
+                """);
         Step step = feature.getPickles().get(0).getSteps().get(0);
 
         StepDefinition stepDefinition = new StubStepDefinition(
@@ -472,9 +490,10 @@ class StepDefinitionMatchTest {
         Executable testMethod = () -> stepDefinitionMatch.runStep(null);
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(equalTo(
-            "Could not invoke step [I have an {word} value] defined at '{stubbed location with details}'.\n" +
-                    "It appears there was a problem with the step definition.\n" +
-                    "The converted arguments types were (null)")));
+            """
+                    Could not invoke step [I have an {word} value] defined at '{stubbed location with details}'.
+                    It appears there was a problem with the step definition.
+                    The converted arguments types were (null)""")));
     }
 
     private StackTraceElement lastStackElement(StackTraceElement[] stackTrace) {

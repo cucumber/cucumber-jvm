@@ -11,31 +11,36 @@ import java.util.Optional;
 public interface Snippet {
 
     /**
-     * The language of the generated snippet.
-     * 
-     * @see    io.cucumber.messages.types.Snippet#getLanguage()
+     * The programming language of the generated snippet.
+     *
      * @return the language of the generated snippet.
+     * @see    io.cucumber.messages.types.Snippet#getLanguage()
      */
     default Optional<String> language() {
         return Optional.empty();
     }
 
     /**
-     * @return a {@link java.text.MessageFormat} template used to generate a
-     *         snippet. The template can access the following variables:
-     *         <ul>
-     *         <li>{0} : Step Keyword</li>
-     *         <li>{1} : Value of {@link #escapePattern(String)}</li>
-     *         <li>{2} : Function name</li>
-     *         <li>{3} : Value of {@link #arguments(Map)}</li>
-     *         <li>{4} : Regexp hint comment</li>
-     *         <li>{5} : value of {@link #tableHint()} if the step has a
-     *         table</li>
-     *         </ul>
+     * Returns a {@link java.text.MessageFormat} template used to generate a
+     * snippet.
+     * <p>
+     * The template can access the following variables:
+     * <ul>
+     * <li>{0} : Step Keyword</li>
+     * <li>{1} : Value of {@link #escapePattern(String)}</li>
+     * <li>{2} : Function name</li>
+     * <li>{3} : Value of {@link #arguments(Map)}</li>
+     * <li>{4} : Regexp hint comment</li>
+     * <li>{5} : value of {@link #tableHint()} if the step has a table</li>
+     * </ul>
+     *
+     * @return a template used to generate a snippet.
      */
     MessageFormat template();
 
     /**
+     * Returns a hint about alternative ways to declare a table argument
+     * 
      * @return a hint about alternative ways to declare a table argument
      */
     String tableHint();
@@ -51,6 +56,8 @@ public interface Snippet {
     String arguments(Map<String, Type> arguments);
 
     /**
+     * Escape representation of the pattern, if escaping is necessary.
+     * 
      * @param  pattern the computed pattern that will match an undefined step
      * @return         an escaped representation of the pattern, if escaping is
      *                 necessary.

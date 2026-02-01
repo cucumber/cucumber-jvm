@@ -36,9 +36,9 @@ class LambdaStepDefinitions : En {
         }
 
         Given("this data table:") { peopleTable: DataTable ->
-            val people: List<Person> = peopleTable.asList(Person::class.java)
-            assertEquals("Aslak", people[0].first)
-            assertEquals("Hellesøy", people[0].last)
+            val people: List<Person?> = peopleTable.asList(Person::class.java)
+            assertEquals("Aslak", people[0]!!.first)
+            assertEquals("Hellesøy", people[0]!!.last)
         }
 
         val alreadyHadThisManyCukes = 1

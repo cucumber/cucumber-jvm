@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CucumberContextConfiguration
 @MetaConfiguration
+@SuppressWarnings("DesignForExtension")
 public class BellyMetaStepDefinitions {
 
     @Autowired

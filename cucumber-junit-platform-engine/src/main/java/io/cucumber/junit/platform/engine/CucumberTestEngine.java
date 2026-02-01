@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.ExecutionRequest;
@@ -76,7 +77,7 @@ public final class CucumberTestEngine extends HierarchicalTestEngine<CucumberEng
         return uniqueId.hasPrefix(cucumberRootEngineId);
     }
 
-    private static TestSource createEngineTestSource(ConfigurationParameters configurationParameters) {
+    private static @Nullable TestSource createEngineTestSource(ConfigurationParameters configurationParameters) {
         // Workaround. Test Engines do not normally have test source.
         // Maven does not count tests that do not have a ClassSource somewhere
         // in the test descriptor tree.

@@ -1,6 +1,7 @@
 package io.cucumber.core.stepexpression;
 
 import io.cucumber.cucumberexpressions.Expression;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public final class StepExpression {
         return expression.getSource();
     }
 
-    public List<Argument> match(String text, List<List<String>> cells, Type... types) {
+    public @Nullable List<Argument> match(String text, List<List<String>> cells, Type... types) {
         List<Argument> list = match(text, types);
 
         if (list == null) {
@@ -41,12 +42,8 @@ public final class StepExpression {
 
     }
 
-    public List<Argument> match(String text, Type... types) {
-        List<io.cucumber.cucumberexpressions.Argument<?>> match = expression.match(text, types);
-        if (match == null) {
-            return null;
-        }
-        return wrapPlusOne(match);
+    public @Nullable List<Argument> match(String text, Type... types) {
+        return expression.match(text, types).map(StepExpression::wrapPlusOne).orElse(null);
     }
 
     private static List<Argument> wrapPlusOne(List<io.cucumber.cucumberexpressions.Argument<?>> match) {
@@ -57,7 +54,7 @@ public final class StepExpression {
         return copy;
     }
 
-    public List<Argument> match(String text, String content, String contentType, Type... types) {
+    public @Nullable List<Argument> match(String text, String content, @Nullable String contentType, Type... types) {
         List<Argument> list = match(text, types);
         if (list == null) {
             return null;

@@ -22,12 +22,13 @@ class PrettyFormatterTest {
 
     @Test
     void writes_pretty_report() {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Given first step
+                    When second step
+                    Then third step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -41,11 +42,11 @@ class PrettyFormatterTest {
                 .build()
                 .run();
 
-        assertThat(out, bytes(equalCompressingLineSeparators("" +
-                "\n" +
-                "Scenario: scenario name # path/test.feature:2\n" +
-                "  ✔ Given first step    # io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()\n" +
-                "  ✔ When second step    # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()\n" +
-                "  ✔ Then third step     # io.cucumber.core.plugin.PrettyFormatterStepDefinition.three()")));
+        assertThat(out, bytes(equalCompressingLineSeparators("""
+
+                Scenario: scenario name # path/test.feature:2
+                  ✔ Given first step    # io.cucumber.core.plugin.PrettyFormatterStepDefinition.one()
+                  ✔ When second step    # io.cucumber.core.plugin.PrettyFormatterStepDefinition.two()
+                  ✔ Then third step     # io.cucumber.core.plugin.PrettyFormatterStepDefinition.three()""")));
     }
 }

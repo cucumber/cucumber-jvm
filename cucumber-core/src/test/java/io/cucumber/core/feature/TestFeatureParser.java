@@ -10,7 +10,11 @@ import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class TestFeatureParser {
+public final class TestFeatureParser {
+
+    private TestFeatureParser() {
+        /* no-op */
+    }
 
     public static Feature parse(final String source) {
         return parse("file:test.feature", source);
@@ -40,7 +44,7 @@ public class TestFeatureParser {
                 return source;
             }
 
-        }).orElse(null);
+        }).orElseThrow();
     }
 
 }

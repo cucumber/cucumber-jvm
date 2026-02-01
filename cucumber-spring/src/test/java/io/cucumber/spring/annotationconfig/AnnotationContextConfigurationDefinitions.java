@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@SuppressWarnings("DesignForExtension")
 public class AnnotationContextConfigurationDefinitions {
 
     @Autowired

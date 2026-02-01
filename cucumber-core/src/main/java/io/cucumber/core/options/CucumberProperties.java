@@ -2,6 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,10 +72,10 @@ public final class CucumberProperties {
 
     static class CucumberPropertiesMap extends AbstractMap<String, String> {
 
-        private final CucumberPropertiesMap parent;
+        private final @Nullable CucumberPropertiesMap parent;
         private final Map<String, String> delegate;
 
-        CucumberPropertiesMap(CucumberPropertiesMap parent, Map<String, String> delegate) {
+        CucumberPropertiesMap(@Nullable CucumberPropertiesMap parent, Map<String, String> delegate) {
             this.delegate = requireNonNull(delegate);
             this.parent = parent;
         }
@@ -95,20 +96,19 @@ public final class CucumberProperties {
         }
 
         @Override
-        public String get(Object key) {
+        public @Nullable String get(Object key) {
             String exactMatch = super.get(key);
             if (exactMatch != null) {
                 return exactMatch;
             }
 
-            if (!(key instanceof String)) {
+            if (!(key instanceof String keyString)) {
                 return null;
             }
 
             // Support old skool
             // Not all environments allow properties to contain dots or dashes.
             // So we map the requested property to its underscore case variant.
-            String keyString = (String) key;
 
             String uppercase = keyString
                     .replace(".", "_")

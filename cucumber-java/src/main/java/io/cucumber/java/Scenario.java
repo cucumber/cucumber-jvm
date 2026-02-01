@@ -2,6 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.TestCaseState;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Collection;
@@ -26,6 +27,8 @@ public final class Scenario {
     }
 
     /**
+     * Returns tags of this scenario.
+     *
      * @return tags of this scenario.
      */
     public Collection<String> getSourceTagNames() {
@@ -45,7 +48,12 @@ public final class Scenario {
     }
 
     /**
-     * @return true if and only if {@link #getStatus()} returns "failed"
+     * Returns true the scenario has failed.
+     * <p>
+     * The scenario has failed if {@link #getStatus()} returns
+     * {@link Status#FAILED}.
+     * 
+     * @return true if the scenario failed.
      */
     public boolean isFailed() {
         return delegate.isFailed();
@@ -53,7 +61,7 @@ public final class Scenario {
 
     /**
      * Attach data to the report(s).
-     * 
+     *
      * <pre>
      * {@code
      * // Attach a screenshot. See your UI automation tool's docs for
@@ -74,7 +82,7 @@ public final class Scenario {
      * @param mediaType what is the data?
      * @param name      attachment name
      */
-    public void attach(byte[] data, String mediaType, String name) {
+    public void attach(byte[] data, String mediaType, @Nullable String name) {
         delegate.attach(data, mediaType, name);
     }
 
@@ -86,7 +94,7 @@ public final class Scenario {
      * @param name      attachment name
      * @see             #attach(byte[], String, String)
      */
-    public void attach(String data, String mediaType, String name) {
+    public void attach(String data, String mediaType, @Nullable String name) {
         delegate.attach(data, mediaType, name);
     }
 
@@ -101,6 +109,8 @@ public final class Scenario {
     }
 
     /**
+     * Return the name of the Scenario
+     * 
      * @return the name of the Scenario
      */
     public String getName() {
@@ -124,6 +134,8 @@ public final class Scenario {
     }
 
     /**
+     * Returns the uri of the Scenario.
+     * 
      * @return the uri of the Scenario.
      */
     public URI getUri() {
@@ -131,6 +143,8 @@ public final class Scenario {
     }
 
     /**
+     * Return the language of the Scenario.
+     * 
      * @return the language of the Scenario.
      */
     public String getLanguage() {

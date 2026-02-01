@@ -20,7 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 
-class PickleRunnerWithNoStepDescriptionsTest {
+final class PickleRunnerWithNoStepDescriptionsTest {
 
     final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     final Options options = RuntimeOptions.defaultOptions();
@@ -29,10 +29,11 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
     void shouldUseScenarioNameWithFeatureNameAsClassNameForDisplayName() {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Then it works
+                """);
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
             "feature name",
@@ -50,10 +51,11 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Then it works
+                """);
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
             "feature name",
@@ -71,11 +73,12 @@ class PickleRunnerWithNoStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileWithRussianLanguage() {
-        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", "" +
-                "#language:ru\n" +
-                "Функция: имя функции\n" +
-                "  Сценарий: имя сценария\n" +
-                "    Тогда он работает\n");
+        List<Pickle> pickles = TestPickleBuilder.picklesFromFeature("featurePath", """
+                #language:ru
+                Функция: имя функции
+                  Сценарий: имя сценария
+                    Тогда он работает
+                """);
 
         PickleRunner runner = PickleRunners.withNoStepDescriptions(
             "имя функции",

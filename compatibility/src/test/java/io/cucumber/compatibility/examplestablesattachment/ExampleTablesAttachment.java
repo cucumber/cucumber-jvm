@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import static io.cucumber.compatibility.Resources.read;
 
-public class ExampleTablesAttachment {
+public final class ExampleTablesAttachment {
 
     Scenario scenario;
 

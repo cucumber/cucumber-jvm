@@ -2,7 +2,7 @@ package io.cucumber.picocontainer;
 
 import org.picocontainer.Disposable;
 
-public class StepDefinitionsWithTransitiveDependencies {
+public final class StepDefinitionsWithTransitiveDependencies {
 
     final FirstDependency firstDependency;
 
@@ -10,7 +10,7 @@ public class StepDefinitionsWithTransitiveDependencies {
         this.firstDependency = firstDependency;
     }
 
-    public static class FirstDependency implements Disposable {
+    public static final class FirstDependency implements Disposable {
         final SecondDependency secondDependency;
 
         public FirstDependency(SecondDependency secondDependency) {

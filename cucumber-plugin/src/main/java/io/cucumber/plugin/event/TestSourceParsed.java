@@ -14,11 +14,11 @@ import java.util.Objects;
  * Cucumber scenarios and individual examples in a scenario outline are compiled
  * into pickles. These pickles are wrapped by a {@link TestCase}. As such
  * Cucumbers internal representation lacks any hierarchy. I.e. once compiled
- * into a a pickle a scenario is no longer associated with a feature file.
+ * into a pickle a scenario is no longer associated with a feature file.
  * <p>
  * However consumers of Cucumbers output generally expect results to be reported
- * in hierarchical fashion. This event allows test cases to be associated with
- * with a {@link Node} in the hierarchy.
+ * in hierarchical fashion. This event allows test cases to be associated with a
+ * {@link Node} in the hierarchy.
  * <p>
  * Note that this representation is intentionally abstract. To create more
  * detailed reports that recreate a facsimile of the feature file it is
@@ -28,7 +28,6 @@ import java.util.Objects;
  * <p>
  * Note that a test source may contain multiple root nodes. Though currently
  * there are no parsers that support this yet.
- * <p>
  */
 @API(status = API.Status.EXPERIMENTAL)
 public final class TestSourceParsed extends TimeStampedEvent {

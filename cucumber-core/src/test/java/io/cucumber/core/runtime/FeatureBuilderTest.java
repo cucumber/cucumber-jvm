@@ -49,7 +49,7 @@ class FeatureBuilderTest {
             public InputStream getInputStream() {
                 return new ByteArrayInputStream("Feature: Example\n  Scenario: Empty".getBytes(UTF_8));
             }
-        }).orElse(null);
+        }).orElseThrow();
     }
 
     @Test

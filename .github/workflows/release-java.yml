@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
           cache: 'maven'
       - uses: cucumber/action-publish-mvn@0f70b286568bfba3172f851d8247e7efb7da1c18 # v3.0.0
         with:

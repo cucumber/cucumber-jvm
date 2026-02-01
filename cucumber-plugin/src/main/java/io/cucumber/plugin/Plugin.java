@@ -31,7 +31,6 @@ import java.net.URL;
  * Plugins may also implement one of these interfaces:
  * <ul>
  * <li>{@link ColorAware}</li>
- * <li>{@link StrictAware}</li>
  * <li>{@link EventListener}</li>
  * <li>{@link ConcurrentEventListener}</li>
  * </ul>

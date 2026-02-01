@@ -1,8 +1,11 @@
 package io.cucumber.core.stepexpression;
 
+import org.jspecify.annotations.Nullable;
+
 @FunctionalInterface
 interface DocStringTransformer<T> {
 
-    T transform(String docString, String contentType);
+    @Nullable
+    T transform(String docString, @Nullable String contentType);
 
 }

@@ -1,6 +1,7 @@
 package io.cucumber.guice;
 
 import com.google.inject.Injector;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InjectorSourceFactoryTest {
 
+    @SuppressWarnings("deprecation")
     @Test
     void instantiatesInjectorSourceByFullyQualifiedName() {
         Map<String, String> properties = new HashMap<>();
@@ -27,6 +29,7 @@ class InjectorSourceFactoryTest {
         assertThat(aClass, is(CustomInjectorSource.class));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void failsToLoadNonExistantClass() {
         Map<String, String> properties = new HashMap<>();
@@ -80,31 +83,35 @@ class InjectorSourceFactoryTest {
     public static class CustomInjectorSource implements InjectorSource {
 
         @Override
+        @SuppressWarnings("NullAway")
         public Injector getInjector() {
             return null;
         }
 
     }
 
-    public static class PrivateConstructor implements InjectorSource {
+    public static final class PrivateConstructor implements InjectorSource {
 
         private PrivateConstructor() {
         }
 
         @Override
+        @SuppressWarnings("NullAway")
         public Injector getInjector() {
             return null;
         }
 
     }
 
-    public static class NoDefaultConstructor implements InjectorSource {
+    public static final class NoDefaultConstructor implements InjectorSource {
 
+        @SuppressWarnings({ "UnusedMethod", "UnusedVariable" })
         private NoDefaultConstructor(String someParameter) {
         }
 
         @Override
-        public Injector getInjector() {
+        @SuppressWarnings("NullAway")
+        public @Nullable Injector getInjector() {
             return null;
         }
 

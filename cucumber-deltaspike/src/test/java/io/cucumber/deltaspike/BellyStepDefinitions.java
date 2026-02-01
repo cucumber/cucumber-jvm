@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("DesignForExtension")
 @Singleton
 public class BellyStepDefinitions {
 

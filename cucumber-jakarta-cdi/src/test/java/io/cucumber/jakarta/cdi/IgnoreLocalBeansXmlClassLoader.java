@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-public class IgnoreLocalBeansXmlClassLoader extends ClassLoader {
+final class IgnoreLocalBeansXmlClassLoader extends ClassLoader {
 
     private static final String BEANS_XML_FILE = "META-INF/beans.xml";
 
-    public IgnoreLocalBeansXmlClassLoader(ClassLoader parent) {
+    IgnoreLocalBeansXmlClassLoader(ClassLoader parent) {
         super(parent);
     }
 
@@ -21,14 +21,14 @@ public class IgnoreLocalBeansXmlClassLoader extends ClassLoader {
         return enumeration;
     }
 
-    public static void setClassLoader(boolean ignoreLocalBeansXml) {
+    static void setClassLoader(boolean ignoreLocalBeansXml) {
         ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
         if (ignoreLocalBeansXml && !(threadClassLoader instanceof IgnoreLocalBeansXmlClassLoader)) {
             Thread.currentThread().setContextClassLoader(new IgnoreLocalBeansXmlClassLoader(threadClassLoader));
         }
     }
 
-    public static void restoreClassLoader() {
+    static void restoreClassLoader() {
         ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
         if (threadClassLoader instanceof IgnoreLocalBeansXmlClassLoader) {
             Thread.currentThread().setContextClassLoader(threadClassLoader.getParent());

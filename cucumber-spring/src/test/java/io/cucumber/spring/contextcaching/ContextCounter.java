@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
+@SuppressWarnings("DesignForExtension")
 public class ContextCounter implements ApplicationContextAware {
 
     private static final Set<ApplicationContext> applicationContextSet = new HashSet<>();

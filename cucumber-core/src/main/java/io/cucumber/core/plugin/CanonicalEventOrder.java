@@ -53,8 +53,8 @@ final class CanonicalEventOrder implements Comparator<Event> {
             .thenComparing(Event::getInstant);
 
     private static int testCaseEvents(Event a, Event b) {
-        if (a instanceof TestCaseEvent && b instanceof TestCaseEvent) {
-            return testCaseOrder.compare((TestCaseEvent) a, (TestCaseEvent) b);
+        if (a instanceof TestCaseEvent testCaseEventA && b instanceof TestCaseEvent testCaseEventB) {
+            return testCaseOrder.compare(testCaseEventA, testCaseEventB);
         }
         return 0;
     }

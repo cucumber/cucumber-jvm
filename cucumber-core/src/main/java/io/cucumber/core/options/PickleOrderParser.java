@@ -15,6 +15,10 @@ final class PickleOrderParser {
 
     private static final Pattern RANDOM_AND_SEED_PATTERN = Pattern.compile("random(?::(\\d+))?");
 
+    private PickleOrderParser() {
+        /* no-op */
+    }
+
     static PickleOrder parse(String argument) {
         if ("reverse".equals(argument)) {
             return StandardPickleOrders.reverseLexicalUriOrder();
@@ -34,7 +38,7 @@ final class PickleOrderParser {
         if (seedString != null) {
             seed = Long.parseLong(seedString);
         } else {
-            seed = Math.abs(new Random().nextLong());
+            seed = new Random().nextLong(Long.MAX_VALUE);
             log.info(() -> "Using random scenario order. Seed: " + seed);
         }
         return StandardPickleOrders.random(seed);

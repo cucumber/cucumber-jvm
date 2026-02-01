@@ -8,8 +8,8 @@ import org.junit.jupiter.api.condition.OS;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
-import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
@@ -21,7 +21,7 @@ class ResourceScannerTest {
     private final ResourceScanner<URI> resourceScanner = new ResourceScanner<>(
         ResourceScannerTest.class::getClassLoader,
         path -> path.getFileName().toString().endsWith("resource.txt"),
-        resource -> of(resource.getUri()));
+        resource -> Optional.of(resource.getUri()));
 
     @Test
     void scanForResourcesInClasspathRoot() {

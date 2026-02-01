@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("DesignForExtension")
 public class AnotherStepDef {
 
     @Autowired

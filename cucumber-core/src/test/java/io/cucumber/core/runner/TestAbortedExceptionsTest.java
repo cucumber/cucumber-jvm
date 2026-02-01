@@ -8,9 +8,7 @@ import java.util.function.Predicate;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestAbortedExceptionsTest {
-    static class TestAbortedExceptionSubClass extends TestAbortedException {
-    }
+class TestAbortedExceptionsTest {
 
     @Test
     void testPredicate() {
@@ -21,4 +19,6 @@ public class TestAbortedExceptionsTest {
         assertTrue(isTestAbortedExceptionPredicate.test(new TestAbortedExceptionSubClass()));
     }
 
+    static class TestAbortedExceptionSubClass extends TestAbortedException {
+    }
 }

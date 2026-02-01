@@ -1,5 +1,6 @@
 package io.cucumber.spring.beans;
 
+@SuppressWarnings("DesignForExtension")
 public class BellyBean {
 
     private int cukes = 0;
