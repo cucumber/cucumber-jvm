@@ -222,6 +222,24 @@
             "old": "class io.cucumber.cucumberexpressions.Group",
             "new": "class io.cucumber.cucumberexpressions.Group",
             "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method void io.cucumber.core.runtime.TestCaseResultObserver.Suggestion::<init>(java.lang.String, java.util.List<java.lang.String>)",
+            "justification": "Suggestions must come with an originating test step"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.removed",
+            "old": "class io.cucumber.core.snippets.GherkinKeywordNormalizer",
+            "justification": "Normalization is context dependent. Don't de-duplicate context that are identical by accident"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method void io.cucumber.core.snippets.SnippetGenerator::<init>(io.cucumber.core.backend.Snippet, io.cucumber.cucumberexpressions.ParameterTypeRegistry)",
+            "justification": "Snippets must now always include a programming language"
           }
         ]
       }
