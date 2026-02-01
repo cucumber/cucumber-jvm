@@ -43,8 +43,8 @@ Maven Surefire and Gradle do not yet support discovery of non-class based tests
 (see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
 [maven-surefire/#2065](https://github.com/apache/maven-surefire/issues/2065), [stb-jupiter-interface/#142](https://github.com/sbt/sbt-jupiter-interface/issues/142)).
 As a workaround, you can either use:
- * the [JUnit Platform Suite Engine](https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine);
- * the [JUnit Platform Console Launcher](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher) or;
+ * the [JUnit Platform Suite Engine](https://docs.junit.org/current/advanced-topics/junit-platform-suite-engine.html);
+ * the [JUnit Platform Console Launcher](https://docs.junit.org/current/running-tests/console-launcher.html) or;
  * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
  * the [Cucable](https://github.com/trivago/cucable-plugin) plugin for Maven.
 
@@ -276,7 +276,7 @@ erDiagram
 ```
 
 To use, add the `junit-platform-suite` dependency and use
-the [`junit-bom`](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven-bom) for dependency management:
+the [`junit-bom`](https://docs.junit.org/current/running-tests/build-support.html#maven) for dependency management:
 
 ```xml
 <dependency>
@@ -344,7 +344,7 @@ for details.
 To avoid flaky tests when multiple scenarios manipulate the same resource, tests
 can be [synchronized][junit5-user-guide-synchronization] on that resource.
 
-[junit5-user-guide-synchronization]: https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization
+[junit5-user-guide-synchronization]: https://docs.junit.org/current/writing-tests/parallel-execution.html#synchronization
 
 To synchronize a scenario on a specific resource, the scenario must be tagged
 and this tag mapped to a lock for the specific resource. A resource is
@@ -430,7 +430,7 @@ parallel. This behaviour can be restored by setting the configuration parameter
 
 Cucumber receives its configuration from the JUnit Platform. To see how these can be supplied; see the JUnit
 documentation
-[4.5. Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params). For 
+[4.5. Configuration Parameters](https://docs.junit.org/current/running-tests/configuration-parameters.html). For 
 documentation on Cucumber properties, see [Constants](src/main/java/io/cucumber/junit/platform/engine/Constants.java).
 
 ```
@@ -566,7 +566,7 @@ cucumber.execution.exclusive-resources.<tag-name>.read=        # a comma separat
 
 ## Supported Discovery Selectors and Filters ## 
 
-The JUnit Platform [introduced a test discovery mechanism](https://junit.org/junit5/docs/current/user-guide/#launcher-api-discovery)
+The JUnit Platform [introduced a test discovery mechanism](https://docs.junit.org/current/advanced-topics/launcher-api.html)
 as a dedicated feature of the platform itself. This allows IDEs and build tools
 to identify tests. Supported `DiscoverySelector`s are:
 
@@ -617,7 +617,7 @@ Scenario: Another tagged scenario
 ```
 
 When using Maven, tags can be provided from the CLI using the `groups` and `excludedGroups` parameters. These take a
-[JUnit5 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions). The example
+[JUnit5 Tag Expression](https://docs.junit.org/current/running-tests/tags.html#expressions). The example
 below will execute `Another tagged scenario`.
 
 ```
@@ -625,10 +625,10 @@ mvn verify -DexcludedGroups="Ignore" -Dgroups="Smoke | Sanity"
 ```
 
 For more information on how to select tags, see the relevant documentation:
-* [JUnit 6 Suite: @Include Tags](https://junit.org/junit5/docs/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/IncludeTags.html)
-* [JUnit 6 Suite: @Exclude Tags](https://junit.org/junit5/docs/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/ExcludeTags.html)
-* [JUnit 6 Console Launcher: Options](https://junit.org/junit5/docs/current/user-guide/#running-tests-console-launcher-options)
-* [JUnit 6 Tag Expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions)
+* [JUnit 6 Suite: @Include Tags](https://docs.junit.org/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/IncludeTags.html)
+* [JUnit 6 Suite: @Exclude Tags](https://docs.junit.org/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/ExcludeTags.html)
+* [JUnit 6 Console Launcher: Options](https://docs.junit.org/current/running-tests/console-launcher.html#options)
+* [JUnit 6 Tag Expression](https://docs.junit.org/current/running-tests/tags.html#expressions)
 * [Maven: Filtering by Tags](https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html)
 * [Gradle: Test Grouping](https://docs.gradle.org/current/userguide/java_testing.html#test_grouping)
 

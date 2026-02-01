@@ -62,7 +62,7 @@ For more information on JUnit, see the [JUnit website](http://www.junit.org).
 ## Assume ## 
 
 Through [Assume](https://junit.org/junit4/javadoc/4.12/org/junit/Assume.html) 
-and [Assumptions](https://junit.org/junit5/docs/5.0.0/api/org/junit/jupiter/api/Assumptions.html) 
+and [Assumptions](https://docs.junit.org/current/writing-tests/assumptions.html) 
 JUnit4 and JUnit5 provide: 
 
 > a collection of utility methods that support conditional test execution based
