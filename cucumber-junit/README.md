@@ -3,7 +3,7 @@ Cucumber JUnit (Deprecated)
 
 > [!IMPORTANT]  
 > **JUnit 4 is in maintenance mode.**  
-> For JUnit 5 use the [Cucumber JUnit Platform Engine](../cucumber-junit-platform-engine)
+> For JUnit 5+ use the [Cucumber JUnit Platform Engine](../cucumber-junit-platform-engine)
 
 Use JUnit 4 to execute Cucumber scenarios. To use add the `cucumber-junit`
 dependency to your `pom.xml` and use the [`cucumber-bom`](../cucumber-bom/README.md)
@@ -62,7 +62,7 @@ For more information on JUnit, see the [JUnit website](http://www.junit.org).
 ## Assume ## 
 
 Through [Assume](https://junit.org/junit4/javadoc/4.12/org/junit/Assume.html) 
-and [Assumptions](https://junit.org/junit5/docs/5.0.0/api/org/junit/jupiter/api/Assumptions.html) 
+and [Assumptions](https://docs.junit.org/current/writing-tests/assumptions.html) 
 JUnit4 and JUnit5 provide: 
 
 > a collection of utility methods that support conditional test execution based

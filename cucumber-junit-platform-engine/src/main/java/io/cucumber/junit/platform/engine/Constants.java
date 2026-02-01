@@ -69,7 +69,7 @@ public final class Constants {
      * Platform Suite Engine, it is recommended to either use the
      * {@link org.junit.platform.engine.discovery.DiscoverySelectors} or
      * annotations from <a
-     * href=https://docs.junit.org/6.0.2/api/org.junit.platform.suite.api/org/junit/platform/suite/api/package-summary.html>org.junit.platform.suite.api</a>
+     * href=https://docs.junit.org/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/package-summary.html>org.junit.platform.suite.api</a>
      * respectively.
      * <p>
      * Additionally, when this property is used, to work around limitations in
@@ -337,7 +337,7 @@ public final class Constants {
      * Valid values are any value understood by {@link Long#decode(String)}. If
      * omitted a random seed is used instead. The exact value can be obtained by
      * <a
-     * href=https://junit.org/junit5/docs/snapshot/user-guide/#running-tests-discovery-issues>
+     * href=https://docs.junit.org/current/running-tests/discovery-issues.html>
      * listening for discovery issues</a>.
      */
     public static final String EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME = "cucumber.execution.order.random.seed";
@@ -371,13 +371,13 @@ public final class Constants {
      * A scenario tagged with {@code @my-tag-ab-rw} will lock resource {@code a}
      * and {@code b} for reading and writing and will not be concurrently
      * executed with other scenarios tagged with {@code @my-tag-ab-rw} as well
-     * as scenarios tagged with {@code @my-tag-a-r}. However a scenarios tagged
+     * as scenarios tagged with {@code @my-tag-a-r}. However, a scenarios tagged
      * with {@code @my-tag-a-r} will be concurrently executed with other
      * scenarios with the same tag.
      *
      * @see <a href=
-     *      "https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution-synchronization">Junit
-     *      5 User Guide - Synchronization</a>
+     *      "https://docs.junit.org/current/writing-tests/parallel-execution.html#synchronization">Junit
+     *      6 User Guide - Synchronization</a>
      */
     public static final String EXECUTION_EXCLUSIVE_RESOURCES_READ_WRITE_TEMPLATE = EXECUTION_EXCLUSIVE_RESOURCES_PREFIX
             + EXECUTION_EXCLUSIVE_RESOURCES_TAG_TEMPLATE_VARIABLE + READ_WRITE_SUFFIX;
