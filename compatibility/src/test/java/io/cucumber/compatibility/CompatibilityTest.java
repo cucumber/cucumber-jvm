@@ -301,7 +301,7 @@ final class CompatibilityTest {
             // bug: Cucumber JVM doesn't produce a suggestion that matches float
             ((ArrayNode) expectedEnvelopes.get("suggestion").get(3).get("snippets")).remove(1);
         }
-        if ("ambiguous".equals(testCase.getId())) {
+        if ("ambiguous".equals(testCase.getId()) || "all-statuses".equals(testCase.getId())) {
             // bug: Cucumber JVM doesn't include the ambiguous step definitions
             // https://github.com/cucumber/cucumber-jvm/issues/3006
             expectedEnvelopes.remove("testCase");
