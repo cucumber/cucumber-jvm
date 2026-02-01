@@ -45,6 +45,183 @@
             "old": "method java.lang.reflect.Type io.cucumber.datatable.TypeReference<T>::getType()",
             "new": "method java.lang.reflect.Type io.cucumber.datatable.TypeReference<T>::getType()",
             "justification": "getType is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityReduced",
+            "old": "method void cucumber.api.cli.Main::<init>()",
+            "new": "method void cucumber.api.cli.Main::<init>()",
+            "oldVisibility": "public",
+            "newVisibility": "private",
+            "justification": "Utility class does not have to be instantiated"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class cucumber.api.cli.Main",
+            "new": "class cucumber.api.cli.Main",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.removed",
+            "old": "interface io.cucumber.core.api.TypeRegistry",
+            "justification": "Remove class deprecated in v7"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.backend.StackTraceElementReference",
+            "new": "class io.cucumber.core.backend.StackTraceElementReference",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.noLongerDefault",
+            "old": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "new": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "justification": "Method must now be implemented by subclass"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.nowAbstract",
+            "old": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "new": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "justification": "Method must now be implemented by subclass"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityReduced",
+            "old": "method void io.cucumber.core.cli.Main::<init>()",
+            "new": "method void io.cucumber.core.cli.Main::<init>()",
+            "oldVisibility": "public",
+            "newVisibility": "private",
+            "justification": "Utility class does not have to be instantiated"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.cli.Main",
+            "new": "class io.cucumber.core.cli.Main",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.eventbus.RandomUuidGenerator",
+            "new": "class io.cucumber.core.eventbus.RandomUuidGenerator",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.FeatureIdentifier",
+            "new": "class io.cucumber.core.feature.FeatureIdentifier",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.FeaturePath",
+            "new": "class io.cucumber.core.feature.FeaturePath",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.FeatureWithLines",
+            "new": "class io.cucumber.core.feature.FeatureWithLines",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.GluePath",
+            "new": "class io.cucumber.core.feature.GluePath",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.options.PluginOption",
+            "new": "class io.cucumber.core.options.PluginOption",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.exception.checkedRemoved",
+            "old": "method void io.cucumber.core.plugin.HtmlFormatter::<init>(java.io.OutputStream) throws java.io.IOException",
+            "new": "method void io.cucumber.core.plugin.HtmlFormatter::<init>(java.io.OutputStream)",
+            "exception": "java.io.IOException",
+            "justification": "No longer thrown"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.plugin.TeamCityPlugin",
+            "new": "class io.cucumber.core.plugin.TeamCityPlugin",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityIncreased",
+            "old": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineGroup::<init>()",
+            "new": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineGroup::<init>()",
+            "oldVisibility": "package",
+            "newVisibility": "public",
+            "justification": "Made public for serializer"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityIncreased",
+            "old": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineItem::<init>()",
+            "new": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineItem::<init>()",
+            "oldVisibility": "package",
+            "newVisibility": "public",
+            "justification": "Made public for serializer"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.resource.PathScanner",
+            "new": "class io.cucumber.core.resource.PathScanner",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.runtime.Runtime.Builder",
+            "new": "class io.cucumber.core.runtime.Runtime.Builder",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.noLongerImplementsInterface",
+            "old": "class io.cucumber.core.stepexpression.StepTypeRegistry",
+            "new": "class io.cucumber.core.stepexpression.StepTypeRegistry",
+            "interface": "io.cucumber.core.api.TypeRegistry",
+            "justification": "Removed interface deprecated in v7"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.returnTypeChanged",
+            "old": "method java.util.List<io.cucumber.cucumberexpressions.Argument<?>> io.cucumber.cucumberexpressions.Expression::match(java.lang.String, java.lang.reflect.Type[])",
+            "new": "method java.util.Optional<java.util.List<io.cucumber.cucumberexpressions.Argument<?>>> io.cucumber.cucumberexpressions.Expression::match(java.lang.String, java.lang.reflect.Type[])",
+            "justification": "Argument groups in Cucumber expressions are now optional"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.returnTypeChanged",
+            "old": "method java.util.List<io.cucumber.cucumberexpressions.Group> io.cucumber.cucumberexpressions.Group::getChildren()",
+            "new": "method java.util.Optional<java.util.List<io.cucumber.cucumberexpressions.Group>> io.cucumber.cucumberexpressions.Group::getChildren()",
+            "justification": "Argument groups in Cucumber expressions are now optional"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.cucumberexpressions.Group",
+            "new": "class io.cucumber.cucumberexpressions.Group",
+            "justification": "Class is not designed for extension"
           }
         ]
       }
