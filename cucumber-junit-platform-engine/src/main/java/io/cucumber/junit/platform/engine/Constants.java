@@ -336,7 +336,8 @@ public final class Constants {
      * <p>
      * Valid values are any value understood by {@link Long#decode(String)}. If
      * omitted a random seed is used instead. The exact value can be obtained by
-     * <a href=https://docs.junit.org/current/running-tests/discovery-issues.html>
+     * <a
+     * href=https://docs.junit.org/current/running-tests/discovery-issues.html>
      * listening for discovery issues</a>.
      */
     public static final String EXECUTION_ORDER_RANDOM_SEED_PROPERTY_NAME = "cucumber.execution.order.random.seed";
