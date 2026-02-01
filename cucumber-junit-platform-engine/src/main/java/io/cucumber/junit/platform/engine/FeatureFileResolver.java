@@ -9,7 +9,7 @@ import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
 import io.cucumber.plugin.event.Node;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
@@ -132,10 +132,9 @@ final class FeatureFileResolver implements SelectorResolver {
         return toResolution(selectors);
     }
 
-    @SuppressWarnings("deprecation") // TODO: Updagrade
     @Override
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
-        Set<Resource> resources = selector.getClasspathResources();
+        var resources = selector.getResources();
         if (!resources.stream().allMatch(resource -> isFeature(resource.getName()))) {
             return resolveClasspathResourceSelectorAsPackageSelector(selector);
         }

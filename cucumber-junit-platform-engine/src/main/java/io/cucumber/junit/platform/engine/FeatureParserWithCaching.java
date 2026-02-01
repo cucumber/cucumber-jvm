@@ -30,16 +30,14 @@ class FeatureParserWithCaching {
         return parseResource(new PathAdapter(resource));
     }
 
-    @SuppressWarnings("deprecation") // TODO: Updagrade
-    Optional<FeatureWithSource> parseResource(org.junit.platform.commons.support.Resource resource) {
+    Optional<FeatureWithSource> parseResource(org.junit.platform.commons.io.Resource resource) {
         return parseResource(new ResourceAdapter(resource));
     }
 
-    @SuppressWarnings("deprecation") // TODO: Updagrade
     private static class ResourceAdapter implements Resource {
-        private final org.junit.platform.commons.support.Resource resource;
+        private final org.junit.platform.commons.io.Resource resource;
 
-        ResourceAdapter(org.junit.platform.commons.support.Resource resource) {
+        ResourceAdapter(org.junit.platform.commons.io.Resource resource) {
             this.resource = resource;
         }
 

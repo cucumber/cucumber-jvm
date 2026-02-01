@@ -5,6 +5,7 @@ import io.cucumber.core.resource.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.platform.engine.DiscoveryIssue.Severity.ERROR;
@@ -27,7 +28,7 @@ class FeatureParserWithIssueReporting {
             issueReporter.reportIssue(DiscoveryIssue
                     // TODO: Improve parse exception to separate out source uri
                     // and individual errors.
-                    .builder(ERROR, e.getMessage())
+                    .builder(ERROR, Objects.requireNonNull(e.getMessage()))
                     .cause(e.getCause())
                     .source(featureSource.source()));
             return Optional.empty();

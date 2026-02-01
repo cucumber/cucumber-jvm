@@ -1,5 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
+import org.junit.platform.commons.io.ResourceFilter;
 import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver;
@@ -9,12 +10,11 @@ import static io.cucumber.junit.platform.engine.FeatureWithLinesFileResolver.isT
 
 class DiscoverySelectorResolver {
 
-    @SuppressWarnings("deprecation") // TODO: Updagrade
     private static final EngineDiscoveryRequestResolver<CucumberEngineDescriptor> resolver = EngineDiscoveryRequestResolver
             .<CucumberEngineDescriptor> builder()
             .addSelectorResolver(context -> new FileContainerSelectorResolver( //
                 path -> isFeature(path) || isTxtFile(path)))
-            .addResourceContainerSelectorResolver(resource -> isFeature(resource.getName()))
+            .addResourceContainerSelectorResolver(ResourceFilter.of(resource -> isFeature(resource.getName())))
             .addSelectorResolver(context -> new FeatureWithLinesFileResolver())
             .addSelectorResolver(context -> new FeatureFileResolver(
                 context.getEngineDescriptor().getConfiguration(), //

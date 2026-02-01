@@ -8,7 +8,7 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.Filter;
@@ -76,6 +76,7 @@ import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResourceByName;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
@@ -206,7 +207,6 @@ class CucumberTestEngineTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation") // TODO: Upgrade
     void classpathResourceSelectorThrowIfDuplicateResources() {
         class TestResource implements Resource {
 
@@ -238,7 +238,7 @@ class CucumberTestEngineTest {
                 new File("duplicate3.feature"))));
 
         Throwable exception = EngineTestKit.engine(ENGINE_ID) //
-                .selectors(selectClasspathResource(resources)) //
+                .selectors(selectClasspathResourceByName(resources)) //
                 .discover() //
                 .getDiscoveryIssues() //
                 .get(0) //
