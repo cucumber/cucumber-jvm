@@ -35,7 +35,7 @@ class JavaSnippetTest {
 
     private String snippetFor(String stepText) {
         Step step = createStep(stepText);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
                 .getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
@@ -112,7 +112,7 @@ class JavaSnippetTest {
         Step step = createStep(stepText);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step,
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), parameterTypeRegistry).getSnippet(step,
             snippetType);
         return String.join("\n", snippet);
     }
@@ -229,7 +229,7 @@ class JavaSnippetTest {
 
     private String snippetForDocString(String stepText, String docString) {
         Step step = createStepWithDocString(stepText, docString);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
                 .getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
@@ -276,7 +276,7 @@ class JavaSnippetTest {
         Step step = createStepWithDocString(stepText, docString);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step,
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), parameterTypeRegistry).getSnippet(step,
             snippetType);
         return String.join("\n", snippet);
     }
@@ -311,7 +311,7 @@ class JavaSnippetTest {
 
     private String snippetForDataTable(String stepText) {
         Step step = createStepWithDataTable(stepText);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
                 .getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
@@ -321,8 +321,8 @@ class JavaSnippetTest {
                 Feature: Test feature
                   Scenario: Test Scenario
                     Given %s
-                      | key   |\s
-                      | value |\s
+                      | key   |
+                      | value |
                 """.formatted(stepText);
 
         Feature feature = TestFeatureParser.parse(source);
@@ -369,7 +369,7 @@ class JavaSnippetTest {
         Step step = createStepWithDataTable(stepText);
         ParameterTypeRegistry parameterTypeRegistry = new ParameterTypeRegistry(Locale.ENGLISH);
         parameterTypeRegistry.defineParameterType(parameterType);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), parameterTypeRegistry).getSnippet(step,
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), parameterTypeRegistry).getSnippet(step,
             snippetType);
         return String.join("\n", snippet);
     }
@@ -407,7 +407,7 @@ class JavaSnippetTest {
 
         Feature feature = TestFeatureParser.parse(source);
         Step step = feature.getPickles().get(0).getSteps().get(1);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
                 .getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }
@@ -424,13 +424,14 @@ class JavaSnippetTest {
     }
 
     private String snippetForWildCard(String stepText) {
-        String source = "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test Scenario\n" +
-                "    * " + stepText + "\n";
+        String source = """
+                Feature: Test feature
+                  Scenario: Test Scenario
+                    * %s
+                """.formatted(stepText);
         Feature feature = TestFeatureParser.parse(source);
         Step step = feature.getPickles().get(0).getSteps().get(0);
-        List<String> snippet = new SnippetGenerator(new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
+        List<String> snippet = new SnippetGenerator("en", new JavaSnippet(), new ParameterTypeRegistry(Locale.ENGLISH))
                 .getSnippet(step, snippetType);
         return String.join("\n", snippet);
     }

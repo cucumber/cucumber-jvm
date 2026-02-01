@@ -143,7 +143,7 @@ class DataTableTypeRegistryTableConverterTest {
     private static final TableCellByTypeTransformer JACKSON_TABLE_CELL_BY_TYPE_CONVERTER = (value,
             cellType) -> objectMapper.convertValue(value, objectMapper.constructType(cellType));
     private static final DataTableType DATE_TABLE_CELL_TRANSFORMER = new DataTableType(Date.class,
-        (@Nullable String source) -> dateFormat().parse(source));
+        (@Nullable String source) -> dateFormat().parse(requireNonNull(source)));
 
     private static Object convertToNumberedObject(Map<String, String> numberedEntry, Type type) {
         int number = Integer.parseInt(numberedEntry.get("#"));

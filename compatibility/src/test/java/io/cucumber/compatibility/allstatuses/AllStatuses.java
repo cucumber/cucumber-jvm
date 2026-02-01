@@ -7,22 +7,22 @@ import org.junit.jupiter.api.Assumptions;
 
 public final class AllStatuses {
 
-    @Given("a step")
+    @Given("^a step$")
     public void a_step() {
         /* no-op */
     }
 
-    @Given("a failing step")
+    @Given("^a failing step$")
     public void a_failing_step() {
         Assertions.fail();
     }
 
-    @Given("a pending step")
+    @Given("^a pending step$")
     public void a_pending_step() {
         throw new PendingException();
     }
 
-    @Given("a skipped step")
+    @Given("^a skipped step$")
     public void a_skipped_step() {
         Assumptions.abort();
     }

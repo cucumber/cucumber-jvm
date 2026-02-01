@@ -152,7 +152,7 @@ class DocStringTypeRegistryDocStringConverterTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
-        assertThat(exception).hasMessage("""
+        assertThat(exception.getMessage()).isEqualToNormalizingNewlines("""
                 'json' could not transform
                 ""\"json
                 {"hello":"world"}

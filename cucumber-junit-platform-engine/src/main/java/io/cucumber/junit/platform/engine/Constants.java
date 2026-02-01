@@ -69,7 +69,7 @@ public final class Constants {
      * Platform Suite Engine, it is recommended to either use the
      * {@link org.junit.platform.engine.discovery.DiscoverySelectors} or
      * annotations from <a
-     * href=https://docs.junit.org/current/api/org.junit.platform.suite.api/org/junit/platform/suite/api/package-summary.html>org.junit.platform.suite.api</a>
+     * href=https://docs.junit.org/6.0.2/api/org.junit.platform.suite.api/org/junit/platform/suite/api/package-summary.html>org.junit.platform.suite.api</a>
      * respectively.
      * <p>
      * Additionally, when this property is used, to work around limitations in
@@ -90,7 +90,7 @@ public final class Constants {
      * <p>
      * By default, all scenarios are executed
      * <p>
-     * Note: To ensure consistent reports between Cucumber and JUnit prefer
+     * Note: To ensure consistent reports between Cucumber and JUnit 5 prefer
      * using <a
      * href=https://docs.junit.org/current/api/org.junit.platform.launcher/org/junit/platform/launcher/core/LauncherDiscoveryRequestBuilder.html#filters(org.junit.platform.engine.Filter...)>JUnit
      * discovery request filters</a>, <a
@@ -110,7 +110,7 @@ public final class Constants {
      * <p>
      * By default, all scenarios are executed
      * <p>
-     * Note: To ensure consistent reports between Cucumber and JUnit prefer
+     * Note: To ensure consistent reports between Cucumber and JUnit 5 prefer
      * using <a
      * href=https://docs.junit.org/current/api/org.junit.platform.launcher/org/junit/platform/launcher/core/LauncherDiscoveryRequestBuilder.html#filters(org.junit.platform.engine.Filter...)>JUnit
      * discovery request filters</a>, <a

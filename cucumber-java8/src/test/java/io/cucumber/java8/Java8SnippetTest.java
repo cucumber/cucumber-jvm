@@ -15,21 +15,21 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 class Java8SnippetTest {
 
-    private final SnippetGenerator snippetGenerator = new SnippetGenerator(
-        new Java8Snippet(),
+    private final SnippetGenerator snippetGenerator = new SnippetGenerator("en", new Java8Snippet(),
         new ParameterTypeRegistry(Locale.ENGLISH));
 
     @Test
     void generatesPlainSnippet() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my \"big\" belly\n");
-        String expected = "" +
-                "Given(\"I have {int} cukes in my {string} belly\", (Integer int1, String string) -> {\n" +
-                "    // Write code here that turns the phrase above into concrete actions\n" +
-                "    throw new io.cucumber.java8.PendingException();\n" +
-                "});";
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my "big" belly
+                """);
+        String expected = """
+                Given("I have {int} cukes in my {string} belly", (Integer int1, String string) -> {
+                    // Write code here that turns the phrase above into concrete actions
+                    throw new io.cucumber.java8.PendingException();
+                });""";
         assertThat(getSnippet(feature), is(equalTo(expected)));
     }
 
@@ -42,24 +42,24 @@ class Java8SnippetTest {
 
     @Test
     void generatesDataTableSnippet() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my \"big\" belly\n" +
-                "      | data table cell | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my "big" belly
+                      | data table cell |
+                """);
 
-        String expected = "" +
-                "Given(\"I have {int} cukes in my {string} belly\", (Integer int1, String string, io.cucumber.datatable.DataTable dataTable) -> {\n"
-                +
-                "    // Write code here that turns the phrase above into concrete actions\n" +
-                "    // For automatic transformation, change DataTable to one of\n" +
-                "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
-                "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
-                "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
-                "    //\n" +
-                "    // For other transformations you can register a DataTableType.\n" +
-                "    throw new io.cucumber.java8.PendingException();\n" +
-                "});";
+        String expected = """
+                Given("I have {int} cukes in my {string} belly", (Integer int1, String string, io.cucumber.datatable.DataTable dataTable) -> {
+                    // Write code here that turns the phrase above into concrete actions
+                    // For automatic transformation, change DataTable to one of
+                    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
+                    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
+                    // Double, Byte, Short, Long, BigInteger or BigDecimal.
+                    //
+                    // For other transformations you can register a DataTableType.
+                    throw new io.cucumber.java8.PendingException();
+                });""";
         assertThat(getSnippet(feature), is(equalTo(expected)));
     }
 

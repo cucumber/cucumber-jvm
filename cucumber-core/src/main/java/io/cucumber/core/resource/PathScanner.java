@@ -2,6 +2,7 @@ package io.cucumber.core.resource;
 
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
+import org.apiguardian.api.API;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,6 +22,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.walkFileTree;
 
+@API(status = API.Status.INTERNAL)
 public final class PathScanner {
 
     private static final Logger log = LoggerFactory.getLogger(PathScanner.class);
