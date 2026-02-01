@@ -10,27 +10,41 @@
             "ignore": true,
             "code": "java.class.removed",
             "old": "interface io.cucumber.plugin.StrictAware",
-            "justification": "Removal of deprecated class"
+            "justification": "Removal of class deprecated in v7"
           },
           {
             "ignore": true,
             "code": "java.class.removed",
             "old": "interface io.cucumber.plugin.SummaryPrinter",
-            "justification": "Removal of deprecated class"
+            "justification": "Removal of class deprecated in v7"
           },
           {
             "ignore": true,
             "code": "java.method.noLongerDefault",
             "old": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
             "new": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
-            "justification": "Method must now be implemented"
+            "justification": "Method must now be implemented by subclass"
           },
           {
             "ignore": true,
             "code": "java.method.nowAbstract",
             "old": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
             "new": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
-            "justification": "Method must now be implemented"
+            "justification": "Method must now be implemented by subclass"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.datatable.TableDiffer",
+            "new": "class io.cucumber.datatable.TableDiffer",
+            "justification": "TableDiffer is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.nowFinal",
+            "old": "method java.lang.reflect.Type io.cucumber.datatable.TypeReference<T>::getType()",
+            "new": "method java.lang.reflect.Type io.cucumber.datatable.TypeReference<T>::getType()",
+            "justification": "getType is not designed for extension"
           }
         ]
       }
