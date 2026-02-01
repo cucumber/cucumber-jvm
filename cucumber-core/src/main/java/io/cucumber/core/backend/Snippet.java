@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface Snippet {
 
     /**
-     * The language of the generated snippet.
+     * The programming language of the generated snippet.
      *
      * @return the language of the generated snippet.
      * @see    io.cucumber.messages.types.Snippet#getLanguage()

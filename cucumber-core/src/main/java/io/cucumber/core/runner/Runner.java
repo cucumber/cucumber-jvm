@@ -239,12 +239,9 @@ public final class Runner {
 
     private List<Snippet> generateSnippetsForStep(Step step) {
         return snippetGenerators.stream()
-                .flatMap(generator -> {
-                    String language = generator.getPickleLanguage().orElse("unknown");
-                    return generator.getSnippet(step, runnerOptions.getSnippetType())
-                            .stream()
-                            .map(code -> new Snippet(language, code));
-                })
+                .flatMap(generator -> generator.getSnippet(step, runnerOptions.getSnippetType())
+                        .stream()
+                        .map(code -> new Snippet(generator.getLanguage().orElse("unknown"), code)))
                 .collect(toList());
     }
 

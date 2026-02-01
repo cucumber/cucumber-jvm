@@ -39,21 +39,17 @@ public final class SnippetGenerator {
 
     private final Snippet snippet;
     private final CucumberExpressionGenerator generator;
-    private final @Nullable String pickleLanguage;
-
-    public SnippetGenerator(Snippet snippet, ParameterTypeRegistry parameterTypeRegistry) {
-        this(null, snippet, parameterTypeRegistry);
-    }
+    private final String pickleLanguage;
 
     public SnippetGenerator(
-            @Nullable String pickleLanguage, Snippet snippet, ParameterTypeRegistry parameterTypeRegistry
+            String pickleLanguage, Snippet snippet, ParameterTypeRegistry parameterTypeRegistry
     ) {
         this.pickleLanguage = pickleLanguage;
         this.snippet = snippet;
         this.generator = new CucumberExpressionGenerator(parameterTypeRegistry);
     }
 
-    public Optional<String> getPickleLanguage() {
+    public Optional<String> getLanguage() {
         return snippet.language();
     }
 
