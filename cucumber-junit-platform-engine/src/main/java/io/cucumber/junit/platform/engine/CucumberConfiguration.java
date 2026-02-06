@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -62,6 +64,7 @@ class CucumberConfiguration implements
 
     private final ConfigurationParameters configurationParameters;
     private final DiscoveryIssueReporter issueReporter;
+    private final ConcurrentHashMap<String, Optional<?>> memoizing = new ConcurrentHashMap<>();
 
     CucumberConfiguration(ConfigurationParameters configurationParameters, DiscoveryIssueReporter issueReporter) {
         this.configurationParameters = requireNonNull(configurationParameters);
@@ -70,7 +73,7 @@ class CucumberConfiguration implements
 
     @Override
     public List<Plugin> plugins() {
-        List<Plugin> plugins = configurationParameters.get(PLUGIN_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
+        List<Plugin> plugins = memoize(PLUGIN_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
                 .map(String::trim)
                 .map(PluginOption::parse)
                 .map(pluginOption -> (Plugin) pluginOption)
@@ -131,18 +134,22 @@ class CucumberConfiguration implements
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> Optional<T> memoize(String key, Function<? super String, ? extends @Nullable T> transformer) {
+        return (Optional<T>) memoizing.computeIfAbsent(key, k -> configurationParameters.get(k, transformer));
+    }
+
     Optional<Expression> tagFilter() {
-        return configurationParameters.get(FILTER_TAGS_PROPERTY_NAME, TagExpressionParser::parse);
+        return memoize(FILTER_TAGS_PROPERTY_NAME, TagExpressionParser::parse);
     }
 
     Optional<Pattern> nameFilter() {
-        return configurationParameters.get(FILTER_NAME_PROPERTY_NAME, Pattern::compile);
+        return memoize(FILTER_NAME_PROPERTY_NAME, Pattern::compile);
     }
 
     @Override
     public List<URI> getGlue() {
-        return configurationParameters
-                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
+        return memoize(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
                 .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
                 .stream()
                 .map(String::trim)
@@ -159,22 +166,19 @@ class CucumberConfiguration implements
 
     @Override
     public SnippetType getSnippetType() {
-        return configurationParameters
-                .get(SNIPPET_TYPE_PROPERTY_NAME, SnippetTypeParser::parseSnippetType)
+        return memoize(SNIPPET_TYPE_PROPERTY_NAME, SnippetTypeParser::parseSnippetType)
                 .orElse(SnippetType.UNDERSCORE);
     }
 
     @Override
     public @Nullable Class<? extends ObjectFactory> getObjectFactoryClass() {
-        return configurationParameters
-                .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
+        return memoize(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
                 .orElse(null);
     }
 
     @Override
     public @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass() {
-        return configurationParameters
-                .get(UUID_GENERATOR_PROPERTY_NAME, UuidGeneratorParser::parseUuidGenerator)
+        return memoize(UUID_GENERATOR_PROPERTY_NAME, UuidGeneratorParser::parseUuidGenerator)
                 .orElse(null);
     }
 
@@ -185,8 +189,7 @@ class CucumberConfiguration implements
     }
 
     NamingStrategy namingStrategy() {
-        return configurationParameters
-                .get(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, DefaultNamingStrategyProvider::getStrategyProvider)
+        return memoize(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME, DefaultNamingStrategyProvider::getStrategyProvider)
                 .map(this::reportIssueIfSurefireStrategyIsUsed)
                 .orElse(DefaultNamingStrategyProvider.SHORT)
                 .create(configurationParameters);
@@ -203,7 +206,7 @@ class CucumberConfiguration implements
     }
 
     Set<FeatureWithLinesSelector> featuresWithLines() {
-        return configurationParameters.get(FEATURES_PROPERTY_NAME,
+        return memoize(FEATURES_PROPERTY_NAME,
             s -> Arrays.stream(s.split(","))
                     .map(String::trim)
                     .map(FeatureWithLines::parse)
@@ -213,7 +216,7 @@ class CucumberConfiguration implements
     }
 
     ExecutionMode getExecutionModeFeature() {
-        return configurationParameters.get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
+        return memoize(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
             value -> ExecutionMode.valueOf(value.toUpperCase(Locale.ROOT)))
                 .orElse(ExecutionMode.CONCURRENT);
     }
