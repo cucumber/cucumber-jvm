@@ -123,7 +123,7 @@ final class CucumberEventConditions {
     }
 
     static Condition<Event> emptySource() {
-        return new Condition<>(event -> !event.getTestDescriptor().getSource().isPresent(), "without a test source");
+        return new Condition<>(event -> event.getTestDescriptor().getSource().isEmpty(), "without a test source");
     }
 
     private static Predicate<UniqueId> lastSegmentTYpe(String type) {

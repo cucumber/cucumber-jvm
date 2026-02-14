@@ -28,12 +28,13 @@ class BannerTest {
                 new Banner.Span("Bla", AnsiEscapes.RED)),
             new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
-        assertThat(bytes, bytes(equalTo("" +
-                "\u001B[36m┌─────────────┐\u001B[0m\n" +
-                "\u001B[36m│\u001B[0m Bla         \u001B[36m│\u001B[0m\n" +
-                "\u001B[36m│\u001B[0m Bla \u001B[34mBla\u001B[0m \u001B[31mBla\u001B[0m \u001B[36m│\u001B[0m\n" +
-                "\u001B[36m│\u001B[0m Bla Bla     \u001B[36m│\u001B[0m\n" +
-                "\u001B[36m└─────────────┘\u001B[0m\n")));
+        assertThat(bytes, bytes(equalTo("""
+                [36m┌─────────────┐[0m
+                [36m│[0m Bla         [36m│[0m
+                [36m│[0m Bla [34mBla[0m [31mBla[0m [36m│[0m
+                [36m│[0m Bla Bla     [36m│[0m
+                [36m└─────────────┘[0m
+                """)));
     }
 
     @Test
@@ -50,12 +51,13 @@ class BannerTest {
                 new Banner.Span("Bla", AnsiEscapes.RED)),
             new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
-        assertThat(bytes, bytes(equalTo("" +
-                "┌─────────────┐\n" +
-                "│ Bla         │\n" +
-                "│ Bla Bla Bla │\n" +
-                "│ Bla Bla     │\n" +
-                "└─────────────┘\n")));
+        assertThat(bytes, bytes(equalTo("""
+                ┌─────────────┐
+                │ Bla         │
+                │ Bla Bla Bla │
+                │ Bla Bla     │
+                └─────────────┘
+                """)));
     }
 
 }

@@ -62,8 +62,9 @@ public final class TestNGCucumberRunnerTest {
             Assert.fail("CucumberException not thrown");
         } catch (FeatureParserException e) {
             assertEquals(e.getMessage(),
-                "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature\n" +
-                        "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'");
+                """
+                Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature
+                (1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'""");
         }
     }
 

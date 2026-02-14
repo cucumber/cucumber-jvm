@@ -37,11 +37,12 @@ class JsonFormatterTest {
 
     @Test
     void should_format_scenario_with_a_passed_step() throws JSONException {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: Banana party\n" +
-                "\n" +
-                "  Scenario: Monkey eats bananas\n" +
-                "    Given there are bananas\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: Banana party
+
+                  Scenario: Monkey eats bananas
+                    Given there are bananas
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StepDurationTimeService timeService = new StepDurationTimeService(ofMillis(1));
@@ -54,44 +55,43 @@ class JsonFormatterTest {
                 .build()
                 .run();
 
-        String expected = "" +
-                "[\n" +
-                "  {\n" +
-                "    \"id\": \"banana-party\",\n" +
-                "    \"uri\": \"file:path/test.feature\",\n" +
-                "    \"keyword\": \"Feature\",\n" +
-                "    \"name\": \"Banana party\",\n" +
-                "    \"line\": 1,\n" +
-                "    \"description\": \"\",\n" +
-                "    \"elements\": [\n" +
-                "      {\n" +
-                "        \"id\": \"banana-party;monkey-eats-bananas\",\n" +
-                "        \"keyword\": \"Scenario\",\n" +
-                "        \"start_timestamp\": \"1970-01-01T00:00:00.000Z\",\n" +
-                "        \"name\": \"Monkey eats bananas\",\n" +
-                "        \"line\": 3,\n" +
-                "        \"description\": \"\",\n" +
-                "        \"type\": \"scenario\",\n" +
-                "        \"steps\": [\n" +
-                "          {\n" +
-                "            \"keyword\": \"Given \",\n" +
-                "            \"name\": \"there are bananas\",\n" +
-                "            \"line\": 4,\n" +
-                "            \"match\": {\n" +
-                "              \"location\": \"io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.there_are_bananas()\"\n"
-                +
-                "            },\n" +
-                "            \"result\": {\n" +
-                "              \"status\": \"passed\",\n" +
-                "              \"duration\": 1000000\n" +
-                "            }\n" +
-                "          }\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"tags\": []\n" +
-                "  }\n" +
-                "]";
+        String expected = """
+                [
+                  {
+                    "id": "banana-party",
+                    "uri": "file:path/test.feature",
+                    "keyword": "Feature",
+                    "name": "Banana party",
+                    "line": 1,
+                    "description": "",
+                    "elements": [
+                      {
+                        "id": "banana-party;monkey-eats-bananas",
+                        "keyword": "Scenario",
+                        "start_timestamp": "1970-01-01T00:00:00.000Z",
+                        "name": "Monkey eats bananas",
+                        "line": 3,
+                        "description": "",
+                        "type": "scenario",
+                        "steps": [
+                          {
+                            "keyword": "Given ",
+                            "name": "there are bananas",
+                            "line": 4,
+                            "match": {
+                              "location": "io.cucumber.core.plugin.JsonFormatterTestStepDefinitions.there_are_bananas()"
+                            },
+                            "result": {
+                              "status": "passed",
+                              "duration": 1000000
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "tags": []
+                  }
+                ]""";
         assertJsonEquals(expected, out);
     }
 }

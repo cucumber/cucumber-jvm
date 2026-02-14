@@ -80,14 +80,15 @@ class PickleStepDefinitionMatch extends Match implements StepDefinitionMatch {
 
     private CucumberException arityMismatch(int parameterCount) {
         List<String> arguments = createArgumentsForErrorMessage();
-        return new CucumberException(("Step [%s] is defined with %s parameters at '%s'.\n" +
-                "However, the gherkin step has %s arguments%sStep text: %s").formatted(
-                    stepDefinition.getPattern(),
-                    parameterCount,
-                    stepDefinition.getLocation(),
-                    arguments.size(),
-                    formatArguments(arguments),
-                    step.getText()));
+        return new CucumberException("""
+                Step [%s] is defined with %s parameters at '%s'.
+                However, the gherkin step has %s arguments%sStep text: %s""".formatted(
+            stepDefinition.getPattern(),
+            parameterCount,
+            stepDefinition.getLocation(),
+            arguments.size(),
+            formatArguments(arguments),
+            step.getText()));
     }
 
     private CucumberException registerDataTableTypeInConfiguration(Exception e) {

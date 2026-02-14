@@ -657,8 +657,7 @@ public final class DataTable {
      * @return a transposed view of the table
      */
     public DataTable transpose() {
-        if (raw instanceof TransposedRawDataTableView) {
-            TransposedRawDataTableView transposed = (TransposedRawDataTableView) this.raw;
+        if (raw instanceof TransposedRawDataTableView transposed) {
             return transposed.dataTable();
         }
         return new DataTable(new TransposedRawDataTableView(), tableConverter);

@@ -266,10 +266,11 @@ class PickleStepTestStepTest {
 
     @Test
     void step_execution_time_is_measured() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
 
         TestStep step = new PickleStepTestStep(
             UUID.randomUUID(),

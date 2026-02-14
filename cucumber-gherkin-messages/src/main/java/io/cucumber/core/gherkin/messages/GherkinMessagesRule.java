@@ -21,8 +21,7 @@ final class GherkinMessagesRule implements Node.Rule {
         this.rule = rule;
         this.children = rule.getChildren().stream()
                 .map(RuleChild::getScenario)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .map(scenario -> {
                     if (!scenario.getExamples().isEmpty()) {
                         return new GherkinMessagesScenarioOutline(this, scenario);

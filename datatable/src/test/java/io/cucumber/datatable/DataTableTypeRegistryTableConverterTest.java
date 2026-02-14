@@ -1589,8 +1589,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, Integer.class, Integer.class));
-        assertThat(exception.getMessage(), is(("Can't convert DataTable to Map<%s, %s>.\n" +
-                "Encountered duplicate key 1 with values 4 and 5")
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to Map<%s, %s>.
+                Encountered duplicate key 1 with values 4 and 5"""
                 .formatted(typeName(Integer.class), typeName(Integer.class))));
     }
 
@@ -1603,8 +1604,9 @@ class DataTableTypeRegistryTableConverterTest {
         CucumberDataTableException exception = assertThrows(
             CucumberDataTableException.class,
             () -> converter.toMaps(table, Integer.class, Integer.class));
-        assertThat(exception.getMessage(), is(("Can't convert DataTable to Map<%s, %s>.\n" +
-                "Encountered duplicate key null with values 1 and 2")
+        assertThat(exception.getMessage(), is("""
+                Can't convert DataTable to Map<%s, %s>.
+                Encountered duplicate key null with values 1 and 2"""
                 .formatted(typeName(Integer.class), typeName(Integer.class))));
     }
 

@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -120,7 +119,7 @@ public final class ClasspathSupport {
     }
 
     public static String packageNameOfResource(String classpathResourceName) {
-        Path parent = Paths.get(classpathResourceName).getParent();
+        Path parent = Path.of(classpathResourceName).getParent();
         if (parent == null) {
             return DEFAULT_PACKAGE_NAME;
         }

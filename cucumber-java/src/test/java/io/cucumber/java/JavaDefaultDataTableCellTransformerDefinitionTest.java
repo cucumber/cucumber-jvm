@@ -77,11 +77,12 @@ class JavaDefaultDataTableCellTransformerDefinitionTest {
             String.class, Type.class);
         InvalidMethodSignatureException exception = assertThrows(InvalidMethodSignatureException.class,
             () -> new JavaDefaultDataTableCellTransformerDefinition(method, lookup, new String[0]));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A @DefaultDataTableCellTransformer annotated method must have one of these signatures:\n" +
-                " * public Object defaultDataTableCell(String fromValue, Type toValueType)\n" +
-                " * public Object defaultDataTableCell(Object fromValue, Type toValueType)\n" +
-                "at io.cucumber.java.JavaDefaultDataTableCellTransformerDefinitionTest.transforms_string_to_void(java.lang.String,java.lang.reflect.Type)"));
+        assertThat(exception.getMessage(), startsWith(
+            """
+                    A @DefaultDataTableCellTransformer annotated method must have one of these signatures:
+                     * public Object defaultDataTableCell(String fromValue, Type toValueType)
+                     * public Object defaultDataTableCell(Object fromValue, Type toValueType)
+                    at io.cucumber.java.JavaDefaultDataTableCellTransformerDefinitionTest.transforms_string_to_void(java.lang.String,java.lang.reflect.Type)"""));
     }
 
     public void transforms_string_to_void(String fromValue, Type toValueType) {

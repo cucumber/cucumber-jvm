@@ -20,10 +20,11 @@ class AmbiguousStepDefinitionsExceptionTest {
 
     @Test
     void can_report_ambiguous_step_definitions() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
 
         Step mockPickleStep = feature.getPickles().get(0).getSteps().get(0);
 
@@ -42,10 +43,10 @@ class AmbiguousStepDefinitionsExceptionTest {
             matches);
         assertAll(
             () -> assertThat(expectedThrown.getMessage(), is(equalTo(
-                "" +
-                        "\"I have 4 cukes in my belly\" matches more than one step definition:\n" +
-                        "  \"PickleStepDefinitionMatchOne_Pattern\" in PickleStepDefinitionMatchOne_Location\n" +
-                        "  \"PickleStepDefinitionMatchTwo_Pattern\" in PickleStepDefinitionMatchTwo_Location"))),
+                """
+                        "I have 4 cukes in my belly" matches more than one step definition:
+                          "PickleStepDefinitionMatchOne_Pattern" in PickleStepDefinitionMatchOne_Location
+                          "PickleStepDefinitionMatchTwo_Pattern" in PickleStepDefinitionMatchTwo_Location"""))),
             () -> assertThat(expectedThrown.getCause(), is(nullValue())),
             () -> assertThat(expectedThrown.getMatches(), is(equalTo(matches))));
     }

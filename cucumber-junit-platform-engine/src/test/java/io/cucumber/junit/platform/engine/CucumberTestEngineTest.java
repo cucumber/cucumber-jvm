@@ -31,7 +31,6 @@ import org.junit.platform.testkit.engine.Event;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -313,7 +312,7 @@ class CucumberTestEngineTest {
 
     @Test
     void supportsClasspathRootSelector() {
-        Path classpathRoot = Paths.get("src/test/resources/");
+        Path classpathRoot = Path.of("src/test/resources/");
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathRoots(singleton(classpathRoot)).get(0))
                 .execute()
@@ -760,7 +759,7 @@ class CucumberTestEngineTest {
 
     @Test
     void supportsPackageFilterForClasspathResources() {
-        Path classpathRoot = Paths.get("src/test/resources/");
+        Path classpathRoot = Path.of("src/test/resources/");
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathRoots(singleton(classpathRoot)).get(0))
                 .filters((Filter<?>) includePackageNames("io.cucumber.junit.platform"))

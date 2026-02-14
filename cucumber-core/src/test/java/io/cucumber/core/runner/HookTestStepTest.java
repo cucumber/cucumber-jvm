@@ -27,10 +27,11 @@ import static org.mockito.Mockito.never;
 
 class HookTestStepTest {
 
-    private final Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n");
+    private final Feature feature = TestFeatureParser.parse("""
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given I have 4 cukes in my belly
+            """);
     private final CoreHookDefinition hookDefintion = mock(CoreHookDefinition.class);
     private final HookDefinitionMatch definitionMatch = new HookDefinitionMatch(hookDefintion);
     private final TestCase testCase = new TestCase(

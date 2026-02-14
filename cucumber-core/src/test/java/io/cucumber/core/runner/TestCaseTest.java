@@ -28,11 +28,12 @@ import static org.mockito.Mockito.when;
 
 class TestCaseTest {
 
-    private final Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n" +
-            "     And I have 4 cucumber on my plate\n");
+    private final Feature feature = TestFeatureParser.parse("""
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given I have 4 cukes in my belly
+                 And I have 4 cucumber on my plate
+            """);
 
     private final EventBus bus = mock(EventBus.class);
 
@@ -92,10 +93,11 @@ class TestCaseTest {
     }
 
     private Pickle pickle() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         return feature.getPickles().get(0);
     }
 

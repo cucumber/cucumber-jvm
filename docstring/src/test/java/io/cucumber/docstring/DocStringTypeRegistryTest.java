@@ -22,8 +22,9 @@ class DocStringTypeRegistryTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class, () -> registry.defineDocStringType(docStringType));
         assertThat(exception).hasMessage(
-            "There is already docstring type registered for '[anonymous]' and java.lang.String.\n" +
-                    "You are trying to add '[anonymous]' and java.lang.String");
+            """
+                    There is already docstring type registered for '[anonymous]' and java.lang.String.
+                    You are trying to add '[anonymous]' and java.lang.String""");
     }
 
     @Test
@@ -42,9 +43,9 @@ class DocStringTypeRegistryTest {
             CucumberDocStringException.class,
             () -> registry.defineDocStringType(duplicate));
         assertThat(exception).hasMessage(
-            "There is already docstring type registered for 'application/json' and com.fasterxml.jackson.databind.JsonNode.\n"
-                    +
-                    "You are trying to add 'application/json' and com.fasterxml.jackson.databind.JsonNode");
+            """
+                    There is already docstring type registered for 'application/json' and com.fasterxml.jackson.databind.JsonNode.
+                    You are trying to add 'application/json' and com.fasterxml.jackson.databind.JsonNode""");
     }
 
     @Test
