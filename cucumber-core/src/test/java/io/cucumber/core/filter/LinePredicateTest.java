@@ -25,14 +25,14 @@ class LinePredicateTest {
                     Scenario Outline: Test scenario
                        Given I have 4 <thing> in my belly
                        Examples: First
-                         | thing    |\s
-                         | cucumber |\s
-                         | gherkin  |\s
+                         | thing    |
+                         | cucumber |
+                         | gherkin  |
 
                        Examples: Second
-                         | thing    |\s
-                         | zukini   |\s
-                         | pickle   |\s
+                         | thing    |
+                         | zukini   |
+                         | pickle   |
                 """);
     private final Pickle firstPickle = feature.getPickles().get(0);
     private final Pickle secondPickle = feature.getPickles().get(1);

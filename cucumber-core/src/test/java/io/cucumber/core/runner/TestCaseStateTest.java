@@ -91,8 +91,8 @@ class TestCaseStateTest {
                   Scenario Outline: Test scenario
                      Given I have 4 <thing> in my belly
                      Examples:
-                       | thing |\s
-                       | cuke  |\s
+                       | thing |
+                       | cuke  |
                 """);
 
         TestCaseState state = createTestCaseState(feature);
@@ -120,8 +120,8 @@ class TestCaseStateTest {
                   Scenario Outline: Test scenario
                      Given I have 4 <thing> in my belly
                      Examples:
-                       | thing |\s
-                       | cuke  |\s
+                       | thing |
+                       | cuke  |
                 """);
         TestCaseState state = createTestCaseState(feature);
 
