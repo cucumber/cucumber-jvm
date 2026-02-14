@@ -41,7 +41,7 @@ public class UndefinedStepExceptionTest {
         assertThat(exception.getMessage(), is("""
                 The step 'some step' is undefined.
                 You can implement this step using the snippet(s) below:
-                
+
                 some snippet
                 """));
     }
@@ -68,7 +68,7 @@ public class UndefinedStepExceptionTest {
         assertThat(exception.getMessage(), is("""
                 The step 'some step' is undefined.
                 You can implement this step using the snippet(s) below:
-                
+
                 some snippet
                 some other snippet
                 """));
@@ -86,7 +86,7 @@ public class UndefinedStepExceptionTest {
         assertThat(exception.getMessage(), is("""
                 The step 'some step' and 1 other step(s) are undefined.
                 You can implement these steps using the snippet(s) below:
-                
+
                 some snippet
                 some other snippet
                 """));
@@ -105,7 +105,7 @@ public class UndefinedStepExceptionTest {
         assertThat(exception.getMessage(), is("""
                 The step 'some step' and 1 other step(s) are undefined.
                 You can implement these steps using the snippet(s) below:
-                
+
                 some snippet
                 some other snippet
                 """));
@@ -125,7 +125,7 @@ public class UndefinedStepExceptionTest {
         assertThat(exception.getMessage(), is("""
                 The step 'some step' and 2 other step(s) are undefined.
                 You can implement these steps using the snippet(s) below:
-                
+
                 some snippet
                 some other snippet
                 yet another snippet
