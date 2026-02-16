@@ -60,12 +60,12 @@ public final class ObjectFactoryServiceLoader {
         }
 
         if (objectFactory == null) {
-            throw new CucumberException("" +
-                    "Could not find any object factory.\n" +
-                    "\n" +
-                    "Cucumber uses SPI to discover object factory implementations.\n" +
-                    "This typically happens when using shaded jars. Make sure\n" +
-                    "to merge all SPI definitions in META-INF/services correctly");
+            throw new CucumberException("""
+                    Could not find any object factory.
+
+                    Cucumber uses SPI to discover object factory implementations.
+                    This typically happens when using shaded jars. Make sure
+                    to merge all SPI definitions in META-INF/services correctly""");
         }
 
         // Check if there are no other non-default object factories

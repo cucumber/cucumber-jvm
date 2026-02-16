@@ -12,14 +12,14 @@ abstract class AbstractJavaSnippet implements Snippet {
 
     @Override
     public final String tableHint() {
-        return "" +
-                "    // For automatic transformation, change DataTable to one of\n" +
-                "    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or\n" +
-                "    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,\n" +
-                "    // Double, Byte, Short, Long, BigInteger or BigDecimal.\n" +
-                "    //\n" +
-                // TODO: Add doc URL
-                "    // For other transformations you can register a DataTableType.\n";
+        return """
+                    // For automatic transformation, change DataTable to one of
+                    // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
+                    // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
+                    // Double, Byte, Short, Long, BigInteger or BigDecimal.
+                    //
+                    // For other transformations you can register a DataTableType.
+                """;
     }
 
     @Override
@@ -31,8 +31,7 @@ abstract class AbstractJavaSnippet implements Snippet {
     }
 
     private String getArgType(Type argType) {
-        if (argType instanceof Class) {
-            Class<?> cType = (Class<?>) argType;
+        if (argType instanceof Class<?> cType) {
             if (cType.equals(DataTable.class)) {
                 return cType.getName();
             }

@@ -25,8 +25,7 @@ final class LambdaTypeResolver implements TypeResolver {
     }
 
     private Type requireNonMapOrListType(Type argumentType) {
-        if (argumentType instanceof Class) {
-            Class<?> argumentClass = (Class<?>) argumentType;
+        if (argumentType instanceof Class<?> argumentClass) {
             if (List.class.isAssignableFrom(argumentClass) || Map.class.isAssignableFrom(argumentClass)) {
                 throw withLocation(
                     new CucumberBackendException(

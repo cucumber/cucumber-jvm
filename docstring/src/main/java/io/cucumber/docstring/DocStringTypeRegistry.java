@@ -36,13 +36,13 @@ public final class DocStringTypeRegistry {
             DocStringType existing, DocStringType docStringType
     ) {
         String contentType = existing.getContentType();
-        return new CucumberDocStringException(("" +
-                "There is already docstring type registered for '%s' and %s.\n" +
-                "You are trying to add '%s' and %s").formatted(
-                    emptyToAnonymous(contentType),
-                    existing.getType().getTypeName(),
-                    emptyToAnonymous(docStringType.getContentType()),
-                    docStringType.getType().getTypeName()));
+        return new CucumberDocStringException("""
+                There is already docstring type registered for '%s' and %s.
+                You are trying to add '%s' and %s""".formatted(
+            emptyToAnonymous(contentType),
+            existing.getType().getTypeName(),
+            emptyToAnonymous(docStringType.getContentType()),
+            docStringType.getType().getTypeName()));
     }
 
     private static String emptyToAnonymous(String contentType) {

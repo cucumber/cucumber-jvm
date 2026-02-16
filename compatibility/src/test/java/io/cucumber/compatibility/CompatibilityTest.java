@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -314,7 +313,7 @@ final class CompatibilityTest {
     }
 
     private static Path writeNdjsonReport(TestCase testCase) throws IOException {
-        Path parentDir = Files.createDirectories(Paths.get("target", "messages", testCase.getId()));
+        Path parentDir = Files.createDirectories(Path.of("target", "messages", testCase.getId()));
         Path actualNdjson = parentDir.resolve("actual.ndjson");
         Path expectedNdjson = parentDir.resolve("expected.ndjson");
         Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);

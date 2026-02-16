@@ -28,31 +28,34 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_uri_of_the_feature_file() {
-        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         TestCaseState state = createTestCaseState(feature);
         assertThat(state.getUri(), is(new File("path/file.feature").toURI()));
     }
 
     @Test
     void provides_the_language_of_the_feature_file_without_language_declaration() {
-        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         TestCaseState state = createTestCaseState(feature);
         assertThat(state.getLanguage(), is("en"));
     }
 
     @Test
     void provides_the_language_of_the_feature_file_with_language_declaration() {
-        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-                "#language: en\n" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", """
+                #language: en
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         TestCaseState state = createTestCaseState(feature);
         assertThat(state.getLanguage(), is("en"));
     }
@@ -71,10 +74,11 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_scenario_line() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
 
         TestCaseState state = createTestCaseState(feature);
         assertThat(state.getLine(), is(2));
@@ -82,13 +86,14 @@ class TestCaseStateTest {
 
     @Test
     void provides_both_the_example_row_line_and_scenario_outline_line_for_scenarios_from_scenario_outlines() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario Outline: Test scenario\n" +
-                "     Given I have 4 <thing> in my belly\n" +
-                "     Examples:\n" +
-                "       | thing | \n" +
-                "       | cuke  | \n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario Outline: Test scenario
+                     Given I have 4 <thing> in my belly
+                     Examples:
+                       | thing |
+                       | cuke  |
+                """);
 
         TestCaseState state = createTestCaseState(feature);
         assertThat(state.getLine(), is(6));
@@ -96,10 +101,11 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_uri_and_scenario_line_as_unique_id() {
-        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", """
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
 
         TestCaseState state = createTestCaseState(feature);
 
@@ -109,13 +115,14 @@ class TestCaseStateTest {
 
     @Test
     void provides_the_uri_and_example_row_line_as_unique_id_for_scenarios_from_scenario_outlines() {
-        Feature feature = TestFeatureParser.parse("file:path/file.feature", "" +
-                "Feature: Test feature\n" +
-                "  Scenario Outline: Test scenario\n" +
-                "     Given I have 4 <thing> in my belly\n" +
-                "     Examples:\n" +
-                "       | thing | \n" +
-                "       | cuke  | \n");
+        Feature feature = TestFeatureParser.parse("file:path/file.feature", """
+                Feature: Test feature
+                  Scenario Outline: Test scenario
+                     Given I have 4 <thing> in my belly
+                     Examples:
+                       | thing |
+                       | cuke  |
+                """);
         TestCaseState state = createTestCaseState(feature);
 
         assertThat(state.getUri() + ":" + state.getLine(),
@@ -124,10 +131,11 @@ class TestCaseStateTest {
 
     @Test
     void attach_bytes_emits_event_on_bus() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         TestCaseState state = createTestCaseState(feature);
 
         List<EmbedEvent> embedEvents = new ArrayList<>();
@@ -157,10 +165,11 @@ class TestCaseStateTest {
 
     @Test
     void attach_string_emits_event_on_bus() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
         TestCaseState state = createTestCaseState(feature);
 
         List<EmbedEvent> embedEvents = new ArrayList<>();

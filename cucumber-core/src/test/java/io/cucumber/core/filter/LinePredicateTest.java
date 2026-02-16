@@ -19,20 +19,21 @@ class LinePredicateTest {
     public static final URI featurePath = URI.create("classpath:path/file.feature");
     private final Feature feature = TestFeatureParser.parse(
         featurePath,
-        "" +
-                "Feature: Test feature\n" +
-                "  Rule: Test rule\n" +
-                "    Scenario Outline: Test scenario\n" +
-                "       Given I have 4 <thing> in my belly\n" +
-                "       Examples: First\n" +
-                "         | thing    | \n" +
-                "         | cucumber | \n" +
-                "         | gherkin  | \n" +
-                "\n" +
-                "       Examples: Second\n" +
-                "         | thing    | \n" +
-                "         | zukini   | \n" +
-                "         | pickle   | \n");
+        """
+                Feature: Test feature
+                  Rule: Test rule
+                    Scenario Outline: Test scenario
+                       Given I have 4 <thing> in my belly
+                       Examples: First
+                         | thing    |
+                         | cucumber |
+                         | gherkin  |
+
+                       Examples: Second
+                         | thing    |
+                         | zukini   |
+                         | pickle   |
+                """);
     private final Pickle firstPickle = feature.getPickles().get(0);
     private final Pickle secondPickle = feature.getPickles().get(1);
     private final Pickle thirdPickle = feature.getPickles().get(2);

@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -333,7 +333,7 @@ class IncrementingUuidGeneratorTest {
 
         private byte[] loadClassBytesFromDisk(String className) {
             try {
-                return Files.readAllBytes(Paths.get(Objects.requireNonNull(NonCachingClassLoader.class
+                return Files.readAllBytes(Path.of(Objects.requireNonNull(NonCachingClassLoader.class
                         .getResource(className.replaceFirst(".+\\.", "") + ".class")).toURI()));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to read file from disk");

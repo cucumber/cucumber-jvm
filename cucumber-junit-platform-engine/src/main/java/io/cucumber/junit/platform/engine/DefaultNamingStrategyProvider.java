@@ -71,11 +71,11 @@ enum DefaultNamingStrategyProvider {
     private static String pickleNameIfParameterized(Node node, Pickle pickle) {
         if (node instanceof Node.Example) {
             String pickleName = pickle.getName();
-            boolean parameterized = !node.getParent()
+            boolean parameterized = node.getParent()
                     .flatMap(Node::getParent)
                     .flatMap(Node::getName)
                     .filter(pickleName::equals)
-                    .isPresent();
+                    .isEmpty();
             if (parameterized) {
                 return ": " + pickleName;
             }

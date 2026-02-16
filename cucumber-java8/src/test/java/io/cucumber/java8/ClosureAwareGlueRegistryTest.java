@@ -59,10 +59,11 @@ class ClosureAwareGlueRegistryTest {
 
         registry.startRegistration();
         CucumberBackendException exception = assertThrows(CucumberBackendException.class, registry::finishRegistration);
-        assertThat(exception.getMessage(), equalTo("" +
-                "Found an inconsistent number of glue registrations.\n" +
-                "Previously 1 step definitions, hooks and parameter types were registered. Currently 0.\n" +
-                "To optimize performance Cucumber expects glue registration to be identical for each scenario and example."));
+        assertThat(exception.getMessage(), equalTo(
+            """
+                    Found an inconsistent number of glue registrations.
+                    Previously 1 step definitions, hooks and parameter types were registered. Currently 0.
+                    To optimize performance Cucumber expects glue registration to be identical for each scenario and example."""));
     }
 
     @Test
@@ -79,10 +80,11 @@ class ClosureAwareGlueRegistryTest {
         registry.addStepDefinition(stepDefinition);
         registry.addStepDefinition(stepDefinition);
         CucumberBackendException exception = assertThrows(CucumberBackendException.class, registry::finishRegistration);
-        assertThat(exception.getMessage(), equalTo("" +
-                "Found an inconsistent number of glue registrations.\n" +
-                "Previously 1 step definitions, hooks and parameter types were registered. Currently 2.\n" +
-                "To optimize performance Cucumber expects glue registration to be identical for each scenario and example."));
+        assertThat(exception.getMessage(), equalTo(
+            """
+                    Found an inconsistent number of glue registrations.
+                    Previously 1 step definitions, hooks and parameter types were registered. Currently 2.
+                    To optimize performance Cucumber expects glue registration to be identical for each scenario and example."""));
     }
 
     @Test
@@ -101,10 +103,10 @@ class ClosureAwareGlueRegistryTest {
         registry.startRegistration();
         CucumberBackendException exception = assertThrows(CucumberBackendException.class,
             () -> registry.addStepDefinition(stepDefinition));
-        assertThat(exception.getMessage(), equalTo("" +
-                "Found an inconsistent glue registrations.\n" +
-                "Previously the registration in slot 0 was a 'io.cucumber.java8.Java8HookDefinition'. Currently 'io.cucumber.java8.Java8StepDefinition'.\n"
-                +
-                "To optimize performance Cucumber expects glue registration to be identical for each scenario and example."));
+        assertThat(exception.getMessage(), equalTo(
+            """
+                    Found an inconsistent glue registrations.
+                    Previously the registration in slot 0 was a 'io.cucumber.java8.Java8HookDefinition'. Currently 'io.cucumber.java8.Java8StepDefinition'.
+                    To optimize performance Cucumber expects glue registration to be identical for each scenario and example."""));
     }
 }

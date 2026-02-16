@@ -19,10 +19,11 @@ class ProgressFormatterTest {
 
     @Test
     void prints_dot_for_passed_step() {
-        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: passed scenario\n" +
-                "    Given passed step\n");
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", """
+                Feature: feature name
+                  Scenario: passed scenario
+                    Given passed step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()

@@ -25,12 +25,13 @@ class RerunFormatterTest {
 
     @Test
     void should_leave_report_empty_when_exit_code_is_zero() {
-        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: passed scenario\n" +
-                "    Given passed step\n" +
-                "  Scenario: skipped scenario\n" +
-                "    Given skipped step\n");
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", """
+                Feature: feature name
+                  Scenario: passed scenario
+                    Given passed step
+                  Scenario: skipped scenario
+                    Given skipped step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -47,14 +48,15 @@ class RerunFormatterTest {
 
     @Test
     void should_put_data_in_report_when_exit_code_is_non_zero() {
-        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: failed scenario\n" +
-                "    Given failed step\n" +
-                "  Scenario: pending scenario\n" +
-                "    Given pending step\n" +
-                "  Scenario: undefined scenario\n" +
-                "    Given undefined step\n");
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", """
+                Feature: feature name
+                  Scenario: failed scenario
+                    Given failed step
+                  Scenario: pending scenario
+                    Given pending step
+                  Scenario: undefined scenario
+                    Given undefined step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -71,12 +73,13 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_scenario_step_fails() {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Given first step
+                    When second step
+                    Then third step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -94,13 +97,14 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_background_step_fails() {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: the background\n" +
-                "    Given background step\n" +
-                "  Scenario: scenario name\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Background: the background
+                    Given background step
+                  Scenario: scenario name
+                    When second step
+                    Then third step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -118,15 +122,15 @@ class RerunFormatterTest {
 
     @Test
     void should_use_example_row_location_when_scenario_outline_fails() {
-        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario Outline: scenario name\n" +
-                "    When executing <row> row\n" +
-                "    Then everything is ok\n" +
-                "    Examples:\n" +
-                "    |  row   |\n" +
-                "    | first  |\n" +
-                "    | second |");
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", """
+                Feature: feature name
+                  Scenario Outline: scenario name
+                    When executing <row> row
+                    Then everything is ok
+                    Examples:
+                    |  row   |
+                    | first  |
+                    | second |""");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -144,12 +148,13 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_before_hook_fails() {
-        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Given first step
+                    When second step
+                    Then third step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -170,12 +175,13 @@ class RerunFormatterTest {
 
     @Test
     void should_use_scenario_location_when_after_hook_fails() {
-        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Given first step\n" +
-                "    When second step\n" +
-                "    Then third step\n");
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Given first step
+                    When second step
+                    Then third step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -196,14 +202,15 @@ class RerunFormatterTest {
 
     @Test
     void should_one_entry_for_feature_with_many_failing_scenarios() {
-        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario 1 name\n" +
-                "    When first step\n" +
-                "    Then second step\n" +
-                "  Scenario: scenario 2 name\n" +
-                "    When third step\n" +
-                "    Then forth step\n");
+        Feature feature = TestFeatureParser.parse("classpath:path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario 1 name
+                    When first step
+                    Then second step
+                  Scenario: scenario 2 name
+                    When third step
+                    Then forth step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
@@ -222,16 +229,18 @@ class RerunFormatterTest {
 
     @Test
     void should_one_entry_for_each_failing_feature() {
-        Feature feature1 = TestFeatureParser.parse("classpath:path/first.feature", "" +
-                "Feature: feature 1 name\n" +
-                "  Scenario: scenario 1 name\n" +
-                "    When first step\n" +
-                "    Then second step\n");
-        Feature feature2 = TestFeatureParser.parse("classpath:path/second.feature", "" +
-                "Feature: feature 2 name\n" +
-                "  Scenario: scenario 2 name\n" +
-                "    When third step\n" +
-                "    Then forth step\n");
+        Feature feature1 = TestFeatureParser.parse("classpath:path/first.feature", """
+                Feature: feature 1 name
+                  Scenario: scenario 1 name
+                    When first step
+                    Then second step
+                """);
+        Feature feature2 = TestFeatureParser.parse("classpath:path/second.feature", """
+                Feature: feature 2 name
+                  Scenario: scenario 2 name
+                    When third step
+                    Then forth step
+                """);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()

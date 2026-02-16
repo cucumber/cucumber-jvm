@@ -46,8 +46,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
 
         List<String> errors = envelopes.stream()
                 .map(Envelope::getParseError)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .map(ParseError::getMessage)
                 .collect(toList());
 
@@ -58,8 +57,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
 
         return envelopes.stream()
                 .map(Envelope::getGherkinDocument)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .findFirst()
                 .map(GherkinDocument::getFeature)
                 .filter(Optional::isPresent)
@@ -74,8 +72,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
 
                     List<io.cucumber.messages.types.Pickle> pickleMessages = envelopes.stream()
                             .map(Envelope::getPickle)
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
+                            .flatMap(Optional::stream)
                             .collect(toList());
 
                     List<Pickle> pickles = pickleMessages.stream()
@@ -84,8 +81,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
 
                     Source sourceMessage = envelopes.stream()
                             .map(Envelope::getSource)
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
+                            .flatMap(Optional::stream)
                             .findFirst()
                             .orElseThrow(() -> new IllegalStateException("source message was not emitted by parser"));
 

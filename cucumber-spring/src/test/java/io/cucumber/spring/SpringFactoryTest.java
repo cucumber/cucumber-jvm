@@ -261,9 +261,9 @@ public final class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(BellyStepDefinitions.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat(actualThrown.getMessage(), startsWith(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both (meta-)annotated with @CucumberContextConfiguration.\n"
-                    +
-                    "Please ensure only one class configures the spring context"));
+            """
+                    Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both (meta-)annotated with @CucumberContextConfiguration.
+                    Please ensure only one class configures the spring context"""));
     }
 
     @Test

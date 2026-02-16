@@ -4,7 +4,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 final class CloseablePath implements Closeable {
 
@@ -20,7 +19,7 @@ final class CloseablePath implements Closeable {
     }
 
     static CloseablePath open(URI uri) {
-        return CloseablePath.open(Paths.get(uri), NULL_CLOSEABLE);
+        return CloseablePath.open(Path.of(uri), NULL_CLOSEABLE);
     }
 
     static CloseablePath open(Path path, Closeable o) {

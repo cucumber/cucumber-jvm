@@ -32,10 +32,11 @@ class HookTest {
 
     private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     private final RuntimeOptions runtimeOptions = RuntimeOptions.defaultOptions();
-    private final Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n");
+    private final Feature feature = TestFeatureParser.parse("""
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given I have 4 cukes in my belly
+            """);
     private final Pickle pickle = feature.getPickles().get(0);
 
     /**

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,8 +39,8 @@ class TimelineFormatterTest {
     private static final Comparator<TimeLineItem> TEST_DATA_COMPARATOR = Comparator
             .comparing(TimeLineItem::getScenario);
 
-    private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Paths
-            .get("src/main/resources/io/cucumber/core/plugin/timeline");
+    private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Path
+            .of("src/main/resources/io/cucumber/core/plugin/timeline");
 
     private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", """
             Feature: Failing Feature

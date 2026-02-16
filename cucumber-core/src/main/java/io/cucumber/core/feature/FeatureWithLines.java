@@ -2,6 +2,7 @@ package io.cucumber.core.feature;
 
 import io.cucumber.core.exception.CucumberException;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Path;
@@ -29,6 +30,7 @@ import static java.nio.file.Files.readAllLines;
  */
 public final class FeatureWithLines implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 20190126L;
     private static final Pattern FEATURE_WITH_LINES_FILE_FORMAT = Pattern.compile("(?m:^| |)(.*?\\.feature(?::\\d+)*)");
     private static final Pattern FEATURE_COLON_LINE_PATTERN = Pattern.compile("^(.*?):([\\d:]+)$");

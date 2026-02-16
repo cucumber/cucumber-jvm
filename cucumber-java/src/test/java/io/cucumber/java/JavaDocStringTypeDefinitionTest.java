@@ -78,10 +78,10 @@ class JavaDocStringTypeDefinitionTest {
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
             () -> new JavaDocStringTypeDefinition("", method, lookup));
-        assertThat(exception.getMessage(), startsWith("" +
-                "A @DocStringType annotated method must have one of these signatures:\n" +
-                " * public JsonNode json(String content)\n" +
-                "at io.cucumber.java.JavaDocStringTypeDefinitionTest.converts_object_to_string(java.lang.Object)"));
+        assertThat(exception.getMessage(), startsWith("""
+                A @DocStringType annotated method must have one of these signatures:
+                 * public JsonNode json(String content)
+                at io.cucumber.java.JavaDocStringTypeDefinitionTest.converts_object_to_string(java.lang.Object)"""));
     }
 
     public Object converts_object_to_string(Object object) {

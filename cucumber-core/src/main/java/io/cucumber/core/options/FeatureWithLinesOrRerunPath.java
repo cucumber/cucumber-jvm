@@ -4,7 +4,6 @@ import io.cucumber.core.feature.FeatureWithLines;
 import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -45,7 +44,7 @@ class FeatureWithLinesOrRerunPath {
 
     static FeatureWithLinesOrRerunPath parse(String arg) {
         if (arg.startsWith("@")) {
-            Path rerunFileOrDirectory = Paths.get(arg.substring(1));
+            Path rerunFileOrDirectory = Path.of(arg.substring(1));
             return new FeatureWithLinesOrRerunPath(null, RerunPath.parse(rerunFileOrDirectory));
         } else {
             return new FeatureWithLinesOrRerunPath(FeatureWithLines.parse(arg), null);

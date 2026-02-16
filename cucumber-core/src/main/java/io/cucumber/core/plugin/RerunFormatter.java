@@ -82,8 +82,7 @@ public final class RerunFormatter implements ConcurrentEventListener {
         query.findAllTestCaseStarted().stream()
                 .filter(this::isNotPassingOrSkipped)
                 .map(query::findPickleBy)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .map(this::createUriAndLine)
                 .collect(groupByUriAndThenCollectLines())
                 .forEach(this::printUriWithLines);

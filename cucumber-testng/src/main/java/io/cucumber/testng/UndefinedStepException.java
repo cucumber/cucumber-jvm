@@ -3,11 +3,13 @@ package io.cucumber.testng;
 import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
 import org.testng.SkipException;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 final class UndefinedStepException extends SkipException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     UndefinedStepException(Collection<Suggestion> suggestions) {

@@ -31,11 +31,12 @@ class JUnitFormatterTest {
         TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0), null, null);
         bus.send(Envelope.of(testRunFinished));
 
-        assertThat(bytes, bytes(equalTo("" +
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<testsuite name=\"Cucumber\" time=\"5.0\" tests=\"0\" skipped=\"0\" failures=\"0\" errors=\"0\" timestamp=\"1970-01-01T00:00:10Z\">\n"
-                +
-                "</testsuite>\n")));
+        assertThat(bytes, bytes(equalTo(
+            """
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <testsuite name="Cucumber" time="5.0" tests="0" skipped="0" failures="0" errors="0" timestamp="1970-01-01T00:00:10Z">
+                    </testsuite>
+                    """)));
     }
 
 }

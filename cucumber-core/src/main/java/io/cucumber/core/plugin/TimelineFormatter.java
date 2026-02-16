@@ -105,8 +105,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                             testCaseStarted, //
                             workerId -> timeLineGroupsById.computeIfAbsent(workerId, id -> new TimeLineGroup(id, id)) //
                         )))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .collect(Collectors.toList());
 
         List<TimeLineGroup> timeLineGroups = timeLineGroupsById.values().stream()

@@ -3,11 +3,13 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.runtime.TestCaseResultObserver.Suggestion;
 import org.opentest4j.IncompleteExecutionException;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 final class UndefinedStepException extends IncompleteExecutionException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     UndefinedStepException(Collection<Suggestion> suggestions) {
