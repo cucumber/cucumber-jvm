@@ -39,7 +39,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
-class FeatureRunnerTest {
+final class FeatureRunnerTest {
 
     private static void assertDescriptionIsPredictable(Description description, Set<Description> descriptions) {
         assertTrue(descriptions.contains(description));
@@ -59,21 +59,22 @@ class FeatureRunnerTest {
 
     @Test
     void should_not_create_step_descriptions_by_default() {
-        Feature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background:\n" +
-                "    Given background step\n" +
-                "  Scenario: A\n" +
-                "    Then scenario name\n" +
-                "  Scenario: B\n" +
-                "    Then scenario name\n" +
-                "  Scenario Outline: C\n" +
-                "    Then scenario <name>\n" +
-                "  Examples:\n" +
-                "    | name |\n" +
-                "    | C    |\n" +
-                "    | D    |\n" +
-                "    | E    |\n"
+        Feature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Background:
+                    Given background step
+                  Scenario: A
+                    Then scenario name
+                  Scenario: B
+                    Then scenario name
+                  Scenario Outline: C
+                    Then scenario <name>
+                  Examples:
+                    | name |
+                    | C    |
+                    | D    |
+                    | E    |
+                """
 
         );
 
@@ -101,12 +102,12 @@ class FeatureRunnerTest {
         final Clock clockStub = new Clock() {
             @Override
             public ZoneId getZone() {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public Clock withZone(ZoneId zone) {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -127,20 +128,21 @@ class FeatureRunnerTest {
 
     @Test
     void should_not_issue_notification_for_steps_by_default_scenario_outline_with_two_examples_table_and_background() {
-        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given step #1\n" +
-                "  Scenario Outline: scenario <id>\n" +
-                "    When step #2 \n" +
-                "    Then step #3 \n" +
-                "    Examples: examples 1 name\n" +
-                "      | id | \n" +
-                "      | #1 |\n" +
-                "      | #2  |\n" +
-                "    Examples: examples 2 name\n" +
-                "      | id |\n" +
-                "      | #3 |\n");
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Background: background
+                    Given step #1
+                  Scenario Outline: scenario <id>
+                    When step #2
+                    Then step #3
+                    Examples: examples 1 name
+                      | id |
+                      | #1 |
+                      | #2 |
+                    Examples: examples 2 name
+                      | id |
+                      | #3 |
+                """);
         RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
         InOrder order = inOrder(notifier);
@@ -165,15 +167,16 @@ class FeatureRunnerTest {
 
     @Test
     void should_not_issue_notification_for_steps_by_default_two_scenarios_with_background() {
-        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given step #1\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    When step #2\n" +
-                "    Then step #3\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Then step #2\n");
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Background: background
+                    Given step #1
+                  Scenario: scenario_1 name
+                    When step #2
+                    Then step #3
+                  Scenario: scenario_2 name
+                    Then step #2
+                """);
 
         RunNotifier notifier = runFeatureWithNotifier(feature, new JUnitOptions());
 
@@ -189,21 +192,22 @@ class FeatureRunnerTest {
 
     @Test
     void should_populate_descriptions_with_stable_unique_ids() {
-        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background:\n" +
-                "    Given background step\n" +
-                "  Scenario: A\n" +
-                "    Then scenario name\n" +
-                "  Scenario: B\n" +
-                "    Then scenario name\n" +
-                "  Scenario Outline: C\n" +
-                "    Then scenario <name>\n" +
-                "  Examples:\n" +
-                "    | name |\n" +
-                "    | C    |\n" +
-                "    | D    |\n" +
-                "    | E    |\n"
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Background:
+                    Given background step
+                  Scenario: A
+                    Then scenario name
+                  Scenario: B
+                    Then scenario name
+                  Scenario Outline: C
+                    Then scenario <name>
+                  Examples:
+                    | name |
+                    | C    |
+                    | D    |
+                    | E    |
+                """
 
         );
 
@@ -219,21 +223,22 @@ class FeatureRunnerTest {
 
     @Test
     void step_descriptions_can_be_turned_on() {
-        Feature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background:\n" +
-                "    Given background step\n" +
-                "  Scenario: A\n" +
-                "    Then scenario name\n" +
-                "  Scenario: B\n" +
-                "    Then scenario name\n" +
-                "  Scenario Outline: C\n" +
-                "    Then scenario <name>\n" +
-                "  Examples:\n" +
-                "    | name |\n" +
-                "    | C    |\n" +
-                "    | D    |\n" +
-                "    | E    |\n"
+        Feature cucumberFeature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Background:
+                    Given background step
+                  Scenario: A
+                    Then scenario name
+                  Scenario: B
+                    Then scenario name
+                  Scenario Outline: C
+                    Then scenario <name>
+                  Examples:
+                    | name |
+                    | C    |
+                    | D    |
+                    | E    |
+                """
 
         );
 
@@ -255,20 +260,21 @@ class FeatureRunnerTest {
 
     @Test
     void step_notification_can_be_turned_on_scenario_outline_with_two_examples_table_and_background() {
-        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given step #1\n" +
-                "  Scenario Outline: scenario <id>\n" +
-                "    When step #2 \n" +
-                "    Then step #3 \n" +
-                "    Examples: examples 1 name\n" +
-                "      | id | \n" +
-                "      | #1 |\n" +
-                "      | #2  |\n" +
-                "    Examples: examples 2 name\n" +
-                "      | id |\n" +
-                "      | #3 |\n");
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Background: background
+                    Given step #1
+                  Scenario Outline: scenario <id>
+                    When step #2
+                    Then step #3
+                    Examples: examples 1 name
+                      | id |
+                      | #1 |
+                      | #2 |
+                    Examples: examples 2 name
+                      | id |
+                      | #3 |
+                """);
 
         JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
         RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
@@ -314,15 +320,16 @@ class FeatureRunnerTest {
 
     @Test
     void step_notification_can_be_turned_on_two_scenarios_with_background() {
-        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given step #1\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    When step #2\n" +
-                "    Then step #3\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Then another step #2\n");
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Background: background
+                    Given step #1
+                  Scenario: scenario_1 name
+                    When step #2
+                    Then step #3
+                  Scenario: scenario_2 name
+                    Then another step #2
+                """);
 
         JUnitOptions junitOption = new JUnitOptionsBuilder().setStepNotifications(true).build();
         RunNotifier notifier = runFeatureWithNotifier(feature, junitOption);
@@ -354,10 +361,11 @@ class FeatureRunnerTest {
 
     @Test
     void should_notify_of_failure_to_create_runners_and_request_test_execution_to_stop() {
-        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    Given step #1\n");
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario_1 name
+                    Given step #1
+                """);
 
         Filters filters = new Filters(RuntimeOptions.defaultOptions());
 
@@ -388,13 +396,14 @@ class FeatureRunnerTest {
 
     @Test
     void should_filter_pickles() {
-        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    Given step #1\n" +
-                "  @tag\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Given step #1\n"
+        Feature feature = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario_1 name
+                    Given step #1
+                  @tag
+                  Scenario: scenario_2 name
+                    Given step #1
+                """
 
         );
 

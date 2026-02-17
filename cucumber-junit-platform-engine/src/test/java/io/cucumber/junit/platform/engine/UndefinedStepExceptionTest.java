@@ -38,11 +38,12 @@ class UndefinedStepExceptionTest {
                 new Suggestion("some step", singletonList("some snippet"), uri, stepLocation))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' is undefined.
+                You can implement this step using the snippet(s) below:
+
+                some snippet
+                """));
     }
 
     @Test
@@ -64,12 +65,13 @@ class UndefinedStepExceptionTest {
                     stepLocation))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' is undefined.
+                You can implement this step using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                """));
     }
 
     @Test
@@ -81,12 +83,13 @@ class UndefinedStepExceptionTest {
                     stepLocation))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' and 1 other step(s) are undefined.\n" +
-                "You can implement these steps using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' and 1 other step(s) are undefined.
+                You can implement these steps using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                """));
     }
 
     @Test
@@ -99,12 +102,13 @@ class UndefinedStepExceptionTest {
                     stepLocation))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' and 1 other step(s) are undefined.\n" +
-                "You can implement these steps using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' and 1 other step(s) are undefined.
+                You can implement these steps using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                """));
     }
 
     @Test
@@ -118,13 +122,14 @@ class UndefinedStepExceptionTest {
                     stepLocation))
 
         );
-        assertThat(exception.getMessage(), is("" +
-                "The step 'some step' and 2 other step(s) are undefined.\n" +
-                "You can implement these steps using the snippet(s) below:\n" +
-                "\n" +
-                "some snippet\n" +
-                "some other snippet\n" +
-                "yet another snippet\n"));
+        assertThat(exception.getMessage(), is("""
+                The step 'some step' and 2 other step(s) are undefined.
+                You can implement these steps using the snippet(s) below:
+
+                some snippet
+                some other snippet
+                yet another snippet
+                """));
     }
 
 }

@@ -1,6 +1,7 @@
 package io.cucumber.plugin.event;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -8,7 +9,7 @@ import java.util.Objects;
 @API(status = API.Status.STABLE)
 public final class TestRunFinished extends TimeStampedEvent {
 
-    private final Result result;
+    private final @Nullable Result result;
 
     @Deprecated
     public TestRunFinished(Instant timeInstant) {
@@ -21,7 +22,7 @@ public final class TestRunFinished extends TimeStampedEvent {
         this.result = Objects.requireNonNull(result);
     }
 
-    public Result getResult() {
+    public @Nullable Result getResult() {
         return result;
     }
 

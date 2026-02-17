@@ -28,7 +28,6 @@ public final class ClasspathScanner {
     private static final String CLASS_FILE_SUFFIX = ".class";
     private static final String PACKAGE_INFO_FILE_NAME = "package-info" + CLASS_FILE_SUFFIX;
     private static final String MODULE_INFO_FILE_NAME = "module-info" + CLASS_FILE_SUFFIX;
-    private static final Predicate<Class<?>> NULL_FILTER = aClass -> true;
 
     private final PathScanner pathScanner = new PathScanner();
 
@@ -72,7 +71,7 @@ public final class ClasspathScanner {
         List<Class<?>> classes = new ArrayList<>();
         pathScanner.findResourcesForUri(
             baseUri,
-            path -> isClassFileButNotAnonymousClass(path) && isNotModuleInfo(path) && isNotPackageInfo(path),
+            path -> isNotModuleInfo(path) && isNotPackageInfo(path) && isClassFile(path),
             processClassFiles(packageName, classFilter, classes::add));
         return classes;
     }
@@ -85,26 +84,8 @@ public final class ClasspathScanner {
         return !path.endsWith(PACKAGE_INFO_FILE_NAME);
     }
 
-    private static boolean isClassFileButNotAnonymousClass(Path file) {
-        String filename = file.getFileName().toString();
-        boolean isClass = filename.endsWith(CLASS_FILE_SUFFIX);
-        return isClass && isNotAnonymousClass(filename);
-    }
-
-    private static boolean isNotAnonymousClass(String fileName) {
-        int indexInnerClass = fileName.lastIndexOf('$');
-        if (indexInnerClass < 0) {
-            // not inner class
-            return true;
-        }
-        for (int i = indexInnerClass + 1; i < fileName.length() - CLASS_FILE_SUFFIX.length(); i++) {
-            if (!Character.isDigit(fileName.charAt(i))) {
-                // not anonymous class
-                return true;
-            }
-        }
-        // anonymous class
-        return false;
+    private static boolean isClassFile(Path file) {
+        return file.getFileName().toString().endsWith(CLASS_FILE_SUFFIX);
     }
 
     private Function<Path, Consumer<Path>> processClassFiles(
@@ -132,7 +113,7 @@ public final class ClasspathScanner {
     }
 
     public List<Class<?>> scanForClassesInPackage(String packageName) {
-        return scanForClassesInPackage(packageName, NULL_FILTER);
+        return scanForClassesInPackage(packageName, aClass -> true);
     }
 
 }

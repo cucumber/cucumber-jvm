@@ -51,34 +51,31 @@ enum DefaultNamingStrategyProvider {
     }
 
     private static Function<BiFunction<Node, String, String>, NamingStrategy> parseStrategy(String exampleStrategy) {
-        switch (exampleStrategy) {
-            case "number":
-                return DefaultNamingStrategyProvider::exampleNumberStrategy;
-            case "number-and-pickle-if-parameterized":
-                return DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy;
-            case "pickle":
-                return DefaultNamingStrategyProvider::pickleNameStrategy;
-            default:
-                throw new IllegalArgumentException("Unrecognized example naming strategy " + exampleStrategy);
-        }
+        return switch (exampleStrategy) {
+            case "number" -> DefaultNamingStrategyProvider::exampleNumberStrategy;
+            case "number-and-pickle-if-parameterized" ->
+                DefaultNamingStrategyProvider::exampleNumberAndPickleIfParameterizedStrategy;
+            case "pickle" -> DefaultNamingStrategyProvider::pickleNameStrategy;
+            default -> throw new IllegalArgumentException("Unrecognized example naming strategy " + exampleStrategy);
+        };
     }
 
     private static NamingStrategy exampleNumberAndPickleIfParameterizedStrategy(
             BiFunction<Node, String, String> baseStrategy
     ) {
         return createNamingStrategy(
-            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+            node -> baseStrategy.apply(node, nameOrKeyword(node)),
             (node, pickle) -> baseStrategy.apply(node, nameOrKeyword(node) + pickleNameIfParameterized(node, pickle)));
     }
 
     private static String pickleNameIfParameterized(Node node, Pickle pickle) {
         if (node instanceof Node.Example) {
             String pickleName = pickle.getName();
-            boolean parameterized = !node.getParent()
+            boolean parameterized = node.getParent()
                     .flatMap(Node::getParent)
                     .flatMap(Node::getName)
                     .filter(pickleName::equals)
-                    .isPresent();
+                    .isEmpty();
             if (parameterized) {
                 return ": " + pickleName;
             }
@@ -88,13 +85,13 @@ enum DefaultNamingStrategyProvider {
 
     private static NamingStrategy exampleNumberStrategy(BiFunction<Node, String, String> baseStrategy) {
         return createNamingStrategy(
-            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+            node -> baseStrategy.apply(node, nameOrKeyword(node)),
             (node, pickle) -> baseStrategy.apply(node, nameOrKeyword(node)));
     }
 
     private static NamingStrategy pickleNameStrategy(BiFunction<Node, String, String> baseStrategy) {
         return createNamingStrategy(
-            (node) -> baseStrategy.apply(node, nameOrKeyword(node)),
+            node -> baseStrategy.apply(node, nameOrKeyword(node)),
             (node, pickle) -> baseStrategy.apply(node, pickle.getName()));
     }
 

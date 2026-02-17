@@ -3,6 +3,7 @@ package io.cucumber.jakarta.cdi.example;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
+@SuppressWarnings("DesignForExtension")
 public class Belly {
 
     private int cukes;

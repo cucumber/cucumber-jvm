@@ -10,17 +10,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- [All] Set baseline to Java 17 ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
+- [All] Adopt [JSpecify](https://jspecify.dev/) to declare nullability ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
+- [Core] Update skipped, pending and undefined colors ([cucumber/common#2302](https://github.com/cucumber/common/issues/2302))
+- [Core] Update dependency io.cucumber:ci-environment.version to v13.0.0
+- [Core] Update dependency io.cucumber:cucumber-expressions.version to v19.0.0
+- [Core] Update dependency io.cucumber:cucumber-json-formatter.version to v0.4.0
+- [Core] Update dependency io.cucumber:gherkin.version to v38.0.0
+- [Core] Update dependency io.cucumber:html-formatter.version to v23.0.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter.version to v0.12.0
+- [Core] Update dependency io.cucumber:messages.version to v32.0.0
+- [Core] Update dependency io.cucumber:messages-ndjson.version to v0.4.0
+- [Core] Update dependency io.cucumber:pretty-formatter.version to v3.0.0 
+- [Core] Update dependency io.cucumber:query.version to v15.0.1
+- [Core] Update dependency io.cucumber:tag-expressions.version to v9.0.0
+- [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.0
+- [Core] Update dependency io.cucumber:testng-xml-formatter.version to v0.8.0
+- [Core] Update dependency io.cucumber:usage-formatter.version to v0.2.0
+- [JUnit Platform Engine] Use JUnit Platform 6.0.2 (JUnit Jupiter 6.0.2) ([#3162](https://github.com/cucumber/cucumber-jvm/pull/3162))
+- [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
+- [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
+
+### Added
+- [Java] Display hints when the glue packages are not efficiently configured ([#3151](https://github.com/cucumber/cucumber-jvm/pull/3151), Julien Kronegg)
+
+## [7.34.2] - 2026-01-29
+### Fixed
+- [Core] Reverted: Early filtering of anonymous classes for glue ([#3158](https://github.com/cucumber/cucumber-jvm/pull/3158))
+
+## [7.34.1] - 2026-01-28
+### Fixed
+- Ensure dependencies converge ([#3157](https://github.com/cucumber/cucumber-jvm/issues/3157)
+
+## [7.34.0] - 2026-01-28
+### Added
+- [Core] Hide successful hooks by default in HTML report ([cucumber/react-components#415](https://github.com/cucumber/react-components/pull/415))
+- [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
+- [Java] Add Step info to `@BeforeStep` and `@AfterStep` hooks ([#3139](https://github.com/cucumber/cucumber-jvm/pull/3139), Menelaos Mamouzellos)
+
+### Changed
+- [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138))
+- [Core] Early filtering of anonymous classes for glue ([#3150](https://github.com/cucumber/cucumber-jvm/pull/3150), Julien Kronegg)
 
 ### Fixed
 - [Core] Ignore all potential class loading issues ([#3135](https://github.com/cucumber/cucumber-jvm/pull/3135), Christoph Läubrich)
-
-### Added
-- [Java] Support Provider instances with Pico Container ([#2879](https://github.com/cucumber/cucumber-jvm/issues/2879), [#3128](https://github.com/cucumber/cucumber-jvm/pull/3128) Stefan Gasterstädt)
-- [Java] Display hints when the glue packages are not efficiently configured ([#3151](https://github.com/cucumber/cucumber-jvm/pull/3151), Julien Kronegg)
-
-### Changed
-- [Core] Refactor internals to use [messages-ndjson](https://github.com/cucumber/messages-ndjson) for serialization ([#3138](https://github.com/cucumber/cucumber-jvm/pull/3138)) 
-- [Core] Early filtering of anonymous classes for glue ([#3150](https://github.com/cucumber/cucumber-jvm/pull/3150), Julien Kronegg)
 
 ## [7.33.0] - 2025-12-09
 ### Added
@@ -579,7 +613,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.2...HEAD
+[7.34.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.1...v7.34.2
+[7.34.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.0...v7.34.1
+[7.34.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...v7.34.0
 [7.33.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.32.0...v7.33.0
 [7.32.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.31.0...v7.32.0
 [7.31.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.30.0...v7.31.0

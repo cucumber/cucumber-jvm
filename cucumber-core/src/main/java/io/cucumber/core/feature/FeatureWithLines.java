@@ -2,6 +2,7 @@ package io.cucumber.core.feature;
 
 import io.cucumber.core.exception.CucumberException;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Path;
@@ -17,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
 import static java.nio.file.Files.readAllLines;
 
 /**
@@ -28,8 +28,9 @@ import static java.nio.file.Files.readAllLines;
  * a {@link FeatureIdentifier} followed by a sequence of line numbers each
  * preceded by a colon.
  */
-public class FeatureWithLines implements Serializable {
+public final class FeatureWithLines implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 20190126L;
     private static final Pattern FEATURE_WITH_LINES_FILE_FORMAT = Pattern.compile("(?m:^| |)(.*?\\.feature(?::\\d+)*)");
     private static final Pattern FEATURE_COLON_LINE_PATTERN = Pattern.compile("^(.*?):([\\d:]+)$");
@@ -54,7 +55,7 @@ public class FeatureWithLines implements Serializable {
             });
             return featurePaths;
         } catch (Exception e) {
-            throw new CucumberException(format("Failed to parse '%s'", path), e);
+            throw new CucumberException("Failed to parse '%s'".formatted(path), e);
         }
     }
 
@@ -131,6 +132,7 @@ public class FeatureWithLines implements Serializable {
         return uri.equals(that.uri) && lines.equals(that.lines);
     }
 
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(uri.toString());
         for (Integer line : lines) {

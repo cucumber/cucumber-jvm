@@ -49,16 +49,16 @@ class PluginOptionTest {
             () -> PluginOption.parse("io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm"));
 
         assertThat(exception.getMessage(),
-            is("The plugin specification 'io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm' has a problem:\n" +
-                    "\n" +
-                    "This plugin is not compatible with this version of Cucumber.\n" +
-                    "\n" +
-                    "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
-                    "\n" +
-                    "Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage, usage-json\n"
-                    +
-                    "\n" +
-                    "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
+            is("""
+                    The plugin specification 'io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm' has a problem:
+
+                    This plugin is not compatible with this version of Cucumber.
+
+                    Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]
+
+                    Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage, usage-json
+
+                    PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"""));
     }
 
     @Test
@@ -66,16 +66,17 @@ class PluginOptionTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> PluginOption.parse(String.class.getName()));
 
-        assertThat(exception.getMessage(), is("The plugin specification 'java.lang.String' has a problem:\n" +
-                "\n" +
-                "'java.lang.String' does not implement 'io.cucumber.plugin.Plugin'.\n" +
-                "\n" +
-                "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
-                "\n" +
-                "Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage, usage-json\n"
-                +
-                "\n" +
-                "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
+        assertThat(exception.getMessage(),
+            is("""
+                    The plugin specification 'java.lang.String' has a problem:
+
+                    'java.lang.String' does not implement 'io.cucumber.plugin.Plugin'.
+
+                    Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]
+
+                    Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage, usage-json
+
+                    PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"""));
     }
 
     @Test
@@ -83,16 +84,17 @@ class PluginOptionTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> PluginOption.parse("no-such-plugin"));
 
-        assertThat(exception.getMessage(), is("The plugin specification 'no-such-plugin' has a problem:\n" +
-                "\n" +
-                "Could not load plugin class 'no-such-plugin'.\n" +
-                "\n" +
-                "Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]\n" +
-                "\n" +
-                "Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage, usage-json\n"
-                +
-                "\n" +
-                "PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"));
+        assertThat(exception.getMessage(),
+            is("""
+                    The plugin specification 'no-such-plugin' has a problem:
+
+                    Could not load plugin class 'no-such-plugin'.
+
+                    Plugin specifications should have the format of PLUGIN[:[PATH|[URI [OPTIONS]]]
+
+                    Valid values for PLUGIN are: html, json, junit, message, pretty, progress, rerun, summary, teamcity, testng, timeline, unused, usage, usage-json
+
+                    PLUGIN can also be a fully qualified class name, allowing registration of 3rd party plugins. The 3rd party plugin must implement io.cucumber.plugin.Plugin"""));
     }
 
     @Test

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class StubBackendProviderService implements BackendProviderService {
+public final class StubBackendProviderService implements BackendProviderService {
 
     static final List<Consumer<String>> callbacks = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class StubBackendProviderService implements BackendProviderService {
     /**
      * We need an implementation of Backend to prevent Runtime from blowing up.
      */
-    public static class StubBackend implements Backend {
+    public static final class StubBackend implements Backend {
 
         StubBackend() {
 

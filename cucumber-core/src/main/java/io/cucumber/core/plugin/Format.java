@@ -20,6 +20,7 @@ interface Format {
             this.escapes = escapes;
         }
 
+        @Override
         public String text(String text) {
             StringBuilder sb = new StringBuilder();
             for (AnsiEscapes escape : escapes) {
@@ -34,10 +35,10 @@ interface Format {
 
     }
 
-    class Monochrome implements Format {
+    final class Monochrome implements Format {
 
         private Monochrome() {
-
+            /* no-op */
         }
 
         @Override

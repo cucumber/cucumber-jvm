@@ -85,12 +85,12 @@ public final class UuidGeneratorServiceLoader {
             return incrementingGenerator;
         } else {
             // we don't have any generators at all, throw an error
-            throw new CucumberException("" +
-                    "Could not find any UUID generator.\n" +
-                    "\n" +
-                    "Cucumber uses SPI to discover UUID generator implementations.\n" +
-                    "This typically happens when using shaded jars. Make sure\n" +
-                    "to merge all SPI definitions in META-INF/services correctly");
+            throw new CucumberException("""
+                    Could not find any UUID generator.
+
+                    Cucumber uses SPI to discover UUID generator implementations.
+                    This typically happens when using shaded jars. Make sure
+                    to merge all SPI definitions in META-INF/services correctly""");
         }
     }
 

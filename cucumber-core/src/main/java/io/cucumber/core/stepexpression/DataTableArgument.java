@@ -2,6 +2,7 @@ package io.cucumber.core.stepexpression;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableFormatter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public final class DataTableArgument implements Argument {
     }
 
     @Override
-    public Object getValue() {
+    public @Nullable Object getValue() {
         return tableType.transform(argument);
     }
 

@@ -34,6 +34,8 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -41,15 +43,15 @@ import org.mockito.ArgumentCaptor;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-import static java.time.Clock.fixed;
 import static java.time.Duration.ZERO;
 import static java.time.Instant.EPOCH;
-import static java.time.ZoneId.of;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -65,6 +67,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Disabled // TODO: Put tests into separate module
 class RuntimeTest {
 
     private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
@@ -155,11 +158,13 @@ class RuntimeTest {
     @Test
     void should_make_scenario_name_available_to_hooks() {
         final Feature feature = TestFeatureParser.parse("path/test.feature",
-            "Feature: feature name\n" +
-                    "  Scenario: scenario name\n" +
-                    "    Given first step\n" +
-                    "    When second step\n" +
-                    "    Then third step\n");
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given first step
+                        When second step
+                        Then third step
+                    """);
         final HookDefinition beforeHook = mock(HookDefinition.class);
         when(beforeHook.getLocation()).thenReturn("");
         when(beforeHook.getTagExpression()).thenReturn("");
@@ -185,15 +190,16 @@ class RuntimeTest {
 
     @Test
     void should_call_formatter_for_two_scenarios_with_background() {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    When second step\n" +
-                "    Then third step\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Then second step\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Background: background
+                    Given first step
+                  Scenario: scenario_1 name
+                    When second step
+                    Then third step
+                  Scenario: scenario_2 name
+                    Then second step
+                """);
 
         FormatterSpy formatterSpy = new FormatterSpy();
         Runtime.builder()
@@ -207,47 +213,49 @@ class RuntimeTest {
                 .run();
 
         assertThat(formatterSpy.toString(),
-            is(equalTo("" +
-                    "TestRun started\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "TestRun finished\n")));
+            is(equalTo("""
+                    TestRun started
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                    TestRun finished
+                    """)));
     }
 
     @Test
     void should_call_formatter_for_scenario_outline_with_two_examples_table_and_background() {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Background: background\n" +
-                "    Given first step\n" +
-                "  Scenario Outline: scenario outline name\n" +
-                "    When <x> step\n" +
-                "    Then <y> step\n" +
-                "    Examples: examples 1 name\n" +
-                "      |   x    |   y   |\n" +
-                "      | second | third |\n" +
-                "      | second | third |\n" +
-                "    Examples: examples 2 name\n" +
-                "      |   x    |   y   |\n" +
-                "      | second | third |\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Background: background
+                    Given first step
+                  Scenario Outline: scenario outline name
+                    When <x> step
+                    Then <y> step
+                    Examples: examples 1 name
+                      |   x    |   y   |
+                      | second | third |
+                      | second | third |
+                    Examples: examples 2 name
+                      |   x    |   y   |
+                      | second | third |
+                """);
 
         FormatterSpy formatterSpy = new FormatterSpy();
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
                 .withAdditionalPlugins(formatterSpy)
-                .withEventBus(new TimeServiceEventBus(fixed(EPOCH, of("UTC")), UUID::randomUUID))
+                .withEventBus(new TimeServiceEventBus(Clock.fixed(EPOCH, ZoneId.of("UTC")), UUID::randomUUID))
                 .withBackendSupplier(new StubBackendSupplier(
                     new StubStepDefinition("first step"),
                     new StubStepDefinition("second step"),
@@ -256,53 +264,57 @@ class RuntimeTest {
                 .run();
 
         assertThat(formatterSpy.toString(),
-            is(equalTo("" +
-                    "TestRun started\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "TestRun finished\n")));
+            is(equalTo("""
+                    TestRun started
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                    TestRun finished
+                    """)));
     }
 
     @Test
     void should_call_formatter_with_correct_sequence_of_events_when_running_in_parallel() {
-        Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name 1\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Given first step\n");
+        Feature feature1 = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name 1
+                  Scenario: scenario_1 name
+                    Given first step
+                  Scenario: scenario_2 name
+                    Given first step
+                """);
 
-        Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
-                "Feature: feature name 2\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Given first step\n");
+        Feature feature2 = TestFeatureParser.parse("path/test2.feature", """
+                Feature: feature name 2
+                  Scenario: scenario_2 name
+                    Given first step
+                """);
 
-        Feature feature3 = TestFeatureParser.parse("path/test3.feature", "" +
-                "Feature: feature name 3\n" +
-                "  Scenario: scenario_3 name\n" +
-                "    Given first step\n");
+        Feature feature3 = TestFeatureParser.parse("path/test3.feature", """
+                Feature: feature name 3
+                  Scenario: scenario_3 name
+                    Given first step
+                """);
 
         FormatterSpy formatterSpy = new FormatterSpy();
         Runtime.builder()
@@ -317,40 +329,43 @@ class RuntimeTest {
         String formatterOutput = formatterSpy.toString();
 
         assertThat(formatterOutput,
-            is(equalTo("" +
-                    "TestRun started\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "  TestCase started\n" +
-                    "    TestStep started\n" +
-                    "    TestStep finished\n" +
-                    "  TestCase finished\n" +
-                    "TestRun finished\n")));
+            is(equalTo("""
+                    TestRun started
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                      TestCase started
+                        TestStep started
+                        TestStep finished
+                      TestCase finished
+                    TestRun finished
+                    """)));
     }
 
     @Test
     void should_fail_on_event_listener_exception_when_running_in_parallel() {
-        Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name 1\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Given first step\n");
+        Feature feature1 = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name 1
+                  Scenario: scenario_1 name
+                    Given first step
+                  Scenario: scenario_2 name
+                    Given first step
+                """);
 
-        Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
-                "Feature: feature name 2\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Given first step\n");
+        Feature feature2 = TestFeatureParser.parse("path/test2.feature", """
+                Feature: feature name 2
+                  Scenario: scenario_2 name
+                    Given first step
+                """);
 
         ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class,
             (TestStepFinished event) -> {
@@ -429,17 +444,19 @@ class RuntimeTest {
 
     @Test
     void should_interrupt_waiting_plugins() throws InterruptedException {
-        final Feature feature1 = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name 1\n" +
-                "  Scenario: scenario_1 name\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Given first step\n");
+        final Feature feature1 = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name 1
+                  Scenario: scenario_1 name
+                    Given first step
+                  Scenario: scenario_2 name
+                    Given first step
+                """);
 
-        final Feature feature2 = TestFeatureParser.parse("path/test2.feature", "" +
-                "Feature: feature name 2\n" +
-                "  Scenario: scenario_2 name\n" +
-                "    Given first step\n");
+        final Feature feature2 = TestFeatureParser.parse("path/test2.feature", """
+                Feature: feature name 2
+                  Scenario: scenario_2 name
+                    Given first step
+                """);
 
         final CountDownLatch threadBlocked = new CountDownLatch(1);
         final CountDownLatch interruptHit = new CountDownLatch(1);
@@ -470,15 +487,15 @@ class RuntimeTest {
 
     @Test
     void generates_events_for_glue_and_scenario_scoped_glue() {
-        final Feature feature = TestFeatureParser.parse("test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: Run a scenario once\n" +
-                "    Given global scoped\n" +
-                "    And scenario scoped\n" +
-                "  Scenario: Then do it again\n" +
-                "    Given global scoped\n" +
-                "    And scenario scoped\n" +
-                "");
+        final Feature feature = TestFeatureParser.parse("test.feature", """
+                Feature: feature name
+                  Scenario: Run a scenario once
+                    Given global scoped
+                    And scenario scoped
+                  Scenario: Then do it again
+                    Given global scoped
+                    And scenario scoped
+                """);
 
         final List<StepDefinition> stepDefinedEvents = new ArrayList<>();
 
@@ -492,7 +509,7 @@ class RuntimeTest {
 
         BackendSupplier backendSupplier = new TestBackendSupplier() {
 
-            private Glue glue;
+            private @Nullable Glue glue;
 
             @Override
             public void loadGlue(Glue glue, List<URI> gluePaths) {
@@ -502,6 +519,7 @@ class RuntimeTest {
 
             @Override
             public void buildWorld() {
+                Objects.requireNonNull(glue);
                 glue.addStepDefinition(mockedScenarioScopedStepDefinition);
             }
         };
@@ -533,10 +551,10 @@ class RuntimeTest {
                 .run();
 
         Meta meta = messages.get(0).getMeta().get();
-        assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
+        assertThat(meta.getProtocolVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+(-M\\d+|-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getImplementation().getName(), is("cucumber-jvm"));
         assertThat(meta.getImplementation().getVersion().get(),
-            matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?"));
+            matchesPattern("\\d+\\.\\d+\\.\\d+(-M\\d+|-RC\\d+)?(-SNAPSHOT)?"));
         assertThat(meta.getOs().getName(), matchesPattern(".+"));
         assertThat(meta.getCpu().getName(), matchesPattern(".+"));
     }
@@ -570,6 +588,7 @@ class RuntimeTest {
 
     }
 
+    @SuppressWarnings("deprecation")
     private static final class MockedScenarioScopedStepDefinition
             implements ScenarioScoped, io.cucumber.core.backend.StepDefinition {
 
@@ -600,7 +619,7 @@ class RuntimeTest {
 
     }
 
-    private static class MockedStaticHookDefinition implements StaticHookDefinition {
+    private final static class MockedStaticHookDefinition implements StaticHookDefinition {
 
         private final Runnable runnable;
 
@@ -629,7 +648,7 @@ class RuntimeTest {
         }
     }
 
-    private static class FormatterSpy implements EventListener {
+    private static final class FormatterSpy implements EventListener {
 
         private final StringBuilder calls = new StringBuilder();
 

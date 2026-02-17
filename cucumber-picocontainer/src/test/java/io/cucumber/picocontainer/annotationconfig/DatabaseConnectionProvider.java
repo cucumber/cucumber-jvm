@@ -6,7 +6,7 @@ import org.picocontainer.injectors.ProviderAdapter;
 import java.sql.Connection;
 
 @CucumberPicoProvider
-public class DatabaseConnectionProvider extends ProviderAdapter {
+public final class DatabaseConnectionProvider extends ProviderAdapter {
 
     public Connection provide() {
         throw new UnsupportedOperationException("Intentionally not supported to detect any premature injection.");

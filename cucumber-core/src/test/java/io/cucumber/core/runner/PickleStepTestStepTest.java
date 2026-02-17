@@ -31,7 +31,7 @@ import static io.cucumber.core.backend.Status.SKIPPED;
 import static io.cucumber.plugin.event.HookType.AFTER_STEP;
 import static io.cucumber.plugin.event.HookType.BEFORE_STEP;
 import static java.time.Duration.ZERO;
-import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofSeconds;
 import static java.time.Instant.ofEpochMilli;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,10 +52,11 @@ import static org.mockito.Mockito.when;
 
 class PickleStepTestStepTest {
 
-    private final Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n");
+    private final Feature feature = TestFeatureParser.parse("""
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given I have 4 cukes in my belly
+            """);
     private final Pickle pickle = feature.getPickles().get(0);
     private final TestCase testCase = new TestCase(UUID.randomUUID(), Collections.emptyList(), Collections.emptyList(),
         Collections.emptyList(), pickle, false);
@@ -265,10 +266,11 @@ class PickleStepTestStepTest {
 
     @Test
     void step_execution_time_is_measured() {
-        Feature feature = TestFeatureParser.parse("" +
-                "Feature: Test feature\n" +
-                "  Scenario: Test scenario\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse("""
+                Feature: Test feature
+                  Scenario: Test scenario
+                     Given I have 4 cukes in my belly
+                """);
 
         TestStep step = new PickleStepTestStep(
             UUID.randomUUID(),
@@ -288,7 +290,7 @@ class PickleStepTestStepTest {
         assertAll(
             () -> assertThat(started.getInstant(), is(equalTo(ofEpochMilli(234L)))),
             () -> assertThat(finished.getInstant(), is(equalTo(ofEpochMilli(1234L)))),
-            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofMillis(1000L)))));
+            () -> assertThat(finished.getResult().getDuration(), is(equalTo(ofSeconds(1L)))));
     }
 
 }

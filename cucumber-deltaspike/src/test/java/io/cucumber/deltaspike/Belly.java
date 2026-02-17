@@ -2,6 +2,7 @@ package io.cucumber.deltaspike;
 
 import javax.inject.Singleton;
 
+@SuppressWarnings("DesignForExtension")
 @Singleton
 public class Belly {
 

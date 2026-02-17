@@ -7,7 +7,7 @@ import java.net.URI;
 import java.net.URL;
 
 @CucumberPicoProvider
-public class UrlToUriProvider implements Provider {
+public final class UrlToUriProvider implements Provider {
 
     public URI provide(URL url) {
         throw new UnsupportedOperationException("Intentionally not supported to detect any premature injection.");

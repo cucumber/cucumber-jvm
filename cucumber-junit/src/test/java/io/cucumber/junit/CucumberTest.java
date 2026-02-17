@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 
+@SuppressWarnings("deprecation")
 class CucumberTest {
 
     private String dir;
@@ -70,13 +71,13 @@ class CucumberTest {
         FeatureParserException actualThrown = assertThrows(FeatureParserException.class, testMethod);
         assertThat(
             actualThrown.getMessage(),
-            equalTo("" +
-                    "Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature\n" +
-                    "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Feature  FA'\n" +
-                    "(3:3): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Scenario SA'\n" +
-                    "(4:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Given GA'\n" +
-                    "(5:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'When GA'\n" +
-                    "(6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'"));
+            equalTo("""
+                    Failed to parse resource at: classpath:io/cucumber/error/lexer_error.feature
+                    (1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Feature  FA'
+                    (3:3): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Scenario SA'
+                    (4:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Given GA'
+                    (5:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'When GA'
+                    (6:5): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Then TA'"""));
     }
 
     @Test
@@ -204,8 +205,9 @@ class CucumberTest {
     }
 
     @RunWith(Cucumber.class)
-    private static class Invalid {
+    private static final class Invalid {
 
+        @SuppressWarnings({ "unused", "EffectivelyPrivate" })
         @DummyWhen
         public void ignoreMe() {
         }
@@ -213,25 +215,25 @@ class CucumberTest {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public static class ImplicitFeatureAndGluePath {
+    public static final class ImplicitFeatureAndGluePath {
 
     }
 
     @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = "classpath:io/cucumber/junit")
-    public static class ExplicitFeaturePath {
+    public static final class ExplicitFeaturePath {
 
     }
 
     @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = "classpath:gibber/ish")
-    public static class ExplicitFeaturePathWithNoFeatures {
+    public static final class ExplicitFeaturePathWithNoFeatures {
 
     }
 
     @SuppressWarnings("WeakerAccess")
     @CucumberOptions(features = "classpath:io/cucumber/error/lexer_error.feature")
-    public static class LexerErrorFeature {
+    public static final class LexerErrorFeature {
 
     }
 
@@ -239,7 +241,7 @@ class CucumberTest {
     @CucumberOptions(
             features = "classpath:io/cucumber/error/lexer_error.feature",
             plugin = "message:target/lexor_error_feature.ndjson")
-    public static class FormatterWithLexerErrorFeature {
+    public static final class FormatterWithLexerErrorFeature {
 
     }
 

@@ -1,5 +1,5 @@
 package io.cucumber.testng;
 
-public class RunCucumberTest extends AbstractTestNGCucumberTests {
+final class RunCucumberTest extends AbstractTestNGCucumberTests {
 
 }

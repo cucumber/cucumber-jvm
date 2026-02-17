@@ -33,8 +33,8 @@ final class TestAbortedExceptions {
                     } catch (Throwable t) {
                         rethrowIfUnrecoverable(t);
                         log.debug(t,
-                            () -> String.format(
-                                "Failed to load class %s: will not be supported for aborted executions.", s));
+                            () -> "Failed to load class %s: will not be supported for aborted executions."
+                                    .formatted(s));
                     }
                     return false;
                 });

@@ -25,20 +25,21 @@ class TestNGFormatterTest {
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
         formatter.setEventPublisher(bus);
 
-        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0L), null);
+        TestRunStarted testRunStarted = new TestRunStarted(new Timestamp(10L, 0), null);
         bus.send(Envelope.of(testRunStarted));
 
-        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0L), null, null);
+        TestRunFinished testRunFinished = new TestRunFinished(null, true, new Timestamp(15L, 0), null, null);
         bus.send(Envelope.of(testRunFinished));
 
-        assertThat(bytes, bytes(equalTo("" +
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<testng-results failed=\"0\" passed=\"0\" skipped=\"0\" total=\"0\">\n" +
-                "<suite name=\"Cucumber\" duration-ms=\"5000\">\n" +
-                "<test name=\"Cucumber\" duration-ms=\"5000\">\n" +
-                "</test>\n" +
-                "</suite>\n" +
-                "</testng-results>\n")));
+        assertThat(bytes, bytes(equalTo("""
+                <?xml version="1.0" encoding="UTF-8"?>
+                <testng-results failed="0" passed="0" skipped="0" total="0">
+                <suite name="Cucumber" duration-ms="5000">
+                <test name="Cucumber" duration-ms="5000">
+                </test>
+                </suite>
+                </testng-results>
+                """)));
     }
 
 }

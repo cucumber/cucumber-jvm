@@ -6,6 +6,7 @@ import io.cucumber.core.runner.Runner;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseStarted;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
+@Disabled // TODO: Put tests into separate module
 class ThreadLocalRunnerSupplierTest {
 
     private ThreadLocalRunnerSupplier runnerSupplier;

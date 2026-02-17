@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.mock;
 
-class PickleRunnerWithStepDescriptionsTest {
+final class PickleRunnerWithStepDescriptionsTest {
 
     final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
     final Options options = RuntimeOptions.defaultOptions();
@@ -33,16 +33,17 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldAssignUnequalDescriptionsToDifferentOccurrencesOfSameStepInAScenario() {
-        List<Pickle> pickles = picklesFromFeature("path/test.feature", "" +
-                "Feature: FB\n" +
-                "# Scenario with same step occurring twice\n" +
-                "\n" +
-                "  Scenario: SB\n" +
-                "    When foo\n" +
-                "    Then bar\n" +
-                "\n" +
-                "    When foo\n" +
-                "    Then baz\n");
+        List<Pickle> pickles = picklesFromFeature("path/test.feature", """
+                Feature: FB
+                # Scenario with same step occurring twice
+
+                  Scenario: SB
+                    When foo
+                    Then bar
+
+                    When foo
+                    Then baz
+                """);
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
             context,
@@ -71,14 +72,15 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldAssignUnequalDescriptionsToDifferentStepsInAScenarioOutline() {
-        Feature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: FB\n" +
-                "  Scenario Outline: SO\n" +
-                "    When <action>\n" +
-                "    Then <result>\n" +
-                "    Examples:\n" +
-                "    | action | result |\n" +
-                "    |   a1   |   r1   |\n");
+        Feature features = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: FB
+                  Scenario Outline: SO
+                    When <action>
+                    Then <result>
+                    Examples:
+                    | action | result |
+                    |   a1   |   r1   |
+                """);
 
         WithStepDescriptions runner = (WithStepDescriptions) PickleRunners.withStepDescriptions(
             context,
@@ -95,15 +97,16 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldIncludeScenarioNameAsClassNameInStepDescriptions() {
-        Feature features = TestPickleBuilder.parseFeature("path/test.feature", "" +
-                "Feature: In cucumber.junit\n" +
-                "  Scenario: first\n" +
-                "    When step\n" +
-                "    Then another step\n" +
-                "\n" +
-                "  Scenario: second\n" +
-                "    When step\n" +
-                "    Then another step\n");
+        Feature features = TestPickleBuilder.parseFeature("path/test.feature", """
+                Feature: In cucumber.junit
+                  Scenario: first
+                    When step
+                    Then another step
+
+                  Scenario: second
+                    When step
+                    Then another step
+                """);
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
             context,
@@ -123,10 +126,11 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseScenarioNameForDisplayName() {
-        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+        List<Pickle> pickles = picklesFromFeature("featurePath", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Then it works
+                """);
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
             context,
@@ -139,10 +143,11 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldUseStepKeyworkAndNameForChildName() {
-        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+        List<Pickle> pickles = picklesFromFeature("featurePath", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Then it works
+                """);
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
             context,
@@ -155,10 +160,11 @@ class PickleRunnerWithStepDescriptionsTest {
 
     @Test
     void shouldConvertTextFromFeatureFileForNamesWithFilenameCompatibleNameOption() {
-        List<Pickle> pickles = picklesFromFeature("featurePath", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario name\n" +
-                "    Then it works\n");
+        List<Pickle> pickles = picklesFromFeature("featurePath", """
+                Feature: feature name
+                  Scenario: scenario name
+                    Then it works
+                """);
 
         PickleRunner runner = PickleRunners.withStepDescriptions(
             context,

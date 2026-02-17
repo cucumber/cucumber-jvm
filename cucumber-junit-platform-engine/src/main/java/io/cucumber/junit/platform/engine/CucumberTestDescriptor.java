@@ -42,6 +42,14 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
         return new Builder(configuration, configuration.namingStrategy());
     }
 
+    static boolean isFeatureSegment(UniqueId.Segment segment) {
+        return FEATURE_SEGMENT_TYPE.equals(segment.getType());
+    }
+
+    protected abstract URI getUri();
+
+    protected abstract Location getLocation();
+
     static class Builder {
         private final CucumberConfiguration configuration;
         private final NamingStrategy namingStrategy;
@@ -123,14 +131,6 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
             return parent.getUniqueId().append(segmentType, line);
         }
     }
-
-    static boolean isFeatureSegment(UniqueId.Segment segment) {
-        return FEATURE_SEGMENT_TYPE.equals(segment.getType());
-    }
-
-    protected abstract URI getUri();
-
-    protected abstract Location getLocation();
 
     static class FeatureDescriptor extends CucumberTestDescriptor implements Node<CucumberEngineExecutionContext> {
 

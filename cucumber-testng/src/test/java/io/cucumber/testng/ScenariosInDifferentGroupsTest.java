@@ -1,5 +1,6 @@
 package io.cucumber.testng;
 
+import org.jspecify.annotations.Nullable;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -11,11 +12,11 @@ import java.util.function.Predicate;
 @CucumberOptions(
         features = "classpath:io/cucumber/testng/scenarios-with-tags.feature",
         plugin = "timeline:target/timeline")
-public class ScenariosInDifferentGroupsTest {
+public final class ScenariosInDifferentGroupsTest {
 
     private static final Predicate<Pickle> isSerial = pickle -> pickle.getTags().contains("@Serial");
 
-    private TestNGCucumberRunner testNGCucumberRunner;
+    private @Nullable TestNGCucumberRunner testNGCucumberRunner;
 
     @BeforeClass(alwaysRun = true)
     public void setUpClass() {
@@ -24,6 +25,10 @@ public class ScenariosInDifferentGroupsTest {
 
     @Test(groups = "cucumber", description = "Runs Cucumber Scenarios", dataProvider = "parallelScenarios")
     public void runParallelScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) {
+        if (testNGCucumberRunner == null) {
+            throw new IllegalStateException(
+                "Tests were started without calling ScenariosInDifferentGroupsTest::setUpClass");
+        }
         testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }
 
@@ -47,6 +52,10 @@ public class ScenariosInDifferentGroupsTest {
             description = "Runs Cucumber Scenarios in the Serial group",
             dataProvider = "serialScenarios")
     public void runSerialScenario(PickleWrapper pickleWrapper, FeatureWrapper featureWrapper) {
+        if (testNGCucumberRunner == null) {
+            throw new IllegalStateException(
+                "Tests were started without calling ScenariosInDifferentGroupsTest::setUpClass");
+        }
         testNGCucumberRunner.runScenario(pickleWrapper.getPickle());
     }
 

@@ -2,6 +2,7 @@ package io.cucumber.cdi2.example;
 
 import javax.enterprise.context.ApplicationScoped;
 
+@SuppressWarnings("DesignForExtension")
 @ApplicationScoped
 public class Belly {
 

@@ -30,26 +30,27 @@ class NoPublishFormatterTest {
         noPublishFormatter.setMonochrome(true);
         noPublishFormatter.setEventPublisher(bus);
 
-        bus.send(Envelope.of(new TestRunStarted(new Timestamp(0L, 0L), null)));
-        bus.send(Envelope.of(new TestRunFinished(null, true, new Timestamp(0L, 0L), null, null)));
+        bus.send(Envelope.of(new TestRunStarted(new Timestamp(0L, 0), null)));
+        bus.send(Envelope.of(new TestRunFinished(null, true, new Timestamp(0L, 0), null, null)));
 
-        assertThat(bytes, bytes(equalTo("" +
-                "┌───────────────────────────────────────────────────────────────────────────────────┐\n" +
-                "│ Share your Cucumber Report with your team at https://reports.cucumber.io          │\n" +
-                "│ Activate publishing with one of the following:                                    │\n" +
-                "│                                                                                   │\n" +
-                "│ src/test/resources/cucumber.properties:          cucumber.publish.enabled=true    │\n" +
-                "│ src/test/resources/junit-platform.properties:    cucumber.publish.enabled=true    │\n" +
-                "│ Environment variable:                            CUCUMBER_PUBLISH_ENABLED=true    │\n" +
-                "│ JUnit:                                           @CucumberOptions(publish = true) │\n" +
-                "│                                                                                   │\n" +
-                "│ More information at https://cucumber.io/docs/cucumber/environment-variables/      │\n" +
-                "│                                                                                   │\n" +
-                "│ Disable this message with one of the following:                                   │\n" +
-                "│                                                                                   │\n" +
-                "│ src/test/resources/cucumber.properties:          cucumber.publish.quiet=true      │\n" +
-                "│ src/test/resources/junit-platform.properties:    cucumber.publish.quiet=true      │\n" +
-                "└───────────────────────────────────────────────────────────────────────────────────┘\n")));
+        assertThat(bytes, bytes(equalTo("""
+                ┌───────────────────────────────────────────────────────────────────────────────────┐
+                │ Share your Cucumber Report with your team at https://reports.cucumber.io          │
+                │ Activate publishing with one of the following:                                    │
+                │                                                                                   │
+                │ src/test/resources/cucumber.properties:          cucumber.publish.enabled=true    │
+                │ src/test/resources/junit-platform.properties:    cucumber.publish.enabled=true    │
+                │ Environment variable:                            CUCUMBER_PUBLISH_ENABLED=true    │
+                │ JUnit:                                           @CucumberOptions(publish = true) │
+                │                                                                                   │
+                │ More information at https://cucumber.io/docs/cucumber/environment-variables/      │
+                │                                                                                   │
+                │ Disable this message with one of the following:                                   │
+                │                                                                                   │
+                │ src/test/resources/cucumber.properties:          cucumber.publish.quiet=true      │
+                │ src/test/resources/junit-platform.properties:    cucumber.publish.quiet=true      │
+                └───────────────────────────────────────────────────────────────────────────────────┘
+                """)));
     }
 
 }

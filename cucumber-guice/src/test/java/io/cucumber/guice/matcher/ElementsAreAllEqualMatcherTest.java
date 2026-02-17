@@ -21,11 +21,9 @@ class ElementsAreAllEqualMatcherTest {
 
     @Test
     void testDoesNotMatchNullCollection() {
-        Collection<?> arg = null;
-
         assertAll(
-            () -> assertDoesNotMatch(matcher, arg),
-            () -> assertMismatchDescription("was null", matcher, arg));
+            () -> assertDoesNotMatch(matcher, null),
+            () -> assertMismatchDescription("was null", matcher, null));
     }
 
     @Test

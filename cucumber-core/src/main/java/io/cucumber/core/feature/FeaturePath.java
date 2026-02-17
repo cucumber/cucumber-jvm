@@ -3,7 +3,6 @@ package io.cucumber.core.feature;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Locale;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
@@ -27,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  * @see FeatureIdentifier
  * @see FeatureWithLines
  */
-public class FeaturePath {
+public final class FeaturePath {
 
     private FeaturePath() {
 
@@ -71,7 +70,7 @@ public class FeaturePath {
     }
 
     private static URI parseAssumeFileScheme(String featureIdentifier) {
-        Path featureFile = Paths.get(featureIdentifier);
+        Path featureFile = Path.of(featureIdentifier);
         return featureFile.toUri();
     }
 

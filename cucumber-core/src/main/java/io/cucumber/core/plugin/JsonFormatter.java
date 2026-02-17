@@ -10,15 +10,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 
-import static io.cucumber.jsonformatter.MessagesToJsonWriter.builder;
-
 public final class JsonFormatter implements ConcurrentEventListener {
 
     private final MessagesToJsonWriter writer;
 
     public JsonFormatter(OutputStream out) {
         URI cwdUri = new File("").toPath().toUri();
-        this.writer = builder(Jackson.OBJECT_MAPPER::writeValue)
+        this.writer = MessagesToJsonWriter.builder(Jackson.OBJECT_MAPPER::writeValue)
                 .relativizeAgainst(cwdUri)
                 .build(out);
     }

@@ -9,7 +9,7 @@ import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureElementSelector;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
 import io.cucumber.plugin.event.Node;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
@@ -79,11 +79,11 @@ final class FeatureFileResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(DiscoverySelector selector, Context context) {
-        if (selector instanceof FeatureElementSelector) {
-            return resolve((FeatureElementSelector) selector, context);
+        if (selector instanceof FeatureElementSelector elementSelector) {
+            return resolve(elementSelector, context);
         }
-        if (selector instanceof FeatureWithLinesSelector) {
-            return resolve((FeatureWithLinesSelector) selector);
+        if (selector instanceof FeatureWithLinesSelector featureWithLinesSelector) {
+            return resolve(featureWithLinesSelector);
         }
         return SelectorResolver.super.resolve(selector, context);
     }
@@ -134,15 +134,16 @@ final class FeatureFileResolver implements SelectorResolver {
 
     @Override
     public Resolution resolve(ClasspathResourceSelector selector, Context context) {
-        Set<Resource> resources = selector.getClasspathResources();
+        var resources = selector.getResources();
         if (!resources.stream().allMatch(resource -> isFeature(resource.getName()))) {
             return resolveClasspathResourceSelectorAsPackageSelector(selector);
         }
         if (resources.size() > 1) {
-            throw new IllegalArgumentException(String.format(
-                "Found %s resources named %s on the classpath %s.",
-                resources.size(), selector.getClasspathResourceName(),
-                resources.stream().map(Resource::getUri).collect(toList())));
+            throw new IllegalArgumentException("Found %s resources named %s on the classpath %s."
+                    .formatted(
+                        resources.size(), //
+                        selector.getClasspathResourceName(), //
+                        resources.stream().map(Resource::getUri).collect(toList())));
         }
         return resources.stream()
                 .findFirst()
@@ -171,10 +172,8 @@ final class FeatureFileResolver implements SelectorResolver {
     private void warnClasspathResourceSelectorUsedForPackage(ClasspathResourceSelector selector) {
         String classpathResourceName = selector.getClasspathResourceName();
         String packageName = classpathResourceName.replaceAll("/", ".");
-        String message = String.format(
-            "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead",
-            classpathResourceName,
-            packageName);
+        String message = "The classpath resource selector '%s' should not be used to select features in a package. Use the package selector with '%s' instead"
+                .formatted(classpathResourceName, packageName);
         issueReporter.reportIssue(DiscoveryIssue.builder(WARNING, message));
     }
 

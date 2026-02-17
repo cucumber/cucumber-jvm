@@ -11,6 +11,6 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("io/cucumber/spring/contextCaching.feature")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "io.cucumber.spring.contextcaching")
-public class RunCucumberTest {
+final class RunCucumberTest {
 
 }

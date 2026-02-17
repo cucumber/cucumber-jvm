@@ -6,7 +6,7 @@ import io.cucumber.java.en.When;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ExamplesTable {
+public final class ExamplesTable {
 
     private int count;
     private int friends;

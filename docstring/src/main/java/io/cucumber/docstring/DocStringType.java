@@ -1,10 +1,10 @@
 package io.cucumber.docstring;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -45,13 +45,13 @@ public final class DocStringType {
         return type;
     }
 
+    @Nullable
     Object transform(String content) {
         try {
             return transformer.transform(content);
         } catch (Throwable throwable) {
-            throw new CucumberDocStringException(format(
-                "'%s' could not transform%n%s",
-                contentType, DocString.create(content, contentType)),
+            throw new CucumberDocStringException("'%s' could not transform%n%s"
+                    .formatted(contentType, DocString.create(content, contentType)),
                 throwable);
         }
     }
@@ -59,6 +59,7 @@ public final class DocStringType {
     @FunctionalInterface
     public interface Transformer<T> {
 
+        @Nullable
         T transform(String content) throws Throwable;
 
     }

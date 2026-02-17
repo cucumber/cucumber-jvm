@@ -5,7 +5,7 @@ import io.cucumber.core.gherkin.Feature;
 import java.util.Arrays;
 import java.util.List;
 
-public class StubFeatureSupplier implements FeatureSupplier {
+public final class StubFeatureSupplier implements FeatureSupplier {
 
     private final List<Feature> features;
 

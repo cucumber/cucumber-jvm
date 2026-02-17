@@ -27,24 +27,28 @@ public final class DefaultObjectFactory implements ObjectFactory {
 
     private final Map<Class<?>, Object> instances = new HashMap<>();
 
+    @Override
     public void start() {
         // No-op
     }
 
+    @Override
     public void stop() {
         instances.clear();
     }
 
+    @Override
     public boolean addClass(Class<?> clazz) {
         return true;
     }
 
+    @Override
     public <T> T getInstance(Class<T> type) {
-        T instance = type.cast(instances.get(type));
-        if (instance == null) {
-            instance = cacheNewInstance(type);
+        Object instance = instances.get(type);
+        if (instance != null) {
+            return type.cast(instance);
         }
-        return instance;
+        return cacheNewInstance(type);
     }
 
     private <T> T cacheNewInstance(Class<T> type) {
@@ -53,18 +57,18 @@ public final class DefaultObjectFactory implements ObjectFactory {
             T instance = constructor.newInstance();
             instances.put(type, instance);
             return instance;
-        } catch (NoSuchMethodException e) {
-            throw new CucumberException(String.format("" +
-                    "%s does not have a public zero-argument constructor.\n" +
-                    "\n" +
-                    "To use dependency injection add an other ObjectFactory implementation such as:\n" +
-                    " * cucumber-picocontainer\n" +
-                    " * cucumber-spring\n" +
-                    " * cucumber-jakarta-cdi\n" +
-                    " * ...etc\n",
-                type), e);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new CucumberException("""
+                    %s does not have an accessible public zero-argument constructor.
+
+                    To use dependency injection add an other ObjectFactory implementation such as:
+                     * cucumber-picocontainer
+                     * cucumber-spring
+                     * cucumber-jakarta-cdi
+                     * ...etc
+                    """.formatted(type), e);
         } catch (Exception e) {
-            throw new CucumberException(String.format("Failed to instantiate %s", type), e);
+            throw new CucumberException("Failed to instantiate %s".formatted(type), e);
         }
     }
 

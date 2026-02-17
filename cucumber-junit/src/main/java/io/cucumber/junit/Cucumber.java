@@ -47,28 +47,29 @@ import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+// @formatter:off
 /**
  * Cucumber JUnit Runner.
- * <p>
- * A class annotated with {@code @RunWith(Cucumber.class)} will run feature
+ * 
+ * <p>A class annotated with {@code @RunWith(Cucumber.class)} will run feature
  * files as junit tests. In general, the runner class should be empty without
  * any fields or methods. For example: <blockquote>
  * 
- * <pre>
- * &#64;RunWith(Cucumber.class)
- * &#64;CucumberOptions(plugin = "pretty")
- * public class RunCucumberTest {
+ * <pre>{@code 
+ * @RunWith(Cucumber.class)
+ * @CucumberOptions(plugin = "pretty")
+ * final class RunCucumberTest {
  * }
- * </pre>
+ * }</pre>
  * 
  * </blockquote>
- * <p>
- * By default Cucumber will look for {@code .feature} and glue files on the
+ * 
+ * <p>By default Cucumber will look for {@code .feature} and glue files on the
  * classpath, using the same resource path as the annotated class. For example,
  * if the annotated class is {@code com.example.RunCucumber} then features and
  * glue are assumed to be located in {@code com.example}.
- * <p>
- * Options can be provided in by (order of precedence):
+ * 
+ * <p>Options can be provided in by (order of precedence):
  * <ol>
  * <li>Properties from {@link System#getProperties()} ()}</li>
  * <li>Properties from in {@link System#getenv()}</li>
@@ -76,8 +77,8 @@ import static java.util.stream.Collectors.toList;
  * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
  * For available properties see {@link Constants}.
- * <p>
- * Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and
+ * 
+ * <p>Cucumber also supports JUnits {@link ClassRule}, {@link BeforeClass} and
  * {@link AfterClass} annotations. These will be executed before and after all
  * scenarios. Using these is not recommended as it limits the portability
  * between different runners; they may not execute correctly when using the
@@ -85,9 +86,10 @@ import static java.util.stream.Collectors.toList;
  * use Cucumbers `Before` and `After` hooks.
  *
  * @see        CucumberOptions
- * @deprecated JUnit 4 is in maintenance mode. Upgrade to JUnit 5 and switch to
+ * @deprecated JUnit 4 is in maintenance mode. Upgrade to JUnit 5+ and switch to
  *             the {@code cucumber-junit-platform-engine}.
  */
+// @formatter:on
 @Deprecated
 @API(status = API.Status.STABLE)
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
@@ -219,7 +221,7 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
     private class StartAndFinishTestRun extends Statement {
         private final Statement next;
 
-        public StartAndFinishTestRun(Statement next) {
+        StartAndFinishTestRun(Statement next) {
             this.next = next;
         }
 

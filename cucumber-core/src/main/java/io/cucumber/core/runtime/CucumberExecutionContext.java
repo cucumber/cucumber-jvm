@@ -17,6 +17,7 @@ import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestSourceParsed;
 import io.cucumber.plugin.event.TestSourceRead;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -28,6 +29,7 @@ import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedExceptio
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 
 public final class CucumberExecutionContext {
 
@@ -39,17 +41,12 @@ public final class CucumberExecutionContext {
     private final ExitStatus exitStatus;
     private final RunnerSupplier runnerSupplier;
     private final RethrowingThrowableCollector collector = new RethrowingThrowableCollector();
-    private Instant start;
+    private @Nullable Instant start;
 
     public CucumberExecutionContext(EventBus bus, ExitStatus exitStatus, RunnerSupplier runnerSupplier) {
         this.bus = bus;
         this.exitStatus = exitStatus;
         this.runnerSupplier = runnerSupplier;
-    }
-
-    @FunctionalInterface
-    public interface ThrowingRunnable {
-        void run() throws Throwable;
     }
 
     public void startTestRun() {
@@ -104,15 +101,15 @@ public final class CucumberExecutionContext {
         emitTestRunFinished(cucumberException);
     }
 
-    public Throwable getThrowable() {
+    public @Nullable Throwable getThrowable() {
         return collector.getThrowable();
     }
 
-    private void emitTestRunFinished(Throwable exception) {
+    private void emitTestRunFinished(@Nullable Throwable exception) {
         Instant instant = bus.getInstant();
         Result result = new Result(
             exception != null ? Status.FAILED : exitStatus.getStatus(),
-            Duration.between(start, instant),
+            Duration.between(requireNonNull(start), instant),
             exception);
         bus.send(new TestRunFinished(instant, result));
 
@@ -164,6 +161,11 @@ public final class CucumberExecutionContext {
             // Collected in CucumberExecutionContext
             rethrowIfUnrecoverable(t);
         }
+    }
+
+    @FunctionalInterface
+    public interface ThrowingRunnable {
+        void run() throws Throwable;
     }
 
 }

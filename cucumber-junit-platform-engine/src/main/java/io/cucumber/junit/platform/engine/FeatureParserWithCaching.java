@@ -30,14 +30,14 @@ class FeatureParserWithCaching {
         return parseResource(new PathAdapter(resource));
     }
 
-    Optional<FeatureWithSource> parseResource(org.junit.platform.commons.support.Resource resource) {
+    Optional<FeatureWithSource> parseResource(org.junit.platform.commons.io.Resource resource) {
         return parseResource(new ResourceAdapter(resource));
     }
 
     private static class ResourceAdapter implements Resource {
-        private final org.junit.platform.commons.support.Resource resource;
+        private final org.junit.platform.commons.io.Resource resource;
 
-        public ResourceAdapter(org.junit.platform.commons.support.Resource resource) {
+        ResourceAdapter(org.junit.platform.commons.io.Resource resource) {
             this.resource = resource;
         }
 
@@ -47,7 +47,7 @@ class FeatureParserWithCaching {
             try {
                 return new URI("classpath", name, null);
             } catch (URISyntaxException e) {
-                String message = String.format("Could not create classpath uri for resource '%s'", name);
+                String message = "Could not create classpath uri for resource '%s'".formatted(name);
                 throw new CucumberException(message, e);
             }
         }
@@ -61,7 +61,7 @@ class FeatureParserWithCaching {
     private static class PathAdapter implements Resource {
         private final Path resource;
 
-        public PathAdapter(Path resource) {
+        PathAdapter(Path resource) {
             this.resource = resource;
         }
 

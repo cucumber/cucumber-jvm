@@ -4,9 +4,9 @@ import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public final class Plugins {
     private final PluginFactory pluginFactory;
     private final Options pluginOptions;
     private boolean pluginNamesInstantiated;
-    private EventPublisher orderedEventPublisher;
+    private @Nullable EventPublisher orderedEventPublisher;
 
     public Plugins(PluginFactory pluginFactory, Options pluginOptions) {
         this.pluginFactory = pluginFactory;
@@ -40,20 +40,11 @@ public final class Plugins {
     private void addPlugin(List<Plugin> plugins, Plugin plugin) {
         plugins.add(plugin);
         setMonochromeOnColorAwarePlugins(plugin);
-        setStrictOnStrictAwarePlugins(plugin);
     }
 
     private void setMonochromeOnColorAwarePlugins(Plugin plugin) {
-        if (plugin instanceof ColorAware) {
-            ColorAware colorAware = (ColorAware) plugin;
+        if (plugin instanceof ColorAware colorAware) {
             colorAware.setMonochrome(pluginOptions.isMonochrome());
-        }
-    }
-
-    private void setStrictOnStrictAwarePlugins(Plugin plugin) {
-        if (plugin instanceof StrictAware) {
-            StrictAware strictAware = (StrictAware) plugin;
-            strictAware.setStrict(true);
         }
     }
 
@@ -67,21 +58,21 @@ public final class Plugins {
 
     public void setEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
         for (Plugin plugin : plugins) {
-            if (plugin instanceof ConcurrentEventListener) {
-                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher, false);
-            } else if (plugin instanceof EventListener) {
-                ((EventListener) plugin).setEventPublisher(eventPublisher);
+            if (plugin instanceof ConcurrentEventListener eventListener) {
+                eventListener.setEventPublisher(eventPublisher, false);
+            } else if (plugin instanceof EventListener eventListener) {
+                eventListener.setEventPublisher(eventPublisher);
             }
         }
     }
 
     public void setSerialEventBusOnEventListenerPlugins(EventPublisher eventPublisher) {
         for (Plugin plugin : plugins) {
-            if (plugin instanceof ConcurrentEventListener) {
-                ((ConcurrentEventListener) plugin).setEventPublisher(eventPublisher, true);
-            } else if (plugin instanceof EventListener) {
+            if (plugin instanceof ConcurrentEventListener eventListener) {
+                eventListener.setEventPublisher(eventPublisher, true);
+            } else if (plugin instanceof EventListener eventListener) {
                 EventPublisher orderedEventPublisher = getOrderedEventPublisher(eventPublisher);
-                ((EventListener) plugin).setEventPublisher(orderedEventPublisher);
+                eventListener.setEventPublisher(orderedEventPublisher);
             }
         }
     }

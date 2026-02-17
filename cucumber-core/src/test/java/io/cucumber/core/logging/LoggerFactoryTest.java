@@ -3,6 +3,7 @@ package io.cucumber.core.logging;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class LoggerFactoryTest {
 
     private final Exception exception = new Exception();
     private final Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
-    private LogRecord logged;
+    private @Nullable LogRecord logged;
 
     @BeforeEach
     void setup() {
@@ -54,8 +55,8 @@ class LoggerFactoryTest {
         assertThat(logged, logRecord("Error", Level.SEVERE, exception));
     }
 
-    private static Matcher<LogRecord> logRecord(final String message, final Level level, final Throwable throwable) {
-        return new TypeSafeDiagnosingMatcher<LogRecord>() {
+    private static Matcher<LogRecord> logRecord(String message, Level level, @Nullable Throwable throwable) {
+        return new TypeSafeDiagnosingMatcher<>() {
             @Override
             public void describeTo(Description description) {
                 description.appendText("error=");

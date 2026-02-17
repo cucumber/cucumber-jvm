@@ -12,9 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
-class TestPickleBuilder {
+final class TestPickleBuilder {
 
     private TestPickleBuilder() {
+        /* no-op */
     }
 
     static List<Pickle> picklesFromFeature(final String path, final String source) {
@@ -37,7 +38,7 @@ class TestPickleBuilder {
                 return new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8));
             }
 
-        }).orElse(null);
+        }).orElseThrow();
     }
 
 }

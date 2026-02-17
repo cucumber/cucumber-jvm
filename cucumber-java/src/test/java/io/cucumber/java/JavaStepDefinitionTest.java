@@ -2,6 +2,7 @@ package io.cucumber.java;
 
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Lookup;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -24,7 +25,7 @@ class JavaStepDefinitionTest {
         }
     };
 
-    private String argument;
+    private @Nullable String argument;
 
     @Test
     void can_define_step() throws Throwable {

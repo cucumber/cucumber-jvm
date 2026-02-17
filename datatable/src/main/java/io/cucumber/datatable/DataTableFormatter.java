@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.function.Function;
@@ -10,10 +11,10 @@ import static java.util.Objects.requireNonNull;
 @API(status = API.Status.STABLE)
 public final class DataTableFormatter {
 
-    private final Function<Integer, String> rowPrefix;
+    private final Function<Integer, @Nullable String> rowPrefix;
     private final boolean escapeDelimiters;
 
-    private DataTableFormatter(Function<Integer, String> rowPrefix, boolean escapeDelimiters) {
+    private DataTableFormatter(Function<Integer, @Nullable String> rowPrefix, boolean escapeDelimiters) {
         this.rowPrefix = rowPrefix;
         this.escapeDelimiters = escapeDelimiters;
     }
@@ -91,7 +92,7 @@ public final class DataTableFormatter {
         }
     }
 
-    private String renderCell(String cell) {
+    private String renderCell(@Nullable String cell) {
         if (cell == null) {
             return "";
         }

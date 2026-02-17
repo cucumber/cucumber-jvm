@@ -1,89 +1,256 @@
 {
-  "7.0.0": [
+  "8.0.0": [
     {
       "extension": "revapi.differences",
       "id": "intentional-api-changes",
-      "ignore": true,
-      "configuration": {
-        "differences": [
-          {
-            "regex": true,
-            "code": "java.class.removed",
-            "old": "@interface io\\.cucumber\\.java\\.tl\\..*",
-            "justification": "Fixes ISO 639-1 code for Telugu. Use io.cucumber.java.te.* instead"
-          },
-          {
-            "code": "java.class.removed",
-            "old": "interface io.cucumber.java8.Tl",
-            "justification": "Fixes ISO 639-1 code for Telugu. Use io.cucumber.java8.Te instead"
-          }
-        ]
-      }
-    }
-  ],
-  "7.2.0": [
-    {
-      "extension": "revapi.differences",
-      "id": "intentional-api-changes",
-      "ignore": true,
-      "configuration": {
-        "differences": [
-          {
-            "code": "java.generics.elementNowParameterized",
-            "old": "method void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<?>)",
-            "new": "method <T> void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<T>)",
-            "justification": "Should not impact the normal use case of the java8 API"
-          },
-          {
-            "code": "java.generics.formalTypeParameterAdded",
-            "old": "method void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<?>)",
-            "new": "method <T> void io.cucumber.java8.LambdaGlue::DocStringType(java.lang.String, io.cucumber.java8.DocStringDefinitionBody<T>)",
-            "typeParameter": "T",
-            "justification": "Should not impact the normal use case of the java8 API"
-          },
-          {
-            "regex": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "(interface|class|enum) io\\.cucumber\\.core.backend\\..*",
-            "justification": "GuiceFactory implements BackendProviderService"
-          },
-          {
-            "regex": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "(interface|class) io\\.cucumber\\.cucumberexpressions\\..*",
-            "justification": "GuiceFactory implements BackendProviderService"
-          },
-          {
-            "regex": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "(interface|class) io\\.cucumber\\.datatable\\..*",
-            "justification": "GuiceFactory implements BackendProviderService"
-          },
-          {
-            "regex": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "class io\\.cucumber\\.docstring\\..*",
-            "justification": "GuiceFactory implements BackendProviderService"
-          }
-        ]
-      }
-    }
-  ],
-  "internal": [
-    {
-      "extension": "revapi.differences",
-      "id": "internal-api-issues",
       "ignore": true,
       "configuration": {
         "differences": [
           {
             "ignore": true,
+            "code": "java.class.removed",
+            "old": "interface io.cucumber.plugin.StrictAware",
+            "justification": "Removal of class deprecated in v7"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.removed",
+            "old": "interface io.cucumber.plugin.SummaryPrinter",
+            "justification": "Removal of class deprecated in v7"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.noLongerDefault",
+            "old": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "new": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "justification": "Method must now be implemented by subclass"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.nowAbstract",
+            "old": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "new": "method java.lang.String io.cucumber.plugin.event.TestCase::getLanguage()",
+            "justification": "Method must now be implemented by subclass"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.datatable.TableDiffer",
+            "new": "class io.cucumber.datatable.TableDiffer",
+            "justification": "TableDiffer is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.nowFinal",
+            "old": "method java.lang.reflect.Type io.cucumber.datatable.TypeReference<T>::getType()",
+            "new": "method java.lang.reflect.Type io.cucumber.datatable.TypeReference<T>::getType()",
+            "justification": "getType is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityReduced",
+            "old": "method void cucumber.api.cli.Main::<init>()",
+            "new": "method void cucumber.api.cli.Main::<init>()",
+            "oldVisibility": "public",
+            "newVisibility": "private",
+            "justification": "Utility class does not have to be instantiated"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class cucumber.api.cli.Main",
+            "new": "class cucumber.api.cli.Main",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.removed",
+            "old": "interface io.cucumber.core.api.TypeRegistry",
+            "justification": "Remove class deprecated in v7"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.backend.StackTraceElementReference",
+            "new": "class io.cucumber.core.backend.StackTraceElementReference",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.noLongerDefault",
+            "old": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "new": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "justification": "Method must now be implemented by subclass"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.nowAbstract",
+            "old": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "new": "method java.lang.String io.cucumber.core.backend.TestCaseState::getLanguage()",
+            "justification": "Method must now be implemented by subclass"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityReduced",
+            "old": "method void io.cucumber.core.cli.Main::<init>()",
+            "new": "method void io.cucumber.core.cli.Main::<init>()",
+            "oldVisibility": "public",
+            "newVisibility": "private",
+            "justification": "Utility class does not have to be instantiated"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.cli.Main",
+            "new": "class io.cucumber.core.cli.Main",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.eventbus.RandomUuidGenerator",
+            "new": "class io.cucumber.core.eventbus.RandomUuidGenerator",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.FeatureIdentifier",
+            "new": "class io.cucumber.core.feature.FeatureIdentifier",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.FeaturePath",
+            "new": "class io.cucumber.core.feature.FeaturePath",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.FeatureWithLines",
+            "new": "class io.cucumber.core.feature.FeatureWithLines",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.feature.GluePath",
+            "new": "class io.cucumber.core.feature.GluePath",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.options.PluginOption",
+            "new": "class io.cucumber.core.options.PluginOption",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.exception.checkedRemoved",
+            "old": "method void io.cucumber.core.plugin.HtmlFormatter::<init>(java.io.OutputStream) throws java.io.IOException",
+            "new": "method void io.cucumber.core.plugin.HtmlFormatter::<init>(java.io.OutputStream)",
+            "exception": "java.io.IOException",
+            "justification": "No longer thrown"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.plugin.TeamCityPlugin",
+            "new": "class io.cucumber.core.plugin.TeamCityPlugin",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
             "code": "java.method.visibilityIncreased",
-            "old": "method io.cucumber.core.eventbus.UuidGenerator io.cucumber.core.runtime.UuidGeneratorServiceLoader::loadUuidGenerator()",
-            "new": "method io.cucumber.core.eventbus.UuidGenerator io.cucumber.core.runtime.UuidGeneratorServiceLoader::loadUuidGenerator()",
+            "old": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineGroup::<init>()",
+            "new": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineGroup::<init>()",
             "oldVisibility": "package",
             "newVisibility": "public",
-            "justification": "Expose internal API to other internal components"
+            "justification": "Made public for serializer"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityIncreased",
+            "old": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineItem::<init>()",
+            "new": "method void io.cucumber.core.plugin.TimelineFormatter.TimeLineItem::<init>()",
+            "oldVisibility": "package",
+            "newVisibility": "public",
+            "justification": "Made public for serializer"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.resource.PathScanner",
+            "new": "class io.cucumber.core.resource.PathScanner",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.core.runtime.Runtime.Builder",
+            "new": "class io.cucumber.core.runtime.Runtime.Builder",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.noLongerImplementsInterface",
+            "old": "class io.cucumber.core.stepexpression.StepTypeRegistry",
+            "new": "class io.cucumber.core.stepexpression.StepTypeRegistry",
+            "interface": "io.cucumber.core.api.TypeRegistry",
+            "justification": "Removed interface deprecated in v7"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.returnTypeChanged",
+            "old": "method java.util.List<io.cucumber.cucumberexpressions.Argument<?>> io.cucumber.cucumberexpressions.Expression::match(java.lang.String, java.lang.reflect.Type[])",
+            "new": "method java.util.Optional<java.util.List<io.cucumber.cucumberexpressions.Argument<?>>> io.cucumber.cucumberexpressions.Expression::match(java.lang.String, java.lang.reflect.Type[])",
+            "justification": "Argument groups in Cucumber expressions are now optional"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.returnTypeChanged",
+            "old": "method java.util.List<io.cucumber.cucumberexpressions.Group> io.cucumber.cucumberexpressions.Group::getChildren()",
+            "new": "method java.util.Optional<java.util.List<io.cucumber.cucumberexpressions.Group>> io.cucumber.cucumberexpressions.Group::getChildren()",
+            "justification": "Argument groups in Cucumber expressions are now optional"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class io.cucumber.cucumberexpressions.Group",
+            "new": "class io.cucumber.cucumberexpressions.Group",
+            "justification": "Class is not designed for extension"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method void io.cucumber.core.runtime.TestCaseResultObserver.Suggestion::<init>(java.lang.String, java.util.List<java.lang.String>)",
+            "justification": "Suggestions must come with an originating test step"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.removed",
+            "old": "class io.cucumber.core.snippets.GherkinKeywordNormalizer",
+            "justification": "Normalization is context dependent. Don't de-duplicate context that are identical by accident"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method void io.cucumber.core.snippets.SnippetGenerator::<init>(io.cucumber.core.backend.Snippet, io.cucumber.cucumberexpressions.ParameterTypeRegistry)",
+            "justification": "Snippets must now always include a programming language"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "@interface io.cucumber.junit.CucumberOptions",
+            "new": "@interface io.cucumber.junit.CucumberOptions",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.STABLE",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "Cucumber JUnit (for JUnit 4) was deprecated. Use Cucumber JUnit Platform Engine instead (JUnit 5+)"
           }
         ]
       }
@@ -137,72 +304,6 @@
             "old": "missing-class com.google.inject.Stage",
             "new": "missing-class com.google.inject.Stage",
             "justification": "Guice is an optional TestNG dependency"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method com.google.inject.Injector org.testng.IInjectorFactory::getInjector(com.google.inject.Stage, com.google.inject.Module[])",
-            "justification": "Guice is an optional TestNG dependency"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method org.testng.IObjectFactory2 org.testng.ISuite::getObjectFactory2()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.field.removed",
-            "old": "field org.testng.xml.XmlSuite.DEFAULT_JUNIT",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method org.testng.ITestObjectFactory org.testng.xml.XmlSuite::getObjectFactory()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method java.lang.Boolean org.testng.xml.XmlSuite::isJUnit()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method void org.testng.xml.XmlSuite::setJUnit(java.lang.Boolean)",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method void org.testng.xml.XmlSuite::setJunit(java.lang.Boolean)",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method void org.testng.xml.XmlSuite::setObjectFactory(org.testng.ITestObjectFactory)",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method boolean org.testng.xml.XmlTest::isJUnit()",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method void org.testng.xml.XmlTest::setJUnit(boolean)",
-            "justification": "Third party api change"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.removed",
-            "old": "method void org.testng.xml.XmlTest::setJunit(boolean)",
-            "justification": "Third party api change"
           }
         ]
       }
@@ -215,198 +316,373 @@
       "ignore": true,
       "configuration": {
         "differences": [
-          {
-            "ignore": true,
-            "code": "java.annotation.added",
-            "old": "class com.google.inject.Key<T>",
-            "new": "class com.google.inject.Key<T>",
-            "annotation": "@com.google.errorprone.annotations.CheckReturnValue",
-            "justification": "It's Google."
-          },
-          {
-            "ignore": true,
-            "regex": true,
-            "code": "java.field.enumConstantOrderChanged",
-            "old": "field com\\.google\\.inject\\.internal\\.ErrorId\\..*",
-            "new": "field com\\.google\\.inject\\.internal\\.ErrorId\\..*",
-            "justification": "It's Google."
-          },
-          {
-            "ignore": true,
-            "code": "java.class.noLongerImplementsInterface",
-            "old": "interface com.google.inject.Provider<T>",
-            "new": "interface com.google.inject.Provider<T>",
-            "interface": "javax.inject.Provider<T>",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.class.nowImplementsInterface",
-            "old": "interface com.google.inject.Provider<T>",
-            "new": "interface com.google.inject.Provider<T>",
-            "interface": "jakarta.inject.Provider<T>",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.parameterTypeParameterChanged",
-            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.Key<? extends javax.inject.Provider<? extends T>>===)",
-            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.Key<? extends jakarta.inject.Provider<? extends T>>===)",
-            "parameterIndex": "0",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.parameterTypeParameterChanged",
-            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.TypeLiteral<? extends javax.inject.Provider<? extends T>>===)",
-            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===com.google.inject.TypeLiteral<? extends jakarta.inject.Provider<? extends T>>===)",
-            "parameterIndex": "0",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.parameterTypeParameterChanged",
-            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===java.lang.Class<? extends javax.inject.Provider<? extends T>>===)",
-            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===java.lang.Class<? extends jakarta.inject.Provider<? extends T>>===)",
-            "parameterIndex": "0",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.parameterTypeChanged",
-            "old": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===javax.inject.Provider<? extends T>===)",
-            "new": "parameter com.google.inject.binder.ScopedBindingBuilder com.google.inject.binder.LinkedBindingBuilder<T>::toProvider(===jakarta.inject.Provider<? extends T>===)",
-            "parameterIndex": "0",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.field.addedStaticField",
-            "new": "field com.google.inject.internal.ErrorId.REQUEST_INJECTION_WITH_DIFFERENT_TYPES",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.returnTypeChanged",
-            "old": "method javax.inject.Provider<? extends T> com.google.inject.spi.ProviderInstanceBinding<T>::getUserSuppliedProvider()",
-            "new": "method jakarta.inject.Provider<? extends T> com.google.inject.spi.ProviderInstanceBinding<T>::getUserSuppliedProvider()",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.returnTypeTypeParametersChanged",
-            "old": "method com.google.inject.Key<? extends javax.inject.Provider<? extends T>> com.google.inject.spi.ProviderKeyBinding<T>::getProviderKey()",
-            "new": "method com.google.inject.Key<? extends jakarta.inject.Provider<? extends T>> com.google.inject.spi.ProviderKeyBinding<T>::getProviderKey()",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.added",
-            "new": "method <T> void com.google.inject.AbstractModule::requestInjection(com.google.inject.TypeLiteral<T>, T) @ io.cucumber.guice.ScenarioModule",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.class.externalClassExposedInAPI",
-            "new": "interface jakarta.inject.Provider<T>",
-            "justification": "Guice v7 uses Jakarta"
-          },
-          {
-            "ignore": true,
-            "code": "java.class.externalClassNoLongerExposedInAPI",
-            "old": "interface javax.inject.Provider<T>",
-            "justification": "Guice v7 uses Jakarta"
-          }
         ]
       }
     }
   ],
-  "junit5": [
+  "junit-jupiter": [
     {
       "extension": "revapi.differences",
-      "id": "junit5-api-issues",
+      "id": "junit-jupiter-api-issues",
       "ignore": true,
       "configuration": {
         "differences": [
           {
             "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
-            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "status",
-            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
-            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
-            "justification": "API consumed from JUnit 5"
-          },
-          {
-            "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
-            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "since",
-            "oldValue": "\"1.13.3\"",
-            "newValue": "\"1.14\"",
-            "justification": "API consumed from JUnit 5"
-          },
-          {
-            "ignore": true,
-            "code": "java.method.parameterTypeChanged",
-            "old": "parameter org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, ===org.junit.platform.engine.reporting.OutputDirectoryProvider===, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
-            "new": "parameter org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, ===org.junit.platform.engine.OutputDirectoryCreator===, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
-            "parameterIndex": "3",
-            "justification": "API consumed from JUnit 5"
-          },
-          {
-            "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
-            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "status",
-            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
-            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
-            "justification": "API consumed from JUnit 5"
-          },
-          {
-            "ignore": true,
-            "code": "java.annotation.attributeValueChanged",
-            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
-            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
-            "annotationType": "org.apiguardian.api.API",
-            "attribute": "since",
-            "oldValue": "\"1.13.3\"",
-            "newValue": "\"1.14\"",
-            "justification": "API consumed from JUnit 5"
+            "code": "java.class.noLongerInheritsFromClass",
+            "old": "class org.junit.platform.commons.PreconditionViolationException",
+            "new": "class org.junit.platform.commons.PreconditionViolationException",
+            "justification": "JUnit 6 Upgrade"
           },
           {
             "ignore": true,
             "code": "java.class.externalClassExposedInAPI",
-            "new": "interface org.junit.platform.engine.OutputDirectoryCreator",
-            "justification": "API consumed from JUnit 5"
+            "new": "interface org.junit.platform.engine.CancellationToken",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeParameterChanged",
+            "old": "parameter <T> java.util.Optional<T> org.junit.platform.engine.ConfigurationParameters::get(java.lang.String, ===java.util.function.Function<java.lang.String, T>===)",
+            "new": "parameter <T> java.util.Optional<T> org.junit.platform.engine.ConfigurationParameters::get(java.lang.String, ===java.util.function.Function<? super java.lang.String, ? extends T>===)",
+            "parameterIndex": "1",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method int org.junit.platform.engine.ConfigurationParameters::size()",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "method <T, V> org.junit.platform.engine.Filter<T> org.junit.platform.engine.Filter<T>::adaptFilter(org.junit.platform.engine.Filter<V>, java.util.function.Function<T, V>) @ org.junit.platform.engine.DiscoveryFilter<T>",
+            "new": "method <T, V> org.junit.platform.engine.Filter<T> org.junit.platform.engine.Filter<T>::adaptFilter(org.junit.platform.engine.Filter<V>, java.util.function.Function<T, V>) @ org.junit.platform.engine.DiscoveryFilter<T>",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"6.0\")",
+            "justification": "JUnit 6 Upgrade"
           },
           {
             "ignore": true,
             "code": "java.annotation.attributeValueChanged",
-            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
-            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "old": "interface org.junit.platform.engine.DiscoveryIssue",
+            "new": "interface org.junit.platform.engine.DiscoveryIssue",
             "annotationType": "org.apiguardian.api.API",
             "attribute": "status",
             "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
-            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
-            "justification": "API consumed from JUnit 5"
+            "newValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "justification": "JUnit 6 Upgrade"
           },
           {
             "ignore": true,
             "code": "java.annotation.attributeValueChanged",
-            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
-            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "old": "interface org.junit.platform.engine.DiscoveryIssue",
+            "new": "interface org.junit.platform.engine.DiscoveryIssue",
             "annotationType": "org.apiguardian.api.API",
             "attribute": "since",
             "oldValue": "\"1.13.3\"",
-            "newValue": "\"1.14\"",
-            "justification": "API consumed from JUnit 5"
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.EngineDiscoveryListener::issueEncountered(org.junit.platform.engine.UniqueId, org.junit.platform.engine.DiscoveryIssue)",
+            "new": "method void org.junit.platform.engine.EngineDiscoveryListener::issueEncountered(org.junit.platform.engine.UniqueId, org.junit.platform.engine.DiscoveryIssue)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method void org.junit.platform.engine.EngineDiscoveryListener::issueEncountered(org.junit.platform.engine.UniqueId, org.junit.platform.engine.DiscoveryIssue)",
+            "new": "method void org.junit.platform.engine.EngineDiscoveryListener::issueEncountered(org.junit.platform.engine.UniqueId, org.junit.platform.engine.DiscoveryIssue)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "annotation": "@java.lang.Deprecated(since = \"1.14\", forRemoval = true)",
+            "attribute": "since",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.EngineDiscoveryRequest::getOutputDirectoryProvider()",
+            "annotation": "@java.lang.Deprecated(since = \"1.14\", forRemoval = true)",
+            "attribute": "forRemoval",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "new": "method void org.junit.platform.engine.ExecutionRequest::<init>(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "annotation": "@java.lang.Deprecated(since = \"1.11\")",
+            "attribute": "since",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters)",
+            "annotation": "@java.lang.Deprecated(since = \"1.11\")",
+            "attribute": "since",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.numberOfParametersChanged",
+            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.OutputDirectoryCreator, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
+            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.OutputDirectoryCreator, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>, org.junit.platform.engine.CancellationToken)",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.OutputDirectoryCreator, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>)",
+            "new": "method org.junit.platform.engine.ExecutionRequest org.junit.platform.engine.ExecutionRequest::create(org.junit.platform.engine.TestDescriptor, org.junit.platform.engine.EngineExecutionListener, org.junit.platform.engine.ConfigurationParameters, org.junit.platform.engine.OutputDirectoryCreator, org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace>, org.junit.platform.engine.CancellationToken)",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13\"",
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "annotation": "@java.lang.Deprecated(since = \"1.14\", forRemoval = true)",
+            "attribute": "since",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "new": "method org.junit.platform.engine.reporting.OutputDirectoryProvider org.junit.platform.engine.ExecutionRequest::getOutputDirectoryProvider()",
+            "annotation": "@java.lang.Deprecated(since = \"1.14\", forRemoval = true)",
+            "attribute": "forRemoval",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace> org.junit.platform.engine.ExecutionRequest::getStore()",
+            "new": "method org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace> org.junit.platform.engine.ExecutionRequest::getStore()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace> org.junit.platform.engine.ExecutionRequest::getStore()",
+            "new": "method org.junit.platform.engine.support.store.NamespacedHierarchicalStore<org.junit.platform.engine.support.store.Namespace> org.junit.platform.engine.ExecutionRequest::getStore()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "method <T, V> org.junit.platform.engine.Filter<T> org.junit.platform.engine.Filter<T>::adaptFilter(org.junit.platform.engine.Filter<V>, java.util.function.Function<T, V>)",
+            "new": "method <T, V> org.junit.platform.engine.Filter<T> org.junit.platform.engine.Filter<T>::adaptFilter(org.junit.platform.engine.Filter<V>, java.util.function.Function<T, V>)",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"6.0\")",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.TestDescriptor.Visitor org.junit.platform.engine.TestDescriptor.Visitor::composite(org.junit.platform.engine.TestDescriptor.Visitor[])",
+            "new": "method org.junit.platform.engine.TestDescriptor.Visitor org.junit.platform.engine.TestDescriptor.Visitor::composite(org.junit.platform.engine.TestDescriptor.Visitor[])",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method org.junit.platform.engine.TestDescriptor.Visitor org.junit.platform.engine.TestDescriptor.Visitor::composite(org.junit.platform.engine.TestDescriptor.Visitor[])",
+            "new": "method org.junit.platform.engine.TestDescriptor.Visitor org.junit.platform.engine.TestDescriptor.Visitor::composite(org.junit.platform.engine.TestDescriptor.Visitor[])",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class org.junit.platform.engine.UniqueId.Segment",
+            "new": "class org.junit.platform.engine.UniqueId.Segment",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class org.junit.platform.engine.UniqueId",
+            "new": "class org.junit.platform.engine.UniqueId",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "annotation": "@java.lang.Deprecated(since = \"1.14\", forRemoval = true)",
+            "attribute": "since",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeAdded",
+            "old": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "new": "interface org.junit.platform.engine.reporting.OutputDirectoryProvider",
+            "annotation": "@java.lang.Deprecated(since = \"1.14\", forRemoval = true)",
+            "attribute": "forRemoval",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityReduced",
+            "old": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
+            "new": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
+            "oldVisibility": "public",
+            "newVisibility": "private",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.removed",
+            "old": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
+            "new": "method void org.junit.platform.engine.reporting.ReportEntry::<init>()",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"1.8\")",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.nowFinal",
+            "old": "class org.junit.platform.engine.support.store.Namespace",
+            "new": "class org.junit.platform.engine.support.store.Namespace",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.support.store.Namespace",
+            "new": "class org.junit.platform.engine.support.store.Namespace",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class org.junit.platform.engine.support.store.Namespace",
+            "new": "class org.junit.platform.engine.support.store.Namespace",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method <N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N>::closeAutoCloseables()",
+            "new": "method <N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N>::closeAutoCloseables()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method <N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N>::closeAutoCloseables()",
+            "new": "method <N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N> org.junit.platform.engine.support.store.NamespacedHierarchicalStore.CloseAction<N>::closeAutoCloseables()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"1.13.3\"",
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeParameterChanged",
+            "old": "parameter <K, V> java.lang.Object org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, ===java.util.function.Function<K, V>===)",
+            "new": "parameter <K, V> java.lang.Object org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, ===java.util.function.Function<? super K, ? extends V>===)",
+            "parameterIndex": "2",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "method <K, V> java.lang.Object org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, java.util.function.Function<K, V>)",
+            "new": "method <K, V> java.lang.Object org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, java.util.function.Function<? super K, ? extends V>)",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"6.0\")",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.parameterTypeParameterChanged",
+            "old": "parameter <K, V> V org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, ===java.util.function.Function<K, V>===, java.lang.Class<V>) throws org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException",
+            "new": "parameter <K, V> V org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, ===java.util.function.Function<? super K, ? extends V>===, java.lang.Class<V>) throws org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException",
+            "parameterIndex": "2",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "method <K, V> V org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, java.util.function.Function<K, V>, java.lang.Class<V>) throws org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException",
+            "new": "method <K, V> V org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getOrComputeIfAbsent(N, K, java.util.function.Function<? super K, ? extends V>, java.lang.Class<V>) throws org.junit.platform.engine.support.store.NamespacedHierarchicalStoreException",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"6.0\")",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method java.util.Optional<org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>> org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getParent()",
+            "new": "method java.util.Optional<org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>> org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getParent()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.MAINTAINED",
+            "newValue": "org.apiguardian.api.API.Status.EXPERIMENTAL",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "method java.util.Optional<org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>> org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getParent()",
+            "new": "method java.util.Optional<org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>> org.junit.platform.engine.support.store.NamespacedHierarchicalStore<N>::getParent()",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "since",
+            "oldValue": "\"5.13.3\"",
+            "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
           }
         ]
       }
@@ -423,22 +699,22 @@
             "ignore": true,
             "regex": true,
             "code": ".*",
-            "old": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
-            "new": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "old": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "new": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
             "justification": "Internal shaded API"
           },
           {
             "ignore": true,
             "regex": true,
             "code": ".*",
-            "old": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "old": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
             "justification": "Internal shaded API"
           },
           {
             "ignore": true,
             "regex": true,
             "code": ".*",
-            "new": ".* io\\.cucumber\\.core\\.internal\\.com\\.fasterxml\\.jackson\\..*",
+            "new": ".* io\\.cucumber\\.messages\\.ndjson\\.internal\\.com\\.fasterxml\\.jackson\\..*",
             "justification": "Internal shaded API"
           }
         ]

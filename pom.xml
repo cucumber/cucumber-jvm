@@ -4,21 +4,18 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>4.6.0</version>
+        <version>5.1.1</version>
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>7.34.0-SNAPSHOT</version>
+    <version>8.0.0-M1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
     <url>https://cucumber.io/</url>
 
     <properties>
-        <!-- Tool chains, ect -->
-        <base.java.version>1.8</base.java.version>
-        <javadoc.java.version>8</javadoc.java.version>
-        <project.build.outputTimestamp>1766076852</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1769807296</project.build.outputTimestamp>
         <project.rootdir>${project.basedir}</project.rootdir>
     </properties>
     <scm>
@@ -108,6 +105,22 @@
             <build>
                 <pluginManagement>
                     <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-jar-plugin</artifactId>
+                            <configuration>
+                                <archive>
+                                    <manifest>
+                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                    </manifest>
+                                    <manifestEntries>
+                                        <Automatic-Module-Name>${project.Automatic-Module-Name}</Automatic-Module-Name>
+                                    </manifestEntries>
+                                </archive>
+                            </configuration>
+                        </plugin>
+
                         <!-- Check code format -->
                         <plugin>
                             <groupId>com.diffplug.spotless</groupId>
@@ -150,68 +163,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-maven-3-6-3-plus</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <fail>true</fail>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>3.6.3</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>enforce-java</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>[11,)</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-
-            <!-- enable Java 9,10,11 compilation -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>java9</id>
-                        <phase>compile</phase>
-                    </execution>
-                    <execution>
-                        <id>java10</id>
-                        <phase>compile</phase>
-                    </execution>
-                    <execution>
-                        <id>java11</id>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Check style -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -219,113 +170,17 @@
                 <executions>
                     <execution>
                         <id>validate</id>
-                        <phase>verify</phase>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
 
         <pluginManagement>
             <plugins>
-                <!-- Standard plugins - alphabetically -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>${base.java.version}</source>
-                        <target>${base.java.version}</target>
-                    </configuration>
-                    <executions>
-                        <!-- for Java 9 -->
-                        <execution>
-                            <id>java9</id>
-                            <phase>none</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <release>9</release>
-                                <compileSourceRoots>
-                                    <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
-                                </compileSourceRoots>
-                                <multiReleaseOutput>true</multiReleaseOutput>
-                            </configuration>
-                        </execution>
-
-                        <!-- for Java 10 -->
-                        <execution>
-                            <id>java10</id>
-                            <phase>none</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <release>10</release>
-                                <compileSourceRoots>
-                                    <compileSourceRoot>${project.basedir}/src/main/java10</compileSourceRoot>
-                                </compileSourceRoots>
-                                <multiReleaseOutput>true</multiReleaseOutput>
-                            </configuration>
-                        </execution>
-
-                        <!-- for Java 11 -->
-                        <execution>
-                            <id>java11</id>
-                            <phase>none</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <release>11</release>
-                                <compileSourceRoots>
-                                    <compileSourceRoot>${project.basedir}/src/main/java11</compileSourceRoot>
-                                </compileSourceRoots>
-                                <multiReleaseOutput>true</multiReleaseOutput>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <configuration>
-                        <doclint>none</doclint>
-                        <source>${javadoc.java.version}</source>
-                        <excludePackageNames>io.cucumber.examples:org.springframework</excludePackageNames>
-                        <links>
-                            <link>https://junit.org/junit4/javadoc/latest/</link>
-                            <!-- javadoc plugin can't port docs for modularized code to
-                               non-modularized code -->
-                            <!-- <link>https://junit.org/junit5/docs/current/api/</link>-->
-                            <!-- javadoc.io is down -->
-                            <!-- <link>https://javadoc.io/doc/org.testng/testng/7.1.0/</link> -->
-                        </links>
-                        <groups>
-                            <group>
-                                <title>API Packages</title>
-                                <packages>
-                                    cucumber.api.*:io.cucumber.core.api:io.cucumber.core.api.*:io.cucumber.junit:io.cucumber.junit.platform.engine:io.cucumber.testng:io.cucumber.java:io.cucumber.java8:io.cucumber.docstring:io.cucumber.plugin:io.cucumber.plugin.event
-                                </packages>
-                            </group>
-                            <group>
-                                <title>I18n</title>
-                                <packages>io.cucumber.java8.*:io.cucumber.java.*</packages>
-                            </group>
-                            <group>
-                                <title>Dependency Injection Providers</title>
-                                <packages>
-                                    io.cucumber.spring:io.cucumber.guice:io.cucumber.picocontainer:io.cucumber.openejb:io.cucumber.cdi2:io.cucumber.deltaspike
-                                </packages>
-                            </group>
-                        </groups>
-                    </configuration>
-                </plugin>
-                
                 <!-- Semantic version check  -->
                 <plugin>
                     <groupId>org.revapi</groupId>
@@ -355,7 +210,7 @@
                             <revapi.differences id="guice-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
-                            <revapi.differences id="junit5-api-issues">
+                            <revapi.differences id="junit-jupiter-api-issues">
                                 <ignore>true</ignore>
                             </revapi.differences>
                             <revapi.differences id="jackson-api-issues">
@@ -366,12 +221,11 @@
                             <configurationFile>
                                 <path>${project.rootdir}/.revapi/api-changes.json</path>
                                 <roots>
-                                    <root>7.0.0</root>
-                                    <root>7.2.0</root>
+                                    <root>8.0.0</root>
                                     <root>internal</root>
                                     <root>testng</root>
                                     <root>guice</root>
-                                    <root>junit5</root>
+                                    <root>junit-jupiter</root>
                                     <root>jackson</root>
                                 </roots>
                             </configurationFile>
@@ -391,47 +245,6 @@
                                 <file>${project.rootdir}/.spotless/intellij-idea.importorder</file>
                             </importOrder>
                         </java>
-                    </configuration>
-                </plugin>
-
-                <!-- Check style -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>12.3.1</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        <checkstyleRules>
-                            <module name="Checker">
-                                <property name="severity" value="error"/>
-                                <module name="TreeWalker">
-                                    <module name="AvoidStarImport"/>
-                                    <module name="JavadocMethod">
-                                        <property name="allowMissingParamTags" value="true"/>
-                                        <property name="allowMissingReturnTag" value="true"/>
-                                    </module>
-                                    <module name="NonEmptyAtclauseDescription"/>
-                                    <module name="SuppressWarningsHolder"/>
-                                    <module name="UnusedImports">
-                                        <property name="processJavadoc" value="true"/>
-                                    </module>
-                                </module>
-                                <module name="SuppressWarningsFilter"/>
-                                <module name="RegexpSingleline">
-                                    <property name="format" value="@author"/>
-                                    <property name="message" value="Please do not use @author tags"/>
-                                    <property name="fileExtensions" value="java,groovy,kt"/>
-                                </module>
-                            </module>
-                        </checkstyleRules>
                     </configuration>
                 </plugin>
             </plugins>

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("io.cucumber.spring.contextcaching")
+@SuppressWarnings("DesignForExtension")
 public class ContextConfig {
 
 }

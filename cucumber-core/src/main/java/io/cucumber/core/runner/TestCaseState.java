@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Status;
+import io.cucumber.core.backend.Step;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.messages.Convertor;
 import io.cucumber.messages.types.Attachment;
@@ -10,6 +11,7 @@ import io.cucumber.plugin.event.EmbedEvent;
 import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.WriteEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.time.Instant;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -31,7 +34,8 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     private final TestCase testCase;
     private final UUID testExecutionId;
 
-    private UUID currentTestStepId;
+    private @Nullable UUID currentTestStepId;
+    private @Nullable Step currentPickleStep;
 
     TestCaseState(EventBus bus, UUID testExecutionId, TestCase testCase) {
         this.bus = requireNonNull(bus);
@@ -68,11 +72,11 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public void attach(byte[] data, String mediaType, String name) {
+    public void attach(byte[] data, String mediaType, @Nullable String name) {
         requireNonNull(data);
         requireNonNull(mediaType);
 
-        requireActiveTestStep();
+        UUID currentTestStepId = getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new EmbedEvent(instant, testCase, data, mediaType, name));
         bus.send(Envelope.of(new Attachment(
@@ -90,11 +94,11 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
     }
 
     @Override
-    public void attach(String data, String mediaType, String name) {
+    public void attach(String data, String mediaType, @Nullable String name) {
         requireNonNull(data);
         requireNonNull(mediaType);
 
-        requireActiveTestStep();
+        UUID currentTestStepId = getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new EmbedEvent(instant, testCase, data.getBytes(UTF_8), mediaType, name));
         bus.send(Envelope.of(new Attachment(
@@ -113,7 +117,9 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
 
     @Override
     public void log(String text) {
-        requireActiveTestStep();
+        requireNonNull(text);
+
+        UUID currentTestStepId = getRequiredCurrentTestStepId();
         Instant instant = bus.getInstant();
         bus.send(new WriteEvent(instant, testCase, text));
         bus.send(Envelope.of(new Attachment(
@@ -155,6 +161,12 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         return testCase.getLocation().getLine();
     }
 
+    @Override
+    public Optional<Step> geCurrentPickleStep() {
+        return Optional.ofNullable(currentPickleStep);
+    }
+
+    @Nullable
     Throwable getError() {
         if (stepResults.isEmpty()) {
             return null;
@@ -171,11 +183,19 @@ class TestCaseState implements io.cucumber.core.backend.TestCaseState {
         this.currentTestStepId = null;
     }
 
-    private void requireActiveTestStep() {
+    void setCurrentPickleStep(Step currentPickleStep) {
+        this.currentPickleStep = currentPickleStep;
+    }
+
+    void clearCurrentPickleStep() {
+        this.currentPickleStep = null;
+    }
+
+    private UUID getRequiredCurrentTestStepId() {
         if (currentTestStepId == null) {
             throw new IllegalStateException(
                 "You can not use Scenario.log or Scenario.attach when a step is not being executed");
         }
+        return currentTestStepId;
     }
-
 }

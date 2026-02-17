@@ -4,17 +4,18 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-jvm</artifactId>
-        <version>7.34.0-SNAPSHOT</version>
+        <version>8.0.0-M1-SNAPSHOT</version>
     </parent>
 
     <artifactId>cucumber-junit-platform-engine</artifactId>
     <packaging>jar</packaging>
-    <name>Cucumber-JVM: JUnit 5 - JUnit Platform Engine</name>
+    <name>Cucumber-JVM: JUnit 6 - JUnit Platform Engine</name>
 
     <properties>
+        <project.Automatic-Module-Name>io.cucumber.junit.platform.engine</project.Automatic-Module-Name>
         <project.rootdir>${project.basedir}/..</project.rootdir>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>5.14.2</junit-jupiter.version>
+        <junit-jupiter.version>6.0.3</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -55,7 +56,7 @@
         </dependency>
 
         <!-- Surefire detects the CucumberEngine and will not use the
-        JupiterEngine unless we add explicitly -->
+        JupiterEngine unless we add it explicitly -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -78,14 +79,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration combine.self="override">
-                    <!-- Ignore Automatic module name -->
+                <configuration>
                     <archive>
                         <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
                             <Engine-Version-cucumber>${project.version}</Engine-Version-cucumber>
                         </manifestEntries>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links>
+                        <link>https://docs.junit.org/${junit-jupiter.version}/api</link>
+                    </links>
                 </configuration>
             </plugin>
         </plugins>

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,56 +39,47 @@ class TimelineFormatterTest {
     private static final Comparator<TimeLineItem> TEST_DATA_COMPARATOR = Comparator
             .comparing(TimeLineItem::getScenario);
 
-    private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Paths
-            .get("src/main/resources/io/cucumber/core/plugin/timeline");
+    private static final Path REPORT_TEMPLATE_RESOURCE_DIR = Path
+            .of("src/main/resources/io/cucumber/core/plugin/timeline");
 
-    // private final Gson gson = new GsonBuilder().registerTypeAdapter(
-    // Instant.class,
-    // (JsonDeserializer<Instant>) (json, type, jsonDeserializationContext) ->
-    // json.isJsonObject()
-    // ?
-    // Instant.ofEpochSecond(json.getAsJsonObject().get("seconds").getAsLong())
-    // : Instant.ofEpochMilli(json.getAsLong()))
-    // .create();
+    private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", """
+            Feature: Failing Feature
+             Background:
+             Given bg_1
+             When bg_2
+             Then bg_3
+             @TagA
+             Scenario: Scenario 1
+             Given step_01
+             When step_02
+             Then step_03
+             Scenario: Scenario 2
+             Given step_01
+             When step_02
+             Then step_03""");
 
-    private final Feature failingFeature = TestFeatureParser.parse("some/path/failing.feature", "" +
-            "Feature: Failing Feature\n" +
-            " Background:\n" +
-            " Given bg_1\n" +
-            " When bg_2\n" +
-            " Then bg_3\n" +
-            " @TagA\n" +
-            " Scenario: Scenario 1\n" +
-            " Given step_01\n" +
-            " When step_02\n" +
-            " Then step_03\n" +
-            " Scenario: Scenario 2\n" +
-            " Given step_01\n" +
-            " When step_02\n" +
-            " Then step_03");
+    private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", """
+            Feature: Successful Feature
+             Background:
+             Given bg_1
+             When bg_2
+             Then bg_3
+             @TagB @TagC
+             Scenario: Scenario 3
+             Given step_10
+             When step_20
+             Then step_30""");
 
-    private final Feature successfulFeature = TestFeatureParser.parse("some/path/successful.feature", "" +
-            "Feature: Successful Feature\n" +
-            " Background:\n" +
-            " Given bg_1\n" +
-            " When bg_2\n" +
-            " Then bg_3\n" +
-            " @TagB @TagC\n" +
-            " Scenario: Scenario 3\n" +
-            " Given step_10\n" +
-            " When step_20\n" +
-            " Then step_30");
-
-    private final Feature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", "" +
-            "Feature: Pending Feature\n" +
-            " Background:\n" +
-            " Given bg_1\n" +
-            " When bg_2\n" +
-            " Then bg_3\n" +
-            " Scenario: Scenario 4\n" +
-            " Given step_10\n" +
-            " When step_20\n" +
-            " Then step_50");
+    private final Feature pendingFeature = TestFeatureParser.parse("some/path/pending.feature", """
+            Feature: Pending Feature
+             Background:
+             Given bg_1
+             When bg_2
+             Then bg_3
+             Scenario: Scenario 4
+             Given step_10
+             When step_20
+             Then step_50""");
 
     @TempDir
     Path reportDir;
@@ -123,7 +113,7 @@ class TimelineFormatterTest {
     }
 
     private void runFormatterWithPlugin() {
-        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofMillis(1000));
+        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofSeconds(1));
 
         Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(failingFeature,
@@ -167,11 +157,12 @@ class TimelineFormatterTest {
 
             final int idx = i;
             assertAll(
-                () -> assertThat(String.format("id on group %s, was not as expected", idx),
+                () -> assertThat("id on group %s, was not as expected".formatted(idx),
                     actual.getId(),
                     is(notNullValue())),
-                () -> assertThat(String.format("content on group %s, was not as expected",
-                    idx), actual.getContent(),
+                () -> assertThat("content on group %s, was not as expected"
+                        .formatted(idx),
+                    actual.getContent(),
                     is(notNullValue())));
         }
 
@@ -183,48 +174,49 @@ class TimelineFormatterTest {
     }
 
     private TimeLineItem[] getExpectedTestData() throws JsonProcessingException {
-        String expectedJson = ("[\n" +
-                " {\n" +
-                " \"feature\": \"Failing Feature\",\n" +
-                " \"scenario\": \"Scenario 1\",\n" +
-                " \"start\": 0,\n" +
-                " \"end\": 6000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"@taga,\",\n" +
-                " \"className\": \"failed\"\n" +
-                " },\n" +
-                " {\n" +
-                " \"feature\": \"Failing Feature\",\n" +
-                " \"scenario\": \"Scenario 2\",\n" +
-                " \"start\": 6000,\n" +
-                " \"end\": 12000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"\",\n" +
-                " \"className\": \"failed\"\n" +
-                " },\n" +
-                " {\n" +
-                " \"feature\": \"Successful Feature\",\n" +
-                " \"scenario\": \"Scenario 3\",\n" +
-                " \"start\": 18000,\n" +
-                " \"end\": 24000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"@tagb,@tagc,\",\n" +
-                " \"className\": \"passed\"\n" +
-                " },\n" +
-                " {\n" +
-                " \"scenario\": \"Scenario 4\",\n" +
-                " \"feature\": \"Pending Feature\",\n" +
-                " \"start\": 12000,\n" +
-                " \"end\": 18000,\n" +
-                " \"group\": \"main\",\n" +
-                " \"content\": \"\",\n" +
-                " \"tags\": \"\",\n" +
-                " \"className\": \"undefined\"\n" +
-                " }\n" +
-                "]");
+        String expectedJson = """
+                [
+                 {
+                 "feature": "Failing Feature",
+                 "scenario": "Scenario 1",
+                 "start": 0,
+                 "end": 6000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "@taga,",
+                 "className": "failed"
+                 },
+                 {
+                 "feature": "Failing Feature",
+                 "scenario": "Scenario 2",
+                 "start": 6000,
+                 "end": 12000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "",
+                 "className": "failed"
+                 },
+                 {
+                 "feature": "Successful Feature",
+                 "scenario": "Scenario 3",
+                 "start": 18000,
+                 "end": 24000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "@tagb,@tagc,",
+                 "className": "passed"
+                 },
+                 {
+                 "scenario": "Scenario 4",
+                 "feature": "Pending Feature",
+                 "start": 12000,
+                 "end": 18000,
+                 "group": "main",
+                 "content": "",
+                 "tags": "",
+                 "className": "undefined"
+                 }
+                ]""";
 
         return Jackson.OBJECT_MAPPER.readValue(expectedJson, TimeLineItem[].class);
     }
@@ -259,40 +251,40 @@ class TimelineFormatterTest {
             final int idx = i;
 
             assertAll(
-                () -> assertThat(String.format("feature on item %s, was not as expected", idx),
+                () -> assertThat("feature on item %d, was not as expected".formatted(idx),
                     actual.getFeature(),
                     is(equalTo(expected.getFeature()))),
-                () -> assertThat(String.format("className on item %s, was not as expected", idx),
+                () -> assertThat("className on item %d, was not as expected".formatted(idx),
                     actual.getClassName(),
                     is(equalTo(expected.getClassName()))),
-                () -> assertThat(String.format("content on item %s, was not as expected", idx),
+                () -> assertThat("content on item %d, was not as expected".formatted(idx),
                     actual.getContent(),
                     is(equalTo(expected.getContent()))),
-                () -> assertThat(String.format("tags on item %s, was not as expected", idx),
+                () -> assertThat("tags on item %d, was not as expected".formatted(idx),
                     actual.getTags(),
                     is(equalTo(expected.getTags()))),
                 () -> {
                     if (checkActualTimeStamps) {
                         assertAll(
-                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
+                            () -> assertThat("startTime on item %d, was not as expected".formatted(idx),
                                 actual.getStart(), is(equalTo(expected.getStart()))),
-                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
+                            () -> assertThat("endTime on item %d, was not as expected".formatted(idx),
                                 actual.getEnd(), is(equalTo(expected.getEnd()))));
                     } else {
                         assertAll(
-                            () -> assertThat(String.format("startTime on item %s, was not as expected", idx),
+                            () -> assertThat("startTime on item %d, was not as expected".formatted(idx),
                                 actual.getStart(), is(notNullValue())),
-                            () -> assertThat(String.format("endTime on item %s, was not as expected", idx),
+                            () -> assertThat("endTime on item %d, was not as expected".formatted(idx),
                                 actual.getEnd(), is(notNullValue())));
                     }
                 },
                 () -> {
                     if (checkActualThreadData) {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx),
+                        assertThat("threadId on item %d, was not as expected".formatted(idx),
                             actual.getGroup(),
                             is(equalTo(expected.getGroup())));
                     } else {
-                        assertThat(String.format("threadId on item %s, was not as expected", idx),
+                        assertThat("threadId on item %d, was not as expected".formatted(idx),
                             actual.getGroup(),
                             is(notNullValue()));
                     }
@@ -311,12 +303,13 @@ class TimelineFormatterTest {
         TimeLineItem[] expectedTests = getExpectedTestData();
 
         TimeLineGroup[] expectedGroups = Jackson.OBJECT_MAPPER.readValue(
-            ("[\n" +
-                    " {\n" +
-                    " \"id\": \"main\",\n" +
-                    " \"content\": \"groupName\"\n" +
-                    " }\n" +
-                    "]")
+            """
+                    [
+                     {
+                     "id": "main",
+                     "content": "groupName"
+                     }
+                    ]"""
                     .replaceAll("groupName", groupName),
             TimeLineGroup[].class);
 
@@ -345,12 +338,12 @@ class TimelineFormatterTest {
 
             int idx = i;
             assertAll(
-                () -> assertThat(String.format("id on group %s, was not as expected", idx),
-                    actual.getId(),
-                    is(equalTo(expected.getId()))),
-                () -> assertThat(String.format("content on group %s, was not as expected",
-                    idx), actual.getContent(),
-                    is(equalTo(expected.getContent()))));
+                () -> assertThat("id on group %s, was not as expected"
+                        .formatted(idx),
+                    actual.getId(), is(equalTo(expected.getId()))),
+                () -> assertThat("content on group %s, was not as expected"
+                        .formatted(idx),
+                    actual.getContent(), is(equalTo(expected.getContent()))));
         }
     }
 

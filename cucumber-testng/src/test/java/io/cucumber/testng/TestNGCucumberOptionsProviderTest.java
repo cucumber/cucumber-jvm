@@ -9,6 +9,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
+@SuppressWarnings("NullAway") // TestNGs assertNotNull not recongized
 final class TestNGCucumberOptionsProviderTest {
 
     private TestNGCucumberOptionsProvider optionsProvider;
@@ -50,7 +51,7 @@ final class TestNGCucumberOptionsProviderTest {
         assertEquals(IncrementingUuidGenerator.class, options.uuidGenerator());
     }
 
-    @CucumberOptions()
+    @CucumberOptions
     private static final class ClassWithDefault {
 
     }

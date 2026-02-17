@@ -20,6 +20,7 @@ import io.cucumber.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefiniti
 import io.cucumber.spring.metaconfig.general.BellyMetaStepDefinitions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.shadow.de.siegmar.fastcsv.util.Nullable;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SpringFactoryTest {
+public final class SpringFactoryTest {
 
     @Test
     void shouldGiveUsNewStepInstancesForEachScenario() {
@@ -260,9 +261,9 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(BellyStepDefinitions.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat(actualThrown.getMessage(), startsWith(
-            "Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both (meta-)annotated with @CucumberContextConfiguration.\n"
-                    +
-                    "Please ensure only one class configures the spring context"));
+            """
+                    Glue class class io.cucumber.spring.contextconfig.BellyStepDefinitions and class io.cucumber.spring.SpringFactoryTest$WithSpringAnnotations are both (meta-)annotated with @CucumberContextConfiguration.
+                    Please ensure only one class configures the spring context"""));
     }
 
     @Test
@@ -272,7 +273,11 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(WithComponentAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was (meta-)annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component (meta-)annotation")));
+            """
+                    Glue class io.cucumber.spring.componentannotation.WithComponentAnnotation was (meta-)annotated with @Component; marking it as a candidate for auto-detection by Spring.
+                    Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions.
+                    Please remove the @Component (meta-)annotation
+                    """)));
     }
 
     @Test
@@ -282,7 +287,11 @@ class SpringFactoryTest {
         Executable testMethod = () -> factory.addClass(WithControllerAnnotation.class);
         CucumberBackendException actualThrown = assertThrows(CucumberBackendException.class, testMethod);
         assertThat(actualThrown.getMessage(), is(equalTo(
-            "Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was (meta-)annotated with @Component; marking it as a candidate for auto-detection by Spring. Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions. Please remove the @Component (meta-)annotation")));
+            """
+                    Glue class io.cucumber.spring.componentannotation.WithControllerAnnotation was (meta-)annotated with @Component; marking it as a candidate for auto-detection by Spring.
+                    Glue classes are detected and registered by Cucumber. Auto-detection of glue classes by spring may lead to duplicate bean definitions.
+                    Please remove the @Component (meta-)annotation
+                    """)));
     }
 
     @Test
@@ -360,12 +369,13 @@ class SpringFactoryTest {
 
     @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
+    @SuppressWarnings("DesignForExtension")
     public static class WithSpringAnnotations {
 
         private boolean autowired;
 
         @Value("${cukes.test.property}")
-        private String property;
+        private @Nullable String property;
 
         @Autowired
         public void setAutowiredCollaborator(DummyComponent collaborator) {
@@ -376,13 +386,14 @@ class SpringFactoryTest {
             return autowired;
         }
 
-        public String getProperty() {
+        public @Nullable String getProperty() {
             return property;
         }
 
     }
 
     @CucumberContextConfiguration
+    @SuppressWarnings("DesignForExtension")
     public static class WithBrokenContextConfiguration {
 
         @Configuration
@@ -399,6 +410,7 @@ class SpringFactoryTest {
 
     @CucumberContextConfiguration
     @ContextConfiguration("classpath:cucumber.xml")
+    @SuppressWarnings("DesignForExtension")
     public static class FailedTestInstanceCreation {
 
         public FailedTestInstanceCreation() {

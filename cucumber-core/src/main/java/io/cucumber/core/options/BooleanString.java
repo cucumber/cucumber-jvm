@@ -1,8 +1,14 @@
 package io.cucumber.core.options;
 
+import org.jspecify.annotations.Nullable;
+
 final class BooleanString {
 
-    static boolean parseBoolean(String s) {
+    private BooleanString() {
+        /* no-op */
+    }
+
+    static boolean parseBoolean(@Nullable String s) {
         if (s == null) {
             return false;
         }
@@ -26,6 +32,6 @@ final class BooleanString {
         }
 
         throw new IllegalArgumentException(
-            String.format("'%s' Was not a valid boolean value. Please use either 'true' or 'false'.", s));
+            "'%s' Was not a valid boolean value. Please use either 'true' or 'false'.".formatted(s));
     }
 }

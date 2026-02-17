@@ -14,7 +14,9 @@ import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.junit.platform.engine.CucumberDiscoverySelectors.FeatureWithLinesSelector;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionParser;
+import org.jspecify.annotations.Nullable;
 import org.junit.platform.engine.ConfigurationParameters;
+import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
@@ -53,7 +55,6 @@ import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERT
 import static io.cucumber.junit.platform.engine.DefaultNamingStrategyProvider.SUREFIRE;
 import static java.util.Objects.requireNonNull;
 import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
-import static org.junit.platform.engine.DiscoveryIssue.create;
 
 class CucumberConfiguration implements
         io.cucumber.core.plugin.Options,
@@ -181,14 +182,14 @@ class CucumberConfiguration implements
     }
 
     @Override
-    public Class<? extends ObjectFactory> getObjectFactoryClass() {
+    public @Nullable Class<? extends ObjectFactory> getObjectFactoryClass() {
         return configurationParameters
                 .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
                 .orElse(null);
     }
 
     @Override
-    public Class<? extends UuidGenerator> getUuidGeneratorClass() {
+    public @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass() {
         return configurationParameters
                 .get(UUID_GENERATOR_PROPERTY_NAME, UuidGeneratorParser::parseUuidGenerator)
                 .orElse(null);
@@ -210,11 +211,10 @@ class CucumberConfiguration implements
 
     private DefaultNamingStrategyProvider reportIssueIfSurefireStrategyIsUsed(DefaultNamingStrategyProvider strategy) {
         if (strategy == SUREFIRE) {
-            issueReporter.reportIssue(create(
+            issueReporter.reportIssue(DiscoveryIssue.create(
                 WARNING,
-                String.format(
-                    "The '%s=surefire' naming strategy does not work as expected on Surefire 3.5.4 and above. Upgrade Surefire to at least 3.5.4 and use the 'long' strategy instead.",
-                    JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME)));
+                "The '%s=surefire' naming strategy does not work as expected on Surefire 3.5.4 and above. Upgrade Surefire to at least 3.5.4 and use the 'long' strategy instead."
+                        .formatted(JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME)));
         }
         return strategy;
     }
@@ -231,7 +231,7 @@ class CucumberConfiguration implements
 
     ExecutionMode getExecutionModeFeature() {
         return configurationParameters.get(EXECUTION_MODE_FEATURE_PROPERTY_NAME,
-            value -> ExecutionMode.valueOf(value.toUpperCase(Locale.US)))
+            value -> ExecutionMode.valueOf(value.toUpperCase(Locale.ROOT)))
                 .orElse(ExecutionMode.CONCURRENT);
     }
 

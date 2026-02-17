@@ -21,12 +21,15 @@ import java.util.function.Predicate;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.walkFileTree;
-import static org.apiguardian.api.API.Status.INTERNAL;
 
-@API(status = INTERNAL)
-public class PathScanner {
+@API(status = API.Status.INTERNAL)
+public final class PathScanner {
 
     private static final Logger log = LoggerFactory.getLogger(PathScanner.class);
+
+    public PathScanner() {
+        /* no-op */
+    }
 
     void findResourcesForUri(URI baseUri, Predicate<Path> filter, Function<Path, Consumer<Path>> consumer) {
         try (CloseablePath closeablePath = open(baseUri)) {

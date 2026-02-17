@@ -3,6 +3,7 @@ package io.cucumber.guice.matcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,13 +17,13 @@ abstract class AbstractMatcherTest {
             "Expected match, but mismatched because: '" + mismatchDescription(matcher, arg) + "'");
     }
 
-    private static <T> String mismatchDescription(Matcher<? super T> matcher, T arg) {
+    private static <T> String mismatchDescription(Matcher<? super T> matcher, @Nullable T arg) {
         Description description = new StringDescription();
         matcher.describeMismatch(arg, description);
         return description.toString().trim();
     }
 
-    static <T> void assertDoesNotMatch(Matcher<? super T> c, T arg) {
+    static <T> void assertDoesNotMatch(Matcher<? super T> c, @Nullable T arg) {
         assertFalse(c.matches(arg), "Unexpected match");
     }
 
@@ -32,7 +33,7 @@ abstract class AbstractMatcherTest {
         Assertions.assertEquals(expected, description.toString().trim(), "Expected description");
     }
 
-    static <T> void assertMismatchDescription(String expected, Matcher<? super T> matcher, T arg) {
+    static <T> void assertMismatchDescription(String expected, Matcher<? super T> matcher, @Nullable T arg) {
         assertFalse(matcher.matches(arg), "Precondition: Matcher should not match item.");
         Assertions.assertEquals(expected, mismatchDescription(matcher, arg), "Expected mismatch description");
     }
@@ -53,7 +54,7 @@ abstract class AbstractMatcherTest {
         }
     }
 
-    private static class UnknownType {
+    private static final class UnknownType {
 
     }
 

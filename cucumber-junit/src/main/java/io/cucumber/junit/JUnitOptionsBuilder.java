@@ -1,9 +1,11 @@
 package io.cucumber.junit;
 
+import org.jspecify.annotations.Nullable;
+
 final class JUnitOptionsBuilder {
 
-    private Boolean filenameCompatibleNames = null;
-    private Boolean stepNotifications = null;
+    private @Nullable Boolean filenameCompatibleNames = null;
+    private @Nullable Boolean stepNotifications = null;
 
     JUnitOptions build() {
         JUnitOptions jUnitOptions = new JUnitOptions();

@@ -17,6 +17,7 @@ import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStep;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
@@ -30,9 +31,7 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TestCaseResultObserverTest {
@@ -43,6 +42,7 @@ class TestCaseResultObserverTest {
 
     private final TestCase testCase = new TestCase() {
         @Override
+        @Deprecated
         public Integer getLine() {
             return 12;
         }
@@ -63,6 +63,7 @@ class TestCaseResultObserverTest {
         }
 
         @Override
+        @Deprecated
         public String getScenarioDesignation() {
             return "mock-test-case:12";
         }
@@ -95,7 +96,7 @@ class TestCaseResultObserverTest {
     private final PickleStepTestStep testStep = new PickleStepTestStep() {
         final Step step = new Step() {
             @Override
-            public StepArgument getArgument() {
+            public @Nullable StepArgument getArgument() {
                 return null;
             }
 
@@ -136,11 +137,13 @@ class TestCaseResultObserverTest {
         }
 
         @Override
-        public StepArgument getStepArgument() {
+        @Deprecated
+        public @Nullable StepArgument getStepArgument() {
             return step.getArgument();
         }
 
         @Override
+        @Deprecated
         public int getStepLine() {
             return step.getLine();
         }
@@ -151,13 +154,14 @@ class TestCaseResultObserverTest {
         }
 
         @Override
+        @Deprecated
         public String getStepText() {
             return step.getText();
         }
 
         @Override
         public String getCodeLocation() {
-            return null;
+            return "{stubbed location}";
         }
 
         @Override
@@ -186,7 +190,7 @@ class TestCaseResultObserverTest {
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
-        assertThat(exception.getCause(), is(error));
+        assertThat(exception).hasCause(error);
     }
 
     @Test
@@ -197,7 +201,7 @@ class TestCaseResultObserverTest {
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
-        assertThat(exception.getCause(), instanceOf(TestAbortedException.class));
+        assertThat(exception).hasCauseInstanceOf(TestAbortedException.class);
     }
 
     @Test
@@ -208,8 +212,7 @@ class TestCaseResultObserverTest {
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
-        assertThat(exception.getCause(), instanceOf(TestAbortedException.class));
-
+        assertThat(exception).hasCauseInstanceOf(TestAbortedException.class);
     }
 
     @Test
@@ -230,15 +233,17 @@ class TestCaseResultObserverTest {
         bus.send(new TestStepFinished(Instant.now(), testCase, testStep, result));
         bus.send(new TestCaseFinished(Instant.now(), testCase, result));
         Exception exception = assertThrows(Exception.class, observer::assertTestCasePassed);
-        assertThat(exception.getCause(), instanceOf(UndefinedStepException.class));
+        assertThat(exception).hasCauseInstanceOf(UndefinedStepException.class);
 
-        assertThat(exception.getCause().getMessage(), is("" +
-                "The step 'mocked' is undefined.\n" +
-                "You can implement this step using the snippet(s) below:\n" +
-                "\n" +
-                "mocked snippet 1\n" +
-                "mocked snippet 2\n" +
-                "mocked snippet 3\n"));
+        assertThat(exception).hasRootCauseMessage(
+            """
+                    The step 'mocked' is undefined.
+                    You can implement this step using the snippet(s) below:
+
+                    mocked snippet 1
+                    mocked snippet 2
+                    mocked snippet 3
+                    """);
     }
 
     @Test

@@ -6,16 +6,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Stream.of;
 
 public final class ClasspathSupport {
 
@@ -69,8 +68,9 @@ public final class ClasspathSupport {
 
     static String determinePackageName(Path baseDir, String basePackageName, Path classFile) {
         String subPackageName = determineSubpackageName(baseDir, classFile);
-        return of(basePackageName, subPackageName)
-                .filter(value -> !value.isEmpty()) // default package
+        return Stream.of(basePackageName, subPackageName)
+                // default package
+                .filter(value -> !value.isEmpty())
                 .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
 
@@ -83,8 +83,9 @@ public final class ClasspathSupport {
     static URI determineClasspathResourceUri(Path baseDir, String basePackagePath, Path resource) {
         String subPackageName = determineSubpackagePath(baseDir, resource);
         String resourceName = resource.getFileName().toString();
-        String classpathResourcePath = of(basePackagePath, subPackageName, resourceName)
-                .filter(value -> !value.isEmpty()) // default package .
+        String classpathResourcePath = Stream.of(basePackagePath, subPackageName, resourceName)
+                // default package .
+                .filter(value -> !value.isEmpty())
                 .collect(joining(RESOURCE_SEPARATOR_STRING));
         return classpathResourceUri(classpathResourcePath);
     }
@@ -107,7 +108,7 @@ public final class ClasspathSupport {
     static String determineFullyQualifiedClassName(Path baseDir, String basePackageName, Path classFile) {
         String subpackageName = determineSubpackageName(baseDir, classFile);
         String simpleClassName = determineSimpleClassName(classFile);
-        return of(basePackageName, subpackageName, simpleClassName)
+        return Stream.of(basePackageName, subpackageName, simpleClassName)
                 .filter(value -> !value.isEmpty()) // default package
                 .collect(joining(PACKAGE_SEPARATOR_STRING));
     }
@@ -118,7 +119,7 @@ public final class ClasspathSupport {
     }
 
     public static String packageNameOfResource(String classpathResourceName) {
-        Path parent = Paths.get(classpathResourceName).getParent();
+        Path parent = Path.of(classpathResourceName).getParent();
         if (parent == null) {
             return DEFAULT_PACKAGE_NAME;
         }
@@ -154,34 +155,37 @@ public final class ClasspathSupport {
     }
 
     public static String classPathScanningExplanation() {
-        return "By default Cucumber scans the entire classpath for step definitions.\n" +
-                "You can restrict this by configuring the glue path.\n" +
-                "\n" +
-                configurationExamples();
+        return """
+                By default Cucumber scans the entire classpath for step definitions.
+                You can restrict this by configuring the glue path.
+
+                %s""".formatted(configurationExamples());
     }
 
     static String nestedJarEntriesExplanation(URI uri) {
-        return "By default Cucumber scans the entire classpath for step definitions.\n" +
-                "However the resource '" + uri + "' is located in a nested jar.\n" +
-                "\n" +
-                "This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.\n" +
-                "Cucumber currently doesn't support classpath scanning in nested jars.\n" +
-                "\n" +
-                "You can avoid this error by unpacking your application before executing or upgrading to Spring Boot 3.2 or higher.\n"
-                +
-                "\n" +
-                "Alternatively you can restrict which packages cucumber scans configuring the glue path such that " +
-                "Cucumber only scans un-nested jars.\n" +
-                "\n" +
-                configurationExamples();
+        return """
+                By default Cucumber scans the entire classpath for step definitions.
+                However the resource '%s' is located in a nested jar.
+
+                This typically happens when trying to run Cucumber inside a Spring Boot Executable Jar.
+                Cucumber currently doesn't support classpath scanning in nested jars.
+
+                You can avoid this error by unpacking your application before executing or upgrading to Spring Boot 3.2 or higher.
+
+                Alternatively you can restrict which packages cucumber scans configuring the glue path such that Cucumber only scans un-nested jars.
+
+                %s"""
+                .formatted(uri, configurationExamples());
     }
 
     public static String configurationExamples() {
-        return "Examples:\n" +
-                " - @CucumberOptions(glue = \"com.example.application\")\n" +
-                " - @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = \"com.example.application\")\n" +
-                " - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application\n" +
-                " - src/test/resources/cucumber.properties         cucumber.glue=com.example.application\n";
+        return """
+                Examples:
+                 - @CucumberOptions(glue = "com.example.application")
+                 - @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example.application")
+                 - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application
+                 - src/test/resources/cucumber.properties         cucumber.glue=com.example.application
+                """;
     }
 
 }

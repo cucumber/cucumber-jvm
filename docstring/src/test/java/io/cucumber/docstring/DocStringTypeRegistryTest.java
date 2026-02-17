@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DocStringTypeRegistryTest {
@@ -22,11 +19,12 @@ class DocStringTypeRegistryTest {
             DEFAULT_CONTENT_TYPE,
             (String s) -> s);
 
-        CucumberDocStringException actualThrown = assertThrows(
+        CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class, () -> registry.defineDocStringType(docStringType));
-        assertThat(actualThrown.getMessage(), is(equalTo(
-            "There is already docstring type registered for '[anonymous]' and java.lang.String.\n" +
-                    "You are trying to add '[anonymous]' and java.lang.String")));
+        assertThat(exception).hasMessage(
+            """
+                    There is already docstring type registered for '[anonymous]' and java.lang.String.
+                    You are trying to add '[anonymous]' and java.lang.String""");
     }
 
     @Test
@@ -44,10 +42,10 @@ class DocStringTypeRegistryTest {
         CucumberDocStringException exception = assertThrows(
             CucumberDocStringException.class,
             () -> registry.defineDocStringType(duplicate));
-        assertThat(exception.getMessage(), is("" +
-                "There is already docstring type registered for 'application/json' and com.fasterxml.jackson.databind.JsonNode.\n"
-                +
-                "You are trying to add 'application/json' and com.fasterxml.jackson.databind.JsonNode"));
+        assertThat(exception).hasMessage(
+            """
+                    There is already docstring type registered for 'application/json' and com.fasterxml.jackson.databind.JsonNode.
+                    You are trying to add 'application/json' and com.fasterxml.jackson.databind.JsonNode""");
     }
 
     @Test
@@ -67,7 +65,7 @@ class DocStringTypeRegistryTest {
             "application/yml",
             (String s) -> null));
 
-        assertThat(registry.lookup(null, JsonNode.class), hasSize(3));
+        assertThat(registry.lookup(null, JsonNode.class)).hasSize(3);
     }
 
     @Test
@@ -87,7 +85,7 @@ class DocStringTypeRegistryTest {
             "json/application",
             (String s) -> null));
 
-        assertThat(registry.lookup(null, JsonNode.class), hasSize(3));
+        assertThat(registry.lookup(null, JsonNode.class)).hasSize(3);
     }
 
     @Test
@@ -102,8 +100,8 @@ class DocStringTypeRegistryTest {
             DEFAULT_CONTENT_TYPE,
             (String s) -> null));
 
-        assertThat(registry.lookup(DEFAULT_CONTENT_TYPE, JsonNode.class), hasSize(1));
-        assertThat(registry.lookup(DEFAULT_CONTENT_TYPE, TreeNode.class), hasSize(1));
+        assertThat(registry.lookup(DEFAULT_CONTENT_TYPE, JsonNode.class)).hasSize(1);
+        assertThat(registry.lookup(DEFAULT_CONTENT_TYPE, TreeNode.class)).hasSize(1);
     }
 
     @Test
@@ -118,8 +116,8 @@ class DocStringTypeRegistryTest {
             "application/json",
             (String s) -> null));
 
-        assertThat(registry.lookup("application/json", JsonNode.class), hasSize(1));
-        assertThat(registry.lookup("application/json", TreeNode.class), hasSize(1));
+        assertThat(registry.lookup("application/json", JsonNode.class)).hasSize(1);
+        assertThat(registry.lookup("application/json", TreeNode.class)).hasSize(1);
     }
 
 }

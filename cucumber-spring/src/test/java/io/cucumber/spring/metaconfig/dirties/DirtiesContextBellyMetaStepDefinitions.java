@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CucumberContextConfiguration
 @DirtiesMetaConfiguration
+@SuppressWarnings("DesignForExtension")
 public class DirtiesContextBellyMetaStepDefinitions {
 
     @Autowired

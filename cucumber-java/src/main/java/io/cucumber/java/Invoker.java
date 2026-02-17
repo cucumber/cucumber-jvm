@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.Located;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -15,11 +16,11 @@ final class Invoker {
 
     }
 
-    static Object invoke(Annotation annotation, Method expressionMethod) {
+    static @Nullable Object invoke(Annotation annotation, Method expressionMethod) {
         return invoke(null, annotation, expressionMethod);
     }
 
-    static Object invoke(Located located, Object target, Method method, Object... args) {
+    static @Nullable Object invoke(@Nullable Located located, Object target, Method method, @Nullable Object... args) {
         Method targetMethod = targetMethod(target, method);
         return doInvoke(located, target, targetMethod, args);
     }
@@ -59,10 +60,14 @@ final class Invoker {
         }
     }
 
-    private static Object doInvoke(Located located, Object target, Method targetMethod, Object[] args) {
-        boolean accessible = targetMethod.isAccessible();
+    private static @Nullable Object doInvoke(
+            @Nullable Located located, @Nullable Object target, Method targetMethod, @Nullable Object[] args
+    ) {
+        boolean accessible = targetMethod.canAccess(target);
         try {
-            targetMethod.setAccessible(true);
+            if (!accessible) {
+                targetMethod.setAccessible(true);
+            }
             return targetMethod.invoke(target, args);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
@@ -70,13 +75,18 @@ final class Invoker {
             if (located == null) { // Reflecting into annotations
                 throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
             }
+            if (e.getCause() == null) {
+                throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
+            }
             throw new CucumberInvocationTargetException(located, e);
         } finally {
-            targetMethod.setAccessible(accessible);
+            if (!accessible) {
+                targetMethod.setAccessible(false);
+            }
         }
     }
 
-    static Object invokeStatic(Located located, Method method, Object... args) {
+    static @Nullable Object invokeStatic(Located located, Method method, @Nullable Object... args) {
         return doInvoke(located, null, method, args);
     }
 

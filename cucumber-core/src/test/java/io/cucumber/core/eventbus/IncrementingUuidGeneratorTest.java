@@ -1,6 +1,7 @@
 package io.cucumber.core.eventbus;
 
 import io.cucumber.core.exception.CucumberException;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
 
@@ -10,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -303,7 +304,7 @@ class IncrementingUuidGeneratorTest {
      *                       default classloader id generator must be used
      * @return               a new IncrementingUuidGenerator instance
      */
-    private static UuidGenerator getUuidGeneratorFromOtherClassloader(Integer classloaderId) {
+    private static UuidGenerator getUuidGeneratorFromOtherClassloader(@Nullable Integer classloaderId) {
         try {
             Class<?> aClass = new NonCachingClassLoader().findClass(IncrementingUuidGenerator.class.getName());
             if (classloaderId != null) {
@@ -321,7 +322,7 @@ class IncrementingUuidGeneratorTest {
      */
     private static class NonCachingClassLoader extends ClassLoader {
 
-        public NonCachingClassLoader() {
+        NonCachingClassLoader() {
         }
 
         @Override
@@ -332,7 +333,7 @@ class IncrementingUuidGeneratorTest {
 
         private byte[] loadClassBytesFromDisk(String className) {
             try {
-                return Files.readAllBytes(Paths.get(Objects.requireNonNull(NonCachingClassLoader.class
+                return Files.readAllBytes(Path.of(Objects.requireNonNull(NonCachingClassLoader.class
                         .getResource(className.replaceFirst(".+\\.", "") + ".class")).toURI()));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to read file from disk");

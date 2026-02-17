@@ -31,12 +31,22 @@ public abstract class AbstractEventPublisher implements EventPublisher {
         }
     }
 
+    /**
+     * Send all events.
+     * <p>
+     * May be overridden, but must be called.
+     */
     protected <T> void sendAll(Iterable<T> events) {
         for (T event : events) {
             send(event);
         }
     }
 
+    /**
+     * Send a single event.
+     * <p>
+     * May be overridden, but must be called.
+     */
     protected <T> void send(T event) {
         if (handlers.containsKey(Event.class) && event instanceof Event) {
             for (EventHandler handler : handlers.get(Event.class)) {

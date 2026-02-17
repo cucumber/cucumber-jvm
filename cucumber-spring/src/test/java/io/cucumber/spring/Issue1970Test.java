@@ -13,10 +13,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-class Issue1970Test {
+public final class Issue1970Test {
 
     @Test
-    public void issue1970() {
+    void issue1970() {
         ObjectFactory factory = new SpringFactory();
         factory.addClass(GlueClass.class); // Add glue with Spring configuration
         factory.start();
@@ -33,6 +33,7 @@ class Issue1970Test {
 
     @CucumberContextConfiguration
     @ContextConfiguration(classes = TestApplicationConfiguration.class)
+    @SuppressWarnings("DesignForExtension")
     public static class GlueClass {
 
         @Autowired
@@ -41,6 +42,7 @@ class Issue1970Test {
     }
 
     @Configuration
+    @SuppressWarnings("DesignForExtension")
     public static class TestApplicationConfiguration {
 
         @Bean
@@ -61,6 +63,7 @@ class Issue1970Test {
 
     }
 
+    @SuppressWarnings("DesignForExtension")
     public static class ExampleService {
 
         final ScenarioScopedApi api;
@@ -74,6 +77,7 @@ class Issue1970Test {
         }
     }
 
+    @SuppressWarnings("DesignForExtension")
     public static class ScenarioScopedApi {
 
         private static final AtomicInteger globalCounter = new AtomicInteger(0);

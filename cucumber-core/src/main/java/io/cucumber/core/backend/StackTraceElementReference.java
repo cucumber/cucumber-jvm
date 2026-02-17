@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-public class StackTraceElementReference implements SourceReference {
+public final class StackTraceElementReference implements SourceReference {
 
     private final String className;
     private final String methodName;

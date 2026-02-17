@@ -1,6 +1,7 @@
 package io.cucumber.datatable;
 
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -16,6 +17,7 @@ import static io.cucumber.datatable.CucumberDataTableException.duplicateKeyExcep
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A m-by-n table of string values. For example:
@@ -29,7 +31,7 @@ import static java.util.Collections.unmodifiableMap;
  * A table is either empty or contains one or more values. As such if a table
  * has zero height it must have zero width and vice versa.
  * <p>
- * The first row of the the table may be referred to as the table header. The
+ * The first row of the table may be referred to as the table header. The
  * remaining cells as the table body.
  * <p>
  * A table can be converted into an object of an arbitrary type by a
@@ -43,7 +45,7 @@ import static java.util.Collections.unmodifiableMap;
 @API(status = API.Status.STABLE)
 public final class DataTable {
 
-    private final List<List<String>> raw;
+    private final List<List<@Nullable String>> raw;
     private final TableConverter tableConverter;
 
     /**
@@ -56,13 +58,9 @@ public final class DataTable {
      * @param  tableConverter       to transform the table
      * @throws NullPointerException if either raw or tableConverter is null
      */
-    private DataTable(List<List<String>> raw, TableConverter tableConverter) {
-        if (raw == null)
-            throw new NullPointerException("cells can not be null");
-        if (tableConverter == null)
-            throw new NullPointerException("tableConverter can not be null");
-        this.raw = raw;
-        this.tableConverter = tableConverter;
+    private DataTable(List<List<@Nullable String>> raw, TableConverter tableConverter) {
+        this.raw = requireNonNull(raw);
+        this.tableConverter = requireNonNull(tableConverter);
     }
 
     /**
@@ -76,7 +74,7 @@ public final class DataTable {
      * @throws IllegalArgumentException when the table is not rectangular or
      *                                  contains null values.
      */
-    public static DataTable create(List<List<String>> raw) {
+    public static DataTable create(List<List<@Nullable String>> raw) {
         return create(raw, new NoConverterDefined());
     }
 
@@ -91,31 +89,31 @@ public final class DataTable {
      * @throws IllegalArgumentException when the table is not rectangular or
      *                                  contains null values
      */
-    public static DataTable create(List<List<String>> raw, TableConverter tableConverter) {
+    public static DataTable create(List<List<@Nullable String>> raw, TableConverter tableConverter) {
         return new DataTable(copy(requireRectangularTable(raw)), tableConverter);
     }
 
-    private static List<List<String>> copy(List<List<String>> balanced) {
-        List<List<String>> rawCopy = new ArrayList<>(balanced.size());
-        for (List<String> row : balanced) {
+    private static List<List<String>> copy(List<List<@Nullable String>> balanced) {
+        List<List<@Nullable String>> rawCopy = new ArrayList<>(balanced.size());
+        for (List<@Nullable String> row : balanced) {
             // A table without columns is an empty table and has no rows.
             if (row.isEmpty()) {
                 return emptyList();
             }
 
-            List<String> rowCopy = new ArrayList<>(row.size());
+            List<@Nullable String> rowCopy = new ArrayList<>(row.size());
             rowCopy.addAll(row);
             rawCopy.add(unmodifiableList(rowCopy));
         }
         return unmodifiableList(rawCopy);
     }
 
-    private static List<List<String>> requireRectangularTable(List<List<String>> table) {
+    private static List<List<@Nullable String>> requireRectangularTable(List<List<@Nullable String>> table) {
         int columns = table.isEmpty() ? 0 : table.get(0).size();
         for (List<String> row : table) {
             if (columns != row.size()) {
-                throw new IllegalArgumentException(String
-                        .format("Table is not rectangular: expected %s column(s) but found %s.", columns, row.size()));
+                throw new IllegalArgumentException("Table is not rectangular: expected %s column(s) but found %s."
+                        .formatted(columns, row.size()));
             }
         }
         return table;
@@ -173,7 +171,7 @@ public final class DataTable {
      *
      * @return the values of the table
      */
-    public List<String> values() {
+    public List<@Nullable String> values() {
         return new ListView();
     }
 
@@ -183,7 +181,7 @@ public final class DataTable {
      * @return a list of strings
      * @see    TableConverter#toList(DataTable, Type)
      */
-    public List<String> asList() {
+    public List<@Nullable String> asList() {
         return asList(String.class);
     }
 
@@ -195,7 +193,7 @@ public final class DataTable {
      * @return          a list of objects
      * @see             TableConverter#toList(DataTable, Type)
      */
-    public <T> List<T> asList(Class<T> itemType) {
+    public <T> List<@Nullable T> asList(Class<T> itemType) {
         return tableConverter.toList(this, itemType);
     }
 
@@ -207,17 +205,17 @@ public final class DataTable {
      * @return          a list of objects
      * @see             TableConverter#toList(DataTable, Type)
      */
-    public <T> List<T> asList(Type itemType) {
+    public <T> List<@Nullable T> asList(Type itemType) {
         return tableConverter.toList(this, itemType);
     }
 
     /**
      * Converts the table to a list of lists of {@code String}s.
      *
-     * @return a list of list of strings
+     * @return a list-of-list-of strings
      * @see    TableConverter#toLists(DataTable, Type)
      */
-    public List<List<String>> asLists() {
+    public List<List<@Nullable String>> asLists() {
         return asLists(String.class);
     }
 
@@ -229,7 +227,7 @@ public final class DataTable {
      * @return          a list of list of objects
      * @see             TableConverter#toLists(DataTable, Type)
      */
-    public <T> List<List<T>> asLists(Class<T> itemType) {
+    public <T> List<List<@Nullable T>> asLists(Class<T> itemType) {
         return tableConverter.toLists(this, itemType);
     }
 
@@ -241,7 +239,7 @@ public final class DataTable {
      * @return          a list of list of objects
      * @see             TableConverter#toLists(DataTable, Type)
      */
-    public <T> List<List<T>> asLists(Type itemType) {
+    public <T> List<List<@Nullable T>> asLists(Type itemType) {
         return tableConverter.toLists(this, itemType);
     }
 
@@ -255,7 +253,7 @@ public final class DataTable {
      * @return a map
      * @see    TableConverter#toMap(DataTable, Type, Type)
      */
-    public Map<String, String> asMap() {
+    public Map<@Nullable String, @Nullable String> asMap() {
         return asMap(String.class, String.class);
     }
 
@@ -274,7 +272,7 @@ public final class DataTable {
      * @return           a map
      * @see              TableConverter#toMap(DataTable, Type, Type)
      */
-    public <K, V> Map<K, V> asMap(Class<K> keyType, Class<V> valueType) {
+    public <K, V> Map<@Nullable K, @Nullable V> asMap(Class<K> keyType, Class<V> valueType) {
         return tableConverter.toMap(this, keyType, valueType);
     }
 
@@ -293,7 +291,7 @@ public final class DataTable {
      * @return           a map
      * @see              TableConverter#toMap(DataTable, Type, Type)
      */
-    public <K, V> Map<K, V> asMap(Type keyType, Type valueType) {
+    public <K, V> Map<@Nullable K, @Nullable V> asMap(Type keyType, Type valueType) {
         return tableConverter.toMap(this, keyType, valueType);
     }
 
@@ -303,16 +301,16 @@ public final class DataTable {
      *
      * @return a view of the entries in a table.
      */
-    public List<Map<String, String>> entries() {
+    public List<Map<@Nullable String, @Nullable String>> entries() {
         if (raw.isEmpty())
             return emptyList();
 
-        List<String> headers = raw.get(0);
-        List<Map<String, String>> headersAndRows = new ArrayList<>();
+        List<@Nullable String> headers = raw.get(0);
+        List<Map<@Nullable String, @Nullable String>> headersAndRows = new ArrayList<>();
 
         for (int i = 1; i < raw.size(); i++) {
-            List<String> row = raw.get(i);
-            LinkedHashMap<String, String> headersAndRow = new LinkedHashMap<>();
+            List<@Nullable String> row = raw.get(i);
+            LinkedHashMap<@Nullable String, @Nullable String> headersAndRow = new LinkedHashMap<>();
             for (int j = 0; j < headers.size(); j++) {
                 String key = headers.get(j);
                 String value = row.get(j);
@@ -336,7 +334,7 @@ public final class DataTable {
      * @return a list of maps
      * @see    TableConverter#toMaps(DataTable, Type, Type)
      */
-    public List<Map<String, String>> asMaps() {
+    public List<Map<@Nullable String, @Nullable String>> asMaps() {
         return asMaps(String.class, String.class);
     }
 
@@ -352,7 +350,7 @@ public final class DataTable {
      * @return           a list of maps
      * @see              TableConverter#toMaps(DataTable, Type, Type)
      */
-    public <K, V> List<Map<K, V>> asMaps(Type keyType, Type valueType) {
+    public <K, V> List<Map<@Nullable K, @Nullable V>> asMaps(Type keyType, Type valueType) {
         return tableConverter.toMaps(this, keyType, valueType);
     }
 
@@ -368,7 +366,7 @@ public final class DataTable {
      * @return           a list of maps
      * @see              TableConverter#toMaps(DataTable, Type, Type)
      */
-    public <K, V> List<Map<K, V>> asMaps(Class<K> keyType, Class<V> valueType) {
+    public <K, V> List<Map<@Nullable K, @Nullable V>> asMaps(Class<K> keyType, Class<V> valueType) {
         return tableConverter.toMaps(this, keyType, valueType);
     }
 
@@ -377,7 +375,7 @@ public final class DataTable {
      *
      * @return the cells of the table
      */
-    public List<List<String>> cells() {
+    public List<List<@Nullable String>> cells() {
         return raw;
     }
 
@@ -390,7 +388,7 @@ public final class DataTable {
      * @throws IndexOutOfBoundsException when either {@code row} or
      *                                   {@code column} is outside the table.
      */
-    public String cell(int row, int column) {
+    public @Nullable String cell(int row, int column) {
         rangeCheckRow(row, height());
         rangeCheckColumn(column, width());
         return raw.get(row).get(column);
@@ -419,7 +417,7 @@ public final class DataTable {
      * @throws IndexOutOfBoundsException when {@code column} is outside the
      *                                   table.
      */
-    public List<String> column(final int column) {
+    public List<@Nullable String> column(final int column) {
         return new ColumnView(column);
     }
 
@@ -462,7 +460,7 @@ public final class DataTable {
      * @param  <T>        the desired type
      * @return            an instance of {@code type}
      */
-    public <T> T convert(Class<T> type, boolean transposed) {
+    public <T> @Nullable T convert(Class<T> type, boolean transposed) {
         return tableConverter.convert(this, type, transposed);
     }
 
@@ -474,7 +472,8 @@ public final class DataTable {
      * @param  <T>        the desired type
      * @return            an instance of {@code type}
      */
-    public <T> T convert(Type type, boolean transposed) {
+    @SuppressWarnings("TypeParameterUnusedInFormals")
+    public <T> @Nullable T convert(Type type, boolean transposed) {
         return tableConverter.convert(this, type, transposed);
     }
 
@@ -511,7 +510,7 @@ public final class DataTable {
      * @return                           a single row
      * @throws IndexOutOfBoundsException when {@code row} is outside the table.
      */
-    public List<String> row(int row) {
+    public List<@Nullable String> row(int row) {
         rangeCheckRow(row, height());
         return raw.get(row);
     }
@@ -658,8 +657,7 @@ public final class DataTable {
      * @return a transposed view of the table
      */
     public DataTable transpose() {
-        if (raw instanceof TransposedRawDataTableView) {
-            TransposedRawDataTableView transposed = (TransposedRawDataTableView) this.raw;
+        if (raw instanceof TransposedRawDataTableView transposed) {
             return transposed.dataTable();
         }
         return new DataTable(new TransposedRawDataTableView(), tableConverter);
@@ -693,7 +691,8 @@ public final class DataTable {
          * @param  <T>       the type to convert to
          * @return           an object of type
          */
-        <T> T convert(DataTable dataTable, Type type);
+        @SuppressWarnings("TypeParameterUnusedInFormals")
+        <T> @Nullable T convert(DataTable dataTable, Type type);
 
         /**
          * Converts a {@link DataTable} to another type.
@@ -710,7 +709,8 @@ public final class DataTable {
          * @param  transposed whether the table should be transposed first.
          * @return            an object of type
          */
-        <T> T convert(DataTable dataTable, Type type, boolean transposed);
+        @SuppressWarnings("TypeParameterUnusedInFormals")
+        <T> @Nullable T convert(DataTable dataTable, Type type, boolean transposed);
 
         /**
          * Converts a {@link DataTable} to a list.
@@ -772,7 +772,7 @@ public final class DataTable {
          * @param  <T>       the type to convert to
          * @return           a list of objects of <code>itemType</code>
          */
-        <T> List<T> toList(DataTable dataTable, Type itemType);
+        <T> List<@Nullable T> toList(DataTable dataTable, Type itemType);
 
         /**
          * Converts a {@link DataTable} to a list of lists.
@@ -803,7 +803,7 @@ public final class DataTable {
          * @param  <T>       the type to convert to
          * @return           a list of lists of objects of <code>itemType</code>
          */
-        <T> List<List<T>> toLists(DataTable dataTable, Type itemType);
+        <T> List<List<@Nullable T>> toLists(DataTable dataTable, Type itemType);
 
         /**
          * Converts a {@link DataTable} to a map.
@@ -860,7 +860,7 @@ public final class DataTable {
          *                   <code>valueType</code>
          */
 
-        <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType);
+        <K, V> Map<@Nullable K, @Nullable V> toMap(DataTable dataTable, Type keyType, Type valueType);
 
         /**
          * Converts a {@link DataTable} to a list of maps.
@@ -893,7 +893,7 @@ public final class DataTable {
          * @return           a list of maps of <code>keyType</code>
          *                   <code>valueType</code>
          */
-        <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType);
+        <K, V> List<Map<@Nullable K, @Nullable V>> toMaps(DataTable dataTable, Type keyType, Type valueType);
 
     }
 
@@ -904,45 +904,48 @@ public final class DataTable {
         }
 
         @Override
-        public <T> T convert(DataTable dataTable, Type type) {
+        @SuppressWarnings("TypeParameterUnusedInFormals")
+        public <T> @Nullable T convert(DataTable dataTable, Type type) {
             return convert(dataTable, type, false);
         }
 
         @Override
-        public <T> T convert(DataTable dataTable, Type type, boolean transposed) {
+        @SuppressWarnings("TypeParameterUnusedInFormals")
+        public <T> @Nullable T convert(DataTable dataTable, Type type, boolean transposed) {
             throw new CucumberDataTableException(
-                String.format("Can't convert DataTable to %s. DataTable was created without a converter", type));
+                "Can't convert DataTable to %s. DataTable was created without a converter".formatted(type));
         }
 
         @Override
-        public <T> List<T> toList(DataTable dataTable, Type itemType) {
-            throw new CucumberDataTableException(String.format(
-                "Can't convert DataTable to List<%s>. DataTable was created without a converter", itemType));
-        }
-
-        @Override
-        public <T> List<List<T>> toLists(DataTable dataTable, Type itemType) {
-            throw new CucumberDataTableException(String.format(
-                "Can't convert DataTable to List<List<%s>>. DataTable was created without a converter", itemType));
-        }
-
-        @Override
-        public <K, V> Map<K, V> toMap(DataTable dataTable, Type keyType, Type valueType) {
+        public <T> List<@Nullable T> toList(DataTable dataTable, Type itemType) {
             throw new CucumberDataTableException(
-                String.format("Can't convert DataTable to Map<%s,%s>. DataTable was created without a converter",
-                    keyType, valueType));
+                "Can't convert DataTable to List<%s>. DataTable was created without a converter".formatted(itemType));
         }
 
         @Override
-        public <K, V> List<Map<K, V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
+        public <T> List<List<@Nullable T>> toLists(DataTable dataTable, Type itemType) {
             throw new CucumberDataTableException(
-                String.format("Can't convert DataTable to List<Map<%s,%s>>. DataTable was created without a converter",
-                    keyType, valueType));
+                "Can't convert DataTable to List<List<%s>>. DataTable was created without a converter"
+                        .formatted(itemType));
+        }
+
+        @Override
+        public <K, V> Map<@Nullable K, @Nullable V> toMap(DataTable dataTable, Type keyType, Type valueType) {
+            throw new CucumberDataTableException(
+                "Can't convert DataTable to Map<%s,%s>. DataTable was created without a converter"
+                        .formatted(keyType, valueType));
+        }
+
+        @Override
+        public <K, V> List<Map<@Nullable K, @Nullable V>> toMaps(DataTable dataTable, Type keyType, Type valueType) {
+            throw new CucumberDataTableException(
+                "Can't convert DataTable to List<Map<%s,%s>>. DataTable was created without a converter"
+                        .formatted(keyType, valueType));
         }
 
     }
 
-    private final class RawDataTableView extends AbstractList<List<String>> implements RandomAccess {
+    private final class RawDataTableView extends AbstractList<List<@Nullable String>> implements RandomAccess {
         private final int fromRow;
         private final int fromColumn;
         private final int toColumn;
@@ -969,11 +972,11 @@ public final class DataTable {
         }
 
         @Override
-        public List<String> get(final int row) {
+        public List<@Nullable String> get(final int row) {
             rangeCheckRow(row, size());
-            return new AbstractList<String>() {
+            return new AbstractList<>() {
                 @Override
-                public String get(final int column) {
+                public @Nullable String get(final int column) {
                     rangeCheckColumn(column, size());
                     return raw.get(fromRow + row).get(fromColumn + column);
                 }
@@ -993,12 +996,12 @@ public final class DataTable {
         }
     }
 
-    private final class ListView extends AbstractList<String> {
+    private final class ListView extends AbstractList<@Nullable String> {
         int width = width();
         int height = height();
 
         @Override
-        public String get(int index) {
+        public @Nullable String get(int index) {
             rangeCheck(index, size());
             return raw.get(index / width).get(index % width);
         }
@@ -1009,7 +1012,7 @@ public final class DataTable {
         }
     }
 
-    private final class ColumnView extends AbstractList<String> implements RandomAccess {
+    private final class ColumnView extends AbstractList<@Nullable String> implements RandomAccess {
         private final int column;
 
         ColumnView(int column) {
@@ -1018,7 +1021,7 @@ public final class DataTable {
         }
 
         @Override
-        public String get(final int row) {
+        public @Nullable String get(final int row) {
             rangeCheckRow(row, size());
             return raw.get(row).get(column);
         }
@@ -1029,18 +1032,19 @@ public final class DataTable {
         }
     }
 
-    private final class TransposedRawDataTableView extends AbstractList<List<String>> implements RandomAccess {
+    private final class TransposedRawDataTableView extends AbstractList<List<@Nullable String>>
+            implements RandomAccess {
 
         DataTable dataTable() {
             return DataTable.this;
         }
 
         @Override
-        public List<String> get(final int row) {
+        public List<@Nullable String> get(final int row) {
             rangeCheckRow(row, size());
-            return new AbstractList<String>() {
+            return new AbstractList<>() {
                 @Override
-                public String get(final int column) {
+                public @Nullable String get(final int column) {
                     rangeCheckColumn(column, size());
                     return raw.get(column).get(row);
                 }

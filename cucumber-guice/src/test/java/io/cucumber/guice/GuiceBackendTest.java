@@ -6,9 +6,8 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.guice.integration.YourInjectorSource;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.net.URI;
 import java.util.function.Supplier;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith({ MockitoExtension.class })
+@MockitoSettings
 class GuiceBackendTest {
 
     public final Supplier<ClassLoader> classLoader = currentThread()::getContextClassLoader;
@@ -60,13 +59,15 @@ class GuiceBackendTest {
     }
 
     @Test
+    @SuppressWarnings("NullAway")
     void doesnt_save_anything_in_glue() {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
         backend.loadGlue(null, singletonList(URI.create("classpath:io/cucumber/guice/integration")));
         verify(factory).addClass(YourInjectorSource.class);
     }
 
-    @Test()
+    @Test
+    @SuppressWarnings("NullAway")
     void list_of_uris_cant_be_null() {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
         assertThrows(NullPointerException.class, () -> backend.loadGlue(glue, null));

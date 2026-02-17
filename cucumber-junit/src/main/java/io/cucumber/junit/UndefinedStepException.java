@@ -2,11 +2,13 @@ package io.cucumber.junit;
 
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 final class UndefinedStepException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     UndefinedStepException(Collection<Suggestion> suggestions) {

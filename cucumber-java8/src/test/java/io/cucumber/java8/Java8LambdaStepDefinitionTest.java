@@ -32,11 +32,11 @@ class Java8LambdaStepDefinitionTest {
 
     @Test
     void should_resolve_type_to_object() {
-        StepDefinitionBody.A1 body = (p1) -> {
+        StepDefinitionBody.A1 body = p1 -> {
         };
         Java8StepDefinition stepDefinition = Java8StepDefinition.create("some step", StepDefinitionBody.A1.class, body);
 
-        assertThat(stepDefinition.parameterInfos().get(0).getType(), isA((Object.class)));
+        assertThat(stepDefinition.parameterInfos().get(0).getType(), isA(Object.class));
     }
 
     @Test

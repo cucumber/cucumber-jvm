@@ -26,10 +26,11 @@ class UsageJsonFormatterTest {
 
     @Test
     void writes_empty_report() throws JSONException {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                """);
 
-        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofMillis(1000));
+        StepDurationTimeService timeService = new StepDurationTimeService(Duration.ofSeconds(1));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -45,19 +46,20 @@ class UsageJsonFormatterTest {
 
     @Test
     void writes_usage_report() throws JSONException {
-        Feature feature = TestFeatureParser.parse("path/test.feature", "" +
-                "Feature: feature name\n" +
-                "  Scenario: scenario 1\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario 2\n" +
-                "    Given first step\n" +
-                "  Scenario: scenario 3\n" +
-                "    Given first step\n");
+        Feature feature = TestFeatureParser.parse("path/test.feature", """
+                Feature: feature name
+                  Scenario: scenario 1
+                    Given first step
+                  Scenario: scenario 2
+                    Given first step
+                  Scenario: scenario 3
+                    Given first step
+                """);
 
         StepDurationTimeService timeService = new StepDurationTimeService(
-            Duration.ofMillis(1000),
-            Duration.ofMillis(2000),
-            Duration.ofMillis(4000));
+            Duration.ofSeconds(1),
+            Duration.ofSeconds(2),
+            Duration.ofSeconds(4));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Runtime.builder()
                 .withEventBus(new TimeServiceEventBus(timeService, UUID::randomUUID))
@@ -71,94 +73,95 @@ class UsageJsonFormatterTest {
                 .run();
 
         String featureFile = new File("").toPath().toUri() + "path/test.feature";
-        String expected = "{\n" +
-                "  \"stepDefinitions\": [\n" +
-                "    {\n" +
-                "      \"sourceReference\": {\n" +
-                "        \"javaMethod\": {\n" +
-                "          \"className\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition\",\n" +
-                "          \"methodName\": \"one\",\n" +
-                "          \"methodParameterTypes\": []\n" +
-                "        }\n" +
-                "      },\n" +
-                "      \"duration\": {\n" +
-                "        \"sum\": {\n" +
-                "          \"seconds\": 7,\n" +
-                "          \"nanos\": 0\n" +
-                "        },\n" +
-                "        \"mean\": {\n" +
-                "          \"seconds\": 2,\n" +
-                "          \"nanos\": 333333333\n" +
-                "        },\n" +
-                "        \"moe95\": {\n" +
-                "          \"seconds\": 1,\n" +
-                "          \"nanos\": 440164599\n" +
-                "        }\n" +
-                "      },\n" +
-                "      \"matches\": [\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": {\n" +
-                "            \"seconds\": 1,\n" +
-                "            \"nanos\": 0\n" +
-                "          },\n" +
-                "          \"uri\": \"path/test.feature\",\n" +
-                "          \"location\": {\n" +
-                "            \"line\": 2,\n" +
-                "            \"column\": 3\n" +
-                "          }\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": {\n" +
-                "            \"seconds\": 2,\n" +
-                "            \"nanos\": 0\n" +
-                "          },\n" +
-                "          \"uri\": \"path/test.feature\",\n" +
-                "          \"location\": {\n" +
-                "            \"line\": 4,\n" +
-                "            \"column\": 3\n" +
-                "          }\n" +
-                "        },\n" +
-                "        {\n" +
-                "          \"text\": \"first step\",\n" +
-                "          \"duration\": {\n" +
-                "            \"seconds\": 4,\n" +
-                "            \"nanos\": 0\n" +
-                "          },\n" +
-                "          \"uri\": \"path/test.feature\",\n" +
-                "          \"location\": {\n" +
-                "            \"line\": 6,\n" +
-                "            \"column\": 3\n" +
-                "          }\n" +
-                "        }\n" +
-                "      ],\n" +
-                "      \"expression\": {\n" +
-                "        \"source\": \"first step\",\n" +
-                "        \"type\": \"CUCUMBER_EXPRESSION\"\n" +
-                "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"sourceReference\": {\n" +
-                "        \"javaMethod\": {\n" +
-                "          \"className\": \"io.cucumber.core.plugin.PrettyFormatterStepDefinition\",\n" +
-                "          \"methodName\": \"two\",\n" +
-                "          \"methodParameterTypes\": []\n" +
-                "        }\n" +
-                "      },\n" +
-                "      \"matches\": [],\n" +
-                "      \"expression\": {\n" +
-                "        \"source\": \"second step\",\n" +
-                "        \"type\": \"CUCUMBER_EXPRESSION\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
+        String expected = """
+                {
+                  "stepDefinitions": [
+                    {
+                      "sourceReference": {
+                        "javaMethod": {
+                          "className": "io.cucumber.core.plugin.PrettyFormatterStepDefinition",
+                          "methodName": "one",
+                          "methodParameterTypes": []
+                        }
+                      },
+                      "duration": {
+                        "sum": {
+                          "seconds": 7,
+                          "nanos": 0
+                        },
+                        "mean": {
+                          "seconds": 2,
+                          "nanos": 333333333
+                        },
+                        "moe95": {
+                          "seconds": 1,
+                          "nanos": 440164599
+                        }
+                      },
+                      "matches": [
+                        {
+                          "text": "first step",
+                          "duration": {
+                            "seconds": 1,
+                            "nanos": 0
+                          },
+                          "uri": "path/test.feature",
+                          "location": {
+                            "line": 2,
+                            "column": 3
+                          }
+                        },
+                        {
+                          "text": "first step",
+                          "duration": {
+                            "seconds": 2,
+                            "nanos": 0
+                          },
+                          "uri": "path/test.feature",
+                          "location": {
+                            "line": 4,
+                            "column": 3
+                          }
+                        },
+                        {
+                          "text": "first step",
+                          "duration": {
+                            "seconds": 4,
+                            "nanos": 0
+                          },
+                          "uri": "path/test.feature",
+                          "location": {
+                            "line": 6,
+                            "column": 3
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "source": "first step",
+                        "type": "CUCUMBER_EXPRESSION"
+                      }
+                    },
+                    {
+                      "sourceReference": {
+                        "javaMethod": {
+                          "className": "io.cucumber.core.plugin.PrettyFormatterStepDefinition",
+                          "methodName": "two",
+                          "methodParameterTypes": []
+                        }
+                      },
+                      "matches": [],
+                      "expression": {
+                        "source": "second step",
+                        "type": "CUCUMBER_EXPRESSION"
+                      }
+                    }
+                  ]
+                }""";
         assertJsonEquals(expected.replaceAll("path/test.feature", featureFile), out);
     }
 
     private void assertJsonEquals(String expected, ByteArrayOutputStream actual) throws JSONException {
-        assertEquals(expected, new String(actual.toByteArray(), UTF_8), true);
+        assertEquals(expected, actual.toString(UTF_8), true);
     }
 
 }

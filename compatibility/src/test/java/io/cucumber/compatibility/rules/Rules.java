@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class Rules {
+public final class Rules {
 
     @Given("the customer has {int} cents")
     public void theCustomerHasCents(int arg0) {

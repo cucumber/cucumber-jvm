@@ -14,7 +14,6 @@ import io.cucumber.core.snippets.SnippetType;
 import io.cucumber.plugin.ColorAware;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
-import io.cucumber.plugin.StrictAware;
 import io.cucumber.plugin.event.EventPublisher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -90,12 +89,12 @@ class CommandlineOptionsParserTest {
     @Test
     void has_version_from_properties_file() {
         parser.parse("--version");
-        assertThat(output(), matchesPattern("\\d+\\.\\d+\\.\\d+(-RC\\d+)?(-SNAPSHOT)?\r?\n"));
+        assertThat(output(), matchesPattern("\\d+\\.\\d+\\.\\d+(-M\\d+|-RC\\d+)?(-SNAPSHOT)?\r?\n"));
         assertThat(parser.exitStatus(), is(Optional.of((byte) 0x0)));
     }
 
     private String output() {
-        return new String(out.toByteArray(), StandardCharsets.UTF_8);
+        return out.toString(StandardCharsets.UTF_8);
     }
 
     @Test
@@ -195,9 +194,8 @@ class CommandlineOptionsParserTest {
 
     @Test
     void throws_runtime_exception_on_malformed_tag_expression() {
-        RuntimeException e = assertThrows(RuntimeException.class, () -> {
-            RuntimeOptions options = parser
-                    .parse("--tags", ")")
+        assertThrows(RuntimeException.class, () -> {
+            parser.parse("--tags", ")")
                     .build();
         });
     }
@@ -257,7 +255,7 @@ class CommandlineOptionsParserTest {
     }
 
     private static Matcher<Plugin> plugin(final String pluginName) {
-        return new TypeSafeDiagnosingMatcher<Plugin>() {
+        return new TypeSafeDiagnosingMatcher<>() {
             @Override
             protected boolean matchesSafely(Plugin plugin, Description description) {
                 description.appendValue(plugin.getClass().getName());
@@ -364,7 +362,7 @@ class CommandlineOptionsParserTest {
                 .build(runtimeOptions);
 
         List<String> actual = options.getTagExpressions().stream()
-                .map(e -> e.toString())
+                .map(Object::toString)
                 .collect(toList());
 
         assertAll(
@@ -440,19 +438,6 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
-    void set_strict_on_strict_aware_formatters() {
-        RuntimeOptions options = parser
-                .parse("--plugin", AwareFormatter.class.getName())
-                .build();
-        Plugins plugins = new Plugins(new PluginFactory(), options);
-        plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
-
-        AwareFormatter formatter = (AwareFormatter) plugins.getPlugins().get(0);
-        assertThat(formatter.isStrict(), is(true));
-
-    }
-
-    @Test
     void ensure_default_snippet_type_is_underscore() {
         RuntimeOptions runtimeOptions = parser
                 .parse()
@@ -476,10 +461,11 @@ class CommandlineOptionsParserTest {
     }
 
     private Pickle createPickle(String uri, String name) {
-        Feature feature = TestFeatureParser.parse(uri, "" +
-                "Feature: Test feature\n" +
-                "  Scenario: " + name + "\n" +
-                "     Given I have 4 cukes in my belly\n");
+        Feature feature = TestFeatureParser.parse(uri, """
+                Feature: Test feature
+                  Scenario: %s
+                     Given I have 4 cukes in my belly
+                """.formatted(name));
         return feature.getPickles().get(0);
     }
 
@@ -562,7 +548,7 @@ class CommandlineOptionsParserTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new IllegalStateException();
         }
 
         @Override
@@ -575,19 +561,9 @@ class CommandlineOptionsParserTest {
 
     }
 
-    public static final class AwareFormatter implements StrictAware, ColorAware, EventListener {
+    public static final class AwareFormatter implements ColorAware, EventListener {
 
-        private boolean strict;
         private boolean monochrome;
-
-        private boolean isStrict() {
-            return strict;
-        }
-
-        @Override
-        public void setStrict(boolean strict) {
-            this.strict = strict;
-        }
 
         boolean isMonochrome() {
             return monochrome;

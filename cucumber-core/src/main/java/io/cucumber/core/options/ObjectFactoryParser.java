@@ -15,11 +15,13 @@ public final class ObjectFactoryParser {
             objectFactoryClass = Class.forName(cucumberObjectFactory);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(
-                String.format("Could not load object factory class for '%s'", cucumberObjectFactory), e);
+                "Could not load object factory class for '%s'"
+                        .formatted(cucumberObjectFactory),
+                e);
         }
         if (!ObjectFactory.class.isAssignableFrom(objectFactoryClass)) {
-            throw new IllegalArgumentException(String.format("Object factory class '%s' was not a subclass of '%s'",
-                objectFactoryClass, ObjectFactory.class));
+            throw new IllegalArgumentException("Object factory class '%s' was not a subclass of '%s'"
+                    .formatted(objectFactoryClass, ObjectFactory.class));
         }
         return (Class<? extends ObjectFactory>) objectFactoryClass;
     }

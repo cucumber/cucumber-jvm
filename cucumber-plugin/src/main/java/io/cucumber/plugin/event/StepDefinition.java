@@ -24,8 +24,10 @@ public final class StepDefinition {
     }
 
     /**
-     * @return the pattern associated with this instance. Used for error
-     *         reporting only.
+     * Returns the pattern associated with this instance. Used for error
+     * reporting only.
+     *
+     * @return the pattern associated with this instance.
      */
     public String getPattern() {
         return pattern;

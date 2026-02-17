@@ -13,10 +13,11 @@ import static org.mockito.Mockito.mock;
 
 class UndefinedStepDefinitionMatchTest {
 
-    private final Feature feature = TestFeatureParser.parse("" +
-            "Feature: Test feature\n" +
-            "  Scenario: Test scenario\n" +
-            "     Given I have 4 cukes in my belly\n");
+    private final Feature feature = TestFeatureParser.parse("""
+            Feature: Test feature
+              Scenario: Test scenario
+                 Given I have 4 cukes in my belly
+            """);
 
     private final UndefinedPickleStepDefinitionMatch match = new UndefinedPickleStepDefinitionMatch(
         URI.create("file:path/to.feature"),

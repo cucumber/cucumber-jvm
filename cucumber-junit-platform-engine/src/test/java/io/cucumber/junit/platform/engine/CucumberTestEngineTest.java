@@ -8,9 +8,10 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.support.Resource;
+import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
+import org.junit.platform.engine.Filter;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
@@ -30,7 +31,6 @@ import org.junit.platform.testkit.engine.Event;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -75,6 +75,7 @@ import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 import static org.junit.platform.engine.UniqueId.forEngine;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResourceByName;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
@@ -82,7 +83,6 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPacka
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
 import static org.junit.platform.engine.discovery.PackageNameFilter.includePackageNames;
-import static org.junit.platform.engine.support.descriptor.FilePosition.from;
 import static org.junit.platform.engine.support.hierarchical.Node.ExecutionMode.CONCURRENT;
 import static org.junit.platform.engine.support.hierarchical.Node.ExecutionMode.SAME_THREAD;
 import static org.junit.platform.testkit.engine.EventConditions.displayName;
@@ -227,6 +227,7 @@ class CucumberTestEngineTest {
                 return source.toURI();
             }
         }
+
         Set<Resource> resources = new LinkedHashSet<>(Arrays.asList(
             new TestResource("io/cucumber/junit/platform/engine/single.feature",
                 new File("duplicate1.feature")),
@@ -236,7 +237,7 @@ class CucumberTestEngineTest {
                 new File("duplicate3.feature"))));
 
         Throwable exception = EngineTestKit.engine(ENGINE_ID) //
-                .selectors(selectClasspathResource(resources)) //
+                .selectors(selectClasspathResourceByName(resources)) //
                 .discover() //
                 .getDiscoveryIssues() //
                 .get(0) //
@@ -311,7 +312,7 @@ class CucumberTestEngineTest {
 
     @Test
     void supportsClasspathRootSelector() {
-        Path classpathRoot = Paths.get("src/test/resources/");
+        Path classpathRoot = Path.of("src/test/resources/");
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathRoots(singleton(classpathRoot)).get(0))
                 .execute()
@@ -635,13 +636,6 @@ class CucumberTestEngineTest {
                 .haveExactly(1, event(test(finishedSuccessfully())));
     }
 
-    @Suite
-    @IncludeEngines("cucumber")
-    @SelectClasspathResource("io/cucumber/junit/platform/engine/single.feature")
-    static class SuiteTestCase {
-
-    }
-
     @Test
     void supportsDisablingDiscoveryAsRootEngine() {
         DiscoverySelector selector = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
@@ -719,15 +713,24 @@ class CucumberTestEngineTest {
                 .execute()
                 .allEvents()
                 .assertThatEvents()
-                .haveAtLeastOne(event(feature(), source(ClasspathResourceSource.from(feature, from(2, 1)))))
+                .haveAtLeastOne(event(feature(),
+                    source(ClasspathResourceSource.from(feature,
+                        org.junit.platform.engine.support.descriptor.FilePosition.from(2, 1)))))
                 .haveAtLeastOne(
-                    event(scenario("scenario:5"), source(ClasspathResourceSource.from(feature, from(5, 3)))))
+                    event(scenario("scenario:5"),
+                        source(ClasspathResourceSource.from(feature,
+                            org.junit.platform.engine.support.descriptor.FilePosition.from(5, 3)))))
                 .haveAtLeastOne(
-                    event(scenario("scenario:11"), source(ClasspathResourceSource.from(feature, from(11, 3)))))
+                    event(scenario("scenario:11"),
+                        source(ClasspathResourceSource.from(feature,
+                            org.junit.platform.engine.support.descriptor.FilePosition.from(11, 3)))))
                 .haveAtLeastOne(
-                    event(examples("examples:17"), source(ClasspathResourceSource.from(feature, from(17, 5)))))
+                    event(examples("examples:17"),
+                        source(ClasspathResourceSource.from(feature,
+                            org.junit.platform.engine.support.descriptor.FilePosition.from(17, 5)))))
                 .haveAtLeastOne(
-                    event(example("example:19"), source(ClasspathResourceSource.from(feature, from(19, 7)))));
+                    event(example("example:19"), source(ClasspathResourceSource.from(feature,
+                        org.junit.platform.engine.support.descriptor.FilePosition.from(19, 7)))));
     }
 
     @Test
@@ -738,19 +741,28 @@ class CucumberTestEngineTest {
                 .execute()
                 .allEvents()
                 .assertThatEvents()
-                .haveAtLeastOne(event(feature(), source(FileSource.from(feature, from(2, 1)))))
-                .haveAtLeastOne(event(scenario("scenario:5"), source(FileSource.from(feature, from(5, 3)))))
-                .haveAtLeastOne(event(scenario("scenario:11"), source(FileSource.from(feature, from(11, 3)))))
-                .haveAtLeastOne(event(examples("examples:17"), source(FileSource.from(feature, from(17, 5)))))
-                .haveAtLeastOne(event(example("example:19"), source(FileSource.from(feature, from(19, 7)))));
+                .haveAtLeastOne(event(feature(),
+                    source(FileSource.from(feature,
+                        org.junit.platform.engine.support.descriptor.FilePosition.from(2, 1)))))
+                .haveAtLeastOne(event(scenario("scenario:5"),
+                    source(FileSource.from(feature,
+                        org.junit.platform.engine.support.descriptor.FilePosition.from(5, 3)))))
+                .haveAtLeastOne(event(scenario("scenario:11"),
+                    source(FileSource.from(feature,
+                        org.junit.platform.engine.support.descriptor.FilePosition.from(11, 3)))))
+                .haveAtLeastOne(event(examples("examples:17"),
+                    source(FileSource.from(feature,
+                        org.junit.platform.engine.support.descriptor.FilePosition.from(17, 5)))))
+                .haveAtLeastOne(event(example("example:19"), source(
+                    FileSource.from(feature, org.junit.platform.engine.support.descriptor.FilePosition.from(19, 7)))));
     }
 
     @Test
     void supportsPackageFilterForClasspathResources() {
-        Path classpathRoot = Paths.get("src/test/resources/");
+        Path classpathRoot = Path.of("src/test/resources/");
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathRoots(singleton(classpathRoot)).get(0))
-                .filters(includePackageNames("io.cucumber.junit.platform"))
+                .filters((Filter<?>) includePackageNames("io.cucumber.junit.platform"))
                 .execute()
                 .containerEvents()
                 .assertEventsMatchLooselyInOrder(
@@ -1124,4 +1136,10 @@ class CucumberTestEngineTest {
                 .haveExactly(2, event(scenario("scenario:3", "A single scenario")));
     }
 
+    @Suite
+    @IncludeEngines("cucumber")
+    @SelectClasspathResource("io/cucumber/junit/platform/engine/single.feature")
+    static class SuiteTestCase {
+
+    }
 }

@@ -62,12 +62,12 @@ class FeaturesPropertyResolver {
             "Discovering tests using the " + FEATURES_PROPERTY_NAME + " property. Other discovery " +
                     "selectors are ignored!\n" +
                     "\n" +
-                    "This is a work around for the limited JUnit 5 support in Maven and Gradle. " +
-                    "Please request/upvote/sponsor/ect better support for JUnit 5 discovery selectors. " +
+                    "This is a work around for the limited JUnit 6 support in Maven and Gradle. " +
+                    "Please request/upvote/sponsor/ect better support for JUnit 6 discovery selectors. " +
                     "For details see: https://github.com/cucumber/cucumber-jvm/pull/2498\n" +
                     "\n" +
-                    "If you are using the JUnit 5 Suite Engine, Platform Launcher API or Console Launcher you " +
-                    "should not use this property. Please consult the JUnit 5 documentation on test selection.");
+                    "If you are using the JUnit 6 Suite Engine, Platform Launcher API or Console Launcher you " +
+                    "should not use this property. Please consult the JUnit 6 documentation on test selection.");
     }
 
     private static class FeaturesPropertyDiscoveryRequest implements EngineDiscoveryRequest {
@@ -75,7 +75,7 @@ class FeaturesPropertyResolver {
         private final EngineDiscoveryRequest delegate;
         private final Set<? extends DiscoverySelector> selectors;
 
-        public FeaturesPropertyDiscoveryRequest(
+        FeaturesPropertyDiscoveryRequest(
                 EngineDiscoveryRequest delegate,
                 Set<? extends DiscoverySelector> selectors
         ) {

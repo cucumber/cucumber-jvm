@@ -20,7 +20,8 @@ import static java.util.Collections.singletonMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
-public class TestNGCucumberRunnerTest {
+@SuppressWarnings("NullAway") // TestNGs assertNotNull not recongized
+public final class TestNGCucumberRunnerTest {
 
     private TestNGCucumberRunner testNGCucumberRunner;
 
@@ -61,8 +62,9 @@ public class TestNGCucumberRunnerTest {
             Assert.fail("CucumberException not thrown");
         } catch (FeatureParserException e) {
             assertEquals(e.getMessage(),
-                "Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature\n" +
-                        "(1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'");
+                """
+                        Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature
+                        (1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'""");
         }
     }
 
@@ -108,16 +110,16 @@ public class TestNGCucumberRunnerTest {
     }
 
     @CucumberOptions
-    static class RunCucumberTest extends AbstractTestNGCucumberTests {
+    static final class RunCucumberTest extends AbstractTestNGCucumberTests {
 
     }
 
     @CucumberOptions(plugin = "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin")
-    static class RunCucumberTestWithPlugin extends AbstractTestNGCucumberTests {
+    static final class RunCucumberTestWithPlugin extends AbstractTestNGCucumberTests {
 
     }
 
-    public static class Plugin implements ConcurrentEventListener {
+    public static final class Plugin implements ConcurrentEventListener {
 
         static List<Event> events = new ArrayList<>();
 

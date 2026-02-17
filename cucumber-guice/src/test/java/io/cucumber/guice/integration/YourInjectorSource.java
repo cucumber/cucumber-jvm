@@ -6,7 +6,7 @@ import com.google.inject.Stage;
 import io.cucumber.guice.CucumberModules;
 import io.cucumber.guice.InjectorSource;
 
-public class YourInjectorSource implements InjectorSource {
+public final class YourInjectorSource implements InjectorSource {
 
     @Override
     public Injector getInjector() {

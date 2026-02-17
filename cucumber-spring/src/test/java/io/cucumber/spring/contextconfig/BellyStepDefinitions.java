@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CucumberContextConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
+@SuppressWarnings("DesignForExtension")
 public class BellyStepDefinitions {
 
     @Autowired
