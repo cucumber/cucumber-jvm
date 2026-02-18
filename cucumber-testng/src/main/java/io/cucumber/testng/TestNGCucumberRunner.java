@@ -114,7 +114,8 @@ public final class TestNGCucumberRunner {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
             runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, runtimeOptions,
+            objectFactorySupplier);
         this.filters = new Filters(runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
             objectFactorySupplier);

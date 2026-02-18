@@ -7,4 +7,8 @@ public interface Options {
     @Nullable
     Class<? extends ObjectFactory> getObjectFactoryClass();
 
+    boolean isGlueHintEnabled();
+
+    int getGlueHintThreshold();
+
 }

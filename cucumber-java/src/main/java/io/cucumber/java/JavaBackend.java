@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.Lookup;
+import io.cucumber.core.backend.Options;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
@@ -21,16 +22,19 @@ final class JavaBackend implements Backend {
     private final Lookup lookup;
     private final Container container;
     private final ClasspathScanner classFinder;
+    private final Options options;
 
-    JavaBackend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier) {
+    JavaBackend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier, Options options) {
         this.lookup = lookup;
         this.container = container;
         this.classFinder = new ClasspathScanner(classLoaderSupplier);
+        this.options = options;
     }
 
     @Override
     public void loadGlue(Glue glue, List<URI> gluePaths) {
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
+        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options);
 
         gluePaths.stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
@@ -38,10 +42,16 @@ final class JavaBackend implements Backend {
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream)
                 .distinct()
-                .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
-                    container.addClass(method.getDeclaringClass());
-                    glueAdaptor.addDefinition(method, annotation);
-                }));
+                .forEach(aGlueClass -> {
+                    advisor.addGlueClass(aGlueClass);
+                    scan(aGlueClass, (method, annotation) -> {
+                        advisor.addContainerClass(method.getDeclaringClass());
+                        container.addClass(method.getDeclaringClass());
+                        glueAdaptor.addDefinition(method, annotation);
+                    });
+                });
+
+        advisor.logGlueLoadingAdvices(gluePaths);
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.cucumber.guice;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.guice.integration.YourInjectorSource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -75,7 +76,8 @@ class GuiceBackendTest {
     @Test
     void backend_service_creates_backend() {
         BackendProviderService backendProviderService = new GuiceBackendProviderService();
-        assertThat(backendProviderService.create(factory, factory, classLoader), is(notNullValue()));
+        assertThat(backendProviderService.create(factory, factory, classLoader, RuntimeOptions.defaultOptions()),
+            is(notNullValue()));
     }
 
 }

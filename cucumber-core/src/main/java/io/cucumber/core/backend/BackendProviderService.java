@@ -7,6 +7,6 @@ import java.util.function.Supplier;
 @API(status = API.Status.STABLE)
 public interface BackendProviderService {
 
-    Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader);
+    Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader, Options options);
 
 }
