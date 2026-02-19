@@ -4,6 +4,7 @@ import io.cucumber.core.backend.DefaultObjectFactory;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
+import io.cucumber.tagexpressions.Expression;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoveryIssue;
@@ -13,10 +14,13 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsIterableContaining.hasItem;
@@ -192,5 +196,24 @@ class CucumberConfigurationTest {
 
         assertThat(new CucumberConfiguration(configurationParameters, issueReporter).getUuidGeneratorClass(),
             is(IncrementingUuidGenerator.class));
+    }
+
+    @Test
+    void tagFilter() {
+        ConfigurationParameters tags = new MapConfigurationParameters(Constants.FILTER_TAGS_PROPERTY_NAME, "@foo");
+        CucumberConfiguration cucumberConfiguration = new CucumberConfiguration(tags, issueReporter);
+        Optional<Expression> expression = cucumberConfiguration.tagFilter();
+        assertTrue(expression.orElseThrow().evaluate(List.of("@foo")));
+        assertThat(expression, sameInstance(cucumberConfiguration.tagFilter()));
+    }
+
+    @Test
+    void nameFilter() {
+        ConfigurationParameters nameFilter = new MapConfigurationParameters(Constants.FILTER_NAME_PROPERTY_NAME,
+            ".*foo.*");
+        CucumberConfiguration cucumberConfiguration = new CucumberConfiguration(nameFilter, issueReporter);
+        Optional<Pattern> pattern = cucumberConfiguration.nameFilter();
+        assertTrue(pattern.orElseThrow().matcher("aaa foo zzz").matches());
+        assertThat(pattern, sameInstance(cucumberConfiguration.nameFilter()));
     }
 }
