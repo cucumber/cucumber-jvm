@@ -67,13 +67,15 @@ public final class CucumberEngineExecutionContext implements EngineExecutionCont
             plugins.setSerialEventBusOnEventListenerPlugins(bus);
             ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(
                 objectFactoryServiceLoader);
-            BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
+            BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, configuration,
+                objectFactorySupplier);
             runnerSupplier = new ThreadLocalRunnerSupplier(configuration, bus, backendSupplier, objectFactorySupplier);
         } else {
             plugins.setEventBusOnEventListenerPlugins(bus);
             ObjectFactorySupplier objectFactorySupplier = new SingletonObjectFactorySupplier(
                 objectFactoryServiceLoader);
-            BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, objectFactorySupplier);
+            BackendSupplier backendSupplier = new BackendServiceLoader(classLoader, configuration,
+                objectFactorySupplier);
             runnerSupplier = new SingletonRunnerSupplier(configuration, bus, backendSupplier, objectFactorySupplier);
         }
         context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);

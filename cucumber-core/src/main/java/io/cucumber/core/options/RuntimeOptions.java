@@ -47,6 +47,8 @@ public final class RuntimeOptions implements
     private boolean dryRun;
     private boolean monochrome = false;
     private boolean wip = false;
+    private boolean glueHint = true;
+    private int glueHintThreshold = 100;
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
@@ -162,11 +164,29 @@ public final class RuntimeOptions implements
     }
 
     @Override
+    public boolean isGlueHintEnabled() {
+        return glueHint;
+    }
+
+    public void setGlueHintEnabled(boolean glueHint) {
+        this.glueHint = glueHint;
+    }
+
+    @Override
+    public int getGlueHintThreshold() {
+        return glueHintThreshold;
+    }
+
+    public void setGlueHintThreshold(int glueHintThreshold) {
+        this.glueHintThreshold = glueHintThreshold;
+    }
+
+    @Override
     public @Nullable Class<? extends ObjectFactory> getObjectFactoryClass() {
         return objectFactoryClass;
     }
 
-    void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
+    public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.objectFactoryClass = objectFactoryClass;
     }
 

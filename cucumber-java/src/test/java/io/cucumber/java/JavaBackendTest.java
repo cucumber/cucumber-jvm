@@ -3,6 +3,7 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.java.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,10 +40,15 @@ class JavaBackendTest {
     private ObjectFactory factory;
 
     private JavaBackend backend;
+    private final RuntimeOptions options = RuntimeOptions.defaultOptions();
+
+    @BeforeEach
+    void setUp() {
+    }
 
     @BeforeEach
     void createBackend() {
-        this.backend = new JavaBackend(factory, factory, currentThread()::getContextClassLoader);
+        this.backend = new JavaBackend(factory, factory, currentThread()::getContextClassLoader, options);
     }
 
     @Test

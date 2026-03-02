@@ -30,7 +30,10 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WithLogRecordListener
 class CucumberPropertiesParserTest {
@@ -132,6 +135,27 @@ class CucumberPropertiesParserTest {
         assertThat(options.getGlue(), contains(
             URI.create("classpath:/com/example/app/steps"),
             URI.create("classpath:/com/example/other/steps")));
+    }
+
+    @Test
+    void should_parse_glue_hint_enabled_false() {
+        properties.put(Constants.GLUE_HINT_ENABLED_PROPERTY_NAME, "false");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertFalse(options.isGlueHintEnabled());
+    }
+
+    @Test
+    void should_parse_glue_hint_enabled_true() {
+        properties.put(Constants.GLUE_HINT_ENABLED_PROPERTY_NAME, "true");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertTrue(options.isGlueHintEnabled());
+    }
+
+    @Test
+    void should_parse_glue_hint_threshold_specific_value() {
+        properties.put(Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME, "1237");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertEquals(1237, options.getGlueHintThreshold());
     }
 
     @Test

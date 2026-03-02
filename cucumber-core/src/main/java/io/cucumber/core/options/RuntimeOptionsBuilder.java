@@ -30,6 +30,8 @@ public final class RuntimeOptionsBuilder {
     private @Nullable Boolean parsedMonochrome = null;
     private @Nullable SnippetType parsedSnippetType = null;
     private @Nullable Boolean parsedWip = null;
+    private @Nullable Boolean parsedGlueHint = null;
+    private @Nullable Integer parsedGlueHintThreshold = null;
     private @Nullable PickleOrder parsedPickleOrder = null;
     private @Nullable Integer parsedCount = null;
     private @Nullable Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
@@ -103,6 +105,14 @@ public final class RuntimeOptionsBuilder {
 
         if (this.parsedWip != null) {
             runtimeOptions.setWip(this.parsedWip);
+        }
+
+        if (this.parsedGlueHint != null) {
+            runtimeOptions.setGlueHintEnabled(this.parsedGlueHint);
+        }
+
+        if (this.parsedGlueHintThreshold != null) {
+            runtimeOptions.setGlueHintThreshold(this.parsedGlueHintThreshold);
         }
 
         if (this.parsedPickleOrder != null) {
@@ -216,6 +226,16 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder setWip(boolean wip) {
         this.parsedWip = wip;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setGlueHintEnabled(boolean glueHint) {
+        this.parsedGlueHint = glueHint;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setGlueHintThreshold(int thresholdInMs) {
+        this.parsedGlueHintThreshold = thresholdInMs;
         return this;
     }
 

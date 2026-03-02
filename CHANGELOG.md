@@ -32,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
 - [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
 
+### Added
+- [Java] Display hints when the glue packages are not efficiently configured ([#3151](https://github.com/cucumber/cucumber-jvm/pull/3151), Julien Kronegg)
+
 ## [7.34.2] - 2026-01-29
 ### Fixed
 - [Core] Reverted: Early filtering of anonymous classes for glue ([#3158](https://github.com/cucumber/cucumber-jvm/pull/3158))

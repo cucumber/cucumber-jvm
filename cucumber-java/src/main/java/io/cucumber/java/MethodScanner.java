@@ -40,7 +40,7 @@ final class MethodScanner {
         try {
             return aClass.getMethods();
         } catch (NoClassDefFoundError e) {
-            log.warn(e,
+            log.trace(e,
                 () -> "Failed to load methods of class '" + aClass.getName() + "'.\n" + classPathScanningExplanation());
         }
         return new Method[0];
