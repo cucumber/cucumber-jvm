@@ -2,13 +2,5 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>cucumber/renovate-config"
-  ],
-  "packageRules": [
-    {
-      "groupName": "Messages and dependants",
-      "matchPackageNames": [
-        "/io.cucumber:(messages|messages-ndjson|gherkin|query|compatibility-kit|html-formatter|junit-xml-formatter|testng-xml-formatter|pretty-formatter|cucumber-json-formatter|usage-formatter|teamcity-formatter)/"
-      ]
-    }
   ]
 }
