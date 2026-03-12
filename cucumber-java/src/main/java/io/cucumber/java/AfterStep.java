@@ -24,7 +24,7 @@ public @interface AfterStep {
     String value() default "";
 
     /**
-     * Name of this hook for message based reporting.
+     * Name of this hook, used for reporting.
      *
      * @return the hook name
      */
