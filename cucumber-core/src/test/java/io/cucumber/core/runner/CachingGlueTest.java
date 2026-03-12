@@ -25,6 +25,7 @@ import io.cucumber.datatable.TableCellByTypeTransformer;
 import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
 import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Hook;
 import io.cucumber.plugin.event.EventHandler;
 import org.junit.jupiter.api.Test;
 
@@ -475,14 +476,12 @@ class CachingGlueTest {
 
     @Test
     void emits_hook_messages_to_bus() {
-
         List<Envelope> events = new ArrayList<>();
-        EventHandler<Envelope> messageEventHandler = e -> events.add(e);
 
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
-        bus.registerHandlerFor(Envelope.class, messageEventHandler);
-        CachingGlue glue = new CachingGlue(bus);
+        bus.registerHandlerFor(Envelope.class, events::add);
 
+        CachingGlue glue = new CachingGlue(bus);
         glue.addBeforeHook(new MockedScenarioScopedHookDefinition(0, "before"));
         glue.addAfterHook(new MockedScenarioScopedHookDefinition(0, "after"));
         glue.addBeforeStepHook(new MockedScenarioScopedHookDefinition(0, "before-step"));
@@ -494,12 +493,12 @@ class CachingGlueTest {
                 .map(Envelope::getHook)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
+                .toList();
 
         assertAll(
             () -> assertThat(hooks.size(), is(4)),
             () -> assertThat(
-                hooks.stream().map(hook -> hook.getName().orElse(null)).collect(Collectors.toList()),
+                hooks.stream().map(Hook::getName).flatMap(Optional::stream).toList(),
                 contains("before", "before-step", "after-step", "after")));
     }
 
