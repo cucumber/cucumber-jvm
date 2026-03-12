@@ -16,6 +16,7 @@ import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE;
 import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE_STEP;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,7 +41,7 @@ class JavaHookDefinitionTest {
     @Test
     void can_create_with_no_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
-        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, lookup);
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, "", lookup);
         definition.execute(state);
         assertTrue(invoked);
     }
@@ -53,7 +54,7 @@ class JavaHookDefinitionTest {
     @Test
     void can_create_with_single_scenario_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("single_argument", Scenario.class);
-        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, lookup);
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, "", lookup);
         definition.execute(state);
         assertTrue(invoked);
     }
@@ -68,7 +69,7 @@ class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_parameter", String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
+            () -> new JavaHookDefinition(BEFORE, method, "", 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("""
                 A @Before annotated method must have one of these signatures:
                  * public void hook()
@@ -85,7 +86,7 @@ class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_generic_parameter", List.class);
         assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
+            () -> new JavaHookDefinition(BEFORE, method, "", 0, "", lookup));
     }
 
     public void invalid_generic_parameter(List<String> badType) {
@@ -97,7 +98,7 @@ class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("too_many_parameters", Scenario.class, String.class);
         assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
+            () -> new JavaHookDefinition(BEFORE, method, "", 0, "", lookup));
     }
 
     public void too_many_parameters(Scenario arg1, String arg2) {
@@ -109,7 +110,7 @@ class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("string_return_type");
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(BEFORE, method, "", 0, lookup));
+            () -> new JavaHookDefinition(BEFORE, method, "", 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("""
                 A @Before annotated method must have one of these signatures:
                  * public void hook()
@@ -124,12 +125,26 @@ class JavaHookDefinitionTest {
         return "";
     }
 
+    @Test
+    void can_create_named_hook() throws Throwable {
+        Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, "Take out the rubbish", lookup);
+        assertEquals("Take out the rubbish", definition.getName().orElseThrow());
+    }
+
+    @Test
+    void unnamed_hook_has_no_name() throws Throwable {
+        Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, "", lookup);
+        assertTrue(definition.getName().isEmpty());
+    }
+
     // Step hook tests
 
     @Test
     void can_create_step_hook_with_no_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("step_hook_no_arguments");
-        JavaHookDefinition definition = new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup);
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE_STEP, method, "", 0, "", lookup);
         definition.execute(state);
         assertTrue(invoked);
     }
@@ -142,7 +157,7 @@ class JavaHookDefinitionTest {
     @Test
     void can_create_step_hook_with_single_scenario_argument() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("step_hook_single_argument", Scenario.class);
-        JavaHookDefinition definition = new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup);
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE_STEP, method, "", 0, "", lookup);
         definition.execute(state);
         assertTrue(invoked);
     }
@@ -155,7 +170,7 @@ class JavaHookDefinitionTest {
     @Test
     void can_create_step_hook_with_scenario_and_step_arguments() throws Throwable {
         Method method = JavaHookDefinitionTest.class.getMethod("step_hook_two_arguments", Scenario.class, Step.class);
-        JavaHookDefinition definition = new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup);
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE_STEP, method, "", 0, "", lookup);
         definition.execute(state);
         assertTrue(invoked);
     }
@@ -170,7 +185,7 @@ class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("step_hook_invalid_first_param", String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup));
+            () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("""
                 A @BeforeStep annotated method must have one of these signatures:
                  * public void hook()
@@ -188,7 +203,7 @@ class JavaHookDefinitionTest {
             String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup));
+            () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("""
                 A @BeforeStep annotated method must have one of these signatures:
                  * public void hook()
@@ -206,7 +221,7 @@ class JavaHookDefinitionTest {
             String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, lookup));
+            () -> new JavaHookDefinition(BEFORE_STEP, method, "", 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("""
                 A @BeforeStep annotated method must have one of these signatures:
                 """));
@@ -222,7 +237,7 @@ class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("invalid_parameter", String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(AFTER, method, "", 0, lookup));
+            () -> new JavaHookDefinition(AFTER, method, "", 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("A @After annotated method must have one of these signatures:"));
     }
 
@@ -231,7 +246,7 @@ class JavaHookDefinitionTest {
         Method method = JavaHookDefinitionTest.class.getMethod("step_hook_invalid_first_param", String.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaHookDefinition(AFTER_STEP, method, "", 0, lookup));
+            () -> new JavaHookDefinition(AFTER_STEP, method, "", 0, "", lookup));
         assertThat(exception.getMessage(),
             startsWith("A @AfterStep annotated method must have one of these signatures:"));
     }

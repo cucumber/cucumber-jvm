@@ -55,8 +55,6 @@ final class CompatibilityTest {
     private static final List<String> unsupportedTestCases = Arrays.asList(
         // exception: not applicable
         "test.feature-run-exception",
-        // exception: Cucumber JVM does not support named hooks
-        "hooks-named",
         // exception: Cucumber executes all hooks,
         // but skipped hooks can skip a scenario
         "hooks-skipped",
@@ -136,7 +134,6 @@ final class CompatibilityTest {
         pickle.put(Pattern.compile("/steps/.*/id"), isA(TextNode.class));
         pickle.put(Pattern.compile("/steps/.*/astNodeIds/.*"), isA(TextNode.class));
         pickle.put(Pattern.compile("/tags/.*/astNodeId"), isA(TextNode.class));
-        pickle.put(Pattern.compile("/name"), isA(TextNode.class));
         exceptions.put("pickle", pickle);
 
         Map<Pattern, Matcher<?>> stepDefinition = new LinkedHashMap<>();

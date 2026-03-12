@@ -346,7 +346,7 @@ final class CachingGlue implements Glue {
     private void emitHook(CoreHookDefinition coreHook) {
         Hook messagesHook = new Hook(
             coreHook.getId().toString(),
-            null,
+            coreHook.getName().orElse(null),
             coreHook.getDefinitionLocation()
                     .map(this::createSourceReference)
                     .orElseGet(this::emptySourceReference),
