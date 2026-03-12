@@ -19,10 +19,6 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     private final HookType hookType;
     private final String name;
 
-    JavaHookDefinition(HookType hookType, Method method, String tagExpression, int order, Lookup lookup) {
-        this(hookType, method, tagExpression, order, "", lookup);
-    }
-
     JavaHookDefinition(HookType hookType, Method method, String tagExpression, int order, String name, Lookup lookup) {
         super(requireValidMethod(hookType, method), lookup);
         this.hookType = requireNonNull(hookType);
