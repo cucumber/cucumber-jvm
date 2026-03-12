@@ -771,7 +771,7 @@ class CachingGlueTest {
     private static final class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
         private final int order;
-        private final Optional<String> name;
+        private final String name;
 
         MockedScenarioScopedHookDefinition() {
             this(0, "");
@@ -783,7 +783,7 @@ class CachingGlueTest {
 
         MockedScenarioScopedHookDefinition(int order, String name) {
             this.order = order;
-            this.name = name.isEmpty() ? Optional.empty() : Optional.of(name);
+            this.name = name;
         }
 
         @Override
@@ -813,7 +813,7 @@ class CachingGlueTest {
 
         @Override
         public Optional<String> getName() {
-            return name;
+            return name.isEmpty() ? Optional.empty() : Optional.of(name);
         }
 
         private boolean disposed;
