@@ -1,12 +1,12 @@
-package io.cucumber.compatibility.hooks;
+package io.cucumber.compatibility.hooksnamed;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 
-public final class Hooks {
+public final class HooksNamed {
 
-    @Before
+    @Before(name = "A named before hook")
     public void before() {
     }
 
@@ -14,12 +14,7 @@ public final class Hooks {
     public void aStepPasses() {
     }
 
-    @When("a step fails")
-    public void aStepFails() throws Exception {
-        throw new Exception("Exception in step");
-    }
-
-    @After
+    @After(name = "A named after hook")
     public void after() {
 
     }
