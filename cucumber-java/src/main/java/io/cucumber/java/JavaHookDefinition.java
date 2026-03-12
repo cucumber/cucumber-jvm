@@ -17,7 +17,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
     private final String tagExpression;
     private final int order;
     private final HookType hookType;
-    private final Optional<String> name;
+    private final String name;
 
     JavaHookDefinition(HookType hookType, Method method, String tagExpression, int order, Lookup lookup) {
         this(hookType, method, tagExpression, order, "", lookup);
@@ -28,8 +28,7 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
         this.hookType = requireNonNull(hookType);
         this.tagExpression = requireNonNull(tagExpression, "tag-expression may not be null");
         this.order = order;
-        String hookName = requireNonNull(name, "name may not be null");
-        this.name = hookName.isEmpty() ? Optional.empty() : Optional.of(hookName);
+        this.name = requireNonNull(name, "name may not be null");
     }
 
     private static Method requireValidMethod(HookType hookType, Method method) {
@@ -141,6 +140,6 @@ final class JavaHookDefinition extends AbstractGlueDefinition implements HookDef
 
     @Override
     public Optional<String> getName() {
-        return name;
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
     }
 }
