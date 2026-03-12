@@ -39,7 +39,8 @@ final class GlueAdaptor {
         } else if (annotationType.equals(After.class)) {
             After after = (After) annotation;
             String tagExpression = after.value();
-            glue.addAfterHook(new JavaHookDefinition(AFTER, method, tagExpression, after.order(), after.name(), lookup));
+            glue.addAfterHook(
+                new JavaHookDefinition(AFTER, method, tagExpression, after.order(), after.name(), lookup));
         } else if (annotationType.equals(AfterAll.class)) {
             AfterAll afterAll = (AfterAll) annotation;
             glue.addAfterAllHook(new JavaStaticHookDefinition(method, afterAll.order(), lookup));
