@@ -44,22 +44,22 @@ public final class GlueAdaptorTestStepDefinitions {
         return "parameter_type";
     }
 
-    @AfterStep
+    @AfterStep(name = "after-step")
     public void after_step() {
 
     }
 
-    @BeforeStep
+    @BeforeStep(name = "before-step")
     public void before_step() {
 
     }
 
-    @After
+    @After(name = "after")
     public void after() {
 
     }
 
-    @Before
+    @Before(name = "before")
     public void before() {
 
     }

@@ -483,13 +483,24 @@ class CachingGlueTest {
         bus.registerHandlerFor(Envelope.class, messageEventHandler);
         CachingGlue glue = new CachingGlue(bus);
 
-        glue.addBeforeHook(new MockedScenarioScopedHookDefinition());
-        glue.addAfterHook(new MockedScenarioScopedHookDefinition());
-        glue.addBeforeStepHook(new MockedScenarioScopedHookDefinition());
-        glue.addAfterStepHook(new MockedScenarioScopedHookDefinition());
+        glue.addBeforeHook(new MockedScenarioScopedHookDefinition(0, "before"));
+        glue.addAfterHook(new MockedScenarioScopedHookDefinition(0, "after"));
+        glue.addBeforeStepHook(new MockedScenarioScopedHookDefinition(0, "before-step"));
+        glue.addAfterStepHook(new MockedScenarioScopedHookDefinition(0, "after-step"));
 
         glue.prepareGlue(language);
-        assertThat(events.size(), is(4));
+
+        List<io.cucumber.messages.types.Hook> hooks = events.stream()
+                .map(Envelope::getHook)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        assertAll(
+            () -> assertThat(hooks.size(), is(4)),
+            () -> assertThat(
+                hooks.stream().map(hook -> hook.getName().orElse(null)).collect(Collectors.toList()),
+                contains("before", "before-step", "after-step", "after")));
     }
 
     @Test
@@ -760,13 +771,19 @@ class CachingGlueTest {
     private static final class MockedScenarioScopedHookDefinition implements HookDefinition, ScenarioScoped {
 
         private final int order;
+        private final Optional<String> name;
 
         MockedScenarioScopedHookDefinition() {
-            this(0);
+            this(0, "");
         }
 
         MockedScenarioScopedHookDefinition(int order) {
+            this(order, "");
+        }
+
+        MockedScenarioScopedHookDefinition(int order, String name) {
             this.order = order;
+            this.name = name.isEmpty() ? Optional.empty() : Optional.of(name);
         }
 
         @Override
@@ -792,6 +809,11 @@ class CachingGlueTest {
         @Override
         public int getOrder() {
             return order;
+        }
+
+        @Override
+        public Optional<String> getName() {
+            return name;
         }
 
         private boolean disposed;

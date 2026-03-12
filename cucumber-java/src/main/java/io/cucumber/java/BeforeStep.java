@@ -24,6 +24,13 @@ public @interface BeforeStep {
     String value() default "";
 
     /**
+     * Name of this hook for message based reporting.
+     *
+     * @return the hook name
+     */
+    String name() default "";
+
+    /**
      * Returns the order in which this hook should run.
      * <p>
      * Lower numbers are run first. The default order is 10000.

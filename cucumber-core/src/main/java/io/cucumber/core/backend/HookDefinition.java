@@ -13,6 +13,10 @@ public interface HookDefinition extends Located {
 
     int getOrder();
 
+    default Optional<String> getName() {
+        return Optional.empty();
+    }
+
     default Optional<HookType> getHookType() {
         return Optional.empty();
     }

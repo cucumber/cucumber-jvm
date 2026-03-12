@@ -16,6 +16,7 @@ import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE;
 import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE_STEP;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -122,6 +123,20 @@ class JavaHookDefinitionTest {
     public String string_return_type() {
         invoked = true;
         return "";
+    }
+
+    @Test
+    void can_create_named_hook() throws Throwable {
+        Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, "Take out the rubbish", lookup);
+        assertEquals("Take out the rubbish", definition.getName().orElseThrow());
+    }
+
+    @Test
+    void unnamed_hook_has_no_name() throws Throwable {
+        Method method = JavaHookDefinitionTest.class.getMethod("no_arguments");
+        JavaHookDefinition definition = new JavaHookDefinition(BEFORE, method, "", 0, lookup);
+        assertTrue(definition.getName().isEmpty());
     }
 
     // Step hook tests
