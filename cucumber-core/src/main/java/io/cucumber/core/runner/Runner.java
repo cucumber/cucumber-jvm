@@ -52,8 +52,7 @@ public final class Runner {
         log.debug(() -> "Loading glue from " + runnerOptions.getGlue());
         for (Backend backend : backends) {
             log.debug(() -> "Loading glue for backend " + backend.getClass().getName());
-            backend.loadGlue(this.glue, runnerOptions.getGlue());
-            backend.loadGlueClasses(this.glue, runnerOptions.getGlueClasses());
+            backend.loadGlue(this.glue, runnerOptions.getGlueDiscoveryRequest());
         }
     }
 

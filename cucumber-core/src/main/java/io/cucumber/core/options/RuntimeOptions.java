@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -157,6 +158,11 @@ public final class RuntimeOptions implements
     @Override
     public Set<String> getGlueClasses() {
         return unmodifiableSet(glueClasses);
+    }
+
+    @Override
+    public GlueDiscoveryRequest getGlueDiscoveryRequest() {
+        return // TODO: Continue
     }
 
     @Override

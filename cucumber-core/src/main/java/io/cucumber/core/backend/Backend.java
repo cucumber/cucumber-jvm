@@ -1,11 +1,11 @@
 package io.cucumber.core.backend;
 
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 @API(status = API.Status.STABLE)
 public interface Backend {
@@ -16,7 +16,9 @@ public interface Backend {
      *
      * @param glue      Glue that provides the steps to be executed.
      * @param gluePaths The locations for the glue to be loaded.
+     * @deprecated use {@link #loadGlue(Glue, GlueDiscoveryRequest)} instead.
      */
+    @Deprecated
     default void loadGlue(Glue glue, List<URI> gluePaths) {
 
     }
@@ -25,11 +27,15 @@ public interface Backend {
      * Invoked once before all features. This is where steps and hooks should be
      * loaded.
      *
-     * @param glue           Glue that provides the steps to be executed.
-     * @param glueClassNames The classes of glue to be loaded.
+     * @param glue                 Glue that provides the steps to be executed.
+     * @param glueDiscoveryRequest The glue discovery request
      */
-    default void loadGlueClasses(Glue glue, Set<String> glueClassNames) {
-        // TODO: Refactor out a request object.
+    default void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
+        List<URI> uris = glueDiscoveryRequest.getSelectorsByType(UriGlueDiscoverySelector.class)
+                .stream()
+                .map(UriGlueDiscoverySelector::getUri)
+                .toList();
+        loadGlue(glue, uris);
     }
 
     /**

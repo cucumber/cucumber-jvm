@@ -3,17 +3,16 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.java.MethodScanner.scan;
@@ -31,49 +30,30 @@ final class JavaBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
-        loadGlueClassesImpl(glue, scanForClasses(gluePaths));
-    }
-
-    @Override
-    public void loadGlueClasses(Glue glue, Set<String> glueClassNames) {
-        Set<Class<?>> glueClasses = glueClassNames.stream()
-                .map(classFinder::loadClass)
-                .collect(Collectors.toSet());
-
-        loadGlueClassesImpl(glue, glueClasses);
-    }
-
-    private void loadGlueClassesImpl(Glue glue, Set<Class<?>> glueClasses) {
-        GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
-        glueClasses.forEach(aGlueClass -> processClass(aGlueClass, glueAdaptor));
-    }
-
-    private Set<Class<?>> scanForClasses(List<URI> gluePaths) {
-        return gluePaths.stream()
+    public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
+        Stream<Class<?>> classesFromUris = glueDiscoveryRequest.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class)
+                .stream()
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::getUri)
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .flatMap(Collection::stream);
+
+        Stream<Class<?>> classNames = glueDiscoveryRequest.getSelectorsByType(GlueDiscoverySelector.ClassGlueDiscoverySelector.class)
+                .stream()
+                .map(GlueDiscoverySelector.ClassGlueDiscoverySelector::getClassName)
+                .map(classFinder::loadClass);
+
+        GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
+
+        Stream.concat(classesFromUris, classNames)
+                .distinct()
+                .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
+                    container.addClass(method.getDeclaringClass());
+                    glueAdaptor.addDefinition(method, annotation);
+                }));
     }
 
-    private void processClass(Class<?> aGlueClass, GlueAdaptor glueAdaptor) {
-        scan(aGlueClass, (method, annotation) -> {
-            container.addClass(method.getDeclaringClass());
-            glueAdaptor.addDefinition(method, annotation);
-        });
-    }
-
-    @Override
-    public void buildWorld() {
-
-    }
-
-    @Override
-    public void disposeWorld() {
-
-    }
 
     @Override
     public Snippet getSnippet() {
