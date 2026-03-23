@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Java] Add optional names to `@Before`, `@After`, `@BeforeStep` and `@AfterStep` hooks and emit hook names in messages ([#2917](https://github.com/cucumber/cucumber-jvm/issues/2917), [#3173](https://github.com/cucumber/cucumber-jvm/pull/3173))
 
 ### Fixed
-- [JUnit Platform Engine] Use `find()` instead of `matches()` for `cucumber.filter.name` to align with JUnit 4 and CLI behaviour ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
+- [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI  ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
 
 ### Changed
 - [All] Set baseline to Java 17 ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
