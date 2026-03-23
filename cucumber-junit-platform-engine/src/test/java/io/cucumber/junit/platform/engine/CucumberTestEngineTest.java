@@ -691,6 +691,51 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void anchoredNamePatternMatchesExactName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^A single scenario$")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(), finishedSuccessfully()));
+    }
+
+    @Test
+    void anchoredNamePatternDoesNotMatchPartOfName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^A single$")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(),
+                    event(skippedWithReason("'cucumber.filter.name=^A single$' did not match this scenario"))));
+    }
+
+    @Test
+    void nonAnchoredNamePatternMatchesPartOfName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "single")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(), finishedSuccessfully()));
+    }
+
+    @Test
+    void wildcardNamePatternMatchesPartOfName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "single .*")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(), finishedSuccessfully()));
+    }
+
+    @Test
     void cucumberTagsAreConvertedToJunitTags() {
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/scenario-outline.feature"))
