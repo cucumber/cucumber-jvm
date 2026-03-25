@@ -10,7 +10,7 @@
 <div align="center">
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.cucumber/cucumber-java?style=flat&color=dark-green&label=Maven%20Central)](https://central.sonatype.com/artifact/io.cucumber/cucumber-java)
-[![Build Status](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-java.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
+[![Build Status](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-mvn.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
 [![OpenCollective](https://opencollective.com/cucumber/backers/badge.svg)](https://opencollective.com/cucumber)
 [![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
 [![#StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://vshymanskyy.github.io/StandWithUkraine)

@@ -292,7 +292,7 @@ abstract class CucumberTestDescriptor extends AbstractTestDescriptor {
 
         private Optional<SkipResult> shouldBeSkippedByNameFilter(CucumberEngineExecutionContext context) {
             return context.getConfiguration().nameFilter().map(pattern -> {
-                if (pattern.matcher(pickle.getName()).matches()) {
+                if (pattern.matcher(pickle.getName()).find()) {
                     return SkipResult.doNotSkip();
                 }
                 return SkipResult
