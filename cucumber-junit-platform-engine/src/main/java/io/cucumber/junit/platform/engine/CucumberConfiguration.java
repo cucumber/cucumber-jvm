@@ -152,13 +152,13 @@ class CucumberConfiguration implements
     }
 
     @Override
-    public Set<String> getGlueClasses() {
+    public List<String> getGlueClasses() {
         return configurationParameters
                 .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(String::trim)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @Override

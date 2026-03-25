@@ -4,7 +4,6 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
@@ -31,29 +30,26 @@ final class JavaBackend implements Backend {
 
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
-        Stream<Class<?>> classesFromUris = glueDiscoveryRequest.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class)
+        Stream<Class<?>> glueClasses = glueDiscoveryRequest.getGlue()
                 .stream()
-                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::getUri)
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream);
 
-        Stream<Class<?>> classNames = glueDiscoveryRequest.getSelectorsByType(GlueDiscoverySelector.ClassGlueDiscoverySelector.class)
+        Stream<Class<?>> explicitClasses = glueDiscoveryRequest.getGlueClassNames()
                 .stream()
-                .map(GlueDiscoverySelector.ClassGlueDiscoverySelector::getClassName)
                 .map(classFinder::loadClass);
 
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
 
-        Stream.concat(classesFromUris, classNames)
+        Stream.concat(glueClasses, explicitClasses)
                 .distinct()
                 .forEach(aGlueClass -> scan(aGlueClass, (method, annotation) -> {
                     container.addClass(method.getDeclaringClass());
                     glueAdaptor.addDefinition(method, annotation);
                 }));
     }
-
 
     @Override
     public Snippet getSnippet() {
