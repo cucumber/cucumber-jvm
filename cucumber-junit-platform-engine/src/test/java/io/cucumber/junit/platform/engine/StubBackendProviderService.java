@@ -4,13 +4,13 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
 
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ public final class StubBackendProviderService implements BackendProviderService 
         }
 
         @Override
-        public void loadGlue(Glue glue, List<URI> gluePaths) {
+        public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
             glue.addStepDefinition(createStepDefinition("a single scenario"));
             glue.addStepDefinition(createStepDefinition("it is executed"));
             glue.addStepDefinition(createStepDefinition("nothing else happens"));
