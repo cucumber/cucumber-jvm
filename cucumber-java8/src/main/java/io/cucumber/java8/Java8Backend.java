@@ -3,20 +3,20 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.java8.LambdaGlueRegistry.CLOSED;
 import static java.util.Objects.requireNonNull;
 
@@ -36,37 +36,27 @@ final class Java8Backend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
-        loadGlueClassesImpl(glue, scanForClasses(gluePaths));
-    }
+    public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
+        Stream<Class<?>> glueClasses = glueDiscoveryRequest.getGlue()
+                .stream()
+                .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
+                .map(ClasspathSupport::packageName)
+                .map(classFinder::scanForClassesInPackage)
+                .flatMap(Collection::stream);
 
-    @Override
-    public void loadGlueClasses(Glue glue, Set<String> glueClassNames) {
-        Set<Class<?>> glueClasses = glueClassNames.stream()
-                .map(classFinder::loadClass)
-                .collect(Collectors.toSet());
+        Stream<Class<?>> explicitClasses = glueDiscoveryRequest.getGlueClassNames()
+                .stream()
+                .map(classFinder::loadClass);
 
-        loadGlueClassesImpl(glue, glueClasses);
-    }
-
-    private void loadGlueClassesImpl(Glue glue, Set<Class<?>> glueClasses) {
         this.glue = new ClosureAwareGlueRegistry(glue);
-        glueClasses.stream()
-                // Filter Java8 style glue (lambdas)
+
+        Stream.concat(glueClasses, explicitClasses)
+                .distinct()
                 .filter(aClass -> !LambdaGlue.class.equals(aClass) && LambdaGlue.class.isAssignableFrom(aClass))
                 .map(aClass -> (Class<? extends LambdaGlue>) aClass.asSubclass(LambdaGlue.class))
                 .filter(glueClass -> !glueClass.isInterface())
                 .filter(glueClass -> glueClass.getConstructors().length > 0)
                 .forEach(this::processClass);
-    }
-
-    private Set<Class<?>> scanForClasses(List<URI> gluePaths) {
-        return gluePaths.stream()
-                .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-                .map(ClasspathSupport::packageName)
-                .map(classFinder::scanForClassesInPackage)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
     }
 
     private void processClass(Class<? extends LambdaGlue> glueClass) {
