@@ -51,11 +51,11 @@ final class Java8Backend implements Backend {
         this.glue = new ClosureAwareGlueRegistry(glue);
 
         Stream.concat(glueClasses, explicitClasses)
-                .distinct()
                 .filter(aClass -> !LambdaGlue.class.equals(aClass) && LambdaGlue.class.isAssignableFrom(aClass))
                 .map(aClass -> (Class<? extends LambdaGlue>) aClass.asSubclass(LambdaGlue.class))
                 .filter(glueClass -> !glueClass.isInterface())
                 .filter(glueClass -> glueClass.getConstructors().length > 0)
+                .distinct()
                 .forEach(this::processClass);
     }
 
