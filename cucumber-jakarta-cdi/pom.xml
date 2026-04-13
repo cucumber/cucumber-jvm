@@ -9,7 +9,7 @@
         <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <weld.version>5.1.7.Final</weld.version>
+        <weld.version>6.0.4.Final</weld.version>
     </properties>
 
     <parent>
