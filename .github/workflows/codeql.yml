@@ -45,6 +45,13 @@ jobs:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
         tools: linked
+    - name: Setup Java
+      uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      if: matrix.build-mode == 'manual'
+      with:
+        distribution: 'temurin'
+        java-version: 21
+        cache: 'maven'
     - name: Build
       if: matrix.build-mode == 'manual'
       shell: bash
