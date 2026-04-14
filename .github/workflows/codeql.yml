@@ -30,7 +30,7 @@ jobs:
         include:
           - language: actions
             build-mode: none
-          - language: java-kotlin
+          - language: java
             build-mode: manual
           - language: javascript
             build-mode: none
