@@ -40,6 +40,7 @@ public final class RuntimeOptions implements
         io.cucumber.core.eventbus.Options {
 
     private final List<URI> glue = new ArrayList<>();
+    private final List<String> glueClasses = new ArrayList<>();
     private final List<Expression> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
@@ -76,7 +77,7 @@ public final class RuntimeOptions implements
     }
 
     void addDefaultGlueIfAbsent() {
-        if (glue.isEmpty()) {
+        if (glue.isEmpty() && glueClasses.isEmpty()) {
             glue.add(rootPackageUri());
         }
     }
@@ -152,6 +153,11 @@ public final class RuntimeOptions implements
     }
 
     @Override
+    public List<String> getGlueClasses() {
+        return unmodifiableList(glueClasses);
+    }
+
+    @Override
     public boolean isDryRun() {
         return dryRun;
     }
@@ -190,6 +196,11 @@ public final class RuntimeOptions implements
     void setGlue(List<URI> parsedGlue) {
         glue.clear();
         glue.addAll(parsedGlue);
+    }
+
+    void setGlueClasses(Set<String> parsedGlue) {
+        glueClasses.clear();
+        glueClasses.addAll(parsedGlue);
     }
 
     @Override
