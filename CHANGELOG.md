@@ -49,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.34.1] - 2026-01-28
 ### Fixed
-- Ensure dependencies converge ([#3157](https://github.com/cucumber/cucumber-jvm/issues/3157)
+- Ensure dependencies converge ([#3157](https://github.com/cucumber/cucumber-jvm/issues/3157))
 
 ## [7.34.0] - 2026-01-28
 ### Added
