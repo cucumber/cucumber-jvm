@@ -19,7 +19,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-      - uses: cucumber/action-publish-mvn@0f70b286568bfba3172f851d8247e7efb7da1c18 # v3.0.0
+      - uses: cucumber/action-publish-mvn@252601e47a5d699c325d1f046199a4d6f2c7b9db # v3.0.1
         with:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
