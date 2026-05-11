@@ -17,6 +17,7 @@ import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_N
 import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_LIMIT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.EXECUTION_THREADS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -138,6 +139,11 @@ public final class CucumberPropertiesParser {
             BooleanString::parseBoolean,
             builder::setWip);
 
+        parse(properties,
+            EXECUTION_THREADS_PROPERTY_NAME,
+            Integer::parseInt,
+            builder::setThreads);
+
         return builder;
     }
 
@@ -151,13 +157,15 @@ public final class CucumberPropertiesParser {
     }
 
     private <T> void parse(
-            CucumberPropertiesProvider properties, String propertyName, Function<String, T> parser, Consumer<T> setter
+            CucumberPropertiesProvider properties, String propertyName, Function<String, T> parser,
+            Consumer<T> setter
     ) {
         parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
     }
 
     private <T> void parseAll(
-            CucumberPropertiesProvider properties, String propertyName, Function<String, Collection<T>> parser,
+            CucumberPropertiesProvider properties, String propertyName,
+            Function<String, Collection<T>> parser,
             Consumer<T> setter
     ) {
         String property = properties.get(propertyName);
@@ -168,7 +176,8 @@ public final class CucumberPropertiesParser {
             Collection<T> parsed = parser.apply(property);
             parsed.forEach(setter);
         } catch (Exception e) {
-            throw new CucumberException("Failed to parse '" + propertyName + "' with value '" + property + "'", e);
+            throw new CucumberException(
+                "Failed to parse '" + propertyName + "' with value '" + property + "'", e);
         }
     }
 

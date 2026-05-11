@@ -48,6 +48,11 @@ public final class Constants {
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
 
     /**
+     * Property name used to set the number of threads.
+     */
+    public static final String EXECUTION_THREADS_PROPERTY_NAME = "cucumber.execution.threads";
+
+    /**
      * Property name used to enable wip execution: {@value}
      * <p>
      * When using wip execution Cucumber will fail if there are any passing
