@@ -18,7 +18,7 @@
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
         <mockito.version>5.23.0</mockito.version>
         <project.Automatic-Module-Name>io.cucumber.guice</project.Automatic-Module-Name>
-        <project.rootdir>${project.basedir}/..</project.rootdir>
+        <project.rootdir>..</project.rootdir>
     </properties>
 
     <dependencyManagement>

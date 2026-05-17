@@ -18,7 +18,7 @@
         <spring.version>7.0.7</spring.version>
         <mockito.version>5.23.0</mockito.version>
         <project.Automatic-Module-Name>io.cucumber.spring</project.Automatic-Module-Name>
-        <project.rootdir>${project.basedir}/..</project.rootdir>
+        <project.rootdir>..</project.rootdir>
     </properties>
 
     <dependencyManagement>

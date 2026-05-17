@@ -18,7 +18,7 @@
         <junit.version>4.13.2</junit.version>
         <mockito.version>5.23.0</mockito.version>
         <project.Automatic-Module-Name>io.cucumber.junit</project.Automatic-Module-Name>
-        <project.rootdir>${project.basedir}/..</project.rootdir>
+        <project.rootdir>..</project.rootdir>
     </properties>
 
     <dependencyManagement>
