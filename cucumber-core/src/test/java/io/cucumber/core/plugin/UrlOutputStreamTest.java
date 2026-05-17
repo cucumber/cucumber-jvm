@@ -63,7 +63,8 @@ class UrlOutputStreamTest {
     private void verifyRequest(
             CurlOption url, TestServer testServer, Vertx vertx, VertxTestContext testContext, String requestBody
     ) {
-        vertx.deployVerticle(testServer, testContext.succeeding(id -> {
+
+        vertx.deployVerticle(testServer).onSuccess(id -> {
             try {
                 OutputStream out = new UrlOutputStream(url, null);
                 Writer w = new UTF8OutputStreamWriter(out);
@@ -75,7 +76,7 @@ class UrlOutputStreamTest {
                 exception = e;
                 testContext.completeNow();
             }
-        }));
+        });
     }
 
     @Test
@@ -238,7 +239,8 @@ class UrlOutputStreamTest {
             vertx
                     .createHttpServer()
                     .requestHandler(router)
-                    .listen(port, e -> startPromise.complete());
+                    .listen(port)
+                    .onComplete(e -> startPromise.complete());
         }
 
         private String unzipBody() {
