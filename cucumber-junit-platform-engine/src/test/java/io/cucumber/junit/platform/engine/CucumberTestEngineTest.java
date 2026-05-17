@@ -1183,7 +1183,6 @@ class CucumberTestEngineTest {
                 .haveExactly(2, event(scenario("scenario:3", "A single scenario")));
     }
 
-
     @Test
     void supportsParallelExecutionWithForkJoinPool() {
         EngineTestKit.engine(ENGINE_ID)
@@ -1194,13 +1193,12 @@ class CucumberTestEngineTest {
                 .allEvents()
                 .assertThatEvents()
                 .haveExactly(1, event( //
-                        scenario("scenario:5", "An example of this rule"), //
-                        finishedSuccessfully()))
+                    scenario("scenario:5", "An example of this rule"), //
+                    finishedSuccessfully()))
                 .haveExactly(1, event( //
-                        scenario("scenario:11", "An other example of this rule"), //
-                        finishedSuccessfully()));
+                    scenario("scenario:11", "An other example of this rule"), //
+                    finishedSuccessfully()));
     }
-
 
     @Test
     void supportsParallelExecutionWithWorkerThreadPool() {
@@ -1212,13 +1210,12 @@ class CucumberTestEngineTest {
                 .allEvents()
                 .assertThatEvents()
                 .haveExactly(1, event( //
-                        scenario("scenario:5", "An example of this rule"), //
-                        finishedSuccessfully()))
+                    scenario("scenario:5", "An example of this rule"), //
+                    finishedSuccessfully()))
                 .haveExactly(1, event( //
-                        scenario("scenario:11", "An other example of this rule"), //
-                        finishedSuccessfully()));
+                    scenario("scenario:11", "An other example of this rule"), //
+                    finishedSuccessfully()));
     }
-
 
     @Suite
     @IncludeEngines("cucumber")

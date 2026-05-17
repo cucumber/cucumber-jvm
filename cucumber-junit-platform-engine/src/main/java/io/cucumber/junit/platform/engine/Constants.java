@@ -459,17 +459,20 @@ public final class Constants {
     /**
      * Property name used to determine the desired
      * {@link ParallelExecutorServiceType ParallelExecutorServiceType}: {@value}
-     *
-     * <p>Value must be
-     * {@link ParallelExecutorServiceType#FORK_JOIN_POOL FORK_JOIN_POOL} or
-     * {@link ParallelExecutorServiceType#WORKER_THREAD_POOL WORKER_THREAD_POOL},
-     * ignoring case.
+     * <p>
+     * Value must be {@link ParallelExecutorServiceType#FORK_JOIN_POOL
+     * FORK_JOIN_POOL} or {@link ParallelExecutorServiceType#WORKER_THREAD_POOL
+     * WORKER_THREAD_POOL}, ignoring case.
      * <p>
      * Defaults to {@code FORK_JOIN_POOL FORK_JOIN_POOL} with JUnit 6.1,
-     * defaults to {@code WORKER_THREAD_POOL WORKER_THREAD_POOL} with JUnit 6.2 (presumably).
+     * defaults to {@code WORKER_THREAD_POOL WORKER_THREAD_POOL} with JUnit 6.2
+     * (presumably).
      *
      * @see ParallelHierarchicalTestExecutorServiceFactory#EXECUTOR_SERVICE_PROPERTY_NAME
-     * @see <a href="https://github.com/junit-team/junit-framework/issues/5291">JUnit Framework - #5291 - Change default executor service implementation to worker_thread_pool</a>.
+     * @see <a href=
+     *      "https://github.com/junit-team/junit-framework/issues/5291">JUnit
+     *      Framework - #5291 - Change default executor service implementation
+     *      to worker_thread_pool</a>.
      */
     public static final String PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME = PARALLEL_CONFIG_PREFIX
             + EXECUTOR_SERVICE_PROPERTY_NAME;
