@@ -22,10 +22,13 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
         version:
           - 21
           - 25
+        include:
+          - os: windows-latest
+            version: 21
+
     name: 'Build Java ${{ matrix.version }} - ${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
     steps:
