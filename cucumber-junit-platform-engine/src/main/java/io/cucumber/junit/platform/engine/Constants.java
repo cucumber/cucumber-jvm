@@ -379,7 +379,7 @@ public final class Constants {
      * scenarios with the same tag.
      *
      * @see <a href=
-     *      "https://docs.junit.org/current/writing-tests/parallel-execution.html#synchronization">Junit
+     *      "https://docs.junit.org/current/writing-tests/parallel-execution.html#synchronization">JUnit
      *      6 User Guide - Synchronization</a>
      */
     public static final String EXECUTION_EXCLUSIVE_RESOURCES_READ_WRITE_TEMPLATE = EXECUTION_EXCLUSIVE_RESOURCES_PREFIX
@@ -469,7 +469,7 @@ public final class Constants {
      * defaults to {@code WORKER_THREAD_POOL WORKER_THREAD_POOL} with JUnit 6.2 (presumably).
      *
      * @see ParallelHierarchicalTestExecutorServiceFactory#EXECUTOR_SERVICE_PROPERTY_NAME
-     * @see <a href="https://github.com/junit-team/junit-framework/issues/5291">JUnit Framework - #5291</a>.
+     * @see <a href="https://github.com/junit-team/junit-framework/issues/5291">JUnit Framework - #5291 - Change default executor service implementation to worker_thread_pool</a>.
      */
     public static final String PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME = PARALLEL_CONFIG_PREFIX
             + EXECUTOR_SERVICE_PROPERTY_NAME;
