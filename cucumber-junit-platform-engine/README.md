@@ -557,6 +557,9 @@ cucumber.execution.parallel.config.dynamic.factor=             # positive double
 cucumber.execution.parallel.config.custom.class=               # class name.
                                                                # example: com.example.MyCustomParallelStrategy
 
+cucumber.execution.parallel.config.executor-service            # FORK_JOIN_POOL, WORKER_THREAD_POOL
+                                                               # default: depends on JUnit version
+
 cucumber.execution.exclusive-resources.<tag-name>.read-write=  # a comma separated list of strings
                                                                # example: resource-a, resource-b.
 

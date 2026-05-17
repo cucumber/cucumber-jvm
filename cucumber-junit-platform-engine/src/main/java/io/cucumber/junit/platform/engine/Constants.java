@@ -4,12 +4,15 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy;
 import org.junit.platform.engine.support.hierarchical.ParallelExecutionConfigurationStrategy;
+import org.junit.platform.engine.support.hierarchical.ParallelHierarchicalTestExecutorServiceFactory;
+import org.junit.platform.engine.support.hierarchical.ParallelHierarchicalTestExecutorServiceFactory.ParallelExecutorServiceType;
 
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_CUSTOM_CLASS_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_DYNAMIC_FACTOR_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_FIXED_MAX_POOL_SIZE_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_FIXED_PARALLELISM_PROPERTY_NAME;
 import static org.junit.platform.engine.support.hierarchical.DefaultParallelExecutionConfigurationStrategy.CONFIG_STRATEGY_PROPERTY_NAME;
+import static org.junit.platform.engine.support.hierarchical.ParallelHierarchicalTestExecutorServiceFactory.EXECUTOR_SERVICE_PROPERTY_NAME;
 
 @API(status = API.Status.STABLE)
 public final class Constants {
@@ -452,6 +455,24 @@ public final class Constants {
      */
     public static final String PARALLEL_CONFIG_CUSTOM_CLASS_PROPERTY_NAME = PARALLEL_CONFIG_PREFIX
             + CONFIG_CUSTOM_CLASS_PROPERTY_NAME;
+
+    /**
+     * Property name used to determine the desired
+     * {@link ParallelExecutorServiceType ParallelExecutorServiceType}: {@value}
+     *
+     * <p>Value must be
+     * {@link ParallelExecutorServiceType#FORK_JOIN_POOL FORK_JOIN_POOL} or
+     * {@link ParallelExecutorServiceType#WORKER_THREAD_POOL WORKER_THREAD_POOL},
+     * ignoring case.
+     * <p>
+     * Defaults to {@code FORK_JOIN_POOL FORK_JOIN_POOL} with JUnit 6.1,
+     * defaults to {@code WORKER_THREAD_POOL WORKER_THREAD_POOL} with JUnit 6.2 (presumably).
+     *
+     * @see ParallelHierarchicalTestExecutorServiceFactory#EXECUTOR_SERVICE_PROPERTY_NAME
+     * @see <a href="https://github.com/junit-team/junit-framework/issues/5291">JUnit Framework - #5291</a>.
+     */
+    public static final String PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME = PARALLEL_CONFIG_PREFIX
+            + EXECUTOR_SERVICE_PROPERTY_NAME;
 
     private Constants() {
 
