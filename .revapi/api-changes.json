@@ -683,6 +683,14 @@
             "oldValue": "\"5.13.3\"",
             "newValue": "\"6.0\"",
             "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.field.serialVersionUIDUnchanged",
+            "old": "field org.junit.platform.engine.UniqueId.serialVersionUID",
+            "new": "field org.junit.platform.engine.UniqueId.serialVersionUID",
+            "serialVersionUID": "1",
+            "justification": "JUnit 6 Upgrade"
           }
         ]
       }
