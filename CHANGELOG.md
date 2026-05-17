@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
 - [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
 
+### Removed
+- [OpenEJB] Removed `cucumber-openejb` in favor of `cucumber-jakarta-openejb` ([#3189](https://github.com/cucumber/cucumber-jvm/pull/3189))
+
 ## [7.34.3] - 2026-03-04
 ### Fixed
 - [Core] Update dependency io.cucumber:messages-ndjson to v0.3.2
