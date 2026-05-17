@@ -464,9 +464,9 @@ public final class Constants {
      * FORK_JOIN_POOL} or {@link ParallelExecutorServiceType#WORKER_THREAD_POOL
      * WORKER_THREAD_POOL}, ignoring case.
      * <p>
-     * Defaults to {@code FORK_JOIN_POOL FORK_JOIN_POOL} with JUnit 6.1,
-     * defaults to {@code WORKER_THREAD_POOL WORKER_THREAD_POOL} with JUnit 6.2
-     * (presumably).
+     * Defaults to {@code FORK_JOIN_POOL FORK_JOIN_POOL} with JUnit 6.1, will
+     * presumably default to {@code WORKER_THREAD_POOL WORKER_THREAD_POOL}
+     * with JUnit 6.2.
      *
      * @see ParallelHierarchicalTestExecutorServiceFactory#EXECUTOR_SERVICE_PROPERTY_NAME
      * @see <a href=
