@@ -28,7 +28,6 @@
     <modules>
         <module>cucumber-archetype</module>
         <module>cucumber-bom</module>
-        <module>cucumber-cdi2</module>
         <module>cucumber-core</module>
         <module>cucumber-deltaspike</module>
         <module>cucumber-gherkin</module>
