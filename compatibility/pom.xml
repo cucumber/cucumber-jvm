@@ -15,7 +15,7 @@
         <project.rootdir>..</project.rootdir>
         <hamcrest.version>3.0</hamcrest.version>
         <jackson.version>2.21.3</jackson.version>
-        <junit-jupiter.version>6.0.3</junit-jupiter.version>
+        <junit-jupiter.version>6.1.0-RC1</junit-jupiter.version>
         <project.Automatic-Module-Name>io.cucumber.compatibility</project.Automatic-Module-Name>
     </properties>
 
