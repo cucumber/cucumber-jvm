@@ -40,7 +40,6 @@
         <module>cucumber-java</module>
         <module>cucumber-junit</module>
         <module>cucumber-junit-platform-engine</module>
-        <module>cucumber-openejb</module>
         <module>cucumber-picocontainer</module>
         <module>cucumber-plugin</module>
         <module>cucumber-spring</module>
