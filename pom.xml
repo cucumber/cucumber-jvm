@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>5.3.1</version>
+        <version>5.4.0</version>
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
@@ -16,7 +16,6 @@
 
     <properties>
         <project.build.outputTimestamp>1769807296</project.build.outputTimestamp>
-        <project.rootdir>${project.basedir}</project.rootdir>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
