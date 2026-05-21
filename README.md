@@ -15,6 +15,7 @@
 [![OpenCollective](https://opencollective.com/cucumber/sponsors/badge.svg)](https://opencollective.com/cucumber)
 [![#StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://vshymanskyy.github.io/StandWithUkraine)
 
+[![Build Status](https://github.com/cucumber/cucumber-jvm/actions/workflows/test-java.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
 [![Build Status](https://github.com/cucumber/cucumber-jvm/actions/workflows/release-mvn.yml/badge.svg)](https://github.com/cucumber/cucumber-jvm/actions)
 
 </div>
