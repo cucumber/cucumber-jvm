@@ -93,6 +93,30 @@ class CachingGlueTest {
     }
 
     @Test
+    void throws_duplicate_error_on_dupe_parameter_types() {
+        glue.addParameterType(new MockedNamedParameterTypeDefinition("iso8601Date", "first location"));
+        glue.addParameterType(new MockedNamedParameterTypeDefinition("iso8601Date", "second location"));
+
+        DuplicateParameterTypeException exception = assertThrows(
+            DuplicateParameterTypeException.class,
+            () -> glue.prepareGlue(language));
+        assertThat(exception.getMessage(), equalTo(
+            "Duplicate parameter type 'iso8601Date' in first location and second location"));
+    }
+
+    @Test
+    void throws_on_builtin_parameter_type_conflict() {
+        glue.addParameterType(new MockedNamedParameterTypeDefinition("int", "custom int location"));
+
+        DuplicateParameterTypeException exception = assertThrows(
+            DuplicateParameterTypeException.class,
+            () -> glue.prepareGlue(language));
+        assertThat(exception.getMessage(), equalTo(
+            "Parameter type 'int' at custom int location conflicts with an existing parameter type of the same name"));
+        assertTrue(exception.getCause() instanceof io.cucumber.cucumberexpressions.DuplicateTypeNameException);
+    }
+
+    @Test
     void throws_on_duplicate_default_table_entry_transformer() {
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
         glue.addDefaultDataTableEntryTransformer(new MockedDefaultDataTableEntryTransformer());
@@ -681,6 +705,33 @@ class CachingGlueTest {
 
         boolean isDisposed() {
             return disposed;
+        }
+
+    }
+
+    private static final class MockedNamedParameterTypeDefinition implements ParameterTypeDefinition {
+
+        private final String name;
+        private final String location;
+
+        private MockedNamedParameterTypeDefinition(String name, String location) {
+            this.name = name;
+            this.location = location;
+        }
+
+        @Override
+        public ParameterType<?> parameterType() {
+            return new ParameterType<>(name, "[ab]", Object.class, (String arg) -> new Object());
+        }
+
+        @Override
+        public boolean isDefinedAt(StackTraceElement stackTraceElement) {
+            return false;
+        }
+
+        @Override
+        public String getLocation() {
+            return location;
         }
 
     }

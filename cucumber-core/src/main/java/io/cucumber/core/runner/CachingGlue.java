@@ -20,6 +20,7 @@ import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.CucumberExpression;
+import io.cucumber.cucumberexpressions.DuplicateTypeNameException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -276,11 +277,21 @@ final class CachingGlue implements Glue {
 
         // TODO: separate prepared and unprepared glue into different classes
         // parameters changed from the previous scenario => re-register them
-        parameterTypeDefinitions.forEach(ptd -> {
-            ParameterType<?> parameterType = ptd.parameterType();
-            stepTypeRegistry.defineParameterType(parameterType);
-            emitParameterTypeDefined(ptd);
-        });
+        Map<String, ParameterTypeDefinition> parameterTypesByName = new HashMap<>();
+        for (ParameterTypeDefinition parameterTypeDefinition : parameterTypeDefinitions) {
+            ParameterType<?> parameterType = parameterTypeDefinition.parameterType();
+            String name = parameterType.getName();
+            ParameterTypeDefinition previous = parameterTypesByName.put(name, parameterTypeDefinition);
+            if (previous != null) {
+                throw new DuplicateParameterTypeException(previous, parameterTypeDefinition);
+            }
+            try {
+                stepTypeRegistry.defineParameterType(parameterType);
+            } catch (DuplicateTypeNameException e) {
+                throw new DuplicateParameterTypeException(parameterTypeDefinition, name, e);
+            }
+            emitParameterTypeDefined(parameterTypeDefinition);
+        }
         dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
         docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
 
