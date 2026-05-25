@@ -5,10 +5,23 @@ import io.cucumber.core.exception.CucumberException;
 
 import static java.util.Objects.requireNonNull;
 
-final class DuplicateStepDefinitionException extends CucumberException {
+public final class DuplicateStepDefinitionException extends CucumberException {
 
-    DuplicateStepDefinitionException(StepDefinition a, StepDefinition b) {
+    private final StepDefinition stepDefinitionA;
+    private final StepDefinition stepDefinitionB;
+
+    public DuplicateStepDefinitionException(StepDefinition a, StepDefinition b) {
         super(createMessage(a, b));
+        this.stepDefinitionA = requireNonNull(a);
+        this.stepDefinitionB = requireNonNull(b);
+    }
+
+    public StepDefinition getStepDefinitionA() {
+        return stepDefinitionA;
+    }
+
+    public StepDefinition getStepDefinitionB() {
+        return stepDefinitionB;
     }
 
     private static String createMessage(StepDefinition a, StepDefinition b) {

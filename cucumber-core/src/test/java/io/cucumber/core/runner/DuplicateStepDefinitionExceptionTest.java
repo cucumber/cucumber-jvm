@@ -25,7 +25,9 @@ class DuplicateStepDefinitionExceptionTest {
         assertAll(
             () -> assertThat(expectedThrown.getMessage(),
                 is(equalTo("Duplicate step definitions in StepDefinitionA_Location and StepDefinitionB_Location"))),
-            () -> assertThat(expectedThrown.getCause(), is(nullValue())));
+            () -> assertThat(expectedThrown.getCause(), is(nullValue())),
+            () -> assertThat(expectedThrown.getStepDefinitionA(), is(mockStepDefinitionA)),
+            () -> assertThat(expectedThrown.getStepDefinitionB(), is(mockStepDefinitionB)));
     }
 
 }

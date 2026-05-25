@@ -6,12 +6,21 @@ import io.cucumber.core.exception.CucumberException;
 
 import java.util.List;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-class DuplicateDefaultDataTableCellTransformers extends CucumberException {
+public final class DuplicateDefaultDataTableCellTransformers extends CucumberException {
 
-    DuplicateDefaultDataTableCellTransformers(List<DefaultDataTableCellTransformerDefinition> definitions) {
+    private final List<DefaultDataTableCellTransformerDefinition> definitions;
+
+    public DuplicateDefaultDataTableCellTransformers(List<DefaultDataTableCellTransformerDefinition> definitions) {
         super(createMessage(definitions));
+        this.definitions = unmodifiableList(requireNonNull(definitions));
+    }
+
+    public List<DefaultDataTableCellTransformerDefinition> getDefinitions() {
+        return definitions;
     }
 
     private static String createMessage(List<DefaultDataTableCellTransformerDefinition> definitions) {

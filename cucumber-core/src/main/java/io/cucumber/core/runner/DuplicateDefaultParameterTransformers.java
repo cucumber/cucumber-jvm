@@ -5,12 +5,21 @@ import io.cucumber.core.exception.CucumberException;
 
 import java.util.List;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-class DuplicateDefaultParameterTransformers extends CucumberException {
+public final class DuplicateDefaultParameterTransformers extends CucumberException {
 
-    DuplicateDefaultParameterTransformers(List<DefaultParameterTransformerDefinition> definitions) {
+    private final List<DefaultParameterTransformerDefinition> definitions;
+
+    public DuplicateDefaultParameterTransformers(List<DefaultParameterTransformerDefinition> definitions) {
         super(createMessage(definitions));
+        this.definitions = unmodifiableList(requireNonNull(definitions));
+    }
+
+    public List<DefaultParameterTransformerDefinition> getDefinitions() {
+        return definitions;
     }
 
     private static String createMessage(List<DefaultParameterTransformerDefinition> definitions) {
